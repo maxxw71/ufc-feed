@@ -9,6 +9,7 @@ on:
     paths:
       - "fetch_ufc_feed.py"
       - "filter_feed.py"
+      - "enrich_odds.py"
       - ".github/workflows/update-feed.yml"
 
 permissions:
@@ -35,6 +36,11 @@ jobs:
 
       - name: Filter feed
         run: python filter_feed.py
+
+      - name: Enrich with sportsbook odds
+        env:
+          THE_ODDS_API_KEY: ${{ secrets.THE_ODDS_API_KEY }}
+        run: python enrich_odds.py
 
       - name: Commit updated feed
         run: |
