@@ -23,20 +23,10 @@ MONTHS = {
 MON3 = {m[:3].lower(): n for m, n in MONTHS.items()}
 
 DIVISIONS = [
-    "Women's Strawweight",
-    "Women's Flyweight",
-    "Women's Bantamweight",
-    "Women's Featherweight",
-    "Light Heavyweight",
-    "Heavyweight",
-    "Middleweight",
-    "Welterweight",
-    "Lightweight",
-    "Featherweight",
-    "Bantamweight",
-    "Flyweight",
-    "Strawweight",
-    "Catch Weight",
+    "Women's Strawweight", "Women's Flyweight", "Women's Bantamweight",
+    "Women's Featherweight", "Light Heavyweight", "Heavyweight",
+    "Middleweight", "Welterweight", "Lightweight", "Featherweight",
+    "Bantamweight", "Flyweight", "Strawweight", "Catch Weight",
 ]
 
 ATHLETE_RE = re.compile(
@@ -47,8 +37,7 @@ EVENT_URL_RE = re.compile(
 )
 SLUG_DATE_RE = re.compile(
     r"(january|february|march|april|may|june|july|august|september|october|"
-    r"november|december)-(\d{1,2})-(\d{4})",
-    re.I,
+    r"november|december)-(\d{1,2})-(\d{4})", re.I,
 )
 DATE_LINE_RE = re.compile(
     r"\b(?:Mon|Tue|Wed|Thu|Fri|Sat|Sun),\s*([A-Za-z]{3,9})\s+(\d{1,2})(?:,\s*(\d{4}))?\b",
@@ -97,10 +86,9 @@ def nearest_year_date(month_name: str, day: int, today: date):
     candidates = []
     for yr in (today.year - 1, today.year, today.year + 1):
         try:
-            d = date(yr, mon, day)
+            candidates.append(date(yr, mon, day))
         except ValueError:
-            continue
-        candidates.append(d)
+            pass
     if not candidates:
         return None
     future = [d for d in candidates if d >= today]
@@ -112,18 +100,18 @@ def date_from_context(text: str, url: str, today: date):
     if slug_date:
         return slug_date
 
-    # Search a small context window around each event URL on the listing page.
     idx = text.find(url)
     if idx >= 0:
-        chunk = text[max(0, idx - 1800): idx + 1800]
+        chunk = text[max(0, idx - 1800):idx + 1800]
         matches = list(DATE_LINE_RE.finditer(chunk))
         for m in matches:
             if m.group(3):
                 mon = MON3.get(m.group(1)[:3].lower())
-                try:
-                    return date(int(m.group(3)), mon, int(m.group(2))) if mon else None
-                except ValueError:
-                    pass
+                if mon:
+                    try:
+                        return date(int(m.group(3)), mon, int(m.group(2)))
+                    except ValueError:
+                        pass
         for m in matches:
             d = nearest_year_date(m.group(1), int(m.group(2)), today)
             if d:
@@ -132,10 +120,9 @@ def date_from_context(text: str, url: str, today: date):
 
 
 def extract_event_urls(listing: str):
-    seen = set()
-    out = []
+    seen, out = set(), []
     for m in EVENT_URL_RE.finditer(listing):
-        url = m.group(0).rstrip(".,)"])
+        url = m.group(0).rstrip(".,)")
         if url not in seen:
             seen.add(url)
             out.append(url)
@@ -162,7 +149,6 @@ def extract_event_name(page: str, url: str):
 
 
 def extract_location(page: str):
-    # UFC event proxy text generally places venue/location immediately after the first date/time line.
     lines = [clean(x) for x in page.splitlines()]
     for i, line in enumerate(lines):
         if DATE_LINE_RE.search(line):
@@ -192,21 +178,16 @@ def division_from_line(line: str):
 
 
 def parse_bouts(page: str):
-    bouts = []
-    seen = set()
-
+    bouts, seen = [], set()
     for raw in page.splitlines():
         if " vs " not in raw.lower() and " vs. " not in raw.lower():
             continue
         names = ATHLETE_RE.findall(raw)
         if len(names) < 2:
             continue
-
-        # The first two non-image athlete text links are the two corners.
         a, b = clean(names[0]), clean(names[1])
         if not a or not b or a == b:
             continue
-        division = division_from_line(raw)
         key = tuple(sorted((a.casefold(), b.casefold())))
         if key in seen:
             continue
@@ -214,10 +195,9 @@ def parse_bouts(page: str):
         bouts.append({
             "fighter_a": a,
             "fighter_b": b,
-            "division": division,
+            "division": division_from_line(raw),
             "status": "announced",
         })
-
     return bouts
 
 
@@ -225,13 +205,12 @@ def main():
     today = date.today()
     listing = get_text(EVENTS_URL)
     urls = extract_event_urls(listing)
-
     events = []
-    for url in urls[:30]:
+
+    for url in urls[:20]:
         event_date = date_from_context(listing, url, today)
         if event_date and event_date < today:
             continue
-
         try:
             page = get_text(url)
         except Exception as exc:
@@ -239,7 +218,6 @@ def main():
             continue
 
         if not event_date:
-            # Event page often supplies the date even when the slug does not.
             m = DATE_LINE_RE.search(page)
             if m:
                 if m.group(3):
@@ -254,12 +232,9 @@ def main():
 
         if not event_date or event_date < today:
             continue
-
         bouts = parse_bouts(page)
-        # Keep events with announced fights. This prevents past/promo links from entering the feed.
         if not bouts:
             continue
-
         events.append({
             "event_id": slug_from_url(url),
             "name": extract_event_name(page, url),
@@ -269,12 +244,8 @@ def main():
             "bouts": bouts,
         })
 
-    # Dedupe by event id and order chronologically.
-    uniq = {}
-    for event in events:
-        uniq[event["event_id"]] = event
+    uniq = {e["event_id"]: e for e in events}
     events = sorted(uniq.values(), key=lambda x: (x["date"], x["event_id"]))[:12]
-
     payload = {
         "generated_at": datetime.now(timezone.utc).isoformat(),
         "source": "UFC.com via Jina Reader relay",
