@@ -8,6 +8,7 @@ on:
     branches: [main]
     paths:
       - "fetch_ufc_feed.py"
+      - "filter_feed.py"
       - ".github/workflows/update-feed.yml"
 
 permissions:
@@ -31,6 +32,9 @@ jobs:
 
       - name: Build feed
         run: python fetch_ufc_feed.py
+
+      - name: Filter feed
+        run: python filter_feed.py
 
       - name: Commit updated feed
         run: |
