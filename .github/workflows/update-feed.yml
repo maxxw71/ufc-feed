@@ -29,6 +29,16 @@ jobs:
       - name: Install dependencies
         run: python -m pip install --disable-pip-version-check requests beautifulsoup4 lxml
 
+      - name: Probe UFC proxy
+        run: |
+          python - <<'PY'
+          import requests
+          u='https://r.jina.ai/https://www.ufc.com/events?language_content_entity=en'
+          r=requests.get(u,timeout=30,headers={'User-Agent':'ufc-feed/1.0'})
+          print('JINA_STATUS',r.status_code,'BYTES',len(r.text))
+          print(r.text[:5000])
+          PY
+
       - name: Build feed
         run: python fetch_ufc_feed.py
 
