@@ -4,199 +4,210 @@ import json
 import re
 from datetime import date, datetime, timezone
 from pathlib import Path
+from urllib.parse import urlparse
 
 import requests
-from bs4 import BeautifulSoup
 
 OUT = Path("upcoming.json")
-API = "https://en.wikipedia.org/w/api.php"
-UA = "ufc-feed/1.0 (public UFC schedule relay)"
+UA = "ufc-feed/1.0"
+EVENTS_URL = "https://www.ufc.com/events?language_content_entity=en"
+JINA = "https://r.jina.ai/"
 
 MONTHS = {
-    m: i for i, m in enumerate(
+    m.lower(): i for i, m in enumerate(
         ["January", "February", "March", "April", "May", "June",
          "July", "August", "September", "October", "November", "December"],
         start=1,
     )
 }
+MON3 = {m[:3].lower(): n for m, n in MONTHS.items()}
+
+DIVISIONS = [
+    "Women's Strawweight",
+    "Women's Flyweight",
+    "Women's Bantamweight",
+    "Women's Featherweight",
+    "Light Heavyweight",
+    "Heavyweight",
+    "Middleweight",
+    "Welterweight",
+    "Lightweight",
+    "Featherweight",
+    "Bantamweight",
+    "Flyweight",
+    "Strawweight",
+    "Catch Weight",
+]
+
+ATHLETE_RE = re.compile(
+    r"(?<!!)\[([^\]]+)\]\(https://www\.ufc\.com/athlete/[^)]+\)", re.I
+)
+EVENT_URL_RE = re.compile(
+    r"https://www\.ufc\.com/event/[A-Za-z0-9._~-]+", re.I
+)
+SLUG_DATE_RE = re.compile(
+    r"(january|february|march|april|may|june|july|august|september|october|"
+    r"november|december)-(\d{1,2})-(\d{4})",
+    re.I,
+)
+DATE_LINE_RE = re.compile(
+    r"\b(?:Mon|Tue|Wed|Thu|Fri|Sat|Sun),\s*([A-Za-z]{3,9})\s+(\d{1,2})(?:,\s*(\d{4}))?\b",
+    re.I,
+)
 
 
-def api_parse(page: str) -> tuple[str, str]:
+def get_text(url: str) -> str:
     r = requests.get(
-        API,
-        params={
-            "action": "parse",
-            "page": page,
-            "prop": "text|displaytitle",
-            "format": "json",
-            "formatversion": 2,
-            "redirects": 1,
-        },
-        timeout=30,
-        headers={"User-Agent": UA},
+        JINA + url,
+        timeout=45,
+        headers={"User-Agent": UA, "Accept": "text/plain"},
     )
     r.raise_for_status()
-    data = r.json()
-    parsed = data.get("parse") or {}
-    return parsed.get("text") or "", parsed.get("displaytitle") or page
+    return r.text
 
 
-def clean_text(s: str) -> str:
-    s = re.sub(r"\[[^\]]+\]", "", s or "")
-    return re.sub(r"\s+", " ", s).strip()
+def clean(s: str) -> str:
+    s = re.sub(r"!\[[^\]]*\]\([^)]*\)", " ", s or "")
+    s = re.sub(r"\[([^\]]+)\]\([^)]*\)", r"\1", s)
+    s = re.sub(r"[#*_`]", " ", s)
+    return re.sub(r"\s+", " ", s).strip(" -|:")
 
 
-def parse_date_text(text: str):
-    text = clean_text(text)
-    for month, num in MONTHS.items():
-        m = re.search(rf"\b{month}\s+(\d{{1,2}}),\s+(\d{{4}})\b", text)
-        if m:
-            try:
-                return date(int(m.group(2)), num, int(m.group(1)))
-            except ValueError:
-                return None
+def slug_from_url(url: str) -> str:
+    return urlparse(url).path.rstrip("/").split("/")[-1]
+
+
+def date_from_slug(slug: str):
+    m = SLUG_DATE_RE.search(slug)
+    if not m:
+        return None
+    mon = MONTHS.get(m.group(1).lower())
+    if not mon:
+        return None
+    try:
+        return date(int(m.group(3)), mon, int(m.group(2)))
+    except ValueError:
+        return None
+
+
+def nearest_year_date(month_name: str, day: int, today: date):
+    mon = MON3.get(month_name[:3].lower()) or MONTHS.get(month_name.lower())
+    if not mon:
+        return None
+    candidates = []
+    for yr in (today.year - 1, today.year, today.year + 1):
+        try:
+            d = date(yr, mon, day)
+        except ValueError:
+            continue
+        candidates.append(d)
+    if not candidates:
+        return None
+    future = [d for d in candidates if d >= today]
+    return min(future) if future else min(candidates, key=lambda d: abs((d - today).days))
+
+
+def date_from_context(text: str, url: str, today: date):
+    slug_date = date_from_slug(slug_from_url(url))
+    if slug_date:
+        return slug_date
+
+    # Search a small context window around each event URL on the listing page.
+    idx = text.find(url)
+    if idx >= 0:
+        chunk = text[max(0, idx - 1800): idx + 1800]
+        matches = list(DATE_LINE_RE.finditer(chunk))
+        for m in matches:
+            if m.group(3):
+                mon = MON3.get(m.group(1)[:3].lower())
+                try:
+                    return date(int(m.group(3)), mon, int(m.group(2))) if mon else None
+                except ValueError:
+                    pass
+        for m in matches:
+            d = nearest_year_date(m.group(1), int(m.group(2)), today)
+            if d:
+                return d
     return None
 
 
-def find_scheduled_events(html: str):
-    soup = BeautifulSoup(html, "lxml")
-    target = None
-
-    # Find the Scheduled events heading, then the next wikitable.
-    for h in soup.find_all(["h2", "h3", "h4"]):
-        if clean_text(h.get_text(" ", strip=True)).lower() == "scheduled events":
-            target = h.find_next("table")
-            break
-
-    if target is None:
-        # Fallback: find a table whose headers include Event and Date.
-        for table in soup.find_all("table"):
-            headers = [clean_text(x.get_text(" ", strip=True)).lower() for x in table.find_all("th")]
-            if "event" in headers and "date" in headers:
-                target = table
-                break
-
-    if target is None:
-        return []
-
-    events = []
-    today = date.today()
-    for tr in target.find_all("tr"):
-        cells = tr.find_all(["th", "td"], recursive=False)
-        if len(cells) < 2:
-            continue
-
-        texts = [clean_text(c.get_text(" ", strip=True)) for c in cells]
-        if texts[0].lower() == "event":
-            continue
-
-        # Scheduled-event tables are normally Event | Date | Venue | Location.
-        event_cell = cells[0]
-        title = texts[0]
-        if not title or "UFC" not in title:
-            continue
-
-        event_date = None
-        for t in texts[1:3]:
-            event_date = parse_date_text(t)
-            if event_date:
-                break
-        if not event_date or event_date < today:
-            continue
-
-        a = event_cell.find("a", href=True)
-        wiki_title = None
-        if a:
-            wiki_title = a.get("title") or a.get_text(" ", strip=True)
-
-        venue = texts[2] if len(texts) >= 3 else ""
-        location = texts[3] if len(texts) >= 4 else ""
-
-        events.append({
-            "name": title,
-            "date": event_date,
-            "wiki_title": wiki_title,
-            "venue": venue,
-            "location": location,
-        })
-
-    events.sort(key=lambda e: e["date"])
-    return events
+def extract_event_urls(listing: str):
+    seen = set()
+    out = []
+    for m in EVENT_URL_RE.finditer(listing):
+        url = m.group(0).rstrip(".,)"])
+        if url not in seen:
+            seen.add(url)
+            out.append(url)
+    return out
 
 
-def normalize_division(raw: str) -> str:
-    s = clean_text(raw)
-    s = re.sub(r"\b(UFC|Interim|Title|Championship|bout)\b", "", s, flags=re.I)
-    s = re.sub(r"\s+", " ", s).strip(" :-")
-    return s or "Unknown"
+def extract_event_name(page: str, url: str):
+    lines = [x.strip() for x in page.splitlines()]
+    for i, line in enumerate(lines):
+        if re.match(r"^#\s+UFC\b", line, flags=re.I):
+            heading = clean(line)
+            matchup = ""
+            for nxt in lines[i + 1:i + 10]:
+                t = clean(nxt)
+                if not t:
+                    continue
+                if re.search(r"\bvs\.?\b", t, flags=re.I):
+                    matchup = re.sub(r"\s*vs\.?\s*", " vs. ", t, flags=re.I)
+                    break
+            if matchup and matchup.lower() not in heading.lower():
+                return f"{heading}: {matchup}"
+            return heading
+    return slug_from_url(url).replace("-", " ").title()
 
 
-def parse_announced_bouts(page_html: str):
-    soup = BeautifulSoup(page_html, "lxml")
+def extract_location(page: str):
+    # UFC event proxy text generally places venue/location immediately after the first date/time line.
+    lines = [clean(x) for x in page.splitlines()]
+    for i, line in enumerate(lines):
+        if DATE_LINE_RE.search(line):
+            for nxt in lines[i + 1:i + 8]:
+                if not nxt:
+                    continue
+                low = nxt.lower()
+                if low.startswith("sponsored") or low.startswith("how to watch"):
+                    continue
+                if "watch on" in low or low.startswith("main card") or low.startswith("prelims"):
+                    continue
+                if "vs." in low or " vs " in low:
+                    continue
+                if len(nxt) <= 140:
+                    return nxt
+    return ""
+
+
+def division_from_line(line: str):
+    low = line.lower()
+    for d in DIVISIONS:
+        if f"{d.lower()} bout" in low or d.lower() in low:
+            return d
+    if "catchweight" in low or "catch weight" in low:
+        return "Catch Weight"
+    return "Unknown"
+
+
+def parse_bouts(page: str):
     bouts = []
     seen = set()
 
-    # Wikipedia upcoming-event pages commonly use an Announced bouts section.
-    heading = None
-    for h in soup.find_all(["h2", "h3", "h4"]):
-        if clean_text(h.get_text(" ", strip=True)).lower() == "announced bouts":
-            heading = h
-            break
-
-    nodes = []
-    if heading is not None:
-        cur = heading.find_next_sibling()
-        while cur is not None and cur.name not in {"h2", "h3"}:
-            nodes.append(cur)
-            cur = cur.find_next_sibling()
-
-    # Fallback: scan all list items because some pages omit a dedicated section.
-    if not nodes:
-        nodes = [soup]
-
-    for node in nodes:
-        for li in node.find_all("li"):
-            text = clean_text(li.get_text(" ", strip=True))
-            # Typical pattern: Heavyweight bout: Fighter A vs. Fighter B
-            m = re.match(r"(.+?\bbout)\s*:\s*(.+?)\s+vs\.?\s+(.+)$", text, flags=re.I)
-            if not m:
-                continue
-            division = normalize_division(m.group(1))
-            fighter_a = clean_text(m.group(2))
-            fighter_b = clean_text(m.group(3))
-            if not fighter_a or not fighter_b:
-                continue
-            key = (fighter_a.casefold(), fighter_b.casefold(), division.casefold())
-            if key in seen:
-                continue
-            seen.add(key)
-            bouts.append({
-                "fighter_a": fighter_a,
-                "fighter_b": fighter_b,
-                "division": division,
-                "status": "announced",
-            })
-
-    # Also handle future pages that already use a results-style table.
-    for tr in soup.find_all("tr"):
-        cells = tr.find_all("td", recursive=False)
-        if len(cells) < 4:
+    for raw in page.splitlines():
+        if " vs " not in raw.lower() and " vs. " not in raw.lower():
             continue
-        texts = [clean_text(c.get_text(" ", strip=True)) for c in cells]
-        vs_idx = None
-        for i, t in enumerate(texts):
-            if t.lower() in {"vs.", "vs"}:
-                vs_idx = i
-                break
-        if vs_idx is None or vs_idx < 1 or vs_idx + 1 >= len(cells):
+        names = ATHLETE_RE.findall(raw)
+        if len(names) < 2:
             continue
-        a = texts[vs_idx - 1]
-        b = texts[vs_idx + 1]
-        division = texts[max(0, vs_idx - 2)] if vs_idx >= 2 else "Unknown"
-        division = normalize_division(division)
-        if not a or not b:
+
+        # The first two non-image athlete text links are the two corners.
+        a, b = clean(names[0]), clean(names[1])
+        if not a or not b or a == b:
             continue
-        key = (a.casefold(), b.casefold(), division.casefold())
+        division = division_from_line(raw)
+        key = tuple(sorted((a.casefold(), b.casefold())))
         if key in seen:
             continue
         seen.add(key)
@@ -204,46 +215,75 @@ def parse_announced_bouts(page_html: str):
             "fighter_a": a,
             "fighter_b": b,
             "division": division,
-            "status": "scheduled",
+            "status": "announced",
         })
 
     return bouts
 
 
 def main():
-    list_html, _ = api_parse("List of UFC events")
-    scheduled = find_scheduled_events(list_html)
+    today = date.today()
+    listing = get_text(EVENTS_URL)
+    urls = extract_event_urls(listing)
 
     events = []
-    for ev in scheduled[:12]:
-        bouts = []
-        canonical_name = ev["name"]
-        if ev.get("wiki_title"):
-            try:
-                event_html, display_title = api_parse(ev["wiki_title"])
-                bouts = parse_announced_bouts(event_html)
-                canonical_name = clean_text(
-                    BeautifulSoup(display_title, "lxml").get_text(" ", strip=True)
-                ) or canonical_name
-            except Exception as exc:
-                print(f"warning: failed {ev['wiki_title']}: {exc}")
+    for url in urls[:30]:
+        event_date = date_from_context(listing, url, today)
+        if event_date and event_date < today:
+            continue
+
+        try:
+            page = get_text(url)
+        except Exception as exc:
+            print(f"warning: {url}: {exc}")
+            continue
+
+        if not event_date:
+            # Event page often supplies the date even when the slug does not.
+            m = DATE_LINE_RE.search(page)
+            if m:
+                if m.group(3):
+                    mon = MON3.get(m.group(1)[:3].lower())
+                    if mon:
+                        try:
+                            event_date = date(int(m.group(3)), mon, int(m.group(2)))
+                        except ValueError:
+                            event_date = None
+                else:
+                    event_date = nearest_year_date(m.group(1), int(m.group(2)), today)
+
+        if not event_date or event_date < today:
+            continue
+
+        bouts = parse_bouts(page)
+        # Keep events with announced fights. This prevents past/promo links from entering the feed.
+        if not bouts:
+            continue
 
         events.append({
-            "event_id": ev.get("wiki_title") or canonical_name,
-            "name": canonical_name,
-            "date": ev["date"].isoformat(),
-            "venue": ev.get("venue", ""),
-            "location": ev.get("location", ""),
+            "event_id": slug_from_url(url),
+            "name": extract_event_name(page, url),
+            "date": event_date.isoformat(),
+            "event_url": url,
+            "venue_location": extract_location(page),
             "bouts": bouts,
         })
 
+    # Dedupe by event id and order chronologically.
+    uniq = {}
+    for event in events:
+        uniq[event["event_id"]] = event
+    events = sorted(uniq.values(), key=lambda x: (x["date"], x["event_id"]))[:12]
+
     payload = {
         "generated_at": datetime.now(timezone.utc).isoformat(),
-        "source": "Wikipedia MediaWiki API",
+        "source": "UFC.com via Jina Reader relay",
         "events": events,
     }
     OUT.write_text(json.dumps(payload, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
-    print(f"wrote {len(events)} upcoming events and {sum(len(e['bouts']) for e in events)} bouts")
+    print(f"wrote {len(events)} events and {sum(len(e['bouts']) for e in events)} bouts")
+    for e in events:
+        print(e["date"], e["name"], len(e["bouts"]))
 
 
 if __name__ == "__main__":
