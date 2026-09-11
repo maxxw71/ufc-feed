@@ -15,6 +15,10 @@ on:
 permissions:
   contents: write
 
+concurrency:
+  group: ufc-feed-update
+  cancel-in-progress: false
+
 jobs:
   update:
     runs-on: ubuntu-latest
@@ -22,6 +26,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -52,4 +58,5 @@ jobs:
             exit 0
           fi
           git commit -m "Update upcoming UFC feed"
-          git push
+          git pull --rebase origin main
+          git push origin HEAD:main
