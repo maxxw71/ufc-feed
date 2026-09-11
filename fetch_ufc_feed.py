@@ -9,7 +9,7 @@ from urllib.parse import urlparse
 import requests
 
 OUT = Path("upcoming.json")
-UA = "ufc-feed/1.0"
+UA = "ufc-feed/1.1"
 EVENTS_URL = "https://www.ufc.com/events?language_content_entity=en"
 JINA = "https://r.jina.ai/"
 
@@ -83,39 +83,48 @@ def nearest_year_date(month_name: str, day: int, today: date):
     mon = MON3.get(month_name[:3].lower()) or MONTHS.get(month_name.lower())
     if not mon:
         return None
-    candidates = []
+    vals = []
     for yr in (today.year - 1, today.year, today.year + 1):
         try:
-            candidates.append(date(yr, mon, day))
+            vals.append(date(yr, mon, day))
         except ValueError:
             pass
-    if not candidates:
+    if not vals:
         return None
-    future = [d for d in candidates if d >= today]
-    return min(future) if future else min(candidates, key=lambda d: abs((d - today).days))
+    future = [d for d in vals if d >= today]
+    return min(future) if future else min(vals, key=lambda d: abs((d - today).days))
 
 
-def date_from_context(text: str, url: str, today: date):
-    slug_date = date_from_slug(slug_from_url(url))
-    if slug_date:
-        return slug_date
+def date_from_match(m, today):
+    if m.group(3):
+        mon = MON3.get(m.group(1)[:3].lower())
+        if mon:
+            try:
+                return date(int(m.group(3)), mon, int(m.group(2)))
+            except ValueError:
+                return None
+    return nearest_year_date(m.group(1), int(m.group(2)), today)
 
-    idx = text.find(url)
-    if idx >= 0:
-        chunk = text[max(0, idx - 1800):idx + 1800]
-        matches = list(DATE_LINE_RE.finditer(chunk))
-        for m in matches:
-            if m.group(3):
-                mon = MON3.get(m.group(1)[:3].lower())
-                if mon:
-                    try:
-                        return date(int(m.group(3)), mon, int(m.group(2)))
-                    except ValueError:
-                        pass
-        for m in matches:
-            d = nearest_year_date(m.group(1), int(m.group(2)), today)
-            if d:
-                return d
+
+def simple(s: str) -> str:
+    s = clean(s).lower().replace("vs.", "vs")
+    return re.sub(r"[^a-z0-9]+", " ", s).strip()
+
+
+def listing_date_for_matchup(listing: str, matchup: str, today: date):
+    target = simple(matchup)
+    if not target:
+        return None
+    lines = listing.splitlines()
+    for i, line in enumerate(lines):
+        if simple(line) != target:
+            continue
+        for j in range(max(0, i - 12), min(len(lines), i + 13)):
+            m = DATE_LINE_RE.search(lines[j])
+            if m:
+                d = date_from_match(m, today)
+                if d:
+                    return d
     return None
 
 
@@ -129,23 +138,24 @@ def extract_event_urls(listing: str):
     return out
 
 
-def extract_event_name(page: str, url: str):
+def heading_and_matchup(page: str, url: str):
     lines = [x.strip() for x in page.splitlines()]
     for i, line in enumerate(lines):
-        if re.match(r"^#\s+UFC\b", line, flags=re.I):
+        if re.match(r"^#\s+.*\bUFC\b", line, flags=re.I):
             heading = clean(line)
-            matchup = ""
-            for nxt in lines[i + 1:i + 10]:
+            for nxt in lines[i + 1:i + 12]:
                 t = clean(nxt)
-                if not t:
-                    continue
-                if re.search(r"\bvs\.?\b", t, flags=re.I):
-                    matchup = re.sub(r"\s*vs\.?\s*", " vs. ", t, flags=re.I)
-                    break
-            if matchup and matchup.lower() not in heading.lower():
-                return f"{heading}: {matchup}"
-            return heading
-    return slug_from_url(url).replace("-", " ").title()
+                if t and re.search(r"\bvs\.?\b", t, flags=re.I):
+                    matchup = re.sub(r"\s*vs\.?\s*", " vs ", t, flags=re.I)
+                    return heading, matchup
+            return heading, ""
+    return slug_from_url(url).replace("-", " ").title(), ""
+
+
+def event_name(heading: str, matchup: str):
+    if matchup and simple(matchup) not in simple(heading):
+        return f"{heading}: {matchup.replace(' vs ', ' vs. ')}"
+    return heading
 
 
 def extract_location(page: str):
@@ -201,43 +211,42 @@ def parse_bouts(page: str):
     return bouts
 
 
+def page_date_fallback(page: str, today: date):
+    m = DATE_LINE_RE.search(page)
+    return date_from_match(m, today) if m else None
+
+
 def main():
     today = date.today()
     listing = get_text(EVENTS_URL)
     urls = extract_event_urls(listing)
     events = []
 
-    for url in urls[:20]:
-        event_date = date_from_context(listing, url, today)
-        if event_date and event_date < today:
-            continue
+    for url in urls[:12]:
+        slug = slug_from_url(url)
         try:
             page = get_text(url)
         except Exception as exc:
             print(f"warning: {url}: {exc}")
             continue
 
+        heading, matchup = heading_and_matchup(page, url)
+        event_date = date_from_slug(slug)
+        if not event_date and matchup:
+            event_date = listing_date_for_matchup(listing, matchup, today)
         if not event_date:
-            m = DATE_LINE_RE.search(page)
-            if m:
-                if m.group(3):
-                    mon = MON3.get(m.group(1)[:3].lower())
-                    if mon:
-                        try:
-                            event_date = date(int(m.group(3)), mon, int(m.group(2)))
-                        except ValueError:
-                            event_date = None
-                else:
-                    event_date = nearest_year_date(m.group(1), int(m.group(2)), today)
+            event_date = page_date_fallback(page, today)
 
         if not event_date or event_date < today:
             continue
+
         bouts = parse_bouts(page)
         if not bouts:
             continue
+
         events.append({
-            "event_id": slug_from_url(url),
-            "name": extract_event_name(page, url),
+            "event_id": slug,
+            "name": event_name(heading, matchup),
             "date": event_date.isoformat(),
             "event_url": url,
             "venue_location": extract_location(page),
