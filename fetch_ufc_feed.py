@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+# This file is updated by ChatGPT and executed by GitHub Actions.
 import json
 from datetime import date, datetime, timezone
 from pathlib import Path
