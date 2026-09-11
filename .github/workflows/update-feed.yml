@@ -27,19 +27,7 @@ jobs:
           python-version: "3.12"
 
       - name: Install dependencies
-        run: python -m pip install --disable-pip-version-check requests beautifulsoup4 lxml
-
-      - name: Probe UFC event proxy
-        run: |
-          python - <<'PY'
-          import requests
-          u='https://r.jina.ai/https://www.ufc.com/event/ufc-fight-night-september-26-2026'
-          r=requests.get(u,timeout=30,headers={'User-Agent':'ufc-feed/1.0'})
-          print('JINA_EVENT_STATUS',r.status_code,'BYTES',len(r.text))
-          t=r.text
-          p=t.lower().find('main card')
-          print(t[max(0,p-1500):p+12000] if p>=0 else t[:12000])
-          PY
+        run: python -m pip install --disable-pip-version-check requests
 
       - name: Build feed
         run: python fetch_ufc_feed.py
