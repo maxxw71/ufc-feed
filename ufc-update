@@ -6,7 +6,7 @@ ROOT="$HOME/ufc-predictor-v1"
 CACHE="$HOME/.cache/ufc-update"
 mkdir -p "$CACHE"
 
-fetch_file() {
+fetch() {
   local remote="$1"
   local dest="$2"
   mkdir -p "$(dirname "$dest")"
@@ -19,10 +19,31 @@ fetch_run() {
   local remote="$1"
   local localfile="$CACHE/$(basename "$remote")"
   echo "Fetching latest: $remote"
-  curl -6 -L --fail --connect-timeout 10 --max-time 180 --retry 2 --retry-delay 2 \
-    "$BASE/$remote" -o "$localfile"
+  fetch "$remote" "$localfile"
   chmod +x "$localfile"
   bash "$localfile"
+}
+
+ensure_skill_veto_deps() {
+  local reach="$ROOT/ufc_reach_method_analysis/reach_market_sample.csv"
+  if [ ! -s "$reach" ]; then
+    echo "Missing reach sample; downloading it automatically..."
+    fetch "ufc_reach_method_analysis/reach_market_sample.csv" "$reach"
+  fi
+
+  local age="$ROOT/historical_backtest/master_2006_2026/hybrid_master_2006_2026.csv"
+  if [ ! -s "$age" ]; then
+    echo "ERROR: Missing Age Hybrid master: $age"
+    echo "That file is generated locally by the historical backtest and is not currently mirrored in ufc-feed."
+    exit 2
+  fi
+
+  local stats="$ROOT/skill_veto_all_methods/all_original_signals_with_skill_veto.csv"
+  if [ ! -s "$stats" ]; then
+    echo "ERROR: Missing skill-veto stats file: $stats"
+    echo "Run the all-method skill analysis once before the official-sample comparison."
+    exit 2
+  fi
 }
 
 TASK="${1:-}"
@@ -33,10 +54,7 @@ case "$TASK" in
     echo "  ufc-update skill-veto"
     ;;
   skill-veto)
-    REACH="$ROOT/ufc_reach_method_analysis/reach_market_sample.csv"
-    if [ ! -s "$REACH" ]; then
-      fetch_file "ufc_reach_method_analysis/reach_market_sample.csv" "$REACH"
-    fi
+    ensure_skill_veto_deps
     fetch_run "scripts/run_skill_veto_official_samples.sh"
     ;;
   *)
