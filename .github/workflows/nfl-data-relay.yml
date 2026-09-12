@@ -1,0 +1,64 @@
+name: NFL data relay
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - '.github/workflows/nfl-data-relay.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  build-relay:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install data packages
+        run: python -m pip install -q nflreadpy polars pyarrow
+      - name: Build compact historical relay files
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import polars as pl
+          import nflreadpy as nfl
+
+          out=Path('relay/nfl')
+          out.mkdir(parents=True,exist_ok=True)
+          seasons=list(range(2006,2027))
+
+          print('Downloading schedules/results/market lines...')
+          sched=nfl.load_schedules(seasons)
+          sched.write_parquet(out/'schedules_2006_2026.parquet',compression='zstd')
+          print('schedules',sched.height,sched.width)
+
+          print('Downloading weekly team stats...')
+          team=nfl.load_team_stats(seasons,summary_level='week')
+          team.write_parquet(out/'team_weekly_2006_2026.parquet',compression='zstd')
+          print('team weekly',team.height,team.width)
+
+          # Small manifest for VM-side validation.
+          import json
+          manifest={
+              'schedules_rows':sched.height,
+              'schedules_cols':sched.width,
+              'team_rows':team.height,
+              'team_cols':team.width,
+              'seasons':'2006-2026',
+          }
+          (out/'manifest.json').write_text(json.dumps(manifest,indent=2))
+          PY
+      - name: Commit relay data
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add relay/nfl
+          if git diff --cached --quiet; then
+            echo 'No relay changes.'
+          else
+            git commit -m 'Refresh NFL relay data'
+            git push
+          fi
