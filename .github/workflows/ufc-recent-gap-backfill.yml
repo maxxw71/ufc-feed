@@ -1,0 +1,31 @@
+name: UFC Recent Gap Backfill
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'ufc_recent_gap_backfill.py'
+      - '.github/workflows/ufc-recent-gap-backfill.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  backfill:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install dependencies
+        run: python -m pip install --disable-pip-version-check requests beautifulsoup4 lxml pandas numpy duckdb rapidfuzz
+      - name: Run recent UFC odds backfill
+        run: python ufc_recent_gap_backfill.py
+      - name: Commit results
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add ufc_recent_gap_backfill/
+          git commit -m "Add UFC 2024-current hybrid backfill results" || exit 0
+          git push
