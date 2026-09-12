@@ -9,10 +9,12 @@ mkdir -p "$CACHE"
 fetch() {
   local remote="$1"
   local dest="$2"
+  local bust="$(date +%s%N)"
   mkdir -p "$(dirname "$dest")"
   echo "Fetching: $remote"
   curl -6 -L --fail --connect-timeout 10 --max-time 180 --retry 2 --retry-delay 2 \
-    "$BASE/$remote" -o "$dest"
+    -H 'Cache-Control: no-cache' \
+    "$BASE/$remote?cb=$bust" -o "$dest"
 }
 
 fetch_run() {
@@ -34,14 +36,12 @@ ensure_skill_veto_deps() {
   local age="$ROOT/historical_backtest/master_2006_2026/hybrid_master_2006_2026.csv"
   if [ ! -s "$age" ]; then
     echo "ERROR: Missing Age Hybrid master: $age"
-    echo "That file is generated locally by the historical backtest and is not currently mirrored in ufc-feed."
     exit 2
   fi
 
   local stats="$ROOT/skill_veto_all_methods/all_original_signals_with_skill_veto.csv"
   if [ ! -s "$stats" ]; then
     echo "ERROR: Missing skill-veto stats file: $stats"
-    echo "Run the all-method skill analysis once before the official-sample comparison."
     exit 2
   fi
 }
