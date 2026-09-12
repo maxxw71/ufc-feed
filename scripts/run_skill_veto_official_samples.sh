@@ -52,9 +52,13 @@ stats["dogn"]=stats["underdog"].map(norm)
 stats["skill_veto"]=(stats["diff_sig_diff_pm"]<=-1.0)|(stats["diff_td_def"]<=-0.20)
 
 skill=stats[[
-    "event_date","favn","dogn","favorite","underdog",
+    "event_date","favn","dogn",
     "diff_sig_diff_pm","diff_td_def","skill_veto"
-]].drop_duplicates(["event_date","favn","dogn"])
+]].drop_duplicates(["event_date","favn","dogn"]).rename(columns={
+    "diff_sig_diff_pm":"skill_sig_diff_pm",
+    "diff_td_def":"skill_td_def",
+    "skill_veto":"skill_veto_flag",
+})
 
 def metric(g, profit_col):
     n=len(g)
@@ -74,7 +78,7 @@ def merge_skill(df,date_col,fav_col,dog_col):
     z["event_date"]=pd.to_datetime(z[date_col],errors="coerce").dt.normalize()
     z["favn"]=z[fav_col].map(norm)
     z["dogn"]=z[dog_col].map(norm)
-    z=z.merge(skill,on=["event_date","favn","dogn"],how="left",suffixes=("","_skill"))
+    z=z.merge(skill,on=["event_date","favn","dogn"],how="left")
     return z
 
 lines=[]
@@ -98,9 +102,9 @@ else:
 
 age=merge_skill(age,date_col,fav_col,dog_col)
 base=metric(age,profit_col)
-age_veto=age["skill_veto"].fillna(False).astype(bool)
-kept=age[~age_veto].copy()
-vetoed=age[age_veto].copy()
+age_veto=age["skill_veto_flag"].fillna(False).astype(bool).to_numpy()
+kept=age.loc[~age_veto].copy()
+vetoed=age.loc[age_veto].copy()
 km=metric(kept,profit_col); vm=metric(vetoed,profit_col)
 
 reach=pd.read_csv(reach_path,low_memory=False)
@@ -121,9 +125,9 @@ if len(reach_off)!=415:
 
 reach_off=merge_skill(reach_off,rdate,rfav,rdog)
 rb=metric(reach_off,"profit_100")
-reach_veto=reach_off["skill_veto"].fillna(False).astype(bool)
-rk=metric(reach_off[~reach_veto],"profit_100")
-rv=metric(reach_off[reach_veto],"profit_100")
+reach_veto=reach_off["skill_veto_flag"].fillna(False).astype(bool).to_numpy()
+rk=metric(reach_off.loc[~reach_veto],"profit_100")
+rv=metric(reach_off.loc[reach_veto],"profit_100")
 
 if "fav_younger_by" not in reach.columns:
     raise RuntimeError("Reach sample lacks fav_younger_by needed for Premium.")
@@ -137,9 +141,9 @@ if len(premium)!=133:
 
 premium=merge_skill(premium,rdate,rfav,rdog)
 pb=metric(premium,"profit_100")
-premium_veto=premium["skill_veto"].fillna(False).astype(bool)
-pk=metric(premium[~premium_veto],"profit_100")
-pv=metric(premium[premium_veto],"profit_100")
+premium_veto=premium["skill_veto_flag"].fillna(False).astype(bool).to_numpy()
+pk=metric(premium.loc[~premium_veto],"profit_100")
+pv=metric(premium.loc[premium_veto],"profit_100")
 
 def add(name,b,k,v):
     removed=int(v["n"])
@@ -155,7 +159,9 @@ def add(name,b,k,v):
         f"WITH SKILL VETO: {k['n']} bets | {int(k['w'])}-{int(k['l'])} | "
         f"ROI={k['roi']*100:+.2f}% | P/L=${k['p']:+,.2f}"
     )
-    lines.append(f"ROI CHANGE: {(k['roi']-b['roi'])*100:+.2f}pp")
+    lines.append(
+        f"ROI CHANGE: {(k['roi']-b['roi'])*100:+.2f}pp"
+    )
     lines.append(
         f"REMOVED: {removed} signals = {removed_wins} winners + {removed_losses} losses "
         f"| removed-group ROI={v['roi']*100:+.2f}%"
