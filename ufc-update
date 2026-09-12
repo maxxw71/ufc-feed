@@ -1,0 +1,33 @@
+#!/usr/bin/env bash
+set -Eeuo pipefail
+
+REPO_DIR="${UFC_FEED_DIR:-$HOME/ufc-feed}"
+
+if [ ! -d "$REPO_DIR/.git" ]; then
+  echo "ERROR: Expected git repo at $REPO_DIR"
+  echo "Set UFC_FEED_DIR if your clone lives elsewhere."
+  exit 2
+fi
+
+cd "$REPO_DIR"
+
+echo "Updating ufc-feed..."
+git pull --ff-only
+
+TASK="${1:-}"
+case "$TASK" in
+  "")
+    echo
+    echo "ufc-update is ready."
+    echo "Available task:"
+    echo "  ufc-update skill-veto"
+    ;;
+  skill-veto)
+    bash scripts/run_skill_veto_official_samples.sh
+    ;;
+  *)
+    echo "Unknown task: $TASK"
+    echo "Available task: skill-veto"
+    exit 3
+    ;;
+esac
