@@ -26,40 +26,41 @@ fetch_run() {
   bash "$localfile"
 }
 
-ensure_skill_veto_deps() {
+ensure_reach_sample() {
   local reach="$ROOT/ufc_reach_method_analysis/reach_market_sample.csv"
   if [ ! -s "$reach" ]; then
     echo "Missing reach sample; downloading it automatically..."
     fetch "ufc_reach_method_analysis/reach_market_sample.csv" "$reach"
   fi
+}
 
+ensure_skill_veto_deps() {
+  ensure_reach_sample
   local age="$ROOT/historical_backtest/master_2006_2026/hybrid_master_2006_2026.csv"
-  if [ ! -s "$age" ]; then
-    echo "ERROR: Missing Age Hybrid master: $age"
-    exit 2
-  fi
-
+  [ -s "$age" ] || { echo "ERROR: Missing Age Hybrid master: $age"; exit 2; }
   local stats="$ROOT/skill_veto_all_methods/all_original_signals_with_skill_veto.csv"
-  if [ ! -s "$stats" ]; then
-    echo "ERROR: Missing skill-veto stats file: $stats"
-    exit 2
-  fi
+  [ -s "$stats" ] || { echo "ERROR: Missing skill-veto stats file: $stats"; exit 2; }
 }
 
 TASK="${1:-}"
 case "$TASK" in
   "")
     echo "ufc-update is ready."
-    echo "Available task:"
+    echo "Available tasks:"
     echo "  ufc-update skill-veto"
+    echo "  ufc-update wrestling"
     ;;
   skill-veto)
     ensure_skill_veto_deps
     fetch_run "scripts/run_skill_veto_official_samples.sh"
     ;;
+  wrestling)
+    ensure_reach_sample
+    fetch_run "scripts/run_wrestling_mismatch_analysis.sh"
+    ;;
   *)
     echo "Unknown task: $TASK"
-    echo "Available task: skill-veto"
+    echo "Available tasks: skill-veto, wrestling"
     exit 3
     ;;
 esac
