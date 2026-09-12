@@ -1,31 +1,25 @@
 #!/usr/bin/env bash
 set -Eeuo pipefail
 
-REPO_DIR="${UFC_FEED_DIR:-$HOME/ufc-feed}"
 TARGET="$HOME/.local/bin/ufc-update"
+URL="https://raw.githubusercontent.com/maxxw71/ufc-feed/main/ufc-update"
 
 mkdir -p "$HOME/.local/bin"
 
-if [ ! -d "$REPO_DIR/.git" ]; then
-  echo "Cloning maxxw71/ufc-feed to $REPO_DIR..."
-  git clone https://github.com/maxxw71/ufc-feed.git "$REPO_DIR"
-fi
-
-cd "$REPO_DIR"
-git pull --ff-only
-chmod +x "$REPO_DIR/ufc-update"
-ln -sf "$REPO_DIR/ufc-update" "$TARGET"
+echo "Installing ufc-update from raw.githubusercontent.com..."
+curl -6 -L --fail --connect-timeout 10 --max-time 120 --retry 2 --retry-delay 2 \
+  "$URL" -o "$TARGET"
+chmod +x "$TARGET"
 
 case ":$PATH:" in
   *":$HOME/.local/bin:"*) ;;
   *)
     echo 'export PATH="$HOME/.local/bin:$PATH"' >> "$HOME/.bashrc"
-    export PATH="$HOME/.local/bin:$PATH"
     ;;
 esac
 
 echo
- echo "Installed: $TARGET"
-echo "Use:"
-echo "  ufc-update"
+echo "Installed: $TARGET"
+echo "Run:"
+echo "  source ~/.bashrc"
 echo "  ufc-update skill-veto"
