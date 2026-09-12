@@ -1,29 +1,30 @@
 #!/usr/bin/env bash
 set -Eeuo pipefail
 
-REPO_DIR="${UFC_FEED_DIR:-$HOME/ufc-feed}"
+BASE="https://raw.githubusercontent.com/maxxw71/ufc-feed/main"
+ROOT="$HOME/ufc-predictor-v1"
+CACHE="$HOME/.cache/ufc-update"
+mkdir -p "$CACHE"
 
-if [ ! -d "$REPO_DIR/.git" ]; then
-  echo "ERROR: Expected git repo at $REPO_DIR"
-  echo "Set UFC_FEED_DIR if your clone lives elsewhere."
-  exit 2
-fi
-
-cd "$REPO_DIR"
-
-echo "Updating ufc-feed..."
-git pull --ff-only
+fetch_run() {
+  local remote="$1"
+  local localfile="$CACHE/$(basename "$remote")"
+  echo "Fetching latest: $remote"
+  curl -6 -L --fail --connect-timeout 10 --max-time 120 --retry 2 --retry-delay 2 \
+    "$BASE/$remote" -o "$localfile"
+  chmod +x "$localfile"
+  bash "$localfile"
+}
 
 TASK="${1:-}"
 case "$TASK" in
   "")
-    echo
     echo "ufc-update is ready."
     echo "Available task:"
     echo "  ufc-update skill-veto"
     ;;
   skill-veto)
-    bash scripts/run_skill_veto_official_samples.sh
+    fetch_run "scripts/run_skill_veto_official_samples.sh"
     ;;
   *)
     echo "Unknown task: $TASK"
