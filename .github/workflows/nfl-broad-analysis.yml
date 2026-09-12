@@ -1,0 +1,46 @@
+name: NFL broad analysis
+
+on:
+  push:
+    paths:
+      - '.github/workflows/nfl-broad-analysis.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  analyze:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Prepare environment
+        run: |
+          python -m venv "$HOME/nfl-predictor-v1/venv"
+          source "$HOME/nfl-predictor-v1/venv/bin/activate"
+          pip install -q --upgrade pip
+          pip install -q pandas numpy pyarrow scipy scikit-learn
+          mkdir -p "$HOME/nfl-predictor-v1/data/raw"
+          cp relay/nfl/schedules_2006_2026.parquet "$HOME/nfl-predictor-v1/data/raw/"
+          cp relay/nfl/team_weekly_2006_2026.parquet "$HOME/nfl-predictor-v1/data/raw/"
+      - name: Build strict pregame feature table
+        run: bash scripts/run_nfl_rolling_roi_discovery.sh
+      - name: Run broad favorite archetype discovery
+        run: bash scripts/run_nfl_broad_favorite_archetype_discovery.sh
+      - name: Save analysis outputs
+        run: |
+          mkdir -p relay/nfl/analysis/broad_favorite
+          cp "$HOME/nfl-predictor-v1/nfl_broad_favorite_discovery/"*.csv relay/nfl/analysis/broad_favorite/ || true
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git add relay/nfl/analysis/broad_favorite
+          if ! git diff --cached --quiet; then
+            git commit -m 'Update NFL broad favorite analysis outputs'
+            git push
+          fi
