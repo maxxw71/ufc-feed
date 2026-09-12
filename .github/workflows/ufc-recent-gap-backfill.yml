@@ -20,8 +20,30 @@ jobs:
           python-version: '3.12'
       - name: Install dependencies
         run: python -m pip install --disable-pip-version-check requests beautifulsoup4 lxml pandas numpy duckdb rapidfuzz
+      - name: Download MMA database robustly
+        run: |
+          curl -L --fail --retry 10 --retry-delay 3 --retry-all-errors \
+            'https://www.kaggle.com/api/v1/datasets/download/leandroiber/mmastats' \
+            -o /tmp/mma.zip
+          python - <<'PY'
+          import zipfile
+          z=zipfile.ZipFile('/tmp/mma.zip')
+          print(z.namelist())
+          z.extractall('/tmp/mma_extract')
+          PY
       - name: Run recent UFC odds backfill
-        run: python ufc_recent_gap_backfill.py
+        run: |
+          python - <<'PY'
+          import ufc_recent_gap_backfill as m
+          from pathlib import Path
+          def local_db(_session):
+              p = Path('/tmp/mma_extract/dataset_global_v3.duckdb')
+              if not p.exists():
+                  raise RuntimeError('Local DuckDB not found after Kaggle download')
+              return p
+          m.fetch_db = local_db
+          m.main()
+          PY
       - name: Commit results
         run: |
           git config user.name "github-actions[bot]"
