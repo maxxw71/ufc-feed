@@ -34,14 +34,86 @@ jobs:
       - name: Run recent UFC odds backfill
         run: |
           python - <<'PY'
-          import ufc_recent_gap_backfill as m
+          import re
           from pathlib import Path
+          import ufc_recent_gap_backfill as m
+
           def local_db(_session):
               p = Path('/tmp/mma_extract/dataset_global_v3.duckdb')
               if not p.exists():
                   raise RuntimeError('Local DuckDB not found after Kaggle download')
               return p
           m.fetch_db = local_db
+
+          original_load = m.load_ufc
+          def load_without_road(db_path):
+              fights, dob = original_load(db_path)
+              mask = ~fights['event_name'].astype(str).str.contains('Road to UFC', case=False, na=False)
+              return fights[mask].copy(), dob
+          m.load_ufc = load_without_road
+
+          def improved_search_event(session, event_name, first_pair):
+              clean = m.clean_event_name(event_name)
+              suffix = clean.split(' - ', 1)[-1] if ' - ' in clean else clean
+              queries = [suffix, clean]
+
+              numbered = re.search(r'\bUFC\s+(\d{3})\b', clean, flags=re.I)
+              if numbered:
+                  queries.insert(0, f"UFC {numbered.group(1)}")
+
+              # Main-event surnames are the strongest identifier for Fight Nights.
+              sides = re.split(r'\s+vs\.?\s+', suffix, flags=re.I)
+              side_tokens = []
+              if len(sides) == 2:
+                  for side in sides:
+                      toks = [t for t in m.norm_name(side).split() if not t.isdigit()]
+                      if toks:
+                          side_tokens.append(toks[-1])
+                  if len(side_tokens) == 2:
+                      queries.insert(0, ' '.join(side_tokens))
+
+              candidates = {}
+              for q in dict.fromkeys(queries):
+                  r = m.robust_get(session, m.BFO + '/search', params={'query': q}, timeout=45)
+                  if r.status_code != 200:
+                      continue
+                  soup = m.BeautifulSoup(r.text, 'lxml')
+                  for a in soup.select('a[href*="/events/"]'):
+                      href = a.get('href') or ''
+                      txt = ' '.join(a.get_text(' ', strip=True).split())
+                      if not href.startswith('/events/'):
+                          continue
+                      low = txt.lower()
+                      if 'ufc' not in low and not href.startswith('/events/ufc-'):
+                          continue
+
+                      score = max(
+                          m.WRatio(clean.lower(), txt.lower()),
+                          m.WRatio(m.norm_name(clean), m.norm_name(txt)),
+                          m.WRatio(m.norm_name(suffix), m.norm_name(txt)),
+                      )
+
+                      cand_norm = m.norm_name(txt)
+                      if len(side_tokens) == 2 and all(tok in cand_norm.split() for tok in side_tokens):
+                          score += 100
+
+                      if numbered:
+                          cand_num = re.search(r'\bUFC\s+(\d{3})\b', txt, flags=re.I)
+                          if cand_num and cand_num.group(1) == numbered.group(1):
+                              score += 120
+                          elif cand_num:
+                              score -= 120
+
+                      prev = candidates.get(href)
+                      if prev is None or score > prev[0]:
+                          candidates[href] = (score, txt)
+
+              if not candidates:
+                  return None, None, 0
+              href, (score, txt) = max(candidates.items(), key=lambda kv: kv[1][0])
+              return href, txt, score
+
+          m.search_event = improved_search_event
           m.main()
           PY
       - name: Commit results
@@ -49,5 +121,5 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add ufc_recent_gap_backfill/
-          git commit -m "Add UFC 2024-current hybrid backfill results" || exit 0
+          git commit -m "Improve UFC 2024-current hybrid backfill coverage" || exit 0
           git push
