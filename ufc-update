@@ -6,11 +6,20 @@ ROOT="$HOME/ufc-predictor-v1"
 CACHE="$HOME/.cache/ufc-update"
 mkdir -p "$CACHE"
 
+fetch_file() {
+  local remote="$1"
+  local dest="$2"
+  mkdir -p "$(dirname "$dest")"
+  echo "Fetching: $remote"
+  curl -6 -L --fail --connect-timeout 10 --max-time 180 --retry 2 --retry-delay 2 \
+    "$BASE/$remote" -o "$dest"
+}
+
 fetch_run() {
   local remote="$1"
   local localfile="$CACHE/$(basename "$remote")"
   echo "Fetching latest: $remote"
-  curl -6 -L --fail --connect-timeout 10 --max-time 120 --retry 2 --retry-delay 2 \
+  curl -6 -L --fail --connect-timeout 10 --max-time 180 --retry 2 --retry-delay 2 \
     "$BASE/$remote" -o "$localfile"
   chmod +x "$localfile"
   bash "$localfile"
@@ -24,6 +33,10 @@ case "$TASK" in
     echo "  ufc-update skill-veto"
     ;;
   skill-veto)
+    REACH="$ROOT/ufc_reach_method_analysis/reach_market_sample.csv"
+    if [ ! -s "$REACH" ]; then
+      fetch_file "ufc_reach_method_analysis/reach_market_sample.csv" "$REACH"
+    fi
     fetch_run "scripts/run_skill_veto_official_samples.sh"
     ;;
   *)
