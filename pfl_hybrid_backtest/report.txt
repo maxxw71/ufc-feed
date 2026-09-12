@@ -1,0 +1,46 @@
+PFL / WSOF HYBRID HISTORICAL BACKTEST
+========================================================================
+
+Same rule as the UFC live hybrid:
+  sportsbook consensus no-vig favorite >=70%
+  AND favorite >=3.0 years younger (qualifies)
+  >=4.0 years younger = strong tier
+  $50 flat stake; ROI uses best archived line shown across books on BestFightOdds.
+
+Discovered BFO event pages: PFL=45, WSOF=25
+Matched fights with odds + result + both DOBs: 83
+Matched PFL: 83
+Matched WSOF: 0
+Date range: 2021-04-23 to 2023-03-17
+
+RULE RESULTS
+------------------------------------------------------------------------
+PFL                70%+ market favorite               bets=  46 win=  76.09% ROI=   -6.44% P/L=$-148.11 95%CI=[-22.31%, +7.97%]
+PFL                70%+ favorite younger              bets=  24 win=  83.33% ROI=   +1.28% P/L=$+15.35 95%CI=[-18.88%, +17.51%]
+PFL                70%+ favorite >=2y younger         bets=  19 win=  84.21% ROI=   +2.20% P/L=$+20.86 95%CI=[-18.75%, +20.52%]
+PFL                70%+ favorite >=3y younger         bets=  16 win=  81.25% ROI=   -1.00% P/L=$-7.98 95%CI=[-24.79%, +20.70%]
+PFL                70%+ favorite >=4y younger         bets=  14 win=  85.71% ROI=   +5.07% P/L=$+35.52 95%CI=[-21.42%, +23.61%]
+PFL                70%+ favorite >=5y younger         bets=  10 win=  80.00% ROI=   -1.29% P/L=$-6.47 95%CI=[-37.78%, +24.63%]
+PFL                70%+ favorite >=7y younger         bets=   6 win=  83.33% ROI=   +1.81% P/L=$+5.44 95%CI=n/a
+PFL                70%+ favorite >=10y younger        bets=   3 win=  66.67% ROI=  -19.85% P/L=$-29.78 95%CI=n/a
+PFL                70%+ favorite older                bets=  22 win=  68.18% ROI=  -14.86% P/L=$-163.46 95%CI=[-39.65%, +8.27%]
+PFL+WSOF lineage   70%+ market favorite               bets=  46 win=  76.09% ROI=   -6.44% P/L=$-148.11 95%CI=[-22.31%, +7.97%]
+PFL+WSOF lineage   70%+ favorite younger              bets=  24 win=  83.33% ROI=   +1.28% P/L=$+15.35 95%CI=[-18.88%, +17.51%]
+PFL+WSOF lineage   70%+ favorite >=2y younger         bets=  19 win=  84.21% ROI=   +2.20% P/L=$+20.86 95%CI=[-18.75%, +20.52%]
+PFL+WSOF lineage   70%+ favorite >=3y younger         bets=  16 win=  81.25% ROI=   -1.00% P/L=$-7.98 95%CI=[-24.79%, +20.70%]
+PFL+WSOF lineage   70%+ favorite >=4y younger         bets=  14 win=  85.71% ROI=   +5.07% P/L=$+35.52 95%CI=[-21.42%, +23.61%]
+PFL+WSOF lineage   70%+ favorite >=5y younger         bets=  10 win=  80.00% ROI=   -1.29% P/L=$-6.47 95%CI=[-37.78%, +24.63%]
+PFL+WSOF lineage   70%+ favorite >=7y younger         bets=   6 win=  83.33% ROI=   +1.81% P/L=$+5.44 95%CI=n/a
+PFL+WSOF lineage   70%+ favorite >=10y younger        bets=   3 win=  66.67% ROI=  -19.85% P/L=$-29.78 95%CI=n/a
+PFL+WSOF lineage   70%+ favorite older                bets=  22 win=  68.18% ROI=  -14.86% P/L=$-163.46 95%CI=[-39.65%, +8.27%]
+
+NOTES
+------------------------------------------------------------------------
+Historical odds come from BestFightOdds archived event pages and are
+combined across displayed sportsbooks to compute median no-vig probability.
+ROI uses the best displayed archived moneyline for the selected favorite.
+This is closer to the current live UFC method than our earlier UFC archival
+dataset backtest, but exact historical line timing/closing status can vary.
+
+PFL-era results are the primary decision set. WSOF is reported separately
+as the predecessor organization and is not silently pooled into PFL.
