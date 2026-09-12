@@ -1,0 +1,31 @@
+name: UFC Recent Exact-ID Backfill
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'ufc_recent_exactid_backfill.py'
+      - '.github/workflows/ufc-recent-exactid-backfill.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  backfill:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install --disable-pip-version-check requests pandas numpy
+      - name: Run exact-ID recent UFC backfill
+        run: python ufc_recent_exactid_backfill.py
+      - name: Commit results
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add ufc_recent_exactid_backfill/
+          git commit -m "Add exact-ID UFC recent backfill results" || exit 0
+          git pull --rebase origin main || true
+          git push
