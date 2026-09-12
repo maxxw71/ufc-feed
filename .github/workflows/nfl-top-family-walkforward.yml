@@ -1,0 +1,43 @@
+name: NFL top family walk-forward
+
+on:
+  push:
+    paths:
+      - '.github/workflows/nfl-top-family-walkforward.yml'
+      - 'scripts/run_nfl_top_family_walkforward.sh'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  ROOT: /home/runner/nfl-predictor-v1
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Prepare environment
+        run: |
+          python -m venv "$ROOT/venv"
+          source "$ROOT/venv/bin/activate"
+          pip install -q --upgrade pip
+          pip install -q pandas numpy pyarrow scipy scikit-learn
+          mkdir -p "$ROOT/data/raw"
+          cp relay/nfl/schedules_2006_2026.parquet "$ROOT/data/raw/"
+          cp relay/nfl/team_weekly_2006_2026.parquet "$ROOT/data/raw/"
+      - name: Build strict pregame feature table
+        run: bash scripts/run_nfl_rolling_roi_discovery.sh
+      - name: Run hard family validation
+        run: bash scripts/run_nfl_top_family_walkforward.sh
+      - name: Upload validation results
+        uses: actions/upload-artifact@v4
+        with:
+          name: nfl-top-family-walkforward
+          path: /home/runner/nfl-predictor-v1/nfl_top_family_walkforward/*.csv
+          if-no-files-found: error
