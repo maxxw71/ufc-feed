@@ -1,0 +1,41 @@
+UFC 2024-CURRENT DAILY-ODDS HYBRID BACKFILL
+============================================================================
+
+Rule unchanged:
+  no-vig market favorite >=70%
+  AND favorite >=3 years younger
+  >=4 years younger = strong tier
+
+Completed UFC fights in result source (ex Road to UFC): 762
+Unique 2024-current odds fights in daily dataset: 2109
+Fight-level odds+result+DOB matches: 425
+Coverage of completed result fights: 55.8%
+Matched date range: 2024-01-13 to 2026-05-16
+
+3+ YEAR HYBRID RULE
+----------------------------------------------------------------------------
+2024           bets=  37 win=  81.08% ROI=   +1.26% P/L=$+23.33 95%CI=[-15.52%, +16.09%]
+2025           bets=  27 win=  85.19% ROI=   +6.26% P/L=$+84.50 95%CI=[-12.52%, +21.52%]
+2026           bets=  16 win=  93.75% ROI=  +23.06% P/L=$+184.50 95%CI=[+4.37%, +34.94%]
+2024-current   bets=  80 win=  85.00% ROI=   +7.31% P/L=$+292.33 95%CI=[-3.48%, +16.93%]
+
+4+ YEAR STRONG TIER
+----------------------------------------------------------------------------
+2024           bets=  30 win=  76.67% ROI=   -4.96% P/L=$-74.40 95%CI=[-24.91%, +12.57%]
+2025           bets=  22 win=  86.36% ROI=   +6.73% P/L=$+74.00 95%CI=[-12.09%, +23.05%]
+2026           bets=  15 win=  93.33% ROI=  +22.20% P/L=$+166.50 95%CI=[+2.33%, +34.93%]
+2024-current   bets=  67 win=  83.58% ROI=   +4.96% P/L=$+166.10 95%CI=[-7.24%, +15.95%]
+
+ODDS SNAPSHOT MODES
+----------------------------------------------------------------------------
+historical_import_fallback: 395 fights
+pre_or_event_snapshot: 30 fights
+
+DATA NOTE
+----------------------------------------------------------------------------
+For daily snapshots, the latest US-region quote snapshot no later than 36h
+after the event date is used. Older imported rows that were loaded after the
+event use the historical-import fallback. No-vig favorite probability is
+computed from the selected odds pair; if multiple same-time rows exist,
+median no-vig probability is used and the best decimal favorite price is used
+for ROI.
