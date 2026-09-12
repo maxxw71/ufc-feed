@@ -1,0 +1,43 @@
+name: NFL nested universe walk-forward
+
+on:
+  push:
+    paths:
+      - '.github/workflows/nfl-nested-universe-walkforward.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    env:
+      ROOT: ${{ github.workspace }}/../nfl-predictor-v1
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Prepare environment
+        run: |
+          python -m venv "$HOME/nfl-predictor-v1/venv"
+          source "$HOME/nfl-predictor-v1/venv/bin/activate"
+          pip install -q --upgrade pip
+          pip install -q pandas numpy pyarrow scipy scikit-learn
+          mkdir -p "$HOME/nfl-predictor-v1/data/raw"
+          cp relay/nfl/schedules_2006_2026.parquet "$HOME/nfl-predictor-v1/data/raw/"
+          cp relay/nfl/team_weekly_2006_2026.parquet "$HOME/nfl-predictor-v1/data/raw/"
+      - name: Build strict pregame feature table
+        run: bash scripts/run_nfl_rolling_roi_discovery.sh
+      - name: Run fully nested universe walk-forward
+        run: |
+          source "$HOME/nfl-predictor-v1/venv/bin/activate"
+          python -u scripts/nfl_nested_universe_walkforward.py
+      - name: Upload nested results
+        uses: actions/upload-artifact@v4
+        with:
+          name: nfl-nested-universe-walkforward
+          path: /home/runner/nfl-predictor-v1/nfl_nested_universe_walkforward/*.csv
+          if-no-files-found: error
