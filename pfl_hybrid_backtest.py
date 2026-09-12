@@ -5,6 +5,7 @@ import json
 import math
 import re
 import statistics
+import time
 import zipfile
 from collections import defaultdict
 from datetime import date, datetime, timezone
@@ -17,8 +18,10 @@ import requests
 from bs4 import BeautifulSoup
 from rapidfuzz.fuzz import ratio
 
-UA = "mma-hybrid-research/2.0"
-KAGGLE = "https://www.kaggle.com/api/v1/datasets/download/leandroiber/mmastats"
+UA = "mma-hybrid-research/2.1"
+KAGGLE_BASE = "https://www.kaggle.com/api/v1/datasets"
+KAGGLE_VIEW = KAGGLE_BASE + "/view/leandroiber/mmastats"
+KAGGLE_DOWNLOAD = KAGGLE_BASE + "/download/leandroiber/mmastats"
 BFO = "https://www.bestfightodds.com"
 OUT = Path("pfl_hybrid_backtest")
 OUT.mkdir(exist_ok=True)
@@ -79,17 +82,84 @@ def valid_fighter_name(s):
     return not any(x in n for x in bad)
 
 
+def _kaggle_version():
+    try:
+        r = requests.get(
+            KAGGLE_VIEW,
+            timeout=60,
+            headers={"User-Agent": UA, "Accept": "application/json,*/*"},
+        )
+        r.raise_for_status()
+        j = r.json()
+        for key in ("currentVersionNumber", "currentVersionNumberNullable", "versionNumber"):
+            v = j.get(key)
+            if v is not None:
+                return int(v)
+        # Some responses nest version metadata.
+        stack = [j]
+        while stack:
+            x = stack.pop()
+            if isinstance(x, dict):
+                for k, v in x.items():
+                    if k in {"currentVersionNumber", "currentVersionNumberNullable", "versionNumber"}:
+                        try:
+                            return int(v)
+                        except Exception:
+                            pass
+                    elif isinstance(v, (dict, list)):
+                        stack.append(v)
+            elif isinstance(x, list):
+                stack.extend(x)
+    except Exception as exc:
+        print("KAGGLE_META_WARN", str(exc)[:200], flush=True)
+    return 1
+
+
 def fetch_global_db(session):
-    r = session.get(KAGGLE, timeout=180)
-    r.raise_for_status()
-    z = zipfile.ZipFile(io.BytesIO(r.content))
-    dbs = [n for n in z.namelist() if n.lower().endswith(".duckdb")]
-    if not dbs:
-        raise RuntimeError("No DuckDB in global MMA dataset")
-    p = Path("/tmp/mma_global.duckdb")
-    with z.open(dbs[0]) as src, open(p, "wb") as dst:
-        dst.write(src.read())
-    return p
+    version = _kaggle_version()
+    urls = [
+        f"{KAGGLE_DOWNLOAD}?datasetVersionNumber={version}",
+        KAGGLE_DOWNLOAD,
+    ]
+    errors = []
+    for attempt in range(1, 7):
+        url = urls[(attempt - 1) % len(urls)]
+        try:
+            # A fresh request instead of the BFO session avoids occasional
+            # non-zip Kaggle responses observed on hosted runners.
+            r = requests.get(
+                url,
+                timeout=180,
+                allow_redirects=True,
+                headers={"User-Agent": UA, "Accept": "application/zip,*/*"},
+            )
+            ctype = r.headers.get("content-type", "")
+            print(
+                "KAGGLE_DOWNLOAD", attempt, r.status_code, ctype,
+                len(r.content), r.url[:180],
+                flush=True,
+            )
+            r.raise_for_status()
+            if len(r.content) < 1000 or not r.content.startswith(b"PK"):
+                raise RuntimeError(
+                    f"not a zip response: type={ctype} bytes={len(r.content)} "
+                    f"prefix={r.content[:80]!r}"
+                )
+            z = zipfile.ZipFile(io.BytesIO(r.content))
+            dbs = [n for n in z.namelist() if n.lower().endswith(".duckdb")]
+            if not dbs:
+                raise RuntimeError("No DuckDB in global MMA dataset archive")
+            p = Path("/tmp/mma_global.duckdb")
+            with z.open(dbs[0]) as src, open(p, "wb") as dst:
+                dst.write(src.read())
+            print("KAGGLE_DB_READY", dbs[0], p.stat().st_size, flush=True)
+            return p
+        except Exception as exc:
+            errors.append(str(exc))
+            print("KAGGLE_RETRY_WARN", attempt, str(exc)[:300], flush=True)
+            if attempt < 6:
+                time.sleep(min(2 * attempt, 8))
+    raise RuntimeError("Kaggle MMA download failed after retries: " + " | ".join(errors[-3:]))
 
 
 def load_fights_and_fighters(db_path):
@@ -132,8 +202,9 @@ def discover_event_links(session, prefix):
     links = {}
     if prefix == "PFL":
         queries = ["PFL"] + [f"PFL {y}" for y in range(2017, 2027)] + [
-            "PFL Playoffs", "PFL Championship", "PFL MENA", "PFL Europe",
-            "PFL Super Fights", "PFL Challenger", "PFL Africa",
+            "PFL Playoffs", "PFL Championship", "PFL Championships",
+            "PFL MENA", "PFL Europe", "PFL Super Fights", "PFL Challenger",
+            "PFL Africa", "Professional Fighters League",
         ]
         wanted = lambda txt, href: href.startswith("/events/pfl-") or txt.lower().startswith("pfl")
     else:
@@ -165,21 +236,19 @@ def parse_bfo_event(session, href, label):
     if not tables:
         return []
 
-    # Pick table with sportsbook columns and moneyline fighter rows.
     target = None
     for t in tables:
         headers = [" ".join(x.get_text(" ", strip=True).split()) for x in t.find_all("th")]
-        if any(h in {"DraftKings", "FanDuel", "BetMGM", "BetRivers", "Caesars"} for h in headers):
+        if any(h in {"DraftKings", "FanDuel", "BetMGM", "BetRivers", "Caesars", "BetWay", "Unibet"} for h in headers):
             target = t
             break
     if target is None:
         return []
 
-    # Header row with bookmaker column positions.
     header_row = None
     for tr in target.find_all("tr"):
         cells = [" ".join(x.get_text(" ", strip=True).split()) for x in tr.find_all(["th", "td"])]
-        if any(c in {"DraftKings", "FanDuel", "BetMGM", "BetRivers", "Caesars"} for c in cells):
+        if any(c in {"DraftKings", "FanDuel", "BetMGM", "BetRivers", "Caesars", "BetWay", "Unibet"} for c in cells):
             header_row = cells
             break
     if not header_row:
@@ -188,8 +257,6 @@ def parse_bfo_event(session, href, label):
     book_idx = {}
     for i, h in enumerate(header_row):
         if h.lower() in BOOK_BLACKLIST or not h:
-            continue
-        if h.lower() == "props":
             continue
         if h in {"FanDuel", "Caesars", "BetRivers", "BetWay", "Unibet", "BetMGM", "DraftKings", "BetOnline.ag", "Bovada", "BetUS"}:
             book_idx[i] = h
@@ -211,7 +278,6 @@ def parse_bfo_event(session, href, label):
         if odds:
             rows.append((name, odds))
 
-    # Fighter moneyline rows occur in pairs before prop rows.
     bouts = []
     i = 0
     while i + 1 < len(rows):
@@ -253,13 +319,11 @@ def match_bout_to_result(bout, candidates):
     if len(exact) == 1:
         return exact.iloc[0]
     if len(exact) > 1:
-        # Event title similarity breaks rare rematches.
         label = norm_name(bout["source_event"])
         exact = exact.copy()
         exact["score"] = exact["event_name"].astype(str).map(lambda x: ratio(label, norm_name(x)))
         return exact.sort_values("score", ascending=False).iloc[0]
 
-    # Fuzzy pair match, conservative threshold.
     best = None
     best_score = 0
     for _, r in candidates.iterrows():
@@ -282,8 +346,6 @@ def market_for_bout(bout):
     pb = 1-pa
     if pa >= pb:
         fav = "a"; fav_prob = pa
-        best_quote = max(quotes, key=lambda q: q["odds_a"] if q["odds_a"] > 0 else -10000 + q["odds_a"])
-        # Better American line: larger numeric value is always better (-200 > -250; +150 > +130).
         best_quote = max(quotes, key=lambda q: q["odds_a"])
         best_odds = best_quote["odds_a"]; best_book = best_quote["book"]
     else:
@@ -375,7 +437,6 @@ def main():
         age1=exact_age(d1,r["event_date"]); age2=exact_age(d2,r["event_date"])
         fav, mp, best_odds, best_book=market_for_bout(b)
 
-        # Orient BFO A/B to result fighter1/fighter2 using name similarity.
         ba,bb=norm_name(b["fighter_a"]),norm_name(b["fighter_b"])
         direct=ratio(ba,r["f1_norm"])+ratio(bb,r["f2_norm"])
         rev=ratio(ba,r["f2_norm"])+ratio(bb,r["f1_norm"])
@@ -416,7 +477,6 @@ def main():
     s=pd.DataFrame(summaries)
     s.to_csv(OUT/"rule_summary.csv",index=False)
 
-    # Probability bands for primary >=3-year rule.
     bands=[]
     d=df[(df["market_prob"]>=.70)&(df["younger_advantage"]>=3)].copy()
     d["band"]=pd.cut(d["market_prob"],[.70,.75,.80,.85,.90,.95,1.001],right=False,
@@ -425,7 +485,6 @@ def main():
         bands.append({"group":grp,"band":str(band),**metrics(g)})
     pd.DataFrame(bands).to_csv(OUT/"probability_bands_3yr.csv",index=False)
 
-    # Year-by-year robustness for PFL primary rule.
     yrs=[]
     p=df[(df["org_group"]=="PFL")&(df["market_prob"]>=.70)&(df["younger_advantage"]>=3)].copy()
     p["year"]=p["event_date"].dt.year
