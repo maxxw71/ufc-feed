@@ -67,6 +67,7 @@ jobs:
           PY
           python build_chronological_master.py
           python phase2_interaction_scan.py
+          python age_form_robustness.py
       - name: Collect compact results
         if: success()
         run: |
@@ -76,7 +77,7 @@ jobs:
           root=Path('/tmp/boxing-research')
           run=Path((root/'LATEST_CHRONOLOGICAL_MASTER.txt').read_text().strip())
           out=Path('boxing/public_phase2');out.mkdir(exist_ok=True)
-          for name in ['phase2_report.txt','phase2_target_candidates.json','phase2_interaction_research.json','coverage.json']:
+          for name in ['phase2_report.txt','phase2_target_candidates.json','phase2_interaction_research.json','coverage.json','age_form_robustness.txt','age_form_robustness.json']:
               src=run/name
               if src.exists():
                   if name=='phase2_interaction_research.json':
