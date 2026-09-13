@@ -1,0 +1,93 @@
+name: Appwiza boxing live integration
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/appwiza-boxing-live-integrate.yml'
+      - 'boxing/research/apply_supplemental_careers.py'
+      - 'boxing/research/rebuild_identity_links.py'
+      - 'boxing/research/match_prices.py'
+      - 'boxing/supplemental_careers/verified_priced_careers.jsonl'
+
+concurrency:
+  group: appwiza-boxing-live-integration
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  integrate:
+    if: github.repository == 'maxxw71/ufc-feed' && github.ref == 'refs/heads/main'
+    runs-on: [self-hosted, Linux, X64, appwiza]
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - name: Integrate verified careers and rebuild raw price links
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          ROOT=/home/anestishkurti92/boxing-research
+          cd "$ROOT"
+          test -x venv/bin/python
+          test -f boxing.sqlite3
+          [ "$(systemctl is-active boxing-archive.service 2>/dev/null || true)" != active ] || { echo 'boxing archive service active; refusing concurrent write'; exit 2; }
+          available=$(df -Pk . | awk 'NR==2 {print $4}')
+          [ "$available" -ge 2097152 ] || { echo 'Less than 2 GiB free; refusing integration'; exit 3; }
+          exec 6>archive-drain.lock; flock -n 6 || { echo 'archive lock busy'; exit 4; }
+          exec 7>data-enrichment.lock; flock -n 7 || { echo 'enrichment lock busy'; exit 5; }
+          exec 9>continuation.lock; flock -n 9 || { echo 'continuation lock busy'; exit 6; }
+
+          # Copy exactly the reviewed code checked out for this run.
+          for pair in \
+            "$GITHUB_WORKSPACE/boxing/research/apply_supplemental_careers.py:apply_supplemental_careers.py" \
+            "$GITHUB_WORKSPACE/boxing/research/rebuild_identity_links.py:rebuild_identity_links.py" \
+            "$GITHUB_WORKSPACE/boxing/research/match_prices.py:match_prices.py"; do
+            src=${pair%%:*}; dst=${pair#*:}; cp "$src" "$ROOT/$dst.new"; mv "$ROOT/$dst.new" "$ROOT/$dst"
+          done
+          mkdir -p "$ROOT/supplemental_careers"
+          cp "$GITHUB_WORKSPACE/boxing/supplemental_careers/verified_priced_careers.jsonl" "$ROOT/supplemental_careers/verified_priced_careers.jsonl.new"
+          mv "$ROOT/supplemental_careers/verified_priced_careers.jsonl.new" "$ROOT/supplemental_careers/verified_priced_careers.jsonl"
+
+          venv/bin/python - <<'PY'
+          import sqlite3,json
+          d=sqlite3.connect('boxing.sqlite3')
+          tabs={r[0] for r in d.execute("select name from sqlite_master where type='table'")}
+          def n(sql): return d.execute(sql).fetchone()[0]
+          out={
+            'bouts':n('select count(*) from bouts'),
+            'champinon_bouts':n("select count(*) from bouts where source='champinon'"),
+            'wba_consensus_bouts':n("select count(*) from bouts where source='wba_consensus'"),
+            'priced_rows':n('select count(*) from priced_bout_research'),
+            'price_rows_with_feature':n('select count(*) from priced_bout_research where feature_bout_id is not null'),
+            'distinct_priced_bouts_with_feature':n('select count(distinct odds_bout_id) from priced_bout_research where feature_bout_id is not null'),
+            'source_rows_present':'source_rows' in tabs,
+          }
+          print('BEFORE',json.dumps(out,sort_keys=True))
+          PY
+
+          BOXING_SUPPLEMENTAL_CAREERS="$ROOT/supplemental_careers/verified_priced_careers.jsonl" venv/bin/python apply_supplemental_careers.py
+          venv/bin/python rebuild_identity_links.py
+          venv/bin/python match_prices.py
+
+          venv/bin/python - <<'PY'
+          import sqlite3,json,datetime
+          d=sqlite3.connect('boxing.sqlite3')
+          def n(sql): return d.execute(sql).fetchone()[0]
+          methods=dict(d.execute("select coalesce(match_method,'unknown'),count(*) from priced_bout_research group by 1"))
+          sources=dict(d.execute("select source,count(*) from bouts where source in ('wikipedia','champinon','wba_consensus') group by source"))
+          out={
+            'completed_at':datetime.datetime.now(datetime.timezone.utc).isoformat(),
+            'bouts':n('select count(*) from bouts'),
+            'career_bouts_by_source':sources,
+            'priced_rows':n('select count(*) from priced_bout_research'),
+            'price_rows_with_feature':n('select count(*) from priced_bout_research where feature_bout_id is not null'),
+            'distinct_priced_bouts_with_feature':n('select count(distinct odds_bout_id) from priced_bout_research where feature_bout_id is not null'),
+            'price_match_methods':methods,
+            'v2_identity_links':n("select count(*) from opponent_links_v2") if d.execute("select 1 from sqlite_master where type='table' and name='opponent_links_v2'").fetchone() else 0,
+          }
+          open('LIVE_INTEGRATION_STATUS.json','w').write(json.dumps(out,indent=2))
+          print('AFTER',json.dumps(out,sort_keys=True))
+          PY
