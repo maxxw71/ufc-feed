@@ -29,6 +29,7 @@ def rows_from(markets):
         fstr=n(fe.get('mean_prior_opponent_observed_win_fraction'));ostr=n(oe.get('mean_prior_opponent_observed_win_fraction'))
         r={'key':tuple(m['key']),'year':int(m['year']),'favorite':m['favorite'],'opponent':m['opponent'],
            'win':m['win'],'median_price':m['median_price'],'best_price':m['best_price'],
+           'profit_median':m['profit_median'],'profit_best':m['profit_best'],
            'market_prob':m['market_prob'],'book_count':m['book_count'],
            'fav_age':fa,'opp_age':oa,'younger_by':oa-fa if fa is not None and oa is not None else None,
            'fav_rest':n(fs.get('rest_days')),'opp_rest':n(os.get('rest_days')),
