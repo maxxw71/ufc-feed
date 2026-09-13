@@ -6,26 +6,26 @@ B1_AGE_FORM_CENTER
 --------------------------------------------------------------------------------------------------------------------
 Rule: younger>=3y | last5 win gap>=1 | median decimal>=1.2 | less experienced=False
 Origin: Phase-2 descriptive center; historically inspected.
-ALL: n=47 42-5 win=89.36170212765957 ROI=23.218722638904932 worst-book ROI=20.715809466090917 WilsonLB=77.40546030798721
-2021-23: n=24 20-4 ROI=13.606505695391085 | 2024-26: n=23 22-1 ROI=33.24886205822373
-Bootstrap ROI 95% interval: 9.04861114414999 to 35.500555711892105 | P(ROI>0)=0.9993 | P(ROI>10%)=0.968
-Drawdown: {'max_drawdown_units': 1.5527777777777776, 'max_consecutive_losses': 1, 'ending_units': 10.912799640285318}
+ALL: n=57 45-12 win=78.94736842105263 ROI=8.414075026118866 worst-book ROI=6.2445482148723945 WilsonLB=66.71363132153347
+2021-23: n=27 21-6 ROI=5.569098536996662 | 2024-26: n=30 24-6 ROI=10.974553866328847
+Bootstrap ROI 95% interval: -7.312064933469091 to 23.005811644412777 | P(ROI>0)=0.8626 | P(ROI>10%)=0.4248
+Drawdown: {'max_drawdown_units': 3.3314657564657564, 'max_consecutive_losses': 3, 'ending_units': 4.796022764887754}
 
 B1_AGE_FORM_DEV_SELECTED
 --------------------------------------------------------------------------------------------------------------------
 Rule: younger>=4y | last5 win gap>=1 | median decimal>=1.2 | less experienced=False
 Origin: Selected using 2021-2023 development evidence only; 2024-2026 is the later-period check.
-ALL: n=37 34-3 win=91.89189189189189 ROI=25.017673571130995 worst-book ROI=22.456422827584525 WilsonLB=78.69900750149847
-2021-23: n=20 18-2 ROI=23.524776531439002 | 2024-26: n=17 16-1 ROI=26.774023029592158
-Bootstrap ROI 95% interval: 10.763910708315453 to 36.83126711015988 | P(ROI>0)=0.9995 | P(ROI>10%)=0.9793
-Drawdown: {'max_drawdown_units': 1.0, 'max_consecutive_losses': 1, 'ending_units': 9.256539221318468}
+ALL: n=45 36-9 win=80.0 ROI=8.532137879156894 worst-book ROI=6.315518682571193 WilsonLB=66.17674868607057
+2021-23: n=22 19-3 ROI=17.9229570199229 | 2024-26: n=23 17-6 ROI=-0.4503847772279847
+Bootstrap ROI 95% interval: -8.629844535753774 to 24.762200917923174 | P(ROI>0)=0.8433 | P(ROI>10%)=0.4482
+Drawdown: {'max_drawdown_units': 3.6350161406648978, 'max_consecutive_losses': 3, 'ending_units': 3.839462045620602}
 
 B2_RISING_PROSPECT
 --------------------------------------------------------------------------------------------------------------------
 Rule: younger>=3y | last5 win gap>=1 | median decimal>=1.2 | less experienced=True
 Origin: Post-hoc hypothesis from AGE+FORM diagnostics; not an untouched discovery.
-ALL: n=39 37-2 win=94.87179487179488 ROI=28.12820944995429 worst-book ROI=25.47462973024795 WilsonLB=83.11406095436207
-2021-23: n=19 18-1 ROI=26.486104136137858 | 2024-26: n=20 19-1 ROI=29.688209498079896
-Bootstrap ROI 95% interval: 16.828054490895873 to 37.32243520865645 | P(ROI>0)=1.0 | P(ROI>10%)=0.9981
-Drawdown: {'max_drawdown_units': 1.0, 'max_consecutive_losses': 1, 'ending_units': 10.970001685482172}
+ALL: n=48 39-9 win=81.25 ROI=9.485259395383972 worst-book ROI=7.225442824473888 WilsonLB=68.05986065115378
+2021-23: n=22 19-3 ROI=14.865704654370141 | 2024-26: n=26 20-6 ROI=4.932574945472599
+Bootstrap ROI 95% interval: -5.965655330526242 to 24.261852385702984 | P(ROI>0)=0.8837 | P(ROI>10%)=0.489
+Drawdown: {'max_drawdown_units': 3.2482783430979554, 'max_consecutive_losses': 3, 'ending_units': 4.552924509784306}
 
