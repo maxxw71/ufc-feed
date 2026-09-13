@@ -1,0 +1,28 @@
+name: Appwiza boxing punch pipeline inspect
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/appwiza-boxing-punch-pipeline-inspect.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  inspect:
+    if: github.repository == 'maxxw71/ufc-feed' && github.ref == 'refs/heads/main'
+    runs-on: [self-hosted, Linux, X64, appwiza]
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Inspect existing historical punch pipeline
+        shell: bash
+        run: |
+          set -e
+          R=/home/anestishkurti92/boxing-research
+          for f in external_evidence_collect.py historical_punch.py alternative_sources.py import_reviewed_evidence.py import_reviewed_round_charts.py export_round_archive.py; do
+            echo "===== $f ====="
+            sed -n '1,260p' "$R/$f" 2>/dev/null || true
+          done
