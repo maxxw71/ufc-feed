@@ -3,12 +3,13 @@
 
 Current source: Champinon fighter pages. A career is accepted only when:
 1) the page identity normalizes to the requested fighter,
-2) its main dated record table is substantially complete when a stated career
-   total is available, and
+2) the main dated record table is complete and reconciles to the page's stated
+   career record when those totals are published, and
 3) at least one archived priced matchup matches exact full date + opponent.
 
 Rows remain explicitly sourced as ``champinon`` and are never relabeled as
-Wikipedia or treated as independently certified complete careers.
+Wikipedia. Running fighter records are reconstructed chronologically from the
+explicit W/L/D rows only; future results never enter an earlier row.
 """
 from __future__ import annotations
 import argparse,datetime as dt,json,re,sqlite3,time,unicodedata,urllib.request
@@ -16,7 +17,7 @@ from bs4 import BeautifulSoup
 from dateutil.parser import parse as dateparse
 from backfill_priced_careers import DB,OUT,nk,priced_missing,match_evidence
 
-UA='Mozilla/5.0 AppwizaBoxingSecondaryCareer/1.0'
+UA='Mozilla/5.0 AppwizaBoxingSecondaryCareer/1.1'
 
 def slug(name):
     s=unicodedata.normalize('NFKD',str(name or '')).encode('ascii','ignore').decode().lower()
@@ -29,8 +30,15 @@ def get(url,timeout=35):
 
 def clean_opponent(text):
     s=re.sub(r'\s+',' ',str(text or '')).strip()
+    # Champinon appends the opponent's pre-fight record in parentheses.
     s=re.sub(r'\s*\(\s*\d+\s*[-–−]\s*\d+(?:\s*[-–−]\s*\d+)?\s*\).*?$','',s).strip()
     return s
+
+def parse_stated_record(text):
+    # Prefer the explicit "record is W-L-D" sentence. Some pages omit draws.
+    m=re.search(r"\brecord\s+is\s+(\d+)\s*[-–−]\s*(\d+)(?:\s*[-–−]\s*(\d+))?\b",text,re.I)
+    if not m:return None
+    return (int(m.group(1)),int(m.group(2)),int(m.group(3) or 0))
 
 def parse_champinon(name):
     url=f'https://champinon.info/boxing/{slug(name)}/'
@@ -40,6 +48,7 @@ def parse_champinon(name):
     text=soup.get_text('\n',strip=True)
     total_match=re.search(r'has had\s+(\d+)\s+professional fights',text,re.I)
     stated_total=int(total_match.group(1)) if total_match else None
+    stated_record=parse_stated_record(text)
     born=None
     bm=re.search(r'Born on\s+([A-Z][a-z]+\s+\d{1,2},\s+\d{4})',text)
     if bm:
@@ -82,22 +91,28 @@ def parse_champinon(name):
                          'round_time':'','location':'','record':'',
                          'raw':{'date':rawdate,'opponent':opponent,'result':result_text,'source':'champinon'}})
     rows.sort(key=lambda r:r['date'])
-    if stated_total is not None:
-        minimum=max(3,stated_total-2)
-        if len(rows)<minimum:raise ValueError(f'partial career table {len(rows)}/{stated_total}')
-    elif len(rows)<5:raise ValueError(f'insufficient career rows: {len(rows)}')
-    # Derive the fighter's running post-fight record from the observed table so
-    # later chronological audits can verify that pre-fight totals reconcile.
-    w=l=d=0
+    if stated_total is not None and len(rows)!=stated_total:
+        raise ValueError(f'incomplete career table {len(rows)}/{stated_total}')
+    if stated_total is None and len(rows)<5:
+        raise ValueError(f'insufficient career rows: {len(rows)}')
+
+    # Running post-fight record, derived only from rows at or before each date.
+    w=l=d=nc=0
     for r in rows:
         if r['result']=='win':w+=1
         elif r['result']=='loss':l+=1
         elif r['result']=='draw':d+=1
+        elif r['result']=='nc':nc+=1
         r['record']=f'{w}-{l}-{d}'
         r['raw']['record']=r['record']
-    if stated_total is not None and w+l+d>stated_total:
-        raise ValueError(f'parsed decisive/draw rows exceed stated total: {w+l+d}/{stated_total}')
-    return {'title':title,'url':url,'born':born,'profile':{},'rows':rows,'stated_total':stated_total}
+    if stated_record is not None and (w,l,d)!=stated_record:
+        raise ValueError(f'career W-L-D mismatch parsed={(w,l,d)} stated={stated_record}')
+    if stated_total is not None and w+l+d+nc!=stated_total:
+        raise ValueError(f'career total mismatch parsed={w+l+d+nc} stated={stated_total}')
+    complete=bool(stated_total is not None and (stated_record is None or (w,l,d)==stated_record))
+    return {'title':title,'url':url,'born':born,'profile':{},'rows':rows,
+            'stated_total':stated_total,'stated_record':stated_record,
+            'career_complete':complete,'parsed_record':(w,l,d),'no_contests':nc}
 
 def main():
     ap=argparse.ArgumentParser();ap.add_argument('--limit',type=int,default=60);args=ap.parse_args()
@@ -117,8 +132,10 @@ def main():
             found={'requested_name':item['name'],'verified_title':page['title'],'source':'champinon','source_url':page['url'],
                    'born':page['born'],'profile':page['profile'],'career_rows':page['rows'],'matched_price_evidence':matches,
                    'priced_bouts':item['priced_bouts'],'bookmakers':item['bookmakers'],'discovery':'deterministic_champinon_slug',
-                   'quality':'secondary_public_exact_priced_match_verified',
-                   'verification':'exact identity heading + substantial dated career table + exact priced full-date/opponent matchup',
+                   'career_complete':page['career_complete'],'stated_total':page['stated_total'],
+                   'stated_record':list(page['stated_record']) if page['stated_record'] is not None else None,
+                   'quality':'secondary_public_complete_career_exact_priced_match_verified',
+                   'verification':'exact identity heading + complete dated career table + reconciled stated record + exact priced full-date/opponent matchup',
                    'collected_at':dt.datetime.now(dt.timezone.utc).isoformat()}
             with OUT.open('a',encoding='utf-8') as f:f.write(json.dumps(found,ensure_ascii=False)+'\n')
             accepted.append({'name':item['name'],'rows':len(page['rows']),'matched':len(matches),'priced_bouts':item['priced_bouts']})
