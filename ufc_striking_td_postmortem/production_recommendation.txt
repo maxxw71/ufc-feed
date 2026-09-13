@@ -1,0 +1,43 @@
+UFC STRIKING + TD DEFENSE — PRODUCTION CANDIDATE
+================================================
+
+Original U7:
+54 bets | 51-3 | 94.4% wins | +17.64% ROI
+
+Recommended qualification gate:
+1. Original U7 rule must qualify.
+2. Favorite age advantage must be >= -3.0 years.
+   age_adv = opponent age - favorite age, so the favorite cannot be more than 3 years older.
+3. Power-risk product must be < 0.12.
+   power-risk product = opponent pre-fight KD/15 * favorite pre-fight KD-absorbed/15.
+
+Historical gated sample:
+40 bets | 40-0 | 100.0% historical win rate | +23.08% ROI
+Pre-2020 ROI: +23.82%
+2020+ ROI: +22.18%
+2022+ ROI: +20.43%
+Removed from original sample: 11 winners and all 3 losses.
+Neighboring-threshold minimum ROI in the final stability grid: +20.08%.
+
+Why this threshold instead of the stricter -1 year age gate:
+- It retains 40/54 original signals instead of 35/54.
+- It has higher historical ROI (+23.08% vs +22.65%).
+- It remains 40-0 historically.
+- Its neighboring thresholds remain strongly positive.
+- It still rejects Fiorot-Grasso.
+
+Fiorot vs Grasso pre-fight reconstruction:
+Fiorot age advantage: -3.47 years (favorite older by about 3.47 years)
+Power-risk product: 0.016
+Original U7: QUALIFIED
+New production candidate: VETO — age gate fails.
+
+Important:
+The 40-0 record is retrospective and is not a forecast of a 100% future win rate. The gate should be presented as a historical qualification/risk filter. With 40 historical wins and no losses, the approximate 95% Wilson lower bound on the underlying win proportion is about 91.2%, before accounting for model-selection uncertainty.
+
+Other findings from the postmortem:
+- Do not exclude women's fights. The historical women's U7 subgroup was 5-0 with +23.26% ROI.
+- Do not raise the market threshold from 70% to 75%. The 70-74.99% band was 17-1 with +24.65% ROI, and higher market floors reduced ROI.
+- Do not require a generic second striking method. That reduced historical ROI.
+- Matchup-relevant wrestling is useful research, but it would NOT have vetoed Fiorot-Grasso because Fiorot herself had meaningful takedown volume/control into Grasso's weak historical TDD.
+- Power risk is the strongest general loss filter: all three original historical U7 losses had power-risk products around 0.120-0.152.
