@@ -1,0 +1,45 @@
+name: Boxing public reports sync
+
+on:
+  push:
+    paths:
+      - '.github/workflows/boxing-public-reports-sync.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Download compact boxing reports
+        run: |
+          python - <<'PY'
+          import io,zipfile,urllib.request,os
+          url='https://appwiza.com/sports/downloads/boxing/reports-and-indexes.zip'
+          req=urllib.request.Request(url,headers={'User-Agent':'Mozilla/5.0 AppwizaPublicReports/1.0'})
+          with urllib.request.urlopen(req,timeout=60) as r:data=r.read()
+          z=zipfile.ZipFile(io.BytesIO(data))
+          keep={'PREFIGHT_EXPLORATION.md','PREFIGHT_EXPLORATION.json','PREFIGHT_EXPLORATION_ROWS.json','RESEARCH_READINESS.json','PRICE_MATCH_COVERAGE.json','DATA_READINESS.md','DETAILED_VALIDATION.json','FEATURE_COVERAGE.json','ENRICHED_COVERAGE.json','STATUS_1990_PLUS.md','STATUS_1990_PLUS.json'}
+          os.makedirs('boxing/public_reports',exist_ok=True)
+          for name in keep:
+              if name in z.namelist():
+                  open('boxing/public_reports/'+name,'wb').write(z.read(name))
+          PY
+      - name: Commit compact reports
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add boxing/public_reports
+          if git diff --cached --quiet; then
+            echo 'No public-report changes.'
+          else
+            git commit -m 'Sync public boxing research reports'
+            git push
+          fi
