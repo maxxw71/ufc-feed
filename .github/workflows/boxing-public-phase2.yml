@@ -7,6 +7,10 @@ on:
       - 'boxing/research/**'
   workflow_dispatch:
 
+concurrency:
+  group: boxing-public-phase2
+  cancel-in-progress: true
+
 permissions:
   contents: write
 
@@ -108,5 +112,6 @@ jobs:
             echo 'No Phase-2 result changes.'
           else
             git commit -m 'Update public boxing Phase 2 research'
+            git pull --rebase origin main
             git push
           fi
