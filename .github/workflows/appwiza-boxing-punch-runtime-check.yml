@@ -1,0 +1,39 @@
+name: Appwiza boxing punch runtime check
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/appwiza-boxing-punch-runtime-check.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    if: github.repository == 'maxxw71/ufc-feed' && github.ref == 'refs/heads/main'
+    runs-on: [self-hosted, Linux, X64, appwiza]
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check safe punch runtime prerequisites
+        shell: bash
+        run: |
+          set -e
+          ROOT=/home/anestishkurti92/boxing-research
+          echo SERVICE=$(systemctl is-active boxing-archive.service 2>/dev/null || true)
+          echo '=== drain/archive scripts ==='
+          sed -n '1,220p' "$ROOT/drain_archive.sh" 2>/dev/null || true
+          echo '=== finish batch ==='
+          sed -n '1,180p' "$ROOT/finish_data_batch.sh" 2>/dev/null || true
+          echo '=== python ==='
+          command -v python3
+          python3 - <<'PY'
+          import sys
+          print(sys.version)
+          for m in ['bs4','pdfplumber','dateutil']:
+              try:
+                  x=__import__(m);print(m,'OK',getattr(x,'__version__',''))
+              except Exception as e:print(m,'ERR',repr(e))
+          PY
