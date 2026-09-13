@@ -106,7 +106,7 @@ def main():
                         'physical_proxy_quality':'identity-linked current biography snapshot when available; height/reach treated as stable adult proxies; stance/nationality exploratory only',
                         'elo':rating,'elo_prior_verified_bouts':n,'last8_wins':sum(x['winner']=='BOXER A' for x in prior[-8:]),'last8_sample':len(prior[-8:]),
                         'input_bout_ids':[x['source_id'] for x in prior]}
-                    assert not s['latest_input_bout_date'] or s['fighter']['latest_input_bout_date']<date
+                    assert not s['latest_input_bout_date'] or s['latest_input_bout_date']<date
                 matched=[q for q in quotes[r['source_id']] if q['event_date']==date]
                 row={'source_id':r['source_id'],'career_source':r['source'],'bout_date':date,'fighter_name':r['boxer_a'],'opponent_name':r['boxer_b'],
                      **sides,'canonical_verified_pair':bool(pair and (date,*pair) in eventkeys),'context':bout_context(r),
