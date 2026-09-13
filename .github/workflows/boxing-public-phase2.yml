@@ -79,6 +79,7 @@ jobs:
           python phase2_interaction_scan.py
           python age_form_robustness.py
           python rising_prospect_hypothesis.py
+          python candidate_method_validation.py
           python phase3_physical_context_scan.py
           python phase3_robustness.py
           python phase4_dynamic_factors.py
@@ -91,13 +92,18 @@ jobs:
           root=Path('/tmp/boxing-research')
           run=Path((root/'LATEST_CHRONOLOGICAL_MASTER.txt').read_text().strip())
           out=Path('boxing/public_phase2');out.mkdir(exist_ok=True)
-          for name in ['phase2_report.txt','phase2_target_candidates.json','phase2_interaction_research.json','coverage.json','age_form_robustness.txt','age_form_robustness.json','rising_prospect_hypothesis.txt','rising_prospect_hypothesis.json','phase3_physical_context.txt','phase3_physical_context.json','phase3_robustness.txt','phase3_robustness.json','phase4_dynamic_factors.txt','phase4_dynamic_factors.json']:
+          for name in ['phase2_report.txt','phase2_target_candidates.json','phase2_interaction_research.json','coverage.json','age_form_robustness.txt','age_form_robustness.json','rising_prospect_hypothesis.txt','rising_prospect_hypothesis.json','candidate_method_validation.txt','candidate_method_validation.json','phase3_physical_context.txt','phase3_physical_context.json','phase3_robustness.txt','phase3_robustness.json','phase4_dynamic_factors.txt','phase4_dynamic_factors.json']:
               src=run/name
               if src.exists():
                   if name=='phase2_interaction_research.json':
                       data=json.loads(src.read_text())
                       compact={k:data[k] for k in ['status','price_policy','coverage','rules_tested','outer_walk_forward','target_screen','limitations'] if k in data}
                       (out/'phase2_interaction_summary.json').write_text(json.dumps(compact,indent=2))
+                  elif name=='candidate_method_validation.json':
+                      data=json.loads(src.read_text())
+                      compact=dict(data)
+                      for c in compact.get('candidates',[]): c.pop('selected_bouts',None)
+                      (out/name).write_text(json.dumps(compact,indent=2))
                   else: shutil.copy2(src,out/name)
           punch=root/'punch_profiles'/'coverage.json'
           if punch.exists():shutil.copy2(punch,out/'punch_profile_coverage.json')
