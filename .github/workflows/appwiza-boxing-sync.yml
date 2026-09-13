@@ -9,6 +9,10 @@ on:
       - 'boxing/collectors/punch_collect.py'
       - 'boxing/research/build_punch_profiles.py'
       - 'boxing/research/round_archive.py'
+      - 'boxing/research/apply_supplemental_careers.py'
+      - 'boxing/research/rebuild_identity_links.py'
+      - 'boxing/research/match_prices.py'
+      - 'boxing/supplemental_careers/verified_priced_careers.jsonl'
       - 'boxing/methods.json'
 
 permissions:
@@ -27,15 +31,29 @@ jobs:
           set -Eeuo pipefail
           ROOT=/home/anestishkurti92/boxing-research
           test -d "$ROOT"
-          python3 -m py_compile boxing/collectors/punch_collect.py boxing/research/build_punch_profiles.py boxing/research/round_archive.py
-          cp boxing/collectors/punch_collect.py "$ROOT/punch_collect.py.new"
-          mv "$ROOT/punch_collect.py.new" "$ROOT/punch_collect.py"
-          cp boxing/research/build_punch_profiles.py "$ROOT/build_punch_profiles.py.new"
-          mv "$ROOT/build_punch_profiles.py.new" "$ROOT/build_punch_profiles.py"
-          cp boxing/research/round_archive.py "$ROOT/round_archive.py.new"
-          mv "$ROOT/round_archive.py.new" "$ROOT/round_archive.py"
+          python3 -m py_compile \
+            boxing/collectors/punch_collect.py \
+            boxing/research/build_punch_profiles.py \
+            boxing/research/round_archive.py \
+            boxing/research/apply_supplemental_careers.py \
+            boxing/research/rebuild_identity_links.py \
+            boxing/research/match_prices.py
+          for pair in \
+            'boxing/collectors/punch_collect.py:punch_collect.py' \
+            'boxing/research/build_punch_profiles.py:build_punch_profiles.py' \
+            'boxing/research/round_archive.py:round_archive.py' \
+            'boxing/research/apply_supplemental_careers.py:apply_supplemental_careers.py' \
+            'boxing/research/rebuild_identity_links.py:rebuild_identity_links.py' \
+            'boxing/research/match_prices.py:match_prices.py'; do
+            src=${pair%%:*}; dst=${pair#*:}
+            cp "$src" "$ROOT/$dst.new"
+            mv "$ROOT/$dst.new" "$ROOT/$dst"
+          done
+          mkdir -p "$ROOT/supplemental_careers"
+          cp boxing/supplemental_careers/verified_priced_careers.jsonl "$ROOT/supplemental_careers/verified_priced_careers.jsonl.new"
+          mv "$ROOT/supplemental_careers/verified_priced_careers.jsonl.new" "$ROOT/supplemental_careers/verified_priced_careers.jsonl"
           cp boxing/methods.json "$ROOT/methods.json.new"
           mv "$ROOT/methods.json.new" "$ROOT/methods.json"
-          echo 'SYNCED punch_collect.py build_punch_profiles.py round_archive.py methods.json'
-          grep -n "ROOT_PAGES=" "$ROOT/round_archive.py"
-          grep -n "B1_AGE_FORM_DEV_SELECTED" "$ROOT/methods.json"
+          echo 'SYNCED boxing collectors, supplement careers, identity and price matcher'
+          grep -n "eligible_bout_sources" "$ROOT/match_prices.py"
+          grep -n "ALLOWED_SOURCES" "$ROOT/rebuild_identity_links.py"
