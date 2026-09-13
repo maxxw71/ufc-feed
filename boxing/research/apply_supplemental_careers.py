@@ -1,18 +1,18 @@
 #!/usr/bin/env python3
-"""Apply evidence-verified supplemental careers to a temporary research DB.
+"""Apply evidence-verified supplemental careers to a boxing research DB.
 
-This mutates only the downloaded/research copy used by workflows. Every inserted
-career was accepted by an exact full-date + opponent priced matchup. Provenance
-is preserved per supplemental source; secondary sources are never relabeled as
-Wikipedia.
+Supplemental source provenance is preserved. Secondary careers must carry an
+explicit strict-completeness flag before insertion; incomplete or ambiguous
+careers are skipped rather than weakening the research layer.
 """
 from __future__ import annotations
-import json,re,sqlite3,unicodedata
+import json,os,re,sqlite3,unicodedata
 from pathlib import Path
 from features import cm
 ROOT=Path(__file__).resolve().parent
 DB=ROOT/'boxing.sqlite3'
-SUP=ROOT.parent/'supplemental_careers'/'verified_priced_careers.jsonl'
+_default_sup=ROOT.parent/'supplemental_careers'/'verified_priced_careers.jsonl'
+SUP=Path(os.environ.get('BOXING_SUPPLEMENTAL_CAREERS',str(_default_sup)))
 REPORT=ROOT/'SUPPLEMENT_APPLY_REPORT.json'
 
 def nk(s):
@@ -27,18 +27,19 @@ def outcome(result):
     return {'win':'BOXER A','loss':'BOXER B','draw':'DRAW','nc':'NO CONTEST','no contest':'NO CONTEST'}[result]
 
 def finish(report):
-    REPORT.write_text(json.dumps(report,indent=2))
-    print(json.dumps(report))
+    REPORT.write_text(json.dumps(report,indent=2));print(json.dumps(report))
 
 def main():
     if not SUP.exists():
-        finish({'supplemental_fighters':0,'inserted_bouts':0,'quote_links_added':0,'by_source':{}});return
+        finish({'supplemental_fighters':0,'inserted_bouts':0,'quote_links_added':0,'skipped_incomplete':0,'by_source':{}});return
     con=sqlite3.connect(DB);con.row_factory=sqlite3.Row
-    added_bouts=0;added_quotes=0;fighters=0;by_source={}
+    added_bouts=0;added_quotes=0;fighters=0;skipped=0;by_source={}
     for line in SUP.read_text().splitlines():
         if not line.strip():continue
-        x=json.loads(line);url=x['source_url'];name=x['requested_name'];profile=x.get('profile') or {};born=x.get('born') or ''
-        source=x.get('source') or 'wikipedia'
+        x=json.loads(line);source=x.get('source') or 'wikipedia'
+        if source in {'champinon','wba_consensus'} and x.get('career_complete') is not True:
+            skipped+=1;continue
+        url=x['source_url'];name=x['requested_name'];profile=x.get('profile') or {};born=x.get('born') or ''
         quality=x.get('quality') or ('supplemental_verified_priced_matchup_current_profile' if source=='wikipedia' else 'secondary_public_exact_priced_match_verified')
         con.execute('INSERT OR REPLACE INTO fighters(source,source_id,name,born,height_cm,snapshot) VALUES(?,?,?,?,?,?)',
                     (source,url,name,born,None,json.dumps({'attributes':profile,'historical_use':'Supplemental observed career source; current profile fields are not backdated.','quality':quality})))
@@ -49,7 +50,7 @@ def main():
         by_key={}
         for i,r in enumerate(x.get('career_rows') or []):
             ident=url+'#supp-'+str(i)+'-'+r['date'];raw=r.get('raw') or {}
-            raw={**raw,'supplemental_source':source,'supplemental_quality':quality}
+            raw={**raw,'supplemental_source':source,'supplemental_quality':quality,'career_complete':x.get('career_complete')}
             con.execute('''INSERT OR REPLACE INTO bouts(source,source_id,date,boxer_a,boxer_b,winner,method,rounds,scheduled_rounds,division,venue,status,url,data)
                            VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?)''',
                         (source,ident,r['date'],name,r['opponent'],outcome(r['result']),r.get('type') or '',r.get('round_time') or '',None,None,r.get('location') or '', 'FINISHED',url,json.dumps(raw)))
@@ -68,7 +69,6 @@ def main():
     con.commit()
     linked_after=con.execute("SELECT count(*) FROM priced_bout_research WHERE feature_bout_id IS NOT NULL").fetchone()[0]
     distinct_after=con.execute("SELECT count(DISTINCT odds_bout_id) FROM priced_bout_research WHERE feature_bout_id IS NOT NULL").fetchone()[0]
-    finish({'supplemental_fighters':fighters,'inserted_bouts':added_bouts,'quote_links_added':added_quotes,
-            'linked_quote_rows_after':linked_after,'distinct_price_bouts_with_feature_side_after':distinct_after,
-            'by_source':by_source})
+    finish({'supplemental_fighters':fighters,'inserted_bouts':added_bouts,'quote_links_added':added_quotes,'skipped_incomplete':skipped,
+            'linked_quote_rows_after':linked_after,'distinct_price_bouts_with_feature_side_after':distinct_after,'by_source':by_source})
 if __name__=='__main__':main()
