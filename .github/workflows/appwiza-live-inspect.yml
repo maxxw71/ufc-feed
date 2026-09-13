@@ -17,27 +17,23 @@ jobs:
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
-      - name: Inspect boxing punch database schemas
+      - name: Inspect boxing archive runtime
         shell: bash
         run: |
           set -u
-          echo '=== BOXING DATABASE CANDIDATES ==='
-          find /opt/appwiza-sports-imports /srv /home -maxdepth 7 -type f \( -name 'boxing.sqlite3' -o -name 'boxing_research.sqlite3' \) -print 2>/dev/null | head -20 || true
-          DB=$(find /opt/appwiza-sports-imports /srv /home -maxdepth 7 -type f \( -name 'boxing.sqlite3' -o -name 'boxing_research.sqlite3' \) -readable -print 2>/dev/null | head -1 || true)
-          echo "selected=$DB"
-          if [ -z "$DB" ]; then exit 0; fi
-          python3 - "$DB" <<'PY'
-          import sqlite3,sys,json
-          db=sqlite3.connect('file:'+sys.argv[1]+'?mode=ro',uri=True)
-          names=['punch_reports','round_punches','fight_punch_totals','secondary_round_punches','reviewed_chart_rounds','reviewed_round_charts','historical_punch_observations','published_fight_punch_totals']
-          for name in names:
-              exists=db.execute("select 1 from sqlite_master where type='table' and name=?",(name,)).fetchone()
-              if not exists:continue
-              cols=[dict(cid=r[0],name=r[1],type=r[2],notnull=r[3],pk=r[5]) for r in db.execute('pragma table_info('+name+')')]
-              count=db.execute('select count(*) from '+name).fetchone()[0]
-              print('\n###',name,'rows=',count)
-              print(json.dumps(cols,indent=2))
-              try:
-                  print('sample=',db.execute('select * from '+name+' limit 2').fetchall())
-              except Exception as e: print('sample_error',type(e).__name__)
-          PY
+          echo '=== BOXING SERVICE ==='
+          systemctl cat boxing-archive.service 2>/dev/null || true
+          echo
+          echo '=== BOXING PROCESS ==='
+          ps -ef | grep -Ei '[b]oxing|[d]rain_archive|[p]unch_collect' || true
+          echo
+          echo '=== KNOWN BOXING RUNTIME TREES ==='
+          find /opt/appwiza-sports-imports/google-ufc-model-20260913/home/boxing-research -maxdepth 3 -type f 2>/dev/null | head -120 || true
+          echo
+          echo '=== OWNERSHIP ==='
+          for p in /opt/appwiza-sports-imports/google-ufc-model-20260913/home/boxing-research /opt/sports-runtime-manifests/boxing-before-priority /srv/appwiza-sports/public/boxing; do
+            [ -e "$p" ] && ls -ld "$p" || true
+          done
+          echo
+          echo '=== DATABASES UNDER BOXING TREE ==='
+          find /opt/appwiza-sports-imports/google-ufc-model-20260913/home/boxing-research -maxdepth 4 -type f \( -name '*.sqlite3' -o -name '*.db' \) -exec ls -lh {} \; 2>/dev/null || true
