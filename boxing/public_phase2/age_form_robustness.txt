@@ -1,9 +1,9 @@
 BOXING AGE + FORM ROBUSTNESS
 ============================================================================================================
 Fixed Phase-2 center: favorite >=3 years younger, last-5 wins gap >=1, median decimal price >=1.20
-ALL: 43 bets | 38-5 | win 88.4% | median-price ROI +22.59% | Wilson LB 75.5%
-2021-23: 21 | 17-4 | win 81.0% | ROI +11.54%
-2024-26: 22 | 21-1 | win 95.5% | ROI +33.14%
+ALL: 46 bets | 41-5 | win 89.1% | median-price ROI +23.24% | Wilson LB 77.0%
+2021-23: 23 | 19-4 | win 82.6% | ROI +13.23%
+2024-26: 23 | 22-1 | win 95.7% | ROI +33.25%
 
 Neighborhood: 19/27 nearby grid points positive in both 2021-23 and 2024-26 (with >=8 later bets).
 
@@ -11,20 +11,20 @@ YEAR BY YEAR
 ------------------------------------------------------------------------------------------------------------
 2021: n=6 6-0 win=100.0 ROI=27.854862815263704
 2022: n=9 6-3 win=66.66666666666667 ROI=-7.152076318742981
-2023: n=6 5-1 win=83.33333333333333 ROI=23.26923041437108
-2024: n=5 5-0 win=100.0 ROI=35.885139905225984
+2023: n=8 7-1 win=87.5 ROI=25.196678055533557
+2024: n=6 6-0 win=100.0 ROI=35.85666420673594
 2025: n=11 10-1 win=90.9090909090909 ROI=29.10538816223368
 2026: n=6 6-0 win=100.0 ROI=38.23742871902659
 
 PRICE BANDS
 ------------------------------------------------------------------------------------------------------------
-1.20-1.29: n=18 18-0 win=100.0 ROI=23.72020628692264
-1.30-1.49: n=12 10-2 win=83.33333333333333 ROI=15.928508499460778
+1.20-1.29: n=19 19-0 win=100.0 ROI=23.667946625888433
+1.30-1.49: n=14 12-2 win=85.71428571428571 ROI=19.00622549561316
 1.50-1.99: n=13 10-3 win=76.92307692307692 ROI=27.175353767372695
 2.00+: n=0 0-0 win=None ROI=None
 
 DEVELOPMENT-ONLY SELECTION
 ------------------------------------------------------------------------------------------------------------
-Selected from 2021-23 only: age>=5 form>=0 price>=1.2
-Development: {'bets': 28, 'wins': 24, 'losses': 4, 'win_pct': 85.71428571428571, 'wilson95_lower_pct': 68.50982695512266, 'profit_median_units': 6.109726197972768, 'roi_median_pct': 21.8204507070456, 'profit_best_units': 7.23306357327052, 'roi_best_pct': 25.832369904537575, 'avg_market_prob': 0.67456146442761, 'avg_book_count': 4.571428571428571}
-Later 2024-26 holdout: {'bets': 23, 'wins': 19, 'losses': 4, 'win_pct': 82.6086956521739, 'wilson95_lower_pct': 62.86194521470434, 'profit_median_units': 3.187605867556898, 'roi_median_pct': 13.859155945899557, 'profit_best_units': 4.075205417996888, 'roi_best_pct': 17.718284426073428, 'avg_market_prob': 0.6857963226616013, 'avg_book_count': 3.9565217391304346}
+Selected from 2021-23 only: age>=4 form>=1 price>=1.2
+Development: {'bets': 19, 'wins': 17, 'losses': 2, 'win_pct': 89.47368421052632, 'wilson95_lower_pct': 68.6054495051583, 'profit_median_units': 4.482733084065577, 'roi_median_pct': 23.593332021397774, 'profit_best_units': 5.201134984874967, 'roi_best_pct': 27.374394657236667, 'avg_market_prob': 0.6904200641618425, 'avg_book_count': 4.421052631578948}
+Later 2024-26 holdout: {'bets': 17, 'wins': 16, 'losses': 1, 'win_pct': 94.11764705882354, 'wilson95_lower_pct': 73.01745479643719, 'profit_median_units': 4.551583915030667, 'roi_median_pct': 26.774023029592158, 'profit_best_units': 5.297114478203821, 'roi_best_pct': 31.15949693061071, 'avg_market_prob': 0.7083487158826269, 'avg_book_count': 3.764705882352941}
