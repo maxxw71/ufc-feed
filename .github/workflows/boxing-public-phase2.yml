@@ -5,6 +5,7 @@ on:
     paths:
       - '.github/workflows/boxing-public-phase2.yml'
       - 'boxing/research/**'
+      - 'boxing/supplemental_careers/**'
   workflow_dispatch:
 
 concurrency:
@@ -53,8 +54,10 @@ jobs:
           open('boxing/public_phase2/database_status.json','w').write(json.dumps(out,indent=2))
           print(json.dumps(out,indent=2))
           PY
-      - name: Prepare current research code
-        run: cp boxing/research/*.py /tmp/boxing-research/
+      - name: Prepare current research code and verified supplements
+        run: |
+          cp boxing/research/*.py /tmp/boxing-research/
+          if [ -d boxing/supplemental_careers ]; then cp -R boxing/supplemental_careers /tmp/supplemental_careers; fi
       - name: Build chronological master and run research passes
         run: |
           cd /tmp/boxing-research
@@ -69,6 +72,7 @@ jobs:
               print('Missing required tables:',missing)
               raise SystemExit(20)
           PY
+          python apply_supplemental_careers.py
           python rebuild_identity_links.py
           python build_chronological_master.py
           python phase2_interaction_scan.py
