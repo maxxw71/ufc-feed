@@ -69,6 +69,7 @@ jobs:
               print('Missing required tables:',missing)
               raise SystemExit(20)
           PY
+          python rebuild_identity_links.py
           python build_chronological_master.py
           python phase2_interaction_scan.py
           python age_form_robustness.py
@@ -90,6 +91,9 @@ jobs:
                       compact={k:data[k] for k in ['status','price_policy','coverage','rules_tested','outer_walk_forward','target_screen','limitations'] if k in data}
                       (out/'phase2_interaction_summary.json').write_text(json.dumps(compact,indent=2))
                   else: shutil.copy2(src,out/name)
+          for name in ['IDENTITY_LINKS_V2.json']:
+              src=root/name
+              if src.exists():shutil.copy2(src,out/name)
           PY
       - name: Record failure diagnostics
         if: failure()
