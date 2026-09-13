@@ -1,0 +1,44 @@
+name: UFC striking TD age power extension
+
+on:
+  push:
+    paths:
+      - '.github/workflows/ufc-striking-td-extension.yml'
+      - 'scripts/ufc_striking_td_extension.py'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  analyze:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install dependencies
+        run: pip install -q pandas numpy
+      - name: Run age and power extension
+        run: python scripts/ufc_striking_td_extension.py
+      - name: Upload extension artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ufc-striking-td-extension
+          path: ufc_striking_td_postmortem/*
+          if-no-files-found: error
+      - name: Commit extension outputs
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add ufc_striking_td_postmortem/
+          if git diff --cached --quiet; then
+            echo 'No output changes to commit.'
+          else
+            git commit -m 'Run UFC striking TD age power extension'
+            git push
+          fi
