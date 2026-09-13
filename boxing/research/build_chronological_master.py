@@ -2,7 +2,7 @@
 import collections, datetime as dt, hashlib, json, math, re, sqlite3
 from pathlib import Path
 from features import summary, age
-from enrich_history import stats
+from enrich_history import stats, rounds_value
 ROOT=Path(__file__).resolve().parent
 
 def canonical_events(histories, links):
@@ -18,6 +18,13 @@ def canonical_events(histories, links):
     # Two orientations required, agreeing outcomes, no ambiguous repeated same-day bouts.
     return [(key,rs[0][1]) for key,rs in sorted(groups.items())
             if len(rs)==2 and len({r[0] for r in rs})==2 and len({r[1] for r in rs})==1]
+
+def load_links(d):
+    links={r['bout_id']:r['opponent_id'] for r in d.execute("select * from opponent_links where evidence='reciprocal_result_confirmed'")}
+    if d.execute("select 1 from sqlite_master where type='table' and name='opponent_links_v2'").fetchone():
+        for r in d.execute("select bout_id,opponent_id from opponent_links_v2 where evidence='reciprocal_result_observed_alias'"):
+            links.setdefault(r['bout_id'],r['opponent_id'])
+    return links
 
 def elo_before(events, targets):
     ratings=collections.defaultdict(lambda:1500.); counts=collections.Counter(); out={}
@@ -41,6 +48,23 @@ def record_matches(history, date, s):
     expected=tuple(int(x or 0) for x in m.groups())
     return expected==tuple(s['career_observed_'+x] for x in ('wins','losses','draws')) and sum(expected)==len(rows)
 
+def bout_context(r):
+    try:data=json.loads(r.get('data') or '{}')
+    except Exception:data={}
+    notes=' '.join(str(data.get(k,'') or '') for k in ('notes','note','note(s)','more')).strip()
+    low=notes.casefold()
+    terminal,scheduled=rounds_value(r.get('rounds'))
+    # Title-at-stake and vacant-title status are historical bout context. We do
+    # not expose outcome words such as won/retained/lost as model features.
+    title=bool(re.search(r'\btitle\b|\bchampionship\b',low))
+    world_orgs=sorted(set(re.findall(r'\b(?:wba|wbc|ibf|wbo)\b',low)))
+    return {'location':r.get('venue') or data.get('location') or data.get('venue and location') or '',
+            'scheduled_rounds':scheduled,
+            'title_bout':title,'vacant_title':bool(title and 'vacant' in low),
+            'major_world_title_orgs':world_orgs,
+            'professional_debut':bool('professional debut' in low),
+            'context_source':'wikipedia_record_row_postfight_source; only pre-fight-knowable context flags exposed'}
+
 def main():
     stamp=dt.datetime.now(dt.timezone.utc).strftime('%Y%m%dT%H%M%SZ')
     outdir=ROOT/'research_runs'/stamp;outdir.mkdir(parents=True)
@@ -52,7 +76,7 @@ def main():
         try:dt.date.fromisoformat(r['date'])
         except (ValueError,TypeError):continue
         histories[r['url']].append(r)
-    links={r['bout_id']:r['opponent_id'] for r in d.execute("select * from opponent_links where evidence='reciprocal_result_confirmed'")}
+    links=load_links(d)
     profiles={r['source_id']:dict(r) for r in d.execute('select * from normalized_fighters')}
     events=canonical_events(histories,links); eventkeys={k for k,s in events}
     targets=collections.defaultdict(set)
@@ -82,29 +106,34 @@ def main():
                     h=histories[who];s=summary(h,date);ex=stats(h,date,other,links,histories,strength)
                     prior=[x for x in h if x['date']<date]
                     rating,n=elo[(date,who)]
+                    p=profiles.get(who,{})
                     sides[label]={'id':who,'record_totals_match':record_matches(h,date,s),'summary':s,'extended':ex,
-                        'age_from_biography':age(profiles.get(who,{}).get('born'),date),
+                        'age_from_biography':age(p.get('born'),date),
+                        'height_cm_static_proxy':p.get('height_cm'),'reach_cm_static_proxy':p.get('reach_cm'),
+                        'stance_static_proxy':p.get('stance'),'nationality_static_proxy':p.get('nationality'),
+                        'physical_proxy_quality':'identity-linked current biography snapshot; height/reach treated as stable adult proxies; stance/nationality exploratory only',
                         'elo':rating,'elo_prior_verified_bouts':n,
                         'last8_wins':sum(x['winner']=='BOXER A' for x in prior[-8:]),'last8_sample':len(prior[-8:]),
                         'input_bout_ids':[x['source_id'] for x in prior]}
                     assert not s['latest_input_bout_date'] or s['latest_input_bout_date']<date
                 matched=[q for q in quotes[r['source_id']] if q['event_date']==date]
                 row={'source_id':r['source_id'],'bout_date':date,'fighter_name':r['boxer_a'],'opponent_name':r['boxer_b'],
-                     **sides,'canonical_verified_pair':bool(pair and (date,*pair) in eventkeys),
+                     **sides,'canonical_verified_pair':bool(pair and (date,*pair) in eventkeys),'context':bout_context(r),
                      'outcome':{'result':r['winner'],'method':r['method'],'rounds':r['rounds']},
                      'quotes':matched,'validated_price_eligible':False,
-                     'historically_verified_physical_stats':None,'historically_linked_prior_punch_stats':None}
+                     'historically_verified_physical_stats':False,'historically_linked_prior_punch_stats':None}
                 f.write(json.dumps(row,ensure_ascii=False)+'\n');total+=1
                 y=years[date[:4]];y['fighter_bout_rows']+=1;y['reciprocal_pair_rows']+=row['canonical_verified_pair'];y['price_linked_rows']+=bool(matched)
                 y['both_record_totals_match']+=bool(sides['opponent'] and all(sides[x]['record_totals_match'] for x in ('fighter','opponent')))
-    report={'built_at':stamp,'rows':total,'verified_graph_bouts':len(events),'years':dict(sorted(years.items())),
+    report={'built_at':stamp,'rows':total,'verified_graph_bouts':len(events),'identity_links':len(links),'years':dict(sorted(years.items())),
             'validated_price_rows':0,'limitations':['Source observations, not a census of all boxing fights.',
             'Own Elo: 1500 initial, K32, reciprocal graph only; all same-day updates batched.',
             'Record totals agreement is an internal audit, not independent full-career certification.',
-            'Biography ages are retrospective; current height/reach/stance excluded.',
+            'Biography age uses birth date; height/reach are static adult proxies, not dated measurements; stance/nationality remain exploratory.',
+            'Title/location/scheduled-round context comes from record rows but only pre-fight-knowable flags are exposed.',
             'All quotes have unverified timing/settlement. No validated ROI or live eligibility.',
             'Prior punch features unavailable until identity, date and coverage gates pass.']}
     (outdir/'coverage.json').write_text(json.dumps(report,indent=2))
     (ROOT/'LATEST_CHRONOLOGICAL_MASTER.txt').write_text(str(outdir)+'\n')
-    print(json.dumps({'run':str(outdir),'rows':total,'verified_graph_bouts':len(events),'years':report['years']}))
+    print(json.dumps({'run':str(outdir),'rows':total,'verified_graph_bouts':len(events),'identity_links':len(links),'years':report['years']}))
 if __name__=='__main__':main()
