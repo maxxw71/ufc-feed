@@ -55,7 +55,7 @@ jobs:
           PY
       - name: Prepare current research code
         run: cp boxing/research/*.py /tmp/boxing-research/
-      - name: Build chronological master and run Phase 2
+      - name: Build chronological master and run research passes
         run: |
           cd /tmp/boxing-research
           python - <<'PY'
@@ -74,6 +74,7 @@ jobs:
           python phase2_interaction_scan.py
           python age_form_robustness.py
           python rising_prospect_hypothesis.py
+          python phase3_physical_context_scan.py
       - name: Collect compact results
         if: success()
         run: |
@@ -83,7 +84,7 @@ jobs:
           root=Path('/tmp/boxing-research')
           run=Path((root/'LATEST_CHRONOLOGICAL_MASTER.txt').read_text().strip())
           out=Path('boxing/public_phase2');out.mkdir(exist_ok=True)
-          for name in ['phase2_report.txt','phase2_target_candidates.json','phase2_interaction_research.json','coverage.json','age_form_robustness.txt','age_form_robustness.json','rising_prospect_hypothesis.txt','rising_prospect_hypothesis.json']:
+          for name in ['phase2_report.txt','phase2_target_candidates.json','phase2_interaction_research.json','coverage.json','age_form_robustness.txt','age_form_robustness.json','rising_prospect_hypothesis.txt','rising_prospect_hypothesis.json','phase3_physical_context.txt','phase3_physical_context.json']:
               src=run/name
               if src.exists():
                   if name=='phase2_interaction_research.json':
@@ -100,7 +101,7 @@ jobs:
         run: |
           mkdir -p boxing/public_phase2
           if [ -f /tmp/boxing_phase2_missing.json ]; then cp /tmp/boxing_phase2_missing.json boxing/public_phase2/status.json; fi
-      - name: Upload Phase 2 artifact
+      - name: Upload research artifact
         if: always()
         uses: actions/upload-artifact@v4
         with:
@@ -114,9 +115,9 @@ jobs:
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add boxing/public_phase2
           if git diff --cached --quiet; then
-            echo 'No Phase-2 result changes.'
+            echo 'No research result changes.'
           else
-            git commit -m 'Update public boxing Phase 2 research'
+            git commit -m 'Update public boxing research'
             git pull --rebase origin main
             git push
           fi
