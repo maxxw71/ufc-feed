@@ -3,16 +3,15 @@
 
 No fuzzy guessing. A new link is accepted only when exactly one candidate fighter
 identity has a same-date reciprocal bout, the opponent names point back through
-observed aliases, and the outcomes are mutually consistent. Wikipedia and
-verified secondary career supplements keep separate provenance but share this
-identity graph.
+observed aliases, and the outcomes are mutually consistent. Accepted career
+sources keep separate provenance but share this identity graph.
 """
 from __future__ import annotations
 import collections,json,sqlite3,unicodedata,re
 from pathlib import Path
 ROOT=Path(__file__).resolve().parent
 DB=ROOT/'boxing.sqlite3'
-ALLOWED_SOURCES=('wikipedia','champinon')
+ALLOWED_SOURCES=('wikipedia','champinon','wba_consensus')
 
 def namekey(s):
     s=re.sub(r'\([^)]*\)|\[[^]]*\]','',str(s or ''))
