@@ -27,9 +27,9 @@ def rows_from(markets):
         fs=f.get('summary') or {};os=o.get('summary') or {};fe=f.get('extended') or {};oe=o.get('extended') or {}
         fa=n(f.get('age_from_biography'));oa=n(o.get('age_from_biography'))
         fstr=n(fe.get('mean_prior_opponent_observed_win_fraction'));ostr=n(oe.get('mean_prior_opponent_observed_win_fraction'))
-        r={'key':tuple(m['key']),'year':int(m['event_date'][:4]),'favorite':m['favorite_name'],'opponent':m['underdog_name'],
-           'win':m['favorite_win'],'median_price':m['favorite_median_price'],'best_price':m['favorite_best_price'],
-           'market_prob':m['favorite_market_prob'],'book_count':m['book_count'],
+        r={'key':tuple(m['key']),'year':int(m['year']),'favorite':m['favorite'],'opponent':m['opponent'],
+           'win':m['win'],'median_price':m['median_price'],'best_price':m['best_price'],
+           'market_prob':m['market_prob'],'book_count':m['book_count'],
            'fav_age':fa,'opp_age':oa,'younger_by':oa-fa if fa is not None and oa is not None else None,
            'fav_rest':n(fs.get('rest_days')),'opp_rest':n(os.get('rest_days')),
            'fav_last365':n(fe.get('bouts_last_365_days')),'opp_last365':n(oe.get('bouts_last_365_days')),
