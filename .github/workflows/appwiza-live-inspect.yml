@@ -1,0 +1,66 @@
+name: Appwiza live inspect
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/appwiza-live-inspect.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  inspect:
+    if: github.repository == 'maxxw71/ufc-feed' && github.ref == 'refs/heads/main'
+    runs-on: [self-hosted, Linux, X64, appwiza]
+    timeout-minutes: 10
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Host and permissions
+        shell: bash
+        run: |
+          set +e
+          echo '=== HOST ==='
+          hostname
+          whoami
+          id
+          pwd
+          echo
+          echo '=== SUDO ==='
+          sudo -n true >/dev/null 2>&1 && echo 'passwordless sudo: yes' || echo 'passwordless sudo: no'
+
+      - name: Locate live sports/UFC runtime
+        shell: bash
+        run: |
+          set +e
+          echo '=== LIVE PUBLIC TREE ==='
+          find /srv/appwiza-sports/public -maxdepth 4 -type f 2>/dev/null | sort | head -300
+          echo
+          echo '=== UFC REFERENCES IN LIVE PUBLIC FILES ==='
+          grep -RniE '17\.64|94\.4|51.?3|Striking|TD Defense|takedown|striking_td_defense' \
+            /srv/appwiza-sports/public 2>/dev/null | head -200
+          echo
+          echo '=== SPORTS / UFC SERVICES ==='
+          systemctl list-unit-files --no-pager 2>/dev/null | grep -Ei 'ufc|sports|boxing' | head -200
+          echo
+          echo '=== RUNTIME FILES ==='
+          find /opt/sports-publisher /opt/sports-runtime-bootstrap /opt/sports-runtime-manifests /opt/sports-envs \
+            -maxdepth 5 -type f 2>/dev/null | sort | head -500
+          echo
+          echo '=== UFC REFERENCES IN RUNTIME ==='
+          grep -RniE '17\.64|94\.4|51.?3|Striking|TD Defense|takedown|striking_td_defense|ufc_email_watcher' \
+            /opt/sports-publisher /opt/sports-runtime-bootstrap /opt/sports-runtime-manifests /opt/sports-envs \
+            /etc/systemd/system 2>/dev/null | head -300
+
+      - name: Show likely UFC service definitions
+        shell: bash
+        run: |
+          set +e
+          for f in /etc/systemd/system/*ufc* /etc/systemd/system/*sports*; do
+            [ -f "$f" ] || continue
+            echo "===== $f ====="
+            sed -n '1,220p' "$f"
+          done
