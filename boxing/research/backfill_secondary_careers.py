@@ -12,7 +12,6 @@ Wikipedia or treated as independently certified complete careers.
 """
 from __future__ import annotations
 import argparse,datetime as dt,json,re,sqlite3,time,unicodedata,urllib.request
-from pathlib import Path
 from bs4 import BeautifulSoup
 from dateutil.parser import parse as dateparse
 from backfill_priced_careers import DB,OUT,nk,priced_missing,match_evidence
@@ -30,7 +29,6 @@ def get(url,timeout=35):
 
 def clean_opponent(text):
     s=re.sub(r'\s+',' ',str(text or '')).strip()
-    # Record parentheticals on these pages follow the opponent name.
     s=re.sub(r'\s*\(\s*\d+\s*[-–−]\s*\d+(?:\s*[-–−]\s*\d+)?\s*\).*?$','',s).strip()
     return s
 
@@ -38,8 +36,7 @@ def parse_champinon(name):
     url=f'https://champinon.info/boxing/{slug(name)}/'
     soup=BeautifulSoup(get(url),'lxml')
     h1=soup.find('h1');title=h1.get_text(' ',strip=True) if h1 else ''
-    if nk(title)!=nk(name):
-        raise ValueError(f'identity heading mismatch: {title!r}')
+    if nk(title)!=nk(name):raise ValueError(f'identity heading mismatch: {title!r}')
     text=soup.get_text('\n',strip=True)
     total_match=re.search(r'has had\s+(\d+)\s+professional fights',text,re.I)
     stated_total=int(total_match.group(1)) if total_match else None
@@ -86,12 +83,20 @@ def parse_champinon(name):
                          'raw':{'date':rawdate,'opponent':opponent,'result':result_text,'source':'champinon'}})
     rows.sort(key=lambda r:r['date'])
     if stated_total is not None:
-        # Allow a small discrepancy for very recent site updates, but reject
-        # pages where only the losses/summary table was parsed.
         minimum=max(3,stated_total-2)
         if len(rows)<minimum:raise ValueError(f'partial career table {len(rows)}/{stated_total}')
-    elif len(rows)<5:
-        raise ValueError(f'insufficient career rows: {len(rows)}')
+    elif len(rows)<5:raise ValueError(f'insufficient career rows: {len(rows)}')
+    # Derive the fighter's running post-fight record from the observed table so
+    # later chronological audits can verify that pre-fight totals reconcile.
+    w=l=d=0
+    for r in rows:
+        if r['result']=='win':w+=1
+        elif r['result']=='loss':l+=1
+        elif r['result']=='draw':d+=1
+        r['record']=f'{w}-{l}-{d}'
+        r['raw']['record']=r['record']
+    if stated_total is not None and w+l+d>stated_total:
+        raise ValueError(f'parsed decisive/draw rows exceed stated total: {w+l+d}/{stated_total}')
     return {'title':title,'url':url,'born':born,'profile':{},'rows':rows,'stated_total':stated_total}
 
 def main():
