@@ -10,6 +10,8 @@ COMP_URL='https://raw.githubusercontent.com/DanMcInerney/mma-ai/main/data/raw/uf
 IND_URL='https://raw.githubusercontent.com/DanMcInerney/mma-ai/main/data/raw/ufcstats/individuals.csv'
 FEED_URL='https://raw.githubusercontent.com/maxxw71/ufc-feed/main/upcoming.json'
 OUT=Path('ufc_striking_td_postmortem');OUT.mkdir(exist_ok=True)
+U7_MIN_AGE_ADV=-3.0
+U7_MAX_POWER_PRODUCT=.12
 
 def fetch(url):
     req=urllib.request.Request(url,headers={'User-Agent':'Appwiza-UFC-Research/1.0'})
@@ -85,14 +87,15 @@ def main():
                 return (ed-z.iloc[0].dob_dt).days/365.2425
             fa,oa=age(fav),age(opp);ageadv=oa-fa if pd.notna(fa) and pd.notna(oa) else np.nan
             okd=opponent_kd15(comp,opp,ed);product=okd*fp['kd_abs15'] if pd.notna(okd) and pd.notna(fp['kd_abs15']) else np.nan
-            gate=bool(pd.notna(ageadv) and ageadv>=-1 and pd.notna(product) and product<.12)
+            gate=bool(pd.notna(ageadv) and ageadv>=U7_MIN_AGE_ADV and pd.notna(product) and product<U7_MAX_POWER_PRODUCT)
             rows.append({'event_date':ed.date(),'event':e.get('name'),'favorite':fav,'opponent':opp,'market_prob':p,'fair_american':american_from_prob(p),'sig_diff_gap':siggap,'td_def_gap':tdgap,'fav_age':fa,'opp_age':oa,'age_adv':ageadv,'opponent_kd15':okd,'favorite_kd_abs15':fp['kd_abs15'],'power_risk_product':product,'original_u7':True,'proposed_u7_gate':gate,'decision':'KEEP' if gate else 'VETO'})
     z=pd.DataFrame(rows);z.to_csv(OUT/'current_live_impact.csv',index=False)
-    lines=['CURRENT UFC STRIKING + TD DEFENSE — PROPOSED RISK GATE IMPACT','='*104,'']
+    lines=['CURRENT UFC STRIKING + TD DEFENSE — PRODUCTION RISK GATE IMPACT','='*104,
+           f'Gate: age_adv >= {U7_MIN_AGE_ADV:+.1f} years and power-risk product < {U7_MAX_POWER_PRODUCT:.2f}.','']
     if z.empty:lines.append('No current upcoming bouts qualify the original U7 rule.')
     else:
         for _,r in z.iterrows():lines.append(f"{r.event_date} | {r.favorite} vs {r.opponent} | market={r.market_prob:.3f} | ageAdv={r.age_adv:+.2f}y | power={r.power_risk_product:.3f} | {r.decision}")
-        lines+=['',f"Original U7 current signals: {len(z)}",f"Kept by proposed gate: {int(z.proposed_u7_gate.sum())}",f"Vetoed by proposed gate: {int((~z.proposed_u7_gate).sum())}"]
+        lines+=['',f"Original U7 current signals: {len(z)}",f"Kept by production gate: {int(z.proposed_u7_gate.sum())}",f"Vetoed by production gate: {int((~z.proposed_u7_gate).sum())}"]
     (OUT/'current_live_impact.txt').write_text('\n'.join(lines))
     print('\n'.join(lines))
 if __name__=='__main__':main()
