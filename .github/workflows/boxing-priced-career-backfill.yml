@@ -61,15 +61,66 @@ jobs:
         run: python boxing/research/backfill_secondary_careers.py --limit "$LIMIT"
       - name: Remove temporary research database
         run: rm -f boxing/research/boxing.sqlite3
-      - name: Commit verified supplements and backfill state
+      - name: Merge generated career outputs onto latest main and publish
+        shell: bash
         run: |
+          set -Eeuo pipefail
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          rm -rf /tmp/boxing-generated
+          mkdir -p /tmp/boxing-generated
+          [ ! -d boxing/supplemental_careers ] || cp -a boxing/supplemental_careers /tmp/boxing-generated/
+          [ ! -d boxing/backfill_state ] || cp -a boxing/backfill_state /tmp/boxing-generated/
+          git fetch origin main
+          git reset --hard origin/main
+          python - <<'PY'
+          import json,re,unicodedata,shutil
+          from pathlib import Path
+          def nk(s):
+              x=unicodedata.normalize('NFKD',str(s or '')).encode('ascii','ignore').decode().lower()
+              return re.sub(r'[^a-z0-9]','',x)
+          base=Path('boxing/supplemental_careers');gen=Path('/tmp/boxing-generated/supplemental_careers')
+          base.mkdir(parents=True,exist_ok=True)
+          # Union career JSONL by requested fighter. Prefer generated records when
+          # they carry a successful strict refresh/completeness audit.
+          def read_jsonl(p):
+              out={}
+              if p.exists():
+                  for line in p.read_text().splitlines():
+                      try:
+                          x=json.loads(line);out[nk(x.get('requested_name') or x.get('verified_title'))]=x
+                      except Exception:pass
+              return out
+          bp=base/'verified_priced_careers.jsonl';gp=gen/'verified_priced_careers.jsonl'
+          merged=read_jsonl(bp);generated=read_jsonl(gp)
+          for k,x in generated.items():
+              old=merged.get(k)
+              if old is None or x.get('career_complete') is True or x.get('refreshed_at'):
+                  merged[k]=x
+          with bp.open('w',encoding='utf-8') as f:
+              for x in sorted(merged.values(),key=lambda r:nk(r.get('requested_name') or r.get('verified_title'))):
+                  f.write(json.dumps(x,ensure_ascii=False)+'\n')
+          # Generated compact reports are latest-run diagnostics; copy them after
+          # the career union. They do not define model inputs by themselves.
+          if gen.exists():
+              for p in gen.iterdir():
+                  if p.name=='verified_priced_careers.jsonl':continue
+                  if p.is_file():shutil.copy2(p,base/p.name)
+          # Merge Wikipedia cooldown cache by newest attempt timestamp.
+          bstate=Path('boxing/backfill_state');gstate=Path('/tmp/boxing-generated/backfill_state');bstate.mkdir(parents=True,exist_ok=True)
+          bp=bstate/'wikipedia_failures.json';gp=gstate/'wikipedia_failures.json'
+          def read_obj(p):
+              try:return json.loads(p.read_text())
+              except Exception:return {}
+          m=read_obj(bp)
+          for k,v in read_obj(gp).items():
+              if k not in m or str(v.get('attempted_at',''))>=str(m[k].get('attempted_at','')):m[k]=v
+          if m:bp.write_text(json.dumps(m,indent=2,ensure_ascii=False))
+          PY
           git add boxing/supplemental_careers boxing/backfill_state 2>/dev/null || true
           if git diff --cached --quiet; then
             echo 'No boxing career/backfill-state changes.'
           else
             git commit -m 'Update verified boxing career supplements'
-            git pull --rebase origin main
-            git push
+            git push origin HEAD:main
           fi
