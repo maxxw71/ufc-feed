@@ -1,0 +1,36 @@
+name: Appwiza NFL method inspect
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/appwiza-nfl-method-inspect.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  inspect:
+    if: github.repository == 'maxxw71/ufc-feed' && github.ref == 'refs/heads/main'
+    runs-on: [self-hosted, Linux, X64, appwiza]
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Inspect live NFL publisher and email code
+        shell: bash
+        run: |
+          set -u
+          echo '=== NFL-RELATED FILES ==='
+          find /opt /home/anestishkurti92 /srv/appwiza-sports -type f \( -iname '*nfl*' -o -iname '*email*' -o -iname '*digest*' -o -iname '*sports*publish*' \) -print 2>/dev/null | head -300 || true
+          echo
+          echo '=== NFL METHOD / PICK REFERENCES ==='
+          grep -RniE 'YPP|LEAKY|NFL.*method|method.*NFL|nfl_picks|NFL Picks|walk.?forward|ROI' /opt /home/anestishkurti92 /srv/appwiza-sports 2>/dev/null | head -500 || true
+          echo
+          echo '=== EMAIL / DIGEST REFERENCES ==='
+          grep -RniE 'send.*mail|send.*email|digest|subject=.*NFL|NFL.*email|email.*NFL' /opt /home/anestishkurti92 2>/dev/null | head -400 || true
+          echo
+          echo '=== NFL PUBLIC PAGE TOKENS ==='
+          if [ -f /srv/appwiza-sports/public/nfl/index.html ]; then
+            grep -n -E 'Method|YPP|ROI|Win Rate|NFL' /srv/appwiza-sports/public/nfl/index.html | head -260 || true
+          fi
