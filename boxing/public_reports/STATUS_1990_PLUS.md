@@ -1,0 +1,104 @@
+# Boxing dataset: 1990 onward
+2026-09-13T02:08:27.282027+00:00
+
+Counts are source observations, not a deduplicated total of fights.
+
+| Source | Bout observations | First date | Last date |
+|---|---:|---|---|
+| openboxing | 4439 | 1990-01-07 | 2023-09-30 |
+| pbc | 646 | 2015-03-07 | 2026-08-22 |
+| wikipedia | 41785 | 1990-01-01 | 2026-09-12 |
+
+| Year | Source | Observations |
+|---|---|---:|
+| 1990 | openboxing | 142 |
+| 1990 | wikipedia | 502 |
+| 1991 | openboxing | 141 |
+| 1991 | wikipedia | 466 |
+| 1992 | openboxing | 137 |
+| 1992 | wikipedia | 490 |
+| 1993 | openboxing | 176 |
+| 1993 | wikipedia | 587 |
+| 1994 | openboxing | 174 |
+| 1994 | wikipedia | 552 |
+| 1995 | openboxing | 173 |
+| 1995 | wikipedia | 564 |
+| 1996 | openboxing | 172 |
+| 1996 | wikipedia | 587 |
+| 1997 | openboxing | 161 |
+| 1997 | wikipedia | 674 |
+| 1998 | openboxing | 136 |
+| 1998 | wikipedia | 622 |
+| 1999 | openboxing | 152 |
+| 1999 | wikipedia | 604 |
+| 2000 | openboxing | 149 |
+| 2000 | wikipedia | 601 |
+| 2001 | openboxing | 118 |
+| 2001 | wikipedia | 650 |
+| 2002 | openboxing | 108 |
+| 2002 | wikipedia | 614 |
+| 2003 | openboxing | 111 |
+| 2003 | wikipedia | 661 |
+| 2004 | openboxing | 124 |
+| 2004 | wikipedia | 734 |
+| 2005 | openboxing | 117 |
+| 2005 | wikipedia | 871 |
+| 2006 | openboxing | 125 |
+| 2006 | wikipedia | 830 |
+| 2007 | openboxing | 147 |
+| 2007 | wikipedia | 931 |
+| 2008 | openboxing | 134 |
+| 2008 | wikipedia | 1067 |
+| 2009 | openboxing | 138 |
+| 2009 | wikipedia | 1170 |
+| 2010 | openboxing | 139 |
+| 2010 | wikipedia | 1318 |
+| 2011 | openboxing | 159 |
+| 2011 | wikipedia | 1415 |
+| 2012 | openboxing | 132 |
+| 2012 | wikipedia | 1495 |
+| 2013 | openboxing | 134 |
+| 2013 | wikipedia | 1717 |
+| 2014 | openboxing | 132 |
+| 2014 | wikipedia | 1814 |
+| 2015 | openboxing | 131 |
+| 2015 | pbc | 89 |
+| 2015 | wikipedia | 1948 |
+| 2016 | openboxing | 129 |
+| 2016 | pbc | 70 |
+| 2016 | wikipedia | 2044 |
+| 2017 | openboxing | 130 |
+| 2017 | pbc | 53 |
+| 2017 | wikipedia | 2283 |
+| 2018 | openboxing | 138 |
+| 2018 | pbc | 34 |
+| 2018 | wikipedia | 2347 |
+| 2019 | openboxing | 136 |
+| 2019 | pbc | 44 |
+| 2019 | wikipedia | 2303 |
+| 2020 | openboxing | 51 |
+| 2020 | pbc | 49 |
+| 2020 | wikipedia | 1071 |
+| 2021 | openboxing | 82 |
+| 2021 | pbc | 89 |
+| 2021 | wikipedia | 1670 |
+| 2022 | openboxing | 70 |
+| 2022 | pbc | 60 |
+| 2022 | wikipedia | 1794 |
+| 2023 | openboxing | 41 |
+| 2023 | pbc | 59 |
+| 2023 | wikipedia | 1623 |
+| 2024 | pbc | 29 |
+| 2024 | wikipedia | 1440 |
+| 2025 | pbc | 39 |
+| 2025 | wikipedia | 1164 |
+| 2026 | pbc | 31 |
+| 2026 | wikipedia | 562 |
+
+## Historical prices
+Archived displayed prices: precise quote times and draw settlement unverified; not approved for ROI backtesting.
+
+[["BetMGM", 3610, 1805], ["BetRivers", 396, 198], ["BetWay", 7614, 3806], ["Caesars", 3750, 1874], ["DraftKings", 5748, 2874], ["FanDuel", 8260, 4129], ["PointsBet", 370, 185], ["Unibet", 3096, 1547]]
+
+## Official event documents
+[["goldenboy", 24], ["matchroom", 18], ["queensberry", 17], ["toprank", 2]]
