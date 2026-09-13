@@ -1,0 +1,88 @@
+{
+  "schema_version": 1,
+  "status": "research_watchlist",
+  "updated_at": "2026-09-13",
+  "price_policy": {
+    "minimum_clean_two_sided_books": 2,
+    "favorite_definition": "median no-vig probability across clean two-sided books",
+    "roi_price": "median displayed decimal price across clean books",
+    "historical_price_warning": "Archived historical quote timing/settlement is not independently verified; historical ROI remains exploratory until prospectively logged observations settle."
+  },
+  "methods": [
+    {
+      "id": "B1_AGE_FORM_DEV_SELECTED",
+      "name": "Younger Favorite + Recent Form",
+      "tracking_status": "prospective_candidate",
+      "selection": "market_favorite",
+      "conditions": {
+        "favorite_younger_by_years_min": 4,
+        "favorite_last5_observed_win_gap_min": 1,
+        "median_decimal_price_min": 1.2,
+        "minimum_observed_prior_bouts_each": 5,
+        "minimum_clean_books": 2
+      },
+      "historical_stress_test": {
+        "bets": 36,
+        "wins": 33,
+        "losses": 3,
+        "win_rate_pct": 91.6666666667,
+        "median_price_roi_pct": 25.0953249975,
+        "worst_book_roi_pct": 22.6172493876,
+        "wilson95_lower_win_pct": 78.1729897231,
+        "development_2021_2023": {
+          "bets": 19,
+          "wins": 17,
+          "losses": 2,
+          "roi_pct": 23.5933320214
+        },
+        "later_2024_2026": {
+          "bets": 17,
+          "wins": 16,
+          "losses": 1,
+          "roi_pct": 26.7740230296
+        },
+        "bootstrap_roi_95_pct": [10.7290682196, 37.2822705469]
+      },
+      "origin": "Threshold chosen from 2021-2023 development evidence; 2024-2026 used as a later-period check.",
+      "promotion_policy": "Track prospectively first. Do not call historical ROI validated until logged pre-fight prices settle."
+    },
+    {
+      "id": "B2_RISING_PROSPECT",
+      "name": "Rising Prospect",
+      "tracking_status": "research_only_posthoc",
+      "selection": "market_favorite",
+      "conditions": {
+        "favorite_younger_by_years_min": 3,
+        "favorite_last5_observed_win_gap_min": 1,
+        "favorite_has_fewer_observed_prior_bouts_than_opponent": true,
+        "median_decimal_price_min": 1.2,
+        "minimum_observed_prior_bouts_each": 5,
+        "minimum_clean_books": 2
+      },
+      "historical_stress_test": {
+        "bets": 38,
+        "wins": 36,
+        "losses": 2,
+        "win_rate_pct": 94.7368421053,
+        "median_price_roi_pct": 28.2836301665,
+        "worst_book_roi_pct": 25.7064182319,
+        "wilson95_lower_win_pct": 82.7142331189,
+        "development_2021_2023": {
+          "bets": 18,
+          "wins": 17,
+          "losses": 1,
+          "roi_pct": 26.7229864647
+        },
+        "later_2024_2026": {
+          "bets": 20,
+          "wins": 19,
+          "losses": 1,
+          "roi_pct": 29.6882094981
+        },
+        "bootstrap_roi_95_pct": [16.5695718288, 37.7928516142]
+      },
+      "origin": "Post-hoc hypothesis discovered inside the inspected Age+Form sample.",
+      "promotion_policy": "Do not promote from retrospective results alone. Prospectively track as a separate hypothesis."
+    }
+  ]
+}
