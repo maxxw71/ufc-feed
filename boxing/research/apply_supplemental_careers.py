@@ -13,6 +13,7 @@ from features import cm
 ROOT=Path(__file__).resolve().parent
 DB=ROOT/'boxing.sqlite3'
 SUP=ROOT.parent/'supplemental_careers'/'verified_priced_careers.jsonl'
+REPORT=ROOT/'SUPPLEMENT_APPLY_REPORT.json'
 
 def nk(s):
     x=unicodedata.normalize('NFKD',str(s or '')).encode('ascii','ignore').decode().lower()
@@ -25,9 +26,13 @@ def stance_value(v):
 def outcome(result):
     return {'win':'BOXER A','loss':'BOXER B','draw':'DRAW','nc':'NO CONTEST','no contest':'NO CONTEST'}[result]
 
+def finish(report):
+    REPORT.write_text(json.dumps(report,indent=2))
+    print(json.dumps(report))
+
 def main():
     if not SUP.exists():
-        print(json.dumps({'supplemental_fighters':0,'inserted_bouts':0,'quote_links_added':0}));return
+        finish({'supplemental_fighters':0,'inserted_bouts':0,'quote_links_added':0,'by_source':{}});return
     con=sqlite3.connect(DB);con.row_factory=sqlite3.Row
     added_bouts=0;added_quotes=0;fighters=0;by_source={}
     for line in SUP.read_text().splitlines():
@@ -61,5 +66,9 @@ def main():
                 added_quotes+=1
         fighters+=1;by_source[source]=by_source.get(source,0)+1
     con.commit()
-    print(json.dumps({'supplemental_fighters':fighters,'inserted_bouts':added_bouts,'quote_links_added':added_quotes,'by_source':by_source}))
+    linked_after=con.execute("SELECT count(*) FROM priced_bout_research WHERE feature_bout_id IS NOT NULL").fetchone()[0]
+    distinct_after=con.execute("SELECT count(DISTINCT odds_bout_id) FROM priced_bout_research WHERE feature_bout_id IS NOT NULL").fetchone()[0]
+    finish({'supplemental_fighters':fighters,'inserted_bouts':added_bouts,'quote_links_added':added_quotes,
+            'linked_quote_rows_after':linked_after,'distinct_price_bouts_with_feature_side_after':distinct_after,
+            'by_source':by_source})
 if __name__=='__main__':main()
