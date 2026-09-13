@@ -136,7 +136,7 @@ def main():
                       'family_choices':fam,'consensus':{str(k):metrics([r for r in rows if r['year']==year and votes[tuple(r['key'])]>=k]) for k in (2,3,4)}})
     coverage={
       'bouts':len(rows),'reach_pair':sum(r['reach_gap'] is not None for r in rows),'height_pair':sum(r['height_gap'] is not None for r in rows),
-      'stance_pair':sum(r['favorite_stance'] and r['opponent_stance'] for r in rows),'title_bouts':sum(r['title_bout'] for r in rows),
+      'stance_pair':sum(bool(r['favorite_stance'] and r['opponent_stance']) for r in rows),'title_bouts':sum(r['title_bout'] for r in rows),
       'scheduled_rounds_known':sum(r['scheduled_rounds'] is not None for r in rows),'rematches':sum(r['prior_meetings']>0 for r in rows)}
     report={'status':'EXPLORATORY_STATIC_PHYSICAL_PROXIES_AND_UNVERIFIED_PRICES','coverage':coverage,'rules_tested':len(rules),
             'targets':candidates,'outer_walk_forward':outer,
