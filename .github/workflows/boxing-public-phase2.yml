@@ -72,6 +72,7 @@ jobs:
               print('Missing required tables:',missing)
               raise SystemExit(20)
           PY
+          python build_punch_profiles.py --db boxing.sqlite3 --out punch_profiles
           python apply_supplemental_careers.py
           python rebuild_identity_links.py
           python build_chronological_master.py
@@ -98,6 +99,8 @@ jobs:
                       compact={k:data[k] for k in ['status','price_policy','coverage','rules_tested','outer_walk_forward','target_screen','limitations'] if k in data}
                       (out/'phase2_interaction_summary.json').write_text(json.dumps(compact,indent=2))
                   else: shutil.copy2(src,out/name)
+          punch=root/'punch_profiles'/'coverage.json'
+          if punch.exists():shutil.copy2(punch,out/'punch_profile_coverage.json')
           for name in ['IDENTITY_LINKS_V2.json']:
               src=root/name
               if src.exists():shutil.copy2(src,out/name)
@@ -107,6 +110,7 @@ jobs:
         run: |
           mkdir -p boxing/public_phase2
           if [ -f /tmp/boxing_phase2_missing.json ]; then cp /tmp/boxing_phase2_missing.json boxing/public_phase2/status.json; fi
+          if [ -f /tmp/boxing-research/punch_profiles/coverage.json ]; then cp /tmp/boxing-research/punch_profiles/coverage.json boxing/public_phase2/punch_profile_coverage.json; fi
       - name: Upload research artifact
         if: always()
         uses: actions/upload-artifact@v4
