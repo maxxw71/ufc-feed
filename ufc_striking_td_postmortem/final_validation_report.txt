@@ -1,0 +1,36 @@
+UFC STRIKING + TD DEFENSE — FINAL COMBINED-RISK VALIDATION
+============================================================================================================
+
+Baseline: 54 bets | 51-3 | win 94.4% | ROI +17.64%
+
+Stable combined age + power centers
+------------------------------------------------------------------------------------------------------------
+ageAdv>=-3y AND powerProduct<0.12 | n=40 40-0 | win=100.0% ROI=+23.08% | pre=+23.82% recent=+22.18% 2022+=+20.43% | removed 11W/3L | neighbor min=+20.08%
+ageAdv>=-2y AND powerProduct<0.10 | n=36 36-0 | win=100.0% ROI=+22.80% | pre=+23.30% recent=+22.25% 2022+=+20.38% | removed 15W/3L | neighbor min=+22.64%
+ageAdv>=+0y AND powerProduct<0.10 | n=33 33-0 | win=100.0% ROI=+22.70% | pre=+23.18% recent=+22.25% 2022+=+20.38% | removed 18W/3L | neighbor min=+22.65%
+ageAdv>=+0y AND powerProduct<0.11 | n=33 33-0 | win=100.0% ROI=+22.70% | pre=+23.18% recent=+22.25% 2022+=+20.38% | removed 18W/3L | neighbor min=+22.65%
+ageAdv>=+0y AND powerProduct<0.12 | n=33 33-0 | win=100.0% ROI=+22.70% | pre=+23.18% recent=+22.25% 2022+=+20.38% | removed 18W/3L | neighbor min=+19.09%
+ageAdv>=-1y AND powerProduct<0.10 | n=35 35-0 | win=100.0% ROI=+22.65% | pre=+23.03% recent=+22.25% 2022+=+20.38% | removed 16W/3L | neighbor min=+22.65%
+ageAdv>=-1y AND powerProduct<0.11 | n=35 35-0 | win=100.0% ROI=+22.65% | pre=+23.03% recent=+22.25% 2022+=+20.38% | removed 16W/3L | neighbor min=+22.64%
+ageAdv>=-1y AND powerProduct<0.12 | n=35 35-0 | win=100.0% ROI=+22.65% | pre=+23.03% recent=+22.25% 2022+=+20.38% | removed 16W/3L | neighbor min=+19.24%
+ageAdv>=-2y AND powerProduct<0.11 | n=37 37-0 | win=100.0% ROI=+22.64% | pre=+22.97% recent=+22.25% 2022+=+20.38% | removed 14W/3L | neighbor min=+22.60%
+ageAdv>=-2y AND powerProduct<0.12 | n=37 37-0 | win=100.0% ROI=+22.64% | pre=+22.97% recent=+22.25% 2022+=+20.38% | removed 14W/3L | neighbor min=+19.41%
+ageAdv>=-3y AND powerProduct<0.11 | n=38 38-0 | win=100.0% ROI=+22.60% | pre=+22.97% recent=+22.18% 2022+=+20.43% | removed 13W/3L | neighbor min=+22.64%
+ageAdv>=-3y AND powerProduct<0.13 | n=41 40-1 | win= 97.6% ROI=+20.08% | pre=+23.82% recent=+15.75% 2022+=+11.83% | removed 11W/2L | neighbor min=+19.41%
+ageAdv>=-2y AND powerProduct<0.13 | n=38 37-1 | win= 97.4% ROI=+19.41% | pre=+22.97% recent=+15.45% 2022+=+11.12% | removed 14W/2L | neighbor min=+19.24%
+ageAdv>=-1y AND powerProduct<0.13 | n=36 35-1 | win= 97.2% ROI=+19.24% | pre=+23.03% recent=+15.45% 2022+=+11.12% | removed 16W/2L | neighbor min=+19.09%
+ageAdv>=-1y AND powerProduct<0.14 | n=36 35-1 | win= 97.2% ROI=+19.24% | pre=+23.03% recent=+15.45% 2022+=+11.12% | removed 16W/2L | neighbor min=+19.09%
+ageAdv>=+0y AND powerProduct<0.15 | n=35 34-1 | win= 97.1% ROI=+19.01% | pre=+23.18% recent=+15.50% 2022+=+11.49% | removed 17W/2L | neighbor min=+18.93%
+
+Recommended center
+------------------------------------------------------------------------------------------------------------
+Keep only when favorite age advantage >= -1 years AND power risk product < 0.12.
+Historical: 35 bets | 35-0 | 100.0% wins | ROI +22.65% | pre +23.03% | recent +22.25% | 2022+ +20.38%.
+Removed: 16 winners / 3 losses from the original 54.
+Fiorot-Grasso: ageAdv=-3.47y, powerProduct=0.016 => VETO under recommended center.
+
+Important
+------------------------------------------------------------------------------------------------------------
+This is still retrospective on a 54-bet parent sample. A 0-loss filtered backtest is not a guarantee.
+Use the filter as a qualification/risk gate, not as a claimed 100% future win rate.
+The power product is opponent KD/15 multiplied by favorite KD-absorbed/15; ageAdv = opponent age - favorite age.
