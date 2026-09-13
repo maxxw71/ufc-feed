@@ -4,13 +4,14 @@ on:
   workflow_dispatch:
     inputs:
       limit:
-        description: 'Maximum missing fighters to attempt this run'
+        description: 'Maximum missing fighters to attempt this run per source'
         required: false
         default: '60'
   push:
     paths:
       - '.github/workflows/boxing-priced-career-backfill.yml'
       - 'boxing/research/backfill_priced_careers.py'
+      - 'boxing/research/backfill_secondary_careers.py'
       - 'boxing/research/test_priced_career_backfill.py'
 
 concurrency:
@@ -23,7 +24,7 @@ permissions:
 jobs:
   backfill:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 35
     steps:
       - uses: actions/checkout@v4
         with:
@@ -47,12 +48,16 @@ jobs:
           db=next(os.path.join(root,f) for root,_,files in os.walk('/tmp/boxing-careers') for f in files if f.endswith('.sqlite3'))
           shutil.copy2(db,'boxing/research/boxing.sqlite3')
           PY
-      - name: Backfill highest-value missing priced fighters
+      - name: Backfill highest-value missing priced fighters from Wikipedia
         env:
           LIMIT: ${{ inputs.limit || '60' }}
-        run: |
-          python boxing/research/backfill_priced_careers.py --limit "$LIMIT"
-          rm -f boxing/research/boxing.sqlite3
+        run: python boxing/research/backfill_priced_careers.py --limit "$LIMIT"
+      - name: Backfill remaining priced fighters from verified secondary records
+        env:
+          LIMIT: ${{ inputs.limit || '60' }}
+        run: python boxing/research/backfill_secondary_careers.py --limit "$LIMIT"
+      - name: Remove temporary research database
+        run: rm -f boxing/research/boxing.sqlite3
       - name: Commit verified supplemental careers
         run: |
           git config user.name 'github-actions[bot]'
