@@ -6,6 +6,11 @@ on:
     branches: [main]
     paths:
       - '.github/workflows/appwiza-boxing-secondary-punch-expand.yml'
+      - 'boxing/research/round_archive.py'
+
+concurrency:
+  group: appwiza-boxing-secondary-punch-expansion
+  cancel-in-progress: true
 
 permissions:
   contents: read
