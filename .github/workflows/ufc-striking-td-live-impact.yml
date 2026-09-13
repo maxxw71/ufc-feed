@@ -1,0 +1,45 @@
+name: UFC striking TD live impact
+
+on:
+  push:
+    paths:
+      - '.github/workflows/ufc-striking-td-live-impact.yml'
+      - 'scripts/ufc_striking_td_live_impact.py'
+      - 'upcoming.json'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  analyze:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install dependencies
+        run: pip install -q pandas numpy
+      - name: Check current live impact
+        run: python scripts/ufc_striking_td_live_impact.py
+      - name: Upload results
+        uses: actions/upload-artifact@v4
+        with:
+          name: ufc-striking-td-live-impact
+          path: ufc_striking_td_postmortem/current_live_impact*
+          if-no-files-found: error
+      - name: Commit impact outputs
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add ufc_striking_td_postmortem/current_live_impact*
+          if git diff --cached --quiet; then
+            echo 'No output changes to commit.'
+          else
+            git commit -m 'Update UFC striking TD live impact'
+            git push
+          fi
