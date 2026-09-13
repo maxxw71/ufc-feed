@@ -1,0 +1,44 @@
+name: UFC striking TD combined risk validation
+
+on:
+  push:
+    paths:
+      - '.github/workflows/ufc-striking-td-final-validation.yml'
+      - 'scripts/ufc_striking_td_final_validation.py'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  analyze:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install dependencies
+        run: pip install -q pandas numpy
+      - name: Run combined risk validation
+        run: python scripts/ufc_striking_td_final_validation.py
+      - name: Upload results
+        uses: actions/upload-artifact@v4
+        with:
+          name: ufc-striking-td-final-validation
+          path: ufc_striking_td_postmortem/*
+          if-no-files-found: error
+      - name: Commit results
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add ufc_striking_td_postmortem/
+          if git diff --cached --quiet; then
+            echo 'No output changes to commit.'
+          else
+            git commit -m 'Run UFC striking TD combined risk validation'
+            git push
+          fi
