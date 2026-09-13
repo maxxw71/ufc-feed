@@ -17,23 +17,21 @@ jobs:
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
-      - name: Inspect boxing archive runtime
+      - name: Locate UFC helper modules and boxing archive hooks
         shell: bash
         run: |
           set -u
-          echo '=== BOXING SERVICE ==='
-          systemctl cat boxing-archive.service 2>/dev/null || true
+          echo '=== BET TRACKER LOCATIONS ==='
+          find /opt /home/anestishkurti92 -type f \( -name 'bet_tracker.py' -o -name 'ufc_email_design.py' -o -name 'ufc_lifecycle.py' \) -print 2>/dev/null | head -100 || true
           echo
-          echo '=== BOXING PROCESS ==='
-          ps -ef | grep -Ei '[b]oxing|[d]rain_archive|[p]unch_collect' || true
+          echo '=== UFC WATCHER IMPORTS ==='
+          grep -n '^import\|^from' /home/anestishkurti92/ufc-predictor-v1/ufc_email_watcher.py 2>/dev/null | head -100 || true
           echo
-          echo '=== KNOWN BOXING RUNTIME TREES ==='
-          find /opt/appwiza-sports-imports/google-ufc-model-20260913/home/boxing-research -maxdepth 3 -type f 2>/dev/null | head -120 || true
+          echo '=== UFC SERVICE ENV ==='
+          systemctl cat ufc-model-watcher.service 2>/dev/null || true
           echo
-          echo '=== OWNERSHIP ==='
-          for p in /opt/appwiza-sports-imports/google-ufc-model-20260913/home/boxing-research /opt/sports-runtime-manifests/boxing-before-priority /srv/appwiza-sports/public/boxing; do
-            [ -e "$p" ] && ls -ld "$p" || true
-          done
+          echo '=== BOXING DRAIN SCRIPT ==='
+          sed -n '1,260p' /home/anestishkurti92/boxing-research/drain_archive.sh 2>/dev/null || true
           echo
-          echo '=== DATABASES UNDER BOXING TREE ==='
-          find /opt/appwiza-sports-imports/google-ufc-model-20260913/home/boxing-research -maxdepth 4 -type f \( -name '*.sqlite3' -o -name '*.db' \) -exec ls -lh {} \; 2>/dev/null || true
+          echo '=== BOXING ARCHIVE CURRENT PUNCH REFERENCES ==='
+          grep -nE 'punch_collect|historical_punch|CompuBox|round' /home/anestishkurti92/boxing-research/drain_archive.sh /home/anestishkurti92/boxing-research/*.py 2>/dev/null | head -220 || true
