@@ -15,7 +15,8 @@ PATCH_SOURCE=REPO/'scripts/apply_live_striking_td_risk_gate.sh'
 DEFAULT_WATCHER=Path('/home/anestishkurti92/ufc-predictor-v1/ufc_email_watcher.py')
 PUBLIC=Path('/srv/appwiza-sports/public/ufc/index.html')
 PUBLISHER=Path('/opt/sports-publisher/initial_ufc.py')
-VENV_PY=Path('/home/anestishkurti92/ufc-predictor-v1/venv/bin/python')
+WATCHER_ROOT=DEFAULT_WATCHER.parent
+VENV_PY=WATCHER_ROOT/'venv/bin/python'
 
 def extract_patch(src:str):
     m=re.search(r"addon=r'''(.*?)'''\ns=s\.replace",src,re.S)
@@ -47,7 +48,11 @@ def patch_watcher(path:Path):
     return backup,'patched'
 
 def publish():
-    env=dict(os.environ);env['HOME']='/home/anestishkurti92';env['PYTHONPATH']='/opt/sports-publisher'
+    env=dict(os.environ)
+    env['HOME']='/home/anestishkurti92'
+    # initial_ufc imports the live watcher, which in turn imports helper modules
+    # from the watcher directory (bet_tracker, design, lifecycle, etc.).
+    env['PYTHONPATH']=os.pathsep.join([str(WATCHER_ROOT),'/opt/sports-publisher',env.get('PYTHONPATH','')]).rstrip(os.pathsep)
     cp=subprocess.run([str(VENV_PY),str(PUBLISHER)],cwd='/opt/sports-publisher',env=env,text=True,capture_output=True,timeout=300)
     print(cp.stdout,end='');print(cp.stderr,end='',file=sys.stderr)
     if cp.returncode:raise RuntimeError(f'Publisher failed with {cp.returncode}')
