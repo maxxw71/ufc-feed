@@ -12,6 +12,7 @@ on:
       - '.github/workflows/boxing-priced-career-backfill.yml'
       - 'boxing/research/backfill_priced_careers.py'
       - 'boxing/research/backfill_secondary_careers.py'
+      - 'boxing/research/refresh_secondary_careers.py'
       - 'boxing/research/test_priced_career_backfill.py'
 
 concurrency:
@@ -56,6 +57,8 @@ jobs:
         env:
           LIMIT: ${{ inputs.limit || '60' }}
         run: python boxing/research/backfill_secondary_careers.py --limit "$LIMIT"
+      - name: Refresh stored secondary careers under strict completeness audit
+        run: python boxing/research/refresh_secondary_careers.py
       - name: Remove temporary research database
         run: rm -f boxing/research/boxing.sqlite3
       - name: Commit verified supplemental careers
