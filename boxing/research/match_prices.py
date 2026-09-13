@@ -21,11 +21,9 @@ def main():
     index=collections.defaultdict(list)
     for row in db.execute("SELECT * FROM bouts WHERE status='FINISHED' AND date>='1990-01-01'").fetchall():
         index[(row['date'],*sorted([namekey(row['boxer_a']),namekey(row['boxer_b'])]))].append(dict(row))
-    # The chronological master now reconstructs pre-fight histories directly from
-    # accepted source-specific bout rows, so a verified Wikipedia or Champinon
-    # orientation can serve as the quote-linked fighter bout even when it does not
-    # already exist in the older pre_bout_features table.
-    eligible_bout_sources={'wikipedia','champinon'}
+    # Accepted career sources reconstruct pre-fight histories directly from their
+    # source-specific bout rows; provenance remains separate in the database.
+    eligible_bout_sources={'wikipedia','champinon','wba_consensus'}
     matchups={r['source_id']:json.loads(r['data']) for r in db.execute("SELECT source_id,data FROM source_rows WHERE source='proboxingodds' AND kind='matchup'").fetchall()}
     db.execute('''CREATE TABLE IF NOT EXISTS priced_bout_research(
         quote_rowid INTEGER PRIMARY KEY,odds_bout_id TEXT,event_date TEXT,bookmaker TEXT,
@@ -50,7 +48,6 @@ def main():
                 if d:
                     c=index[(d,*pair)]
                     if c:nearby.append((off,d,c))
-            # Only recover when exactly one adjacent date contains this exact pair.
             if len(nearby)==1:
                 offset,result_date,candidates=nearby[0]
                 match_method='exact_pair_adjacent_date'
