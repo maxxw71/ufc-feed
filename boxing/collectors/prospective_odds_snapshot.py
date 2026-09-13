@@ -7,7 +7,7 @@ observations. Same-day observations remain separately flagged unless event time
 is independently verified.
 """
 from __future__ import annotations
-import datetime as dt,hashlib,json,re,urllib.request,unicodedata
+import datetime as dt,hashlib,json,re,subprocess,time,urllib.request,unicodedata
 from pathlib import Path
 from bs4 import BeautifulSoup
 BASE='https://www.proboxingodds.com/'
@@ -80,8 +80,24 @@ def parse_home(html,now=None):
     return rows
 
 def fetch():
-    req=urllib.request.Request(BASE,headers={'User-Agent':'Mozilla/5.0 AppwizaProspectiveBoxing/1.0'})
-    with urllib.request.urlopen(req,timeout=60) as r:return r.read()
+    ua='Mozilla/5.0 AppwizaProspectiveBoxing/1.1'
+    last=None
+    for attempt in range(3):
+        try:
+            # curl has proved more reliable than urllib against this host from cloud runners.
+            p=subprocess.run(['curl','-4','--http1.1','-L','--compressed','--fail','--silent','--show-error',
+                              '--connect-timeout','20','--max-time','180','--retry','2','--retry-delay','3',
+                              '-A',ua,BASE],capture_output=True,timeout=200)
+            if p.returncode==0 and p.stdout:return p.stdout
+            last=RuntimeError(p.stderr.decode('utf-8','replace') or f'curl exit {p.returncode}')
+        except Exception as e:last=e
+        time.sleep(4*(attempt+1))
+    # Final urllib fallback for non-curl environments.
+    try:
+        req=urllib.request.Request(BASE,headers={'User-Agent':ua,'Connection':'close'})
+        with urllib.request.urlopen(req,timeout=180) as r:return r.read()
+    except Exception as e:
+        raise RuntimeError(f'PBO fetch failed after retries: {last!r}; urllib: {e!r}')
 
 def main():
     now=dt.datetime.now(dt.timezone.utc);raw=fetch();sha=hashlib.sha256(raw).hexdigest()
