@@ -5,6 +5,7 @@ on:
     paths:
       - '.github/workflows/boxing-data-gap-audit.yml'
       - 'boxing/research/data_gap_audit.py'
+      - 'boxing/research/priced_identity_gap.py'
   workflow_dispatch:
 
 permissions:
@@ -36,21 +37,23 @@ jobs:
           db=next(os.path.join(root,f) for root,_,files in os.walk('/tmp/boxing-gap') for f in files if f.endswith('.sqlite3'))
           shutil.copy2(db,'boxing/research/boxing.sqlite3')
           PY
-      - name: Run data gap audit
+      - name: Run data gap audits
         run: |
           cd boxing/research
           python data_gap_audit.py
+          python priced_identity_gap.py
           mv DATA_GAP_AUDIT.json ../public_reports/DATA_GAP_AUDIT.json
+          mv PRICED_IDENTITY_GAP.json ../public_reports/PRICED_IDENTITY_GAP.json
           rm -f boxing.sqlite3
-      - name: Commit audit
+      - name: Commit audits
         run: |
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add boxing/public_reports/DATA_GAP_AUDIT.json
+          git add boxing/public_reports/DATA_GAP_AUDIT.json boxing/public_reports/PRICED_IDENTITY_GAP.json
           if git diff --cached --quiet; then
             echo 'No data-gap changes.'
           else
-            git commit -m 'Update boxing data gap audit'
+            git commit -m 'Update boxing data gap audits'
             git pull --rebase origin main
             git push
           fi
