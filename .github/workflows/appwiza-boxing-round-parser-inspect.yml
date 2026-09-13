@@ -1,0 +1,29 @@
+name: Appwiza boxing round parser inspect
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/appwiza-boxing-round-parser-inspect.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  inspect:
+    if: github.repository == 'maxxw71/ufc-feed' && github.ref == 'refs/heads/main'
+    runs-on: [self-hosted, Linux, X64, appwiza]
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Locate secondary round parsers
+        shell: bash
+        run: |
+          R=/home/anestishkurti92/boxing-research
+          grep -RIlE 'secondary_round_punches|round_evidence_pages' "$R" --include='*.py' 2>/dev/null | head -30
+          echo '=== matching code ==='
+          for f in $(grep -RIlE 'secondary_round_punches|round_evidence_pages' "$R" --include='*.py' 2>/dev/null | head -12); do
+            echo "===== $f ====="
+            sed -n '1,320p' "$f"
+          done
