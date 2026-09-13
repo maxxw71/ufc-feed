@@ -1,0 +1,63 @@
+name: Boxing punch coverage audit
+
+on:
+  push:
+    paths:
+      - '.github/workflows/boxing-punch-coverage-audit.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Download database and audit punch tables
+        run: |
+          python - <<'PY'
+          import io,zipfile,urllib.request,sqlite3,tempfile,json,os,collections
+          url='https://appwiza.com/sports/downloads/boxing/research-database.zip'
+          req=urllib.request.Request(url,headers={'User-Agent':'Mozilla/5.0 AppwizaPunchAudit/1.0'})
+          with urllib.request.urlopen(req,timeout=180) as r:data=r.read()
+          z=zipfile.ZipFile(io.BytesIO(data))
+          dbname=next(n for n in z.namelist() if n.endswith('.sqlite3'))
+          path='/tmp/boxing_research.sqlite3';open(path,'wb').write(z.read(dbname))
+          db=sqlite3.connect(path);db.row_factory=sqlite3.Row
+          names=['punch_reports','round_punches','fight_punch_totals','historical_punch_observations','published_fight_punch_totals','secondary_round_punches','reviewed_chart_rounds','reviewed_round_charts']
+          out={'archive_bytes':len(data),'tables':{}}
+          for name in names:
+              exists=db.execute("select 1 from sqlite_master where type='table' and name=?",(name,)).fetchone()
+              if not exists:continue
+              cols=[dict(r) for r in db.execute(f'pragma table_info({name})')]
+              count=db.execute(f'select count(*) from {name}').fetchone()[0]
+              sample=[dict(r) for r in db.execute(f'select * from {name} limit 3')]
+              out['tables'][name]={'rows':count,'columns':[c['name'] for c in cols],'sample':sample}
+          # Date/identity coverage where columns permit it.
+          for name,meta in out['tables'].items():
+              cols=set(meta['columns']);extra={}
+              for c in ['bout_date','date','report_date','event_date']:
+                  if c in cols:
+                      extra['date_column']=c
+                      extra['dated_rows']=db.execute(f"select count(*) from {name} where {c} is not null and trim(cast({c} as text))!=''").fetchone()[0]
+                      extra['min_date']=db.execute(f'select min({c}) from {name}').fetchone()[0]
+                      extra['max_date']=db.execute(f'select max({c}) from {name}').fetchone()[0]
+                      try:extra['by_year']=dict(db.execute(f"select substr(cast({c} as text),1,4),count(*) from {name} where {c} is not null group by 1 order by 1").fetchall())
+                      except Exception:pass
+                      break
+              meta.update(extra)
+          os.makedirs('boxing/public_punch_audit',exist_ok=True)
+          open('boxing/public_punch_audit/schema_coverage.json','w').write(json.dumps(out,indent=2,default=str))
+          print(json.dumps({k:{'rows':v['rows'],'columns':v['columns'],'dated_rows':v.get('dated_rows'),'min_date':v.get('min_date'),'max_date':v.get('max_date')} for k,v in out['tables'].items()},indent=2))
+          PY
+      - name: Commit punch audit
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add boxing/public_punch_audit
+          if git diff --cached --quiet; then echo 'No punch-audit changes.'; else git commit -m 'Update public boxing punch coverage audit'; git push; fi
