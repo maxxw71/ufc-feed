@@ -15,42 +15,20 @@ jobs:
     if: github.repository == 'maxxw71/ufc-feed' && github.ref == 'refs/heads/main'
     runs-on: [self-hosted, Linux, X64, appwiza]
     timeout-minutes: 10
-
     steps:
       - uses: actions/checkout@v4
-
-      - name: Inspect Appwiza UFC deployment
+      - name: Check controlled deploy prerequisites
         shell: bash
         run: |
           set -u
-          echo '=== HOST ==='
-          hostname || true
-          whoami || true
+          echo '=== ACL TOOLS ==='
+          command -v setfacl || true
+          command -v getfacl || true
+          echo '=== RUNNER ==='
           id || true
-          echo
-          echo '=== TARGET PERMISSIONS ==='
-          for p in /srv/appwiza-sports/public /srv/appwiza-sports/public/ufc /srv/appwiza-sports/public/ufc/index.html /opt/sports-publisher /home/anestishkurti92 /home/anestishkurti92/ufc-predictor-v1 /home/anestishkurti92/ufc-predictor-v1/ufc_email_watcher.py /home/anestishkurti92/.config/ufc-watcher.env; do
-            if [ -e "$p" ]; then
-              ls -ld "$p" || true
-              [ -r "$p" ] && echo "READ yes: $p" || echo "READ no: $p"
-              [ -w "$p" ] && echo "WRITE yes: $p" || echo "WRITE no: $p"
-            else
-              echo "MISSING: $p"
-            fi
-          done
-          echo
-          echo '=== UFC SERVICE ==='
-          systemctl cat ufc-model-watcher.service 2>/dev/null || true
-          systemctl cat ufc-model-watcher.timer 2>/dev/null || true
-          echo
-          echo '=== WATCHER U7 MARKERS ==='
-          grep -nE 'STRIKING_METHODS_RULE_V1|STRIKING_TD_RISK_GATE_V2|striking_td_defense|51.?3|17\.64' /home/anestishkurti92/ufc-predictor-v1/ufc_email_watcher.py 2>/dev/null | head -120 || true
-          echo
-          echo '=== PUBLISHER U7 MARKERS ==='
-          grep -RniE 'striking_td_defense|51.?3|17\.64|94\.4|STRIKING \+ TD' /opt/sports-publisher 2>/dev/null | head -120 || true
-          echo
-          echo '=== LIVE PAGE U7 TOKENS ==='
-          grep -oE 'Striking \+ TD Defense|94\.4%|17\.64%|Payton Talbott' /srv/appwiza-sports/public/ufc/index.html 2>/dev/null | sort | uniq -c || true
-          echo
-          echo '=== SUDO CHECK ==='
-          if sudo -n true >/dev/null 2>&1; then echo 'passwordless sudo: yes'; else echo 'passwordless sudo: no'; fi
+          echo '=== PATHS ==='
+          namei -l /home/anestishkurti92/ufc-predictor-v1/ufc_email_watcher.py || true
+          namei -l /srv/appwiza-sports/public/ufc/index.html || true
+          namei -l /opt/sports-publisher/sports_publish.py || true
+          echo '=== SUDO RULES ==='
+          sudo -n -l 2>&1 || true
