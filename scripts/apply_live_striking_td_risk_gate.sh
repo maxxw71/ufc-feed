@@ -29,17 +29,17 @@ if marker not in s: raise RuntimeError('Could not find watcher main marker')
 addon=r'''
 # STRIKING_TD_RISK_GATE_V2
 # Postmortem validation of original U7 (54 bets, 51-3, +17.64% ROI):
-# Gate: favorite age advantage >= -1.0 years AND
+# Gate: favorite age advantage >= -3.0 years AND
 #       opponent KD/15 * favorite KD-absorbed/15 < 0.12.
-# Filtered historical sample: 35 bets, 35-0, +22.65% ROI;
-# pre-2020 +23.03%, 2020+ +22.25%, 2022+ +20.38%.
-# Neighboring age/power thresholds remained positive; this is a risk gate,
-# not a claim of 100% future win probability.
+# Filtered historical sample: 40 bets, 40-0, +23.08% ROI;
+# pre-2020 +23.82%, 2020+ +22.18%, 2022+ +20.43%.
+# Neighboring age/power thresholds remained strongly positive; this is a risk
+# gate, not a claim of 100% future win probability.
 _U7_RISK_INDEX=None
 _U7_RISK_CACHE=ROOT/'u7_striking_td_risk_index.json'
 _U7_RISK_CACHE_MAX_AGE=86400
 _U7_INDIVIDUALS_URL='https://raw.githubusercontent.com/DanMcInerney/mma-ai/main/data/raw/ufcstats/individuals.csv'
-_U7_MIN_AGE_ADV=-1.0
+_U7_MIN_AGE_ADV=-3.0
 _U7_MAX_POWER_PRODUCT=.12
 
 def _u7_num(v):
@@ -152,7 +152,7 @@ s=s.replace(marker,addon+'\n'+marker,1)
 
 # Update the displayed historical record for the newly gated U7 method only.
 old="('striking_td_defense','STRIKING + TD DEFENSE',54,51,3,.944,.1764,.1628,.1909)"
-new="('striking_td_defense','STRIKING + TD DEFENSE — RISK GATED',35,35,0,1.000,.2265,.2303,.2225)"
+new="('striking_td_defense','STRIKING + TD DEFENSE — RISK GATED',40,40,0,1.000,.2308,.2382,.2218)"
 if old not in s:
     raise RuntimeError('Could not locate the existing U7 display-stat tuple; refusing partial install.')
 s=s.replace(old,new,1)
@@ -198,5 +198,5 @@ sudo systemctl daemon-reload
 sudo systemctl restart ufc-model-watcher.timer
 
 echo "[100%] U7 STRIKING + TD DEFENSE RISK GATE ACTIVE"
-echo "Historical gated sample: 35 bets | 35-0 | +22.65% ROI"
-echo "Gate: favorite no more than 1 year older; opponent KD/15 x favorite KD-absorbed/15 < 0.12"
+echo "Historical gated sample: 40 bets | 40-0 | +23.08% ROI"
+echo "Gate: favorite no more than 3 years older; opponent KD/15 x favorite KD-absorbed/15 < 0.12"
