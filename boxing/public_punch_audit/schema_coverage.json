@@ -1,0 +1,394 @@
+{
+  "archive_bytes": 100510727,
+  "tables": {
+    "punch_reports": {
+      "rows": 7,
+      "columns": [
+        "url",
+        "title",
+        "bout_date",
+        "fetched_at",
+        "sha256",
+        "raw_path",
+        "status"
+      ],
+      "sample": [
+        {
+          "url": "https://beta.compuboxdata.com/round-stats/16773",
+          "title": "DAMIAN KNYBA UD 12 ANDY RUIZ-JR.",
+          "bout_date": "2026-09-04",
+          "fetched_at": "2026-09-12T21:36:30.193044+00:00",
+          "sha256": "ad17da6a5bab0888d726a64515ae7582ded9546cf3e8ecb92008371a078a106d",
+          "raw_path": "punch_raw/ad17da6a5bab0888d726a64515ae7582ded9546cf3e8ecb92008371a078a106d.pdf",
+          "status": "parsed"
+        },
+        {
+          "url": "https://beta.compuboxdata.com/round-stats/16774",
+          "title": "VITO MIELNICKI JR. UD 10 AUSTIN WILLIAMS",
+          "bout_date": "2026-09-04",
+          "fetched_at": "2026-09-12T21:36:40.934180+00:00",
+          "sha256": "5fc1e99a3ef464802dc33db5cce7401e8f9cd5cd9887b399e14ada5d6d4c235f",
+          "raw_path": "punch_raw/5fc1e99a3ef464802dc33db5cce7401e8f9cd5cd9887b399e14ada5d6d4c235f.pdf",
+          "status": "parsed"
+        },
+        {
+          "url": "https://beta.compuboxdata.com/round-stats/16778",
+          "title": "KATIE TAYLOR UD 10 FLORA PILI",
+          "bout_date": "2026-09-05",
+          "fetched_at": "2026-09-12T21:36:50.694282+00:00",
+          "sha256": "c137a1efecd0e24522941d13799e74496ffb72fc383f5e6e560a1b27d4155bff",
+          "raw_path": "punch_raw/c137a1efecd0e24522941d13799e74496ffb72fc383f5e6e560a1b27d4155bff.pdf",
+          "status": "parsed"
+        }
+      ],
+      "date_column": "bout_date",
+      "dated_rows": 7,
+      "min_date": "2026-09-04",
+      "max_date": "2026-09-11",
+      "by_year": {
+        "2026": 7
+      }
+    },
+    "round_punches": {
+      "rows": 354,
+      "columns": [
+        "report_url",
+        "fighter_label",
+        "round",
+        "category",
+        "landed",
+        "thrown"
+      ],
+      "sample": [
+        {
+          "report_url": "https://beta.compuboxdata.com/round-stats/16773",
+          "fighter_label": "RUIZ-JR.",
+          "round": 1,
+          "category": "total",
+          "landed": 10,
+          "thrown": 43
+        },
+        {
+          "report_url": "https://beta.compuboxdata.com/round-stats/16773",
+          "fighter_label": "RUIZ-JR.",
+          "round": 2,
+          "category": "total",
+          "landed": 10,
+          "thrown": 37
+        },
+        {
+          "report_url": "https://beta.compuboxdata.com/round-stats/16773",
+          "fighter_label": "RUIZ-JR.",
+          "round": 3,
+          "category": "total",
+          "landed": 12,
+          "thrown": 36
+        }
+      ]
+    },
+    "fight_punch_totals": {
+      "rows": 42,
+      "columns": [
+        "report_url",
+        "fighter_label",
+        "category",
+        "landed",
+        "body_landed",
+        "thrown"
+      ],
+      "sample": [
+        {
+          "report_url": "https://beta.compuboxdata.com/round-stats/16773",
+          "fighter_label": "RUIZ-JR.",
+          "category": "total",
+          "landed": 119,
+          "body_landed": 26,
+          "thrown": 408
+        },
+        {
+          "report_url": "https://beta.compuboxdata.com/round-stats/16773",
+          "fighter_label": "RUIZ-JR.",
+          "category": "jab",
+          "landed": 59,
+          "body_landed": 14,
+          "thrown": 260
+        },
+        {
+          "report_url": "https://beta.compuboxdata.com/round-stats/16773",
+          "fighter_label": "RUIZ-JR.",
+          "category": "power",
+          "landed": 60,
+          "body_landed": 12,
+          "thrown": 148
+        }
+      ]
+    },
+    "historical_punch_observations": {
+      "rows": 41,
+      "columns": [
+        "source_url",
+        "bout_date",
+        "fighter_label",
+        "opponent_label",
+        "total_landed",
+        "result_label",
+        "rounds",
+        "weight_lb",
+        "raw_path",
+        "sha256",
+        "sample_selection",
+        "imported_at"
+      ],
+      "sample": [
+        {
+          "source_url": "https://beta.compuboxdata.com/uploads/400plusclub.pdf",
+          "bout_date": "1990-02-04",
+          "fighter_label": "Troy Dorsey",
+          "opponent_label": "Jorge Paez",
+          "total_landed": 620,
+          "result_label": "L",
+          "rounds": 12,
+          "weight_lb": 126,
+          "raw_path": "punch_raw/794335a448584f33fe7e3b0eb1341787c37b0e3c91cd056b1144c66d1a0561a1.pdf",
+          "sha256": "794335a448584f33fe7e3b0eb1341787c37b0e3c91cd056b1144c66d1a0561a1",
+          "sample_selection": "outcome_selected_400plus_title_bouts_not_representative",
+          "imported_at": "2026-09-12T22:30:03.020661+00:00"
+        },
+        {
+          "source_url": "https://beta.compuboxdata.com/uploads/400plusclub.pdf",
+          "bout_date": "1996-12-21",
+          "fighter_label": "Philip Holiday",
+          "opponent_label": "Ivan Robinson",
+          "total_landed": 555,
+          "result_label": "W",
+          "rounds": 12,
+          "weight_lb": 135,
+          "raw_path": "punch_raw/794335a448584f33fe7e3b0eb1341787c37b0e3c91cd056b1144c66d1a0561a1.pdf",
+          "sha256": "794335a448584f33fe7e3b0eb1341787c37b0e3c91cd056b1144c66d1a0561a1",
+          "sample_selection": "outcome_selected_400plus_title_bouts_not_representative",
+          "imported_at": "2026-09-12T22:30:03.020752+00:00"
+        },
+        {
+          "source_url": "https://beta.compuboxdata.com/uploads/400plusclub.pdf",
+          "bout_date": "1993-06-22",
+          "fighter_label": "John Molina",
+          "opponent_label": "Manuel Medina",
+          "total_landed": 550,
+          "result_label": "W",
+          "rounds": 12,
+          "weight_lb": 130,
+          "raw_path": "punch_raw/794335a448584f33fe7e3b0eb1341787c37b0e3c91cd056b1144c66d1a0561a1.pdf",
+          "sha256": "794335a448584f33fe7e3b0eb1341787c37b0e3c91cd056b1144c66d1a0561a1",
+          "sample_selection": "outcome_selected_400plus_title_bouts_not_representative",
+          "imported_at": "2026-09-12T22:30:03.020808+00:00"
+        }
+      ],
+      "date_column": "bout_date",
+      "dated_rows": 41,
+      "min_date": "1988-02-06",
+      "max_date": "2022-02-26",
+      "by_year": {
+        "1988": 3,
+        "1990": 3,
+        "1991": 2,
+        "1992": 2,
+        "1993": 3,
+        "1994": 2,
+        "1995": 1,
+        "1996": 3,
+        "1997": 2,
+        "1999": 1,
+        "2001": 1,
+        "2002": 3,
+        "2003": 1,
+        "2005": 2,
+        "2007": 1,
+        "2008": 1,
+        "2009": 3,
+        "2010": 2,
+        "2013": 2,
+        "2015": 1,
+        "2019": 1,
+        "2022": 1
+      }
+    },
+    "published_fight_punch_totals": {
+      "rows": 16,
+      "columns": [
+        "source_url",
+        "bout_date",
+        "fighter",
+        "opponent",
+        "landed",
+        "thrown",
+        "quality",
+        "imported_at"
+      ],
+      "sample": [
+        {
+          "source_url": "https://www.boxingscene.com/articles/compubox-post-analysis-khan-ortiz-come-up-big",
+          "bout_date": "2010-05-15",
+          "fighter": "Amir Khan",
+          "opponent": "Paulie Malignaggi",
+          "landed": 259,
+          "thrown": 653,
+          "quality": "source_transcription_matched_to_unique_pair_year; targeted_coverage; not_independent_compubox_verification",
+          "imported_at": "2026-09-12T22:36:09.020087+00:00"
+        },
+        {
+          "source_url": "https://www.boxingscene.com/articles/compubox-post-analysis-khan-ortiz-come-up-big",
+          "bout_date": "2010-05-15",
+          "fighter": "Paulie Malignaggi",
+          "opponent": "Amir Khan",
+          "landed": 127,
+          "thrown": 531,
+          "quality": "source_transcription_matched_to_unique_pair_year; targeted_coverage; not_independent_compubox_verification",
+          "imported_at": "2026-09-12T22:36:09.020453+00:00"
+        },
+        {
+          "source_url": "https://en.wikipedia.org/wiki/Wladimir_Klitschko",
+          "bout_date": "2011-07-02",
+          "fighter": "Wladimir Klitschko",
+          "opponent": "David Haye",
+          "landed": 134,
+          "thrown": 509,
+          "quality": "source_transcription_matched_to_unique_pair_year; targeted_coverage; not_independent_compubox_verification",
+          "imported_at": "2026-09-12T22:36:09.267700+00:00"
+        }
+      ],
+      "date_column": "bout_date",
+      "dated_rows": 16,
+      "min_date": "2010-05-15",
+      "max_date": "2017-04-29",
+      "by_year": {
+        "2010": 2,
+        "2011": 2,
+        "2012": 4,
+        "2013": 6,
+        "2017": 2
+      }
+    },
+    "secondary_round_punches": {
+      "rows": 34,
+      "columns": [
+        "source_url",
+        "table_index",
+        "fighter_label",
+        "round",
+        "category",
+        "landed",
+        "thrown",
+        "quality"
+      ],
+      "sample": [
+        {
+          "source_url": "https://boxingblotter.com/programs/shields-scott-atlanta-aug15-2026-recap",
+          "table_index": 0,
+          "fighter_label": "Shields",
+          "round": 1,
+          "category": "unspecified",
+          "landed": 12,
+          "thrown": 45,
+          "quality": "secondary_published_counts_unverified"
+        },
+        {
+          "source_url": "https://boxingblotter.com/programs/shields-scott-atlanta-aug15-2026-recap",
+          "table_index": 0,
+          "fighter_label": "Scott",
+          "round": 1,
+          "category": "unspecified",
+          "landed": 7,
+          "thrown": 27,
+          "quality": "secondary_published_counts_unverified"
+        },
+        {
+          "source_url": "https://boxingblotter.com/programs/shields-scott-atlanta-aug15-2026-recap",
+          "table_index": 0,
+          "fighter_label": "Shields",
+          "round": 2,
+          "category": "unspecified",
+          "landed": 17,
+          "thrown": 59,
+          "quality": "secondary_published_counts_unverified"
+        }
+      ]
+    },
+    "reviewed_chart_rounds": {
+      "rows": 94,
+      "columns": [
+        "source_url",
+        "fighter",
+        "round",
+        "category",
+        "landed",
+        "thrown"
+      ],
+      "sample": [
+        {
+          "source_url": "https://www.ringmagazine.com/news/naoya-inoue-vs-alan-picasso-compubox-punch-stats-5G6mdzgIpQy2w7Mpks0Bkk",
+          "fighter": "Naoya Inoue",
+          "round": 1,
+          "category": "total",
+          "landed": 10,
+          "thrown": 35
+        },
+        {
+          "source_url": "https://www.ringmagazine.com/news/naoya-inoue-vs-alan-picasso-compubox-punch-stats-5G6mdzgIpQy2w7Mpks0Bkk",
+          "fighter": "Naoya Inoue",
+          "round": 2,
+          "category": "total",
+          "landed": 38,
+          "thrown": 82
+        },
+        {
+          "source_url": "https://www.ringmagazine.com/news/naoya-inoue-vs-alan-picasso-compubox-punch-stats-5G6mdzgIpQy2w7Mpks0Bkk",
+          "fighter": "Naoya Inoue",
+          "round": 3,
+          "category": "total",
+          "landed": 29,
+          "thrown": 73
+        }
+      ]
+    },
+    "reviewed_round_charts": {
+      "rows": 2,
+      "columns": [
+        "source_url",
+        "bout_date",
+        "fighters_json",
+        "raw_path",
+        "sha256",
+        "quality",
+        "totals_json"
+      ],
+      "sample": [
+        {
+          "source_url": "https://www.ringmagazine.com/news/naoya-inoue-vs-alan-picasso-compubox-punch-stats-5G6mdzgIpQy2w7Mpks0Bkk",
+          "bout_date": "2025-12-27",
+          "fighters_json": "[\"Naoya Inoue\", \"Alan David Picasso\"]",
+          "raw_path": "round-source-probes/2a2ff5ce24c2235dfc8ddf583f1332db852d86b3fa80e954c184ab9086f84280.chart",
+          "sha256": "3f4719d1b535836e902e466e04cfd34f195bd4c3c885b3b1373bcc71fde49d7d",
+          "quality": "publisher_reproduced_chart; visual_transcription_and_arithmetic_checked",
+          "totals_json": "{\"Naoya Inoue\": {\"total\": [328, 790, 96], \"jab\": [161, 426, 41], \"power\": [167, 364, 55]}, \"Alan David Picasso\": {\"total\": [170, 485, 66], \"jab\": [63, 218, 27], \"power\": [107, 267, 39]}}"
+        },
+        {
+          "source_url": "https://split-decision.co.uk/boxing-news/wardley-vs-dubois/",
+          "bout_date": "2026-05-09",
+          "fighters_json": "[\"Daniel Dubois\", \"Fabio Wardley\"]",
+          "raw_path": "round-source-probes/dbe3191a2edec61d381bab31c4978358f81904754e5de54b2548cbbc857bc5d4.chart",
+          "sha256": "2fbfd3173181678e71e33690cb1811b01f15cd81a37ab67191fd74d9ee9e9905",
+          "quality": "secondary_graph; visual_transcription_and_total_checked; thrown_missing",
+          "totals_json": "{\"Daniel Dubois\": {\"total_landed\": 179, \"jab_landed\": 92, \"power_landed\": 87}, \"Fabio Wardley\": {\"total_landed\": 97, \"jab_landed\": 57, \"power_landed\": 40}}"
+        }
+      ],
+      "date_column": "bout_date",
+      "dated_rows": 2,
+      "min_date": "2025-12-27",
+      "max_date": "2026-05-09",
+      "by_year": {
+        "2025": 1,
+        "2026": 1
+      }
+    }
+  }
+}
