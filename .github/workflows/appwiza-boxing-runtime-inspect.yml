@@ -1,0 +1,45 @@
+name: Appwiza boxing runtime inspect
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/appwiza-boxing-runtime-inspect.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  inspect:
+    if: github.repository == 'maxxw71/ufc-feed' && github.ref == 'refs/heads/main'
+    runs-on: [self-hosted, Linux, X64, appwiza]
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Inspect boxing runtime safely
+        shell: bash
+        run: |
+          set +e
+          echo '=== SERVICE ==='
+          systemctl is-active boxing-archive.service 2>/dev/null || true
+          systemctl cat boxing-archive.service 2>/dev/null | head -120 || true
+          echo '=== PROCESSES ==='
+          ps -eo pid,etime,cmd | grep -E '[b]oxing|[p]unch_collect|[c]areers.py' | head -80 || true
+          echo '=== RESEARCH ROOT ==='
+          ls -lah /home/anestishkurti92/boxing-research 2>/dev/null | head -100 || true
+          echo '=== SQLITE FILES ==='
+          find /home/anestishkurti92/boxing-research -maxdepth 2 -type f -name '*.sqlite3' -printf '%p %s bytes\n' 2>/dev/null | head -30 || true
+          echo '=== PUNCH COUNTS ==='
+          python3 - <<'PY'
+          import os,sqlite3,glob
+          for p in glob.glob('/home/anestishkurti92/boxing-research/**/*.sqlite3',recursive=True):
+              try:
+                  d=sqlite3.connect(f'file:{p}?mode=ro',uri=True,timeout=5)
+                  tables={r[0] for r in d.execute("select name from sqlite_master where type='table'")}
+                  if 'punch_reports' not in tables: continue
+                  def n(t):
+                      return d.execute(f'select count(*) from {t}').fetchone()[0] if t in tables else None
+                  print(p,{'punch_reports':n('punch_reports'),'round_punches':n('round_punches'),'fight_punch_totals':n('fight_punch_totals'),'historical_punch_observations':n('historical_punch_observations')})
+              except Exception as e: print('ERR',p,e)
+          PY
