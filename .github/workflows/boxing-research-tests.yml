@@ -24,6 +24,6 @@ jobs:
       - name: Compile research modules
         working-directory: boxing/research
         run: python -m py_compile *.py
-      - name: Run leakage, audit and market-policy tests
+      - name: Run leakage, audit, identity and market-policy tests
         working-directory: boxing/research
-        run: python -m unittest test_chronological_master test_sample_audit test_market_consensus
+        run: python -m unittest test_chronological_master test_sample_audit test_market_consensus test_identity_links_v2
