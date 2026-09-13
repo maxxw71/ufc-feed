@@ -17,18 +17,15 @@ jobs:
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
-      - name: Check controlled deploy prerequisites
+      - name: Inspect UFC publisher
         shell: bash
         run: |
           set -u
-          echo '=== ACL TOOLS ==='
-          command -v setfacl || true
-          command -v getfacl || true
-          echo '=== RUNNER ==='
-          id || true
-          echo '=== PATHS ==='
-          namei -l /home/anestishkurti92/ufc-predictor-v1/ufc_email_watcher.py || true
-          namei -l /srv/appwiza-sports/public/ufc/index.html || true
-          namei -l /opt/sports-publisher/sports_publish.py || true
-          echo '=== SUDO RULES ==='
-          sudo -n -l 2>&1 || true
+          echo '=== initial_ufc.py ==='
+          sed -n '1,260p' /opt/sports-publisher/initial_ufc.py 2>/dev/null || true
+          echo '=== sports_publish.py relevant symbols ==='
+          grep -nE 'ufc|method|striking|publish|PUBLIC|render|watcher' /opt/sports-publisher/sports_publish.py 2>/dev/null | head -240 || true
+          echo '=== ufc_lifecycle.py ==='
+          sed -n '1,320p' /opt/sports-publisher/ufc_lifecycle.py 2>/dev/null || true
+          echo '=== publisher ownership ==='
+          ls -la /opt/sports-publisher || true
