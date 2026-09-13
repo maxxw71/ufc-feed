@@ -1,0 +1,26 @@
+name: Appwiza deploy UFC U7 gate
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/appwiza-u7-deploy.yml'
+      - 'scripts/deploy_appwiza_u7_from_repo.py'
+      - 'scripts/apply_live_striking_td_risk_gate.sh'
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    if: github.repository == 'maxxw71/ufc-feed' && github.ref == 'refs/heads/main'
+    runs-on: [self-hosted, Linux, X64, appwiza]
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Deploy reviewed U7 gate and republish UFC page
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          python3 scripts/deploy_appwiza_u7_from_repo.py --publish
