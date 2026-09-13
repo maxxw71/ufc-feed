@@ -49,6 +49,8 @@ jobs:
           db=next(os.path.join(root,f) for root,_,files in os.walk('/tmp/boxing-careers') for f in files if f.endswith('.sqlite3'))
           shutil.copy2(db,'boxing/research/boxing.sqlite3')
           PY
+      - name: Refresh stored secondary careers under strict completeness audit
+        run: python boxing/research/refresh_secondary_careers.py
       - name: Backfill highest-value missing priced fighters from Wikipedia
         env:
           LIMIT: ${{ inputs.limit || '60' }}
@@ -57,19 +59,17 @@ jobs:
         env:
           LIMIT: ${{ inputs.limit || '60' }}
         run: python boxing/research/backfill_secondary_careers.py --limit "$LIMIT"
-      - name: Refresh stored secondary careers under strict completeness audit
-        run: python boxing/research/refresh_secondary_careers.py
       - name: Remove temporary research database
         run: rm -f boxing/research/boxing.sqlite3
-      - name: Commit verified supplemental careers
+      - name: Commit verified supplements and backfill state
         run: |
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add boxing/supplemental_careers
+          git add boxing/supplemental_careers boxing/backfill_state 2>/dev/null || true
           if git diff --cached --quiet; then
-            echo 'No new verified careers.'
+            echo 'No boxing career/backfill-state changes.'
           else
-            git commit -m 'Add verified priced boxing career supplements'
+            git commit -m 'Update verified boxing career supplements'
             git pull --rebase origin main
             git push
           fi
