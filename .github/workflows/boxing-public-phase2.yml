@@ -18,7 +18,7 @@ permissions:
 jobs:
   analyze:
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@v4
         with:
@@ -93,6 +93,7 @@ jobs:
           python phase3_physical_context_scan.py
           python phase3_robustness.py
           python phase4_dynamic_factors.py
+          python audit_strict_profile_gaps.py
       - name: Collect compact results
         if: success()
         run: |
@@ -117,7 +118,7 @@ jobs:
                   else: shutil.copy2(src,out/name)
           punch=root/'punch_profiles'/'coverage.json'
           if punch.exists():shutil.copy2(punch,out/'punch_profile_coverage.json')
-          for name in ['IDENTITY_LINKS_V2.json','PRICE_MATCH_COVERAGE.json','SUPPLEMENT_APPLY_REPORT.json']:
+          for name in ['IDENTITY_LINKS_V2.json','PRICE_MATCH_COVERAGE.json','SUPPLEMENT_APPLY_REPORT.json','PROFILE_GAP_AUDIT.json']:
               src=root/name
               if src.exists():shutil.copy2(src,out/name)
           PY
@@ -128,6 +129,7 @@ jobs:
           if [ -f /tmp/boxing_phase2_missing.json ]; then cp /tmp/boxing_phase2_missing.json boxing/public_phase2/status.json; fi
           if [ -f /tmp/boxing-research/punch_profiles/coverage.json ]; then cp /tmp/boxing-research/punch_profiles/coverage.json boxing/public_phase2/punch_profile_coverage.json; fi
           if [ -f /tmp/boxing-research/SUPPLEMENT_APPLY_REPORT.json ]; then cp /tmp/boxing-research/SUPPLEMENT_APPLY_REPORT.json boxing/public_phase2/SUPPLEMENT_APPLY_REPORT.json; fi
+          if [ -f /tmp/boxing-research/PROFILE_GAP_AUDIT.json ]; then cp /tmp/boxing-research/PROFILE_GAP_AUDIT.json boxing/public_phase2/PROFILE_GAP_AUDIT.json; fi
       - name: Upload research artifact
         if: always()
         uses: actions/upload-artifact@v4
