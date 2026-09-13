@@ -1,0 +1,47 @@
+name: Boxing WBA career probe
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/boxing-wba-career-probe.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install -q beautifulsoup4 lxml
+      - name: Inspect WBA profile fight-table structure
+        run: |
+          python - <<'PY'
+          import urllib.request,re
+          from bs4 import BeautifulSoup
+          for name,i in [('Vaida Masiokaite',11929),('Boris Crighton',15366),('Gemma Ruegg',13141)]:
+              url=f'https://www.wbaboxing.com/wba-boxer-profile?id={i}'
+              req=urllib.request.Request(url,headers={'User-Agent':'Mozilla/5.0 AppwizaBoxingResearch/1.0'})
+              raw=urllib.request.urlopen(req,timeout=30).read()
+              s=BeautifulSoup(raw,'lxml')
+              print('\n===',name,url,'bytes',len(raw),'===')
+              print('H1', [x.get_text(' ',strip=True) for x in s.find_all(['h1','h2'])[:5]])
+              for ti,t in enumerate(s.find_all('table')):
+                  rows=[]
+                  for tr in t.find_all('tr')[:8]:
+                      cells=[re.sub(r'\s+',' ',x.get_text(' ',strip=True)).strip() for x in tr.find_all(['th','td'],recursive=False)]
+                      if cells:rows.append(cells)
+                  if rows:print('TABLE',ti,'ROWS',rows)
+              # also show compact date-containing blocks when tables are absent
+              hits=[]
+              for tr in s.find_all(['tr','li','div']):
+                  txt=re.sub(r'\s+',' ',tr.get_text(' ',strip=True)).strip()
+                  if re.search(r'20\d{2}-\d{2}-\d{2}',txt) and len(txt)<400:hits.append(txt)
+              print('DATE_BLOCKS',hits[:12])
+          PY
