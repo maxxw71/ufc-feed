@@ -29,7 +29,7 @@ CREATE TABLE IF NOT EXISTS secondary_fight_punch_totals(
  PRIMARY KEY(source_url,table_index,fighter_label,category));
 ''')
 OUT=ROOT/'round_archive';OUT.mkdir(exist_ok=True)
-UA='BoxingHistoryResearch/1.2; public personal research'
+UA='BoxingHistoryResearch/1.3; public personal research'
 ROOT_PAGES=['https://boxingblotter.com/','https://boxingblotter.com/programs/']
 
 def fetch(url):
@@ -65,7 +65,6 @@ def extract_tables(url,soup):
         all_tables.append(rows)
         if not rows:continue
         header=rows[0]
-        # Round-by-round table: first column is Round/Rd/Rnd and later cells contain L/T.
         if header and re.fullmatch(r'round|rd\.?|rnd\.?',header[0],re.I):
             for row in rows[1:]:
                 if len(row)!=len(header):continue
@@ -78,8 +77,6 @@ def extract_tables(url,soup):
                     round_rows.append((url,ti,label,int(rn[1]),category(header[i]),p[0],p[1],
                                        'secondary_published_counts_unverified'))
             continue
-        # Fight-total tables: require an explicit fighter/name column and explicit
-        # total/jab/power landed-thrown column labels. Never infer unlabeled columns.
         lower=[h.casefold() for h in header]
         fighter_i=next((i for i,h in enumerate(lower) if h in {'fighter','boxer','name'} or 'fighter' in h),None)
         stat_cols=[(i,category(h)) for i,h in enumerate(header)
@@ -96,10 +93,11 @@ def extract_tables(url,soup):
     return all_tables,round_rows,fight_totals
 
 def discover_programs(limit):
-    urls=[];seen=set()
-    queue=list(ROOT_PAGES)
+    urls=[];seen_urls=set();visited_pages=set();queued=set(ROOT_PAGES);queue=list(ROOT_PAGES)
     while queue and len(urls)<limit:
-        page=queue.pop(0)
+        page=queue.pop(0);queued.discard(page)
+        if page in visited_pages:continue
+        visited_pages.add(page)
         try:raw=fetch(page);s=BeautifulSoup(raw,'lxml')
         except Exception as e:
             print('DISCOVERY_FAIL',page,str(e),flush=True);continue
@@ -109,11 +107,12 @@ def discover_programs(limit):
             path=p.path.rstrip('/')
             if path.startswith('/programs/') and path!='/programs':
                 label=(a.get_text(' ',strip=True)+' '+path).casefold()
-                if 'recap' in label and u not in seen:
-                    seen.add(u);urls.append(u)
-            # Follow only explicit archive/program-list navigation pages.
-            if path in {'/programs','/archive','/programs/archive'} and u not in queue:
-                queue.append(u)
+                if 'recap' in label and u not in seen_urls:
+                    seen_urls.add(u);urls.append(u)
+                    if len(urls)>=limit:break
+            if path in {'/programs','/archive','/programs/archive'} and u not in visited_pages and u not in queued:
+                queue.append(u);queued.add(u)
+    print('DISCOVERY_INDEX_PAGES',len(visited_pages),sorted(visited_pages),flush=True)
     return urls[:limit]
 
 def main():
