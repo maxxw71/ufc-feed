@@ -1,0 +1,45 @@
+name: NFL YPP loss audit
+
+on:
+  push:
+    paths:
+      - '.github/workflows/nfl-ypp-loss-audit.yml'
+      - 'scripts/nfl_ypp_loss_audit.py'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  ROOT: /home/runner/nfl-predictor-v1
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Prepare environment
+        run: |
+          python -m venv "$ROOT/venv"
+          source "$ROOT/venv/bin/activate"
+          pip install -q --upgrade pip
+          pip install -q pandas numpy pyarrow scipy scikit-learn
+          mkdir -p "$ROOT/data/raw"
+          cp relay/nfl/schedules_2006_2026.parquet "$ROOT/data/raw/"
+          cp relay/nfl/team_weekly_2006_2026.parquet "$ROOT/data/raw/"
+      - name: Build strict pregame feature table
+        run: bash scripts/run_nfl_rolling_roi_discovery.sh
+      - name: Audit YPP walk-forward losses
+        run: |
+          source "$ROOT/venv/bin/activate"
+          python -u scripts/nfl_ypp_loss_audit.py
+      - name: Upload audit results
+        uses: actions/upload-artifact@v4
+        with:
+          name: nfl-ypp-loss-audit
+          path: /home/runner/nfl-predictor-v1/nfl_ypp_loss_audit/*.csv
+          if-no-files-found: error
