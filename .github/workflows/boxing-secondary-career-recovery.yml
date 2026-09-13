@@ -1,0 +1,87 @@
+name: Boxing secondary career recovery
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/boxing-secondary-career-recovery.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  recover:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install dependencies
+        run: pip install -q beautifulsoup4 lxml python-dateutil
+      - name: Download research database
+        run: |
+          python - <<'PY'
+          import io,zipfile,urllib.request,os,shutil
+          url='https://appwiza.com/sports/downloads/boxing/research-database.zip'
+          req=urllib.request.Request(url,headers={'User-Agent':'Mozilla/5.0 AppwizaSecondaryCareer/1.0'})
+          with urllib.request.urlopen(req,timeout=180) as r:data=r.read()
+          z=zipfile.ZipFile(io.BytesIO(data));z.extractall('/tmp/boxing-secondary')
+          db=next(os.path.join(root,f) for root,_,files in os.walk('/tmp/boxing-secondary') for f in files if f.endswith('.sqlite3'))
+          shutil.copy2(db,'boxing/research/boxing.sqlite3')
+          PY
+      - name: Recover deeper secondary careers
+        run: |
+          python boxing/research/backfill_secondary_careers.py --limit 180
+          python boxing/research/refresh_secondary_careers.py
+          rm -f boxing/research/boxing.sqlite3
+      - name: Merge recovered careers onto latest main
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          rm -rf /tmp/generated-secondary
+          mkdir -p /tmp/generated-secondary
+          cp -a boxing/supplemental_careers /tmp/generated-secondary/
+          git fetch origin main
+          git reset --hard origin/main
+          python - <<'PY'
+          import json,re,unicodedata,shutil
+          from pathlib import Path
+          def nk(s):
+              x=unicodedata.normalize('NFKD',str(s or '')).encode('ascii','ignore').decode().lower()
+              return re.sub(r'[^a-z0-9]','',x)
+          base=Path('boxing/supplemental_careers');gen=Path('/tmp/generated-secondary/supplemental_careers')
+          base.mkdir(parents=True,exist_ok=True)
+          def read_jsonl(p):
+              out={}
+              if p.exists():
+                  for line in p.read_text().splitlines():
+                      try:
+                          x=json.loads(line);out[nk(x.get('requested_name') or x.get('verified_title'))]=x
+                      except Exception:pass
+              return out
+          bp=base/'verified_priced_careers.jsonl';gp=gen/'verified_priced_careers.jsonl'
+          merged=read_jsonl(bp);g=read_jsonl(gp)
+          for k,x in g.items():
+              old=merged.get(k)
+              if old is None or x.get('career_complete') is True or x.get('refreshed_at'):merged[k]=x
+          with bp.open('w',encoding='utf-8') as f:
+              for x in sorted(merged.values(),key=lambda r:nk(r.get('requested_name') or r.get('verified_title'))):
+                  f.write(json.dumps(x,ensure_ascii=False)+'\n')
+          for p in gen.iterdir():
+              if p.name=='verified_priced_careers.jsonl':continue
+              if p.is_file():shutil.copy2(p,base/p.name)
+          PY
+          git add boxing/supplemental_careers
+          if git diff --cached --quiet; then
+            echo 'No new secondary career changes.'
+          else
+            git commit -m 'Expand verified secondary boxing careers'
+            git push origin HEAD:main
+          fi
