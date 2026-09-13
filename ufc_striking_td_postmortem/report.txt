@@ -1,0 +1,60 @@
+UFC STRIKING + TD DEFENSE — POST-MORTEM / ROBUSTNESS
+========================================================================================================
+
+Baseline deployed rule:
+market>=70%, >=4 prior fights each, sig-strike differential gap>=1.0/min, TD-defense gap>=10pp
+Baseline: 54 bets | 51-3 | 94.4% wins | ROI +17.64%
+Pre-2020 ROI +16.28% | 2020+ ROI +19.09% | 2022+ ROI +15.82%
+
+Subgroups
+--------------------------------------------------------------------------------------------------------
+Men                                n= 49 46-3 win= 93.9% ROI=+17.06%
+Women                              n=  5 5-0 win=100.0% ROI=+23.26%
+Favorite younger/same age          n=  0 0-0 win=  nan% ROI=  +nan%
+Favorite older                     n=  0 0-0 win=  nan% ROI=  +nan%
+Favorite >=2y older                n=  0 0-0 win=  nan% ROI=  +nan%
+Market 70-74.99%                   n= 18 17-1 win= 94.4% ROI=+24.65%
+Market >=75%                       n= 36 34-2 win= 94.4% ROI=+14.13%
+Has second striking method         n= 32 31-1 win= 96.9% ROI=+16.43%
+TD method only                     n= 22 20-2 win= 90.9% ROI=+19.38%
+
+Candidates clearing conservative promotion screen
+--------------------------------------------------------------------------------------------------------
+POWER INTERACTION            n= 37 37-0 win=100.0% ROI=+23.37% (dROI +5.73pp) | pre=+23.37% recent=+23.36% | removed 14W/3L | veto opp KD/15 >= 0.25 AND fav KD-abs/15 >= 0.125
+LAYOFF                       n= 38 37-1 win= 97.4% ROI=+21.08% (dROI +3.45pp) | pre=+26.04% recent=+16.62% | removed 14W/2L | veto if favorite layoff exceeds opponent by > 90 days
+MATCHUP-RELEVANT WRESTLING   n= 39 38-1 win= 97.4% ROI=+20.80% (dROI +3.16pp) | pre=+19.62% recent=+22.17% | removed 13W/2L | keep if opp TDatt/15 >= 4 OR (fav TDatt/15 >= 2 & fav ctrl/15 >=1 & opp TDD<=75%)
+MATCHUP-RELEVANT WRESTLING   n= 37 36-1 win= 97.3% ROI=+20.67% (dROI +3.04pp) | pre=+24.78% recent=+13.93% | removed 15W/2L | keep if opp TDatt/15 >= 2 OR (fav TDatt/15 >= 5 & fav ctrl/15 >=1 & opp TDD<=75%)
+MATCHUP-RELEVANT WRESTLING   n= 38 37-1 win= 97.4% ROI=+20.55% (dROI +2.91pp) | pre=+19.09% recent=+22.17% | removed 14W/2L | keep if opp TDatt/15 >= 5 OR (fav TDatt/15 >= 2 & fav ctrl/15 >=1 & opp TDD<=75%)
+MATCHUP-RELEVANT WRESTLING   n= 37 36-1 win= 97.3% ROI=+20.42% (dROI +2.78pp) | pre=+19.62% recent=+21.46% | removed 15W/2L | keep if opp TDatt/15 >= 4 OR (fav TDatt/15 >= 3 & fav ctrl/15 >=1 & opp TDD<=75%)
+MATCHUP-RELEVANT WRESTLING   n= 36 35-1 win= 97.2% ROI=+20.14% (dROI +2.51pp) | pre=+19.09% recent=+21.46% | removed 16W/2L | keep if opp TDatt/15 >= 5 OR (fav TDatt/15 >= 3 & fav ctrl/15 >=1 & opp TDD<=75%)
+LAYOFF                       n= 49 47-2 win= 95.9% ROI=+19.14% (dROI +1.51pp) | pre=+20.40% recent=+17.94% | removed 4W/1L | veto if favorite layoff exceeds opponent by > 270 days
+LAYOFF                       n= 49 47-2 win= 95.9% ROI=+19.14% (dROI +1.51pp) | pre=+20.40% recent=+17.94% | removed 4W/1L | veto if favorite layoff exceeds opponent by > 365 days
+MATCHUP-RELEVANT WRESTLING   n= 49 47-2 win= 95.9% ROI=+19.13% (dROI +1.50pp) | pre=+20.49% recent=+17.60% | removed 4W/1L | keep if opp TDatt/15 >= 2 OR (fav TDatt/15 >= 1.5 & fav ctrl/15 >=1 & opp TDD<=75%)
+LAST5 FORM                   n= 50 48-2 win= 96.0% ROI=+19.07% (dROI +1.44pp) | pre=+19.73% recent=+18.42% | removed 3W/1L | veto if favorite last5 trails opponent by > 0.00
+LAST5 FORM                   n= 50 48-2 win= 96.0% ROI=+19.07% (dROI +1.44pp) | pre=+19.73% recent=+18.42% | removed 3W/1L | veto if favorite last5 trails opponent by > 0.10
+LAST3 FORM                   n= 48 46-2 win= 95.8% ROI=+19.06% (dROI +1.42pp) | pre=+19.73% recent=+18.33% | removed 5W/1L | veto if favorite last3 trails opponent by > 0.00
+LAST3 FORM                   n= 48 46-2 win= 95.8% ROI=+19.06% (dROI +1.42pp) | pre=+19.73% recent=+18.33% | removed 5W/1L | veto if favorite last3 trails opponent by > 0.15
+LAST3 FORM                   n= 48 46-2 win= 95.8% ROI=+19.06% (dROI +1.42pp) | pre=+19.73% recent=+18.33% | removed 5W/1L | veto if favorite last3 trails opponent by > 0.25
+LAYOFF                       n= 46 44-2 win= 95.7% ROI=+18.99% (dROI +1.36pp) | pre=+20.56% recent=+17.42% | removed 7W/1L | veto if favorite layoff exceeds opponent by > 180 days
+WRESTLING RELEVANCE SENSITIVITY n= 47 45-2 win= 95.7% ROI=+18.97% (dROI +1.33pp) | pre=+19.97% recent=+17.83% | removed 6W/1L | keep oppTDatt>=2 OR (favTDatt>=2 & ctrl>=0.5 & oppTDD<=0.80)
+WRESTLING RELEVANCE SENSITIVITY n= 47 45-2 win= 95.7% ROI=+18.97% (dROI +1.33pp) | pre=+19.97% recent=+17.83% | removed 6W/1L | keep oppTDatt>=2 OR (favTDatt>=2 & ctrl>=1 & oppTDD<=0.80)
+WRESTLING RELEVANCE SENSITIVITY n= 45 43-2 win= 95.6% ROI=+18.89% (dROI +1.26pp) | pre=+20.17% recent=+17.43% | removed 8W/1L | keep oppTDatt>=2 OR (favTDatt>=2 & ctrl>=0.5 & oppTDD<=0.70)
+WRESTLING RELEVANCE SENSITIVITY n= 45 43-2 win= 95.6% ROI=+18.89% (dROI +1.26pp) | pre=+20.17% recent=+17.43% | removed 8W/1L | keep oppTDatt>=2 OR (favTDatt>=2 & ctrl>=1 & oppTDD<=0.70)
+MATCHUP-RELEVANT WRESTLING   n= 46 44-2 win= 95.7% ROI=+18.81% (dROI +1.18pp) | pre=+19.97% recent=+17.43% | removed 7W/1L | keep if opp TDatt/15 >= 2 OR (fav TDatt/15 >= 2 & fav ctrl/15 >=1 & opp TDD<=75%)
+WRESTLING RELEVANCE SENSITIVITY n= 46 44-2 win= 95.7% ROI=+18.81% (dROI +1.18pp) | pre=+19.97% recent=+17.43% | removed 7W/1L | keep oppTDatt>=2 OR (favTDatt>=2 & ctrl>=0.5 & oppTDD<=0.75)
+WRESTLING RELEVANCE SENSITIVITY n= 46 44-2 win= 95.7% ROI=+18.81% (dROI +1.18pp) | pre=+19.97% recent=+17.43% | removed 7W/1L | keep oppTDatt>=2 OR (favTDatt>=2 & ctrl>=1 & oppTDD<=0.75)
+MATCHUP-RELEVANT WRESTLING   n= 45 43-2 win= 95.6% ROI=+18.79% (dROI +1.15pp) | pre=+19.99% recent=+17.54% | removed 8W/1L | keep if opp TDatt/15 >= 3 OR (fav TDatt/15 >= 1.5 & fav ctrl/15 >=1 & opp TDD<=75%)
+WRESTLING RELEVANCE SENSITIVITY n= 45 43-2 win= 95.6% ROI=+18.70% (dROI +1.07pp) | pre=+19.97% recent=+17.12% | removed 8W/1L | keep oppTDatt>=2 OR (favTDatt>=2 & ctrl>=1.5 & oppTDD<=0.80)
+WRESTLING RELEVANCE SENSITIVITY n= 45 43-2 win= 95.6% ROI=+18.70% (dROI +1.07pp) | pre=+19.97% recent=+17.12% | removed 8W/1L | keep oppTDatt>=2 OR (favTDatt>=2 & ctrl>=2 & oppTDD<=0.80)
+OPPONENT POWER               n= 45 43-2 win= 95.6% ROI=+18.34% (dROI +0.71pp) | pre=+19.03% recent=+17.56% | removed 8W/1L | veto opponent KD/15 >= 0.75
+LAST3 FORM                   n= 54 51-3 win= 94.4% ROI=+17.64% (dROI +0.00pp) | pre=+16.28% recent=+19.09% | removed 0W/0L | veto if favorite last3 trails opponent by > 0.34
+LAST3 FORM                   n= 54 51-3 win= 94.4% ROI=+17.64% (dROI +0.00pp) | pre=+16.28% recent=+19.09% | removed 0W/0L | veto if favorite last3 trails opponent by > 0.50
+LAST5 FORM                   n= 54 51-3 win= 94.4% ROI=+17.64% (dROI +0.00pp) | pre=+16.28% recent=+19.09% | removed 0W/0L | veto if favorite last5 trails opponent by > 0.25
+
+Interpretation rules
+--------------------------------------------------------------------------------------------------------
+* A filter is not promoted merely because it would exclude Fiorot-Grasso.
+* Prefer simple gates that improve ROI while retaining >=55% of the sample and staying positive in both eras.
+* Women/men splits are descriptive unless sample sizes are independently adequate.
+* Matchup-relevant wrestling means opponent TD volume OR favorite offensive wrestling into weak opponent TDD.
+* If no filter passes, retain the original rule and downgrade confidence rather than retrofitting.
