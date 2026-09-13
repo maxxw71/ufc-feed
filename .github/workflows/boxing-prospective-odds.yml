@@ -1,0 +1,49 @@
+name: Boxing prospective odds snapshots
+
+on:
+  schedule:
+    - cron: '17 */4 * * *'
+  workflow_dispatch:
+  push:
+    paths:
+      - '.github/workflows/boxing-prospective-odds.yml'
+      - 'boxing/collectors/prospective_odds_snapshot.py'
+      - 'boxing/collectors/test_prospective_odds_snapshot.py'
+
+concurrency:
+  group: boxing-prospective-odds
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  snapshot:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install parser dependencies
+        run: pip install -q beautifulsoup4 lxml
+      - name: Test prospective parser
+        working-directory: boxing/collectors
+        run: python -m unittest test_prospective_odds_snapshot
+      - name: Capture current upcoming moneylines
+        run: python boxing/collectors/prospective_odds_snapshot.py
+      - name: Commit timestamped snapshot
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add boxing/prospective_odds
+          if git diff --cached --quiet; then
+            echo 'No prospective odds changes.'
+          else
+            git commit -m 'Snapshot prospective boxing odds'
+            git pull --rebase origin main
+            git push
+          fi
