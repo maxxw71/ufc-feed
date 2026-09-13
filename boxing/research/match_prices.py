@@ -10,16 +10,22 @@ from pathlib import Path
 from features import namekey
 ROOT=Path(__file__).resolve().parent
 
+
 def shifted(date,days):
     try:return (dt.date.fromisoformat(date)+dt.timedelta(days=days)).isoformat()
     except Exception:return None
+
 
 def main():
     db=sqlite3.connect(ROOT/'boxing.sqlite3',timeout=120);db.row_factory=sqlite3.Row
     index=collections.defaultdict(list)
     for row in db.execute("SELECT * FROM bouts WHERE status='FINISHED' AND date>='1990-01-01'").fetchall():
         index[(row['date'],*sorted([namekey(row['boxer_a']),namekey(row['boxer_b'])]))].append(dict(row))
-    features={r['source_id'] for r in db.execute('SELECT source_id FROM pre_bout_features').fetchall()}
+    # The chronological master now reconstructs pre-fight histories directly from
+    # accepted source-specific bout rows, so a verified Wikipedia or Champinon
+    # orientation can serve as the quote-linked fighter bout even when it does not
+    # already exist in the older pre_bout_features table.
+    eligible_bout_sources={'wikipedia','champinon'}
     matchups={r['source_id']:json.loads(r['data']) for r in db.execute("SELECT source_id,data FROM source_rows WHERE source='proboxingodds' AND kind='matchup'").fetchall()}
     db.execute('''CREATE TABLE IF NOT EXISTS priced_bout_research(
         quote_rowid INTEGER PRIMARY KEY,odds_bout_id TEXT,event_date TEXT,bookmaker TEXT,
@@ -62,8 +68,10 @@ def main():
         elif outcome==selection:result='WIN';profit=quote['decimal_price']-1
         elif outcome in set(map(namekey,names)):result='LOSS';profit=-1
         else:counts['invalid_selection_or_result']+=1;continue
-        own=[r for r in candidates if r['source_id'] in features and namekey(r['boxer_a'])==selection]
-        ownid=own[0]['source_id'] if len(own)==1 else None
+        own=[r for r in candidates if r.get('source') in eligible_bout_sources and namekey(r['boxer_a'])==selection]
+        ownids=sorted({r['source_id'] for r in own})
+        ownid=ownids[0] if len(ownids)==1 else None
+        if len(ownids)>1:counts['ambiguous_fighter_orientation']+=1
         readiness='exploratory_only_quote_time_unverified' if result in ['WIN','LOSS'] else 'excluded_draw_nc_settlement_unknown'
         db.execute('''INSERT OR REPLACE INTO priced_bout_research(
             quote_rowid,odds_bout_id,event_date,bookmaker,selection,decimal_price,result,
