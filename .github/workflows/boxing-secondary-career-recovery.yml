@@ -6,6 +6,13 @@ on:
     branches: [main]
     paths:
       - '.github/workflows/boxing-secondary-career-recovery.yml'
+      - 'boxing/research/backfill_secondary_careers.py'
+      - 'boxing/research/backfill_wba_consensus_careers.py'
+      - 'boxing/research/refresh_secondary_careers.py'
+
+concurrency:
+  group: boxing-secondary-career-recovery
+  cancel-in-progress: true
 
 permissions:
   contents: write
@@ -13,7 +20,7 @@ permissions:
 jobs:
   recover:
     runs-on: ubuntu-latest
-    timeout-minutes: 25
+    timeout-minutes: 50
     steps:
       - uses: actions/checkout@v4
         with:
@@ -34,10 +41,11 @@ jobs:
           db=next(os.path.join(root,f) for root,_,files in os.walk('/tmp/boxing-secondary') for f in files if f.endswith('.sqlite3'))
           shutil.copy2(db,'boxing/research/boxing.sqlite3')
           PY
-      - name: Recover deeper secondary careers
+      - name: Recover deep secondary and WBA-consensus careers
         run: |
-          python boxing/research/backfill_secondary_careers.py --limit 180
+          python boxing/research/backfill_secondary_careers.py --limit 500
           python boxing/research/refresh_secondary_careers.py
+          python boxing/research/backfill_wba_consensus_careers.py --limit 100
           rm -f boxing/research/boxing.sqlite3
       - name: Merge recovered careers onto latest main
         shell: bash
