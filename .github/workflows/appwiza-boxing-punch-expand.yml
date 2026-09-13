@@ -1,0 +1,57 @@
+name: Appwiza boxing punch expansion
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/appwiza-boxing-punch-expand.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  expand:
+    if: github.repository == 'maxxw71/ufc-feed' && github.ref == 'refs/heads/main'
+    runs-on: [self-hosted, Linux, X64, appwiza]
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Expand verified punch reports safely
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          ROOT=/home/anestishkurti92/boxing-research
+          cd "$ROOT"
+          test -x venv/bin/python
+          test -f boxing.sqlite3
+          [ "$(systemctl is-active boxing-archive.service 2>/dev/null || true)" != active ] || { echo 'boxing-archive.service is active; refusing concurrent write'; exit 2; }
+          available=$(df -Pk . | awk 'NR==2 {print $4}')
+          [ "$available" -ge 2097152 ] || { echo 'Less than 2 GiB free; refusing collection'; exit 3; }
+          exec 6>archive-drain.lock
+          flock -n 6 || { echo 'archive drain lock busy'; exit 4; }
+          exec 7>data-enrichment.lock
+          flock -n 7 || { echo 'data enrichment lock busy'; exit 5; }
+          exec 9>continuation.lock
+          flock -n 9 || { echo 'continuation lock busy'; exit 6; }
+          venv/bin/python - <<'PY'
+          import sqlite3,json
+          d=sqlite3.connect('boxing.sqlite3')
+          tabs={r[0] for r in d.execute("select name from sqlite_master where type='table'")}
+          def n(t): return d.execute(f'select count(*) from {t}').fetchone()[0] if t in tabs else 0
+          print('BEFORE',json.dumps({t:n(t) for t in ['punch_reports','round_punches','fight_punch_totals','historical_punch_observations']}))
+          if 'punch_reports' in tabs:
+              print('STATUS_BEFORE',list(d.execute('select status,count(*) from punch_reports group by status order by status')))
+          PY
+          nice -n 15 venv/bin/python -u punch_collect.py | tee PUNCH_EXPAND.latest.log
+          venv/bin/python - <<'PY'
+          import sqlite3,json,datetime
+          d=sqlite3.connect('boxing.sqlite3')
+          tabs={r[0] for r in d.execute("select name from sqlite_master where type='table'")}
+          def n(t): return d.execute(f'select count(*) from {t}').fetchone()[0] if t in tabs else 0
+          out={t:n(t) for t in ['punch_reports','round_punches','fight_punch_totals','historical_punch_observations']}
+          if 'punch_reports' in tabs: out['statuses']=list(d.execute('select status,count(*) from punch_reports group by status order by status'))
+          out['completed_at']=datetime.datetime.now(datetime.timezone.utc).isoformat()
+          open('PUNCH_EXPAND_STATUS.json','w').write(json.dumps(out,indent=2))
+          print('AFTER',json.dumps(out))
+          PY
