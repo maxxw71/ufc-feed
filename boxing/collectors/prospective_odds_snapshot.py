@@ -1,10 +1,11 @@
 #!/usr/bin/env python3
 """Prospectively snapshot upcoming ProBoxingOdds moneylines.
 
-Unlike the historical archive collector, every row here receives an actual UTC
-fetch timestamp. Future-date snapshots are therefore auditable pre-event price
-observations. Same-day observations remain separately flagged unless event time
-is independently verified.
+Every row receives an actual UTC fetch timestamp.  The public PBO page lists a
+calendar heading and UTC start time for current bouts; when both are parsed we
+store an explicit event_start_utc and can certify same-day observations fetched
+before that listed time.  If the time is missing, the older conservative
+future-date/date-unresolved flags remain in force.
 """
 from __future__ import annotations
 import datetime as dt,hashlib,json,re,subprocess,time,urllib.request,unicodedata
@@ -41,6 +42,20 @@ def heading_for(table):
                 return text
     return ''
 
+def start_utc(event_date,clock):
+    if not event_date or not clock:return None
+    try:return dt.datetime.fromisoformat(event_date+'T'+clock+':00+00:00').isoformat().replace('+00:00','Z')
+    except ValueError:return None
+
+def timing_quality(event_date,event_start,now):
+    if event_start:
+        try:
+            when=dt.datetime.fromisoformat(event_start.replace('Z','+00:00'))
+            return 'verified_pre_event_time' if now < when else 'observed_at_or_after_listed_time'
+        except ValueError:pass
+    if event_date and event_date>now.date().isoformat():return 'verified_pre_event_date'
+    return 'same_day_or_date_unresolved'
+
 def parse_home(html,now=None):
     now=now or dt.datetime.now(dt.timezone.utc)
     soup=BeautifulSoup(html,'lxml')
@@ -49,10 +64,12 @@ def parse_home(html,now=None):
         label=heading_for(table);event_date=infer_event_date(label,now)
         books={int(c['data-b']):c.get_text(' ',strip=True) for c in table.select('thead th[data-b]')}
         if not books:continue
-        participants={}
-        quotes=[]
+        participants={};bout_times={};quotes=[];current_clock=None
         for tr in table.select('tbody tr'):
             if 'pr' in (tr.get('class') or []):continue
+            text=tr.get_text(' ',strip=True)
+            tm=re.search(r'(?<!\d)([01]?\d|2[0-3]):([0-5]\d)(?!\d)',text)
+            if tm:current_clock=f'{int(tm.group(1)):02d}:{tm.group(2)}'
             a=tr.select_one('th a[href^="/fighters/"]')
             if not a:continue
             fighter=a.get_text(' ',strip=True)
@@ -60,31 +77,32 @@ def parse_home(html,now=None):
                 try:ids=json.loads(td['data-li'])
                 except Exception:continue
                 if len(ids)!=3:continue
-                book_id,side,bout=ids;book=books.get(book_id)
-                participants.setdefault(str(bout),{})[str(side)]=fighter
+                book_id,side,bout=ids;book=books.get(book_id);bout=str(bout);side=str(side)
+                participants.setdefault(bout,{})[side]=fighter
+                if current_clock:bout_times.setdefault(bout,current_clock)
                 val=td.select_one('span[id^="oID"]')
                 if not book or not val:continue
                 raw=val.get_text(strip=True).replace('−','-')
                 if not re.fullmatch(r'[+-]\d+',raw):continue
                 american=int(raw)
                 if abs(american)<100:continue
-                quotes.append((str(bout),str(side),fighter,book,american,american_to_decimal(american)))
+                quotes.append((bout,side,fighter,book,american,american_to_decimal(american)))
         for bout,side,fighter,book,american,decimal in quotes:
             names=participants.get(bout,{})
             if len(set(names.values()))!=2:continue
             market_class='prediction_market' if book.casefold() in {'polymarket','kalshi'} else 'sportsbook'
-            timing='verified_pre_event_date' if event_date and event_date>now.date().isoformat() else 'same_day_or_date_unresolved'
-            rows.append({'bout_id':bout,'event_date':event_date,'event_label':label,'selection':fighter,
-                         'participants':names,'bookmaker':book,'market_class':market_class,
-                         'american_price':american,'decimal_price':decimal,'timing_quality':timing})
+            clock=bout_times.get(bout);event_start=start_utc(event_date,clock);timing=timing_quality(event_date,event_start,now)
+            rows.append({'bout_id':bout,'event_date':event_date,'event_time_utc':clock,'event_start_utc':event_start,
+                         'event_label':label,'selection':fighter,'participants':names,'bookmaker':book,
+                         'market_class':market_class,'american_price':american,'decimal_price':decimal,
+                         'timing_quality':timing})
     return rows
 
 def fetch():
-    ua='Mozilla/5.0 AppwizaProspectiveBoxing/1.1'
+    ua='Mozilla/5.0 AppwizaProspectiveBoxing/1.2'
     last=None
     for attempt in range(3):
         try:
-            # curl has proved more reliable than urllib against this host from cloud runners.
             p=subprocess.run(['curl','-4','--http1.1','-L','--compressed','--fail','--silent','--show-error',
                               '--connect-timeout','20','--max-time','180','--retry','2','--retry-delay','3',
                               '-A',ua,BASE],capture_output=True,timeout=200)
@@ -92,7 +110,6 @@ def fetch():
             last=RuntimeError(p.stderr.decode('utf-8','replace') or f'curl exit {p.returncode}')
         except Exception as e:last=e
         time.sleep(4*(attempt+1))
-    # Final urllib fallback for non-curl environments.
     try:
         req=urllib.request.Request(BASE,headers={'User-Agent':ua,'Connection':'close'})
         with urllib.request.urlopen(req,timeout=180) as r:return r.read()
@@ -102,12 +119,15 @@ def fetch():
 def main():
     now=dt.datetime.now(dt.timezone.utc);raw=fetch();sha=hashlib.sha256(raw).hexdigest()
     quotes=parse_home(raw,now)
-    snap={'fetched_at':now.isoformat(),'source_url':BASE,'raw_sha256':sha,
-          'quote_rows':len(quotes),'future_date_rows':sum(q['timing_quality']=='verified_pre_event_date' for q in quotes),
+    certified=sum(q['timing_quality'] in {'verified_pre_event_time','verified_pre_event_date'} for q in quotes)
+    snap={'fetched_at':now.isoformat(),'source_url':BASE,'raw_sha256':sha,'quote_rows':len(quotes),
+          'verified_pre_event_rows':certified,
+          'future_date_rows':sum(q['timing_quality']=='verified_pre_event_date' for q in quotes),
+          'verified_pre_event_time_rows':sum(q['timing_quality']=='verified_pre_event_time' for q in quotes),
           'sportsbook_rows':sum(q['market_class']=='sportsbook' for q in quotes),'quotes':quotes}
     ROOT.mkdir(parents=True,exist_ok=True)
     day=ROOT/(now.date().isoformat()+'.jsonl')
     with day.open('a',encoding='utf-8') as f:f.write(json.dumps(snap,separators=(',',':'),ensure_ascii=False)+'\n')
     (ROOT/'latest.json').write_text(json.dumps(snap,indent=2,ensure_ascii=False))
-    print(json.dumps({k:snap[k] for k in ['fetched_at','raw_sha256','quote_rows','future_date_rows','sportsbook_rows']},indent=2))
+    print(json.dumps({k:snap[k] for k in ['fetched_at','raw_sha256','quote_rows','verified_pre_event_rows','verified_pre_event_time_rows','future_date_rows','sportsbook_rows']},indent=2))
 if __name__=='__main__':main()
