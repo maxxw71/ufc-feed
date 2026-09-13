@@ -48,10 +48,14 @@ def main():
         for e in x.get('matched_price_evidence') or []:
             ident=by_key.get((e['date'],nk(e['opponent'])))
             if not ident:continue
-            # Attach every exact selection quote for this PBO bout/date to the newly verified career row.
-            cur=con.execute('''UPDATE priced_bout_research SET feature_bout_id=? WHERE odds_bout_id=? AND event_date=? AND lower(replace(replace(selection,' ',''),'-',''))=? AND feature_bout_id IS NULL''',
-                            (ident,e['odds_bout_id'],e['date'],nk(name)))
-            added_quotes+=cur.rowcount
+            # Attach every exact normalized selection quote for this PBO bout/date.
+            candidates=con.execute('''SELECT quote_rowid,selection FROM priced_bout_research
+                                      WHERE odds_bout_id=? AND event_date=? AND feature_bout_id IS NULL
+                                      AND result IN ('WIN','LOSS')''',(e['odds_bout_id'],e['date'])).fetchall()
+            for q in candidates:
+                if nk(q['selection'])!=nk(name):continue
+                con.execute('UPDATE priced_bout_research SET feature_bout_id=? WHERE quote_rowid=?',(ident,q['quote_rowid']))
+                added_quotes+=1
         fighters+=1
     con.commit()
     print(json.dumps({'supplemental_fighters':fighters,'inserted_bouts':added_bouts,'quote_links_added':added_quotes}))
