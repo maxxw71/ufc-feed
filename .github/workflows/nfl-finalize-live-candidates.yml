@@ -1,4 +1,5 @@
 name: NFL finalize live candidates
+# Manual kick after all required research outputs landed.
 on:
   push:
     branches: [main]
@@ -7,6 +8,7 @@ on:
       - 'nfl/exact_price_windows/method_price_windows.csv'
       - 'nfl/next_wave_combinations/next_wave_survivors.csv'
       - 'nfl/travel_deployment_audit/travel_methods_ready.csv'
+      - '.github/workflows/nfl-finalize-live-candidates.yml'
   workflow_dispatch:
 permissions:
   contents: write
