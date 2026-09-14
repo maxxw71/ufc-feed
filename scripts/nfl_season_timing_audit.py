@@ -3,9 +3,11 @@ import json, os
 import numpy as np
 import pandas as pd
 
+ROOT=Path('/home/anestishkurti92/nfl-predictor-v1')
 CTX=Path('/home/appwiza-runner/nfl-context-data')
 REPO=Path(os.environ.get('GITHUB_WORKSPACE','.'))
 DATA=CTX/'coaching_everything'/'coaching_enriched_team_sides_2006_2025.parquet'
+SCHED=ROOT/'data'/'raw'/'schedules_2006_2026.parquet'
 REG=REPO/'nfl/live_candidate_finalization/final_candidate_registry.csv'
 OUT=CTX/'season_timing_audit'; OUT.mkdir(parents=True,exist_ok=True)
 
@@ -20,11 +22,15 @@ def metrics(x):
     return {'n':int(len(x)),'wins':int(x.win.sum()),'losses':int(len(x)-x.win.sum()),'roi':float(x.profit_units.mean()),'units':float(x.profit_units.sum())}
 
 d=pd.read_parquet(DATA)
+# Hard regular-season gate from the authoritative schedule. This prevents postseason rows
+# in the enriched research table from affecting timing/deployment decisions.
+s=pd.read_parquet(SCHED,columns=['game_id','game_type'])
+reg_ids=set(s.loc[s.game_type.astype(str).eq('REG'),'game_id'].astype(str))
+d=d[d.game_id.astype(str).isin(reg_ids)].copy()
 d=d[d.season.between(2006,2025)].copy()
 d['week']=num(d.week)
 d['prior_games']=num(d.get('prior_games',np.nan))
-d=d[d.prior_games>=3].copy()  # same maturity rule used in discovery/finalization
-# Completed historical rows only.
+d=d[d.prior_games>=3].copy()
 d=d[num(d.win).isin([0,1]) & num(d.moneyline).notna()].copy()
 d['win']=num(d.win); d['moneyline']=num(d.moneyline); d['profit_units']=profit(d.win,d.moneyline)
 d['market_prob_use']=num(d.market_prob) if 'market_prob' in d else pd.Series(implied(d.moneyline),index=d.index)
@@ -73,7 +79,6 @@ for _,r in reg.iterrows():
         rec[f'{name}_trainval_n']=ztv['n']; rec[f'{name}_trainval_roi']=ztv['roi']; rec[f'{name}_holdout_n']=zho['n']; rec[f'{name}_holdout_roi']=zho['roi']
         detail.append({'candidate_id':r.candidate_id,'bucket':name,'week_lo':lo,'week_hi':hi,**z,
                        'trainval_n':ztv['n'],'trainval_roi':ztv['roi'],'holdout_n':zho['n'],'holdout_roi':zho['roi']})
-    # Deployment timing guard. Discovery already required prior_games>=3. Only allow W4 start when early evidence exists in both eras.
     e_n=rec['W4_6_n']; e_tv=rec['W4_6_trainval_n']; e_ho=rec['W4_6_holdout_n']; e_tv_roi=rec['W4_6_trainval_roi']; e_ho_roi=rec['W4_6_holdout_roi']
     if rec['min_week']>4:
         timing='START_AT_HISTORICAL_MIN_WEEK'; start=int(rec['min_week'])
@@ -89,7 +94,6 @@ for _,r in reg.iterrows():
 res=pd.DataFrame(rows)
 res.to_csv(OUT/'method_season_timing.csv',index=False)
 pd.DataFrame(detail).to_csv(OUT/'method_week_bucket_performance.csv',index=False)
-# Focus tables
 live=res[res.deployment_status.eq('LIVE_READY')].copy()
 watch=res[res.deployment_status.eq('WATCHLIST')].copy()
 live.to_csv(OUT/'live_ready_timing.csv',index=False)
@@ -100,11 +104,14 @@ summary={
  'live_ready_week4_ok':int((live.recommended_start_week==4).sum()) if len(live) else 0,
  'live_ready_start_week7_or_later':int((live.recommended_start_week>=7).sum()) if len(live) else 0,
  'all_min_week':int(res.min_week.min()) if len(res) else None,
+ 'all_max_week':int(res.max_week.max()) if len(res) else None,
  'global_maturity_rule':'prior_games >= 3 completed games for selected team',
+ 'regular_season_only':True,
 }
 (OUT/'summary.json').write_text(json.dumps(summary,indent=2))
-lines=['NFL SEASON TIMING + MATURITY AUDIT','',json.dumps(summary,indent=2),'','LIVE READY TIMING']
+lines=['NFL SEASON TIMING + MATURITY AUDIT (REGULAR SEASON ONLY)','',json.dumps(summary,indent=2),'','LIVE READY TIMING']
 for _,r in live.sort_values(['recommended_start_week','holdout_roi'],ascending=[True,False]).iterrows():
-    lines.append(f"{r.candidate_id} | start=W{int(r.recommended_start_week)} ({r.timing_decision}) | historical weeks {int(r.min_week)}-{int(r.max_week)}, median W{r.median_week:.1f} | W4-6 n={int(r.W4_6_n)} ROI={100*r.W4_6_roi:+.1f}% (pre {100*r.W4_6_trainval_roi:+.1f}% / hold {100*r.W4_6_holdout_roi:+.1f}%) | W7-10 n={int(r.W7_10_n)} ROI={100*r.W7_10_roi:+.1f}% | W11-14 n={int(r.W11_14_n)} ROI={100*r.W11_14_roi:+.1f}% | W15-18 n={int(r.W15_18_n)} ROI={100*r.W15_18_roi:+.1f}%")
+    def pct(v): return 'NA' if pd.isna(v) else f'{100*v:+.1f}%'
+    lines.append(f"{r.candidate_id} | start=W{int(r.recommended_start_week)} ({r.timing_decision}) | historical weeks {int(r.min_week)}-{int(r.max_week)}, median W{r.median_week:.1f} | W4-6 n={int(r.W4_6_n)} ROI={pct(r.W4_6_roi)} (pre {pct(r.W4_6_trainval_roi)} / hold {pct(r.W4_6_holdout_roi)}) | W7-10 n={int(r.W7_10_n)} ROI={pct(r.W7_10_roi)} | W11-14 n={int(r.W11_14_n)} ROI={pct(r.W11_14_roi)} | W15-18 n={int(r.W15_18_n)} ROI={pct(r.W15_18_roi)}")
 (OUT/'report.txt').write_text('\n'.join(lines)+'\n')
 print('\n'.join(lines))
