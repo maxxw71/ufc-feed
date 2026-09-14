@@ -1,0 +1,17 @@
+NFL COACH QUALITY EXPANSION
+
+{
+  "coach_quality_features": 32,
+  "football_features": 80,
+  "survivors": 281,
+  "user_preferred": 7
+}
+
+TOP USER-PREFERRED
+CQ001 MODERN FAV55_65 AWAY | n=135 win=74.8% ROI=+25.2% | train=+13.7% val=+27.2% hold=+32.8% recent_delta=+12.4pp pos_seasons=89% | [["coachq_dc_prior_win_pct", "<=", 0.5769230769230769], ["opp_fatigue_load_index", ">=", 0.9480943998014948]]
+CQ002 MODERN PK_55 ANY | n=107 win=64.5% ROI=+30.4% | train=+37.6% val=+14.5% hold=+30.9% recent_delta=+4.9pp pos_seasons=94% | [["coachq_oc_quality_delta_vs_departed", "<=", 0.04073660714285715], ["recent_edge_def_allowed_early_down_epa", "<=", 0.00209705196277545]]
+CQ003 LONG DOG20_34 HOME | n=90 win=36.7% ROI=+36.7% | train=+33.2% val=+34.6% hold=+45.5% recent_delta=+11.6pp pos_seasons=72% | [["coachq_oc_prior_quality", "<=", 0.44765625]]
+CQ004 LONG DOG20_34 AWAY | n=109 win=37.6% ROI=+33.3% | train=+38.8% val=+27.2% hold=+36.1% recent_delta=+3.1pp pos_seasons=72% | [["coachq_hc_quality_delta_vs_departed", "<=", -0.01689976689976691], ["rank_edge_points_against", ">=", -5.0]]
+CQ005 LONG FAV55_65 AWAY | n=136 win=72.1% ROI=+20.4% | train=+14.8% val=+21.4% hold=+25.1% recent_delta=+7.0pp pos_seasons=79% | [["coachq_dc_prior_quality", "<=", 0.61875], ["opp_fatigue_load_index", ">=", 0.9976454236715554]]
+CQ006 LONG FAV55_65 AWAY | n=149 win=72.5% ROI=+20.5% | train=+23.8% val=+15.7% hold=+21.5% recent_delta=+1.8pp pos_seasons=84% | [["coachq_dc_prior_quality", "<=", 0.61875], ["rank_edge_punt_return_average", ">=", 1.0]]
+CQ007 LONG DOG20_34 ANY | n=118 win=33.9% ROI=+18.7% | train=+12.4% val=+24.2% hold=+22.0% recent_delta=+3.7pp pos_seasons=74% | [["coachq_oc_prior_quality", ">=", 0.59375], ["adv_prior_road_games_last5", ">=", 1.0]]
