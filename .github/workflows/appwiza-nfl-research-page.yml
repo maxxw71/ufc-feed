@@ -30,25 +30,39 @@ jobs:
         run: |
           set -Eeuo pipefail
           /home/anestishkurti92/nfl-predictor-v1/venv/bin/python "$GITHUB_WORKSPACE/scripts/nfl_build_research_page.py"
-      - name: Deploy without touching official tracker
+      - name: Deploy research page without touching official tracker
         shell: bash
         run: |
           set -Eeuo pipefail
-          LIVE_ROOT=/srv/appwiza-sports/public/nfl
-          LIVE_DIR="$LIVE_ROOT/research"
+          PRIMARY_ROOT=/srv/appwiza-sports/public/nfl
+          PRIMARY_DIR="$PRIMARY_ROOT/research"
+          FALLBACK_ROOT=/srv/appwiza-sports/public/downloads/nfl
+          FALLBACK_DIR="$FALLBACK_ROOT/research"
           REPORT="$GITHUB_WORKSPACE/nfl/research_page/deploy_report.txt"
+          SRC="$GITHUB_WORKSPACE/nfl/research_page/index.html"
           {
             echo "runner=$(id)"
-            echo "live_root=$LIVE_ROOT"
-            stat -c 'root_stat=%U:%G %a %n' "$LIVE_ROOT" 2>/dev/null || true
-            echo "official_tracker_untouched=$LIVE_ROOT/index.html"
+            echo "primary_root=$PRIMARY_ROOT"
+            echo "fallback_root=$FALLBACK_ROOT"
+            stat -c 'primary_stat=%U:%G %a %n' "$PRIMARY_ROOT" 2>/dev/null || true
+            stat -c 'fallback_stat=%U:%G %a %n' "$FALLBACK_ROOT" 2>/dev/null || true
+            echo "official_tracker_untouched=$PRIMARY_ROOT/index.html"
           } > "$REPORT"
-          if [ -d "$LIVE_ROOT" ] && [ -w "$LIVE_ROOT" ]; then
-            mkdir -p "$LIVE_DIR"
-            cp "$GITHUB_WORKSPACE/nfl/research_page/index.html" "$LIVE_DIR/index.html"
-            chmod 0644 "$LIVE_DIR/index.html" || true
-            echo "deploy_status=SUCCESS" >> "$REPORT"
-            stat -c 'deployed=%U:%G %a %s %n' "$LIVE_DIR/index.html" >> "$REPORT" || true
+          if [ -d "$PRIMARY_ROOT" ] && [ -w "$PRIMARY_ROOT" ]; then
+            mkdir -p "$PRIMARY_DIR"
+            cp "$SRC" "$PRIMARY_DIR/index.html"
+            chmod 0644 "$PRIMARY_DIR/index.html" || true
+            echo "deploy_status=SUCCESS_PRIMARY" >> "$REPORT"
+            echo "public_url=https://appwiza.com/sports/nfl/research/" >> "$REPORT"
+            stat -c 'deployed=%U:%G %a %s %n' "$PRIMARY_DIR/index.html" >> "$REPORT" || true
+          elif [ -d "$FALLBACK_ROOT" ] && [ -w "$FALLBACK_ROOT" ]; then
+            mkdir -p "$FALLBACK_DIR"
+            cp "$SRC" "$FALLBACK_DIR/index.html"
+            chmod 0664 "$FALLBACK_DIR/index.html" || true
+            echo "deploy_status=SUCCESS_FALLBACK" >> "$REPORT"
+            echo "public_url=https://appwiza.com/sports/downloads/nfl/research/" >> "$REPORT"
+            echo "primary_blocker=ACL_MASK_READONLY_ON_NFL_DIRECTORY" >> "$REPORT"
+            stat -c 'deployed=%U:%G %a %s %n' "$FALLBACK_DIR/index.html" >> "$REPORT" || true
           else
             echo "deploy_status=NO_WRITE_ACCESS" >> "$REPORT"
           fi
