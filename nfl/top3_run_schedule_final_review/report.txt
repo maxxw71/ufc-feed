@@ -1,0 +1,23 @@
+TOP-3 RUN / SCHEDULE STRICT FINAL REVIEW
+
+{
+  "shadow_ready": 3,
+  "watch": 0,
+  "one_veto_count": 3,
+  "public_live": false
+}
+
+FINAL METHODS
+RS001 Heavy-road schedule + pressure edge | BASE 48-38 win=55.8% ROI=+39.3% | FINAL 40-20 win=66.7% ROI=+66.9% | train=+65.3% val=+42.4% hold=+91.2% pos=85% | odds +122 to +186 (REVERT_TO_ORIGINAL_AFTER_HOLDOUT_REJECT) | veto=opp_prior_road_miles_last3 <= 1084.2572731409475 | SHADOW_READY
+RS002 Run-heavy + punt-net edge | BASE 72-44 win=62.1% ROI=+50.3% | FINAL 61-25 win=70.9% ROI=+71.8% | train=+63.9% val=+93.9% hold=+76.2% pos=84% | odds -100 to +186 (REVERT_TO_ORIGINAL_AFTER_HOLDOUT_REJECT) | veto=recent_edge_def_allowed_pass_epa_per_dropback >= 0.1544327526509944 | SHADOW_READY
+RS003 Run-heavy + defensive YPP edge | BASE 104-78 win=57.1% ROI=+36.9% | FINAL 87-53 win=62.1% ROI=+49.5% | train=+46.0% val=+54.2% hold=+51.1% pos=85% | odds -100 to +186 (REVERT_TO_ORIGINAL_AFTER_HOLDOUT_REJECT) | veto=rank_edge_def_allowed_giveaway_rate >= 9.400000000000006 | SHADOW_READY
+
+PRICE AUDIT
+RS001: REVERT_TO_ORIGINAL_AFTER_HOLDOUT_REJECT; final +122 to +186; rejected candidate +122 to +163 hold=+62.4% vs base=+67.6%
+RS002: REVERT_TO_ORIGINAL_AFTER_HOLDOUT_REJECT; final -100 to +186; rejected candidate +108 to +186 hold=+46.3% vs base=+49.5%
+RS003: REVERT_TO_ORIGINAL_AFTER_HOLDOUT_REJECT; final -100 to +186; rejected candidate +113 to +163 hold=+23.8% vs base=+37.2%
+
+ONE-VETO MAX
+RS001: opp_prior_road_miles_last3 <= 1084.26; pre-risk n=19; hold risk n=7 ROI=+7.0% -> safe=+91.2%; retain=72%
+RS002: recent_edge_def_allowed_pass_epa_per_dropback >= 0.154433; pre-risk n=19; hold risk n=11 ROI=-13.8% -> safe=+76.2%; retain=70%
+RS003: rank_edge_def_allowed_giveaway_rate >= 9.4; pre-risk n=24; hold risk n=18 ROI=+1.8% -> safe=+51.1%; retain=72%
