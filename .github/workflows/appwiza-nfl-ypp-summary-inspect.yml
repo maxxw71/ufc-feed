@@ -1,0 +1,35 @@
+name: Appwiza NFL YPP method summary inspect
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/appwiza-nfl-ypp-summary-inspect.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  inspect:
+    if: github.repository == 'maxxw71/ufc-feed' && github.ref == 'refs/heads/main'
+    runs-on: [self-hosted, Linux, X64, appwiza]
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - name: Extract validated YPP method summary
+        shell: bash
+        run: |
+          set -euo pipefail
+          SRC=nfl/live_ypp_evaluator_report.txt
+          OUT=nfl/live_ypp_method_summary.txt
+          : > "$OUT"
+          echo '=== KEY LINES ===' >> "$OUT"
+          grep -niE -C 8 '44.?7|base_ypp|6\.2|5\.8|road|away|favorite|season|ROI|win rate|method' "$SRC" 2>/dev/null | head -1200 >> "$OUT" || true
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions-bot@users.noreply.github.com'
+          git add "$OUT"
+          if ! git diff --cached --quiet; then
+            git commit -m 'Capture validated NFL YPP method summary'
+            git push
+          fi
