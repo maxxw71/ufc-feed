@@ -27,13 +27,16 @@ jobs:
         run: |
           set -Eeuo pipefail
           ROOT=/home/anestishkurti92/nfl-predictor-v1
+          OWNER=anestishkurti92
           test -x "$ROOT/venv/bin/python"
           avail=$(df -Pk "$ROOT" | awk 'NR==2 {print $4}')
           [ "$avail" -ge 4194304 ] || { echo 'Less than 4 GiB free; refusing large NFL expansion'; exit 3; }
-          "$ROOT/venv/bin/python" -m pip install -q --upgrade nflreadpy
-          cp "$GITHUB_WORKSPACE/scripts/nfl_expand_context_data.py" "$ROOT/nfl_expand_context_data.py.new"
-          mv "$ROOT/nfl_expand_context_data.py.new" "$ROOT/nfl_expand_context_data.py"
-          NFL_ROOT="$ROOT" "$ROOT/venv/bin/python" "$ROOT/nfl_expand_context_data.py"
+          TMP=/tmp/nfl_expand_context_data.py
+          cp "$GITHUB_WORKSPACE/scripts/nfl_expand_context_data.py" "$TMP"
+          chmod 644 "$TMP"
+          sudo -u "$OWNER" "$ROOT/venv/bin/python" -m pip install -q --upgrade nflreadpy
+          sudo -u "$OWNER" env NFL_ROOT="$ROOT" "$ROOT/venv/bin/python" "$TMP"
+          rm -f "$TMP"
           echo '=== STATUS ==='
           cat "$ROOT/NFL_CONTEXT_DATA_STATUS.json"
           echo '=== DISK ==='
