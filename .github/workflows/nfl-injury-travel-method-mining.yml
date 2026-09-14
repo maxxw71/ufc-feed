@@ -29,14 +29,21 @@ jobs:
         run: |
           set -Eeuo pipefail
           ROOT=/home/anestishkurti92/nfl-predictor-v1
+          CTX=/home/appwiza-runner/nfl-context-data
+          VENDOR="$CTX/vendor"
           test -x "$ROOT/venv/bin/python"
-          "$ROOT/venv/bin/python" -m pip install -q requests beautifulsoup4 lxml html5lib
+          mkdir -p "$VENDOR"
+          if ! PYTHONPATH="$VENDOR" "$ROOT/venv/bin/python" -c 'import requests, bs4, lxml, html5lib' 2>/dev/null; then
+            "$ROOT/venv/bin/python" -m pip install -q --upgrade --target "$VENDOR" requests beautifulsoup4 lxml html5lib
+          fi
       - name: Enrich injuries travel timezone altitude and mine methods
         shell: bash
         run: |
           set -Eeuo pipefail
           ROOT=/home/anestishkurti92/nfl-predictor-v1
           CTX=/home/appwiza-runner/nfl-context-data
+          VENDOR="$CTX/vendor"
+          export PYTHONPATH="$VENDOR${PYTHONPATH:+:$PYTHONPATH}"
           NFL_SOURCE_ROOT="$ROOT" NFL_CONTEXT_ROOT="$CTX" "$ROOT/venv/bin/python" "$GITHUB_WORKSPACE/scripts/nfl_injury_travel_method_mining.py"
       - name: Publish compact results
         shell: bash
