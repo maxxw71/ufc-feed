@@ -9,11 +9,11 @@ permissions:
 jobs:
   backfill:
     runs-on: [self-hosted, Linux, X64, appwiza]
-    timeout-minutes: 25
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@v4
         with: {fetch-depth: 0}
-      - name: Build coordinator history
+      - name: Build coordinator history from audited team-season pages
         shell: bash
         run: |
           set -Eeuo pipefail
@@ -21,11 +21,11 @@ jobs:
           CTX=/home/appwiza-runner/nfl-context-data
           VENDOR="$CTX/vendor"
           mkdir -p "$VENDOR"
-          if ! PYTHONPATH="$VENDOR" "$ROOT/venv/bin/python" -c 'import requests,bs4,lxml,html5lib,pypdf' 2>/dev/null; then
-            "$ROOT/venv/bin/python" -m pip install -q --upgrade --target "$VENDOR" requests beautifulsoup4 lxml html5lib pypdf
+          if ! PYTHONPATH="$VENDOR" "$ROOT/venv/bin/python" -c 'import requests,pandas,numpy' 2>/dev/null; then
+            "$ROOT/venv/bin/python" -m pip install -q --upgrade --target "$VENDOR" requests pandas numpy
           fi
           export PYTHONPATH="$VENDOR${PYTHONPATH:+:$PYTHONPATH}"
-          NFL_SOURCE_ROOT="$ROOT" NFL_CONTEXT_ROOT="$CTX" "$ROOT/venv/bin/python" "$GITHUB_WORKSPACE/scripts/nfl_build_staff_history_bulk.py"
+          NFL_SOURCE_ROOT="$ROOT" NFL_CONTEXT_ROOT="$CTX" "$ROOT/venv/bin/python" "$GITHUB_WORKSPACE/scripts/nfl_build_staff_history_wikipedia.py"
       - name: Rebuild pregame context using refreshed staff
         shell: bash
         run: |
