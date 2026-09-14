@@ -3,6 +3,7 @@ import json, os, io, requests, importlib.util
 import numpy as np
 import pandas as pd
 
+# Exact current-rule re-audit for the Week-1 pass-defense rule and late-season road-favorite rule.
 ROOT=Path('/home/anestishkurti92/nfl-predictor-v1')
 R=ROOT/'research_v2'
 CTX=Path('/home/appwiza-runner/nfl-context-data')
@@ -39,7 +40,6 @@ elif 'season_type' in G.columns:G=G[G.season_type.eq('REG')].copy()
 for c in ['home_team','away_team']:
     G[c]=G[c].replace(ALIASES)
 
-# -------- pass_defense_offense24 exact current rule --------
 pd_bets=[]; pd_coverage=[]
 for season in range(2007,2026):
     prior=season-1
@@ -57,8 +57,7 @@ for season in range(2007,2026):
         qr=q.groupby(['game_id','posteam'],as_index=False).hit.mean().rename(columns={'posteam':'team','hit':'hit_rate'})
         j=j.merge(qr,on=['game_id','team'],how='left',validate='one_to_one')
         ranks=pd.DataFrame({'pass_rank':j.groupby('opponent').pass_rate.mean().rank(method='average'),'hit_rank':j.groupby('opponent').hit_rate.mean().rank(ascending=False,method='average'),'offense_rank':j.groupby('team').offense_rate.mean().rank(ascending=False,method='average')})
-        cur=G[(G.season==season)&(num(G.week)==1)].copy()
-        n=0
+        cur=G[(G.season==season)&(num(G.week)==1)].copy(); n=0
         for _,g in cur.iterrows():
             ht=g.home_team
             if ht not in ranks.index:continue
@@ -72,7 +71,6 @@ for season in range(2007,2026):
     except Exception as e:
         pd_coverage.append({'season':season,'status':'error','error':type(e).__name__+': '+str(e)[:180]})
 
-# -------- late_road_protection_rest_v1 exact current rule --------
 late_path=R/'late_season_method.py'
 spec=importlib.util.spec_from_file_location('late_live',late_path);late=importlib.util.module_from_spec(spec);spec.loader.exec_module(late)
 late_bets=[];late_cov=[]
