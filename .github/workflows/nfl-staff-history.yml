@@ -28,9 +28,13 @@ jobs:
           set -Eeuo pipefail
           ROOT=/home/anestishkurti92/nfl-predictor-v1
           CTX=/home/appwiza-runner/nfl-context-data
+          VENDOR="$CTX/vendor"
           test -x "$ROOT/venv/bin/python"
-          mkdir -p "$CTX/raw"
-          NFL_SOURCE_ROOT="$ROOT" NFL_CONTEXT_ROOT="$CTX" "$ROOT/venv/bin/python" "$GITHUB_WORKSPACE/scripts/nfl_build_staff_history_bulk.py"
+          mkdir -p "$CTX/raw" "$VENDOR"
+          if ! PYTHONPATH="$VENDOR" "$ROOT/venv/bin/python" -c 'import pypdf' 2>/dev/null; then
+            "$ROOT/venv/bin/python" -m pip install -q --target "$VENDOR" pypdf
+          fi
+          PYTHONPATH="$VENDOR" NFL_SOURCE_ROOT="$ROOT" NFL_CONTEXT_ROOT="$CTX" "$ROOT/venv/bin/python" "$GITHUB_WORKSPACE/scripts/nfl_build_staff_history_bulk.py"
           chmod -R a+rX "$CTX"
           echo '=== STAFF STATUS ==='
           cat "$CTX/NFL_COACHING_STAFF_STATUS.json"
