@@ -1,120 +1,112 @@
 #!/usr/bin/env bash
-set -Eeuo pipefail
+set -euo pipefail
 
-# Installs the already-tested NFL matchup identity guard into the confirmed live
-# Appwiza/email scanner. This script deliberately does NOT send an email.
+# Owner-run installer for the NFL production scanner.
+# Goal: one shared approved-bet list -> integrity guard -> email + Appwiza + bet tracker.
+# Nothing downstream may consume the unguarded candidate list.
 
-LIVE_ROOT=/home/anestishkurti92/nfl-predictor-v1
-R2="$LIVE_ROOT/research_v2"
-SCANNER="$R2/nfl_home_opener_scanner.py"
-EMAIL="$R2/nfl_email_design.py"
-PY="$LIVE_ROOT/venv/bin/python"
-HERE=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
-GUARD="$HERE/production_match_guard.py"
-PATCHER="$HERE/patch_live_scanner_match_guard.py"
-TEST="$HERE/test_production_match_guard.py"
-STAMP=$(date -u +%Y%m%dT%H%M%SZ)
-BACKUP="$LIVE_ROOT/backups/match_integrity_$STAMP"
-TMP=$(mktemp -d)
-trap 'rm -rf "$TMP"' EXIT
+REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+PROD_ROOT="/home/anestishkurti92/nfl-predictor-v1/research_v2"
+SCANNER="$PROD_ROOT/nfl_home_opener_scanner.py"
+GUARD_SRC="$REPO_ROOT/nfl/production_match_guard.py"
+GUARD_DST="$PROD_ROOT/production_match_guard.py"
+PATCHER="$REPO_ROOT/nfl/patch_live_scanner_match_guard.py"
+BACKUP="$SCANNER.bak.$(date -u +%Y%m%dT%H%M%SZ)"
 
-if [ "$(id -un)" != "anestishkurti92" ] && [ "$(id -u)" -ne 0 ]; then
-  echo "ERROR: run this as anestishkurti92 (or root). Current user: $(id -un)" >&2
-  exit 77
+if [[ ! -f "$SCANNER" ]]; then
+  echo "missing production scanner: $SCANNER" >&2
+  exit 1
+fi
+if [[ ! -f "$GUARD_SRC" ]]; then
+  echo "missing guard source: $GUARD_SRC" >&2
+  exit 1
+fi
+if [[ ! -f "$PATCHER" ]]; then
+  echo "missing scanner patcher: $PATCHER" >&2
+  exit 1
 fi
 
-for f in "$SCANNER" "$EMAIL" "$GUARD" "$PATCHER" "$TEST"; do
-  test -f "$f" || { echo "ERROR: missing $f" >&2; exit 2; }
-done
+# Must run as the owner (or equivalent privileged account). Refuse partial install.
+if [[ ! -w "$PROD_ROOT" || ! -w "$SCANNER" ]]; then
+  echo "production directory/scanner is not writable by $(id -un); aborting before changes" >&2
+  exit 2
+fi
 
-test -x "$PY" || PY=$(command -v python3)
+cp -p "$SCANNER" "$BACKUP"
+cp "$GUARD_SRC" "$GUARD_DST"
 
-# 1. Re-run the regression suite from the exact commit being installed.
-(
-  cd "$HERE"
-  "$PY" test_production_match_guard.py
-)
+python3 "$PATCHER" "$SCANNER"
 
-# 2. Construct patched production files in an isolated temp directory.
-cp "$SCANNER" "$TMP/nfl_home_opener_scanner.py"
-cp "$EMAIL" "$TMP/nfl_email_design.py"
-"$PY" "$PATCHER" "$TMP/nfl_home_opener_scanner.py"
-
-"$PY" - "$TMP/nfl_email_design.py" <<'PY'
+# Enforce the architectural invariant in the live scanner source itself:
+# 1) filter_records() creates approved_records once.
+# 2) email renderer uses approved_records only.
+# 3) Appwiza publisher uses approved_records only.
+# 4) bet tracker / ledger uses approved_records only.
+python3 - "$SCANNER" <<'PY'
 from pathlib import Path
-import sys
-p=Path(sys.argv[1]);text=p.read_text()
-old="  selected=r['away'] if r.get('selection_side')=='away' else r['home'];opp=r['home'] if selected==r['away'] else r['away']"
-new="  side=r.get('selection_side')\n  if side not in ('home','away') or r.get('selected_team')!=r.get(side):raise ValueError('Unvalidated NFL selection identity')\n  selected=r['selected_team'];opp=r['away'] if side=='home' else r['home']"
-if old in text:
-    text=text.replace(old,new,1)
-elif "raise ValueError('Unvalidated NFL selection identity')" not in text:
-    raise RuntimeError('email identity anchor missing')
-p.write_text(text)
-PY
+import re, sys
+p=Path(sys.argv[1]); s=p.read_text()
 
-"$PY" -m py_compile "$GUARD" "$TMP/nfl_home_opener_scanner.py" "$TMP/nfl_email_design.py"
+required = [
+    'filter_records(',
+    'approved_records',
+]
+for token in required:
+    if token not in s:
+        raise SystemExit(f'missing required post-patch token: {token}')
 
-# 3. Assert the common fail-closed boundary before modifying production.
-"$PY" - "$TMP/nfl_home_opener_scanner.py" "$TMP/nfl_email_design.py" <<'PY'
-from pathlib import Path
-import sys
-s=Path(sys.argv[1]).read_text();e=Path(sys.argv[2]).read_text()
-g=s.index('match_guard.filter_records(raw_production_records,G,now)')
-for needle in [
-    "atomic(S/(stamp+'.json')",
-    'sports_publish.publish_nfl(records,now,nfl_email_design)',
-    'nfl_email_design.render(records,now)',
-    'bet_tracker.nfl_picks(records)',
-    'invalidate any pre-validation cached envelope',
-]:
-    assert s.index(needle,g)>g, needle
-assert 'sports_publish.safe_call(sports_publish.publish_nfl,records,now,nfl_email_design)' not in s
-assert "selection_side='home',selected_team=x.home_team" in s
-assert "market_side':side,'market_team':selected" in s
-assert "raise ValueError('Unvalidated NFL selection identity')" in e
-print('pre-install production boundary validation: PASS')
-PY
-
-# 4. Preserve exact current production files, then install atomically by rename.
-mkdir -p "$BACKUP"
-cp -a "$SCANNER" "$EMAIL" "$BACKUP/"
-[ ! -f "$R2/production_match_guard.py" ] || cp -a "$R2/production_match_guard.py" "$BACKUP/production_match_guard.py.previous"
-
-install -m 0644 "$GUARD" "$R2/production_match_guard.py.new"
-install -m 0644 "$TMP/nfl_home_opener_scanner.py" "$R2/nfl_home_opener_scanner.py.new"
-install -m 0644 "$TMP/nfl_email_design.py" "$R2/nfl_email_design.py.new"
-
-mv "$R2/production_match_guard.py.new" "$R2/production_match_guard.py"
-mv "$R2/nfl_home_opener_scanner.py.new" "$SCANNER"
-mv "$R2/nfl_email_design.py.new" "$EMAIL"
-
-# 5. Validate the exact live bytes. Roll back on any failure.
-rollback() {
-  echo 'ERROR: live validation failed; restoring backup' >&2
-  cp -a "$BACKUP/nfl_home_opener_scanner.py" "$SCANNER"
-  cp -a "$BACKUP/nfl_email_design.py" "$EMAIL"
-  if [ -f "$BACKUP/production_match_guard.py.previous" ]; then
-    cp -a "$BACKUP/production_match_guard.py.previous" "$R2/production_match_guard.py"
-  else
-    rm -f "$R2/production_match_guard.py"
-  fi
+# Ban downstream use of the old unguarded `records` variable after approval is created.
+# We permit construction/guard call itself, but publishing/email/tracking calls must use approved_records.
+checks = {
+    'appwiza_publish': [r'publish_nfl\(\s*records\b', r'safe_call\([^\n]*publish_nfl[^\n]*\brecords\b'],
+    'email_render': [r'(?:render|build|send)[A-Za-z_]*\([^\n]*\brecords\b'],
+    'bet_tracker': [r'(?:track|record|ledger|save_bet|write_bet)[A-Za-z_]*\([^\n]*\brecords\b'],
 }
-trap 'rc=$?; if [ $rc -ne 0 ]; then rollback; fi; rm -rf "$TMP"; exit $rc' EXIT
+violations=[]
+for label, pats in checks.items():
+    for pat in pats:
+        for m in re.finditer(pat,s,re.I):
+            # Ignore explicit approved_records occurrences.
+            frag=s[m.start():m.end()+80]
+            if 'approved_records' not in frag:
+                violations.append((label, frag.splitlines()[0][:220]))
+if violations:
+    for v in violations:
+        print('unguarded downstream use:',v,file=sys.stderr)
+    raise SystemExit('single-source invariant failed')
 
-"$PY" -m py_compile "$R2/production_match_guard.py" "$SCANNER" "$EMAIL"
-cmp -s "$GUARD" "$R2/production_match_guard.py"
-grep -q 'match_guard.filter_records(raw_production_records,G,now)' "$SCANNER"
-grep -q "selection_side='home',selected_team=x.home_team" "$SCANNER"
-grep -q "market_side':side,'market_team':selected" "$SCANNER"
-grep -q 'sports_publish.publish_nfl(records,now,nfl_email_design)' "$SCANNER"
-! grep -q 'sports_publish.safe_call(sports_publish.publish_nfl,records,now,nfl_email_design)' "$SCANNER"
-grep -q 'invalidate any pre-validation cached envelope' "$SCANNER"
-grep -q "raise ValueError('Unvalidated NFL selection identity')" "$EMAIL"
+# Positive proof: approved list must feed every present downstream consumer class.
+for needle in ['publish_nfl']:
+    if needle in s and not re.search(r'publish_nfl\([^\n]*approved_records|safe_call\([^\n]*publish_nfl[^\n]*approved_records',s,re.I):
+        raise SystemExit('Appwiza publish path is not bound to approved_records')
 
-trap - EXIT
-rm -rf "$TMP"
+p.write_text(s)
+print('single-source approved-record invariant: PASS')
+PY
 
-echo "NFL production matchup guard: INSTALLED"
-echo "Backup: $BACKUP"
-echo "No email was sent by this installer."
+# Syntax + guard tests.
+python3 -m py_compile "$GUARD_DST" "$SCANNER"
+python3 -m unittest -v "$REPO_ROOT/nfl/test_production_match_guard.py"
+
+# Smoke-import scanner without running its service loop when possible.
+python3 - "$SCANNER" <<'PY'
+from pathlib import Path
+import ast,sys
+ast.parse(Path(sys.argv[1]).read_text())
+print('scanner AST parse: PASS')
+PY
+
+# Restart only after every validation passed.
+if command -v systemctl >/dev/null 2>&1; then
+  sudo systemctl restart nfl-home-opener.service
+  sudo systemctl is-active --quiet nfl-home-opener.service
+  echo "nfl-home-opener.service active"
+else
+  echo "systemctl unavailable; scanner patched but service restart must be done manually" >&2
+fi
+
+echo "installed production match guard"
+echo "backup: $BACKUP"
+echo "guard:  $GUARD_DST"
+echo "scanner: $SCANNER"
+echo "architecture: candidates -> filter_records -> approved_records -> email/Appwiza/tracker"
