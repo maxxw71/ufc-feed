@@ -1,0 +1,58 @@
+name: NFL injury travel method mining
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/nfl_injury_travel_method_mining.py'
+      - '.github/workflows/nfl-injury-travel-method-mining.yml'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: nfl-injury-travel-method-mining
+  cancel-in-progress: true
+
+jobs:
+  mine:
+    if: github.repository == 'maxxw71/ufc-feed' && github.ref == 'refs/heads/main'
+    runs-on: [self-hosted, Linux, X64, appwiza]
+    timeout-minutes: 55
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Prepare Python dependencies
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          ROOT=/home/anestishkurti92/nfl-predictor-v1
+          test -x "$ROOT/venv/bin/python"
+          "$ROOT/venv/bin/python" -m pip install -q requests beautifulsoup4 lxml html5lib
+      - name: Enrich injuries travel timezone altitude and mine methods
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          ROOT=/home/anestishkurti92/nfl-predictor-v1
+          CTX=/home/appwiza-runner/nfl-context-data
+          NFL_SOURCE_ROOT="$ROOT" NFL_CONTEXT_ROOT="$CTX" "$ROOT/venv/bin/python" "$GITHUB_WORKSPACE/scripts/nfl_injury_travel_method_mining.py"
+      - name: Publish compact results
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          SRC=/home/appwiza-runner/nfl-context-data/injury_travel_mining
+          DEST="$GITHUB_WORKSPACE/nfl/injury_travel_mining"
+          mkdir -p "$DEST"
+          cp "$SRC/report.txt" "$DEST/report.txt"
+          cp "$SRC/coverage.json" "$DEST/coverage.json"
+          cp "$SRC/positive_roi_method_candidates.csv" "$DEST/positive_roi_method_candidates.csv"
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git add nfl/injury_travel_mining
+          if ! git diff --cached --quiet; then
+            git commit -m 'Update NFL injury travel method mining results'
+            git pull --rebase origin main
+            git push origin HEAD:main
+          fi
