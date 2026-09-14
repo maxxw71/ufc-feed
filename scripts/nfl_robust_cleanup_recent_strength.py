@@ -18,14 +18,16 @@ t=pd.read_csv(TIMING)
 n=pd.read_csv(NEW)
 
 # ---- clean the older H-series registry with the newest robust evidence ----
-hm=h.merge(f[['candidate_id','deployment_status','deployment_reason','positive_season_ratio','duplicate_of','max_jaccard_overlap','live_odds_range','hard_veto_source','hard_veto_feature','hard_veto_op','hard_veto_threshold']],left_on='method_id',right_on='candidate_id',how='left')
-hm=hm.merge(t[['candidate_id','full_n','full_roi','trainval_n','trainval_roi','holdout_n','holdout_roi','recommended_start_week','timing_decision','min_week','median_week','max_week']],left_on='method_id',right_on='candidate_id',how='left',suffixes=('','_timing'))
+# Keep the H registry's own positive-season ratio; timing supplies REG-only reconstructed metrics.
+hm=h.merge(f[['candidate_id','deployment_status','deployment_reason','duplicate_of','max_jaccard_overlap','live_odds_range','hard_veto_source','hard_veto_feature','hard_veto_op','hard_veto_threshold']],left_on='method_id',right_on='candidate_id',how='left')
+tcols=t[['candidate_id','full_n','full_roi','trainval_n','trainval_roi','holdout_n','holdout_roi','recommended_start_week','timing_decision','min_week','median_week','max_week']].copy()
+tcols=tcols.rename(columns={c:f'{c}_reg' for c in ['full_n','full_roi','trainval_n','trainval_roi','holdout_n','holdout_roi']})
+hm=hm.merge(tcols,left_on='method_id',right_on='candidate_id',how='left',suffixes=('','_timing'))
 
-# Prefer REG-only timing/reconstruction metrics when available.
-hm['recent_delta']=hm['holdout_roi']-hm['trainval_roi']
+hm['recent_delta']=hm['holdout_roi_reg']-hm['trainval_roi_reg']
 hm['cleanup_status']='REVIEW'
 for i,r in hm.iterrows():
-    full_roi=r.get('full_roi'); hold=r.get('holdout_roi'); nfull=r.get('full_n'); pos=r.get('positive_season_ratio')
+    full_roi=r.get('full_roi_reg'); hold=r.get('holdout_roi_reg'); nfull=r.get('full_n_reg'); pos=r.get('positive_season_ratio')
     dep=str(r.get('deployment_status') or '')
     dup=str(r.get('duplicate_of') or '')
     if dup and dup!='nan':
@@ -40,7 +42,7 @@ for i,r in hm.iterrows():
         status='ARCHIVE_WEAK'
     hm.at[i,'cleanup_status']=status
 
-hm['cleanup_score']=(hm['holdout_roi'].fillna(-1)*.40 + hm['full_roi'].fillna(-1)*.25 + hm['positive_season_ratio'].fillna(0)*.15 + hm['recent_delta'].fillna(-1)*.15 + np.log10(hm['full_n'].fillna(1).clip(lower=1))*.025)
+hm['cleanup_score']=(hm['holdout_roi_reg'].fillna(-1)*.40 + hm['full_roi_reg'].fillna(-1)*.25 + hm['positive_season_ratio'].fillna(0)*.15 + hm['recent_delta'].fillna(-1)*.15 + np.log10(hm['full_n_reg'].fillna(1).clip(lower=1))*.025)
 hm=hm.sort_values(['cleanup_status','cleanup_score'],ascending=[True,False])
 hm.to_csv(OUT/'h_series_cleaned_registry.csv',index=False)
 
@@ -95,6 +97,11 @@ for status in ['CORE_LIVE','KEEP_RESEARCH','WATCH_ONLY','ARCHIVE_DUPLICATE','ARC
     z=hm[hm.cleanup_status.eq(status)]
     lines.append(f'{status}: {len(z)}')
     for _,r in z.sort_values('cleanup_score',ascending=False).head(15).iterrows():
-        lines.append(f"  {r.method_id} | n={int(r.full_n) if pd.notna(r.full_n) else 0} full={100*r.full_roi:+.1f}% hold={100*r.holdout_roi:+.1f}% recent_delta={100*r.recent_delta:+.1f}pp start=W{int(r.recommended_start_week) if pd.notna(r.recommended_start_week) else 0}")
+        nval=int(r.full_n_reg) if pd.notna(r.full_n_reg) else 0
+        froi=100*r.full_roi_reg if pd.notna(r.full_roi_reg) else float('nan')
+        hroi=100*r.holdout_roi_reg if pd.notna(r.holdout_roi_reg) else float('nan')
+        dlt=100*r.recent_delta if pd.notna(r.recent_delta) else float('nan')
+        sw=int(r.recommended_start_week) if pd.notna(r.recommended_start_week) else 0
+        lines.append(f"  {r.method_id} | n={nval} full={froi:+.1f}% hold={hroi:+.1f}% recent_delta={dlt:+.1f}pp start=W{sw}")
 (OUT/'report.txt').write_text('\n'.join(lines)+'\n')
 print('\n'.join(lines))
