@@ -1,0 +1,41 @@
+name: Appwiza NFL owner SSH deploy
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/appwiza-nfl-owner-ssh-deploy.yml'
+      - 'nfl/research_page/index.html'
+permissions:
+  contents: write
+jobs:
+  deploy:
+    runs-on: [self-hosted, Linux, X64, appwiza]
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - name: Try existing batch SSH as site owner
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          SRC="$GITHUB_WORKSPACE/nfl/research_page/index.html"
+          REPORT="$GITHUB_WORKSPACE/nfl/research_page/owner_ssh_deploy_report.txt"
+          : > "$REPORT"
+          SSH='ssh -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=accept-new anestishkurti92@127.0.0.1'
+          if $SSH 'id && test -w /srv/appwiza-sports/public/nfl' >> "$REPORT" 2>&1; then
+            echo 'owner_ssh=yes' >> "$REPORT"
+            cat "$SRC" | $SSH 'set -e; mkdir -p /srv/appwiza-sports/public/nfl/research; cat > /srv/appwiza-sports/public/nfl/research/index.html; chmod 0644 /srv/appwiza-sports/public/nfl/research/index.html; stat -c "%U:%G %a %s %n" /srv/appwiza-sports/public/nfl/research/index.html' >> "$REPORT" 2>&1
+            echo 'deploy_status=SUCCESS_PRIMARY_VIA_OWNER_SSH' >> "$REPORT"
+            echo 'public_url=https://appwiza.com/sports/nfl/research/' >> "$REPORT"
+          else
+            echo 'owner_ssh=no' >> "$REPORT"
+            echo 'deploy_status=NO_EXISTING_OWNER_SSH_AUTH' >> "$REPORT"
+          fi
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git add nfl/research_page/owner_ssh_deploy_report.txt
+          if ! git diff --cached --quiet; then
+            git commit -m 'Record owner SSH NFL research deploy attempt'
+            git pull --rebase origin main
+            git push origin HEAD:main
+          fi
