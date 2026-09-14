@@ -1,0 +1,45 @@
+name: NFL ESPN coordinator scrape
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/nfl_scrape_coordinators_espn.py'
+      - '.github/workflows/nfl-espn-coordinator-scrape.yml'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: nfl-espn-coordinator-scrape
+  cancel-in-progress: true
+
+jobs:
+  scrape:
+    if: github.repository == 'maxxw71/ufc-feed' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install parser dependencies
+        run: python -m pip install -q pandas requests pypdf
+      - name: Collect 2019-2025 NFL coordinators from ESPN annual guides
+        run: python scripts/nfl_scrape_coordinators_espn.py
+      - name: Publish coordinator table
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          git config user.name 'appwiza-bot'
+          git config user.email 'actions@users.noreply.github.com'
+          git pull --rebase origin main
+          git add data/nfl/coordinator_history_espn_2019_2025.csv
+          if git diff --cached --quiet; then
+            echo 'No coordinator data changes.'
+            exit 0
+          fi
+          git commit -m 'Update ESPN NFL coordinator history'
+          git push origin HEAD:main
