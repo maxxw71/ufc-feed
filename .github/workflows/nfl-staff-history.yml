@@ -31,8 +31,8 @@ jobs:
           VENDOR="$CTX/vendor"
           test -x "$ROOT/venv/bin/python"
           mkdir -p "$CTX/raw" "$VENDOR"
-          if ! PYTHONPATH="$VENDOR" "$ROOT/venv/bin/python" -c 'import pypdf' 2>/dev/null; then
-            "$ROOT/venv/bin/python" -m pip install -q --target "$VENDOR" pypdf
+          if ! PYTHONPATH="$VENDOR" "$ROOT/venv/bin/python" -c 'import pypdf, lxml' 2>/dev/null; then
+            "$ROOT/venv/bin/python" -m pip install -q --upgrade --target "$VENDOR" pypdf lxml
           fi
           PYTHONPATH="$VENDOR" NFL_SOURCE_ROOT="$ROOT" NFL_CONTEXT_ROOT="$CTX" "$ROOT/venv/bin/python" "$GITHUB_WORKSPACE/scripts/nfl_build_staff_history_bulk.py"
           chmod -R a+rX "$CTX"
