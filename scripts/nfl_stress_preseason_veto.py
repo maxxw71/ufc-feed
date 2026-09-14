@@ -6,6 +6,7 @@ import pandas as pd
 REPO=Path(os.environ.get('GITHUB_WORKSPACE','.'))
 OUT=Path('/home/appwiza-runner/nfl-context-data/preseason_veto_stress');OUT.mkdir(parents=True,exist_ok=True)
 PRE=REPO/'nfl/legacy_preseason_staff_filter_audit/espn_preseason_team_seasons.csv'
+ALIASES={'SD':'LAC','OAK':'LV','STL':'LA','LAR':'LA','WSH':'WAS','JAX':'JAC'}
 
 def num(x):return pd.to_numeric(x,errors='coerce')
 def met(x):
@@ -15,10 +16,10 @@ def met(x):
 
 def load(path,name):
     d=pd.read_csv(path,low_memory=False)
-    z=pd.DataFrame({'method':name,'season':num(d.season).astype(int),'week':num(d.week).astype(int),'game_id':d.game_id.astype(str),'team':d.home_team,'opponent':d.away_team,'moneyline':num(d.home_moneyline),'win':num(d.win),'profit_units':num(d.profit)})
+    z=pd.DataFrame({'method':name,'season':num(d.season).astype(int),'week':num(d.week).astype(int),'game_id':d.game_id.astype(str),'team':d.home_team.replace(ALIASES),'opponent':d.away_team.replace(ALIASES),'moneyline':num(d.home_moneyline),'win':num(d.win),'profit_units':num(d.profit)})
     return z
 
-pre=pd.read_csv(PRE)
+pre=pd.read_csv(PRE);pre['team']=pre.team.replace(ALIASES)
 base=pd.concat([
     load(REPO/'nfl/legacy_live_home_opener_exact/original_bets.csv','original'),
     load(REPO/'nfl/legacy_live_home_opener_exact/stricter_bets.csv','stricter')],ignore_index=True)
@@ -26,6 +27,10 @@ base=base.merge(pre[['season','team','pre_games','pre_wins','pre_losses','pre_wi
 base['keep_ge2']=num(base.pre_wins)>=2
 base['keep_nonlosing']=num(base.pre_win_pct)>=.5
 base['keep_positive_margin']=num(base.pre_margin_pg)>=0
+
+# fail closed if any historical bet is missing a preseason join; this keeps counts auditable.
+missing=base[base.pre_games.isna()][['method','season','game_id','team','opponent']].copy()
+missing.to_csv(OUT/'missing_preseason_joins.csv',index=False)
 
 rows=[]; yearly=[]; loo=[]; price=[]
 for method,x0 in base.groupby('method'):
@@ -61,11 +66,11 @@ stability={
  'era_rois':{k:float(p[f'{k}_roi']) if pd.notna(p[f'{k}_roi']) else None for k in ['2007_2013','2014_2019','2020_2025','2023_2025']},
  'era_win_pcts':{k:float(p[f'{k}_win_pct']) if pd.notna(p[f'{k}_win_pct']) else None for k in ['2007_2013','2014_2019','2020_2025','2023_2025']},
  'loo_min_win_pct':float(q.win_pct.min()),'loo_min_roi':float(q.roi.min()),'loo_max_roi':float(q.roi.max()),
- 'all_loo_profitable':bool((q.roi>0).all())
+ 'all_loo_profitable':bool((q.roi>0).all()),
+ 'missing_preseason_joins':int(len(missing))
 }
 (OUT/'stability.json').write_text(json.dumps(stability,indent=2))
 lines=['NFL PRESEASON VETO STRESS TEST','',json.dumps(stability,indent=2),'','SUMMARY']
 for _,r in summary.iterrows():
     lines.append(f"{r.method} / {r.rule}: {int(r.wins)}-{int(r.losses)} ({100*r.win_pct:.1f}%) n={int(r.n)} ROI={100*r.roi:+.1f}% | 07-13 {100*r['2007_2013_win_pct']:.1f}%/{100*r['2007_2013_roi']:+.1f}% | 14-19 {100*r['2014_2019_win_pct']:.1f}%/{100*r['2014_2019_roi']:+.1f}% | 20-25 {100*r['2020_2025_win_pct']:.1f}%/{100*r['2020_2025_roi']:+.1f}% | 23-25 {100*r['2023_2025_win_pct']:.1f}%/{100*r['2023_2025_roi']:+.1f}% | pos seasons {int(r.positive_seasons)}/{int(r.active_seasons)}")
 (OUT/'report.txt').write_text('\n'.join(lines)+'\n');print('\n'.join(lines))
-# trigger after workflow creation
