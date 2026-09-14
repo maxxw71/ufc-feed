@@ -1,0 +1,52 @@
+NFL COACH-ONLY DEEP DISSECTION
+
+{
+  "coach_live_ready_input": 10,
+  "confirmed_timing_filters": 0,
+  "confirmed_vetoes": 110,
+  "confirmed_coach_vetoes": 47,
+  "confirmed_context_vetoes": 63,
+  "independent_h_methods": 8,
+  "coach_h_pairs_with_overlap": 17,
+  "final_status_counts": {
+    "READY_WITH_SINGLE_VETO": 10
+  }
+}
+
+FINAL RECOMMENDATIONS
+CO001: READY_WITH_SINGLE_VETO | 93 bets 36.6% win ROI +36.9% | hold 28 39.3% ROI +45.4% | timing=- veto=COACH:opp_coachq_hc_recent_quality | CO+H n=0 ROI=+nan% hold_n=0 holdROI=+nan%
+CO005: READY_WITH_SINGLE_VETO | 158 bets 50.6% win ROI +26.9% | hold 36 58.3% ROI +47.7% | timing=- veto=COACH:opp_coachq_prev_dc_prior_quality | CO+H n=59 ROI=+48.1% hold_n=16 holdROI=+55.8%
+CO026: READY_WITH_SINGLE_VETO | 109 bets 56.0% win ROI +40.5% | hold 34 52.9% ROI +32.4% | timing=- veto=COACH:adv_dc_prior_win_pct | CO+H n=7 ROI=+155.0% hold_n=4 holdROI=+153.5%
+CO009: READY_WITH_SINGLE_VETO | 265 bets 34.7% win ROI +28.8% | hold 90 36.7% ROI +35.3% | timing=- veto=COACH:coachq_hc_quality_delta_vs_departed | CO+H n=0 ROI=+nan% hold_n=0 holdROI=+nan%
+CO048: READY_WITH_SINGLE_VETO | 98 bets 43.9% win ROI +53.1% | hold 28 35.7% ROI +20.3% | timing=- veto=COACH:adv_hc_prior_games | CO+H n=0 ROI=+nan% hold_n=0 holdROI=+nan%
+CO043: READY_WITH_SINGLE_VETO | 94 bets 37.2% win ROI +35.7% | hold 26 34.6% ROI +28.5% | timing=- veto=COACH:opp_coachq_hc_recent_quality | CO+H n=0 ROI=+nan% hold_n=0 holdROI=+nan%
+CO061: READY_WITH_SINGLE_VETO | 97 bets 37.1% win ROI +30.8% | hold 26 34.6% ROI +24.7% | timing=- veto=COACH:coachq_prev_hc_recent_quality | CO+H n=0 ROI=+nan% hold_n=0 holdROI=+nan%
+CO017: READY_WITH_SINGLE_VETO | 146 bets 47.3% win ROI +18.3% | hold 51 49.0% ROI +21.3% | timing=- veto=COACH:coachq_hc_prior_quality | CO+H n=55 ROI=+50.0% hold_n=16 holdROI=+68.6%
+CO016: READY_WITH_SINGLE_VETO | 101 bets 81.2% win ROI +16.4% | hold 25 80.0% ROI +15.5% | timing=- veto=CONTEXT:adv_prior_road_miles_last5 | CO+H n=0 ROI=+nan% hold_n=0 holdROI=+nan%
+CO018: READY_WITH_SINGLE_VETO | 132 bets 69.7% win ROI +16.2% | hold 47 70.2% ROI +16.0% | timing=- veto=COACH:coachq_prev_oc_prior_quality | CO+H n=0 ROI=+nan% hold_n=0 holdROI=+nan%
+
+TOP CONFIRMED VETOES
+CO001 CONTEXT adv_travel_miles <= -953.137 | hold risk n=7 win=0.0% ROI=-100.0% -> safe ROI=+93.9% retain=75%
+CO001 CONTEXT travel_miles >= 953.137 | hold risk n=9 win=11.1% ROI=-52.1% -> safe ROI=+91.6% retain=68%
+CO005 CONTEXT rank_edge_punt_return_average <= -3 | hold risk n=14 win=35.7% ROI=-10.3% -> safe ROI=+84.6% retain=61%
+CO043 CONTEXT rank_edge_def_allowed_early_down_epa <= -5.9 | hold risk n=12 win=16.7% ROI=-43.9% -> safe ROI=+90.6% retain=54%
+CO043 CONTEXT qb_prior_starts <= 9.2 | hold risk n=10 win=10.0% ROI=-55.0% -> safe ROI=+80.7% retain=62%
+CO005 COACH opp_coachq_prev_dc_prior_quality <= 0.445312 | hold risk n=4 win=25.0% ROI=-41.0% -> safe ROI=+58.8% retain=89%
+CO061 COACH coachq_prev_hc_recent_quality >= 0.761538 | hold risk n=6 win=0.0% ROI=-100.0% -> safe ROI=+62.1% retain=77%
+CO061 COACH coachq_prev_hc_recent_quality >= 0.769231 | hold risk n=6 win=0.0% ROI=-100.0% -> safe ROI=+62.1% retain=77%
+CO043 COACH opp_coachq_hc_recent_quality <= 0.461538 | hold risk n=6 win=0.0% ROI=-100.0% -> safe ROI=+67.0% retain=77%
+CO005 COACH coachq_hc_prior_role_seasons >= 3 | hold risk n=16 win=43.8% ROI=+11.9% -> safe ROI=+76.4% retain=56%
+CO005 COACH coachq_prev_hc_prior_role_seasons >= 2 | hold risk n=16 win=43.8% ROI=+11.9% -> safe ROI=+76.4% retain=56%
+CO061 CONTEXT rank_edge_penalty_yards <= -3.8 | hold risk n=12 win=16.7% ROI=-35.8% -> safe ROI=+76.6% retain=54%
+CO005 CONTEXT rank_edge_punt_return_average <= 3.5 | hold risk n=19 win=47.4% ROI=+19.6% -> safe ROI=+79.1% retain=47%
+CO005 CONTEXT recent_edge_third_down_success >= 0.0750997 | hold risk n=6 win=33.3% ROI=-15.2% -> safe ROI=+60.3% retain=83%
+CO005 COACH opp_coachq_oc_prior_quality <= 0.524609 | hold risk n=8 win=37.5% ROI=-7.2% -> safe ROI=+63.4% retain=78%
+CO009 COACH coachq_hc_quality_delta_vs_departed >= 0.0404915 | hold risk n=5 win=0.0% ROI=-100.0% -> safe ROI=+43.2% retain=94%
+CO061 CONTEXT recent_edge_def_allowed_early_down_epa <= -0.119098 | hold risk n=4 win=0.0% ROI=-100.0% -> safe ROI=+47.4% retain=85%
+CO018 CONTEXT recent_edge_off_epa >= 8.83813 | hold risk n=13 win=38.5% ROI=-38.7% -> safe ROI=+36.9% retain=72%
+CO043 COACH adv_staff_quality_min >= 0.188812 | hold risk n=4 win=0.0% ROI=-100.0% -> safe ROI=+51.9% retain=85%
+CO009 COACH opp_coachq_oc_prior_quality <= 0.34375 | hold risk n=4 win=0.0% ROI=-100.0% -> safe ROI=+41.6% retain=96%
+
+TOP CO+H CONSENSUS
+CO017+any independent H | 33-22 n=55 win=60.0% ROI=+50.0% | hold n=16 win=68.8% ROI=+68.6%
+CO005+any independent H | 35-24 n=59 win=59.3% ROI=+48.1% | hold n=16 win=62.5% ROI=+55.8%
