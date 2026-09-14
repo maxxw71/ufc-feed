@@ -9,7 +9,7 @@ SOURCE_ROOT=Path(os.environ.get('NFL_SOURCE_ROOT','/home/anestishkurti92/nfl-pre
 CTX=Path(os.environ.get('NFL_CONTEXT_ROOT','/home/appwiza-runner/nfl-context-data'))
 REPO=Path(os.environ.get('GITHUB_WORKSPACE','.'))
 PFR_SRC=REPO/'data'/'nfl'/'coordinator_history_pfr_2006_2026.csv'
-ESPN_SRC=REPO/'data'/'nfl'/'coordinator_history_espn_2019_2025.csv'
+ESPN_SRC=REPO/'data'/'nfl'/'coordinator_history_espn_2019_2026.csv'
 OUT=CTX/'raw'/'coaching_staff_2006_2026.csv'
 STATUS=CTX/'NFL_COACHING_STAFF_STATUS.json'
 SCHEDULES=SOURCE_ROOT/'data'/'raw'/'schedules_2006_2026.parquet'
@@ -52,16 +52,16 @@ staff['major_staff_changes']=staff[['head_coach_changed','offensive_coordinator_
 staff.to_csv(OUT,index=False)
 
 both=staff.offensive_coordinator.notna() & staff.defensive_coordinator.notna()
-recent=staff[staff.season.between(2021,2025)]
+recent=staff[staff.season.between(2021,2026)]
 rb=recent.offensive_coordinator.notna() & recent.defensive_coordinator.notna()
 by_season={str(int(y)):{'teams':int(len(g)),'oc':int(g.offensive_coordinator.notna().sum()),'dc':int(g.defensive_coordinator.notna().sum()),'both':int((g.offensive_coordinator.notna()&g.defensive_coordinator.notna()).sum())} for y,g in staff.groupby('season')}
 status={'team_seasons':int(len(staff)),'head_coach_filled':int(staff.head_coach.notna().sum()),
         'oc_filled':int(staff.offensive_coordinator.notna().sum()),'dc_filled':int(staff.defensive_coordinator.notna().sum()),
         'both_coordinators_filled':int(both.sum()),'both_coordinator_pct':round(float(both.mean()*100),2),
-        '2021_2025_both_pct':round(float(rb.mean()*100),2) if len(recent) else 0,
+        '2021_2026_both_pct':round(float(rb.mean()*100),2) if len(recent) else 0,
         'source_files':[str(x) for x in [PFR_SRC,ESPN_SRC] if x.exists()], 'by_season':by_season,
-        'output':str(OUT),'source':'versioned public coordinator sources + nflverse schedule head coaches',
-        'notes':['Head coach comes from nflverse schedules.','2021-2025 coordinator history is complete from ESPN annual projection guides.','Older unknown coordinator values remain null and never count as no-change.','2026 is patched separately from current public staff sources.']}
+        'output':str(OUT),'source':'versioned ESPN public coordinator guides + nflverse schedule head coaches',
+        'notes':['Head coach comes from nflverse schedules.','2021-2026 OC/DC history is complete from ESPN annual projection guides.','Older unknown coordinator values remain null and never count as no-change.']}
 STATUS.write_text(json.dumps(status,indent=2)); print(json.dumps(status,indent=2))
-if len(recent)!=160 or int(rb.sum())!=160:
-    raise RuntimeError(f'Expected 160 complete 2021-2025 coordinator team-seasons; rows={len(recent)} both={int(rb.sum())}')
+if len(recent)!=192 or int(rb.sum())!=192:
+    raise RuntimeError(f'Expected 192 complete 2021-2026 coordinator team-seasons; rows={len(recent)} both={int(rb.sum())}')
