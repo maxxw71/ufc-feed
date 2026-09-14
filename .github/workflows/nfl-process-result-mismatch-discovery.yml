@@ -1,0 +1,38 @@
+name: NFL process result mismatch discovery
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/nfl_process_result_mismatch_discovery.py'
+      - 'scripts/nfl_process_result_mismatch_trigger.txt'
+permissions:
+  contents: write
+jobs:
+  research:
+    runs-on: [self-hosted, Linux, X64, appwiza]
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+        with: {fetch-depth: 0}
+      - name: Run discovery
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          /home/anestishkurti92/nfl-predictor-v1/venv/bin/python "$GITHUB_WORKSPACE/scripts/nfl_process_result_mismatch_discovery.py"
+      - name: Publish
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          SRC=/home/appwiza-runner/nfl-context-data/process_result_mismatch_discovery
+          DEST="$GITHUB_WORKSPACE/nfl/process_result_mismatch_discovery"
+          mkdir -p "$DEST"
+          cp "$SRC"/* "$DEST"/
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git add nfl/process_result_mismatch_discovery
+          if ! git diff --cached --quiet; then
+            git commit -m 'Update process-vs-results NFL discovery'
+            git pull --rebase origin main
+            git push origin HEAD:main
+          fi
