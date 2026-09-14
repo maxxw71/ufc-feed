@@ -1,0 +1,53 @@
+name: Appwiza NFL base YPP integrity inspect
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/appwiza-nfl-base-ypp-integrity-inspect.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  inspect:
+    if: github.repository == 'maxxw71/ufc-feed' && github.ref == 'refs/heads/main'
+    runs-on: [self-hosted, Linux, X64, appwiza]
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - name: Trace live base YPP selector
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p nfl
+          REPORT=nfl/live_base_ypp_integrity_report.txt
+          ROOT=/home/anestishkurti92/nfl-predictor-v1
+          R2="$ROOT/research_v2"
+          : > "$REPORT"
+
+          echo '=== BASE YPP REFERENCES ===' >> "$REPORT"
+          timeout 30s grep -RniE -C 14 'base_ypp_v1|pre_off_ypp|opp_pre_def_ypp_allowed|MIN_OFFENSE_YPP|6\.2.*5\.8|5\.8.*6\.2' "$R2" \
+            --include='*.py' --include='*.json' --include='*.md' --include='*.txt' \
+            --exclude-dir=.git --exclude-dir=home_opener_email_state --exclude-dir=venv --exclude-dir=.venv 2>/dev/null | \
+            head -1400 >> "$REPORT" || true
+          echo >> "$REPORT"
+
+          echo '=== PUBLISH MODULE ACCESS ===' >> "$REPORT"
+          for p in /opt/sports-publisher /opt/sports-publisher/sports_publish.py /home/anestishkurti92/betting-ledger/code /home/anestishkurti92/betting-ledger/code/bet_tracker.py; do
+            stat -c '%U:%G %a %n' "$p" >> "$REPORT" 2>&1 || true
+            if [ -w "$p" ]; then echo "writable=yes $p" >> "$REPORT"; else echo "writable=no $p" >> "$REPORT"; fi
+          done
+          echo >> "$REPORT"
+
+          echo '=== SPORTS PUBLISH NFL ===' >> "$REPORT"
+          grep -n -B20 -A100 -E '^def publish_nfl|def safe_call|nfl' /opt/sports-publisher/sports_publish.py 2>/dev/null | head -500 >> "$REPORT" || true
+
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add "$REPORT"
+          if ! git diff --cached --quiet; then
+            git commit -m 'Capture live NFL base YPP integrity report'
+            git push
+          fi
