@@ -1,0 +1,89 @@
+=== IDENTITY ===
+2026-09-14T08:06:29+00:00
+ubuntu-4gb-fsn1-1
+uid=1001(appwiza-runner) gid=1001(appwiza-runner) groups=1001(appwiza-runner)
+Linux ubuntu-4gb-fsn1-1 7.0.0-31-generic #31-Ubuntu SMP PREEMPT_DYNAMIC Sat Aug  1 04:26:38 UTC 2026 x86_64 GNU/Linux
+=== SUDO ===
+sudo: Sorry, user appwiza-runner may not run sudo on ubuntu-4gb-fsn1-1.
+=== BEFORE ===
+● ssh.service - OpenBSD Secure Shell server
+     Loaded: loaded (/usr/lib/systemd/system/ssh.service; disabled; preset: enabled)
+     Active: active (running) since Mon 2026-09-14 07:01:41 UTC; 1h 4min ago
+ Invocation: 31d303934fa549249b9d7b346ee869cd
+TriggeredBy: ● ssh.socket
+       Docs: man:sshd(8)
+             man:sshd_config(5)
+    Process: 1062 ExecStartPre=/usr/sbin/sshd -t (code=exited, status=0/SUCCESS)
+   Main PID: 1094 (sshd)
+      Tasks: 6 (limit: 3647)
+     Memory: 15M (peak: 26.9M)
+        CPU: 9.941s
+     CGroup: /system.slice/ssh.service
+             ├─1094 "sshd: /usr/sbin/sshd -D [listener] 3 of 10-100 startups"
+             ├─4122 "sshd-session: [accepted]"
+             ├─4136 "sshd-session: [accepted]"
+             ├─4138 "sshd-auth: [session-auth]"
+             ├─4160 "sshd-session: root [priv]"
+             └─4161 "sshd-auth: root [net]"
+
+Warning: some journal files were not opened due to insufficient permissions.
+● ssh.service - OpenBSD Secure Shell server
+     Loaded: loaded (/usr/lib/systemd/system/ssh.service; disabled; preset: enabled)
+     Active: active (running) since Mon 2026-09-14 07:01:41 UTC; 1h 4min ago
+ Invocation: 31d303934fa549249b9d7b346ee869cd
+TriggeredBy: ● ssh.socket
+       Docs: man:sshd(8)
+             man:sshd_config(5)
+    Process: 1062 ExecStartPre=/usr/sbin/sshd -t (code=exited, status=0/SUCCESS)
+   Main PID: 1094 (sshd)
+      Tasks: 6 (limit: 3647)
+     Memory: 15M (peak: 26.9M)
+        CPU: 9.941s
+     CGroup: /system.slice/ssh.service
+             ├─1094 "sshd: /usr/sbin/sshd -D [listener] 3 of 10-100 startups"
+             ├─4122 "sshd-session: [accepted]"
+             ├─4136 "sshd-session: [accepted]"
+             ├─4138 "sshd-auth: [session-auth]"
+             ├─4160 "sshd-session: root [priv]"
+             └─4161 "sshd-auth: root [net]"
+
+Warning: some journal files were not opened due to insufficient permissions.
+LISTEN 0      4096         0.0.0.0:22        0.0.0.0:*          
+LISTEN 0      4096            [::]:22           [::]:*          
+Detected SSH unit: ssh
+=== CONFIG TEST ===
+sudo: I'm sorry appwiza-runner. I'm afraid I can't do that
+=== REPAIR ATTEMPT ===
+sudo: I'm sorry appwiza-runner. I'm afraid I can't do that
+sudo: I'm sorry appwiza-runner. I'm afraid I can't do that
+sudo: I'm sorry appwiza-runner. I'm afraid I can't do that
+=== UFW ===
+sudo: I'm sorry appwiza-runner. I'm afraid I can't do that
+=== FIREWALL SNAPSHOT ===
+=== AFTER ===
+● ssh.service - OpenBSD Secure Shell server
+     Loaded: loaded (/usr/lib/systemd/system/ssh.service; disabled; preset: enabled)
+     Active: active (running) since Mon 2026-09-14 07:01:41 UTC; 1h 4min ago
+ Invocation: 31d303934fa549249b9d7b346ee869cd
+TriggeredBy: ● ssh.socket
+       Docs: man:sshd(8)
+             man:sshd_config(5)
+    Process: 1062 ExecStartPre=/usr/sbin/sshd -t (code=exited, status=0/SUCCESS)
+   Main PID: 1094 (sshd)
+      Tasks: 6 (limit: 3647)
+     Memory: 14.8M (peak: 26.9M)
+        CPU: 9.941s
+     CGroup: /system.slice/ssh.service
+             ├─1094 "sshd: /usr/sbin/sshd -D [listener] 3 of 10-100 startups"
+             ├─4122 "sshd-session: [accepted]"
+             ├─4136 "sshd-session: [accepted]"
+             ├─4138 "sshd-auth: [session-auth]"
+             ├─4160 "sshd-session: root [priv]"
+             └─4161 "sshd-auth: root [net]"
+
+Warning: some journal files were not opened due to insufficient permissions.
+LISTEN 0      4096         0.0.0.0:22        0.0.0.0:*          
+LISTEN 0      4096            [::]:22           [::]:*          
+LOCAL_PORT_22=OPEN
+=== RECENT SSH LOGS ===
+sudo: I'm sorry appwiza-runner. I'm afraid I can't do that
