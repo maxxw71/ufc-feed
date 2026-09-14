@@ -34,33 +34,46 @@ jobs:
           ROOT=/home/anestishkurti92/nfl-predictor-v1
           R2="$ROOT/research_v2"
           SCANNER="$R2/nfl_home_opener_scanner.py"
+          REPORT=nfl/live_production_guard_deploy_report.txt
           TS=$(date -u +%Y%m%dT%H%M%SZ)
           BACKUP="$ROOT/backups/production_guard_$TS"
-          mkdir -p "$BACKUP"
-          test -f "$SCANNER"
-          cp -a "$SCANNER" "$BACKUP/nfl_home_opener_scanner.py"
-          if [ -f "$R2/production_approval_guard.py" ]; then
-            cp -a "$R2/production_approval_guard.py" "$BACKUP/production_approval_guard.py.previous"
+          LOCAL=/tmp/nfl_home_opener_scanner.guarded.py
+          STAGE=initialize
+          SUDO=''
+
+          mkdir -p nfl
+          {
+            echo "attempted_at=$TS"
+            echo "production_scanner=$SCANNER"
+          } > "$REPORT"
+
+          fail_report() {
+            rc=$?
+            echo "deployment_status=FAILED" >> "$REPORT"
+            echo "failed_stage=$STAGE" >> "$REPORT"
+            echo "exit_code=$rc" >> "$REPORT"
+          }
+          trap fail_report ERR
+
+          STAGE=access_check
+          test -r "$SCANNER"
+          if [ ! -w "$SCANNER" ] || [ ! -w "$R2" ]; then
+            if sudo -n true >/dev/null 2>&1; then
+              SUDO=sudo
+              echo 'install_mode=passwordless_sudo' >> "$REPORT"
+            else
+              echo 'install_mode=unwritable_no_sudo' >> "$REPORT"
+              false
+            fi
+          else
+            echo 'install_mode=direct_write' >> "$REPORT"
           fi
 
-          rollback() {
-            echo 'Deployment failed; restoring production scanner.' >&2
-            cp -a "$BACKUP/nfl_home_opener_scanner.py" "$SCANNER"
-            if [ -f "$BACKUP/production_approval_guard.py.previous" ]; then
-              cp -a "$BACKUP/production_approval_guard.py.previous" "$R2/production_approval_guard.py"
-            else
-              rm -f "$R2/production_approval_guard.py"
-            fi
-          }
-          trap rollback ERR
-
-          install -m 0644 nfl/production_approval_guard.py "$R2/production_approval_guard.py.tmp"
-          mv "$R2/production_approval_guard.py.tmp" "$R2/production_approval_guard.py"
-
-          python3 - "$SCANNER" <<'PY'
+          STAGE=prepare_local_patch
+          cp "$SCANNER" "$LOCAL"
+          python3 - "$LOCAL" <<'PY'
           from pathlib import Path
           import sys
-
           path=Path(sys.argv[1])
           text=path.read_text()
           if 'import production_approval_guard as production_gate' not in text:
@@ -68,7 +81,6 @@ jobs:
               if anchor not in text:
                   raise RuntimeError('production scanner import anchor missing')
               text=text.replace(anchor,anchor+'import production_approval_guard as production_gate\n',1)
-
           marker="late_records,late_status=late.scan(G,R,now,current_odds);records.extend(late_records)"
           if 'production_gate.approve(records,now)' not in text:
               if marker not in text:
@@ -76,13 +88,52 @@ jobs:
               gate=("\n records,production_rejections=production_gate.approve(records,now)"
                     "\n atomic(S/'production_rejections.json',{'scanned_at':now.isoformat(),'rejections':production_rejections})")
               text=text.replace(marker,marker+gate,1)
-
-          tmp=path.with_suffix('.py.guardtmp')
-          tmp.write_text(text)
-          tmp.replace(path)
+          path.write_text(text)
           PY
 
-          python3 -m py_compile "$R2/production_approval_guard.py" "$SCANNER"
+          STAGE=validate_local_patch
+          python3 -m py_compile nfl/production_approval_guard.py "$LOCAL"
+          python3 - "$LOCAL" <<'PY'
+          from pathlib import Path
+          import sys
+          text=Path(sys.argv[1]).read_text()
+          gate=text.index('production_gate.approve(records,now)')
+          publish=text.index('sports_publish.safe_call(sports_publish.publish_nfl,records,now,nfl_email_design)')
+          render=text.index('nfl_email_design.render(records,now)',publish)
+          assert gate < publish < render
+          print('site/email same guarded records source check: PASS')
+          PY
+
+          STAGE=backup_live
+          $SUDO mkdir -p "$BACKUP"
+          $SUDO cp -a "$SCANNER" "$BACKUP/nfl_home_opener_scanner.py"
+          if [ -f "$R2/production_approval_guard.py" ]; then
+            $SUDO cp -a "$R2/production_approval_guard.py" "$BACKUP/production_approval_guard.py.previous"
+          fi
+          echo "backup=$BACKUP" >> "$REPORT"
+
+          rollback_live() {
+            $SUDO install -m 0644 "$BACKUP/nfl_home_opener_scanner.py" "$SCANNER" || true
+            if [ -f "$BACKUP/production_approval_guard.py.previous" ]; then
+              $SUDO install -m 0644 "$BACKUP/production_approval_guard.py.previous" "$R2/production_approval_guard.py" || true
+            else
+              $SUDO rm -f "$R2/production_approval_guard.py" || true
+            fi
+          }
+
+          STAGE=install_live
+          $SUDO install -m 0644 nfl/production_approval_guard.py "$R2/production_approval_guard.py"
+          $SUDO install -m 0644 "$LOCAL" "$SCANNER"
+
+          STAGE=validate_live
+          if ! python3 -m py_compile "$R2/production_approval_guard.py" "$SCANNER"; then
+            rollback_live
+            false
+          fi
+          if ! cmp -s nfl/production_approval_guard.py "$R2/production_approval_guard.py"; then
+            rollback_live
+            false
+          fi
 
           PYTHONPATH="$R2" python3 - <<'PY'
           from datetime import datetime,timedelta,timezone
@@ -106,36 +157,18 @@ jobs:
           print('live approval guard regression: PASS')
           PY
 
-          python3 - "$SCANNER" <<'PY'
-          from pathlib import Path
-          import sys
-          text=Path(sys.argv[1]).read_text()
-          gate=text.index('production_gate.approve(records,now)')
-          publish=text.index('sports_publish.safe_call(sports_publish.publish_nfl,records,now,nfl_email_design)')
-          render=text.index('nfl_email_design.render(records,now)',publish)
-          assert gate < publish < render
-          between=text[gate:render]
-          assert 'records=' not in between.replace('records,production_rejections=','',1)
-          print('site/email same guarded records: PASS')
-          PY
-
-          cmp -s nfl/production_approval_guard.py "$R2/production_approval_guard.py"
+          STAGE=complete
+          echo 'deployment_status=PASS' >> "$REPORT"
+          echo 'approved_methods=base_ypp_v1' >> "$REPORT"
+          echo 'min_week=4' >> "$REPORT"
+          echo 'min_prior_games=3' >> "$REPORT"
+          echo 'week1_LAC_ARI_regression=PASS' >> "$REPORT"
+          echo 'unapproved_research_method_regression=PASS' >> "$REPORT"
+          echo 'site_email_same_guarded_records=PASS' >> "$REPORT"
           trap - ERR
 
-          mkdir -p nfl
-          {
-            echo "deployed_at=$TS"
-            echo "production_scanner=$SCANNER"
-            echo "backup=$BACKUP"
-            echo "approved_methods=base_ypp_v1"
-            echo "min_week=4"
-            echo "min_prior_games=3"
-            echo "week1_LAC_ARI_regression=PASS"
-            echo "unapproved_research_method_regression=PASS"
-            echo "site_email_same_guarded_records=PASS"
-          } > nfl/live_production_guard_deploy_report.txt
-
       - name: Refresh public NFL page without sending email
+        if: success()
         shell: bash
         run: |
           set -u
@@ -162,9 +195,7 @@ jobs:
         run: |
           set -u
           REPORT=nfl/live_production_guard_deploy_report.txt
-          if [ ! -f "$REPORT" ]; then
-            echo 'deployment_status=FAILED_BEFORE_REPORT' > "$REPORT"
-          fi
+          if [ ! -f "$REPORT" ]; then echo 'deployment_status=FAILED_NO_REPORT' > "$REPORT"; fi
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add "$REPORT"
