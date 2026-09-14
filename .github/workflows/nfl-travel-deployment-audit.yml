@@ -1,0 +1,44 @@
+name: NFL travel deployment audit
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/nfl_travel_deployment_audit.py'
+      - '.github/workflows/nfl-travel-deployment-audit.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  audit:
+    runs-on: [self-hosted, Linux, X64, appwiza]
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with: {fetch-depth: 0}
+      - name: Run deployment audit
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          /home/anestishkurti92/nfl-predictor-v1/venv/bin/python "$GITHUB_WORKSPACE/scripts/nfl_travel_deployment_audit.py"
+      - name: Publish results
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          SRC=/home/appwiza-runner/nfl-context-data/travel_deployment_audit
+          DEST="$GITHUB_WORKSPACE/nfl/travel_deployment_audit"
+          mkdir -p "$DEST"
+          cp "$SRC/summary.json" "$DEST/summary.json"
+          cp "$SRC/report.txt" "$DEST/report.txt"
+          cp "$SRC/travel_method_deployment_audit.csv" "$DEST/travel_method_deployment_audit.csv"
+          cp "$SRC/travel_methods_ready.csv" "$DEST/travel_methods_ready.csv"
+          cp "$SRC/travel_methods_watch.csv" "$DEST/travel_methods_watch.csv"
+          cp "$SRC/travel_vetoes_deployment_grade.csv" "$DEST/travel_vetoes_deployment_grade.csv"
+          cp "$SRC/travel_primary_vetoes_ready.csv" "$DEST/travel_primary_vetoes_ready.csv"
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git add nfl/travel_deployment_audit
+          if ! git diff --cached --quiet; then
+            git commit -m 'Update NFL travel deployment audit'
+            git pull --rebase origin main
+            git push origin HEAD:main
+          fi
