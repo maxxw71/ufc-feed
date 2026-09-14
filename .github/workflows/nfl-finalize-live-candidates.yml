@@ -1,0 +1,65 @@
+name: NFL finalize live candidates
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'nfl/coaching_deployment_audit/coaching_methods_ready.csv'
+      - 'nfl/exact_price_windows/method_price_windows.csv'
+      - 'nfl/next_wave_combinations/next_wave_survivors.csv'
+      - 'nfl/travel_deployment_audit/travel_methods_ready.csv'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  finalize:
+    runs-on: [self-hosted, Linux, X64, appwiza]
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+        with: {fetch-depth: 0}
+      - name: Check required inputs
+        id: inputs
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          required=(
+            nfl/coaching_deployment_audit/coaching_methods_ready.csv
+            nfl/exact_price_windows/method_price_windows.csv
+            nfl/travel_deployment_audit/travel_methods_ready.csv
+          )
+          for f in "${required[@]}"; do
+            if [ ! -s "$f" ]; then
+              echo "ready=false" >> "$GITHUB_OUTPUT"
+              echo "Missing $f; finalization will rerun automatically when it lands."
+              exit 0
+            fi
+          done
+          echo "ready=true" >> "$GITHUB_OUTPUT"
+      - name: Build final live candidate registry
+        if: steps.inputs.outputs.ready == 'true'
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          /home/anestishkurti92/nfl-predictor-v1/venv/bin/python "$GITHUB_WORKSPACE/scripts/nfl_finalize_live_candidates.py"
+      - name: Publish finalization
+        if: steps.inputs.outputs.ready == 'true'
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          SRC=/home/appwiza-runner/nfl-context-data/live_candidate_finalization
+          DEST="$GITHUB_WORKSPACE/nfl/live_candidate_finalization"
+          mkdir -p "$DEST"
+          cp "$SRC/summary.json" "$DEST/summary.json"
+          cp "$SRC/report.txt" "$DEST/report.txt"
+          cp "$SRC/final_candidate_registry.csv" "$DEST/final_candidate_registry.csv"
+          cp "$SRC/live_ready.csv" "$DEST/live_ready.csv"
+          cp "$SRC/watchlist.csv" "$DEST/watchlist.csv"
+          cp "$SRC/research_only.csv" "$DEST/research_only.csv"
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git add nfl/live_candidate_finalization
+          if ! git diff --cached --quiet; then
+            git commit -m 'Update NFL live candidate finalization'
+            git pull --rebase origin main
+            git push origin HEAD:main
+          fi
