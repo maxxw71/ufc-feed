@@ -1,0 +1,34 @@
+name: NFL inspect legacy server artifacts
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/nfl_inspect_legacy_server_artifacts.py'
+permissions:
+  contents: write
+jobs:
+  inspect:
+    runs-on: [self-hosted, Linux, X64, appwiza]
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with: {fetch-depth: 0}
+      - name: Inspect
+        run: /home/anestishkurti92/nfl-predictor-v1/venv/bin/python "$GITHUB_WORKSPACE/scripts/nfl_inspect_legacy_server_artifacts.py"
+      - name: Publish
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          SRC=/home/appwiza-runner/nfl-context-data/legacy_live_artifact_inspect
+          DEST="$GITHUB_WORKSPACE/nfl/legacy_live_artifact_inspect"
+          rm -rf "$DEST"; mkdir -p "$DEST"
+          cp -a "$SRC"/. "$DEST"/
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git add nfl/legacy_live_artifact_inspect
+          if ! git diff --cached --quiet; then
+            git commit -m 'Update legacy NFL artifact inspection'
+            git pull --rebase origin main
+            git push origin HEAD:main
+          fi
