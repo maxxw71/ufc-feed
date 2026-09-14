@@ -3,6 +3,7 @@ import json, os, re, importlib.util, sys
 import numpy as np
 import pandas as pd
 
+# Re-audit the currently live legacy email rules against the richer REG-only dataset.
 ROOT=Path('/home/anestishkurti92/nfl-predictor-v1')
 R=ROOT/'research_v2'
 CTX=Path('/home/appwiza-runner/nfl-context-data')
@@ -26,20 +27,17 @@ d=d[num(d.win).isin([0,1]) & num(d.moneyline).notna()].copy()
 d['win']=num(d.win); d['moneyline']=num(d.moneyline); d['profit_units']=profit(d.win,d.moneyline)
 if 'prior_games' in d.columns:d=d[num(d.prior_games)>=0].copy()
 
-# Authoritative schedule REG-only marker.
 s=pd.read_parquet(SCHED)
 if 'game_type' in s.columns: s=s[s.game_type.eq('REG')]
 elif 'season_type' in s.columns: s=s[s.season_type.eq('REG')]
 reg_ids=set(s.game_id.astype(str))
 d=d[d.game_id.astype(str).isin(reg_ids)].copy()
 
-# Current live scanner definitions/source fingerprint.
 scanner=R/'nfl_home_opener_scanner.py'; late=R/'late_season_method.py'
 scanner_text=scanner.read_text() if scanner.exists() else ''
 late_text=late.read_text() if late.exists() else ''
 (OUT/'current_live_source_snapshot.txt').write_text('=== nfl_home_opener_scanner.py ===\n'+scanner_text+'\n\n=== late_season_method.py ===\n'+late_text)
 
-# Identify live rule labels from source.
 rule_names=[]
 for name in ['original','stricter','pass_defense_offense24']:
     if name in scanner_text: rule_names.append(name)
@@ -47,19 +45,15 @@ late_rule='late_season'
 m=re.search(r"RULE\s*=\s*['\"]([^'\"]+)",late_text)
 if m: late_rule=m.group(1)
 
-# Reconstruct current HOME-OPENER legacy rules exactly from their source semantics.
-# For each season, first regular-season home game for each home team; use prior-season run-defense rank and record.
 sch=s.copy()
 for c in ['home_team','away_team']:
     if c in sch: sch[c]=sch[c].replace(ALIASES)
-# Need scores to calculate prior records; schedule table normally has them.
 rows=[]
 for season in sorted(x for x in sch.season.dropna().unique() if 2007<=int(x)<=2025):
     cur=sch[sch.season.eq(season)].sort_values(['week','game_id']).copy()
     openers=cur.drop_duplicates('home_team',keep='first')
     prior=sch[sch.season.eq(season-1)].copy()
     if prior.empty: continue
-    # prior record pct by team
     sides=[]
     for side in ['home','away']:
         if side=='home':
@@ -71,9 +65,7 @@ for season in sorted(x for x in sch.season.dropna().unique() if 2007<=int(x)<=20
     ps['winx']=(num(ps.pts)>num(ps.opp_pts)).astype(float); ps['tiex']=(num(ps.pts)==num(ps.opp_pts)).astype(float)
     rec=ps.groupby('team').agg(w=('winx','sum'),t=('tiex','sum'),n=('game_id','count'))
     rec['pct']=(rec.w+.5*rec.t)/rec.n
-    # derive prior run-defense EPA/carry rank from enriched rows for that prior season if available
     pd0=d[d.season.eq(season-1)].copy()
-    # Prefer rank column already built pregame at end-year; reconstruct season aggregate if raw columns available.
     rankmap={}
     if {'pre_def_allowed_rush_epa_per_carry','team'}.issubset(pd0.columns):
         last=pd0.sort_values('week').groupby('team').tail(1)
@@ -82,19 +74,10 @@ for season in sorted(x for x in sch.season.dropna().unique() if 2007<=int(x)<=20
     elif 'rank_def_allowed_rush_epa_per_carry' in pd0.columns:
         last=pd0.sort_values('week').groupby('team').tail(1)
         rankmap=dict(zip(last.team,num(last.rank_def_allowed_rush_epa_per_carry)))
-    else:
-        # use live stats_team files exactly if present
-        path=R/f'data/stats_team/stats_team_week_{season-1}.parquet'
-        if path.exists():
-            st=pd.read_parquet(path)
-            st=st[(st.season==season-1)&st.season_type.eq('REG')].copy(); st.team=st.team.replace(ALIASES)
-            st['rate']=num(st.rushing_epa)/num(st.carries)
-            rankmap=st.groupby('opponent').rate.mean().rank(method='average').to_dict() if 'opponent' in st.columns else {}
     for _,g in openers.iterrows():
         ht=g.home_team; at=g.away_team
         if ht not in rec.index or at not in rec.index or ht not in rankmap: continue
         gap=float(rec.at[ht,'pct']-rec.at[at,'pct']); rr=float(rankmap[ht])
-        # locate the home-side historical betting row
         q=d[(d.game_id.astype(str)==str(g.game_id)) & d.team.eq(ht)]
         if q.empty: continue
         rr0=q.iloc[0].copy()
@@ -102,10 +85,7 @@ for season in sorted(x for x in sch.season.dropna().unique() if 2007<=int(x)<=20
             if ok:
                 rows.append({'method':rid,'game_id':g.game_id,'season':season,'week':int(g.week),'team':ht,'opponent':at,'moneyline':float(rr0.moneyline),'win':float(rr0.win),'profit_units':float(rr0.profit_units),'record_gap':gap,'run_def_rank':rr})
 
-# PASS-DEFENSE-OFFENSE24: week-1 home opener based on prior-season ranks. Use features in enriched table if reproducible.
-# Current source condition is pass-defense rank <=10, hit rank <=16, offense rank <=24, week==1.
 for _,q in d[d.week.eq(1) & num(d.is_home).eq(1)].iterrows():
-    # Best available corresponding prior-season rank fields are the rank columns materialized for the side.
     candidates={
       'pass_rank':['prior_rank_def_allowed_pass_epa_per_dropback','last_rank_def_allowed_pass_epa_per_dropback','rank_def_allowed_pass_epa_per_dropback'],
       'hit_rank':['prior_rank_def_allowed_sack_or_hit_rate','last_rank_def_allowed_sack_or_hit_rate','rank_def_allowed_sack_or_hit_rate'],
@@ -119,7 +99,6 @@ for _,q in d[d.week.eq(1) & num(d.is_home).eq(1)].iterrows():
 bets=pd.DataFrame(rows)
 if len(bets): bets=bets.drop_duplicates(['method','game_id','team'])
 
-# Late-season method: import its historical evaluator if exposed; otherwise capture source for manual follow-up.
 late_summary={'rule':late_rule,'status':'source_captured'}
 try:
     spec=importlib.util.spec_from_file_location('late_live',late)
@@ -128,7 +107,6 @@ try:
 except Exception as e:
     late_summary['import_error']=type(e).__name__+': '+str(e)
 
-# Method summaries + era/year consistency.
 summary_rows=[]; yearly=[]
 if len(bets):
     for method,x in bets.groupby('method'):
@@ -138,22 +116,20 @@ if len(bets):
         active=yrs[yrs.n>=2]
         pos=int((active.units>0).sum()); act=len(active)
         summary_rows.append({'method':method,**m,'older_n':older['n'],'older_win_pct':older['win_pct'],'older_roi':older['roi'],'recent_n':recent['n'],'recent_win_pct':recent['win_pct'],'recent_roi':recent['roi'],'recent_roi_delta':recent['roi']-older['roi'] if older['n'] and recent['n'] else np.nan,'positive_seasons':pos,'active_seasons':act,'positive_season_ratio':pos/act if act else np.nan})
-        for y,r in yrs.reset_index().iterrows(): yearly.append({'method':method,'season':int(r.season),'n':int(r.n),'wins':int(r.wins),'win_pct':float(r.win_pct),'roi':float(r.roi),'units':float(r.units)})
+        for _,r in yrs.reset_index().iterrows(): yearly.append({'method':method,'season':int(r.season),'n':int(r.n),'wins':int(r.wins),'win_pct':float(r.win_pct),'roi':float(r.roi),'units':float(r.units)})
 
 pd.DataFrame(summary_rows).to_csv(OUT/'legacy_live_methods_summary.csv',index=False)
 pd.DataFrame(yearly).to_csv(OUT/'legacy_live_methods_by_season.csv',index=False)
 if len(bets): bets.to_csv(OUT/'legacy_live_method_bets.csv',index=False)
 (OUT/'late_method_source_meta.json').write_text(json.dumps(late_summary,indent=2,default=str))
 
-# Current 2026 email/ledger Chargers trace if present.
 trace=[]
 state=R/'home_opener_email_state'
 for p in [state/'ledger.json',state/'status.json',state/'preview.txt']:
     if not p.exists(): continue
     try:
         if p.suffix=='.json':
-            obj=json.loads(p.read_text())
-            text=json.dumps(obj,indent=2)
+            obj=json.loads(p.read_text()); text=json.dumps(obj,indent=2)
         else:text=p.read_text()
         chunks=[line for line in text.splitlines() if 'LAC' in line or 'Chargers' in line or 'ARI' in line or 'Cardinals' in line]
         if chunks: trace.append({'file':str(p),'matches':chunks[:100]})
