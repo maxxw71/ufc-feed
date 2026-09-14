@@ -1,0 +1,37 @@
+NFL STREAK / BOUNCEBACK / DIVISION DISCOVERY
+
+{
+  "survivors": 562,
+  "preferred": 60,
+  "by_concept": {
+    "STREAK": 59,
+    "BOUNCEBACK": 1
+  }
+}
+
+TOP PREFERRED
+SB001 STREAK LONG DOG20_34 HOME | 34-54 (38.6%) n=88 ROI=+47.8% train=+46.4% val=+28.6% hold=+76.8% pos=75% recent=+39.3pp | [["seq_last3_margin", "<=", -6.666666666666667], ["rank_edge_points_for", "<=", -20.0]]
+SB002 STREAK LONG DOG35_44 ANY | 74-63 (54.0%) n=137 ROI=+35.5% train=+28.6% val=+31.3% hold=+49.1% pos=84% recent=+19.1pp | [["opp_seq_last3_wins", "<=", 1.0], ["coachq_prev_hc_prior_role_seasons", "<=", 0.0]]
+SB003 STREAK MODERN DOG35_49 ANY | 55-42 (56.7%) n=97 ROI=+38.7% train=+16.7% val=+63.2% hold=+51.3% pos=70% recent=+11.3pp | [["seq_loss_streak", ">=", 3.0], ["rank_edge_def_allowed_giveaway_rate", "<=", -12.0]]
+SB004 STREAK MODERN DOG35_44 HOME | 51-43 (54.3%) n=94 ROI=+36.4% train=+10.6% val=+51.8% hold=+43.6% pos=70% recent=+12.4pp | [["opp_seq_win_streak", ">=", 1.0], ["recent_edge_def_allowed_explosive_rate", ">=", 0.00797034393553275]]
+SB005 STREAK LONG DOG35_44 AWAY | 69-57 (54.8%) n=126 ROI=+36.5% train=+50.0% val=+18.7% hold=+38.4% pos=80% recent=+4.1pp | [["opp_seq_loss_streak", ">=", 1.0], ["recent_edge_def_allowed_yards_per_play", "<=", -0.4763034867774787]]
+SB006 STREAK LONG DOG35_49 ANY | 63-51 (55.3%) n=114 ROI=+34.7% train=+27.0% val=+38.6% hold=+38.2% pos=75% recent=+5.4pp | [["seq_loss_streak", ">=", 3.0], ["rank_edge_def_allowed_giveaway_rate", "<=", -10.0]]
+SB007 STREAK LONG DOG35_44 AWAY | 51-45 (53.1%) n=96 ROI=+34.2% train=+36.1% val=+25.2% hold=+38.7% pos=72% recent=+8.0pp | [["opp_seq_loss_streak", ">=", 1.0], ["coachq_prev_hc_prior_role_seasons", "<=", 0.0]]
+SB008 STREAK LONG FAV55_65 AWAY | 72-21 (77.4%) n=93 ROI=+28.3% train=+30.2% val=+18.1% hold=+32.8% pos=75% recent=+8.6pp | [["opp_seq_last5_margin", "<=", 1.6], ["recent_edge_kick_return_average", ">=", 4.361805555555557]]
+SB009 STREAK LONG DOG35_49 HOME | 58-53 (52.3%) n=111 ROI=+24.9% train=+19.3% val=+16.4% hold=+39.7% pos=70% recent=+21.9pp | [["opp_seq_last5_margin", ">=", 3.2], ["rank_edge_punt_return_average", ">=", 8.0]]
+SB010 STREAK LONG DOG35_44 AWAY | 65-62 (51.2%) n=127 ROI=+28.3% train=+45.0% val=+10.0% hold=+30.9% pos=80% recent=+3.5pp | [["opp_seq_loss_streak", ">=", 1.0], ["rank_edge_def_allowed_pass_epa_per_dropback", "<=", -8.0]]
+SB011 STREAK LONG FAV65_75 AWAY | 70-15 (82.4%) n=85 ROI=+18.1% train=+12.5% val=+19.5% hold=+25.2% pos=85% recent=+9.1pp | [["seq_last5_wins", ">=", 2.0], ["recent_edge_penalty_yards", "<=", -17.75]]
+SB012 STREAK LONG DOG35_44 ANY | 78-76 (50.6%) n=154 ROI=+28.3% train=+22.0% val=+35.9% hold=+30.5% pos=80% recent=+1.6pp | [["opp_seq_last5_margin", ">=", 6.875], ["rank_edge_punt_return_average", ">=", 1.0]]
+SB013 STREAK LONG DOG35_49 AWAY | 65-60 (52.0%) n=125 ROI=+26.9% train=+25.1% val=+23.4% hold=+32.3% pos=74% recent=+8.1pp | [["opp_seq_loss_streak", ">=", 1.0], ["coachq_prev_hc_prior_role_seasons", "<=", 0.0]]
+SB014 STREAK LONG FAV65_75 AWAY | 71-17 (80.7%) n=88 ROI=+15.8% train=+11.3% val=+14.9% hold=+24.3% pos=85% recent=+11.2pp | [["seq_last3_wins", ">=", 1.0], ["recent_edge_penalty_yards", "<=", -17.75]]
+SB015 STREAK LONG DOG35_49 AWAY | 69-62 (52.7%) n=131 ROI=+21.6% train=+19.1% val=+17.3% hold=+33.3% pos=70% recent=+15.1pp | [["seq_last5_wins", ">=", 3.0], ["rank_edge_off_epa_per_play", ">=", 8.0]]
+SB016 BOUNCEBACK MODERN DOG35_49 ANY | 69-75 (47.9%) n=144 ROI=+15.5% train=+16.6% val=+21.8% hold=+31.5% pos=83% recent=+12.3pp | [["opp_seq_blowout_win14", ">=", 1.0], ["coachq_prev_oc_prior_win_pct", ">=", 0.47115384615384615]]
+SB017 STREAK LONG DOG35_49 AWAY | 86-74 (53.8%) n=160 ROI=+29.5% train=+39.4% val=+15.7% hold=+30.0% pos=70% recent=+2.5pp | [["opp_seq_loss_streak", ">=", 1.0], ["rank_edge_def_allowed_off_epa_per_play", "<=", -8.0]]
+SB018 STREAK LONG DOG35_49 AWAY | 85-84 (50.3%) n=169 ROI=+21.7% train=+26.5% val=+11.4% hold=+25.3% pos=85% recent=+6.4pp | [["opp_seq_loss_streak", ">=", 1.0], ["rank_edge_def_allowed_pass_epa_per_dropback", "<=", -8.0]]
+SB019 STREAK LONG DOG35_49 AWAY | 72-63 (53.3%) n=135 ROI=+25.6% train=+24.8% val=+24.0% hold=+28.1% pos=75% recent=+3.6pp | [["opp_seq_loss_streak", ">=", 1.0], ["recent_edge_punt_return_average", ">=", 4.691666666666666]]
+SB020 STREAK LONG FAV65_75 AWAY | 74-19 (79.6%) n=93 ROI=+14.2% train=+11.9% val=+10.7% hold=+21.2% pos=85% recent=+9.9pp | [["seq_last5_wins", ">=", 1.0], ["recent_edge_penalty_yards", "<=", -17.75]]
+SB021 STREAK LONG DOG35_44 HOME | 57-60 (48.7%) n=117 ROI=+22.8% train=+8.2% val=+36.3% hold=+32.7% pos=70% recent=+10.5pp | [["opp_seq_win_streak", ">=", 2.0], ["coachq_staff_downgrade_count", "<=", 0.0]]
+SB022 STREAK MODERN DOG35_44 HOME | 50-54 (48.1%) n=104 ROI=+20.5% train=+28.4% val=+21.8% hold=+32.1% pos=75% recent=+6.9pp | [["opp_seq_win_streak", ">=", 1.0], ["rank_edge_sack_rate_allowed", "<=", -12.0]]
+SB023 STREAK LONG FAV55_65 AWAY | 70-27 (72.2%) n=97 ROI=+20.5% train=+22.1% val=+10.2% hold=+24.4% pos=70% recent=+8.2pp | [["opp_seq_last3_wins", ">=", 1.0], ["recent_edge_kick_return_average", ">=", 4.361805555555557]]
+SB024 STREAK LONG DOG35_49 ANY | 107-108 (49.8%) n=215 ROI=+19.5% train=+16.1% val=+18.5% hold=+26.1% pos=74% recent=+8.8pp | [["opp_seq_loss_streak", ">=", 1.0], ["coachq_prev_hc_prior_role_seasons", "<=", 0.0]]
+SB025 STREAK LONG FAV55_65 AWAY | 81-30 (73.0%) n=111 ROI=+22.2% train=+22.8% val=+21.7% hold=+21.8% pos=75% recent=-0.5pp | [["seq_last3_margin", "<=", 9.0], ["recent_edge_def_allowed_yards_per_play", ">=", 0.7302054077592606]]
