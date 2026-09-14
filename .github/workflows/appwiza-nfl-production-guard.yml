@@ -27,36 +27,25 @@ jobs:
           cd nfl
           python3 test_production_approval_guard.py
 
-      - name: Deploy guard and patch live selectors
+      - name: Patch confirmed live site/email scanner
         shell: bash
         run: |
           set -euo pipefail
           ROOT=/home/anestishkurti92/nfl-predictor-v1
           R2="$ROOT/research_v2"
+          SCANNER="$R2/nfl_home_opener_scanner.py"
           TS=$(date -u +%Y%m%dT%H%M%SZ)
           BACKUP="$ROOT/backups/production_guard_$TS"
           mkdir -p "$BACKUP"
-
-          TARGETS=(
-            "$R2/nfl_home_opener_scanner.py"
-            "$R2/nfl_email_candidate.py"
-            "$R2/nfl_scanner_candidate.py"
-            "$R2/nfl_tracker_candidate.py"
-          )
-
-          for f in "${TARGETS[@]}"; do
-            if [ -f "$f" ]; then cp -a "$f" "$BACKUP/$(basename "$f")"; fi
-          done
+          test -f "$SCANNER"
+          cp -a "$SCANNER" "$BACKUP/nfl_home_opener_scanner.py"
           if [ -f "$R2/production_approval_guard.py" ]; then
             cp -a "$R2/production_approval_guard.py" "$BACKUP/production_approval_guard.py.previous"
           fi
 
           rollback() {
-            echo 'Deployment failed; restoring selector backups.' >&2
-            for f in "${TARGETS[@]}"; do
-              b="$BACKUP/$(basename "$f")"
-              if [ -f "$b" ]; then cp -a "$b" "$f"; fi
-            done
+            echo 'Deployment failed; restoring production scanner.' >&2
+            cp -a "$BACKUP/nfl_home_opener_scanner.py" "$SCANNER"
             if [ -f "$BACKUP/production_approval_guard.py.previous" ]; then
               cp -a "$BACKUP/production_approval_guard.py.previous" "$R2/production_approval_guard.py"
             else
@@ -68,50 +57,35 @@ jobs:
           install -m 0644 nfl/production_approval_guard.py "$R2/production_approval_guard.py.tmp"
           mv "$R2/production_approval_guard.py.tmp" "$R2/production_approval_guard.py"
 
-          python3 - "$R2" <<'PY'
+          python3 - "$SCANNER" <<'PY'
           from pathlib import Path
           import sys
 
-          root = Path(sys.argv[1])
-          targets = [
-              root / 'nfl_home_opener_scanner.py',
-              root / 'nfl_email_candidate.py',
-              root / 'nfl_scanner_candidate.py',
-              root / 'nfl_tracker_candidate.py',
-          ]
-          marker = "late_records,late_status=late.scan(G,R,now,current_odds);records.extend(late_records)"
-          gate = " records,production_rejections=production_gate.approve(records,now)\n atomic(S/'production_rejections.json',{'scanned_at':now.isoformat(),'rejections':production_rejections})"
-          patched = []
-          for path in targets:
-              if not path.exists():
-                  continue
-              text = path.read_text()
-              if 'import production_approval_guard as production_gate' not in text:
-                  needle = 'import nfl_email_design\n'
-                  if needle not in text:
-                      raise RuntimeError(f'Cannot find import anchor in {path}')
-                  text = text.replace(needle, needle + 'import production_approval_guard as production_gate\n', 1)
-              if 'production_gate.approve(records,now)' not in text:
-                  if marker not in text:
-                      raise RuntimeError(f'Cannot find records-finalization anchor in {path}')
-                  text = text.replace(marker, marker + '\n' + gate, 1)
-              tmp = path.with_suffix(path.suffix + '.guardtmp')
-              tmp.write_text(text)
-              tmp.replace(path)
-              patched.append(str(path))
-          if str(root / 'nfl_home_opener_scanner.py') not in patched:
-              raise RuntimeError('Production scanner was not found')
-          print('\n'.join(patched))
+          path=Path(sys.argv[1])
+          text=path.read_text()
+          if 'import production_approval_guard as production_gate' not in text:
+              anchor='import nfl_email_design\n'
+              if anchor not in text:
+                  raise RuntimeError('production scanner import anchor missing')
+              text=text.replace(anchor,anchor+'import production_approval_guard as production_gate\n',1)
+
+          marker="late_records,late_status=late.scan(G,R,now,current_odds);records.extend(late_records)"
+          if 'production_gate.approve(records,now)' not in text:
+              if marker not in text:
+                  raise RuntimeError('production scanner records-finalization anchor missing')
+              gate=("\n records,production_rejections=production_gate.approve(records,now)"
+                    "\n atomic(S/'production_rejections.json',{'scanned_at':now.isoformat(),'rejections':production_rejections})")
+              text=text.replace(marker,marker+gate,1)
+
+          tmp=path.with_suffix('.py.guardtmp')
+          tmp.write_text(text)
+          tmp.replace(path)
           PY
 
-          python3 -m py_compile "$R2/production_approval_guard.py" \
-            "$R2/nfl_home_opener_scanner.py" \
-            "$R2/nfl_email_candidate.py" \
-            "$R2/nfl_scanner_candidate.py" \
-            "$R2/nfl_tracker_candidate.py"
+          python3 -m py_compile "$R2/production_approval_guard.py" "$SCANNER"
 
           PYTHONPATH="$R2" python3 - <<'PY'
-          from datetime import datetime, timedelta, timezone
+          from datetime import datetime,timedelta,timezone
           import production_approval_guard as g
           now=datetime(2026,9,14,5,15,tzinfo=timezone.utc)
           base={
@@ -122,36 +96,42 @@ jobs:
             'odds':{'moneyline':-150,'retrieved_at':now.isoformat()}}
           ok,bad=g.approve([base],now)
           assert len(ok)==1 and not bad
-          wk1=dict(base);wk1['game_id']='2026_01_LAC_ARI';wk1['week']=1;wk1['odds']=dict(base['odds'],moneyline=-500)
+          wk1={**base,'game_id':'2026_01_LAC_ARI','week':1,
+               'odds':{**base['odds'],'moneyline':-500}}
           ok,bad=g.approve([wk1],now)
           assert not ok and 'insufficient_history' in bad[0]['reasons']
-          print('live guard regression: PASS')
+          research={**base,'game_id':'research','method':'pass_defense_offense24'}
+          ok,bad=g.approve([research],now)
+          assert not ok and 'unsupported_method' in bad[0]['reasons']
+          print('live approval guard regression: PASS')
           PY
 
-          python3 - "$R2/nfl_home_opener_scanner.py" <<'PY'
+          python3 - "$SCANNER" <<'PY'
           from pathlib import Path
           import sys
           text=Path(sys.argv[1]).read_text()
           gate=text.index('production_gate.approve(records,now)')
           publish=text.index('sports_publish.safe_call(sports_publish.publish_nfl,records,now,nfl_email_design)')
-          render=text.index('nfl_email_design.render(records,now)', publish)
+          render=text.index('nfl_email_design.render(records,now)',publish)
           assert gate < publish < render
-          assert "qualifies_pass_defense(int(x.week)" in text
-          print('site/email parity source check: PASS')
+          between=text[gate:render]
+          assert 'records=' not in between.replace('records,production_rejections=','',1)
+          print('site/email same guarded records: PASS')
           PY
 
-          sha256sum nfl/production_approval_guard.py "$R2/production_approval_guard.py" | awk '{print $1}' | uniq | awk 'END{if(NR!=1)exit 1}'
+          cmp -s nfl/production_approval_guard.py "$R2/production_approval_guard.py"
           trap - ERR
 
           mkdir -p nfl
           {
             echo "deployed_at=$TS"
-            echo "production_root=$R2"
+            echo "production_scanner=$SCANNER"
             echo "backup=$BACKUP"
             echo "approved_methods=base_ypp_v1"
             echo "min_week=4"
             echo "min_prior_games=3"
-            echo "week1_regression=PASS"
+            echo "week1_LAC_ARI_regression=PASS"
+            echo "unapproved_research_method_regression=PASS"
             echo "site_email_same_guarded_records=PASS"
           } > nfl/live_production_guard_deploy_report.txt
 
@@ -171,20 +151,24 @@ jobs:
               echo 'public_refresh=PASS' >> "$REPORT"
             else
               echo 'public_refresh=WARNING_failed_no_email_sent' >> "$REPORT"
-              tail -20 /tmp/nfl_guard_refresh.log | sed -E 's/(password|secret|token|api[_-]?key).*/[redacted]/Ig' >> "$REPORT" || true
             fi
           else
             echo 'public_refresh=WARNING_no_compatible_python_found' >> "$REPORT"
           fi
 
       - name: Commit sanitized deployment report
+        if: always()
         shell: bash
         run: |
-          set -euo pipefail
+          set -u
+          REPORT=nfl/live_production_guard_deploy_report.txt
+          if [ ! -f "$REPORT" ]; then
+            echo 'deployment_status=FAILED_BEFORE_REPORT' > "$REPORT"
+          fi
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add nfl/live_production_guard_deploy_report.txt
+          git add "$REPORT"
           if ! git diff --cached --quiet; then
             git commit -m 'Record live NFL production guard deployment'
-            git push
+            git push || true
           fi
