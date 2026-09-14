@@ -35,7 +35,6 @@ bets=bets[num(bets.win).isin([0,1]) & num(bets.moneyline).notna()].copy()
 # Rich pregame context for selected side and opponent.
 d=pd.read_parquet(ENR)
 d=d[d.season.between(2006,2025)].copy(); d['team']=d.team.replace(ALIASES); d['opponent']=d.opponent.replace(ALIASES)
-# de-dupe just in case
 sel=d.sort_values(['season','week']).drop_duplicates(['game_id','team'],keep='last')
 base_cols=['game_id','team']
 feature_candidates=[
@@ -70,7 +69,6 @@ if len(ps):
     bets=bets.merge(pr.rename(columns={c:'team_'+c for c in pr.columns if c not in ['season','team']}),on=['season','team'],how='left')
     bets=bets.merge(pr.rename(columns={'team':'opponent',**{c:'opp_'+c for c in pr.columns if c not in ['season','team']}}),on=['season','opponent'],how='left')
 
-# Generic boolean-risk library. Missing fields simply skip.
 def bcol(name): return num(bets[name]) if name in bets else pd.Series(np.nan,index=bets.index)
 flags={}
 def add(name,series): flags[name]=series.fillna(False).astype(bool)
@@ -93,13 +91,11 @@ for prefix in ['team','opp']:
 if 'team_pre_win_pct' in bets and 'opp_pre_win_pct' in bets:
     add('preseason_record_disadvantage',bcol('team_pre_win_pct')<bcol('opp_pre_win_pct'))
     add('preseason_record_edge_le_minus_0_25',(bcol('team_pre_win_pct')-bcol('opp_pre_win_pct'))<=-.25)
-# continuity thresholds
 for c in ['returning_offense_share','returning_defense_share','returning_ol_share','returning_skill_share']:
     col='team_'+c
     if col in bets:
         for th in [.50,.60,.70]: add(f'{col}_le_{th:.2f}',bcol(col)<=th)
 
-# Chargers-style compound flags.
 def F(n): return flags.get(n,pd.Series(False,index=bets.index))
 add('team_both_coords_changed_and_losing_preseason',F('team_both_coords_changed')&F('team_preseason_losing'))
 add('team_oc_dc_changed_and_losing_preseason',F('team_oc_changed_season')&F('team_dc_changed_season')&F('team_preseason_losing'))
@@ -113,7 +109,6 @@ if 'opponent_prior_win_pct' in bets:
     add('opponent_new_hc_after_poor_prior_year',F('opp_hc_changed_season')&(num(bets.opponent_prior_win_pct)<=.35))
     add('opponent_staff_change_after_poor_prior_year',(F('opp_hc_changed_season')|F('opp_oc_changed_season')|F('opp_dc_changed_season'))&(num(bets.opponent_prior_win_pct)<=.35))
 
-# Evaluate risk flags. Design on <=2019, confirm on 2020-25. We want loss-heavy risk in both eras and safe-set improvement or no material damage.
 rows=[]
 for method,x0 in bets.groupby('method'):
     idx=x0.index; base_all=met(x0); old=x0.season<=2019; rec=x0.season>=2020
@@ -139,21 +134,16 @@ if len(res):
     res.to_csv(OUT/'risk_filters.csv',index=False)
     res[res.confirmed].to_csv(OUT/'confirmed_risk_filters.csv',index=False)
 
-# Current 2026 Chargers profile derived from preseason and audited staff file when possible.
-charg={'team':'LAC','opponent':'ARI','season':2026,'known_public_context':{
- 'new_oc':'Mike McDaniel','new_dc':'Chris OLeary','dc_regular_season_playcalling_debut':True,'preseason_record':'1-2'}}
-# preseason from schedule
+charg={'team':'LAC','opponent':'ARI','season':2026,'known_public_context':{'new_oc':'Mike McDaniel','new_dc':'Chris OLeary','dc_regular_season_playcalling_debut':True,'preseason_record':'1-2'}}
 if len(ps):
     for tm,label in [('LAC','team'),('ARI','opponent')]:
         q=pr[(pr.season==2026)&(pr.team==tm)]
         if len(q): charg[label+'_preseason']=q.iloc[0].to_dict()
-# audited staff history
 staff=CTX/'raw/coaching_staff_2006_2026.csv'
 if staff.exists():
     st=pd.read_csv(staff); st.team=st.team.replace(ALIASES)
     for tm,label in [('LAC','team'),('ARI','opponent')]:
-        q=st[(st.season==2026)&(st.team==tm)]
-        p=st[(st.season==2025)&(st.team==tm)]
+        q=st[(st.season==2026)&(st.team==tm)]; p=st[(st.season==2025)&(st.team==tm)]
         if len(q):
             cur=q.iloc[0]; prev=p.iloc[0] if len(p) else None
             charg[label+'_staff']={k:(None if pd.isna(cur.get(k)) else str(cur.get(k))) for k in ['head_coach','offensive_coordinator','defensive_coordinator'] if k in q.columns}
@@ -161,7 +151,6 @@ if staff.exists():
                 for role in ['head_coach','offensive_coordinator','defensive_coordinator']:
                     if role in q.columns: charg[label+'_staff'][role+'_changed']=bool(str(cur.get(role))!=str(prev.get(role))) if pd.notna(cur.get(role)) and pd.notna(prev.get(role)) else None
 (OUT/'chargers_2026_profile.json').write_text(json.dumps(charg,indent=2,default=str))
-
 summary={'methods':sorted(bets.method.unique().tolist()),'bets':int(len(bets)),'candidate_flags':len(flags),'tested_rows':int(len(res)) if len(rows) else 0,'confirmed_filters':int(res.confirmed.sum()) if len(rows) else 0}
 (OUT/'summary.json').write_text(json.dumps(summary,indent=2))
 lines=['NFL LEGACY LOSS FORENSICS + CHARGERS-STYLE FILTERS','',json.dumps(summary,indent=2),'','TOP CONFIRMED FILTERS']
@@ -171,3 +160,4 @@ if len(res):
 lines+=['','CHARGERS 2026 PROFILE',json.dumps(charg,indent=2,default=str)]
 (OUT/'report.txt').write_text('\n'.join(lines)+'\n')
 print('\n'.join(lines[:60]))
+# workflow trigger: 2026-09-14
