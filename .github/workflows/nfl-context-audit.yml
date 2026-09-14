@@ -21,15 +21,15 @@ jobs:
         shell: bash
         run: |
           set -Eeuo pipefail
-          ROOT="$HOME/nfl-predictor-v1"
+          ROOT=/home/anestishkurti92/nfl-predictor-v1
           test -x "$ROOT/venv/bin/python"
           test -d "$ROOT/data/raw"
           cd "$ROOT"
-          venv/bin/python - <<'PY'
+          NFL_ROOT="$ROOT" venv/bin/python - <<'PY'
           from pathlib import Path
-          import json
+          import json, os
           import pandas as pd
-          root=Path.home()/"nfl-predictor-v1"/"data"/"raw"
+          root=Path(os.environ["NFL_ROOT"])/"data"/"raw"
           names=[
             "schedules_2006_2026.parquet",
             "team_weekly_2006_2026.parquet",
@@ -50,12 +50,14 @@ jobs:
             df=pd.read_parquet(p)
             rec={"present":True,"rows":len(df),"columns":list(df.columns)}
             if "season" in df.columns:
-              rec["season_min"]=int(pd.to_numeric(df.season,errors="coerce").min()) if len(df) else None
-              rec["season_max"]=int(pd.to_numeric(df.season,errors="coerce").max()) if len(df) else None
-              z=df[pd.to_numeric(df.season,errors="coerce").isin([2025,2026])].head(5)
+              s=pd.to_numeric(df.season,errors="coerce")
+              rec["season_min"]=int(s.min()) if s.notna().any() else None
+              rec["season_max"]=int(s.max()) if s.notna().any() else None
+              z=df[s.isin([2025,2026])].head(5)
               rec["sample_2025_26"]=z.astype(object).where(pd.notna(z),None).to_dict("records")
             else:
-              rec["sample"]=df.head(5).astype(object).where(pd.notna(df.head(5)),None).to_dict("records")
+              z=df.head(5)
+              rec["sample"]=z.astype(object).where(pd.notna(z),None).to_dict("records")
             out[name]=rec
           print(json.dumps(out,indent=2,default=str))
           PY
