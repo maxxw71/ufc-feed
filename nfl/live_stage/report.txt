@@ -1,0 +1,21 @@
+NFL H-METHOD LIVE STAGE
+mode=SHADOW_ONLY
+week4_methods=8
+week7_methods=4
+public_website_enabled=false
+email_enabled=false
+bet_tracker_enabled=false
+global_rule=REG only + selected team prior_games>=3 + exact price gate + fail closed
+
+NFL-H002 | start W4 | AWAY | +100 to +186 | SHADOW_ELIGIBLE | veto dome_game >= 1.0
+NFL-H003 | start W4 | AWAY | +122 to +186 | SHADOW_ELIGIBLE | veto recent_edge_def_allowed_pass_epa_per_dropback >= 0.2182382565949704
+NFL-H008 | start W4 | ANY | +136 to +186 | SHADOW_ELIGIBLE
+NFL-H017 | start W4 | AWAY | +100 to +186 | SHADOW_ELIGIBLE | veto adv_prior_road_miles_last5 <= -315.24304298251786
+NFL-H027 | start W4 | AWAY | +100 to +186 | SHADOW_ELIGIBLE | veto dc_tenure_seasons >= 3.0
+NFL-H029 | start W4 | AWAY | +100 to +186 | SHADOW_ELIGIBLE | veto rank_edge_punt_return_average <= -14.2
+NFL-H033 | start W4 | AWAY | +100 to +186 | SHADOW_ELIGIBLE
+NFL-H036 | start W4 | AWAY | +100 to +186 | SHADOW_ELIGIBLE | veto adv_prior_road_miles_last5 <= -449.2804356656068
+NFL-H005 | start W7 | ANY | +134 to +173 | LOCKED_UNTIL_WEEK_7 | veto oc_prior_role_seasons >= 3.0
+NFL-H010 | start W7 | AWAY | +121 to +186 | LOCKED_UNTIL_WEEK_7 | veto adv_dc_prior_win_pct <= -0.1042471042471042
+NFL-H028 | start W7 | AWAY | +100 to +186 | LOCKED_UNTIL_WEEK_7 | veto adv_abs_tz_shift_hours >= 0.0
+NFL-H035 | start W7 | AWAY | +100 to +186 | LOCKED_UNTIL_WEEK_7 | veto oc_tenure_seasons >= 3.0
