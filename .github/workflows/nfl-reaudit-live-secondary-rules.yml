@@ -1,0 +1,33 @@
+name: NFL re-audit live secondary rules
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/nfl_reaudit_live_secondary_rules.py'
+permissions:
+  contents: write
+jobs:
+  audit:
+    runs-on: [self-hosted, Linux, X64, appwiza]
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with: {fetch-depth: 0}
+      - name: Run secondary audit
+        run: /home/anestishkurti92/nfl-predictor-v1/venv/bin/python "$GITHUB_WORKSPACE/scripts/nfl_reaudit_live_secondary_rules.py"
+      - name: Publish
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          SRC=/home/appwiza-runner/nfl-context-data/legacy_live_secondary_exact
+          DEST="$GITHUB_WORKSPACE/nfl/legacy_live_secondary_exact"
+          rm -rf "$DEST"; mkdir -p "$DEST"; cp -a "$SRC"/. "$DEST"/
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git add nfl/legacy_live_secondary_exact
+          if ! git diff --cached --quiet; then
+            git commit -m 'Update secondary legacy NFL rule re-audit'
+            git pull --rebase origin main
+            git push origin HEAD:main
+          fi
