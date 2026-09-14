@@ -7,7 +7,7 @@ import requests
 import pandas as pd
 from pypdf import PdfReader
 
-OUT=Path('data/nfl/coordinator_history_espn_2019_2025.csv')
+OUT=Path('data/nfl/coordinator_history_espn_2019_2026.csv')
 OUT.parent.mkdir(parents=True,exist_ok=True)
 URLS={
   2019:'https://g.espncdn.com/s/ffldraftkit/19/NFLDK2019_CS_ClayProjections.pdf',
@@ -17,6 +17,7 @@ URLS={
   2023:'https://g.espncdn.com/s/ffldraftkit/23/NFLDK2023_CS_ClayProjections2023.pdf',
   2024:'https://g.espncdn.com/s/ffldraftkit/24/NFLDK2024_CS_ClayProjections2024.pdf',
   2025:'https://g.espncdn.com/s/ffldraftkit/25/NFLDK2025_CS_ClayProjections2025.pdf',
+  2026:'https://g.espncdn.com/s/ffldraftkit/26/NFLDK2026_CS_ClayProjections2026.pdf',
 }
 TEAM_NAMES={
  'ARI':['Arizona Cardinals'], 'ATL':['Atlanta Falcons'], 'BAL':['Baltimore Ravens'], 'BUF':['Buffalo Bills'],
@@ -53,11 +54,9 @@ def parse_staff_layout(reader,season,url):
     out={}
     for page_no in range(max(0,len(reader.pages)-4),len(reader.pages)):
         page=reader.pages[page_no]
-        try:
-            layout=page.extract_text(extraction_mode='layout') or ''
+        try: layout=page.extract_text(extraction_mode='layout') or ''
         except Exception as e:
-            print(f'{season}: skip unreadable/blank PDF page {page_no+1}: {type(e).__name__}',flush=True)
-            continue
+            print(f'{season}: skip unreadable/blank PDF page {page_no+1}: {type(e).__name__}',flush=True); continue
         if 'Head Coach' not in layout and 'Current Coaching Staffs' not in layout: continue
         print(f'{season}: trying layout staff table on PDF page {page_no+1}',flush=True)
         for rawline in layout.splitlines():
@@ -108,14 +107,12 @@ for season,url in URLS.items():
 
 df=pd.DataFrame(rows).sort_values(['season','team'])
 print(df[['season','team','offensive_coordinator','defensive_coordinator']].to_string(index=False)); print('STATUS',season_status)
-# 2019-20 ESPN guides do not expose the same audited coaching-staff table. Publish the five
-# completely recovered seasons instead of fabricating those two missing years.
-for y in range(2021,2026):
+for y in range(2021,2027):
     st=season_status.get(y,{})
     if st.get('teams_found')!=32 or st.get('both_coordinators')!=32:
         raise RuntimeError(f'ESPN coordinator season {y} not complete: {st}')
-df=df[df.season.between(2021,2025)].copy()
-if len(df)!=160 or int((df.offensive_coordinator.notna()&df.defensive_coordinator.notna()).sum())!=160:
-    raise RuntimeError(f'Expected 160 complete 2021-2025 team-seasons, got {len(df)}')
+df=df[df.season.between(2021,2026)].copy()
+if len(df)!=192 or int((df.offensive_coordinator.notna()&df.defensive_coordinator.notna()).sum())!=192:
+    raise RuntimeError(f'Expected 192 complete 2021-2026 team-seasons, got {len(df)}')
 df.to_csv(OUT,index=False)
-print('wrote',OUT,'rows',len(df),'complete seasons 2021-2025; 2019-2020 intentionally unknown')
+print('wrote',OUT,'rows',len(df),'complete seasons 2021-2026; 2019-2020 intentionally unknown')
