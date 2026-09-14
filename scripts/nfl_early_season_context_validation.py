@@ -24,6 +24,18 @@ def profit100(o,win):
     if not win:return -100.0
     return o if o>0 else 10000/abs(o)
 
+def num_factor(d,col,op,value):
+    s=pd.to_numeric(d[col],errors='coerce')
+    out=pd.Series(pd.NA,index=d.index,dtype='boolean')
+    known=s.notna()
+    if op=='lt': out.loc[known]=(s.loc[known] < value).values
+    elif op=='eq': out.loc[known]=(s.loc[known] == value).values
+    else: raise ValueError(op)
+    return out
+
+def flag_factor(d,col):
+    return num_factor(d,col,'eq',1)
+
 # Result map, one row per team-game.
 parts=[]
 for side,opp in [('home','away'),('away','home')]:
@@ -41,36 +53,33 @@ b['novig_prob']=b.team_imp/(b.team_imp+b.opp_imp)
 b=b[b.novig_prob>.5].copy()
 b['profit100']=[profit100(o,w) for o,w in zip(b.moneyline,b.win)]
 
-# Fixed football-motivated definitions. These are descriptive validation buckets,
-# not an optimizer and not automatic production vetoes.
+# Fixed football-motivated definitions. Unknown inputs stay unknown and are excluded
+# from BOTH risk and no-risk buckets rather than silently becoming 'safe'.
 FACTORS={
- 'QB_CHANGED': lambda d: d.qb_changed_from_prior_season.eq(1),
- 'HC_CHANGED': lambda d: d.head_coach_changed.eq(1),
- 'RETURN_OFF_LT_50': lambda d: pd.to_numeric(d.returning_offense_snap_share,errors='coerce')<.50,
- 'RETURN_OFF_LT_60': lambda d: pd.to_numeric(d.returning_offense_snap_share,errors='coerce')<.60,
- 'RETURN_OFF_LT_70': lambda d: pd.to_numeric(d.returning_offense_snap_share,errors='coerce')<.70,
- 'RETURN_DEF_LT_50': lambda d: pd.to_numeric(d.returning_defense_snap_share,errors='coerce')<.50,
- 'RETURN_DEF_LT_60': lambda d: pd.to_numeric(d.returning_defense_snap_share,errors='coerce')<.60,
- 'RETURN_DEF_LT_70': lambda d: pd.to_numeric(d.returning_defense_snap_share,errors='coerce')<.70,
- 'RETURN_OL_LT_60': lambda d: pd.to_numeric(d.returning_ol_snap_share,errors='coerce')<.60,
- 'RETURN_OL_LT_70': lambda d: pd.to_numeric(d.returning_ol_snap_share,errors='coerce')<.70,
- 'RETURN_SKILL_LT_60': lambda d: pd.to_numeric(d.returning_skill_snap_share,errors='coerce')<.60,
- 'RETURN_SKILL_LT_70': lambda d: pd.to_numeric(d.returning_skill_snap_share,errors='coerce')<.70,
+ 'QB_CHANGED': lambda d: flag_factor(d,'qb_changed_from_prior_season'),
+ 'HC_CHANGED': lambda d: flag_factor(d,'head_coach_changed'),
+ 'RETURN_OFF_LT_50': lambda d: num_factor(d,'returning_offense_snap_share','lt',.50),
+ 'RETURN_OFF_LT_60': lambda d: num_factor(d,'returning_offense_snap_share','lt',.60),
+ 'RETURN_OFF_LT_70': lambda d: num_factor(d,'returning_offense_snap_share','lt',.70),
+ 'RETURN_DEF_LT_50': lambda d: num_factor(d,'returning_defense_snap_share','lt',.50),
+ 'RETURN_DEF_LT_60': lambda d: num_factor(d,'returning_defense_snap_share','lt',.60),
+ 'RETURN_DEF_LT_70': lambda d: num_factor(d,'returning_defense_snap_share','lt',.70),
+ 'RETURN_OL_LT_60': lambda d: num_factor(d,'returning_ol_snap_share','lt',.60),
+ 'RETURN_OL_LT_70': lambda d: num_factor(d,'returning_ol_snap_share','lt',.70),
+ 'RETURN_SKILL_LT_60': lambda d: num_factor(d,'returning_skill_snap_share','lt',.60),
+ 'RETURN_SKILL_LT_70': lambda d: num_factor(d,'returning_skill_snap_share','lt',.70),
 }
-# Preseason hypotheses are prespecified from football logic and the 2026 Chargers audit.
-# The audited source is record/win-rate only; do not invent scoring margin.
 if 'preseason_win_pct' in b:
-    FACTORS['PRESEASON_LOSING']=lambda d: pd.to_numeric(d.preseason_win_pct,errors='coerce')<.50
-    FACTORS['PRESEASON_WINLESS']=lambda d: pd.to_numeric(d.preseason_win_pct,errors='coerce').eq(0)
+    FACTORS['PRESEASON_LOSING']=lambda d: num_factor(d,'preseason_win_pct','lt',.50)
+    FACTORS['PRESEASON_WINLESS']=lambda d: num_factor(d,'preseason_win_pct','eq',0)
 if 'preseason_form_disadvantage' in b:
-    FACTORS['PRESEASON_FORM_DISADVANTAGE']=lambda d: pd.to_numeric(d.preseason_form_disadvantage,errors='coerce').eq(1)
+    FACTORS['PRESEASON_FORM_DISADVANTAGE']=lambda d: flag_factor(d,'preseason_form_disadvantage')
 if 'both_teams_preseason_losing' in b:
-    FACTORS['BOTH_PRESEASON_LOSING']=lambda d: pd.to_numeric(d.both_teams_preseason_losing,errors='coerce').eq(1)
-# Coordinator factors are included only if meaningful coverage exists.
+    FACTORS['BOTH_PRESEASON_LOSING']=lambda d: flag_factor(d,'both_teams_preseason_losing')
 if 'offensive_coordinator_changed' in b and 'offensive_coordinator' in b and b.offensive_coordinator.notna().sum()>=100:
-    FACTORS['OC_CHANGED']=lambda d:d.offensive_coordinator_changed.eq(1)
+    FACTORS['OC_CHANGED']=lambda d: flag_factor(d,'offensive_coordinator_changed')
 if 'defensive_coordinator_changed' in b and 'defensive_coordinator' in b and b.defensive_coordinator.notna().sum()>=100:
-    FACTORS['DC_CHANGED']=lambda d:d.defensive_coordinator_changed.eq(1)
+    FACTORS['DC_CHANGED']=lambda d: flag_factor(d,'defensive_coordinator_changed')
 
 
 def stats(z):
@@ -97,27 +106,28 @@ for floor in [.60,.65,.70,.75,.80]:
         detail[f'{floor:.2f}_BASE']=bs
     for name,fn in FACTORS.items():
         raw=fn(base)
-        known=raw.notna() if hasattr(raw,'notna') else pd.Series(True,index=base.index)
+        known=raw.notna()
         risk=raw.fillna(False).astype(bool)
-        # Unknown context must never silently become a no-risk observation.
         for bucket,m in [('RISK',known & risk),('NO_RISK',known & ~risk)]:
             z=base[m].copy(); st=stats(z)
             if st:
                 rows.append({'market_floor':floor,'factor':name,'bucket':bucket,**{k:v for k,v in st.items() if k!='yearly'}})
                 detail[f'{floor:.2f}_{name}_{bucket}']=st
 
-# Simple prespecified risk counts at the Chargers-like big-favorite level.
+# Prespecified risk count at Chargers-like favorite level. Require every component
+# to be known so missing historical context cannot lower the apparent risk count.
 z=b[b.novig_prob>=.75].copy()
 component_names=['QB_CHANGED','HC_CHANGED','RETURN_OFF_LT_60','RETURN_DEF_LT_60','RETURN_OL_LT_60','RETURN_SKILL_LT_60','PRESEASON_LOSING']
-components=[]
+component_raw=[]
 for name in component_names:
     if name in FACTORS:
-        raw=FACTORS[name](z)
-        components.append(raw.fillna(False).astype(int))
-if components:
-    z['risk_count']=sum(components)
+        component_raw.append(FACTORS[name](z))
+if component_raw:
+    known_all=pd.concat(component_raw,axis=1).notna().all(axis=1)
+    z['risk_count']=pd.concat([x.fillna(False).astype(int) for x in component_raw],axis=1).sum(axis=1)
+    z['risk_count_context_complete']=known_all.astype(int)
     for k in [1,2,3]:
-        st=stats(z[z.risk_count>=k])
+        st=stats(z[known_all & (z.risk_count>=k)])
         if st:
             rows.append({'market_floor':.75,'factor':f'RISK_COUNT_GE_{k}','bucket':'RISK',**{kk:vv for kk,vv in st.items() if kk!='yearly'}})
             detail[f'0.75_RISK_COUNT_GE_{k}']=st
@@ -138,8 +148,6 @@ for floor in [.60,.65,.70,.75,.80]:
                          'win_pct_gap_risk_minus_safe':A.win_pct-C.win_pct,'roi_gap_risk_minus_safe':A.roi_pct-C.roi_pct})
 compdf=pd.DataFrame(comp)
 compdf.to_csv(OUT/'early_season_risk_comparison.csv',index=False)
-
-# Compact preseason-only report for direct inspection of the hypothesis.
 pre_names=[x for x in FACTORS if x.startswith('PRESEASON_') or x=='BOTH_PRESEASON_LOSING']
 if len(compdf):
     compdf[compdf.factor.isin(pre_names)].to_csv(OUT/'early_season_preseason_comparison.csv',index=False)
