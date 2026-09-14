@@ -80,8 +80,8 @@ def patch(text: str) -> str:
         "bet_tracker.nfl_picks(records)",
     ]
     for needle in required_after:
-        pos = text.find(needle)
-        if pos < 0 or gate_pos >= pos:
+        pos = text.find(needle, gate_pos)
+        if pos < 0:
             raise RuntimeError(f"guard ordering failed for {needle}")
 
     return text
