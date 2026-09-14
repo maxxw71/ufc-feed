@@ -1,0 +1,86 @@
+name: Appwiza NFL matchup integrity inspect
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/appwiza-nfl-match-integrity-inspect.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  inspect:
+    if: github.repository == 'maxxw71/ufc-feed' && github.ref == 'refs/heads/main'
+    runs-on: [self-hosted, Linux, X64, appwiza]
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - name: Capture live matchup integrity boundary
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p nfl
+          REPORT=nfl/live_match_integrity_report.txt
+          ROOT=/home/anestishkurti92/nfl-predictor-v1
+          R2="$ROOT/research_v2"
+          STATE="$R2/home_opener_email_state"
+          : > "$REPORT"
+
+          echo '=== RUNNER / WRITE ACCESS ===' >> "$REPORT"
+          id >> "$REPORT" 2>&1 || true
+          for p in "$ROOT" "$R2" "$R2/nfl_home_opener_scanner.py" /srv/appwiza-sports /srv/appwiza-sports/public; do
+            stat -c '%U:%G %a %n' "$p" >> "$REPORT" 2>&1 || true
+            if [ -w "$p" ]; then echo "writable=yes $p" >> "$REPORT"; else echo "writable=no $p" >> "$REPORT"; fi
+          done
+          echo >> "$REPORT"
+
+          echo '=== SERVICE ===' >> "$REPORT"
+          sed -n '1,180p' /etc/systemd/system/nfl-home-opener.service >> "$REPORT" 2>&1 || true
+          echo >> "$REPORT"
+
+          for f in nfl_home_opener_scanner.py late_season_method.py sports_publish.py nfl_email_design.py; do
+            echo "=== FILE $f ===" >> "$REPORT"
+            sed -n '1,320p' "$R2/$f" >> "$REPORT" 2>&1 || true
+            echo >> "$REPORT"
+          done
+
+          echo '=== LATEST STATE SUMMARY ===' >> "$REPORT"
+          python3 - "$STATE" >> "$REPORT" 2>&1 <<'PY'
+          from pathlib import Path
+          import json,sys
+          s=Path(sys.argv[1])
+          files=[]
+          if s.exists():
+              for p in s.glob('*.json'):
+                  if p.name in {'ledger.json','sent.json','status.json','production_rejections.json'} or p.name.startswith('pending-'):
+                      continue
+                  files.append(p)
+          if not files:
+              print('no_snapshot')
+              raise SystemExit
+          p=max(files,key=lambda x:x.stat().st_mtime)
+          print('snapshot',p.name)
+          try:data=json.loads(p.read_text())
+          except Exception as e:
+              print('snapshot_read_error',type(e).__name__);raise SystemExit
+          for i,r in enumerate(data.get('records',[])[:30]):
+              odds=r.get('odds') if isinstance(r.get('odds'),dict) else {}
+              safe={k:r.get(k) for k in ['game_id','season','week','home','away','team','opponent','selection_side','method','approved_method','rules','kickoff','espn']}
+              safe['odds']={k:odds.get(k) for k in ['bookmaker','moneyline','retrieved_at','source','status','error_type']}
+              print(i,json.dumps(safe,sort_keys=True,default=str))
+          PY
+          echo >> "$REPORT"
+
+          echo '=== ACL / DEPLOY HELPERS ===' >> "$REPORT"
+          command -v getfacl >/dev/null 2>&1 && getfacl -p "$R2" "$R2/nfl_home_opener_scanner.py" >> "$REPORT" 2>&1 || true
+          find /usr/local/bin /opt -maxdepth 3 -type f \( -iname '*deploy*' -o -iname '*nfl*' -o -iname '*appwiza*' \) -perm -u+x -print 2>/dev/null | head -120 >> "$REPORT" || true
+
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add "$REPORT"
+          if ! git diff --cached --quiet; then
+            git commit -m 'Capture live NFL matchup integrity report'
+            git push
+          fi
