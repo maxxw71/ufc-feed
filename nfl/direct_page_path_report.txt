@@ -1,0 +1,60 @@
+=== EXACT ACCESS ===
+uid=1001(appwiza-runner) gid=1001(appwiza-runner) groups=1001(appwiza-runner)
+--- /srv/appwiza-sports/public/nfl
+anestishkurti92:anestishkurti92 755 4096 /srv/appwiza-sports/public/nfl
+# file: /srv/appwiza-sports/public/nfl
+# owner: anestishkurti92
+# group: anestishkurti92
+user::rwx
+user:appwiza-runner:rwx	#effective:r-x
+group::r-x
+mask::r-x
+other::r-x
+default:user::rwx
+default:user:appwiza-runner:rwx
+default:group::r-x
+default:mask::rwx
+default:other::r-x
+
+READABLE
+READONLY
+--- /srv/appwiza-sports/public/nfl/index.html
+anestishkurti92:anestishkurti92 644 33791 /srv/appwiza-sports/public/nfl/index.html
+# file: /srv/appwiza-sports/public/nfl/index.html
+# owner: anestishkurti92
+# group: anestishkurti92
+user::rw-
+user:appwiza-runner:rwx	#effective:r--
+group::r-x	#effective:r--
+mask::r--
+other::r--
+
+READABLE
+READONLY
+--- /srv/appwiza-sports/public/style.css
+anestishkurti92:anestishkurti92 644 2257 /srv/appwiza-sports/public/style.css
+# file: /srv/appwiza-sports/public/style.css
+# owner: anestishkurti92
+# group: anestishkurti92
+user::rw-
+user:appwiza-runner:rwx	#effective:r--
+group::r-x	#effective:r--
+mask::r--
+other::r--
+
+READABLE
+READONLY
+=== NFL TREE ===
+drwxr-xr-x anestishkurti92:anestishkurti92 /srv/appwiza-sports/public/nfl -> 
+-rw-r--r-- anestishkurti92:anestishkurti92 /srv/appwiza-sports/public/nfl/index.html -> 
+=== CHILD DIR WRITABILITY ===
+=== PUBLISHER / TIMER REWRITE CLUES ===
+/opt/sports-publisher/test_publish.py:7:p.save('nfl',[card('near',1),card('far',5),card('past',-1)],now)
+/opt/sports-publisher/test_publish.py:8:html=(p.ROOT/'public/nfl/index.html').read_text()
+/opt/sports-publisher/test_publish.py:12:p.save('nfl',[card('near',1)],now)
+/opt/sports-publisher/build_downloads.py:75: web.render_all()
+/opt/sports-publisher/sports_publish.py:19:def publish_nfl(records,now,design):
+/opt/sports-publisher/sports_publish.py:27: save('nfl',cards,now)
+/opt/sports-publisher/sports_publish.py:78:  render_all()
+/opt/sports-publisher/sports_publish.py:133:def render_all():
+/home/anestishkurti92/nfl-predictor-v1/research_v2/nfl_home_opener_scanner.py:151: sports_publish.publish_nfl(records,now,nfl_email_design)
