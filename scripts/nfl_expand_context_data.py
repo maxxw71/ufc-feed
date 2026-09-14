@@ -7,12 +7,13 @@ import traceback
 
 import nflreadpy as nfl
 
-ROOT = Path(os.environ.get("NFL_ROOT", "/home/anestishkurti92/nfl-predictor-v1"))
-RAW = ROOT / "data" / "raw"
+SOURCE_ROOT = Path(os.environ.get("NFL_SOURCE_ROOT", "/home/anestishkurti92/nfl-predictor-v1"))
+CONTEXT_ROOT = Path(os.environ.get("NFL_CONTEXT_ROOT", "/home/appwiza-runner/nfl-context-data"))
+RAW = CONTEXT_ROOT / "raw"
 RAW.mkdir(parents=True, exist_ok=True)
 
 SEASONS = list(range(2006, 2027))
-STATUS = {}
+STATUS = {"source_root": str(SOURCE_ROOT), "context_root": str(CONTEXT_ROOT), "datasets": {}}
 
 
 def save(name, loader):
@@ -25,10 +26,10 @@ def save(name, loader):
         if "season" in df.columns and df.height:
             rec["season_min"] = df.select("season").min().item()
             rec["season_max"] = df.select("season").max().item()
-        STATUS[name] = rec
+        STATUS["datasets"][name] = rec
         print(f"[NFL CONTEXT] {name}: {df.height:,} rows x {df.width}", flush=True)
     except Exception as exc:
-        STATUS[name] = {"ok": False, "error": repr(exc)}
+        STATUS["datasets"][name] = {"ok": False, "error": repr(exc)}
         print(f"[NFL CONTEXT] WARNING {name}: {exc}", flush=True)
         traceback.print_exc()
 
@@ -55,6 +56,7 @@ save("trades.parquet", nfl.load_trades)
 save("combine.parquet", nfl.load_combine)
 save("draft_picks.parquet", nfl.load_draft_picks)
 
-status_path = ROOT / "NFL_CONTEXT_DATA_STATUS.json"
+status_path = CONTEXT_ROOT / "NFL_CONTEXT_DATA_STATUS.json"
 status_path.write_text(json.dumps(STATUS, indent=2, default=str))
-print(json.dumps({k: {kk: vv for kk, vv in v.items() if kk != "columns"} for k, v in STATUS.items()}, indent=2, default=str))
+summary = {k: {kk: vv for kk, vv in v.items() if kk != "columns"} for k, v in STATUS["datasets"].items()}
+print(json.dumps(summary, indent=2, default=str))
