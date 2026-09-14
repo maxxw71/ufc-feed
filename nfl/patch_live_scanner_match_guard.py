@@ -16,8 +16,6 @@ def patch(text: str) -> str:
             raise RuntimeError("nfl_email_design import anchor missing")
         text = text.replace(import_anchor, import_anchor + "import production_match_guard as match_guard\n", 1)
 
-    # Home-opener methods are intentionally home selections, but that identity must
-    # be explicit. Never rely on a renderer/odds function defaulting to home.
     old = "home=x.home_team,away=x.away_team,home_record=h"
     new = "home=x.home_team,away=x.away_team,selection_side='home',selected_team=x.home_team,home_record=h"
     if old in text:
@@ -25,8 +23,6 @@ def patch(text: str) -> str:
     elif new not in text:
         raise RuntimeError("home-opener record identity anchor missing")
 
-    # Replace the odds function so it refuses ambiguous selection identity and tags
-    # every quote with the exact side/team that was requested.
     start = text.find("def current_odds(rec):")
     end = text.find("\ndef render(records,now):", start)
     if start < 0 or end < 0:
@@ -70,14 +66,32 @@ def patch(text: str) -> str:
 """
         text = text.replace(marker, marker + gate, 1)
 
-    # Guard must be upstream of every persistent/public output and betting stage.
+    # Keep website and email atomic from the selection perspective: if the website
+    # cannot accept the guarded set, abort instead of emailing a different state.
+    safe_publish = "sports_publish.safe_call(sports_publish.publish_nfl,records,now,nfl_email_design)"
+    direct_publish = "sports_publish.publish_nfl(records,now,nfl_email_design)"
+    if safe_publish in text:
+        text = text.replace(safe_publish, direct_publish, 1)
+    elif direct_publish not in text:
+        raise RuntimeError("NFL public publish call anchor missing")
+
+    # Never retry a pre-guard pending email envelope. Rebuild it from the current,
+    # freshly guarded records so an old failed send cannot bypass today's checks.
+    stale_pending = "   if pending.exists():mail=json.loads(pending.read_text())"
+    invalidated_pending = "   if pending.exists():pending.unlink() # invalidate any pre-validation cached envelope\n   if pending.exists():mail=json.loads(pending.read_text())"
+    if stale_pending in text:
+        text = text.replace(stale_pending, invalidated_pending, 1)
+    elif "invalidate any pre-validation cached envelope" not in text:
+        raise RuntimeError("pending email retry anchor missing")
+
     gate_pos = text.index(gate_marker)
     required_after = [
         "atomic(S/(stamp+'.json')",
         "ledgerpath=S/'ledger.json'",
-        "sports_publish.safe_call(sports_publish.publish_nfl,records,now,nfl_email_design)",
+        direct_publish,
         "nfl_email_design.render(records,now)",
         "bet_tracker.nfl_picks(records)",
+        "invalidate any pre-validation cached envelope",
     ]
     for needle in required_after:
         pos = text.find(needle, gate_pos)
