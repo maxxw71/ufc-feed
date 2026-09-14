@@ -5,7 +5,7 @@ on:
   push:
     branches: [main]
     paths:
-      - 'scripts/nfl_build_staff_history_pfr.py'
+      - 'scripts/nfl_build_staff_history_bulk.py'
       - '.github/workflows/nfl-staff-history.yml'
 
 permissions:
@@ -19,7 +19,7 @@ jobs:
   build:
     if: github.repository == 'maxxw71/ufc-feed' && github.ref == 'refs/heads/main'
     runs-on: [self-hosted, Linux, X64, appwiza]
-    timeout-minutes: 20
+    timeout-minutes: 12
     steps:
       - uses: actions/checkout@v4
       - name: Build 2006-2026 NFL HC OC DC history
@@ -30,10 +30,9 @@ jobs:
           CTX=/home/appwiza-runner/nfl-context-data
           test -x "$ROOT/venv/bin/python"
           mkdir -p "$CTX/raw"
-          chmod 755 "$CTX" "$CTX/raw"
-          NFL_SOURCE_ROOT="$ROOT" NFL_CONTEXT_ROOT="$CTX" "$ROOT/venv/bin/python" "$GITHUB_WORKSPACE/scripts/nfl_build_staff_history_pfr.py"
+          NFL_SOURCE_ROOT="$ROOT" NFL_CONTEXT_ROOT="$CTX" "$ROOT/venv/bin/python" "$GITHUB_WORKSPACE/scripts/nfl_build_staff_history_bulk.py"
           chmod -R a+rX "$CTX"
           echo '=== STAFF STATUS ==='
           cat "$CTX/NFL_COACHING_STAFF_STATUS.json"
-          echo '=== 2025-26 SAMPLE ==='
-          grep -E '^2025,|^2026,' "$CTX/raw/coaching_staff_2006_2026.csv" | head -80 || true
+          echo '=== LAC 2024-26 ==='
+          grep -E '^(2024|2025|2026),LAC,' "$CTX/raw/coaching_staff_2006_2026.csv" || true
