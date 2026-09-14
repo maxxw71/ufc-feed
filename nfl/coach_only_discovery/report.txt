@@ -1,0 +1,35 @@
+NFL COACH-ONLY METHOD DISCOVERY
+
+{
+  "coach_features": 55,
+  "survivors": 325,
+  "preferred": 21,
+  "elite_recent": 2
+}
+
+TOP COACH-ONLY METHODS
+CO001 ELITE_RECENT LONG DOG20_34 AWAY | 34-59 (36.6%) n=93 ROI=+36.9% | train=+25.4% val=+39.2% hold=+45.4% | pos seasons=12/14 (86%) recent_delta=+13.1pp | [["coachq_staff_quality_min", ">=", 0.46153846153846156], ["coachq_hc_prior_role_seasons", "<=", 0.0]]
+CO002 ELITE_RECENT MODERN FAV55_65 AWAY | 85-34 (71.4%) n=119 ROI=+18.6% | train=+18.0% val=+10.8% hold=+22.8% | pos seasons=15/18 (83%) recent_delta=+8.4pp | [["coachonly_staff_prior_quality_spread", ">=", 0.32451923076923084]]
+CO003 PREFERRED LONG DOG20_34 HOME | 33-57 (36.7%) n=90 ROI=+36.7% | train=+33.2% val=+34.6% hold=+45.5% | pos seasons=11/15 (73%) recent_delta=+11.6pp | [["coachq_oc_prior_quality", "<=", 0.44765625]]
+CO004 PREFERRED LONG DOG35_44 ANY | 80-78 (50.6%) n=158 ROI=+26.9% | train=+20.4% val=+21.3% hold=+47.7% | pos seasons=13/18 (72%) recent_delta=+26.9pp | [["coachq_dc_recent_quality", ">=", 0.34375], ["coachq_hc_prior_quality", "<=", 0.48391608391608393]]
+CO005 PREFERRED LONG DOG35_44 ANY | 80-78 (50.6%) n=158 ROI=+26.9% | train=+20.4% val=+21.3% hold=+47.7% | pos seasons=13/18 (72%) recent_delta=+26.9pp | [["coachq_dc_recent_quality", ">=", 0.34375], ["coachq_hc_prior_win_pct", "<=", 0.48391608391608393]]
+CO006 PREFERRED LONG DOG20_34 ANY | 32-49 (39.5%) n=81 ROI=+35.1% | train=+21.5% val=+46.3% hold=+41.2% | pos seasons=12/15 (80%) recent_delta=+7.3pp | [["coachq_oc_prior_quality", ">=", 0.65625], ["coachonly_upgrade_minus_downgrade", "<=", -1.0]]
+CO007 PREFERRED LONG DOG35_44 ANY | 55-44 (55.6%) n=99 ROI=+37.4% | train=+22.7% val=+49.3% hold=+40.8% | pos seasons=13/18 (72%) recent_delta=+4.8pp | [["coachonly_hc_oc_quality_mean", ">=", 0.6653081293706293], ["coachq_dc_recent_quality", ">=", 0.34375]]
+CO008 PREFERRED LONG DOG20_34 ANY | 35-62 (36.1%) n=97 ROI=+29.3% | train=+11.0% val=+38.6% hold=+50.3% | pos seasons=10/14 (71%) recent_delta=+25.5pp | [["coachq_oc_recent_quality", "<=", 0.3125], ["coachq_dc_changed_quality", ">=", 1.0]]
+CO009 PREFERRED LONG DOG20_34 AWAY | 92-173 (34.7%) n=265 ROI=+28.8% | train=+17.9% val=+30.7% hold=+35.3% | pos seasons=13/18 (72%) recent_delta=+11.0pp | [["adv_staff_quality_mean", ">=", -0.15197649572649574], ["adv_staff_upgrade_count", "<=", -1.0]]
+CO010 PREFERRED MODERN PK_55 AWAY | 74-60 (55.2%) n=134 ROI=+12.4% | train=+13.5% val=+27.4% hold=+37.1% | pos seasons=13/17 (76%) recent_delta=+16.6pp | [["coachq_oc_prior_role_seasons", ">=", 3.0], ["coachq_oc_quality_delta_vs_departed", ">=", -0.09635416666666663]]
+CO011 PREFERRED LONG FAV65_75 AWAY | 73-16 (82.0%) n=89 ROI=+17.8% | train=+19.9% val=+15.4% hold=+18.4% | pos seasons=15/17 (88%) recent_delta=+0.8pp | [["coachq_dc_recent_quality", ">=", 0.84375]]
+CO012 PREFERRED LONG FAV55_65 ANY | 63-22 (74.1%) n=85 ROI=+23.0% | train=+33.0% val=+11.7% hold=+23.8% | pos seasons=13/16 (81%) recent_delta=+1.4pp | [["adv_dc_quality_delta_vs_departed", ">=", 0.012760416666666677], ["adv_dc_prior_quality", ">=", 0.0625]]
+CO013 PREFERRED MODERN DOG35_44 HOME | 58-68 (46.0%) n=126 ROI=+14.6% | train=+9.7% val=+25.0% hold=+34.3% | pos seasons=13/18 (72%) recent_delta=+16.9pp | [["coachq_hc_prior_role_seasons", "<=", 1.0], ["coachq_prev_hc_prior_role_seasons", "<=", 0.0]]
+CO014 PREFERRED LONG DOG20_34 AWAY | 51-93 (35.4%) n=144 ROI=+28.9% | train=+12.1% val=+45.1% hold=+29.3% | pos seasons=13/18 (72%) recent_delta=+0.7pp | [["coachonly_oc_dc_quality_mean", ">=", 0.6978422619047618], ["coachq_staff_quality_mean", ">=", 0.5564903846153846]]
+CO015 PREFERRED LONG DOG20_34 ANY | 64-116 (35.6%) n=180 ROI=+24.3% | train=+18.5% val=+27.3% hold=+24.3% | pos seasons=13/18 (72%) recent_delta=+1.4pp | [["coachonly_upgrade_minus_downgrade", "<=", -1.0], ["coachq_staff_quality_min", ">=", 0.5]]
+CO016 PREFERRED MODERN FAV65_75 AWAY | 82-19 (81.2%) n=101 ROI=+16.4% | train=+12.1% val=+9.3% hold=+15.5% | pos seasons=15/17 (88%) recent_delta=+4.9pp | [["coachq_dc_recent_quality", ">=", 0.8125]]
+CO017 PREFERRED LONG DOG35_44 ANY | 69-77 (47.3%) n=146 ROI=+18.3% | train=+14.4% val=+18.5% hold=+21.3% | pos seasons=13/18 (72%) recent_delta=+4.9pp | [["adv_staff_upgrade_count", ">=", 0.0], ["coachq_prev_dc_recent_quality", "<=", 0.28125]]
+CO018 PREFERRED LONG FAV55_65 AWAY | 92-40 (69.7%) n=132 ROI=+16.2% | train=+15.6% val=+17.2% hold=+16.0% | pos seasons=14/18 (78%) recent_delta=-0.4pp | [["coachq_dc_prior_win_pct", "<=", 0.6045454545454546], ["coachq_prev_dc_prior_win_pct", "<=", 0.5384615384615384]]
+CO019 PREFERRED LONG DOG35_44 ANY | 139-163 (46.0%) n=302 ROI=+15.6% | train=+17.7% val=+12.3% hold=+14.9% | pos seasons=15/19 (79%) recent_delta=-0.1pp | [["coachq_prev_hc_prior_role_seasons", "<=", 0.0]]
+CO020 PREFERRED MODERN FAV75_85 HOME | 107-15 (87.7%) n=122 ROI=+10.9% | train=+9.7% val=+18.9% hold=+18.1% | pos seasons=12/17 (71%) recent_delta=+3.9pp | [["coachq_dc_quality_delta_vs_departed", "<=", -0.01718749999999998]]
+CO021 PREFERRED MODERN FAV55_65 AWAY | 65-32 (67.0%) n=97 ROI=+11.2% | train=+11.8% val=+9.7% hold=+12.0% | pos seasons=12/17 (71%) recent_delta=+1.2pp | [["coachq_hc_quality_delta_vs_departed", "<=", -0.023648747086247035]]
+CO022 SURVIVOR MODERN DOG20_34 AWAY | 34-40 (45.9%) n=74 ROI=+71.2% | train=+100.8% val=+62.5% hold=+59.5% | pos seasons=12/16 (75%) recent_delta=-22.2pp | [["coachq_staff_quality_min", ">=", 0.5076709401709403], ["coachq_prev_dc_prior_quality", "<=", 0.53125]]
+CO023 SURVIVOR LONG DOG20_34 AWAY | 30-41 (42.3%) n=71 ROI=+55.2% | train=+48.4% val=+58.6% hold=+56.9% | pos seasons=11/16 (69%) recent_delta=+3.4pp | [["coachonly_oc_dc_quality_mean", ">=", 0.6978422619047618], ["coachq_dc_changed_quality", ">=", 1.0]]
+CO024 SURVIVOR LONG DOG35_44 ANY | 46-37 (55.4%) n=83 ROI=+38.9% | train=+39.9% val=+41.3% hold=+35.8% | pos seasons=11/14 (79%) recent_delta=-4.8pp | [["coachq_prev_dc_recent_quality", "<=", 0.28125], ["coachonly_upgrade_minus_downgrade", ">=", 1.0]]
+CO025 SURVIVOR LONG DOG20_34 AWAY | 30-46 (39.5%) n=76 ROI=+40.0% | train=+39.9% val=+38.8% hold=+41.1% | pos seasons=9/14 (64%) recent_delta=+1.7pp | [["coachonly_oc_dc_quality_mean", ">=", 0.6978422619047618], ["coachq_oc_prior_quality", ">=", 0.59375], ["coachq_staff_quality_min", ">=", 0.46153846153846156]]
