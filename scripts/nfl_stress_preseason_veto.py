@@ -16,32 +16,28 @@ def met(x):
 
 def load(path,name):
     d=pd.read_csv(path,low_memory=False)
-    z=pd.DataFrame({'method':name,'season':num(d.season).astype(int),'week':num(d.week).astype(int),'game_id':d.game_id.astype(str),'team':d.home_team.replace(ALIASES),'opponent':d.away_team.replace(ALIASES),'moneyline':num(d.home_moneyline),'win':num(d.win),'profit_units':num(d.profit)})
-    return z
+    return pd.DataFrame({'method':name,'season':num(d.season).astype(int),'week':num(d.week).astype(int),'game_id':d.game_id.astype(str),'team':d.home_team.replace(ALIASES),'opponent':d.away_team.replace(ALIASES),'moneyline':num(d.home_moneyline),'win':num(d.win),'profit_units':num(d.profit)})
 
 pre=pd.read_csv(PRE);pre['team']=pre.team.replace(ALIASES)
-base=pd.concat([
-    load(REPO/'nfl/legacy_live_home_opener_exact/original_bets.csv','original'),
-    load(REPO/'nfl/legacy_live_home_opener_exact/stricter_bets.csv','stricter')],ignore_index=True)
+preseason_seasons=set(num(pre.season).dropna().astype(int))
+base=pd.concat([load(REPO/'nfl/legacy_live_home_opener_exact/original_bets.csv','original'),load(REPO/'nfl/legacy_live_home_opener_exact/stricter_bets.csv','stricter')],ignore_index=True)
 base=base.merge(pre[['season','team','pre_games','pre_wins','pre_losses','pre_win_pct','pre_margin_pg']],on=['season','team'],how='left')
+base['league_had_preseason']=base.season.isin(preseason_seasons)
 base['keep_ge2']=num(base.pre_wins)>=2
-base['keep_nonlosing']=num(base.pre_win_pct)>=.5
-base['keep_positive_margin']=num(base.pre_margin_pg)>=0
+# Preferred policy: require >=2 wins when that NFL season actually had a preseason; neutral in a leaguewide no-preseason season such as 2020.
+base['keep_ge2_or_no_preseason']=base['keep_ge2'] | (~base['league_had_preseason'])
+base['keep_nonlosing']=(num(base.pre_win_pct)>=.5) | (~base['league_had_preseason'])
+base['keep_positive_margin']=(num(base.pre_margin_pg)>=0) | (~base['league_had_preseason'])
+missing=base[base.pre_games.isna()][['method','season','game_id','team','opponent','league_had_preseason']].copy();missing.to_csv(OUT/'missing_preseason_joins.csv',index=False)
 
-# fail closed if any historical bet is missing a preseason join; this keeps counts auditable.
-missing=base[base.pre_games.isna()][['method','season','game_id','team','opponent']].copy()
-missing.to_csv(OUT/'missing_preseason_joins.csv',index=False)
-
-rows=[]; yearly=[]; loo=[]; price=[]
+rows=[];yearly=[];loo=[];price=[]
 for method,x0 in base.groupby('method'):
-    for rule,col in [('baseline',None),('preseason_wins_ge2','keep_ge2'),('preseason_nonlosing','keep_nonlosing'),('preseason_positive_margin','keep_positive_margin')]:
-        x=x0.copy() if col is None else x0[x0[col].fillna(False)].copy()
-        m=met(x)
-        eras=[('2007_2013',2007,2013),('2014_2019',2014,2019),('2020_2025',2020,2025),('2023_2025',2023,2025)]
+    rules=[('baseline',None),('preseason_wins_ge2_fail_closed','keep_ge2'),('preseason_wins_ge2_or_no_preseason','keep_ge2_or_no_preseason'),('preseason_nonlosing_or_no_preseason','keep_nonlosing'),('preseason_positive_margin_or_no_preseason','keep_positive_margin')]
+    for rule,col in rules:
+        x=x0.copy() if col is None else x0[x0[col].fillna(False)].copy();m=met(x)
         rec={'method':method,'rule':rule,**m}
-        for en,a,b in eras:
-            mm=met(x[x.season.between(a,b)])
-            rec.update({f'{en}_n':mm['n'],f'{en}_win_pct':mm['win_pct'],f'{en}_roi':mm['roi']})
+        for en,a,b in [('2007_2013',2007,2013),('2014_2019',2014,2019),('2020_2025',2020,2025),('2023_2025',2023,2025)]:
+            mm=met(x[x.season.between(a,b)]);rec.update({f'{en}_n':mm['n'],f'{en}_win_pct':mm['win_pct'],f'{en}_roi':mm['roi']})
         y=x.groupby('season').agg(n=('win','size'),wins=('win','sum'),units=('profit_units','sum')).reset_index();y['win_pct']=y.wins/y.n;y['roi']=y.units/y.n
         active=y[y.n>=2];rec['active_seasons']=len(active);rec['positive_seasons']=int((active.units>0).sum());rec['positive_season_ratio']=rec['positive_seasons']/len(active) if len(active) else np.nan
         rows.append(rec)
@@ -51,24 +47,10 @@ for method,x0 in base.groupby('method'):
         for lo,hi in [(-1000,-400),(-399,-300),(-299,-200),(-199,-150),(-149,-110),(100,999)]:
             z=x[x.moneyline.between(lo,hi)];mm=met(z);price.append({'method':method,'rule':rule,'odds_lo':lo,'odds_hi':hi,**mm})
 
-summary=pd.DataFrame(rows);summary.to_csv(OUT/'summary.csv',index=False)
-pd.DataFrame(yearly).to_csv(OUT/'by_season.csv',index=False)
-pd.DataFrame(loo).to_csv(OUT/'leave_one_season_out.csv',index=False)
-pd.DataFrame(price).to_csv(OUT/'price_buckets.csv',index=False)
-
-p=summary[(summary.method=='stricter')&(summary.rule=='preseason_wins_ge2')].iloc[0]
-loo_df=pd.DataFrame(loo);q=loo_df[(loo_df.method=='stricter')&(loo_df.rule=='preseason_wins_ge2')]
-stability={
- 'preferred_rule':'stricter + preseason_wins >= 2',
- 'record':f"{int(p.wins)}-{int(p.losses)}",
- 'win_pct':float(p.win_pct),'roi':float(p.roi),'n':int(p.n),
- 'positive_season_ratio':float(p.positive_season_ratio),
- 'era_rois':{k:float(p[f'{k}_roi']) if pd.notna(p[f'{k}_roi']) else None for k in ['2007_2013','2014_2019','2020_2025','2023_2025']},
- 'era_win_pcts':{k:float(p[f'{k}_win_pct']) if pd.notna(p[f'{k}_win_pct']) else None for k in ['2007_2013','2014_2019','2020_2025','2023_2025']},
- 'loo_min_win_pct':float(q.win_pct.min()),'loo_min_roi':float(q.roi.min()),'loo_max_roi':float(q.roi.max()),
- 'all_loo_profitable':bool((q.roi>0).all()),
- 'missing_preseason_joins':int(len(missing))
-}
+summary=pd.DataFrame(rows);summary.to_csv(OUT/'summary.csv',index=False);pd.DataFrame(yearly).to_csv(OUT/'by_season.csv',index=False);pd.DataFrame(loo).to_csv(OUT/'leave_one_season_out.csv',index=False);pd.DataFrame(price).to_csv(OUT/'price_buckets.csv',index=False)
+preferred='preseason_wins_ge2_or_no_preseason';p=summary[(summary.method=='stricter')&(summary.rule==preferred)].iloc[0]
+q=pd.DataFrame(loo);q=q[(q.method=='stricter')&(q.rule==preferred)]
+stability={'preferred_rule':'stricter + preseason wins >=2 when preseason exists; neutral if no league preseason','record':f"{int(p.wins)}-{int(p.losses)}",'win_pct':float(p.win_pct),'roi':float(p.roi),'n':int(p.n),'positive_season_ratio':float(p.positive_season_ratio),'era_rois':{k:float(p[f'{k}_roi']) for k in ['2007_2013','2014_2019','2020_2025','2023_2025']},'era_win_pcts':{k:float(p[f'{k}_win_pct']) for k in ['2007_2013','2014_2019','2020_2025','2023_2025']},'loo_min_win_pct':float(q.win_pct.min()),'loo_min_roi':float(q.roi.min()),'loo_max_roi':float(q.roi.max()),'all_loo_profitable':bool((q.roi>0).all()),'missing_joins_in_seasons_with_preseason':int((missing.league_had_preseason==True).sum()),'leaguewide_no_preseason_missing_bets':int((missing.league_had_preseason==False).sum())}
 (OUT/'stability.json').write_text(json.dumps(stability,indent=2))
 lines=['NFL PRESEASON VETO STRESS TEST','',json.dumps(stability,indent=2),'','SUMMARY']
 for _,r in summary.iterrows():
