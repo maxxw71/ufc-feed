@@ -27,14 +27,13 @@ jobs:
         run: |
           set -Eeuo pipefail
           ROOT=/home/anestishkurti92/nfl-predictor-v1
-          OWNER=anestishkurti92
+          CTX=/home/appwiza-runner/nfl-context-data
           test -x "$ROOT/venv/bin/python"
-          TMP=/tmp/nfl_build_staff_history.py
-          cp "$GITHUB_WORKSPACE/scripts/nfl_build_staff_history.py" "$TMP"
-          chmod 644 "$TMP"
-          sudo -u "$OWNER" env NFL_ROOT="$ROOT" "$ROOT/venv/bin/python" "$TMP"
-          rm -f "$TMP"
+          mkdir -p "$CTX/raw"
+          chmod 755 "$CTX" "$CTX/raw"
+          NFL_SOURCE_ROOT="$ROOT" NFL_CONTEXT_ROOT="$CTX" "$ROOT/venv/bin/python" "$GITHUB_WORKSPACE/scripts/nfl_build_staff_history.py"
+          chmod -R a+rX "$CTX"
           echo '=== STAFF STATUS ==='
-          cat "$ROOT/NFL_COACHING_STAFF_STATUS.json"
+          cat "$CTX/NFL_COACHING_STAFF_STATUS.json"
           echo '=== 2025-26 SAMPLE ==='
-          grep -E '^2025,|^2026,' "$ROOT/data/raw/coaching_staff_2006_2026.csv" | head -80 || true
+          grep -E '^2025,|^2026,' "$CTX/raw/coaching_staff_2006_2026.csv" | head -80 || true
