@@ -1,6 +1,7 @@
 from pathlib import Path
 import json, os
 import pandas as pd
+# Inventory current server-side legacy method artifacts for robust re-audit.
 R=Path('/home/anestishkurti92/nfl-predictor-v1/research_v2')
 OUT=Path('/home/appwiza-runner/nfl-context-data/legacy_live_artifact_inspect');OUT.mkdir(parents=True,exist_ok=True)
 patterns=['home_opener_stress/*.csv','*home*opener*.csv','late_season*','*late*season*.csv','*pass*rush*.csv','*regular*season*roi*.csv']
@@ -24,7 +25,6 @@ for pat in patterns:
         except Exception as e: rec['error']=type(e).__name__+': '+str(e)
         files.append(rec)
 (OUT/'inventory.json').write_text(json.dumps(files,indent=2,default=str))
-# condensed report
 lines=[]
 for r in files:
     lines.append('\n### '+r['path'])
