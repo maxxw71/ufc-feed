@@ -1,0 +1,37 @@
+name: NFL coaching staff history
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/nfl_build_staff_history.py'
+      - '.github/workflows/nfl-staff-history.yml'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: nfl-staff-history
+  cancel-in-progress: true
+
+jobs:
+  build:
+    if: github.repository == 'maxxw71/ufc-feed' && github.ref == 'refs/heads/main'
+    runs-on: [self-hosted, Linux, X64, appwiza]
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build 2006-2026 NFL HC OC DC history
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          ROOT=/home/anestishkurti92/nfl-predictor-v1
+          test -x "$ROOT/venv/bin/python"
+          cp "$GITHUB_WORKSPACE/scripts/nfl_build_staff_history.py" "$ROOT/nfl_build_staff_history.py.new"
+          mv "$ROOT/nfl_build_staff_history.py.new" "$ROOT/nfl_build_staff_history.py"
+          NFL_ROOT="$ROOT" "$ROOT/venv/bin/python" "$ROOT/nfl_build_staff_history.py"
+          echo '=== STAFF STATUS ==='
+          cat "$ROOT/NFL_COACHING_STAFF_STATUS.json"
+          echo '=== 2025-26 SAMPLE ==='
+          grep -E '^2025,|^2026,' "$ROOT/data/raw/coaching_staff_2006_2026.csv" | head -80 || true
