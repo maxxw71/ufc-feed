@@ -1,0 +1,83 @@
+NFL PRIORITY METHOD LOSS FORENSICS
+{
+  "methods": [
+    "NFL-H003",
+    "NFL-H002",
+    "NFL-H010",
+    "NFL-H016",
+    "NFL-H006",
+    "NFL-H029",
+    "NFL-H033"
+  ],
+  "candidate_features": 113,
+  "preselected_veto_rows": 49,
+  "confirmed_veto_rows": 8,
+  "methods_with_confirmed_veto": 5
+}
+
+Method thresholds and veto filters were selected WITHOUT using 2020-2025. Holdout only confirms/rejects the pre-selected risk flags.
+Weather excluded by project decision. In-game events are not used because they are not knowable pregame.
+
+NFL-H003: base full n=173 ROI=+43.2% | frozen holdout n=43 ROI=+43.7%
+  REJECT/WEAK #1 OTHER: adv_questionable_players >= 0 | holdout removed 12 L / 16 W; n 43->15; ROI +43.7%->+51.4% (+7.7 pts); loss rate 41.9%->40.0%
+  REJECT/WEAK #2 RUSHING: rank_edge_rush_epa_per_carry <= -4.6 | holdout removed 5 L / 8 W; n 43->30; ROI +43.7%->+36.4% (-7.4 pts); loss rate 41.9%->43.3%
+  REJECT/WEAK #3 QB_CONTEXT: qb_prior_starts >= 78.4 | holdout removed 6 L / 10 W; n 43->27; ROI +43.7%->+33.7% (-10.0 pts); loss rate 41.9%->44.4%
+  REJECT/WEAK #4 SPECIAL_TEAMS: rank_edge_fg_accuracy <= -6.6 | holdout removed 5 L / 9 W; n 43->29; ROI +43.7%->+36.7% (-7.1 pts); loss rate 41.9%->44.8%
+  REJECT/WEAK #5 INJURY_AVAILABILITY: adv_out_players <= -3 | holdout removed 1 L / 5 W; n 43->37; ROI +43.7%->+33.1% (-10.6 pts); loss rate 41.9%->45.9%
+  CONFIRMED #6 PASSING: recent_edge_def_allowed_pass_epa_per_dropback >= 0.218238 | holdout removed 6 L / 2 W; n 43->35; ROI +43.7%->+63.6% (+19.9 pts); loss rate 41.9%->34.3%
+  REJECT/WEAK #7 OTHER+QB_CONTEXT: adv_questionable_players >= 0 AND qb_prior_starts >= 78.4  | holdout removed 5 L / 6 W; n 43->32; ROI +43.7%->+45.6% (+1.8 pts); loss rate 41.9%->40.6%
+
+NFL-H002: base full n=143 ROI=+35.5% | frozen holdout n=47 ROI=+49.5%
+  REJECT/WEAK #1 INJURY_AVAILABILITY: adv_front7_unavail_equiv <= -0.134983 | holdout removed 2 L / 10 W; n 47->35; ROI +49.5%->+33.9% (-15.5 pts); loss rate 36.2%->42.9%
+  CONFIRMED #2 OTHER: dome_game >= 1 | holdout removed 10 L / 9 W; n 47->28; ROI +49.5%->+75.0% (+25.5 pts); loss rate 36.2%->25.0%
+  REJECT/WEAK #3 EFFICIENCY: recent_edge_success_rate >= 0.0918862 | holdout removed 0 L / 1 W; n 47->46; ROI +49.5%->+47.9% (-1.6 pts); loss rate 36.2%->37.0%
+  REJECT/WEAK #4 REST_SCHEDULING: rest_edge <= -1 | holdout removed 3 L / 4 W; n 47->40; ROI +49.5%->+49.8% (+0.3 pts); loss rate 36.2%->35.0%
+  CONFIRMED #5 QB_CONTEXT: qb_prior_starts <= 12.7 | holdout removed 6 L / 5 W; n 47->36; ROI +49.5%->+62.1% (+12.6 pts); loss rate 36.2%->30.6%
+  REJECT/WEAK #6 PASS_PROTECTION_RUSH: rank_edge_sack_or_hit_rate <= -4 | holdout removed 11 L / 11 W; n 47->25; ROI +49.5%->+83.0% (+33.5 pts); loss rate 36.2%->24.0%
+  REJECT/WEAK #7 INJURY_AVAILABILITY+EFFICIENCY: adv_front7_unavail_equiv <= -0.134983 OR recent_edge_success_rate >= 0.0918862  | holdout removed 2 L / 11 W; n 47->34; ROI +49.5%->+31.3% (-18.2 pts); loss rate 36.2%->44.1%
+
+NFL-H010: base full n=162 ROI=+31.9% | frozen holdout n=40 ROI=+32.2%
+  REJECT/WEAK #1 OTHER: total_line >= 48.45 | holdout removed 3 L / 3 W; n 40->34; ROI +32.2%->+35.1% (+2.9 pts); loss rate 45.0%->44.1%
+  REJECT/WEAK #2 EFFICIENCY: recent_edge_success_rate <= 0.0223211 | holdout removed 4 L / 10 W; n 40->26; ROI +32.2%->+10.5% (-21.7 pts); loss rate 45.0%->53.8%
+  REJECT/WEAK #3 SPECIAL_TEAMS: recent_edge_punt_return_average >= 8.72222 | holdout removed 1 L / 4 W; n 40->35; ROI +32.2%->+22.8% (-9.4 pts); loss rate 45.0%->48.6%
+  REJECT/WEAK #4 PASSING: recent_edge_def_allowed_pass_epa_per_dropback <= -0.443701 | holdout removed 1 L / 2 W; n 40->37; ROI +32.2%->+29.5% (-2.7 pts); loss rate 45.0%->45.9%
+  REJECT/WEAK #5 COACHING: defensive_coordinator_changed <= 0 | holdout removed 8 L / 10 W; n 40->22; ROI +32.2%->+30.1% (-2.1 pts); loss rate 45.0%->45.5%
+  REJECT/WEAK #6 PASS_PROTECTION_RUSH: rank_edge_sack_rate_allowed >= 17 | holdout removed 2 L / 9 W; n 40->29; ROI +32.2%->+2.2% (-30.0 pts); loss rate 45.0%->55.2%
+  REJECT/WEAK #7 OTHER+SPECIAL_TEAMS: total_line >= 48.45 OR recent_edge_punt_return_average >= 8.72222  | holdout removed 4 L / 6 W; n 40->30; ROI +32.2%->+28.6% (-3.6 pts); loss rate 45.0%->46.7%
+
+NFL-H016: base full n=176 ROI=+30.8% | frozen holdout n=45 ROI=+26.1%
+  REJECT/WEAK #1 SPECIAL_TEAMS: rank_edge_fg_accuracy <= -15.8 | holdout removed 2 L / 7 W; n 45->36; ROI +26.1%->+11.0% (-15.1 pts); loss rate 48.9%->55.6%
+  REJECT/WEAK #2 OTHER: grass_surface <= 0 | holdout removed 13 L / 14 W; n 45->18; ROI +26.1%->+26.1% (-0.0 pts); loss rate 48.9%->50.0%
+  REJECT/WEAK #3 PASS_PROTECTION_RUSH: rank_edge_def_allowed_sack_or_hit_rate <= -18 | holdout removed 1 L / 0 W; n 45->44; ROI +26.1%->+29.0% (+2.9 pts); loss rate 48.9%->47.7%
+  CONFIRMED #4 TURNOVERS: rank_edge_giveaway_rate <= -4 | holdout removed 11 L / 8 W; n 45->26; ROI +26.1%->+44.8% (+18.6 pts); loss rate 48.9%->42.3%
+  REJECT/WEAK #5 PENALTIES: recent_edge_penalty_yards >= 30.9333 | holdout removed 0 L / 1 W; n 45->44; ROI +26.1%->+23.5% (-2.6 pts); loss rate 48.9%->50.0%
+  REJECT/WEAK #6 PASSING: recent_edge_passing_cpoe <= -1.52608 | holdout removed 6 L / 13 W; n 45->26; ROI +26.1%->-7.2% (-33.4 pts); loss rate 48.9%->61.5%
+  REJECT/WEAK #7 SPECIAL_TEAMS+OTHER: rank_edge_fg_accuracy <= -15.8 AND grass_surface <= 0  | holdout removed 1 L / 4 W; n 45->40; ROI +26.1%->+18.6% (-7.5 pts); loss rate 48.9%->52.5%
+
+NFL-H006: base full n=252 ROI=+27.3% | frozen holdout n=76 ROI=+26.8%
+  CONFIRMED #1 OTHER: grass_surface <= 0 | holdout removed 20 L / 17 W; n 76->39; ROI +26.8%->+39.6% (+12.8 pts); loss rate 48.7%->43.6%
+  REJECT/WEAK #2 PASSING: rank_edge_def_allowed_pass_epa_per_dropback >= -6 | holdout removed 11 L / 14 W; n 76->51; ROI +26.8%->+22.4% (-4.4 pts); loss rate 48.7%->51.0%
+  CONFIRMED #3 PASS_PROTECTION_RUSH: recent_edge_sack_or_hit_rate <= -0.024187 | holdout removed 16 L / 14 W; n 76->46; ROI +26.8%->+35.4% (+8.6 pts); loss rate 48.7%->45.7%
+  REJECT/WEAK #4 TURNOVERS: recent_edge_giveaway_rate <= -0.0221242 | holdout removed 2 L / 4 W; n 76->70; ROI +26.8%->+23.4% (-3.4 pts); loss rate 48.7%->50.0%
+  REJECT/WEAK #5 EFFICIENCY: rank_edge_success_rate <= 2 | holdout removed 14 L / 12 W; n 76->50; ROI +26.8%->+33.4% (+6.6 pts); loss rate 48.7%->46.0%
+  CONFIRMED #6 INJURY_AVAILABILITY: adv_skill_unavail_equiv <= -0.63875 | holdout removed 6 L / 2 W; n 76->68; ROI +26.8%->+35.0% (+8.2 pts); loss rate 48.7%->45.6%
+  REJECT/WEAK #7 OTHER+PASSING: grass_surface <= 0 AND rank_edge_def_allowed_pass_epa_per_dropback >= -6  | holdout removed 6 L / 8 W; n 76->62; ROI +26.8%->+24.9% (-2.0 pts); loss rate 48.7%->50.0%
+
+NFL-H029: base full n=196 ROI=+21.1% | frozen holdout n=60 ROI=+21.8%
+  CONFIRMED #1 SPECIAL_TEAMS: rank_edge_punt_return_average <= -14.2 | holdout removed 9 L / 6 W; n 60->45; ROI +21.8%->+31.0% (+9.2 pts); loss rate 48.3%->44.4%
+  REJECT/WEAK #2 TURNOVERS: rank_edge_def_allowed_giveaway_rate >= 19 | holdout removed 2 L / 2 W; n 60->56; ROI +21.8%->+21.9% (+0.1 pts); loss rate 48.3%->48.2%
+  REJECT/WEAK #3 EXPLOSIVENESS: recent_edge_def_allowed_explosive_rate >= 0.0333697 | holdout removed 9 L / 9 W; n 60->42; ROI +21.8%->+23.8% (+2.0 pts); loss rate 48.3%->47.6%
+  REJECT/WEAK #4 OTHER: div_game >= 1 | holdout removed 6 L / 16 W; n 60->38; ROI +21.8%->-7.4% (-29.2 pts); loss rate 48.3%->60.5%
+  REJECT/WEAK #5 PASS_PROTECTION_RUSH: rank_edge_sack_or_hit_rate <= -18.6 | holdout removed 5 L / 3 W; n 60->52; ROI +21.8%->+27.1% (+5.3 pts); loss rate 48.3%->46.2%
+  REJECT/WEAK #6 TRAVEL_CIRCADIAN: adv_travel_miles >= -657.554 | holdout removed 13 L / 13 W; n 60->34; ROI +21.8%->+25.2% (+3.4 pts); loss rate 48.3%->47.1%
+  REJECT/WEAK #7 TURNOVERS+EXPLOSIVENESS: rank_edge_def_allowed_giveaway_rate >= 19 AND recent_edge_def_allowed_explosive_rate >= 0.0333697  | holdout removed 0 L / 0 W; n 60->60; ROI +21.8%->+21.8% (+0.0 pts); loss rate 48.3%->48.3%
+
+NFL-H033: base full n=286 ROI=+19.9% | frozen holdout n=88 ROI=+16.1%
+  REJECT/WEAK #1 TURNOVERS: rank_edge_giveaway_rate <= -3 | holdout removed 21 L / 22 W; n 88->45; ROI +16.1%->+8.7% (-7.4 pts); loss rate 51.1%->53.3%
+  REJECT/WEAK #2 SPECIAL_TEAMS: rank_edge_fg_accuracy >= 6.9 | holdout removed 15 L / 15 W; n 88->58; ROI +16.1%->+16.1% (-0.1 pts); loss rate 51.1%->51.7%
+  REJECT/WEAK #3 PASS_PROTECTION_RUSH: rank_edge_sack_rate_allowed >= 16.6 | holdout removed 3 L / 8 W; n 88->77; ROI +16.1%->+6.1% (-10.0 pts); loss rate 51.1%->54.5%
+  REJECT/WEAK #4 EFFICIENCY: recent_edge_def_allowed_early_down_epa >= 0.0870233 | holdout removed 15 L / 15 W; n 88->58; ROI +16.1%->+14.1% (-2.0 pts); loss rate 51.1%->51.7%
+  REJECT/WEAK #5 OTHER: adv_doubtful_players <= -1 | holdout removed 6 L / 6 W; n 88->76; ROI +16.1%->+15.6% (-0.6 pts); loss rate 51.1%->51.3%
+  REJECT/WEAK #6 INJURY_AVAILABILITY: adv_out_players >= 2.8 | holdout removed 9 L / 12 W; n 88->67; ROI +16.1%->+10.5% (-5.7 pts); loss rate 51.1%->53.7%
+  REJECT/WEAK #7 SPECIAL_TEAMS+PASS_PROTECTION_RUSH: rank_edge_fg_accuracy >= 6.9 OR rank_edge_sack_rate_allowed >= 16.6  | holdout removed 18 L / 20 W; n 88->50; ROI +16.1%->+8.3% (-7.8 pts); loss rate 51.1%->54.0%
+
