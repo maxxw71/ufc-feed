@@ -1,0 +1,217 @@
+=== ID ===
+uid=1001(appwiza-runner) gid=1001(appwiza-runner) groups=1001(appwiza-runner)
+=== PATHS / ACLS ===
+--- /srv/appwiza-sports
+anestishkurti92:anestishkurti92 775 /srv/appwiza-sports
+WRITABLE
+# file: /srv/appwiza-sports
+# owner: anestishkurti92
+# group: anestishkurti92
+user::rwx
+user:appwiza-runner:rwx
+group::r-x
+mask::rwx
+other::r-x
+default:user::rwx
+default:user:appwiza-runner:rwx
+default:group::r-x
+default:mask::rwx
+default:other::r-x
+
+--- /srv/appwiza-sports/public
+anestishkurti92:anestishkurti92 755 /srv/appwiza-sports/public
+READONLY
+# file: /srv/appwiza-sports/public
+# owner: anestishkurti92
+# group: anestishkurti92
+user::rwx
+user:appwiza-runner:rwx	#effective:r-x
+group::r-x
+mask::r-x
+other::r-x
+default:user::rwx
+default:user:appwiza-runner:rwx
+default:group::r-x
+default:mask::rwx
+default:other::r-x
+
+--- /srv/appwiza-sports/public/nfl
+anestishkurti92:anestishkurti92 755 /srv/appwiza-sports/public/nfl
+READONLY
+# file: /srv/appwiza-sports/public/nfl
+# owner: anestishkurti92
+# group: anestishkurti92
+user::rwx
+user:appwiza-runner:rwx	#effective:r-x
+group::r-x
+mask::r-x
+other::r-x
+default:user::rwx
+default:user:appwiza-runner:rwx
+default:group::r-x
+default:mask::rwx
+default:other::r-x
+
+--- /srv/appwiza-sports/state
+anestishkurti92:anestishkurti92 700 /srv/appwiza-sports/state
+READONLY
+# file: /srv/appwiza-sports/state
+# owner: anestishkurti92
+# group: anestishkurti92
+user::rwx
+user:appwiza-runner:rwx	#effective:---
+group::---
+mask::---
+other::---
+default:user::rwx
+default:user:appwiza-runner:rwx
+default:group::---
+default:mask::rwx
+default:other::---
+
+--- /opt/sports-publisher
+root:root 755 /opt/sports-publisher
+READONLY
+# file: /opt/sports-publisher
+# owner: root
+# group: root
+user::rwx
+group::r-x
+other::r-x
+
+=== PUBLIC TREE / SYMLINKS ===
+drwxr-xr-x anestishkurti92:anestishkurti92 /srv/appwiza-sports/public -> 
+drwxr-xr-x anestishkurti92:anestishkurti92 /srv/appwiza-sports/public/nfl -> 
+-rw-r--r-- anestishkurti92:anestishkurti92 /srv/appwiza-sports/public/nfl/index.html -> 
+drwxrwxr-x anestishkurti92:anestishkurti92 /srv/appwiza-sports/public/downloads -> 
+drwxrwxr-x anestishkurti92:anestishkurti92 /srv/appwiza-sports/public/downloads/nfl -> 
+-rw-rw-r-- anestishkurti92:anestishkurti92 /srv/appwiza-sports/public/downloads/nfl/regular-season-roi.zip -> 
+-rw-rw-r-- anestishkurti92:anestishkurti92 /srv/appwiza-sports/public/downloads/nfl/home-opener-stress.zip -> 
+-rw-rw-r-- anestishkurti92:anestishkurti92 /srv/appwiza-sports/public/downloads/nfl/home-openers-2026.zip -> 
+-rw-rw-r-- anestishkurti92:anestishkurti92 /srv/appwiza-sports/public/downloads/nfl/late-season-inputs.zip -> 
+-rw-rw-r-- anestishkurti92:anestishkurti92 /srv/appwiza-sports/public/downloads/nfl/home-opener-refinement.zip -> 
+-rw-rw-r-- anestishkurti92:anestishkurti92 /srv/appwiza-sports/public/downloads/nfl/pass-rush-matchup.zip -> 
+-rw-rw-r-- anestishkurti92:anestishkurti92 /srv/appwiza-sports/public/downloads/nfl/context-research.zip -> 
+-rw-rw-r-- anestishkurti92:anestishkurti92 /srv/appwiza-sports/public/downloads/nfl/home-opener-history.zip -> 
+-rw-rw-r-- anestishkurti92:anestishkurti92 /srv/appwiza-sports/public/downloads/nfl/reports-and-indexes.zip -> 
+-rw-rw-r-- anestishkurti92:anestishkurti92 /srv/appwiza-sports/public/downloads/nfl/earlier-research-nfl-rush-matchup-deep-dive.zip -> 
+-rw-rw-r-- anestishkurti92:anestishkurti92 /srv/appwiza-sports/public/downloads/nfl/nfl-com-power-rankings.zip -> 
+-rw-rw-r-- anestishkurti92:anestishkurti92 /srv/appwiza-sports/public/downloads/nfl/top-bottom-defense.zip -> 
+-rw-rw-r-- anestishkurti92:anestishkurti92 /srv/appwiza-sports/public/downloads/nfl/feature-store.zip -> 
+-rw-rw-r-- anestishkurti92:anestishkurti92 /srv/appwiza-sports/public/downloads/nfl/earlier-research-rolling-roi-discovery.zip -> 
+-rw-rw-r-- anestishkurti92:anestishkurti92 /srv/appwiza-sports/public/downloads/nfl/road-streaks.zip -> 
+-rw-rw-r-- anestishkurti92:anestishkurti92 /srv/appwiza-sports/public/downloads/nfl/offense-filter-validation.zip -> 
+-rw-rw-r-- anestishkurti92:anestishkurti92 /srv/appwiza-sports/public/downloads/nfl/earlier-research-nfl-candidate-validation.zip -> 
+-rw-rw-r-- anestishkurti92:anestishkurti92 /srv/appwiza-sports/public/downloads/nfl/home-opener-pair-search.zip -> 
+-rw-rw-r-- anestishkurti92:anestishkurti92 /srv/appwiza-sports/public/downloads/nfl/pair-loss-analysis.zip -> 
+-rw-rw-r-- anestishkurti92:anestishkurti92 /srv/appwiza-sports/public/downloads/nfl/home-opener-odds-audit.zip -> 
+-rw-rw-r-- anestishkurti92:anestishkurti92 /srv/appwiza-sports/public/downloads/nfl/validation.zip -> 
+-rw-rw-r-- anestishkurti92:anestishkurti92 /srv/appwiza-sports/public/downloads/nfl/earlier-research-data.zip -> 
+-rw-rw-r-- anestishkurti92:anestishkurti92 /srv/appwiza-sports/public/downloads/nfl/consistent-high-win.zip -> 
+-rw-rw-r-- anestishkurti92:anestishkurti92 /srv/appwiza-sports/public/downloads/nfl/consistency-2023-review.zip -> 
+-rw-rw-r-- anestishkurti92:anestishkurti92 /srv/appwiza-sports/public/downloads/nfl/pass-rush-roi.zip -> 
+-rw-rw-r-- anestishkurti92:anestishkurti92 /srv/appwiza-sports/public/downloads/nfl/historical-alert-probabilities.zip -> 
+-rw-rw-r-- anestishkurti92:anestishkurti92 /srv/appwiza-sports/public/downloads/nfl/expanded-search.zip -> 
+-rw-rw-r-- anestishkurti92:anestishkurti92 /srv/appwiza-sports/public/downloads/nfl/historical-odds.zip -> 
+-rw-rw-r-- anestishkurti92:anestishkurti92 /srv/appwiza-sports/public/downloads/nfl/underdog-refinement.zip -> 
+-rw-rw-r-- anestishkurti92:anestishkurti92 /srv/appwiza-sports/public/downloads/nfl/data.zip -> 
+-rw-rw-r-- anestishkurti92:anestishkurti92 /srv/appwiza-sports/public/downloads/nfl/protection-interactions.zip -> 
+-rw-rw-r-- anestishkurti92:anestishkurti92 /srv/appwiza-sports/public/downloads/nfl/pair-candidate-validation.zip -> 
+-rw-rw-r-- anestishkurti92:anestishkurti92 /srv/appwiza-sports/public/downloads/nfl/home-opener-price-comparison.zip -> 
+drwxrwxr-x anestishkurti92:anestishkurti92 /srv/appwiza-sports/public/downloads/boxing -> 
+-rw-rw-r-- anestishkurti92:anestishkurti92 /srv/appwiza-sports/public/downloads/boxing/round-archive.zip -> 
+-rw-rw-r-- anestishkurti92:anestishkurti92 /srv/appwiza-sports/public/downloads/boxing/reports-and-indexes.zip -> 
+-rw-rw-r-- anestishkurti92:anestishkurti92 /srv/appwiza-sports/public/downloads/boxing/research-database.zip -> 
+-rw-rw-r-- anestishkurti92:anestishkurti92 /srv/appwiza-sports/public/downloads/manifest.json -> 
+drwxrwxr-x anestishkurti92:anestishkurti92 /srv/appwiza-sports/public/downloads/ufc -> 
+-rw-rw-r-- anestishkurti92:anestishkurti92 /srv/appwiza-sports/public/downloads/ufc/hybrid-70-agegap-robustness.zip -> 
+-rw-rw-r-- anestishkurti92:anestishkurti92 /srv/appwiza-sports/public/downloads/ufc/market-anchor-backtest.zip -> 
+-rw-rw-r-- anestishkurti92:anestishkurti92 /srv/appwiza-sports/public/downloads/ufc/age-research-reports-and-indexes.zip -> 
+-rw-rw-r-- anestishkurti92:anestishkurti92 /srv/appwiza-sports/public/downloads/ufc/underdog-structural-edge-analysis.zip -> 
+-rw-rw-r-- anestishkurti92:anestishkurti92 /srv/appwiza-sports/public/downloads/ufc/structural-edge-failure-analysis.zip -> 
+-rw-rw-r-- anestishkurti92:anestishkurti92 /srv/appwiza-sports/public/downloads/ufc/striking-portfolio-100.zip -> 
+-rw-rw-r-- anestishkurti92:anestishkurti92 /srv/appwiza-sports/public/downloads/ufc/historical-backtest.zip -> 
+-rw-rw-r-- anestishkurti92:anestishkurti92 /srv/appwiza-sports/public/downloads/ufc/reports-and-indexes.zip -> 
+-rw-rw-r-- anestishkurti92:anestishkurti92 /srv/appwiza-sports/public/downloads/ufc/opponent-wrestling-threshold-expansion.zip -> 
+-rw-rw-r-- anestishkurti92:anestishkurti92 /srv/appwiza-sports/public/downloads/ufc/new-category-discovery.zip -> 
+-rw-rw-r-- anestishkurti92:anestishkurti92 /srv/appwiza-sports/public/downloads/ufc/striking-family-stability.zip -> 
+-rw-rw-r-- anestishkurti92:anestishkurti92 /srv/appwiza-sports/public/downloads/ufc/structural-edge-striking-wrestling-stability.zip -> 
+-rw-rw-r-- anestishkurti92:anestishkurti92 /srv/appwiza-sports/public/downloads/ufc/hybrid-price-history.zip -> 
+-rw-rw-r-- anestishkurti92:anestishkurti92 /srv/appwiza-sports/public/downloads/ufc/wrestling-mismatch-analysis.zip -> 
+-rw-rw-r-- anestishkurti92:anestishkurti92 /srv/appwiza-sports/public/downloads/ufc/age-research-data.zip -> 
+-rw-rw-r-- anestishkurti92:anestishkurti92 /srv/appwiza-sports/public/downloads/ufc/combined-age-reach-backtest.zip -> 
+-rw-rw-r-- anestishkurti92:anestishkurti92 /srv/appwiza-sports/public/downloads/ufc/wrestling-stability-positive-roi.zip -> 
+-rw-rw-r-- anestishkurti92:anestishkurti92 /srv/appwiza-sports/public/downloads/ufc/model.zip -> 
+-rw-rw-r-- anestishkurti92:anestishkurti92 /srv/appwiza-sports/public/downloads/ufc/threshold-stability-analysis.zip -> 
+-rw-rw-r-- anestishkurti92:anestishkurti92 /srv/appwiza-sports/public/downloads/ufc/skill-veto-official-samples.zip -> 
+-rw-rw-r-- anestishkurti92:anestishkurti92 /srv/appwiza-sports/public/downloads/ufc/favorite-loss-risk-analysis.zip -> 
+-rw-rw-r-- anestishkurti92:anestishkurti92 /srv/appwiza-sports/public/downloads/ufc/ufc-reach-method-analysis.zip -> 
+-rw-rw-r-- anestishkurti92:anestishkurti92 /srv/appwiza-sports/public/downloads/ufc/ufc-age-reach-overlap.zip -> 
+-rw-rw-r-- anestishkurti92:anestishkurti92 /srv/appwiza-sports/public/downloads/ufc/wrestling-stability-fast.zip -> 
+-rw-rw-r-- anestishkurti92:anestishkurti92 /srv/appwiza-sports/public/downloads/ufc/raw.zip -> 
+-rw-rw-r-- anestishkurti92:anestishkurti92 /srv/appwiza-sports/public/downloads/ufc/skill-veto-all-methods.zip -> 
+-rw-rw-r-- anestishkurti92:anestishkurti92 /srv/appwiza-sports/public/downloads/ufc/structural-edge-performance-analysis.zip -> 
+-rw-rw-r-- anestishkurti92:anestishkurti92 /srv/appwiza-sports/public/downloads/ufc/model-v2.zip -> 
+-rw-rw-r-- anestishkurti92:anestishkurti92 /srv/appwiza-sports/public/downloads/ufc/original-age-research-reports-and-indexes.zip -> 
+-rw-rw-r-- anestishkurti92:anestishkurti92 /srv/appwiza-sports/public/downloads/ufc/age-research-outputs.zip -> 
+-rw-rw-r-- anestishkurti92:anestishkurti92 /srv/appwiza-sports/public/downloads/ufc/hybrid-70-agegap.zip -> 
+drwxr-xr-x anestishkurti92:anestishkurti92 /srv/appwiza-sports/public/boxing -> 
+-rw-r--r-- anestishkurti92:anestishkurti92 /srv/appwiza-sports/public/boxing/index.html -> 
+-rw-rw-r-- anestishkurti92:anestishkurti92 /srv/appwiza-sports/public/boxing/upcoming.json -> 
+-rw-r--r-- anestishkurti92:anestishkurti92 /srv/appwiza-sports/public/index.html -> 
+-rw-r--r-- anestishkurti92:anestishkurti92 /srv/appwiza-sports/public/style.css -> 
+drwxr-xr-x anestishkurti92:anestishkurti92 /srv/appwiza-sports/public/ufc -> 
+-rw-r--r-- anestishkurti92:anestishkurti92 /srv/appwiza-sports/public/ufc/index.html -> 
+=== NGINX / WEB CONFIG REFERENCES ===
+/etc/nginx/sites-enabled/trading-bot-2-    server_name appwiza.com www.appwiza.com 167.233.75.223;
+/etc/nginx/sites-enabled/trading-bot-3-
+/etc/nginx/sites-enabled/trading-bot-4-
+/etc/nginx/sites-enabled/trading-bot-5-    # Sports summaries only; databases and collector files are outside this root.
+/etc/nginx/sites-enabled/trading-bot:6:    location = /sports { return 301 /sports/; }
+/etc/nginx/sites-enabled/trading-bot:7:    location ^~ /sports/ {
+/etc/nginx/sites-enabled/trading-bot:8:        alias /srv/appwiza-sports/public/;
+/etc/nginx/sites-enabled/trading-bot-9-        index index.html;
+/etc/nginx/sites-enabled/trading-bot-10-        autoindex off;
+/etc/nginx/sites-enabled/trading-bot-11-        add_header Cache-Control "no-cache" always;
+/etc/nginx/sites-enabled/trading-bot-12-        add_header X-Content-Type-Options nosniff always;
+=== SPORTS PUBLISHER SERVICES / TIMERS ===
+nfl-home-opener.service                                   static          -
+nfl-home-opener.timer                                     enabled         enabled
+--- nfl-home-opener.service
+# /etc/systemd/system/nfl-home-opener.service
+[Unit]
+Description=NFL research email scan on appwiza
+After=network-online.target
+Wants=network-online.target
+[Service]
+Type=oneshot
+User=anestishkurti92
+Environment=HOME=/home/anestishkurti92
+Environment=OMP_NUM_THREADS=1
+Environment=OPENBLAS_NUM_THREADS=1
+WorkingDirectory=/home/anestishkurti92/nfl-predictor-v1/research_v2
+ExecStart=/home/anestishkurti92/nfl-predictor-v1/venv/bin/python /home/anestishkurti92/nfl-predictor-v1/research_v2/nfl_home_opener_scanner.py --send
+TimeoutStartSec=10min
+UMask=0077
+Nice=5
+--- nfl-home-opener.timer
+# /etc/systemd/system/nfl-home-opener.timer
+[Unit]
+Description=Daily nfl-home-opener scan on appwiza (every 24 hours)
+[Timer]
+OnCalendar=*-*-* 10:00:00 America/New_York
+Persistent=true
+AccuracySec=1min
+Unit=nfl-home-opener.service
+[Install]
+WantedBy=timers.target
+=== WRITABLE DIRECTORIES UNDER SPORTS ROOT ===
+/srv/appwiza-sports
+/srv/appwiza-sports/public/downloads
+/srv/appwiza-sports/public/downloads/nfl
+/srv/appwiza-sports/public/downloads/boxing
+/srv/appwiza-sports/public/downloads/ufc
+=== PUBLISHER EXECUTABLES ===
+-rw-r--r-- root:root /opt/sports-publisher/test_publish.py
+-rw-r--r-- root:root /opt/sports-publisher/__pycache__/sports_publish.cpython-312.pyc
+-rw-r--r-- root:root /opt/sports-publisher/sports_publish.py
