@@ -71,7 +71,7 @@ for (team,season),g in seq.groupby(['team','season'],sort=False):
         x[f'prior_road_games_last{n}']=x.road_game.shift(1).rolling(n,min_periods=1).sum().fillna(0)
         x[f'prior_road_miles_last{n}']=x.travel_miles.shift(1).rolling(n,min_periods=1).sum().fillna(0)
         x[f'prior_tz_hours_last{n}']=x.abs_tz_shift_hours.shift(1).rolling(n,min_periods=1).sum().fillna(0)
-        x[f'prior_long_trips_last{n}']=(x.travel_miles.ge(1500).astype(int).shift(1).rolling(n,min_periods=1).sum().fillna(0))
+        x[f'prior_long_trips_last{n}']=x.travel_miles.ge(1500).astype(int).shift(1).rolling(n,min_periods=1).sum().fillna(0)
     x['prior_overtime_last3']=x.overtime.shift(1).rolling(3,min_periods=1).sum().fillna(0)
     x['road_games_last4_including_current']=x.prior_road_games_last3+x.road_game
     x['road_games_last5_including_current']=x.prior_road_games_last4+x.road_game
@@ -102,7 +102,6 @@ for (team,season),g in seq.groupby(['team','season'],sort=False):
 seq=pd.concat(creative,ignore_index=True)
 base_cols=['game_id','season','week','team']
 newcols=[c for c in seq.columns if c not in ['opponent','is_home','gameday_dt','rest_days','travel_miles','abs_tz_shift_hours','eastward_tz_hours','westward_tz_hours','altitude_change_ft','high_altitude_game','international_game','neutral_site','road_game','consecutive_road_games','overtime'] and c not in base_cols]
-# Keep original travel fields plus the creative sequential features.
 newcols=['travel_miles','abs_tz_shift_hours','eastward_tz_hours','westward_tz_hours','altitude_change_ft','road_game','consecutive_road_games']+newcols
 newcols=list(dict.fromkeys([c for c in newcols if c in seq.columns]))
 for c in newcols:
@@ -112,14 +111,23 @@ d=d.merge(seq[base_cols+newcols],on=base_cols,how='left')
 # Opponent edges: positive means our side has LESS burden / MORE rest than opponent.
 bad=[c for c in newcols if c not in {'extra_rest_ge8'}]
 for c in bad:
+    # Existing context already contains some opponent travel fields; rebuild cleanly.
+    for old in ['opp_'+c,'adv_'+c]:
+        if old in d.columns:d=d.drop(columns=[old])
     opp=d[['game_id','team',c]].rename(columns={'team':'opponent',c:'opp_'+c})
     d=d.merge(opp,on=['game_id','opponent'],how='left')
     d['adv_'+c]=num(d['opp_'+c])-num(d[c])
 if 'extra_rest_ge8' in d.columns:
-    opp=d[['game_id','team','extra_rest_ge8']].rename(columns={'team':'opponent','extra_rest_ge8':'opp_extra_rest_ge8'}); d=d.merge(opp,on=['game_id','opponent'],how='left'); d['adv_extra_rest_ge8']=num(d.extra_rest_ge8)-num(d.opp_extra_rest_ge8)
+    for old in ['opp_extra_rest_ge8','adv_extra_rest_ge8']:
+        if old in d.columns:d=d.drop(columns=[old])
+    opp=d[['game_id','team','extra_rest_ge8']].rename(columns={'team':'opponent','extra_rest_ge8':'opp_extra_rest_ge8'})
+    d=d.merge(opp,on=['game_id','opponent'],how='left')
+    d['adv_extra_rest_ge8']=num(d.extra_rest_ge8)-num(d.opp_extra_rest_ge8)
 
 # Market movement needed by some frozen base methods.
 if ODDS.exists():
+    for c in ['open_home','open_away','close_home','close_away','open_prob','close_prob','open_to_close_prob_move','base_vs_open_prob_move']:
+        if c in d.columns:d=d.drop(columns=[c])
     q=pd.read_csv(ODDS,low_memory=False); q=q[q.market.astype(str).str.lower().eq('moneyline')].copy(); q['american_odds']=num(q.american_odds); q['prob']=implied(q.american_odds)
     q=q[q.phase.astype(str).str.lower().isin(['open','close'])&q.selection.astype(str).str.lower().isin(['home','away'])]
     qa=q.groupby(['game_id','phase','selection'],as_index=False).prob.median(); w=qa.pivot_table(index='game_id',columns=['phase','selection'],values='prob',aggfunc='first'); w.columns=['_'.join(x) for x in w.columns]; w=w.reset_index()
@@ -127,12 +135,11 @@ if ODDS.exists():
     d['open_prob']=np.where(home,num(d.get('open_home')),num(d.get('open_away'))); d['close_prob']=np.where(home,num(d.get('close_home')),num(d.get('close_away')))
     d['open_to_close_prob_move']=d.close_prob-d.open_prob; d['base_vs_open_prob_move']=d.market_prob_use-d.open_prob
 
-# Save enriched data for future prospective use.
 d.to_parquet(OUT/'creative_context_team_sides_2006_2025.parquet',index=False)
 
 creative_features=[]
 for c in d.columns:
-    if c in newcols or c.startswith('adv_') and any(x in c for x in newcols):
+    if c in newcols or (c.startswith('adv_') and any(x in c for x in newcols)):
         z=num(d[c])
         if z.notna().sum()>=150 and z.nunique(dropna=True)>=2:creative_features.append(c)
 creative_features=list(dict.fromkeys(creative_features))
@@ -196,7 +203,9 @@ for _,r in methods.iterrows():
         if ok:confirmed.append(row)
 
 pd.DataFrame(all_pre).to_csv(OUT/'all_creative_veto_tests.csv',index=False)
-pd.DataFrame(confirmed).sort_values(['roi_change','holdout_removed_losses'],ascending=[False,False]).to_csv(OUT/'confirmed_creative_vetoes.csv',index=False)
+confdf=pd.DataFrame(confirmed)
+if len(confdf):confdf=confdf.sort_values(['roi_change','holdout_removed_losses'],ascending=[False,False])
+confdf.to_csv(OUT/'confirmed_creative_vetoes.csv',index=False)
 
 # ------- Standalone creative-method discovery with frozen holdout -------
 surv=[]
@@ -228,15 +237,14 @@ res=pd.DataFrame(surv)
 if len(res):
     res['score']=res.holdout_roi*np.sqrt(res.holdout_n)+.35*res.validation_roi*np.sqrt(res.validation_n)
     res=res.sort_values(['score','full_n'],ascending=[False,False])
-    # semantic/market dedup: one threshold variant per feature+market+venue.
     res=res.drop_duplicates(['track','feature','price_band','venue'],keep='first')
 res.to_csv(OUT/'creative_method_survivors.csv',index=False)
 
-summary={'creative_features':len(creative_features),'canonical_methods_tested':int(len(methods)),'confirmed_creative_vetoes':int(len(confirmed)),'methods_with_confirmed_creative_veto':int(pd.DataFrame(confirmed).method_id.nunique()) if confirmed else 0,'creative_standalone_methods':int(len(res))}
+summary={'creative_features':len(creative_features),'canonical_methods_tested':int(len(methods)),'confirmed_creative_vetoes':int(len(confdf)),'methods_with_confirmed_creative_veto':int(confdf.method_id.nunique()) if len(confdf) else 0,'creative_standalone_methods':int(len(res))}
 (OUT/'summary.json').write_text(json.dumps(summary,indent=2))
 lines=['NFL CREATIVE TRAVEL/FATIGUE EXPANSION',json.dumps(summary,indent=2),'','TOP CONFIRMED CREATIVE VETOES']
-for r in sorted(confirmed,key=lambda z:(z['roi_change'],z['holdout_removed_losses']),reverse=True)[:30]:
-    lines.append(f"{r['method_id']} | VETO {r['feature']} {r['op']} {r['threshold']:.5g} | holdout {100*r['holdout_base_roi']:+.1f}% -> {100*r['holdout_safe_roi']:+.1f}% | removed {r['holdout_removed_losses']}L/{r['holdout_removed_wins']}W | n {r['holdout_base_n']}->{r['holdout_safe_n']}")
+for _,r in confdf.head(30).iterrows():
+    lines.append(f"{r.method_id} | VETO {r.feature} {r.op} {r.threshold:.5g} | holdout {100*r.holdout_base_roi:+.1f}% -> {100*r.holdout_safe_roi:+.1f}% | removed {int(r.holdout_removed_losses)}L/{int(r.holdout_removed_wins)}W | n {int(r.holdout_base_n)}->{int(r.holdout_safe_n)}")
 lines.append('');lines.append('TOP CREATIVE STANDALONE METHODS')
 if len(res):
     for _,r in res.head(30).iterrows():
