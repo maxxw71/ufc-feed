@@ -1,0 +1,57 @@
+name: Appwiza NFL publish hook inspect
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/appwiza-nfl-publish-hook-inspect.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  inspect:
+    if: github.repository == 'maxxw71/ufc-feed' && github.ref == 'refs/heads/main'
+    runs-on: [self-hosted, Linux, X64, appwiza]
+    timeout-minutes: 6
+    steps:
+      - uses: actions/checkout@v4
+      - name: Inspect writable production hook points
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p nfl
+          REPORT=nfl/live_publish_hook_report.txt
+          ROOT=/home/anestishkurti92/nfl-predictor-v1
+          R2="$ROOT/research_v2"
+          : > "$REPORT"
+
+          echo '=== ACCESS ===' >> "$REPORT"
+          for p in /opt/sports-publisher /opt/sports-publisher/sports_publish.py /srv/appwiza-sports /srv/appwiza-sports/public "$R2" "$R2/nfl_home_opener_scanner.py"; do
+            stat -c '%U:%G %a %n' "$p" >> "$REPORT" 2>&1 || true
+            if [ -w "$p" ]; then echo "WRITABLE $p" >> "$REPORT"; else echo "READONLY $p" >> "$REPORT"; fi
+          done
+          echo >> "$REPORT"
+
+          echo '=== SPORTS_PUBLISH.PY ===' >> "$REPORT"
+          sed -n '1,320p' /opt/sports-publisher/sports_publish.py >> "$REPORT" 2>&1 || true
+          echo >> "$REPORT"
+
+          echo '=== BASE_YPP PYTHON REFERENCES ONLY ===' >> "$REPORT"
+          grep -RniE -C 8 'base_ypp_v1|pre_off_ypp|opp_pre_def_ypp_allowed|6\.2|5\.8' "$R2" \
+            --include='*.py' \
+            --exclude-dir=.git --exclude-dir=historical_odds --exclude-dir=home_opener_email_state --exclude-dir=data \
+            --exclude-dir=venv --exclude-dir=.venv 2>/dev/null | head -500 >> "$REPORT" || true
+          echo >> "$REPORT"
+
+          echo '=== APPWIZA NFL FILES ===' >> "$REPORT"
+          find /srv/appwiza-sports -maxdepth 4 -type f \( -iname '*nfl*' -o -iname '*pick*' -o -iname '*bet*' \) -print 2>/dev/null | head -160 >> "$REPORT" || true
+
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add "$REPORT"
+          if ! git diff --cached --quiet; then
+            git commit -m 'Capture NFL publisher hook report'
+            git push
+          fi
