@@ -1,0 +1,69 @@
+{
+  "status": "SHADOW_PRIORITY_NOT_LIVE",
+  "generated": "2026-09-14",
+  "policy": "Require both independently derived methods to qualify the same team at actionable odds, with each method's approved vetoes. Historical win rate is not a calibrated future-game probability.",
+  "priority": [
+    {
+      "tier": "A_PLUS_SHADOW",
+      "rs_method": "RS001",
+      "h_method": "NFL-H003",
+      "n": 24,
+      "wins": 19,
+      "losses": 5,
+      "win_pct": 0.7917,
+      "roi": 0.9767,
+      "holdout_n": 7,
+      "holdout_win_pct": 0.8571,
+      "holdout_roi": 1.0,
+      "positive_season_ratio": 0.9286,
+      "leave_one_season_out_min_roi": 0.8943,
+      "independent": true
+    },
+    {
+      "tier": "A_PLUS_SHADOW",
+      "rs_method": "RS003",
+      "h_method": "NFL-H036",
+      "n": 15,
+      "wins": 13,
+      "losses": 2,
+      "win_pct": 0.8667,
+      "roi": 1.196,
+      "holdout_n": 8,
+      "holdout_win_pct": 0.875,
+      "holdout_roi": 1.188,
+      "positive_season_ratio": 0.91,
+      "leave_one_season_out_min_roi": 1.108,
+      "independent": true
+    },
+    {
+      "tier": "A_SHADOW_LARGER_SAMPLE",
+      "rs_method": "RS003",
+      "h_method": "NFL-H017",
+      "n": 25,
+      "wins": 17,
+      "losses": 8,
+      "win_pct": 0.68,
+      "roi": 0.698,
+      "holdout_n": 11,
+      "holdout_win_pct": 0.7273,
+      "holdout_roi": 0.799,
+      "positive_season_ratio": 0.82,
+      "leave_one_season_out_min_roi": 0.606,
+      "independent": true
+    }
+  ],
+  "micro_sample_watch": [
+    {
+      "rs_method": "RS001",
+      "co_method": "CO005",
+      "n": 6,
+      "wins": 6,
+      "losses": 0,
+      "roi": 1.525,
+      "holdout_n": 4,
+      "holdout_wins": 4,
+      "holdout_roi": 1.53,
+      "reason": "Excellent result but too few observations to promote."
+    }
+  ]
+}
