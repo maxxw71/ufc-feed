@@ -6,6 +6,7 @@ on:
     branches: [main]
     paths:
       - 'scripts/nfl_build_staff_history_bulk.py'
+      - 'scripts/nfl_patch_2026_staff.py'
       - '.github/workflows/nfl-staff-history.yml'
 
 permissions:
@@ -31,10 +32,14 @@ jobs:
           VENDOR="$CTX/vendor"
           test -x "$ROOT/venv/bin/python"
           mkdir -p "$CTX/raw" "$VENDOR"
-          if ! PYTHONPATH="$VENDOR" "$ROOT/venv/bin/python" -c 'import pypdf, lxml' 2>/dev/null; then
-            "$ROOT/venv/bin/python" -m pip install -q --upgrade --target "$VENDOR" pypdf lxml
+          if ! PYTHONPATH="$VENDOR" "$ROOT/venv/bin/python" -c 'import pypdf, lxml, html5lib, bs4' 2>/dev/null; then
+            "$ROOT/venv/bin/python" -m pip install -q --upgrade --target "$VENDOR" pypdf lxml html5lib beautifulsoup4
           fi
-          PYTHONPATH="$VENDOR" NFL_SOURCE_ROOT="$ROOT" NFL_CONTEXT_ROOT="$CTX" "$ROOT/venv/bin/python" "$GITHUB_WORKSPACE/scripts/nfl_build_staff_history_bulk.py"
+          export PYTHONPATH="$VENDOR"
+          export NFL_SOURCE_ROOT="$ROOT"
+          export NFL_CONTEXT_ROOT="$CTX"
+          "$ROOT/venv/bin/python" "$GITHUB_WORKSPACE/scripts/nfl_build_staff_history_bulk.py"
+          "$ROOT/venv/bin/python" "$GITHUB_WORKSPACE/scripts/nfl_patch_2026_staff.py"
           chmod -R a+rX "$CTX"
           echo '=== STAFF STATUS ==='
           cat "$CTX/NFL_COACHING_STAFF_STATUS.json"
