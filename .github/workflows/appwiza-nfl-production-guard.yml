@@ -55,10 +55,10 @@ jobs:
           from pathlib import Path
           s=Path('/tmp/nfl_home_opener_scanner.integrity.py').read_text()
           gate=s.index('match_guard.filter_records(raw_production_records,G,now)')
-          assert gate < s.index("atomic(S/(stamp+'.json')")
-          assert gate < s.index('sports_publish.safe_call(sports_publish.publish_nfl,records,now,nfl_email_design)')
-          assert gate < s.index('nfl_email_design.render(records,now)')
-          assert gate < s.index('bet_tracker.nfl_picks(records)')
+          assert s.index("atomic(S/(stamp+'.json')",gate)>gate
+          assert s.index('sports_publish.safe_call(sports_publish.publish_nfl,records,now,nfl_email_design)',gate)>gate
+          assert s.index('nfl_email_design.render(records,now)',gate)>gate
+          assert s.index('bet_tracker.nfl_picks(records)',gate)>gate
           assert "selection_side='home',selected_team=x.home_team" in s
           assert "market_side':side,'market_team':selected" in s
           e=Path('/tmp/nfl_email_design.integrity.py').read_text()
