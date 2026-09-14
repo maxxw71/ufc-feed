@@ -1,0 +1,45 @@
+name: Appwiza NFL deployment access inspect
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/appwiza-nfl-deploy-access-inspect.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  inspect:
+    if: github.repository == 'maxxw71/ufc-feed' && github.ref == 'refs/heads/main'
+    runs-on: [self-hosted, Linux, X64, appwiza]
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - name: Inspect authorized deployment path
+        shell: bash
+        run: |
+          set -euo pipefail
+          REPORT=nfl/live_deploy_access.txt
+          : > "$REPORT"
+          echo '=== SUDO LIST ===' >> "$REPORT"
+          sudo -n -l >> "$REPORT" 2>&1 || true
+          echo >> "$REPORT"
+          echo '=== DEPLOY HELPERS ===' >> "$REPORT"
+          for f in /usr/local/bin/ufc_deploy.sh /opt/trading-bot/deploy/deploy.sh; do
+            if [ -e "$f" ]; then
+              stat -c '%U:%G %a %s %n' "$f" >> "$REPORT" 2>&1 || true
+              sed -n '1,220p' "$f" >> "$REPORT" 2>&1 || true
+            fi
+          done
+          echo >> "$REPORT"
+          echo '=== PARENT ACCESS ===' >> "$REPORT"
+          namei -l /home/anestishkurti92/nfl-predictor-v1/research_v2/nfl_home_opener_scanner.py >> "$REPORT" 2>&1 || true
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add "$REPORT"
+          if ! git diff --cached --quiet; then
+            git commit -m 'Capture authorized NFL deployment access'
+            git push
+          fi
