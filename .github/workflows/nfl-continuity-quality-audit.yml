@@ -1,0 +1,46 @@
+name: NFL continuity quality audit
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/nfl-continuity-quality-audit.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  audit:
+    if: github.repository == 'maxxw71/ufc-feed' && github.ref == 'refs/heads/main'
+    runs-on: [self-hosted, Linux, X64, appwiza]
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Inspect LAC snap and roster identity overlap
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          PY=/home/anestishkurti92/nfl-predictor-v1/venv/bin/python
+          CTX=/home/appwiza-runner/nfl-context-data
+          "$PY" - <<'PY'
+          import pandas as pd
+          sn=pd.read_parquet('/home/appwiza-runner/nfl-context-data/raw/snap_counts_2012_2026.parquet')
+          wr=pd.read_parquet('/home/appwiza-runner/nfl-context-data/raw/weekly_rosters_2006_2026.parquet')
+          sn=sn[(sn.season==2025)&(sn.team=='LAC')].copy()
+          for c in ['offense_snaps','defense_snaps']:
+              sn[c]=pd.to_numeric(sn[c],errors='coerce').fillna(0)
+          agg=sn.groupby(['pfr_player_id','player','position'],as_index=False)[['offense_snaps','defense_snaps']].sum().sort_values('offense_snaps',ascending=False)
+          print('=== LAC 2025 TOP OFFENSIVE SNAPS ===')
+          print(agg.head(30).to_string(index=False))
+          print('\nPOSITIONS',agg.groupby('position').offense_snaps.sum().sort_values(ascending=False).to_dict())
+          w=wr[(wr.season==2026)&(wr.team=='LAC')].copy()
+          if 'game_type' in w.columns: w=w[w.game_type.eq('REG')]
+          w['weeknum']=pd.to_numeric(w.week,errors='coerce')
+          w=w[w.weeknum.eq(w.weeknum.min())]
+          print('\n=== LAC FIRST 2026 WEEKLY ROSTER ===')
+          print(w[[c for c in ['full_name','position','depth_chart_position','pfr_id','gsis_id','status'] if c in w.columns]].head(80).to_string(index=False))
+          a=set(agg.pfr_player_id.dropna().astype(str)); b=set(w.pfr_id.dropna().astype(str))
+          print('\nPFR ID overlap',len(a&b),'of prior',len(a),'current',len(b))
+          print('overlap ids',sorted(a&b)[:50])
+          PY
