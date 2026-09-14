@@ -1,0 +1,32 @@
+name: Appwiza NFL email selector inspect
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/appwiza-nfl-email-selector-inspect.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  inspect:
+    if: github.repository == 'maxxw71/ufc-feed' && github.ref == 'refs/heads/main'
+    runs-on: [self-hosted, Linux, X64, appwiza]
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - name: Trace live NFL email selector
+        shell: bash
+        run: |
+          set -u
+          ROOT=/home/anestishkurti92/nfl-predictor-v1
+          echo '=== CANDIDATE EMAIL / REPORT FILES ==='
+          find "$ROOT" /srv/appwiza-sports -maxdepth 4 -type f \( -iname '*email*.py' -o -iname '*report*.py' -o -iname '*digest*.py' -o -iname '*pick*.py' -o -iname 'app.py' \) -print 2>/dev/null | head -120 || true
+          echo
+          echo '=== SELECTOR LOGIC SNIPPETS ==='
+          grep -RniE -C 5 'prior_games|market_prob|moneyline|recommend|bet(s|ting)?|pick(s)?|confidence|favorite|week[ _<>=]|send_.*(mail|email)|smtp|method' "$ROOT" /srv/appwiza-sports --include='*.py' 2>/dev/null | head -900 || true
+          echo
+          echo '=== CHARGERS / ARIZONA IN GENERATED OUTPUTS ==='
+          grep -RniE -C 4 'Chargers|Cardinals|\bLAC\b|\bARI\b' "$ROOT" /srv/appwiza-sports --include='*.json' --include='*.csv' --include='*.html' --include='*.txt' 2>/dev/null | head -500 || true
