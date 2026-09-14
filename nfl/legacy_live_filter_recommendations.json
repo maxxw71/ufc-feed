@@ -1,0 +1,42 @@
+{
+  "status": "STAGED_NOT_PRODUCTION_DEPLOYED",
+  "generated": "2026-09-14",
+  "rules": [
+    {
+      "methods": ["original", "stricter"],
+      "filter_type": "HARD_VETO_CANDIDATE",
+      "feature": "same_season_preseason_wins",
+      "operator": "<=",
+      "threshold": 1,
+      "reason": "Confirmed loss-heavy in both <=2019 and 2020-2025 eras; would have vetoed LAC 2026 Week 1.",
+      "original_risk": {"n": 27, "win_pct": 0.5925925926, "roi": -0.0600916263},
+      "original_safe": {"n": 64, "win_pct": 0.921875, "roi": 0.2521476816},
+      "stricter_risk": {"n": 16, "win_pct": 0.625, "roi": -0.0419268418},
+      "stricter_safe": {"n": 48, "win_pct": 0.9375, "roi": 0.2428395244}
+    },
+    {
+      "methods": ["original"],
+      "filter_type": "SECONDARY_RISK_FLAG",
+      "feature": "same_season_preseason_win_pct",
+      "operator": "<",
+      "threshold": 0.5,
+      "reason": "Confirmed in both eras; retained as secondary because wins<=1 is the stronger primary veto."
+    },
+    {
+      "methods": ["late_road_protection_rest_v1"],
+      "filter_type": "HARD_VETO_CANDIDATE",
+      "feature": "opponent_new_oc_low_off_continuity",
+      "operator": "==",
+      "threshold": true,
+      "reason": "Historical risk subset 61.5% win / -18.3% ROI versus safe subset 82.6% / +11.4%; confirmed loss lift in older and recent eras."
+    }
+  ],
+  "not_yet_validated_as_hard_veto": [
+    "team_both_coordinators_changed",
+    "team_both_coordinators_changed_and_preseason_1_2",
+    "opponent_new_head_coach_after_bad_prior_year",
+    "scheme_reset_both_sides",
+    "chargers_like_combo"
+  ],
+  "deployment_note": "Do not deploy staff-change flags as hard vetoes until historical sample is sufficient. Production scanner remains unchanged until the privileged deployment path installs an approved patch."
+}
