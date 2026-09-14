@@ -1,5 +1,5 @@
 from pathlib import Path
-import os,json,ast
+import os,json
 import numpy as np
 import pandas as pd
 REPO=Path(os.environ.get('GITHUB_WORKSPACE','.'))
@@ -24,7 +24,7 @@ bands={'DOG20_34':(.20,.35),'DOG35_44':(.35,.45),'DOG35_49':(.35,.50),'PK_55':(.
 tracks={'LONG':((2006,2013),(2014,2019),(2020,2025)),'MODERN':((2012,2017),(2018,2020),(2021,2025))}
 d=pd.read_parquet(DATA);d=d[d.season.between(2006,2025)].copy();d['market_prob']=implied(d.moneyline);d['win']=num(d.win);d['profit']=profit(d.win,d.moneyline)
 meth=pd.read_csv(METHODS).copy()
-meth=meth.sort_values(['user_preferred','score'],ascending=[False,False]).head(80).reset_index(drop=True)
+meth=meth.sort_values(['preferred','elite_recent','score'],ascending=[False,False,False]).head(80).reset_index(drop=True)
 rows=[];sets={}
 for i,r in meth.iterrows():
     cid=f'CO{i+1:03d}'
@@ -48,7 +48,7 @@ for i,r in meth.iterrows():
     early=metrics(x[num(x.week).between(4,6)])
     if minweek>4:recstart=minweek
     elif early['n']<15 or (pd.notna(early['roi']) and early['roi']<.05):recstart=7
-    rows.append({'method_id':cid,'track':r.track,'price_band':r.price_band,'venue':r.venue,'conditions':r.conditions,**m,'train_n':mt['n'],'train_roi':mt['roi'],'validation_n':mv['n'],'validation_roi':mv['roi'],'holdout_n':mh['n'],'holdout_roi':mh['roi'],'positive_season_ratio':pos,'top_team':top.index[0] if len(top) else None,'top_team_share':float(top.iloc[0]) if len(top) else np.nan,'top3_team_share':top3,'recommended_start_week':recstart,**segs})
+    rows.append({'method_id':cid,'track':r.track,'price_band':r.price_band,'venue':r.venue,'conditions':r.conditions,'preferred_discovery':bool(r.preferred),'elite_recent_discovery':bool(r.elite_recent),**m,'train_n':mt['n'],'train_roi':mt['roi'],'validation_n':mv['n'],'validation_roi':mv['roi'],'holdout_n':mh['n'],'holdout_roi':mh['roi'],'positive_season_ratio':pos,'top_team':top.index[0] if len(top) else None,'top_team_share':float(top.iloc[0]) if len(top) else np.nan,'top3_team_share':top3,'recommended_start_week':recstart,**segs})
 a=pd.DataFrame(rows)
 if len(a):
     a['robust_score']=a.holdout_roi*.35+a.roi*.25+a.positive_season_ratio*.18+np.log10(a.n.clip(lower=1))*.04-a.top_team_share.fillna(1)*.08
@@ -80,4 +80,4 @@ if len(a):
   for _,r in a[a.deployment_status.eq('CO_LIVE_READY')].head(20).iterrows():
     lines.append(f"{r.method_id} {r.track} {r.price_band} {r.venue} | {int(r.wins)}-{int(r.losses)} ({100*r.win_pct:.1f}%) n={int(r.n)} ROI={100*r.roi:+.1f}% hold={100*r.holdout_roi:+.1f}% pos={100*r.positive_season_ratio:.0f}% topteam={r.top_team} {100*r.top_team_share:.1f}% start=W{int(r.recommended_start_week)} | {r.conditions}")
 (OUT/'report.txt').write_text('\n'.join(lines)+'\n');print('\n'.join(lines))
-# trigger 2026-09-14
+# trigger fixed 2026-09-14
