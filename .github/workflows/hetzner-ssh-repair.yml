@@ -1,0 +1,84 @@
+name: Hetzner SSH repair
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/hetzner-ssh-repair.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  repair:
+    if: github.repository == 'maxxw71/ufc-feed' && github.ref == 'refs/heads/main'
+    runs-on: [self-hosted, Linux, X64, appwiza]
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - name: Diagnose and repair SSH
+        shell: bash
+        run: |
+          set +e
+          REPORT=ops/hetzner_ssh_repair_report.txt
+          mkdir -p ops
+          : > "$REPORT"
+          exec > >(tee -a "$REPORT") 2>&1
+
+          echo '=== IDENTITY ==='
+          date -Is
+          hostname
+          id
+          uname -a
+
+          echo '=== SUDO ==='
+          sudo -n -l
+
+          echo '=== BEFORE ==='
+          systemctl status ssh --no-pager -l || true
+          systemctl status sshd --no-pager -l || true
+          ss -ltnp | grep -E '(:22\s|:22$)' || true
+
+          UNIT=''
+          if systemctl list-unit-files | grep -q '^ssh.service'; then UNIT=ssh; fi
+          if [ -z "$UNIT" ] && systemctl list-unit-files | grep -q '^sshd.service'; then UNIT=sshd; fi
+          echo "Detected SSH unit: ${UNIT:-none}"
+
+          echo '=== CONFIG TEST ==='
+          if [ -x /usr/sbin/sshd ]; then sudo -n /usr/sbin/sshd -t || true; fi
+
+          echo '=== REPAIR ATTEMPT ==='
+          if [ -n "$UNIT" ]; then
+            sudo -n systemctl enable "$UNIT" || true
+            sudo -n systemctl restart "$UNIT" || sudo -n systemctl start "$UNIT" || true
+          fi
+
+          if command -v ufw >/dev/null 2>&1; then
+            echo '=== UFW ==='
+            sudo -n ufw status verbose || true
+            if sudo -n ufw status 2>/dev/null | grep -q '^Status: active'; then
+              sudo -n ufw allow 22/tcp || true
+              sudo -n ufw allow OpenSSH || true
+            fi
+          fi
+
+          echo '=== FIREWALL SNAPSHOT ==='
+          sudo -n nft list ruleset 2>/dev/null | sed -n '1,220p' || true
+          sudo -n iptables -S 2>/dev/null | sed -n '1,160p' || true
+
+          echo '=== AFTER ==='
+          if [ -n "$UNIT" ]; then systemctl status "$UNIT" --no-pager -l || true; fi
+          ss -ltnp | grep -E '(:22\s|:22$)' || true
+          timeout 3 bash -c '</dev/tcp/127.0.0.1/22' && echo 'LOCAL_PORT_22=OPEN' || echo 'LOCAL_PORT_22=CLOSED'
+
+          echo '=== RECENT SSH LOGS ==='
+          if [ -n "$UNIT" ]; then sudo -n journalctl -u "$UNIT" -n 100 --no-pager || true; fi
+
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add "$REPORT"
+          if ! git diff --cached --quiet; then
+            git commit -m 'Record Hetzner SSH repair result'
+            git push
+          fi
