@@ -1,0 +1,42 @@
+TARGETED ROAD3 / COLD / RUN-HEAVY FOLLOW-UP
+
+{
+  "road3_rows": 75,
+  "road4_rows": 0,
+  "late_cold40_rows": 1134,
+  "late_freezing_rows": 434,
+  "survivors": 207,
+  "preferred": 45,
+  "preferred_by_concept": {
+    "RUN": 41,
+    "ROAD3": 3,
+    "COLD": 1
+  }
+}
+
+TOP PREFERRED
+TF001 ROAD3 LONG DOG35_44 AWAY | 48-38 (55.8%) n=86 ROI=+39.3% train=+26.2% val=+30.6% hold=+67.6% pos=85% recent=+39.2pp | [["road_prev5_ge3", ">=", 1.0], ["recent_edge_sack_or_hit_rate", ">=", 0.00288736374754465]]
+TF002 RUN LONG DOG20_34 AWAY | 32-40 (44.4%) n=72 ROI=+44.3% train=+30.9% val=+57.5% hold=+59.9% pos=79% recent=+15.7pp | [["recent3_run_rate2", ">=", 0.457134278164785], ["rank_edge_pass_epa_per_dropback", ">=", 1.0]]
+TF003 RUN LONG DOG35_49 ANY | 72-44 (62.1%) n=116 ROI=+50.3% train=+51.5% val=+47.9% hold=+49.5% pos=75% recent=-0.2pp | [["pre_run_rate2", ">=", 0.462580750311148], ["recent_edge_punt_net_average", ">=", 3.68373015873016]]
+TF004 RUN LONG DOG35_49 AWAY | 45-31 (59.2%) n=76 ROI=+39.1% train=+53.9% val=+5.3% hold=+45.1% pos=79% recent=+15.5pp | [["pre_run_rate2", ">=", 0.4476493111406392], ["rank_edge_off_epa", ">=", 8.0]]
+TF005 RUN LONG DOG20_34 AWAY | 32-54 (37.2%) n=86 ROI=+31.4% train=+13.6% val=+42.0% hold=+59.1% pos=70% recent=+31.3pp | [["recent3_run_rate2", ">=", 0.47805328197721075], ["recent_edge_kick_return_average", "<=", -0.1388888888888892]]
+TF006 RUN LONG DOG20_34 AWAY | 43-80 (35.0%) n=123 ROI=+22.8% train=+8.4% val=+17.5% hold=+58.1% pos=80% recent=+45.1pp | [["recent3_run_rate2", ">=", 0.47805328197721075], ["rank_edge_points_against", ">=", -5.0]]
+TF007 RUN LONG DOG20_34 AWAY | 47-63 (42.7%) n=110 ROI=+49.2% train=+45.5% val=+57.7% hold=+50.5% pos=65% recent=-1.1pp | [["recent3_run_rate2", ">=", 0.42857142857142855], ["recent_edge_giveaway_rate", ">=", 0.0090715033196651]]
+TF008 RUN LONG DOG35_49 AWAY | 73-52 (58.4%) n=125 ROI=+37.5% train=+48.3% val=+12.4% hold=+40.0% pos=79% recent=+9.6pp | [["pre_run_rate2", ">=", 0.4667437246300308], ["recent_edge_punt_return_average", ">=", 0.2999999999999989]]
+TF009 COLD LONG DOG20_34 AWAY | 24-41 (36.9%) n=65 ROI=+33.6% train=+30.5% val=+31.2% hold=+45.9% pos=74% recent=+15.0pp | [["late_cold40_known", ">=", 1.0], ["recent_edge_off_epa", ">=", -3.647945323238858]]
+TF010 RUN MODERN FAV65_75 AWAY | 88-17 (83.8%) n=105 ROI=+21.0% train=+14.0% val=+20.2% hold=+35.2% pos=80% recent=+18.1pp | [["recent3_run_rate2", "<=", 0.4], ["rank_edge_fg_accuracy", "<=", 10.5]]
+TF011 RUN LONG DOG35_49 AWAY | 54-39 (58.1%) n=93 ROI=+38.6% train=+45.8% val=+11.7% hold=+39.2% pos=68% recent=+10.5pp | [["pre_run_rate2", ">=", 0.4667437246300308], ["recent_edge_explosive_rate", "<=", -0.0016755061764846]]
+TF012 RUN LONG DOG35_49 ANY | 104-78 (57.1%) n=182 ROI=+36.9% train=+38.3% val=+33.6% hold=+37.2% pos=75% recent=+1.2pp | [["pre_run_rate2", ">=", 0.462580750311148], ["rank_edge_def_allowed_yards_per_play", "<=", -2.0]]
+TF013 RUN LONG FAV65_75 AWAY | 78-15 (83.9%) n=93 ROI=+21.1% train=+7.8% val=+22.0% hold=+31.6% pos=75% recent=+16.7pp | [["recent3_run_rate2", "<=", 0.39317810457516345], ["rank_edge_fg_accuracy", "<=", 10.125]]
+TF014 RUN LONG DOG35_49 AWAY | 43-35 (55.1%) n=78 ROI=+32.9% train=+38.0% val=+23.5% hold=+35.2% pos=75% recent=+4.5pp | [["pre_run_rate2", ">=", 0.4476493111406392], ["rank_edge_third_down_success", ">=", 9.0]]
+TF015 RUN MODERN FAV65_75 AWAY | 57-13 (81.4%) n=70 ROI=+17.2% train=+9.2% val=+13.1% hold=+36.1% pos=65% recent=+24.9pp | [["recent3_run_rate2", "<=", 0.4], ["rank_edge_def_allowed_explosive_rate", ">=", 5.0]]
+TF016 RUN LONG DOG35_49 ANY | 63-52 (54.8%) n=115 ROI=+31.3% train=+42.2% val=+7.8% hold=+33.9% pos=70% recent=+8.9pp | [["pre_run_rate2", ">=", 0.462580750311148], ["rank_edge_punt_return_average", ">=", 10.0]]
+TF017 RUN LONG DOG20_34 AWAY | 64-111 (36.6%) n=175 ROI=+30.3% train=+22.8% val=+36.5% hold=+41.4% pos=65% recent=+11.7pp | [["recent3_run_rate2", ">=", 0.457134278164785], ["rank_edge_points_against", ">=", -5.0]]
+TF018 ROAD3 LONG DOG35_44 AWAY | 57-51 (52.8%) n=108 ROI=+33.0% train=+53.6% val=+6.9% hold=+28.7% pos=80% recent=-1.6pp | [["road_prev5_ge3", ">=", 1.0], ["rank_edge_punt_return_average", ">=", 0.0]]
+TF019 RUN LONG DOG35_44 ANY | 76-67 (53.1%) n=143 ROI=+35.3% train=+45.9% val=+16.8% hold=+29.7% pos=70% recent=-1.6pp | [["pre_run_rate2", ">=", 0.42752740560292324], ["recent_edge_punt_net_average", ">=", 3.636002886002888]]
+TF020 RUN LONG DOG35_49 ANY | 46-39 (54.1%) n=85 ROI=+30.3% train=+29.2% val=+29.9% hold=+32.3% pos=65% recent=+2.7pp | [["pre_run_rate2", ">=", 0.462580750311148], ["rank_edge_def_allowed_giveaway_rate", "<=", -10.0]]
+TF021 RUN LONG DOG35_49 AWAY | 66-56 (54.1%) n=122 ROI=+26.2% train=+31.0% val=+12.8% hold=+29.1% pos=70% recent=+7.2pp | [["pre_run_rate2", ">=", 0.4667437246300308], ["rank_edge_punt_return_average", ">=", 1.0]]
+TF022 RUN LONG DOG35_49 ANY | 161-150 (51.8%) n=311 ROI=+23.3% train=+25.0% val=+13.5% hold=+28.2% pos=75% recent=+9.0pp | [["pre_run_rate2", ">=", 0.462580750311148], ["rank_edge_punt_return_average", ">=", -9.0]]
+TF023 RUN LONG DOG20_34 ANY | 47-73 (39.2%) n=120 ROI=+29.4% train=+32.7% val=+20.6% hold=+31.5% pos=68% recent=+4.9pp | [["recent3_run_rate2", ">=", 0.45263157894736844], ["rank_edge_pass_epa_per_dropback", ">=", -2.0]]
+TF024 RUN LONG FAV65_75 AWAY | 104-27 (79.4%) n=131 ROI=+14.5% train=+5.9% val=+17.8% hold=+20.0% pos=80% recent=+8.1pp | [["recent3_run_rate2", "<=", 0.4127370564281559], ["rank_edge_fg_accuracy", "<=", 10.125]]
+TF025 RUN LONG DOG35_49 ANY | 110-99 (52.6%) n=209 ROI=+24.7% train=+32.5% val=+9.8% hold=+24.9% pos=75% recent=+3.8pp | [["pre_run_rate2", ">=", 0.462580750311148], ["rank_edge_punt_return_average", ">=", 1.0]]
