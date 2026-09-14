@@ -1,0 +1,368 @@
+=== RUNNER / WRITE ACCESS ===
+uid=1001(appwiza-runner) gid=1001(appwiza-runner) groups=1001(appwiza-runner)
+anestishkurti92:anestishkurti92 775 /home/anestishkurti92/nfl-predictor-v1
+writable=no /home/anestishkurti92/nfl-predictor-v1
+anestishkurti92:anestishkurti92 775 /home/anestishkurti92/nfl-predictor-v1/research_v2
+writable=no /home/anestishkurti92/nfl-predictor-v1/research_v2
+anestishkurti92:anestishkurti92 644 /home/anestishkurti92/nfl-predictor-v1/research_v2/nfl_home_opener_scanner.py
+writable=no /home/anestishkurti92/nfl-predictor-v1/research_v2/nfl_home_opener_scanner.py
+anestishkurti92:anestishkurti92 775 /srv/appwiza-sports
+writable=yes /srv/appwiza-sports
+anestishkurti92:anestishkurti92 755 /srv/appwiza-sports/public
+writable=no /srv/appwiza-sports/public
+
+=== SERVICE ===
+[Unit]
+Description=NFL research email scan on appwiza
+After=network-online.target
+Wants=network-online.target
+[Service]
+Type=oneshot
+User=anestishkurti92
+Environment=HOME=/home/anestishkurti92
+Environment=OMP_NUM_THREADS=1
+Environment=OPENBLAS_NUM_THREADS=1
+WorkingDirectory=/home/anestishkurti92/nfl-predictor-v1/research_v2
+ExecStart=/home/anestishkurti92/nfl-predictor-v1/venv/bin/python /home/anestishkurti92/nfl-predictor-v1/research_v2/nfl_home_opener_scanner.py --send
+TimeoutStartSec=10min
+UMask=0077
+Nice=5
+
+=== FILE nfl_home_opener_scanner.py ===
+"""Server-only home-opener research digest; frozen rules, no bet execution."""
+from pathlib import Path
+from datetime import datetime, timezone, timedelta
+from zoneinfo import ZoneInfo
+from urllib.request import Request,urlopen
+from concurrent.futures import ThreadPoolExecutor
+import json,io,os,shlex,hashlib,fcntl,argparse,subprocess
+import pandas as pd
+import requests
+import polars as pl
+import late_season_method as late
+import nfl_email_design
+import sys
+sys.path.insert(0,'/opt/sports-publisher')
+import sports_publish
+sys.path.insert(0,str(Path.home()/'betting-ledger'/'code'))
+import bet_tracker
+import public_feed_ipv6
+public_feed_ipv6.enable()
+R=Path(__file__).resolve().parent;S=R/'home_opener_email_state';NY=ZoneInfo('America/New_York')
+ALIASES={'SD':'LAC','OAK':'LV','STL':'LA','LAR':'LA'}
+NAMES={'LAC':'Chargers','ARI':'Cardinals','TB':'Buccaneers','CLE':'Browns','BAL':'Ravens','NO':'Saints','LV':'Raiders','PHI':'Eagles','WAS':'Commanders','MIN':'Vikings','GB':'Packers'}
+VERSION='nfl-v3-late-road-protection-rest';BOOKS={'ESPN BET':0,'DraftKings':1,'Caesars Sportsbook':2,'Unibet':3,'FanDuel':4,'BetMGM':5,'bet365':6}
+RULE_NAMES={'original':'Run defense + better record','stricter':'Run defense + record advantage >12.5pp','pass_defense_offense24':'Week 1 pass defense + pass rush + offense rank <=24'}
+RULE_NAMES[late.RULE]='Late-season away favorite + protection/rest exclusion'
+def atomic(path,data):
+ tmp=path.with_suffix('.tmp');tmp.write_text(json.dumps(data,indent=2,allow_nan=False));tmp.chmod(0o600);tmp.replace(path)
+def cfg():
+ d={}
+ for ln in Path('/home/anestishkurti92/.config/ufc-watcher.env').read_text().splitlines():
+  k,sep,v=ln.removeprefix('export ').partition('=')
+  if sep and k.strip() in ['RESEND_API_KEY','UFC_ALERT_EMAIL','UFC_ALERT_FROM']:
+   z=shlex.split(v,comments=True);d[k.strip()]=z[0] if z else ''
+ if not d.get('RESEND_API_KEY') or not d.get('UFC_ALERT_EMAIL'):raise RuntimeError('Missing existing email credentials')
+ return d
+def get(url,timeout=20):
+ with urlopen(Request(url,headers={'User-Agent':'NFLHomeOpenerResearch/1.0'}),timeout=timeout) as f:return f.read()
+def ranks_records(G,season):
+ p=G[(G.season==season-1)&(G.game_type=='REG')].copy()
+ if len(p)!=272 or p.home_score.isna().any() or p.away_score.isna().any():raise ValueError('Prior regular season incomplete; no signals sent')
+ sides=pd.concat([p[['season','week','game_id','home_team','away_team','home_score','away_score']].rename(columns={'home_team':'team','away_team':'opponent','home_score':'points','away_score':'against'}),p[['season','week','game_id','home_team','away_team','home_score','away_score']].rename(columns={'away_team':'team','home_team':'opponent','away_score':'points','home_score':'against'})])
+ records={}
+ for t,z in sides.groupby('team'):
+  w=int((z.points>z.against).sum());ties=int((z.points==z.against).sum());n=len(z)
+  if n!=17:raise ValueError('Unexpected prior-season team count')
+  records[t]={'wins':w,'losses':n-w-ties,'ties':ties,'pct':(w+.5*ties)/n}
+ path=R/f'data/stats_team/stats_team_week_{season-1}.parquet'
+ if not path.exists():
+  path=S/f'stats_team_week_{season-1}.parquet'
+  if not path.exists():path.write_bytes(get(f'https://github.com/nflverse/nflverse-data/releases/download/stats_team/stats_team_week_{season-1}.parquet',30))
+ t=pd.read_parquet(path,columns=['season','week','season_type','team','rushing_epa','carries']);t=t[(t.season==season-1)&(t.season_type=='REG')].copy();t.team=t.team.replace(ALIASES)
+ j=sides.merge(t,on=['season','week','team'],validate='one_to_one',how='left')
+ if j.rushing_epa.isna().any() or j.carries.isna().any() or (j.carries<=0).any():raise ValueError('Incomplete prior rushing statistics')
+ j['rate']=j.rushing_epa/j.carries;r=j.groupby('opponent').rate.mean().rank(method='average').to_dict()
+ if len(r)!=32:raise ValueError('Cannot rank 32 teams')
+ return records,r
+def qualifies(rank,gap):return ['original','stricter'] if rank<=10 and gap>.125 else ['original'] if rank<=10 and gap>0 else []
+def qualifies_pass_defense(week,pass_rank,hit_rank,offense_rank):
+ return week==1 and pass_rank<=10 and hit_rank<=16 and offense_rank<=24
+def pass_defense_profiles(G,season):
+ prior=season-1;p=G[(G.season==prior)&G.game_type.eq('REG')]
+ sides=pd.concat([p[['game_id','season','week','home_team','away_team']].rename(columns={'home_team':'team','away_team':'opponent'}),p[['game_id','season','week','away_team','home_team']].rename(columns={'away_team':'team','home_team':'opponent'})])
+ path=R/f'data/stats_team/stats_team_week_{prior}.parquet'
+ if not path.exists():path=S/f'stats_team_week_{prior}.parquet'
+ t=pd.read_parquet(path,columns=['season','week','season_type','team','passing_epa','rushing_epa','attempts','sacks_suffered','carries']);t=t[t.season.eq(prior)&t.season_type.eq('REG')].copy();t.team=t.team.replace(ALIASES)
+ j=sides.merge(t,on=['season','week','team'],how='left',validate='one_to_one')
+ cols=['passing_epa','rushing_epa','attempts','sacks_suffered','carries']
+ if len(j)!=544 or j[cols].isna().any().any():raise ValueError('Incomplete prior offense/pass-defense statistics')
+ db=j.attempts+j.sacks_suffered
+ if (db<=0).any() or (db+j.carries<=0).any():raise ValueError('Invalid play denominators')
+ j['pass_rate']=j.passing_epa/db;j['offense_rate']=(j.passing_epa+j.rushing_epa)/(db+j.carries)
+ paths=list((R/'data/pbp').glob(f'*{prior}*.parquet'))
+ if len(paths)>1:raise ValueError('Ambiguous prior play-by-play file')
+ pbpath=paths[0] if paths else S/f'play_by_play_{prior}.parquet'
+ if not pbpath.exists():
+  raw=get(f'https://github.com/nflverse/nflverse-data/releases/download/pbp/play_by_play_{prior}.parquet',90)
+  tmp=pbpath.with_suffix('.tmp');tmp.write_bytes(raw);tmp.replace(pbpath)
+ q=pl.scan_parquet(pbpath).select(['game_id','posteam','epa','pass_attempt','sack','qb_hit']).filter(pl.col('posteam').is_not_null()&pl.col('epa').is_not_null()&(pl.col('pass_attempt')==1)).group_by(['game_id','posteam']).agg(((pl.col('sack')==1)|(pl.col('qb_hit')==1)).mean().alias('hit_rate')).collect().to_pandas().rename(columns={'posteam':'team'})
+ q.team=q.team.replace(ALIASES);j=j.merge(q,on=['game_id','team'],how='left',validate='one_to_one')
+ if j.hit_rate.isna().any() or not j.groupby('team').size().eq(17).all():raise ValueError('Incomplete prior sack/hit data')
+ ranks=pd.DataFrame({'pass_rank':j.groupby('opponent').pass_rate.mean().rank(method='average'),'hit_rank':j.groupby('opponent').hit_rate.mean().rank(ascending=False,method='average'),'offense_rank':j.groupby('team').offense_rate.mean().rank(ascending=False,method='average')})
+ if len(ranks)!=32 or ranks.isna().any().any():raise ValueError('Incomplete 32-team ranks')
+ return ranks.to_dict('index')
+def current_odds(rec):
+ url=f"https://sports.core.api.espn.com/v2/sports/football/leagues/nfl/events/{rec['espn']}/competitions/{rec['espn']}/odds"
+ try:
+  response=requests.get(url,timeout=(3,8));response.raise_for_status();raw=response.content;items=json.loads(raw).get('items',[]);options=[]
+  for item in items:
+   name=item.get('provider',{}).get('name')
+   if name not in BOOKS:continue
+   q=((item.get('awayTeamOdds' if rec.get('selection_side')=='away' else 'homeTeamOdds') or {}).get('current') or {}).get('moneyLine') or {}
+   try:price=float(q['american'])
+   except (KeyError,ValueError,TypeError):continue
+   if abs(price)>=100:options.append((BOOKS[name],name,price))
+  if not options:raise ValueError('No explicit current bookmaker moneyline')
+  _,name,price=sorted(options)[0]
+  return {'bookmaker':name,'moneyline':price,'retrieved_at':datetime.now(timezone.utc).isoformat(),'source':url,'raw':json.loads(raw)}
+ except Exception as e:return {'moneyline':None,'status':'Live odds unavailable','error_type':type(e).__name__,'source':url}
+def render(records,now):
+ return nfl_email_design.render(records,now)[0]
+def settlement_result(home,away,side='home'):
+ margin=(away-home) if side=='away' else (home-away)
+ return 'win' if margin>0 else 'loss' if margin<0 else 'push'
+def main():
+ ap=argparse.ArgumentParser();ap.add_argument('--send',action='store_true');ap.add_argument('--manual',action='store_true');args=ap.parse_args();S.mkdir(exist_ok=True);os.chmod(S,0o700)
+ lock=(S/'run.lock').open('w');fcntl.flock(lock,fcntl.LOCK_EX|fcntl.LOCK_NB);now=datetime.now(timezone.utc);bet_tracker.settle(now=now);season=now.astimezone(NY).year
+ raw=get('https://raw.githubusercontent.com/nflverse/nfldata/master/data/games.csv');G=pd.read_csv(io.BytesIO(raw))
+ for c in ['home_team','away_team']:G[c]=G[c].replace(ALIASES)
+ g=G[(G.season==season)&(G.game_type=='REG')&(G.location=='Home')].sort_values(['gameday','gametime','game_id']).drop_duplicates('home_team')
+ records=[]
+ if len(g):
+  if len(g)!=32:raise ValueError('Incomplete current home-opener schedule')
+  profiles,ranks=ranks_records(G,season);pass_profiles=pass_defense_profiles(G,season)
+  for _,x in g.iterrows():
+   if pd.notna(x.home_score) or pd.notna(x.away_score) or pd.isna(x.gametime):continue
+   k=datetime.fromisoformat(x.gameday+'T'+x.gametime).replace(tzinfo=NY).astimezone(timezone.utc)
+   if not now<k<=now+timedelta(days=21):continue
+   h=profiles[x.home_team];a=profiles[x.away_team];gap=h['pct']-a['pct'];rules=qualifies(ranks[x.home_team],gap)
+   f=pass_profiles[x.home_team]
+   if qualifies_pass_defense(int(x.week),f['pass_rank'],f['hit_rank'],f['offense_rank']):rules.append('pass_defense_offense24')
+   if rules:records.append(dict(game_id=x.game_id,season=season,home=x.home_team,away=x.away_team,home_record=h,away_record=a,rank=ranks[x.home_team],record_gap_pp=gap*100,rules=rules,pass_defense_profile=f,kickoff=k.isoformat(),week=int(x.week),espn=str(int(x.espn)),observed_at=now.isoformat(),rule_version=VERSION))
+ with ThreadPoolExecutor(max_workers=4) as pool:
+  for rec,o in zip(records,pool.map(current_odds,records)):rec['odds']=o
+ late_records,late_status=late.scan(G,R,now,current_odds);records.extend(late_records)
+ stamp=now.strftime('%Y%m%dT%H%M%S%fZ');atomic(S/(stamp+'.json'),{'observed_at':now.isoformat(),'rule_version':VERSION,'records':records,'schedule_sha256':hashlib.sha256(raw).hexdigest(),'late_method':late_status})
+ ledgerpath=S/'ledger.json';ledger=json.loads(ledgerpath.read_text()) if ledgerpath.exists() else {}
+ for rec in records:
+  entry=ledger.setdefault(rec['game_id'],dict(rec,bet_placed=None,actual_stake=None,actual_odds=None))
+  observations=entry.setdefault('method_first_observations',{})
+  for rule in rec['rules']:observations.setdefault(rule,{'observed_at':now.isoformat(),'rule_version':VERSION,'pass_defense_profile':rec.get('pass_defense_profile'),'late_profile':rec.get('late_profile')})
+ byid=G.set_index('game_id')
+ for key,entry in ledger.items():
+  if key in byid.index:
+   x=byid.loc[key]
+   if pd.notna(x.home_score) and pd.notna(x.away_score):entry['settlement']={'home_score':float(x.home_score),'away_score':float(x.away_score),'result':settlement_result(x.home_score,x.away_score,entry.get('selection_side','home')),'actual_profit':None}
+ sports_publish.safe_call(sports_publish.publish_nfl,records,now,nfl_email_design)
+ atomic(ledgerpath,ledger);body,html_body=nfl_email_design.render(records,now)
+ footer_text,footer_html=bet_tracker.footer();body+='\n\n'+footer_text;html_body=html_body.replace('</body>','<div style="max-width:640px;margin:0 auto;padding:0 10px;">'+footer_html+'</div></body>');(S/'preview.txt').write_text(body);(S/'preview.html').write_text(html_body)
+ subject=f"NFL signals: {len(records)} qualifying games — {now.astimezone(NY).strftime('%b %d')}"
+ status={'scanned_at':now.isoformat(),'matches':len(records),'mode':'manual' if args.manual else 'automatic','sent':False,'late_method':late_status}
+ if args.send and records:
+  c=cfg();slot=now.strftime('%Y%m%d')+'-'+str(now.hour//6);key='manual-'+now.strftime('%Y%m%dT%H%M') if args.manual else 'auto-'+slot
+  ident=hashlib.sha256((VERSION+':'+key).encode()).hexdigest();sentpath=S/'sent.json';sent=json.loads(sentpath.read_text()) if sentpath.exists() else {}
+  if ident not in sent:
+   pending=S/('pending-'+ident+'.json')
+   if pending.exists():mail=json.loads(pending.read_text())
+   else:
+    mail={'from':c.get('UFC_ALERT_FROM') or 'onboarding@resend.dev','to':[c['UFC_ALERT_EMAIL']],'subject':subject,'text':body,'html':html_body}
+    bet_tracker.stage('NFL:'+ident,'NFL',bet_tracker.nfl_picks(records));atomic(pending,mail)
+   bet_tracker.stage('NFL:'+ident,'NFL',[])
+   req=Request('https://api.resend.com/emails',data=json.dumps(mail).encode(),headers={'Authorization':'Bearer '+c['RESEND_API_KEY'],'Content-Type':'application/json','Idempotency-Key':ident},method='POST')
+   response=requests.post(req.full_url,data=req.data,headers=dict(req.header_items()),timeout=25)
+   if response.status_code>=300:raise RuntimeError(f'Email provider {response.status_code}: {response.text[:600]}')
+   res=response.json()
+   if not res.get('id'):raise ValueError('Email provider did not return a message ID')
+   bet_tracker.confirm('NFL:'+ident,res['id'])
+   sent[ident]={'sent_at':now.isoformat(),'provider_id':res['id'],'mode':status['mode'],'games':[r['game_id'] for r in records]};atomic(sentpath,sent);status.update(sent=True,provider_id=res['id'])
+  else:status['already_sent_for_scan_slot']=True
+ atomic(S/'status.json',status);print(json.dumps(status))
+if __name__=='__main__':main()
+
+=== FILE late_season_method.py ===
+"""Frozen late-season away favorite rule. Never use cached research ranks as live inputs."""
+from pathlib import Path
+from datetime import datetime,timezone,timedelta
+from concurrent.futures import ThreadPoolExecutor
+from zoneinfo import ZoneInfo
+import io,json,hashlib
+import numpy as np,pandas as pd,requests
+RULE='late_road_protection_rest_v1'
+ALIASES={'SD':'LAC','OAK':'LV','STL':'LA','LAR':'LA'}
+OL=['C','G','T','OT','OG','LT','LG','RT','RG']
+def qualifies(week,prior_games,opp_prior_games,defense_edge,continuity,opponent_protection_rank,rest_edge,moneyline):
+ vals=[week,prior_games,opp_prior_games,defense_edge,continuity,opponent_protection_rank,rest_edge,moneyline]
+ if any(v is None or not np.isfinite(v) for v in vals):return False
+ return 11<=week<=18 and min(prior_games,opp_prior_games)>=4 and defense_edge>=8 and continuity>=.6 and -400<=moneyline< -200 and not(opponent_protection_rank<=8 and rest_edge<0)
+def refresh(root,season):
+ cache=root/'late_season_inputs';cache.mkdir(exist_ok=True)
+ def one(kind,stem):
+  url=f'https://github.com/nflverse/nflverse-data/releases/download/{kind}/{stem}_{season}.parquet'
+  response=requests.get(url,timeout=(5,25));response.raise_for_status();data=response.content
+  frame=pd.read_parquet(io.BytesIO(data));path=cache/f'{stem}_{season}.parquet';tmp=path.with_suffix('.tmp');tmp.write_bytes(data);tmp.replace(path)
+  (cache/f'{stem}_{season}.json').write_text(json.dumps({'source':url,'retrieved_at':datetime.now(timezone.utc).isoformat(),'sha256':hashlib.sha256(data).hexdigest()},indent=2))
+  return frame
+ with ThreadPoolExecutor(max_workers=2) as p:
+  ft=p.submit(one,'stats_team','stats_team_week');fs=p.submit(one,'snap_counts','snap_counts');return ft.result(),fs.result()
+def build_profiles(G,T,S,season,week):
+ # Require all earlier-week scores and statistics; don't predict a future week with partial prior-week data.
+ prior=G[G.season.eq(season)&G.game_type.eq('REG')&G.week.lt(week)].copy()
+ if prior.empty or prior[['home_score','away_score']].isna().any().any():raise ValueError('Prior weeks not complete')
+ sides=pd.concat([prior[['game_id','season','week','home_team','away_team']].rename(columns={'home_team':'team','away_team':'opponent'}),prior[['game_id','season','week','away_team','home_team']].rename(columns={'away_team':'team','home_team':'opponent'})])
+ t=T[T.season.eq(season)&T.season_type.eq('REG')&T.week.lt(week)].copy();t.team=t.team.replace(ALIASES)
+ cols=['season','week','team','passing_epa','attempts','sacks_suffered']
+ j=sides.merge(t[cols],on=['season','week','team'],how='left',validate='one_to_one');db=j.attempts+j.sacks_suffered
+ if j[cols].isna().any().any() or (db<=0).any():raise ValueError('Incomplete prior team statistics')
+ j['pass_epa']=j.passing_epa/db;j['sack_rate']=j.sacks_suffered/db
+ defense=j.groupby('opponent').pass_epa.mean().rank(method='average');protection=j.groupby('team').sack_rate.mean().rank(method='average');counts=j.groupby('team').size()
+ if len(defense)!=32 or len(protection)!=32:raise ValueError('Incomplete league ranking universe')
+ snaps=S.copy();snaps.team=snaps.team.replace(ALIASES);continuity={}
+ for team,h in j.groupby('team'):
+  ids=h.sort_values(['week','game_id']).tail(2).game_id.tolist();lineups=[]
+  for gid in ids:
+   a=snaps[snaps.game_id.eq(gid)&snaps.team.eq(team)&snaps.position.isin(OL)].sort_values(['offense_snaps','pfr_player_id'],ascending=[False,True]).head(5)
+   players=set(a.pfr_player_id.dropna());lineups.append(players)
+  continuity[team]=len(lineups[0]&lineups[1])/5 if len(lineups)==2 and all(len(v)==5 for v in lineups) else np.nan
+ return {t:dict(defense_rank=float(defense[t]),protection_rank=float(protection[t]),prior_games=int(counts[t]),continuity=float(continuity[t])) for t in defense.index}
+def scan(G,root,now,odds_fetch):
+ upcoming=[]
+ for x in G[G.game_type.eq('REG')&G.week.ge(11)&G.week.le(18)].itertuples():
+  if pd.notna(x.home_score) or pd.notna(x.away_score) or pd.isna(x.gametime):continue
+  kickoff=datetime.fromisoformat(x.gameday+'T'+x.gametime).replace(tzinfo=ZoneInfo('America/New_York')).astimezone(timezone.utc)
+  if now<kickoff<=now+timedelta(days=7):upcoming.append((x,kickoff))
+ status={'rule':RULE,'checked_at':now.isoformat(),'upcoming_week11plus_games':len(upcoming),'matches':0,'issues':[]}
+ if not upcoming:status['status']='No Week 11+ games within seven days';return [],status
+ frames={};profiles={};failures={};candidates=[]
+ for x,kickoff in upcoming:
+  try:
+   if x.season in failures:raise ValueError(failures[x.season])
+   if x.season not in frames:
+    try:frames[x.season]=refresh(root,x.season)
+    except Exception as e:failures[x.season]='Fresh season feed unavailable: '+type(e).__name__;raise
+   key=(x.season,x.week)
+   if key not in profiles:profiles[key]=build_profiles(G,*frames[x.season],*key)
+   a=profiles[key][x.away_team];h=profiles[key][x.home_team];edge=h['defense_rank']-a['defense_rank'];rest=x.away_rest-x.home_rest
+   if not qualifies(x.week,a['prior_games'],h['prior_games'],edge,a['continuity'],h['protection_rank'],rest,-300):continue
+   rec=dict(game_id=x.game_id,season=int(x.season),week=int(x.week),home=x.home_team,away=x.away_team,selection_side='away',selected_team=x.away_team,rules=[RULE],kickoff=kickoff.isoformat(),espn=str(int(x.espn)),observed_at=now.isoformat(),rule_version=RULE,late_profile={'defense_rank':a['defense_rank'],'opponent_defense_rank':h['defense_rank'],'defense_edge':edge,'ol_continuity':a['continuity'],'opponent_protection_rank':h['protection_rank'],'rest_edge':float(rest),'prior_games':a['prior_games'],'opponent_prior_games':h['prior_games']})
+   candidates.append(rec)
+  except Exception as e:status['issues'].append({'game_id':x.game_id,'error':type(e).__name__+': '+str(e)[:160]})
+ with ThreadPoolExecutor(max_workers=4) as pool:
+  for r,odds in zip(candidates,pool.map(odds_fetch,candidates)):r['odds']=odds
+ records=[]
+ for r in candidates:
+  p=r['late_profile'];o=r['odds'];price=o.get('moneyline')
+  if price is None:status['issues'].append({'game_id':r['game_id'],'error':'Current away moneyline unavailable; no signal emitted'});continue
+  stamp=o.get('retrieved_at');fresh=stamp and abs((now-datetime.fromisoformat(stamp)).total_seconds())<=900
+  if not fresh:status['issues'].append({'game_id':r['game_id'],'error':'Stale or missing odds observation time'});continue
+  if qualifies(r['week'],p['prior_games'],p['opponent_prior_games'],p['defense_edge'],p['ol_continuity'],p['opponent_protection_rank'],p['rest_edge'],price):records.append(r)
+ status['matches']=len(records);status['status']='Needs data/odds attention' if status['issues'] else 'Complete';return records,status
+
+=== FILE sports_publish.py ===
+sed: can't read /home/anestishkurti92/nfl-predictor-v1/research_v2/sports_publish.py: No such file or directory
+
+=== FILE nfl_email_design.py ===
+"""Email-safe HTML and matching plain text. Presentation only; no rule changes."""
+from html import escape as e
+from datetime import datetime
+from zoneinfo import ZoneInfo
+NY=ZoneInfo('America/New_York')
+TEAMS=dict(zip('ARI ATL BAL BUF CAR CHI CIN CLE DAL DEN DET GB HOU IND JAX KC LA LAC LV MIA MIN NE NO NYG NYJ PHI PIT SEA SF TB TEN WAS'.split(),['Cardinals','Falcons','Ravens','Bills','Panthers','Bears','Bengals','Browns','Cowboys','Broncos','Lions','Packers','Texans','Colts','Jaguars','Chiefs','Rams','Chargers','Raiders','Dolphins','Vikings','Patriots','Saints','Giants','Jets','Eagles','Steelers','49ers','Buccaneers','Titans','Commanders']))
+METHODS={
+ 'original':('M1','Home opener · Run defense','79.6%','78 / 98','+10.7%','Archived opening prices','Previous-season run defense in the top 10, plus a better regular-season record than the opponent.'),
+ 'stricter':('M2','Home opener · Larger record advantage','82.4%','56 / 68','+11.1%','Archived opening prices','All M1 conditions, plus a winning-percentage advantage greater than 12.5 percentage points.'),
+ 'pass_defense_offense24':('M3','Week 1 · Defense + offense filter','83.7%','41 / 49','+26.5%','Archived opening prices','Week 1 home opener; previous-season pass defense top 10, sack/QB-hit rank top 16, and offense rank 24 or better.'),
+ 'late_road_protection_rest_v1':('M4','Late season · Away favorite','88.7%','47 / 53','+18.9%','Archived closing prices · 2018–2025','Week 11 onward; pass-defense advantage ≥8 ranks; line continuity ≥60%; odds −400 to below −200. Exclude only if the opponent has both top-eight sack avoidance and more rest.')}
+def name(t):return TEAMS.get(t,t)
+def evidence(r,rule):
+ if rule in ('original','stricter'):
+  h,a=r['home_record'],r['away_record']
+  rows=[f"First non-neutral regular-season home game · Week {r['week']}",f"Previous-season run defense: #{r['rank']:g} of 32 (required: top 10)",f"Previous-season records: {name(r['home'])} {h['wins']}–{h['losses']}–{h['ties']} vs {name(r['away'])} {a['wins']}–{a['losses']}–{a['ties']}",f"Winning-percentage advantage: {r['record_gap_pp']:.2f} points (required: {'>12.5' if rule=='stricter' else '>0'})"]
+ elif rule=='pass_defense_offense24':
+  f=r['pass_defense_profile'];rows=[f"Week {r['week']} home opener",f"Previous-season pass defense: #{f['pass_rank']:g} (required: ≤10)",f"Previous-season sack/QB-hit rank: #{f['hit_rank']:g} (required: ≤16)",f"Previous-season offense: #{f['offense_rank']:g} (required: ≤24)"]
+ else:
+  f=r['late_profile'];rows=[f"Designated away team · Week {r['week']} (required: 11–18)",f"Pass defense: #{f['defense_rank']:g} vs #{f['opponent_defense_rank']:g} · {f['defense_edge']:g}-place advantage (required: ≥8)",f"Offensive-line continuity: {f['ol_continuity']:.0%} (required: ≥60%)",f"Prior games: {f['prior_games']} vs {f['opponent_prior_games']} (required: ≥4 each)",f"Opponent sack avoidance: #{f['opponent_protection_rank']:g} · selected team's rest advantage: {f['rest_edge']:+g} days",'Combined protection/rest exclusion: not triggered','Fresh moneyline passes −400 inclusive to below −200']
+ return rows
+def consistency(rule):
+ if rule=='pass_defense_offense24':return '15 profitable seasons · 3 losing · 1 with no bets. 2017–2025 subset: 18/21 wins, +21.2% ROI.'
+ if rule=='late_road_protection_rest_v1':return '8/8 profitable seasons (2018–2025). 2022–2025 subset: 19/22 wins, +13.5% ROI.'
+ return ''
+def render(records,now):
+ stamp=now.astimezone(NY).strftime('%b %d, %Y · %I:%M %p ET')
+ plain=[f'NFL PICKS | {len(records)} qualifying games',stamp,'']
+ cards=[]
+ for r in sorted(records,key=lambda r:r['kickoff']):
+  selected=r['away'] if r.get('selection_side')=='away' else r['home'];opp=r['home'] if selected==r['away'] else r['away']
+  title=f'{name(selected)} to win';fixture=f"{name(r['away'])} at {name(r['home'])}"
+  when=datetime.fromisoformat(r['kickoff']).astimezone(NY).strftime('%a, %b %d · %I:%M %p ET')+f" · Week {r['week']}"
+  o=r['odds'];p=o.get('moneyline');priced=p is not None
+  badge='ODDS AVAILABLE' if priced else 'CHECK PRICE · METRICS ONLY'
+  if priced:
+   implied=abs(p)/(abs(p)+100) if p<0 else 100/(100+p)
+   profit=10000/abs(p) if p<0 else p
+   quote=f"{p:+g} · {o['bookmaker']}"
+   observed=datetime.fromisoformat(o['retrieved_at']).astimezone(NY).strftime('%b %d, %I:%M %p ET')
+   detail=f"Example only: $100 risk returns ${profit:.2f} profit if it wins; $100 lost if it loses. Break-even win rate at this price: {implied:.1%}."
+   quote_note=f'Observed {observed}. Confirm your sportsbook’s current price.'
+  else:
+   quote='Current moneyline unavailable';detail='The statistical conditions match. Check your sportsbook’s price before deciding.';quote_note='No current payout calculation available.'
+  plain += [title.upper(),'Moneyline · '+fixture,when,badge,quote,detail,quote_note,'']
+  methods=[]
+  for rule in r['rules']:
+   mid,label,win,sample,roi,basis,definition=METHODS[rule];checks=evidence(r,rule);extra=consistency(rule)
+   plain += [f'{mid} — {label}',definition,'WHY THIS GAME QUALIFIES:']+['✓ '+c for c in checks]+[f'Historical wins: {win} ({sample}) | Historical ROI: {roi}',basis,extra,'']
+   rows=''.join(f'<div style="margin:7px 0;color:#334155;">✓ {e(c)}</div>' for c in checks)
+   methods.append(f'''<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-top:20px;border-top:1px solid #e2e8f0;"><tr><td style="padding-top:18px;">
+<div style="font-size:12px;color:#2563eb;font-weight:bold;letter-spacing:1px;">{e(mid)} · QUALIFYING METHOD</div>
+<div style="font-size:19px;font-weight:bold;margin:6px 0;">{e(label)}</div><div style="font-size:13px;color:#64748b;line-height:1.6;">{e(definition)}</div>
+<table role="presentation" width="100%" cellpadding="12" cellspacing="0" style="margin:14px 0;background:#f1f5f9;border-radius:8px;"><tr><td width="50%" valign="top"><div style="font-size:26px;font-weight:bold;">{win}</div><div style="font-size:12px;">Historical win rate</div><div style="font-size:12px;color:#64748b;margin-top:4px;">{sample} games won</div></td><td width="50%" valign="top"><div style="font-size:26px;font-weight:bold;color:#087f5b;">{roi}</div><div style="font-size:12px;">Historical ROI</div><div style="font-size:12px;color:#64748b;margin-top:4px;">{e(basis)}</div></td></tr></table>
+<div style="font-size:12px;font-weight:bold;letter-spacing:1px;margin-bottom:8px;">WHY THIS GAME QUALIFIES</div><div style="font-size:14px;line-height:1.6;">{rows}</div>
+{('<div style="margin-top:12px;font-size:12px;color:#64748b;line-height:1.6;">'+e(extra)+'</div>') if extra else ''}</td></tr></table>''')
+  overlap='<p style="font-size:12px;color:#64748b;">Multiple matching methods support the same selection. Their samples overlap; do not add their percentages or count this as multiple bets.</p>' if len(r['rules'])>1 else ''
+  cards.append(f'''<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#ffffff;border:1px solid #dbe3ee;border-radius:12px;margin-bottom:22px;"><tr><td style="padding:24px;">
+<div style="color:{'#087f5b' if priced else '#92400e'};font-size:11px;font-weight:bold;letter-spacing:1px;">{badge}</div>
+<div style="font-size:12px;color:#64748b;margin-top:16px;">PICK · MONEYLINE</div><h2 style="font-size:28px;line-height:1.2;margin:6px 0 10px;">{e(title)}</h2>
+<div style="font-size:15px;">{e(fixture)}</div><div style="font-size:13px;color:#64748b;margin-top:6px;">{e(when)}</div>
+<div style="background:#eff6ff;padding:16px;margin-top:18px;border-radius:8px;"><div style="font-size:20px;font-weight:bold;">{e(quote)}</div><div style="font-size:13px;line-height:1.6;margin-top:8px;">{e(detail)}</div><div style="font-size:11px;color:#64748b;margin-top:8px;">{e(quote_note)}</div></div>
+{''.join(methods)}{overlap}</td></tr></table>''')
+ footer='Historical percentages and ROI describe past qualifying groups at archived prices—not this game’s predicted probability or expected return. Filters were selected retrospectively. ROI means net profit divided by total amount risked. Regular season only.'
+ plain += [footer,'Google scanner · every six hours · No bets placed automatically.']
+ html=f'''<!doctype html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>NFL picks</title></head><body style="margin:0;background:#eef2f7;font-family:Arial,Helvetica,sans-serif;color:#0f172a;">
+<div style="display:none;max-height:0;overflow:hidden;">{len(records)} qualifying NFL games: picks, reasons, current odds and historical results.</div>
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr><td align="center" style="padding:24px 10px;"><table role="presentation" width="640" cellpadding="0" cellspacing="0" style="width:100%;max-width:640px;"><tr><td>
+<div style="background:#0f172a;padding:28px 24px;border-radius:12px;margin-bottom:22px;color:white;"><div style="font-size:12px;color:#93c5fd;letter-spacing:2px;">NFL · STRATEGY WATCHLIST</div><h1 style="font-size:30px;margin:12px 0;">{len(records)} qualifying {'game' if len(records)==1 else 'games'}</h1><div style="font-size:14px;color:#cbd5e1;">Your picks, the reasons, and the historical evidence.</div><div style="font-size:12px;color:#94a3b8;margin-top:16px;">{e(stamp)}</div></div>
+{''.join(cards) or '<p>No qualifying games in this scan.</p>'}
+<div style="font-size:12px;color:#64748b;line-height:1.7;padding:0 10px 24px;">{e(footer)}<br><br>Google scanner · Every six hours · No bets placed automatically.</div>
+</td></tr></table></td></tr></table></body></html>'''
+ return '\n'.join(plain),html
+
+=== LATEST STATE SUMMARY ===
+no_snapshot
+
+=== ACL / DEPLOY HELPERS ===
+# file: /home/anestishkurti92/nfl-predictor-v1/research_v2
+# owner: anestishkurti92
+# group: anestishkurti92
+user::rwx
+group::rwx
+other::r-x
+
+# file: /home/anestishkurti92/nfl-predictor-v1/research_v2/nfl_home_opener_scanner.py
+# owner: anestishkurti92
+# group: anestishkurti92
+user::rw-
+group::r--
+other::r--
+
+/opt/trading-bot/deploy/deploy.sh
+/opt/trading-bot/scripts/deploy-vps.sh
