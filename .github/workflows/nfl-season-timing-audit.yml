@@ -1,0 +1,43 @@
+name: NFL season timing and maturity audit
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/nfl_season_timing_audit.py'
+      - '.github/workflows/nfl-season-timing-audit.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  audit:
+    runs-on: [self-hosted, Linux, X64, appwiza]
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+        with: {fetch-depth: 0}
+      - name: Run season timing audit
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          /home/anestishkurti92/nfl-predictor-v1/venv/bin/python "$GITHUB_WORKSPACE/scripts/nfl_season_timing_audit.py"
+      - name: Publish results
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          SRC=/home/appwiza-runner/nfl-context-data/season_timing_audit
+          DEST="$GITHUB_WORKSPACE/nfl/season_timing_audit"
+          mkdir -p "$DEST"
+          cp "$SRC/summary.json" "$DEST/summary.json"
+          cp "$SRC/report.txt" "$DEST/report.txt"
+          cp "$SRC/method_season_timing.csv" "$DEST/method_season_timing.csv"
+          cp "$SRC/method_week_bucket_performance.csv" "$DEST/method_week_bucket_performance.csv"
+          cp "$SRC/live_ready_timing.csv" "$DEST/live_ready_timing.csv"
+          cp "$SRC/top_watchlist_timing.csv" "$DEST/top_watchlist_timing.csv"
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git add nfl/season_timing_audit
+          if ! git diff --cached --quiet; then
+            git commit -m 'Update NFL season timing audit'
+            git pull --rebase origin main
+            git push origin HEAD:main
+          fi
