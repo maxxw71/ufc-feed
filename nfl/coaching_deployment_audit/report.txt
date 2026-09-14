@@ -1,0 +1,60 @@
+NFL COACHING DEPLOYMENT AUDIT
+
+{
+  "coaching_methods_audited": 34,
+  "coaching_methods_ready": 14,
+  "coaching_methods_watch": 12,
+  "coaching_methods_research_only": 8,
+  "confirmed_coaching_vetoes_audited": 96,
+  "deployment_grade_coaching_vetoes": 46,
+  "methods_with_primary_coaching_veto": 31
+}
+
+READY COACHING+FOOTBALL METHODS
+LONG DOG35_49 AWAY | dc_prior_games <= 14 AND rank_edge_redzone_epa >= 1 | n=140 ROI=+32.9% holdout=+31.6% seasons=14/18 | top-team share=7.1% (DET)
+LONG DOG35_49 AWAY | adv_staff_change_count <= 0 AND recent_edge_explosive_rate <= -1.7048e-05 | n=192 ROI=+29.1% holdout=+27.7% seasons=16/19 | top-team share=6.8% (MIN)
+LONG DOG35_44 AWAY | dc_prior_games <= 14 AND rank_edge_punt_net_average >= -0.5 | n=122 ROI=+37.4% holdout=+26.0% seasons=12/18 | top-team share=7.4% (CIN)
+LONG DOG35_44 ANY | hc_prior_win_pct <= 0.46429 AND rank_edge_punt_return_average >= 9 | n=123 ROI=+44.9% holdout=+21.9% seasons=14/19 | top-team share=10.6% (DET)
+LONG DOG35_49 AWAY | adv_staff_change_count <= 0 AND rank_edge_third_down_success >= 0 | n=189 ROI=+24.2% holdout=+21.1% seasons=14/18 | top-team share=6.9% (PHI)
+LONG DOG35_49 AWAY | adv_staff_change_count <= 0 AND rank_edge_punt_return_average >= 1 | n=180 ROI=+27.2% holdout=+19.9% seasons=15/19 | top-team share=6.7% (CIN)
+LONG DOG35_49 AWAY | dc_prior_games <= 14 AND recent_edge_sack_or_hit_rate >= -0.043727 | n=206 ROI=+27.8% holdout=+17.5% seasons=14/20 | top-team share=6.3% (BAL)
+MODERN DOG35_44 HOME | oc_prior_games <= 32 AND recent_edge_sack_rate_allowed <= 0 | n=148 ROI=+22.7% holdout=+15.9% seasons=13/14 | top-team share=7.2% (CHI)
+LONG DOG35_49 AWAY | dc_prior_games <= 14 AND recent_edge_success_rate >= 0 | n=140 ROI=+31.3% holdout=+15.7% seasons=13/18 | top-team share=7.1% (ARI)
+MODERN DOG35_44 HOME | oc_prior_games <= 32 AND recent_edge_sack_or_hit_rate <= 4.5281e-05 | n=140 ROI=+24.9% holdout=+14.1% seasons=11/13 | top-team share=7.8% (WAS)
+LONG DOG35_49 ANY | dc_prior_win_pct >= 0.65517 AND recent_edge_sack_or_hit_rate >= -0.043727 | n=210 ROI=+24.9% holdout=+13.7% seasons=13/20 | top-team share=9.5% (BAL)
+LONG DOG35_44 ANY | hc_prior_games_current_stint <= 33 AND rank_edge_third_down_success >= 0 | n=325 ROI=+24.5% holdout=+13.0% seasons=14/20 | top-team share=5.8% (NO)
+LONG DOG35_49 AWAY | adv_full_staff_overhaul >= 0 AND rank_edge_punt_return_average >= 1 | n=228 ROI=+23.8% holdout=+13.0% seasons=14/19 | top-team share=7.5% (PHI)
+MODERN DOG35_44 HOME | hc_prior_win_pct <= 0.54545 AND recent_edge_sack_or_hit_rate <= 4.5281e-05 | n=166 ROI=+21.9% holdout=+12.3% seasons=12/14 | top-team share=8.6% (JAX)
+
+PRIMARY DEPLOYMENT-GRADE COACHING VETOES
+NFL-H016 | VETO oc_prior_games >= 23 | holdout ROI +26.1% -> +64.2% | removed 14L/7W | retain 53%
+NFL-H066 | VETO hc_prior_games <= 25 | holdout ROI +25.2% -> +56.8% | removed 7L/1W | retain 72%
+NFL-H096 | VETO adv_dc_prior_role_seasons >= 2.3 | holdout ROI +11.6% -> +41.5% | removed 7L/1W | retain 74%
+NFL-H015 | VETO adv_dc_prior_role_seasons >= 1 | holdout ROI +33.5% -> +61.8% | removed 7L/4W | retain 63%
+NFL-H059 | VETO adv_dc_prior_games >= 44 | holdout ROI +24.2% -> +50.8% | removed 7L/1W | retain 78%
+NFL-H093 | VETO adv_hc_prior_games <= -13 | holdout ROI +13.2% -> +38.2% | removed 7L/3W | retain 64%
+NFL-H075 | VETO adv_dc_prior_games <= -14 | holdout ROI +26.1% -> +50.2% | removed 5L/1W | retain 78%
+NFL-H005 | VETO oc_prior_role_seasons >= 3 | holdout ROI +36.0% -> +56.8% | removed 7L/3W | retain 76%
+NFL-H044 | VETO adv_oc_prior_games >= 14.75 | holdout ROI +16.0% -> +34.5% | removed 7L/2W | retain 78%
+NFL-H036 | VETO oc_tenure_seasons >= 2.5 | holdout ROI +17.3% -> +35.1% | removed 8L/3W | retain 76%
+NFL-H020 | VETO oc_prior_role_seasons >= 2.25 | holdout ROI +26.7% -> +44.3% | removed 5L/1W | retain 82%
+NFL-H082 | VETO adv_hc_changed_season <= -0.6 | holdout ROI +11.2% -> +28.4% | removed 12L/5W | retain 72%
+NFL-H002 | VETO dc_prior_role_seasons >= 4 | holdout ROI +49.5% -> +66.0% | removed 7L/5W | retain 74%
+NFL-H057 | VETO adv_hc_prior_games <= -25.4 | holdout ROI +12.5% -> +29.0% | removed 17L/9W | retain 61%
+NFL-H065 | VETO oc_prior_role_seasons >= 2 | holdout ROI +10.2% -> +26.2% | removed 29L/14W | retain 64%
+NFL-H081 | VETO adv_dc_prior_win_pct <= -0.065578 | holdout ROI +15.9% -> +31.8% | removed 8L/4W | retain 68%
+NFL-H022 | VETO hc_prior_win_pct >= 0.60094 | holdout ROI +21.1% -> +35.7% | removed 8L/5W | retain 68%
+NFL-H087 | VETO adv_dc_prior_win_pct <= -0.15327 | holdout ROI +11.0% -> +24.2% | removed 9L/2W | retain 74%
+NFL-H003 | VETO dc_prior_role_seasons >= 3.35 | holdout ROI +43.7% -> +56.6% | removed 7L/5W | retain 72%
+NFL-H031 | VETO adv_dc_tenure_seasons >= 1 | holdout ROI +18.3% -> +30.7% | removed 13L/6W | retain 75%
+NFL-H042 | VETO hc_prior_win_pct >= 0.63347 | holdout ROI +15.2% -> +27.2% | removed 6L/2W | retain 82%
+NFL-H086 | VETO oc_tenure_seasons >= 2.5 | holdout ROI +11.8% -> +23.8% | removed 10L/6W | retain 69%
+NFL-H095 | VETO adv_dc_prior_role_seasons >= 1 | holdout ROI +10.0% -> +21.9% | removed 6L/3W | retain 73%
+NFL-H006 | VETO adv_staff_change_count >= 1 | holdout ROI +26.8% -> +38.6% | removed 11L/6W | retain 78%
+NFL-H010 | VETO adv_dc_prior_win_pct <= -0.10425 | holdout ROI +32.2% -> +43.1% | removed 5L/3W | retain 80%
+NFL-H035 | VETO oc_tenure_seasons >= 3 | holdout ROI +15.4% -> +25.0% | removed 7L/4W | retain 79%
+NFL-H014 | VETO adv_dc_tenure_seasons >= 1.25 | holdout ROI +33.3% -> +42.8% | removed 5L/3W | retain 80%
+NFL-H091 | VETO oc_prior_role_seasons >= 3 | holdout ROI +12.8% -> +22.0% | removed 5L/2W | retain 81%
+NFL-H009 | VETO adv_hc_prior_games_current_stint <= -13 | holdout ROI +19.5% -> +28.1% | removed 24L/20W | retain 52%
+NFL-H058 | VETO oc_tenure_seasons >= 3 | holdout ROI +13.8% -> +22.0% | removed 19L/9W | retain 78%
+NFL-H027 | VETO dc_tenure_seasons >= 3 | holdout ROI +22.9% -> +30.9% | removed 6L/4W | retain 77%
