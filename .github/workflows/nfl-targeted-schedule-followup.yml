@@ -1,0 +1,38 @@
+name: NFL targeted schedule followup
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/nfl_targeted_schedule_followup.py'
+      - '.github/trigger-nfl-targeted-schedule-followup'
+permissions:
+  contents: write
+jobs:
+  research:
+    runs-on: [self-hosted, Linux, X64, appwiza]
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+        with: {fetch-depth: 0}
+      - name: Run targeted followup
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          /home/anestishkurti92/nfl-predictor-v1/venv/bin/python "$GITHUB_WORKSPACE/scripts/nfl_targeted_schedule_followup.py"
+      - name: Publish
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          SRC=/home/appwiza-runner/nfl-context-data/targeted_schedule_followup
+          DEST="$GITHUB_WORKSPACE/nfl/targeted_schedule_followup"
+          mkdir -p "$DEST"
+          cp "$SRC"/* "$DEST"/
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git add nfl/targeted_schedule_followup
+          if ! git diff --cached --quiet; then
+            git commit -m 'Update targeted schedule followup results'
+            git pull --rebase origin main
+            git push origin HEAD:main
+          fi
