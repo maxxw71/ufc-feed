@@ -6,6 +6,8 @@ on:
     branches: [main]
     paths:
       - 'scripts/nfl_build_pregame_context.py'
+      - 'scripts/nfl_build_preseason_history.py'
+      - 'scripts/nfl_merge_preseason_context.py'
       - '.github/workflows/nfl-build-pregame-context.yml'
 
 permissions:
@@ -19,28 +21,40 @@ jobs:
   build:
     if: github.repository == 'maxxw71/ufc-feed' && github.ref == 'refs/heads/main'
     runs-on: [self-hosted, Linux, X64, appwiza]
-    timeout-minutes: 15
+    timeout-minutes: 25
     steps:
       - uses: actions/checkout@v4
-      - name: Build strict pregame player and continuity context
+      - name: Build strict pregame player, staff, continuity, and preseason context
         shell: bash
         run: |
           set -Eeuo pipefail
           ROOT=/home/anestishkurti92/nfl-predictor-v1
           CTX=/home/appwiza-runner/nfl-context-data
+          VENDOR="$CTX/vendor"
           test -x "$ROOT/venv/bin/python"
           test -f "$CTX/raw/players.parquet"
           test -f "$CTX/raw/weekly_rosters_2006_2026.parquet"
           test -f "$CTX/raw/snap_counts_2012_2026.parquet"
-          mkdir -p "$CTX/derived"
+          mkdir -p "$CTX/derived" "$VENDOR"
+          if ! PYTHONPATH="$VENDOR" "$ROOT/venv/bin/python" -c 'import lxml, html5lib, bs4' 2>/dev/null; then
+            "$ROOT/venv/bin/python" -m pip install -q --upgrade --target "$VENDOR" lxml html5lib beautifulsoup4
+          fi
+          export PYTHONPATH="$VENDOR"
+          NFL_CONTEXT_ROOT="$CTX" "$ROOT/venv/bin/python" "$GITHUB_WORKSPACE/scripts/nfl_build_preseason_history.py"
           NFL_SOURCE_ROOT="$ROOT" NFL_CONTEXT_ROOT="$CTX" "$ROOT/venv/bin/python" "$GITHUB_WORKSPACE/scripts/nfl_build_pregame_context.py"
+          NFL_CONTEXT_ROOT="$CTX" "$ROOT/venv/bin/python" "$GITHUB_WORKSPACE/scripts/nfl_merge_preseason_context.py"
+          chmod -R a+rX "$CTX"
           echo '=== CONTEXT STATUS ==='
           cat "$CTX/NFL_PREGAME_CONTEXT_STATUS.json"
+          echo '=== PRESEASON HISTORY STATUS ==='
+          cat "$CTX/NFL_PRESEASON_HISTORY_STATUS.json"
+          echo '=== PRESEASON MERGE STATUS ==='
+          cat "$CTX/NFL_PRESEASON_CONTEXT_STATUS.json"
           echo '=== 2026 CHARGERS ==='
           "$ROOT/venv/bin/python" - <<'PY'
           import pandas as pd
           p='/home/appwiza-runner/nfl-context-data/derived/team_game_pregame_context_2006_2026.parquet'
           d=pd.read_parquet(p)
-          cols=[c for c in ['season','week','team','opponent','moneyline','qb_name','qb_prior_starts','qb_changed_from_prior_season','head_coach','head_coach_changed','offensive_coordinator','defensive_coordinator','offensive_coordinator_changed','defensive_coordinator_changed','returning_offense_snap_share','returning_defense_snap_share','returning_ol_snap_share','returning_skill_snap_share','early_season_context_only'] if c in d.columns]
+          cols=[c for c in ['season','week','team','opponent','moneyline','qb_name','qb_prior_starts','qb_changed_from_prior_season','head_coach','head_coach_changed','offensive_coordinator','defensive_coordinator','offensive_coordinator_changed','defensive_coordinator_changed','returning_offense_snap_share','returning_defense_snap_share','returning_ol_snap_share','returning_skill_snap_share','preseason_wins','preseason_losses','preseason_win_pct','preseason_point_diff','opp_preseason_wins','opp_preseason_losses','opp_preseason_win_pct','opp_preseason_point_diff','preseason_losing_record','preseason_negative_point_diff','preseason_form_disadvantage','early_season_context_only'] if c in d.columns]
           print(d[(d.season==2026)&(d.team=='LAC')][cols].to_string(index=False))
           PY
