@@ -1,0 +1,66 @@
+name: Appwiza NFL publish boundary inspect
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/appwiza-nfl-publish-boundary-inspect.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  inspect:
+    if: github.repository == 'maxxw71/ufc-feed' && github.ref == 'refs/heads/main'
+    runs-on: [self-hosted, Linux, X64, appwiza]
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - name: Capture small publish-boundary report
+        shell: bash
+        run: |
+          set -euo pipefail
+          REPORT=nfl/live_publish_boundary.txt
+          ROOT=/home/anestishkurti92/nfl-predictor-v1/research_v2
+          PUB=/opt/sports-publisher/sports_publish.py
+          : > "$REPORT"
+
+          echo '=== ACCESS ===' >> "$REPORT"
+          for p in /opt/sports-publisher "$PUB"; do
+            stat -c '%U:%G %a %s %n' "$p" >> "$REPORT" 2>&1 || true
+            if [ -w "$p" ]; then echo "writable=yes $p" >> "$REPORT"; else echo "writable=no $p" >> "$REPORT"; fi
+          done
+          echo >> "$REPORT"
+
+          echo '=== PUBLISH_NFL ===' >> "$REPORT"
+          python3 - "$PUB" >> "$REPORT" <<'PY'
+          from pathlib import Path
+          import sys
+          p=Path(sys.argv[1])
+          lines=p.read_text(errors='replace').splitlines()
+          starts=[i for i,l in enumerate(lines) if l.startswith('def publish_nfl')]
+          if not starts:
+              print('publish_nfl_not_found')
+          else:
+              s=starts[0]
+              for i in range(max(0,s-20), min(len(lines),s+180)):
+                  print(f'{i+1}: {lines[i]}')
+          PY
+          echo >> "$REPORT"
+
+          echo '=== BASE_YPP_FILES ===' >> "$REPORT"
+          mapfile -t FILES < <(grep -RIl --exclude-dir=.git --exclude-dir=home_opener_email_state --exclude-dir=venv --exclude-dir=.venv 'base_ypp_v1' "$ROOT" 2>/dev/null | head -20 || true)
+          printf '%s\n' "${FILES[@]}" >> "$REPORT"
+          for f in "${FILES[@]}"; do
+            echo "--- $f ---" >> "$REPORT"
+            grep -n -B15 -A45 'base_ypp_v1' "$f" 2>/dev/null | head -180 >> "$REPORT" || true
+          done
+
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add "$REPORT"
+          if ! git diff --cached --quiet; then
+            git commit -m 'Capture writable NFL publish boundary'
+            git push
+          fi
