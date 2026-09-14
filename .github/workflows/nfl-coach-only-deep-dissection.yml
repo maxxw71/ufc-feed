@@ -1,0 +1,39 @@
+name: NFL coach-only deep dissection
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/nfl_coach_only_deep_dissection.py'
+permissions:
+  contents: write
+jobs:
+  audit:
+    runs-on: [self-hosted, Linux, X64, appwiza]
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+        with: {fetch-depth: 0}
+      - name: Run deep dissection
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          /home/anestishkurti92/nfl-predictor-v1/venv/bin/python "$GITHUB_WORKSPACE/scripts/nfl_coach_only_deep_dissection.py"
+      - name: Publish
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          SRC=/home/appwiza-runner/nfl-context-data/coach_only_deep_dissection
+          DEST="$GITHUB_WORKSPACE/nfl/coach_only_deep_dissection"
+          mkdir -p "$DEST"
+          cp "$SRC"/*.csv "$DEST"/ 2>/dev/null || true
+          cp "$SRC"/*.json "$DEST"/ 2>/dev/null || true
+          cp "$SRC"/*.txt "$DEST"/ 2>/dev/null || true
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git add nfl/coach_only_deep_dissection
+          if ! git diff --cached --quiet; then
+            git commit -m 'Update coach-only deep dissection results'
+            git pull --rebase origin main
+            git push origin HEAD:main
+          fi
