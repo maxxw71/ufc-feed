@@ -6,6 +6,7 @@ on:
     branches: [main]
     paths:
       - 'scripts/nfl_injury_travel_method_mining.py'
+      - 'scripts/nfl_sanitize_future_injury_weeks.py'
       - '.github/workflows/nfl-injury-travel-method-mining.yml'
 
 permissions:
@@ -45,6 +46,11 @@ jobs:
           VENDOR="$CTX/vendor"
           export PYTHONPATH="$VENDOR${PYTHONPATH:+:$PYTHONPATH}"
           NFL_SOURCE_ROOT="$ROOT" NFL_CONTEXT_ROOT="$CTX" "$ROOT/venv/bin/python" "$GITHUB_WORKSPACE/scripts/nfl_injury_travel_method_mining.py"
+      - name: Remove future-week injury contamination
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          /home/anestishkurti92/nfl-predictor-v1/venv/bin/python "$GITHUB_WORKSPACE/scripts/nfl_sanitize_future_injury_weeks.py"
       - name: Publish compact results
         shell: bash
         run: |
