@@ -126,14 +126,18 @@ if len(bets): bets.to_csv(OUT/'legacy_live_method_bets.csv',index=False)
 trace=[]
 state=R/'home_opener_email_state'
 for p in [state/'ledger.json',state/'status.json',state/'preview.txt']:
-    if not p.exists(): continue
+    try:
+        exists=p.exists()
+    except PermissionError:
+        trace.append({'file':str(p),'error':'permission_denied'}); continue
+    if not exists: continue
     try:
         if p.suffix=='.json':
             obj=json.loads(p.read_text()); text=json.dumps(obj,indent=2)
         else:text=p.read_text()
         chunks=[line for line in text.splitlines() if 'LAC' in line or 'Chargers' in line or 'ARI' in line or 'Cardinals' in line]
         if chunks: trace.append({'file':str(p),'matches':chunks[:100]})
-    except Exception as e:trace.append({'file':str(p),'error':str(e)})
+    except Exception as e:trace.append({'file':str(p),'error':type(e).__name__+': '+str(e)})
 (OUT/'chargers_2026_trace.json').write_text(json.dumps(trace,indent=2))
 
 report=['NFL CURRENT LIVE LEGACY METHOD RE-AUDIT','',f'live_rules_detected={rule_names+[late_rule]}','REG-only historical reconstruction; win percentage is reported alongside ROI.','']
