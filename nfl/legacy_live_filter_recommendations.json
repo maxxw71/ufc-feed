@@ -1,18 +1,44 @@
 {
   "status": "STAGED_NOT_PRODUCTION_DEPLOYED",
   "generated": "2026-09-14",
+  "preferred_legacy_home_opener": {
+    "method": "stricter",
+    "policy": "Existing stricter rule AND preseason wins >= 2 when that NFL season had a preseason; neutral only if the league held no preseason at all.",
+    "record": "45-3",
+    "bets": 48,
+    "win_pct": 0.9375,
+    "roi": 0.2428395244,
+    "positive_season_ratio": 0.8571428571,
+    "era_results": {
+      "2007_2013": {"win_pct": 0.8888888889, "roi": 0.1003739397},
+      "2014_2019": {"win_pct": 1.0, "roi": 0.3607489238},
+      "2020_2025": {"win_pct": 0.9333333333, "roi": 0.2958888266},
+      "2023_2025": {"win_pct": 0.8888888889, "roi": 0.1972645979}
+    },
+    "leave_one_season_out": {
+      "minimum_win_pct": 0.9302325581,
+      "minimum_roi": 0.2223334505,
+      "all_profitable": true
+    },
+    "2026_chargers_result": "VETOED because LAC preseason record was 1-2"
+  },
+  "secondary_legacy_home_opener": {
+    "method": "original",
+    "same_preseason_policy": true,
+    "record": "59-5",
+    "bets": 64,
+    "win_pct": 0.921875,
+    "roi": 0.2521476816
+  },
   "rules": [
     {
       "methods": ["original", "stricter"],
-      "filter_type": "HARD_VETO_CANDIDATE",
+      "filter_type": "HARD_VETO_RECOMMENDED",
       "feature": "same_season_preseason_wins",
       "operator": "<=",
       "threshold": 1,
-      "reason": "Confirmed loss-heavy in both <=2019 and 2020-2025 eras; would have vetoed LAC 2026 Week 1.",
-      "original_risk": {"n": 27, "win_pct": 0.5925925926, "roi": -0.0600916263},
-      "original_safe": {"n": 64, "win_pct": 0.921875, "roi": 0.2521476816},
-      "stricter_risk": {"n": 16, "win_pct": 0.625, "roi": -0.0419268418},
-      "stricter_safe": {"n": 48, "win_pct": 0.9375, "roi": 0.2428395244}
+      "missing_behavior": "If the league played a preseason, missing team preseason data fails closed. If the league held no preseason at all, treat neutrally.",
+      "reason": "Confirmed loss-heavy in older and recent eras and passed era and leave-one-season-out stress tests; would have vetoed LAC 2026 Week 1."
     },
     {
       "methods": ["original"],
@@ -20,7 +46,7 @@
       "feature": "same_season_preseason_win_pct",
       "operator": "<",
       "threshold": 0.5,
-      "reason": "Confirmed in both eras; retained as secondary because wins<=1 is the stronger primary veto."
+      "reason": "Confirmed in both eras; wins<=1 remains the stronger primary veto."
     },
     {
       "methods": ["late_road_protection_rest_v1"],
@@ -38,5 +64,5 @@
     "scheme_reset_both_sides",
     "chargers_like_combo"
   ],
-  "deployment_note": "Do not deploy staff-change flags as hard vetoes until historical sample is sufficient. Production scanner remains unchanged until the privileged deployment path installs an approved patch."
+  "deployment_note": "Production scanner remains unchanged until the privileged deployment path installs an approved patch. Staff-change flags remain advisory until historical sample is sufficient."
 }
