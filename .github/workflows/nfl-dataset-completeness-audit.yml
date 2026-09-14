@@ -1,0 +1,123 @@
+name: NFL dataset completeness audit
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/nfl-dataset-completeness-audit.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  audit:
+    if: github.repository == 'maxxw71/ufc-feed' && github.ref == 'refs/heads/main'
+    runs-on: [self-hosted, Linux, X64, appwiza]
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Audit NFL research data
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p nfl
+          python3 - <<'PY'
+          import os, csv, json, re
+          from pathlib import Path
+
+          roots = [Path('/home/anestishkurti92/nfl-predictor-v1'), Path('/opt/appwiza-sports-imports')]
+          out = Path('nfl/dataset_completeness_audit.txt')
+          exts = {'.csv','.tsv','.json','.jsonl','.parquet'}
+          files=[]
+          for root in roots:
+              if not root.exists():
+                  continue
+              for p in root.rglob('*'):
+                  try:
+                      if p.is_file() and p.suffix.lower() in exts and 'nfl' in str(p).lower():
+                          files.append(p)
+                  except OSError:
+                      pass
+          files = sorted(set(files), key=lambda p: (-p.stat().st_size, str(p)))[:250]
+
+          families = {
+              'market_lines': ['spread','moneyline','money_line','total','closing','open_line','close_line','odds','implied'],
+              'play_efficiency': ['epa','success_rate','success','cpoe','ypp','yards_per_play','explosive'],
+              'pass_rush_protection': ['pressure','sack','pass_rush','qb_hit','protection'],
+              'turnovers': ['turnover','interception','fumble','giveaway','takeaway'],
+              'qb': ['qb','quarterback','passer'],
+              'offensive_line': ['offensive_line','o_line','oline','ol_continuity'],
+              'injury_availability': ['injury','injured','inactive','availability','starter_out','snap_share'],
+              'rest_schedule': ['rest','bye','short_week','days_rest'],
+              'travel_location': ['travel','timezone','time_zone','distance','altitude','international'],
+              'weather_venue': ['weather','wind','temperature','temp','precip','roof','surface','dome','venue'],
+              'coaching_continuity': ['coach','coordinator','continuity'],
+              'special_teams': ['special_teams','field_goal','punt','kickoff'],
+              'strength_ratings': ['elo','rating','power_rating','srs','dvoa'],
+              'situational': ['home','away','division','conference','prime','opener','week'],
+          }
+          family_hits={k:set() for k in families}
+
+          lines=[]
+          lines.append('NFL DATASET COMPLETENESS AUDIT')
+          lines.append('')
+          lines.append(f'candidate_data_files={len(files)} (top 250 by size)')
+          lines.append('')
+          lines.append('=== FILE INVENTORY ===')
+
+          for p in files:
+              size=p.stat().st_size
+              cols=[]; rows=None; years=set(); date_min=None; date_max=None
+              try:
+                  if p.suffix.lower() in ('.csv','.tsv'):
+                      delim='\t' if p.suffix.lower()=='.tsv' else ','
+                      with p.open('r', encoding='utf-8', errors='replace', newline='') as f:
+                          r=csv.reader(f, delimiter=delim)
+                          header=next(r, [])
+                          cols=[str(x).strip() for x in header]
+                          n=0
+                          date_idxs=[i for i,c in enumerate(cols) if any(x in c.lower() for x in ('date','season','year','week'))]
+                          for row in r:
+                              n+=1
+                              for i in date_idxs[:6]:
+                                  if i < len(row):
+                                      for y in re.findall(r'\b(19\d{2}|20\d{2})\b', str(row[i])):
+                                          yi=int(y)
+                                          if 1990 <= yi <= 2035: years.add(yi)
+                          rows=n
+                  elif p.suffix.lower()=='.json':
+                      with p.open('r', encoding='utf-8', errors='replace') as f:
+                          obj=json.load(f)
+                      if isinstance(obj,list):
+                          rows=len(obj)
+                          if obj and isinstance(obj[0],dict): cols=list(obj[0].keys())
+                      elif isinstance(obj,dict):
+                          cols=list(obj.keys())
+                          rows=len(obj)
+              except Exception as e:
+                  cols=[]
+              lowcols=[c.lower() for c in cols]
+              for fam, keys in families.items():
+                  for c in lowcols:
+                      if any(k in c for k in keys):
+                          family_hits[fam].add(c)
+              yr = f'{min(years)}-{max(years)}' if years else '-'
+              rtxt = str(rows) if rows is not None else '-'
+              lines.append(f'{p} | bytes={size} | rows={rtxt} | cols={len(cols)} | years={yr}')
+              if cols:
+                  lines.append('  columns: ' + ', '.join(cols[:120]))
+
+          lines.append('')
+          lines.append('=== FEATURE FAMILY COVERAGE ===')
+          for fam in families:
+              hits=sorted(family_hits[fam])
+              lines.append(f'{fam}: {"YES" if hits else "NO"}')
+              if hits: lines.append('  ' + ', '.join(hits[:80]))
+
+          out.write_text('\n'.join(lines)+'\n', encoding='utf-8')
+          PY
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add nfl/dataset_completeness_audit.txt
+          git commit -m 'Record NFL dataset completeness audit' || true
+          git push || true
