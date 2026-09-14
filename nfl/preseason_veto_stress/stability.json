@@ -1,25 +1,26 @@
 {
-  "preferred_rule": "stricter + preseason_wins >= 2",
-  "record": "41-3",
-  "win_pct": 0.9318181818181818,
-  "roi": 0.2284283906631569,
-  "n": 44,
-  "positive_season_ratio": 0.8461538461538461,
+  "preferred_rule": "stricter + preseason wins >=2 when preseason exists; neutral if no league preseason",
+  "record": "45-3",
+  "win_pct": 0.9375,
+  "roi": 0.24283952436797884,
+  "n": 48,
+  "positive_season_ratio": 0.8571428571428571,
   "era_rois": {
     "2007_2013": 0.10037393971330405,
     "2014_2019": 0.3607489237657494,
-    "2020_2025": 0.25753494707756297,
+    "2020_2025": 0.295888826555818,
     "2023_2025": 0.19726459793981505
   },
   "era_win_pcts": {
     "2007_2013": 0.8888888888888888,
     "2014_2019": 1.0,
-    "2020_2025": 0.9090909090909091,
+    "2020_2025": 0.9333333333333333,
     "2023_2025": 0.8888888888888888
   },
-  "loo_min_win_pct": 0.9230769230769231,
-  "loo_min_roi": 0.20443059601933705,
-  "loo_max_roi": 0.293968457874462,
+  "loo_min_win_pct": 0.9302325581395349,
+  "loo_min_roi": 0.22233345048312636,
+  "loo_max_roi": 0.3037315067150581,
   "all_loo_profitable": true,
-  "missing_preseason_joins": 10
+  "missing_joins_in_seasons_with_preseason": 0,
+  "leaguewide_no_preseason_missing_bets": 10
 }
