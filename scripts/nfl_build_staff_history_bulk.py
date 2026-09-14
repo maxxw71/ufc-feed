@@ -18,6 +18,12 @@ SCHEDULES=SOURCE_ROOT/'data'/'raw'/'schedules_2006_2026.parquet'
 
 UA={'User-Agent':'Mozilla/5.0 (compatible; AppWizaNFLResearch/1.0; +https://appwiza.com)'}
 ALIASES={'LAR':'LA','STL':'LA','SD':'LAC','OAK':'LV','WSH':'WAS','ARZ':'ARI','BLT':'BAL'}
+TEAM_NAMES={
+ 'Arizona Cardinals':'ARI','Atlanta Falcons':'ATL','Baltimore Ravens':'BAL','Buffalo Bills':'BUF','Carolina Panthers':'CAR','Chicago Bears':'CHI','Cincinnati Bengals':'CIN','Cleveland Browns':'CLE',
+ 'Dallas Cowboys':'DAL','Denver Broncos':'DEN','Detroit Lions':'DET','Green Bay Packers':'GB','Houston Texans':'HOU','Indianapolis Colts':'IND','Jacksonville Jaguars':'JAX','Kansas City Chiefs':'KC',
+ 'Las Vegas Raiders':'LV','Los Angeles Chargers':'LAC','Los Angeles Rams':'LA','Miami Dolphins':'MIA','Minnesota Vikings':'MIN','New England Patriots':'NE','New Orleans Saints':'NO','New York Giants':'NYG',
+ 'New York Jets':'NYJ','Philadelphia Eagles':'PHI','Pittsburgh Steelers':'PIT','San Francisco 49ers':'SF','Seattle Seahawks':'SEA','Tampa Bay Buccaneers':'TB','Tennessee Titans':'TEN','Washington Commanders':'WAS'
+}
 def canon(x):
     if pd.isna(x): return None
     s=str(x).strip().upper()
@@ -79,6 +85,37 @@ try:
 except Exception as e:
     source_status['altdraft']={'ok':False,'error':repr(e)}
 
+# 2025 bridge: ESPN's published projection guide has HC/OC/DC on each of the 32 team pages.
+# This is a single bulk PDF, avoiding fragile per-team scraping.
+try:
+    from pypdf import PdfReader
+    pdf_url='https://g.espncdn.com/s/ffldraftkit/25/NFLDK2025_CS_ClayProjections2025.pdf'
+    r=requests.get(pdf_url,headers=UA,timeout=60); r.raise_for_status()
+    reader=PdfReader(io.BytesIO(r.content))
+    found={}
+    for page in reader.pages[1:34]:
+        text=re.sub(r'\s+',' ',page.extract_text() or ' ')
+        team_code=None
+        for full,code in TEAM_NAMES.items():
+            if f'2025 {full} Projections' in text:
+                team_code=code; break
+        if not team_code: continue
+        mh=re.search(r'\bHC\s+(.+?)\s+LT\b',text)
+        mo=re.search(r'\bOC\s+(.+?)\s+LG\b',text)
+        md=re.search(r'\bDC\s+(.+?)\s+RG\b',text)
+        found[team_code]={
+          'season':2025,'team':team_code,
+          'source_head_coach':clean(mh.group(1)) if mh else None,
+          'offensive_coordinator':clean(mo.group(1)) if mo else None,
+          'defensive_coordinator':clean(md.group(1)) if md else None,
+          'staff_source':'espn_mike_clay_2025_projection_guide'
+        }
+    if len(found)<28: raise RuntimeError(f'Only parsed {len(found)} of 32 ESPN 2025 team staff pages')
+    source_rows.extend(found.values())
+    source_status['espn_2025']={'ok':True,'teams':len(found),'oc':sum(bool(x['offensive_coordinator']) for x in found.values()),'dc':sum(bool(x['defensive_coordinator']) for x in found.values())}
+except Exception as e:
+    source_status['espn_2025']={'ok':False,'error':repr(e)}
+
 # Current 2026: two league-wide sortable coordinator pages. These are used only for names/current-change context.
 def parse_current(url, role):
     tabs=get_tables(url)
@@ -93,7 +130,6 @@ def parse_current(url, role):
             if len(out)>=20:return pd.DataFrame(out).drop_duplicates('team')
     raise RuntimeError(f'2026 {role} coordinator table not found')
 
-current=None
 try:
     o=parse_current('https://profootballmania.com/nfl-offensive-coordinators/','offensive')
     source_status['current_2026_offense']={'ok':True,'rows':len(o)}
@@ -113,7 +149,6 @@ if len(o) or len(d):
 
 src=pd.DataFrame(source_rows)
 if len(src):
-    # If duplicate current/historical rows occur, prefer the 2026 current source and otherwise first non-null.
     src=src.groupby(['season','team'],as_index=False).agg(
         source_head_coach=('source_head_coach',lambda x:next((clean(v) for v in x if clean(v)),None)),
         offensive_coordinator=('offensive_coordinator',lambda x:next((clean(v) for v in x if clean(v)),None)),
@@ -123,7 +158,6 @@ else:
     src=pd.DataFrame(columns=['season','team','source_head_coach','offensive_coordinator','defensive_coordinator','staff_source'])
 
 staff=h.merge(src,on=['season','team'],how='left').sort_values(['team','season'])
-# Cross-source head-coach mismatch is diagnostic only; nflverse remains authoritative.
 staff['head_coach_source_mismatch']=np.where(staff.source_head_coach.notna() & staff.head_coach.notna(),
     staff.source_head_coach.astype(str).str.replace(r'\s+',' ',regex=True).ne(staff.head_coach.astype(str).str.replace(r'\s+',' ',regex=True)).astype(float),np.nan)
 
@@ -143,7 +177,7 @@ status={
  'both_coordinators_filled':int((staff.offensive_coordinator.notna()&staff.defensive_coordinator.notna()).sum()),
  'by_season':{str(int(y)):{'teams':len(z),'oc':int(z.offensive_coordinator.notna().sum()),'dc':int(z.defensive_coordinator.notna().sum())} for y,z in staff.groupby('season')},
  'sources':source_status,'output':str(OUT),
- 'limitations':['Historical coordinator coverage is bulk-source 2010-2024; 2006-2009 remain unknown unless another audited source is added.','2025 coordinator names are intentionally left unknown until a complete audited source is ingested.','Unknown coordinator change values remain null, never zero.','2026 current coordinator names come from league-wide current coordinator tables and should be periodically refreshed.']
+ 'limitations':['Historical coordinator coverage begins in 2010; 2006-2009 remain unknown unless another audited source is added.','Unknown coordinator change values remain null, never zero.','2026 current coordinator names come from league-wide current coordinator tables and should be periodically refreshed.']
 }
 STATUS.write_text(json.dumps(status,indent=2,default=str))
 print(json.dumps(status,indent=2,default=str))
