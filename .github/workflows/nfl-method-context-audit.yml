@@ -1,0 +1,49 @@
+name: NFL method context audit
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/nfl_method_context_audit.py'
+      - '.github/workflows/nfl-method-context-audit.yml'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: nfl-method-context-audit
+  cancel-in-progress: true
+
+jobs:
+  audit:
+    if: github.repository == 'maxxw71/ufc-feed' && github.ref == 'refs/heads/main'
+    runs-on: [self-hosted, Linux, X64, appwiza]
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - name: Audit frozen NFL methods against richer pregame context
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          ROOT=/home/anestishkurti92/nfl-predictor-v1
+          CTX=/home/appwiza-runner/nfl-context-data
+          test -f "$CTX/derived/team_game_pregame_context_2006_2026.parquet"
+          NFL_SOURCE_ROOT="$ROOT" NFL_CONTEXT_ROOT="$CTX" "$ROOT/venv/bin/python" "$GITHUB_WORKSPACE/scripts/nfl_method_context_audit.py"
+          echo '=== METHOD CONTEXT REPORT ==='
+          cat "$CTX/method_audit/method_context_report.txt"
+          echo '=== BASELINE ==='
+          cat "$CTX/method_audit/method_baseline_summary.csv"
+          echo '=== TOP CANDIDATES ==='
+          "$ROOT/venv/bin/python" - <<'PY'
+          import pandas as pd
+          p='/home/appwiza-runner/nfl-context-data/method_audit/method_context_candidate_ranking.csv'
+          d=pd.read_csv(p)
+          print(d.head(60).to_string(index=False))
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: nfl-method-context-audit
+          path: /home/appwiza-runner/nfl-context-data/method_audit/
+          if-no-files-found: error
+          retention-days: 30
