@@ -2,11 +2,11 @@
 
 A research candidate is never safe to publish merely because its metrics match.
 Before a record leaves the scanner, this module binds it to the authoritative
-schedule row and to the exact ESPN odds event/side/team used for its price.
+schedule row and to the exact ESPN odds event, bookmaker, side, team and price.
 
 Safety policy: ambiguity means rejection. Missing identity fields, mismatched
-teams, duplicate game records, stale/wrong-event odds, or a guard exception
-must never be converted into a default home/away selection.
+teams, duplicate game records, stale/wrong-event odds, a mismatched bookmaker
+payload, or a guard exception must never be converted into a default selection.
 """
 from __future__ import annotations
 
@@ -24,6 +24,19 @@ MAX_KICKOFF_DRIFT_SECONDS = 90
 MIN_KICKOFF_LEAD_SECONDS = 5 * 60
 GAME_ID_RE = re.compile(r"^(?P<season>\d{4})_(?P<week>\d{2})_(?P<away>[A-Z0-9]{2,3})_(?P<home>[A-Z0-9]{2,3})$")
 ODDS_PATH_RE = re.compile(r"/events/(?P<event>\d+)/competitions/(?P<competition>\d+)/odds/?$")
+TEAM_REF_RE = re.compile(r"/teams/(?P<team>\d+)(?:\?|$)")
+
+# ESPN NFL team IDs are stable franchise identifiers used in the odds payload's
+# team.$ref values. Historical aliases never reach production schedule rows.
+ESPN_TEAM_IDS = {
+    "ATL": "1", "BUF": "2", "CHI": "3", "CIN": "4", "CLE": "5",
+    "DAL": "6", "DEN": "7", "DET": "8", "GB": "9", "TEN": "10",
+    "IND": "11", "KC": "12", "LV": "13", "LA": "14", "MIA": "15",
+    "MIN": "16", "NE": "17", "NO": "18", "NYG": "19", "NYJ": "20",
+    "PHI": "21", "ARI": "22", "PIT": "23", "LAC": "24", "SF": "25",
+    "SEA": "26", "TB": "27", "WAS": "28", "CAR": "29", "JAX": "30",
+    "BAL": "33", "HOU": "34",
+}
 
 
 def _utc(value: Any) -> datetime | None:
@@ -78,7 +91,6 @@ def _schedule_kickoff(row: dict[str, Any]) -> datetime | None:
     if not gameday or not gametime:
         return None
     try:
-        # nflverse schedule times are local U.S. Eastern clock times in this scanner.
         return datetime.fromisoformat(f"{gameday}T{gametime}").replace(tzinfo=NY).astimezone(timezone.utc)
     except ValueError:
         return None
@@ -115,6 +127,95 @@ def _source_event_ids(source: Any) -> tuple[str, str] | None:
     return match.group("event"), match.group("competition")
 
 
+def _team_ref_id(side_payload: Any) -> str | None:
+    if not isinstance(side_payload, dict):
+        return None
+    team = side_payload.get("team")
+    if not isinstance(team, dict):
+        return None
+    ref = _text(team.get("$ref"))
+    match = TEAM_REF_RE.search(ref)
+    return match.group("team") if match else None
+
+
+def _moneyline_from_side(side_payload: Any) -> float | None:
+    if not isinstance(side_payload, dict):
+        return None
+    current = side_payload.get("current")
+    if not isinstance(current, dict):
+        return None
+    line = current.get("moneyLine")
+    if not isinstance(line, dict):
+        return None
+    return _number(line.get("american"))
+
+
+def _raw_odds_identity_reasons(
+    odds: dict[str, Any],
+    espn: str | None,
+    side: str,
+    home: str,
+    away: str,
+    selected_team: str,
+    price: float | None,
+) -> list[str]:
+    """Prove the selected bookmaker's raw ESPN payload matches this exact bet."""
+    raw = odds.get("raw")
+    if not isinstance(raw, dict):
+        return ["missing_odds_raw"]
+    items = raw.get("items")
+    if not isinstance(items, list) or not items:
+        return ["missing_odds_raw_items"]
+
+    bookmaker = _text(odds.get("bookmaker"))
+    if not bookmaker:
+        return ["missing_bookmaker"]
+    if side not in {"home", "away"}:
+        return ["raw_odds_identity_uncheckable"]
+
+    expected_selected_id = ESPN_TEAM_IDS.get(selected_team)
+    opponent = away if side == "home" else home
+    expected_opponent_id = ESPN_TEAM_IDS.get(opponent)
+    if expected_selected_id is None or expected_opponent_id is None:
+        return ["unknown_team_identity"]
+
+    side_key = "homeTeamOdds" if side == "home" else "awayTeamOdds"
+    other_key = "awayTeamOdds" if side == "home" else "homeTeamOdds"
+    provider_items: list[dict[str, Any]] = []
+    for item in items:
+        if not isinstance(item, dict):
+            continue
+        provider = item.get("provider")
+        if isinstance(provider, dict) and _text(provider.get("name")) == bookmaker:
+            provider_items.append(item)
+
+    if not provider_items:
+        return ["bookmaker_not_in_raw_odds"]
+    if len(provider_items) != 1:
+        return ["ambiguous_bookmaker_raw_odds"]
+
+    item = provider_items[0]
+    reasons: list[str] = []
+
+    # The bookmaker item itself must be attached to the same ESPN event/competition.
+    item_ref = _text(item.get("$ref"))
+    if espn is None or f"/events/{espn}/competitions/{espn}/odds/" not in item_ref:
+        reasons.append("raw_odds_event_mismatch")
+
+    selected_payload = item.get(side_key)
+    opponent_payload = item.get(other_key)
+    if _team_ref_id(selected_payload) != expected_selected_id:
+        reasons.append("raw_odds_selected_team_mismatch")
+    if _team_ref_id(opponent_payload) != expected_opponent_id:
+        reasons.append("raw_odds_opponent_team_mismatch")
+
+    raw_price = _moneyline_from_side(selected_payload)
+    if price is None or raw_price is None or abs(raw_price - price) > 1e-9:
+        reasons.append("raw_odds_price_mismatch")
+
+    return reasons
+
+
 def _reject(record: dict[str, Any], reasons: Iterable[str]) -> dict[str, Any]:
     side = _text(record.get("selection_side")).lower()
     return {
@@ -131,12 +232,7 @@ def _reject(record: dict[str, Any], reasons: Iterable[str]) -> dict[str, Any]:
 
 
 def filter_records(records: Iterable[dict[str, Any]], schedule: Any, now: datetime | None = None):
-    """Return (approved, rejected), validating every output record against schedule + odds identity.
-
-    The caller should fail closed too: copy the candidate list, clear the live output
-    list, then call this function. If this function raises unexpectedly, the cleared
-    output must remain empty.
-    """
+    """Return (approved, rejected), validating every output against schedule + raw odds identity."""
     now = _utc(now or datetime.now(timezone.utc))
     if now is None:
         raise ValueError("now_must_be_timezone_aware")
@@ -155,8 +251,6 @@ def filter_records(records: Iterable[dict[str, Any]], schedule: Any, now: dateti
         except Exception:
             malformed.append({"game_id": None, "reasons": ["malformed_record"]})
 
-    # No game may appear twice in the outbound selection set. Two records for one
-    # event can otherwise disagree on side/team/method and accidentally create two bets.
     counts: dict[str, int] = defaultdict(int)
     for record in raw_records:
         counts[_text(record.get("game_id"))] += 1
@@ -199,6 +293,8 @@ def filter_records(records: Iterable[dict[str, Any]], schedule: Any, now: dateti
             reasons.append("missing_week")
         if not home or not away or home == away:
             reasons.append("invalid_teams")
+        if home not in ESPN_TEAM_IDS or away not in ESPN_TEAM_IDS:
+            reasons.append("unknown_team_identity")
         if espn is None:
             reasons.append("missing_espn_event")
         if kickoff is None:
@@ -278,6 +374,8 @@ def filter_records(records: Iterable[dict[str, Any]], schedule: Any, now: dateti
             reasons.append("odds_side_mismatch")
         if odds_team != selected_team or not odds_team:
             reasons.append("odds_team_mismatch")
+
+        reasons.extend(_raw_odds_identity_reasons(odds, espn, side, home, away, selected_team, price))
 
         if reasons:
             rejected.append(_reject(record, reasons))
