@@ -5,6 +5,7 @@ on:
     branches: [main]
     paths:
       - 'scripts/nfl_calendar_schedule_runheavy_discovery.py'
+      - '.github/trigger-nfl-calendar-schedule-runheavy'
 permissions:
   contents: write
 jobs:
