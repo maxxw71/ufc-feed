@@ -22,6 +22,23 @@ def schedule():
     }]
 
 
+def raw_odds():
+    return {
+        "items": [{
+            "$ref": f"https://sports.core.api.espn.com/v2/sports/football/leagues/nfl/events/{ESPN}/competitions/{ESPN}/odds/1?lang=en&region=us",
+            "provider": {"name": "FanDuel"},
+            "awayTeamOdds": {
+                "team": {"$ref": "https://sports.core.api.espn.com/v2/sports/football/leagues/nfl/teams/22?lang=en&region=us"},
+                "current": {"moneyLine": {"american": -150}},
+            },
+            "homeTeamOdds": {
+                "team": {"$ref": "https://sports.core.api.espn.com/v2/sports/football/leagues/nfl/teams/24?lang=en&region=us"},
+                "current": {"moneyLine": {"american": 130}},
+            },
+        }]
+    }
+
+
 def good():
     return {
         "game_id": GAME_ID,
@@ -41,6 +58,7 @@ def good():
             "source": f"https://sports.core.api.espn.com/v2/sports/football/leagues/nfl/events/{ESPN}/competitions/{ESPN}/odds",
             "market_side": "away",
             "market_team": "ARI",
+            "raw": raw_odds(),
         },
     }
 
@@ -118,12 +136,24 @@ def main():
     approved, reasons = why(started, now=KICKOFF - timedelta(minutes=4))
     assert not approved and "game_started_or_too_close" in reasons
 
+    # Raw bookmaker payload is authoritative; app-supplied market_team cannot override it.
+    wrong_raw_team = good()
+    wrong_raw_team["odds"]["raw"]["items"][0]["awayTeamOdds"]["team"]["$ref"] = "https://sports.core.api.espn.com/v2/sports/football/leagues/nfl/teams/24?lang=en&region=us"
+    approved, reasons = why(wrong_raw_team)
+    assert not approved and "raw_odds_selected_team_mismatch" in reasons
+
+    wrong_raw_price = good()
+    wrong_raw_price["odds"]["raw"]["items"][0]["awayTeamOdds"]["current"]["moneyLine"]["american"] = -145
+    approved, reasons = why(wrong_raw_price)
+    assert not approved and "raw_odds_price_mismatch" in reasons
+
     # Two records for one event are ambiguous. Reject both rather than choose one.
     first, second = good(), good()
     second["selection_side"] = "home"
     second["selected_team"] = "LAC"
     second["odds"]["market_side"] = "home"
     second["odds"]["market_team"] = "LAC"
+    second["odds"]["moneyline"] = 130
     approved, rejected = filter_records([first, second], schedule(), NOW)
     assert not approved and len(rejected) == 2
     assert all("duplicate_game_id" in item["reasons"] for item in rejected)
