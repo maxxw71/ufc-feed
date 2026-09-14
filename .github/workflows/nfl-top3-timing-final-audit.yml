@@ -1,0 +1,38 @@
+name: NFL top3 timing final audit
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/nfl_top3_timing_final_audit.py'
+      - '.github/workflows/nfl-top3-timing-final-audit.yml'
+permissions:
+  contents: write
+jobs:
+  audit:
+    runs-on: [self-hosted, Linux, X64, appwiza]
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+        with: {fetch-depth: 0}
+      - name: Run final timing audit
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          /home/anestishkurti92/nfl-predictor-v1/venv/bin/python "$GITHUB_WORKSPACE/scripts/nfl_top3_timing_final_audit.py"
+      - name: Publish
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          SRC=/home/appwiza-runner/nfl-context-data/top3_timing_final_audit
+          DEST="$GITHUB_WORKSPACE/nfl/top3_timing_final_audit"
+          mkdir -p "$DEST"
+          cp "$SRC"/* "$DEST"/
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git add nfl/top3_timing_final_audit
+          if ! git diff --cached --quiet; then
+            git commit -m 'Update top3 timing final audit results'
+            git pull --rebase origin main
+            git push origin HEAD:main
+          fi
