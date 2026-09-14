@@ -1,0 +1,44 @@
+NFL COACH-ONLY FINAL SIEVE
+
+{
+  "input_methods": 10,
+  "strict_veto_count": 18,
+  "methods_with_strict_single_veto": 7,
+  "ultra_strict_vetoes": 5,
+  "elite_co_h_pairs": 2,
+  "priority_co_h_pairs": 4,
+  "priority_any_h": 2,
+  "status_counts": {
+    "CO_CORE_READY_WITH_VETO": 7,
+    "CO_CORE_READY_UNFILTERED": 3
+  }
+}
+
+SELECTED STRICT VETOES
+CO001 CONTEXT travel_miles >= 953.137 | risk hold n=9 win=11.1% ROI=-52.1% -> safe ROI=+91.6% retain=68% ultra=True
+CO005 COACH opp_coachq_oc_prior_quality <= 0.524609 | risk hold n=8 win=37.5% ROI=-7.2% -> safe ROI=+63.4% retain=78% ultra=False
+CO009 COACH opp_coachq_dc_quality_delta_vs_departed >= 0.113542 | risk hold n=8 win=25.0% ROI=-3.2% -> safe ROI=+39.0% retain=91% ultra=False
+CO017 CONTEXT rank_edge_passing_cpoe <= -10.2 | risk hold n=11 win=36.4% ROI=-14.0% -> safe ROI=+30.9% retain=78% ultra=True
+CO018 CONTEXT recent_edge_off_epa >= 8.83813 | risk hold n=13 win=38.5% ROI=-38.7% -> safe ROI=+36.9% retain=72% ultra=True
+CO043 COACH opp_coachq_hc_prior_quality <= 0.502137 | risk hold n=9 win=22.2% ROI=-10.8% -> safe ROI=+49.3% retain=65% ultra=True
+CO061 COACH coachq_prev_hc_recent_quality >= 0.761538 | risk hold n=6 win=0.0% ROI=-100.0% -> safe ROI=+62.1% retain=77% ultra=False
+
+ELITE CO+H PAIRS
+CO005+NFL-H017: 19-3 n=22 win=86.4% ROI=+120.1% | hold 12 win=83.3% ROI=+107.7%
+CO017+NFL-H029: 15-3 n=18 win=83.3% ROI=+103.5% | hold 9 win=77.8% ROI=+91.8%
+
+PRIORITY ANY-H CONSENSUS
+CO017+any H: 33-22 n=55 win=60.0% ROI=+50.0% | hold 16 win=68.8% ROI=+68.6%
+CO005+any H: 35-24 n=59 win=59.3% ROI=+48.1% | hold 16 win=62.5% ROI=+55.8%
+
+FINAL
+CO001: CO_CORE_READY_WITH_VETO | 93 bets win=36.6% ROI=+36.9% hold=+45.4% | weak windows descriptive only=W7_10 | veto=CONTEXT:travel_miles
+CO005: CO_CORE_READY_WITH_VETO | 158 bets win=50.6% ROI=+26.9% hold=+47.7% | weak windows descriptive only=W15_18 | veto=COACH:opp_coachq_oc_prior_quality
+CO026: CO_CORE_READY_UNFILTERED | 109 bets win=56.0% ROI=+40.5% hold=+32.4% | weak windows descriptive only=- | veto=-
+CO009: CO_CORE_READY_WITH_VETO | 265 bets win=34.7% ROI=+28.8% hold=+35.3% | weak windows descriptive only=W7_10 | veto=COACH:opp_coachq_dc_quality_delta_vs_departed
+CO048: CO_CORE_READY_UNFILTERED | 98 bets win=43.9% ROI=+53.1% hold=+20.3% | weak windows descriptive only=W15_18 | veto=-
+CO043: CO_CORE_READY_WITH_VETO | 94 bets win=37.2% ROI=+35.7% hold=+28.5% | weak windows descriptive only=- | veto=COACH:opp_coachq_hc_prior_quality
+CO061: CO_CORE_READY_WITH_VETO | 97 bets win=37.1% ROI=+30.8% hold=+24.7% | weak windows descriptive only=W4_6 | veto=COACH:coachq_prev_hc_recent_quality
+CO017: CO_CORE_READY_WITH_VETO | 146 bets win=47.3% ROI=+18.3% hold=+21.3% | weak windows descriptive only=W15_18 | veto=CONTEXT:rank_edge_passing_cpoe
+CO016: CO_CORE_READY_UNFILTERED | 101 bets win=81.2% ROI=+16.4% hold=+15.5% | weak windows descriptive only=- | veto=-
+CO018: CO_CORE_READY_WITH_VETO | 132 bets win=69.7% ROI=+16.2% hold=+16.0% | weak windows descriptive only=- | veto=CONTEXT:recent_edge_off_epa
