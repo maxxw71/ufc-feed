@@ -1,0 +1,38 @@
+name: NFL top3 run schedule final review
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/nfl_top3_run_schedule_final_review.py'
+      - '.github/workflows/nfl-top3-run-schedule-final-review.yml'
+permissions:
+  contents: write
+jobs:
+  audit:
+    runs-on: [self-hosted, Linux, X64, appwiza]
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+        with: {fetch-depth: 0}
+      - name: Run strict final review
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          /home/anestishkurti92/nfl-predictor-v1/venv/bin/python "$GITHUB_WORKSPACE/scripts/nfl_top3_run_schedule_final_review.py"
+      - name: Publish
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          SRC=/home/appwiza-runner/nfl-context-data/top3_run_schedule_final_review
+          DEST="$GITHUB_WORKSPACE/nfl/top3_run_schedule_final_review"
+          mkdir -p "$DEST"
+          cp "$SRC"/* "$DEST"/
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git add nfl/top3_run_schedule_final_review
+          if ! git diff --cached --quiet; then
+            git commit -m 'Update top3 run schedule final review results'
+            git pull --rebase origin main
+            git push origin HEAD:main
+          fi
