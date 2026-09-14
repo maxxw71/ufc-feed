@@ -10,11 +10,14 @@ import time
 import requests
 import pandas as pd
 
-ROOT = Path(os.environ.get("NFL_ROOT", "/home/anestishkurti92/nfl-predictor-v1"))
-RAW = ROOT / "data" / "raw"
-SCHEDULES = RAW / "schedules_2006_2026.parquet"
-OUT = RAW / "coaching_staff_2006_2026.csv"
-STATUS = ROOT / "NFL_COACHING_STAFF_STATUS.json"
+SOURCE_ROOT = Path(os.environ.get("NFL_SOURCE_ROOT", "/home/anestishkurti92/nfl-predictor-v1"))
+CONTEXT_ROOT = Path(os.environ.get("NFL_CONTEXT_ROOT", "/home/appwiza-runner/nfl-context-data"))
+SOURCE_RAW = SOURCE_ROOT / "data" / "raw"
+OUT_RAW = CONTEXT_ROOT / "raw"
+OUT_RAW.mkdir(parents=True, exist_ok=True)
+SCHEDULES = SOURCE_RAW / "schedules_2006_2026.parquet"
+OUT = OUT_RAW / "coaching_staff_2006_2026.csv"
+STATUS = CONTEXT_ROOT / "NFL_COACHING_STAFF_STATUS.json"
 API = "https://en.wikipedia.org/w/api.php"
 
 BASE_NAMES = {
