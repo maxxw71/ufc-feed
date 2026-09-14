@@ -56,8 +56,11 @@ def parse_staff_layout(reader,season,url):
     out={}
     for page_no in range(max(0,len(reader.pages)-4),len(reader.pages)):
         page=reader.pages[page_no]
-        try: layout=page.extract_text(extraction_mode='layout') or ''
-        except TypeError: layout=page.extract_text() or ''
+        try:
+            layout=page.extract_text(extraction_mode='layout') or ''
+        except Exception as e:
+            print(f'{season}: skip unreadable/blank PDF page {page_no+1}: {type(e).__name__}',flush=True)
+            continue
         if 'Head Coach' not in layout and 'Current Coaching Staffs' not in layout: continue
         print(f'{season}: trying layout staff table on PDF page {page_no+1}',flush=True)
         for rawline in layout.splitlines():
@@ -65,13 +68,9 @@ def parse_staff_layout(reader,season,url):
             m=re.match(r'^\s*([A-Z]{2,3})\s+(.+?)\s*$',line)
             if not m or m.group(1) not in ESPN_CODE: continue
             team=ESPN_CODE[m.group(1)]; tail=m.group(2)
-            # Layout extraction preserves table columns as runs of 2+ spaces.
             cells=[clean(x) for x in re.split(r'\s{2,}',tail.strip())]
             cells=[x for x in cells if x is not None]
             if len(cells)<3: continue
-            # Expected columns after Tm: Head Coach | Offensive Coordinator | Offensive Playcaller |
-            # Defensive Coordinator | General Manager. Some guides omit playcaller or GM, so use
-            # header positions below when possible, otherwise accept only unambiguous 4/5-cell rows.
             hc=oc=dc=None
             if len(cells)>=5:
                 hc,oc,_,dc=cells[:4]
@@ -93,7 +92,6 @@ for season,url in URLS.items():
     r=sess.get(url,timeout=60); r.raise_for_status()
     if not r.content.startswith(b'%PDF'):raise RuntimeError(f'{season}: response was not PDF ({r.headers.get("content-type")})')
     reader=PdfReader(BytesIO(r.content)); found={}
-    # Modern guides expose team names and HC/OC/DC cleanly on each of the first 32 team pages.
     for page_no,page in enumerate(reader.pages[1:min(36,len(reader.pages))],start=1):
         raw=page.extract_text() or ''; text=re.sub(r'\s+',' ',raw); team=identify_team(text)
         if not team or team in found:continue
@@ -107,8 +105,6 @@ for season,url in URLS.items():
         if hc or oc or dc:
             found[team]={'season':season,'team':team,'head_coach_espn':hc,'offensive_coordinator':oc,
                          'defensive_coordinator':dc,'staff_source':'espn_mike_clay_projection_guide_team_page','staff_page':url,'pdf_page':page_no+1}
-    # 2019-2022 use an older layout whose team pages lack full team-name/staff labels in extraction.
-    # Recover from the complete current-coaching-staff table using layout-preserving PDF text.
     if len(found)<28:
         fallback=parse_staff_layout(reader,season,url)
         for team,rec in fallback.items():
