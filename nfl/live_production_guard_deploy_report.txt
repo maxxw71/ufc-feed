@@ -1,6 +1,9 @@
-attempted_at=20260914T051517Z
+attempted_at=20260914T053519Z
 production_scanner=/home/anestishkurti92/nfl-predictor-v1/research_v2/nfl_home_opener_scanner.py
-install_mode=unwritable_no_sudo
-deployment_status=FAILED
-failed_stage=access_check
-exit_code=1
+guard=production_match_guard.py
+repo_tests=PASS
+local_patch_validation=PASS
+deployment_status=BLOCKED_PERMISSIONS
+live_code_changed=no
+required_owner=anestishkurti92
+reason=appwiza-runner cannot write the owner-controlled production scanner directory
