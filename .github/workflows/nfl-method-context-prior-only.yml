@@ -1,0 +1,38 @@
+name: NFL method context prior-only validation
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/nfl_method_context_prior_only.py'
+      - '.github/workflows/nfl-method-context-prior-only.yml'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: nfl-method-context-prior-only
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    if: github.repository == 'maxxw71/ufc-feed' && github.ref == 'refs/heads/main'
+    runs-on: [self-hosted, Linux, X64, appwiza]
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run prior-only context veto selection
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          ROOT=/home/anestishkurti92/nfl-predictor-v1
+          CTX=/home/appwiza-runner/nfl-context-data
+          test -f "$CTX/method_audit/method_all_bets_context.csv"
+          NFL_SOURCE_ROOT="$ROOT" NFL_CONTEXT_ROOT="$CTX" "$ROOT/venv/bin/python" "$GITHUB_WORKSPACE/scripts/nfl_method_context_prior_only.py"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: nfl-method-context-prior-only
+          path: /home/appwiza-runner/nfl-context-data/method_prior_only/
+          if-no-files-found: error
+          retention-days: 30
