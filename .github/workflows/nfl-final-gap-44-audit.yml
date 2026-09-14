@@ -1,0 +1,46 @@
+name: NFL final gap and 44-7 audit
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/nfl_final_gap_and_44_audit.py'
+      - '.github/workflows/nfl-final-gap-44-audit.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  audit:
+    if: github.repository == 'maxxw71/ufc-feed' && github.ref == 'refs/heads/main'
+    runs-on: [self-hosted, Linux, X64, appwiza]
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Audit remaining gaps and locate 44-7
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          ROOT=/home/anestishkurti92/nfl-predictor-v1
+          "$ROOT/venv/bin/python" "$GITHUB_WORKSPACE/scripts/nfl_final_gap_and_44_audit.py"
+      - name: Publish audit
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          SRC=/home/appwiza-runner/nfl-context-data/final_method_expansion
+          DEST="$GITHUB_WORKSPACE/nfl/final_method_expansion"
+          mkdir -p "$DEST"
+          cp "$SRC/gap_44_audit.txt" "$DEST/gap_44_audit.txt"
+          cp "$SRC/gap_44_audit.json" "$DEST/gap_44_audit.json"
+          cp "$SRC/fortyfour_matches.csv" "$DEST/fortyfour_matches.csv"
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git add nfl/final_method_expansion
+          if ! git diff --cached --quiet; then
+            git commit -m 'Update NFL final gap and 44-7 audit'
+            git pull --rebase origin main
+            git push origin HEAD:main
+          fi
