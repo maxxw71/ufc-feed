@@ -1,19 +1,19 @@
 NFL FINAL RESEARCH METHOD REGISTRY
 
 {
-  "flagship_methods": 36,
-  "final_research": 32,
+  "registry_methods": 37,
+  "final_research": 33,
   "watchlist": 3,
   "review_extreme_roi": 1,
-  "methods_with_validated_vetoes": 4
+  "methods_with_validated_vetoes": 5
 }
 
 Methods are research-approved, not automatically deployed to the live email/Appwiza scanner.
 
-NFL-H001 [REVIEW_EXTREME_ROI] EFFICIENCY+OTHER | DOG20_34 AWAY | rank_edge_def_allowed_success_rate <= -9 AND recent_edge_penalty_yards >= 14.667 | n=117 ROI=+61.4% holdout=+42.9% seasons=14/18
 NFL-H002 [FINAL_RESEARCH] EXPLOSIVENESS+SPECIAL_TEAMS | DOG35_49 AWAY | rank_edge_def_allowed_explosive_rate <= -6 AND recent_edge_punt_return_average >= 2.4958 | n=143 ROI=+35.5% holdout=+49.5% seasons=16/19 | VETO: dome_game >= 1.0 || VETO: qb_prior_starts <= 12.7
 NFL-H003 [FINAL_RESEARCH] PASS_PROTECTION_RUSH+THIRD_DOWN | DOG35_44 AWAY | rank_edge_third_down_success >= 0 AND rank_edge_sack_or_hit_rate >= 5 | n=173 ROI=+43.2% holdout=+43.7% seasons=18/20 | VETO: recent_edge_def_allowed_pass_epa_per_dropback >= 0.2182382565949704
 NFL-H005 [FINAL_RESEARCH] EFFICIENCY+THIRD_DOWN | DOG35_44 ANY | rank_edge_third_down_success >= 0 AND rank_edge_off_epa_per_play >= 10 | n=143 ROI=+41.6% holdout=+36.0% seasons=15/18
+NFL-H006 [FINAL_RESEARCH] EFFICIENCY+THIRD_DOWN | DOG35_44 ANY | rank_edge_third_down_success >= 0 AND recent_edge_def_allowed_yards_per_play <= -0.33707 | n=252 ROI=+27.3% holdout=+26.8% seasons=14/20 | VETO: grass_surface <= 0.0 || VETO: recent_edge_sack_or_hit_rate <= -0.0241869882910562 || VETO: adv_skill_unavail_equiv <= -0.6387499999999999
 NFL-H008 [FINAL_RESEARCH] SPECIAL_TEAMS+THIRD_DOWN | DOG35_44 ANY | rank_edge_third_down_success >= 0 AND recent_edge_kick_return_average >= 2.1667 | n=206 ROI=+29.4% holdout=+24.5% seasons=14/20
 NFL-H010 [FINAL_RESEARCH] PASSING+THIRD_DOWN | DOG35_49 AWAY | rank_edge_third_down_success >= 0 AND rank_edge_pass_epa_per_dropback >= 10 | n=162 ROI=+31.9% holdout=+32.2% seasons=13/18
 NFL-H015 [FINAL_RESEARCH] EXPLOSIVENESS+THIRD_DOWN | DOG35_44 AWAY | rank_edge_def_allowed_explosive_rate <= -9.75 AND rank_edge_third_down_success >= 0 | n=118 ROI=+36.8% holdout=+33.5% seasons=13/18
@@ -31,8 +31,6 @@ NFL-H036 [FINAL_RESEARCH] EXPLOSIVENESS+PASSING | DOG35_49 AWAY | rank_edge_def_
 NFL-H039 [FINAL_RESEARCH] OTHER+TURNOVERS | DOG35_44 ANY | rank_edge_giveaway_rate >= 0 AND rank_edge_penalty_yards >= 14 | n=100 ROI=+28.4% holdout=+22.2% seasons=11/15
 NFL-H040 [FINAL_RESEARCH] EXPLOSIVENESS | DOG35_44 HOME | rank_edge_def_allowed_explosive_rate >= 9 | n=81 ROI=+32.6% holdout=+20.5% seasons=11/13
 NFL-H044 [FINAL_RESEARCH] RED_ZONE+SPECIAL_TEAMS | DOG35_44 AWAY | rank_edge_redzone_epa >= 1 AND recent_edge_kick_return_average <= -2.1667 | n=127 ROI=+26.0% holdout=+16.0% seasons=13/19
-NFL-H053 [WATCHLIST] EFFICIENCY+QB_CONTEXT | DOG20_34 AWAY | qb_prior_starts >= 38 AND rank_edge_def_allowed_success_rate <= -9 | n=164 ROI=+26.6% holdout=+23.9% seasons=11/17
-NFL-H056 [WATCHLIST] PASSING | DOG35_44 AWAY | rank_edge_pass_epa_per_dropback >= 10 | n=131 ROI=+29.7% holdout=+28.8% seasons=10/16
 NFL-H057 [FINAL_RESEARCH] RED_ZONE+THIRD_DOWN | DOG35_44 AWAY | rank_edge_third_down_success >= 0 AND rank_edge_redzone_epa >= 1 | n=224 ROI=+31.1% holdout=+12.5% seasons=16/20
 NFL-H062 [FINAL_RESEARCH] EFFICIENCY+PASSING | DOG35_49 AWAY | recent_edge_success_rate >= 0 AND rank_edge_def_allowed_pass_epa_per_dropback <= -6 | n=256 ROI=+26.2% holdout=+12.0% seasons=15/20
 NFL-H065 [FINAL_RESEARCH] MARKET_MOVEMENT+THIRD_DOWN | DOG35_44 ANY | rank_edge_third_down_success >= 0 AND base_vs_open_prob_move <= -0.0073623 | n=301 ROI=+20.1% holdout=+10.2% seasons=16/20
@@ -40,9 +38,12 @@ NFL-H066 [FINAL_RESEARCH] OTHER+THIRD_DOWN | DOG20_34 AWAY | rank_edge_penalty_y
 NFL-H069 [FINAL_RESEARCH] PASS_PROTECTION_RUSH+SPECIAL_TEAMS | DOG35_49 AWAY | recent_edge_sack_or_hit_rate >= -0.043727 AND rank_edge_punt_return_average >= 1 | n=450 ROI=+14.0% holdout=+11.8% seasons=15/20
 NFL-H075 [FINAL_RESEARCH] EFFICIENCY+RUSHING | DOG35_44 ANY | rank_edge_early_down_epa >= 6 AND rank_edge_rush_epa_per_carry >= 14 | n=93 ROI=+30.1% holdout=+26.1% seasons=12/18
 NFL-H079 [FINAL_RESEARCH] PASSING+RED_ZONE | DOG35_44 ANY | recent_edge_redzone_epa <= -0.20216 AND recent_edge_pass_epa_per_dropback <= -0.11621 | n=286 ROI=+17.8% holdout=+12.4% seasons=16/20
-NFL-H081 [WATCHLIST] MARKET_MOVEMENT+TURNOVERS | DOG35_44 AWAY | base_vs_open_prob_move <= -0.0073623 AND recent_edge_giveaway_rate >= 0.0073072 | n=130 ROI=+25.4% holdout=+15.9% seasons=11/17
 NFL-H082 [FINAL_RESEARCH] EFFICIENCY+PASS_PROTECTION_RUSH | DOG35_49 AWAY | recent_edge_success_rate >= 0.048607 AND recent_edge_sack_or_hit_rate >= -0.043727 | n=222 ROI=+22.7% holdout=+11.2% seasons=15/20
 NFL-H086 [FINAL_RESEARCH] EFFICIENCY+EXPLOSIVENESS | DOG35_49 AWAY | rank_edge_def_allowed_early_down_epa <= -10 AND rank_edge_def_allowed_explosive_rate <= -6 | n=174 ROI=+26.5% holdout=+11.8% seasons=13/20
 NFL-H087 [FINAL_RESEARCH] EXPLOSIVENESS+OTHER | DOG20_34 AWAY | recent_edge_def_allowed_explosive_rate >= -0.01345 AND recent_edge_penalty_yards >= 14.667 | n=168 ROI=+27.9% holdout=+11.0% seasons=13/20
 NFL-H095 [FINAL_RESEARCH] PASS_PROTECTION_RUSH+TURNOVERS | DOG35_44 AWAY | recent_edge_giveaway_rate >= 0.012851 AND recent_edge_sack_or_hit_rate >= -0.022791 | n=128 ROI=+23.7% holdout=+10.0% seasons=13/19
 NFL-H096 [FINAL_RESEARCH] RED_ZONE+RUSHING | DOG35_49 AWAY | rank_edge_rush_epa_per_carry >= 14 AND rank_edge_redzone_epa >= 6 | n=91 ROI=+26.8% holdout=+11.6% seasons=12/15
+NFL-H001 [REVIEW_EXTREME_ROI] EFFICIENCY+OTHER | DOG20_34 AWAY | rank_edge_def_allowed_success_rate <= -9 AND recent_edge_penalty_yards >= 14.667 | n=117 ROI=+61.4% holdout=+42.9% seasons=14/18
+NFL-H053 [WATCHLIST] EFFICIENCY+QB_CONTEXT | DOG20_34 AWAY | qb_prior_starts >= 38 AND rank_edge_def_allowed_success_rate <= -9 | n=164 ROI=+26.6% holdout=+23.9% seasons=11/17
+NFL-H056 [WATCHLIST] PASSING | DOG35_44 AWAY | rank_edge_pass_epa_per_dropback >= 10 | n=131 ROI=+29.7% holdout=+28.8% seasons=10/16
+NFL-H081 [WATCHLIST] MARKET_MOVEMENT+TURNOVERS | DOG35_44 AWAY | base_vs_open_prob_move <= -0.0073623 AND recent_edge_giveaway_rate >= 0.0073072 | n=130 ROI=+25.4% holdout=+15.9% seasons=11/17
