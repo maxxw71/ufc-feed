@@ -18,6 +18,7 @@ PFR={
  'LV':'rai','LAC':'sdg','LA':'ram','MIA':'mia','MIN':'min','NE':'nwe','NO':'nor','NYG':'nyg','NYJ':'nyj',
  'PHI':'phi','PIT':'pit','SF':'sfo','SEA':'sea','TB':'tam','TEN':'oti','WAS':'was'
 }
+PFR_HOSTS=['https://aws.pro-football-reference.com','https://www.pro-football-reference.com']
 ALIASES={'OAK':'LV','SD':'LAC','STL':'LA','LAR':'LA'}
 def canon(x): return ALIASES.get(str(x),str(x))
 
@@ -50,52 +51,53 @@ sess=requests.Session()
 sess.headers.update({'User-Agent':'Mozilla/5.0 (compatible; AppWizaNFLResearch/1.0; +https://appwiza.com)'})
 rows=[]; failures=[]
 for i,(team,code) in enumerate(PFR.items(),1):
-    url=f'https://www.pro-football-reference.com/teams/{code}/coaches.htm'
-    try:
-        r=sess.get(url,timeout=30); r.raise_for_status()
-        # PFR frequently stores tables inside HTML comments.
-        text=re.sub(r'<!--|-->','',r.text)
-        tables=pd.read_html(io.StringIO(text))
-        chosen=None; mapping=None
-        for t in tables:
-            cols=list(t.columns)
-            yc=find_col(cols,('year',))
-            hc=find_col(cols,('coach',))
-            oc=find_col(cols,('coordinators','offense'),('offense',))
-            dc=find_col(cols,('coordinators','defense'),('defense',))
-            gc=find_col(cols,('reg. season','g'),('regular season','g'))
-            if yc is not None and hc is not None and oc is not None and dc is not None and len(t)>=10:
-                chosen=t; mapping=(yc,hc,oc,dc,gc); break
-        if chosen is None: raise RuntimeError('year-by-year coordinator table not found')
-        yc,hc,oc,dc,gc=mapping
-        before=len(rows)
-        for rec in chosen.to_dict('records'):
-            y=pd.to_numeric(rec.get(yc),errors='coerce')
-            if pd.isna(y) or int(y)<2006 or int(y)>2026: continue
-            rows.append({
-              'season':int(y),'team':team,'head_coach_pfr':clean_name(rec.get(hc)),
-              'offensive_coordinator':clean_name(rec.get(oc)),
-              'defensive_coordinator':clean_name(rec.get(dc)),
-              'coach_games':pd.to_numeric(rec.get(gc),errors='coerce') if gc is not None else None,
-              'staff_source':'pro_football_reference_franchise_coaches','staff_page':url,
-            })
-        print(f'{i:02d}/32 {team}: rows={len(rows)-before}',flush=True)
-    except Exception as e:
-        failures.append({'team':team,'url':url,'error':repr(e)})
-        print(f'{i:02d}/32 {team}: ERROR {e}',flush=True)
-    time.sleep(random.uniform(2.0,2.8))
+    used_url=None; chosen=None; mapping=None; last_error=None
+    for host in PFR_HOSTS:
+        url=f'{host}/teams/{code}/coaches.htm'
+        try:
+            r=sess.get(url,timeout=30); r.raise_for_status()
+            text=re.sub(r'<!--|-->','',r.text)
+            tables=pd.read_html(io.StringIO(text))
+            for t in tables:
+                cols=list(t.columns)
+                yc=find_col(cols,('year',))
+                hc=find_col(cols,('coach',))
+                oc=find_col(cols,('coordinators','offense'),('offense',))
+                dc=find_col(cols,('coordinators','defense'),('defense',))
+                gc=find_col(cols,('reg. season','g'),('regular season','g'))
+                if yc is not None and hc is not None and oc is not None and dc is not None and len(t)>=10:
+                    chosen=t; mapping=(yc,hc,oc,dc,gc); used_url=url; break
+            if chosen is not None: break
+            last_error=RuntimeError('year-by-year coordinator table not found')
+        except Exception as e:
+            last_error=e
+    if chosen is None:
+        failures.append({'team':team,'url':used_url or f'{PFR_HOSTS[0]}/teams/{code}/coaches.htm','error':repr(last_error)})
+        print(f'{i:02d}/32 {team}: ERROR {last_error}',flush=True)
+        time.sleep(random.uniform(.6,1.0)); continue
+    yc,hc,oc,dc,gc=mapping
+    before=len(rows)
+    for rec in chosen.to_dict('records'):
+        y=pd.to_numeric(rec.get(yc),errors='coerce')
+        if pd.isna(y) or int(y)<2006 or int(y)>2026: continue
+        rows.append({
+          'season':int(y),'team':team,'head_coach_pfr':clean_name(rec.get(hc)),
+          'offensive_coordinator':clean_name(rec.get(oc)),
+          'defensive_coordinator':clean_name(rec.get(dc)),
+          'coach_games':pd.to_numeric(rec.get(gc),errors='coerce') if gc is not None else None,
+          'staff_source':'pro_football_reference_franchise_coaches','staff_page':used_url,
+        })
+    print(f'{i:02d}/32 {team}: rows={len(rows)-before} source={used_url}',flush=True)
+    time.sleep(random.uniform(.6,1.0))
 
 pfr=pd.DataFrame(rows)
 if pfr.empty: raise RuntimeError('PFR coordinator collection returned zero rows')
-# Multiple head coaches can create multiple rows for one season. Coordinators are season-level;
-# retain all distinct named coordinators in that team-season rather than duplicating the join.
 pfr=(pfr.groupby(['season','team'],as_index=False)
        .agg(head_coach_pfr=('head_coach_pfr',join_unique),
             offensive_coordinator=('offensive_coordinator',join_unique),
             defensive_coordinator=('defensive_coordinator',join_unique),
             staff_source=('staff_source','first'),staff_page=('staff_page','first')))
 
-# nflverse schedule coaches remain authoritative for HC because they reflect in-season HC changes.
 s=pd.read_parquet(SCHEDULES); s=s[s.game_type.eq('REG')].copy()
 parts=[]
 for side in ['home','away']:
@@ -123,7 +125,7 @@ status={
  'both_coordinators_filled':int(both.sum()),'both_coordinator_pct':round(float(both.mean()*100),2),
  'franchise_pages_succeeded':32-len(failures),'franchise_pages_failed':len(failures),'failures':failures,
  'by_season':by_season,'output':str(OUT),
- 'source':'Pro Football Reference year-by-year franchise coaches pages; HC cross-checked to nflverse schedules',
+ 'source':'Pro Football Reference year-by-year franchise coaches pages via AWS mirror first; HC cross-checked to nflverse schedules',
  'notes':['Unknown coordinators remain null, never inferred.','Multiple named coordinators within one season are preserved with / separators.']
 }
 STATUS.write_text(json.dumps(status,indent=2)); print(json.dumps(status,indent=2))
