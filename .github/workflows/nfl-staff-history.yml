@@ -5,8 +5,9 @@ on:
   push:
     branches: [main]
     paths:
-      - 'scripts/nfl_build_staff_history_wikipedia.py'
+      - 'scripts/nfl_build_staff_history_pfr.py'
       - 'scripts/nfl_patch_2026_staff.py'
+      - 'scripts/nfl_build_pregame_context.py'
       - '.github/workflows/nfl-staff-history.yml'
 
 permissions:
@@ -33,7 +34,7 @@ jobs:
           mkdir -p "$CTX/raw" "$CTX/derived"
           export NFL_SOURCE_ROOT="$ROOT"
           export NFL_CONTEXT_ROOT="$CTX"
-          "$ROOT/venv/bin/python" "$GITHUB_WORKSPACE/scripts/nfl_build_staff_history_wikipedia.py"
+          "$ROOT/venv/bin/python" "$GITHUB_WORKSPACE/scripts/nfl_build_staff_history_pfr.py"
           "$ROOT/venv/bin/python" "$GITHUB_WORKSPACE/scripts/nfl_patch_2026_staff.py"
           "$ROOT/venv/bin/python" "$GITHUB_WORKSPACE/scripts/nfl_build_pregame_context.py"
           if [ -f "$CTX/raw/preseason_team_2006_2026.csv" ]; then
