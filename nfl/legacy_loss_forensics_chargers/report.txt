@@ -1,0 +1,46 @@
+NFL LEGACY LOSS FORENSICS + CHARGERS-STYLE FILTERS
+
+{
+  "methods": [
+    "late_road_protection_rest_v1",
+    "original",
+    "pass_defense_offense24",
+    "stricter"
+  ],
+  "bets": 305,
+  "candidate_flags": 30,
+  "tested_rows": 21,
+  "confirmed_filters": 1
+}
+
+TOP CONFIRMED FILTERS
+late_road_protection_rest_v1 | opp_new_oc_low_off_continuity | risk n=13 win=61.5% ROI=-18.3% | safe win=82.6% ROI=+11.4% | old loss lift=+13.3pp recent=+27.2pp
+
+CHARGERS 2026 PROFILE
+{
+  "team": "LAC",
+  "opponent": "ARI",
+  "season": 2026,
+  "known_public_context": {
+    "new_oc": "Mike McDaniel",
+    "new_dc": "Chris OLeary",
+    "dc_regular_season_playcalling_debut": true,
+    "preseason_record": "1-2"
+  },
+  "team_staff": {
+    "head_coach": "Jim Harbaugh",
+    "offensive_coordinator": null,
+    "defensive_coordinator": null,
+    "head_coach_changed": false,
+    "offensive_coordinator_changed": null,
+    "defensive_coordinator_changed": null
+  },
+  "opponent_staff": {
+    "head_coach": "Jonathan Gannon",
+    "offensive_coordinator": "Nathaniel Hackett",
+    "defensive_coordinator": "Nick Rallis",
+    "head_coach_changed": false,
+    "offensive_coordinator_changed": true,
+    "defensive_coordinator_changed": false
+  }
+}
