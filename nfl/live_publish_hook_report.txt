@@ -1,0 +1,161 @@
+=== ACCESS ===
+root:root 755 /opt/sports-publisher
+READONLY /opt/sports-publisher
+root:root 644 /opt/sports-publisher/sports_publish.py
+READONLY /opt/sports-publisher/sports_publish.py
+anestishkurti92:anestishkurti92 775 /srv/appwiza-sports
+WRITABLE /srv/appwiza-sports
+anestishkurti92:anestishkurti92 755 /srv/appwiza-sports/public
+READONLY /srv/appwiza-sports/public
+anestishkurti92:anestishkurti92 775 /home/anestishkurti92/nfl-predictor-v1/research_v2
+READONLY /home/anestishkurti92/nfl-predictor-v1/research_v2
+anestishkurti92:anestishkurti92 644 /home/anestishkurti92/nfl-predictor-v1/research_v2/nfl_home_opener_scanner.py
+READONLY /home/anestishkurti92/nfl-predictor-v1/research_v2/nfl_home_opener_scanner.py
+
+=== SPORTS_PUBLISH.PY ===
+"""Public, allowlisted pick summaries from the existing email methods."""
+import os,json,math,hashlib,fcntl
+from pathlib import Path
+from datetime import datetime,timezone
+from zoneinfo import ZoneInfo
+from html import escape as esc
+ROOT=Path(os.environ.get('SPORTS_PUBLISH_ROOT','/srv/appwiza-sports'))
+NY=ZoneInfo('America/New_York')
+def dt(s):return datetime.fromisoformat(s.replace('Z','+00:00')).astimezone(timezone.utc)
+def clean(x):
+ if isinstance(x,dict):return {k:clean(v) for k,v in x.items()}
+ if isinstance(x,(list,tuple)):return [clean(v) for v in x]
+ if hasattr(x,'item'):return clean(x.item())
+ if isinstance(x,float) and not math.isfinite(x):return None
+ return x
+def atomic(path,text,mode):
+ path.parent.mkdir(parents=True,exist_ok=True)
+ tmp=path.with_name(path.name+'.tmp');tmp.write_text(text);tmp.chmod(mode);tmp.replace(path)
+def publish_nfl(records,now,design):
+ cards=[]
+ for r in records:
+  side=r.get('selection_side','home');selected=r[side];o=r['odds'];methods=[]
+  for rule in r['rules']:
+   mid,label,win,sample,roi,basis,definition=design.METHODS[rule]
+   methods.append(dict(id=mid,title=label,win=win,sample=sample,roi=roi,note=basis,definition=definition,checks=design.evidence(r,rule),consistency=design.consistency(rule)))
+  cards.append(dict(id='NFL:'+r['game_id'],start=r['kickoff'],selection=design.name(selected),opponent=design.name(r['away'] if side=='home' else r['home']),fixture=f"{design.name(r['away'])} at {design.name(r['home'])}",event=f"NFL · Week {r['week']}",price=o.get('moneyline'),book=o.get('bookmaker'),quote_at=o.get('retrieved_at'),methods=methods))
+ save('nfl',cards,now)
+def publish_ufc(events,predictions,w,now=None):
+ cards=[];design=w['ufc_email_design'];tracker=w['bet_tracker']
+ for event in events:
+  preds=predictions.get(w['event_key'](event),[])
+  picks=tracker.ufc_picks(event,preds)
+  for pick in picks:
+   p=next(p for p in preds if {p.get('fighter_a'),p.get('fighter_b')}=={pick['selection'],pick['opponent']})
+   methods=[]
+   for m in design.method_cards(p,w):
+    h=m['history'];methods.append(dict(id=m['id'],title=m['title'],win=f"{h['win_rate']:.1%}",sample=f"{h['wins']} / {h['bets']}",roi=f"{h['roi']:+.2%}",note=m['note'],definition='',checks=m['checks'],consistency=''))
+   cards.append(dict(id=pick['key'],start=pick['start'],selection=pick['selection'],opponent=pick['opponent'],fixture=f"{pick['selection']} vs {pick['opponent']}",event=pick['event'],price=pick['price'],book=pick['book'],quote_at=pick['quote_observed_at'],methods=methods))
+ save('ufc',cards,now or datetime.now(timezone.utc))
+def safe_call(fn,*args):
+ try:fn(*args)
+ except Exception as exc:
+  import logging
+  logging.exception('Sports web publishing failed; email scan continues')
+  try:atomic(ROOT/'state'/'publish_error.json',json.dumps({'at':datetime.now(timezone.utc).isoformat(),'error':type(exc).__name__}),0o600)
+  except OSError:pass
+def ufc_record_html():
+ path=ROOT/'state/ufc.json'
+ if not path.exists():return ''
+ cards=json.loads(path.read_text())['cards'];w=sum(c.get('result')=='win' for c in cards);l=sum(c.get('result')=='loss' for c in cards)
+ priced=[c for c in cards if c.get('profit_units') is not None and c.get('result') in {'win','loss','push'}]
+ profit=sum(c['profit_units'] for c in priced);win=f'{w/(w+l):.1%}' if w+l else 'Pending';roi=f'{profit/len(priced):+.1%}' if priced else 'Pending'
+ pending=sum(c.get('result') not in {'win','loss','push','void'} for c in cards)
+ return f'<section><h2>UFC method-selection record</h2><p><strong>{w} wins · {l} losses · {win} win rate · {roi} ROI</strong></p><p>{pending} pending selections. One unit per recorded fight at its frozen price; missing prices and voids are excluded from ROI.</p><p>This includes documented pre-fight previews and website selections, not only confirmed emails. It is separate from the confirmed-email assumed-bet ledger. <a href="https://appwiza.com/sports/ufc/">View individual results</a>.</p></section>'
+def save(sport,cards,now):
+ state=ROOT/'state';state.mkdir(parents=True,exist_ok=True);state.chmod(0o700)
+ with (state/'publish.lock').open('w') as lock:
+  fcntl.flock(lock,fcntl.LOCK_EX)
+  path=state/(sport+'.json');old=json.loads(path.read_text()) if path.exists() else {'cards':[]}
+  known={x['id']:x for x in old['cards']};active=set()
+  for card in clean(cards):
+   active.add(card['id']);previous=known.get(card['id'],{})
+   card.update(first_seen=previous.get('first_seen',now.isoformat()),observed_at=now.isoformat(),withdrawn=False)
+   if sport=='ufc':
+    card['tracking']=previous.get('tracking') or {k:card.get(k) for k in ['selection','opponent','start','fixture','event','price','book','quote_at','methods','first_seen']}
+    for field in ['result','profit_units','result_source','settled_at','tracking_source']:
+     if field in previous:card[field]=previous[field]
+   known[card['id']]=card
+  for key,card in known.items():
+   if key not in active and dt(card['start'])>now:card['withdrawn']=True
+  if sport=='ufc':
+   import ufc_lifecycle
+   for card in known.values():
+    card.setdefault('tracking',{k:card.get(k) for k in ['selection','opponent','start','fixture','event','price','book','quote_at','methods','first_seen']})
+   ufc_lifecycle.settle_cards(known,now)
+  payload={'sport':sport,'updated_at':now.isoformat(),'cards':list(known.values())}
+  atomic(path,json.dumps(payload,allow_nan=False),0o600)
+  render_all()
+CSS='''*{box-sizing:border-box}body{margin:0;background:#f3f5f9;color:#142137;font:16px/1.6 system-ui,sans-serif}a{color:inherit}header{background:#101d33;color:white}nav{max-width:1180px;margin:auto;padding:20px 24px;display:flex;gap:24px;align-items:center;flex-wrap:wrap}nav a{text-decoration:none}nav .brand{font-size:23px;font-weight:750;margin-right:auto}nav [aria-current]{color:#90d9ff}main{max-width:1100px;margin:auto;padding:40px 24px}h1{font-size:clamp(32px,5vw,50px);line-height:1.15;margin:10px 0 18px}h2{font-size:25px;margin:0 0 12px}h3{font-size:19px;margin:8px 0}.eyebrow{font-size:12px;letter-spacing:2px;text-transform:uppercase;color:#167597;font-weight:750}.sub{color:#5a687d;max-width:760px}.bar{display:flex;flex-wrap:wrap;gap:16px;justify-content:space-between;border-bottom:1px solid #d9e0ea;padding:18px 0;margin-bottom:24px;font-size:13px}.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:22px}.card{background:white;border:1px solid #dce3ec;border-radius:18px;padding:26px;box-shadow:0 5px 22px #13233b05}.card .pick{font-size:29px;line-height:1.2;margin:10px 0}.muted{color:#627187;font-size:13px}.quote{background:#eef6ff;padding:16px;border-radius:10px;margin:18px 0}.quote strong{font-size:24px}.method{border-top:1px solid #e3e8ef;padding-top:18px;margin-top:20px}.stats{display:flex;gap:28px;margin:16px 0}.stats b{display:block;font-size:24px}.positive{color:#12734e}ul{padding-left:20px;font-size:14px}.empty{padding:34px;border:1px dashed #aebdd0;border-radius:14px;background:#fff}.pill{font-size:11px;letter-spacing:1px;font-weight:750;color:#12734e}details{margin-top:36px}summary{cursor:pointer;font-weight:700;font-size:21px;margin-bottom:20px}footer{border-top:1px solid #d9e0ea;margin-top:40px;padding:25px 0;color:#627187;font-size:13px}.sportlinks{display:flex;gap:12px;flex-wrap:wrap}.sportlinks a{background:#142137;color:white;text-decoration:none;border-radius:9px;padding:12px 24px}.stale{color:#92400e;background:#fff0d9;padding:12px;border-radius:8px}@media(max-width:750px){.grid{grid-template-columns:1fr}main{padding:28px 16px}.card{padding:20px}nav{gap:15px;padding:16px}.stats{gap:24px}}'''
+def card_html(c):
+ e=lambda x:esc(str(x or ''))
+ when=dt(c['start']).astimezone(NY).strftime('%a, %b %d, %Y · %I:%M %p ET')
+ price=c.get('price');valid=isinstance(price,(int,float)) and math.isfinite(price) and abs(price)>=100
+ if valid:
+  profit=10000/abs(price) if price<0 else price;be=abs(price)/(abs(price)+100) if price<0 else 100/(100+price)
+  quote=f'<strong>{price:+g}</strong> · {e(c.get("book"))}<div class="muted">$100 risk → ${profit:.2f} profit if won. Break-even: {be:.1%}.</div>'
+ else:quote='<strong>Price unavailable</strong><div class="muted">Metrics match; confirm the current sportsbook price.</div>'
+ quote+=f'<div class="muted">Quote observed: {e(c.get("quote_at") or "Timestamp unavailable")}</div>'
+ methods=''
+ for m in c['methods']:
+  methods+=f'''<section class="method"><span class="eyebrow">{e(m['id'])} · Qualifying method</span><h3>{e(m['title'])}</h3><div class="muted">{e(m['definition'])}</div><div class="stats"><div><b>{e(m['win'])}</b><span class="muted">Historical win rate<br>{e(m['sample'])} won</span></div><div><b class="positive">{e(m['roi'])}</b><span class="muted">Historical ROI</span></div></div><div class="muted">{e(m['note'])}</div><h4>Why this matchup qualifies</h4><ul>{''.join('<li>'+e(v)+'</li>' for v in m['checks'])}</ul><div class="muted">{e(m['consistency'])}</div></section>'''
+ result=''
+ if dt(c['start'])<=datetime.now(timezone.utc):
+  outcome={'win':'WIN','loss':'LOSS','push':'DRAW / PUSH','void':'VOID / NO CONTEST'}.get(c.get('result'),'RESULT PENDING')
+  units=c.get('profit_units');gain=f' · {units:+.2f} units' if units is not None else ''
+  result='<p><strong>'+outcome+gain+'</strong></p>'
+  if c.get('result_source'):result+='<a href="'+e(c['result_source'])+'">Result source</a>'
+  if c.get('tracking_source'):result+='<p class="muted">'+e(c['tracking_source'])+'</p>'
+ return f'''<article class="card"><span class="pill">{'PREVIOUSLY QUALIFIED · NO LONGER IN CURRENT SCAN' if c.get('withdrawn') else 'METHOD MATCH'}</span><h2 class="pick">{e(c['selection'])} to win</h2><div>{e(c['fixture'])}</div><div class="muted">{e(c['event'])}<br>{when}</div>{result}<div class="quote">{quote}</div>{methods}<p class="muted">One selection, even when several methods match. Historical samples may overlap.</p></article>'''
+def downloads_html(sport):
+ path=ROOT/'state/downloads.json'
+ if not path.exists():return ''
+ data=json.loads(path.read_text());items=data['sports'].get(sport,[])
+ if not items:return ''
+ rows=[]
+ for item in items:
+  size=item['bytes']/1048576
+  label=f'{size:.1f} MB' if size>=1 else f"{item['bytes']/1024:.1f} KB"
+  extra='<p class="muted">Showing the first 30 files. The ZIP contains all '+str(item['files'])+' files.</p>' if len(item['contents'])>30 else ''
+  rows.append('<article class="card"><h3>'+esc(item['folder'])+'</h3><p class="muted">'+str(item['files'])+' files · '+label+'</p><a href="'+esc(item['url'])+'" download>Download folder ZIP ↓</a><details><summary>Files in this folder</summary><ul>'+''.join('<li>'+esc(n)+'</li>' for n in item['contents'][:30])+'</ul>'+extra+'</details></article>')
+ return '<section id="downloads"><h2>Research downloads</h2><p class="sub">Download each research folder as a ZIP. Snapshot: '+esc(data['built_at'][:10])+'. Dataset coverage and quality vary; check the included reports.</p><div class="grid">'+''.join(rows)+'</div></section>'
+def page(sport,payload=None):
+ now=datetime.now(timezone.utc);cards=(payload or {}).get('cards',[])
+ upcoming=sorted([c for c in cards if dt(c['start'])>now and not c.get('withdrawn')],key=lambda c:dt(c['start']),reverse=True)
+ past=sorted([c for c in cards if dt(c['start'])<=now or c.get('withdrawn')],key=lambda c:dt(c['start']),reverse=True)
+ if sport=='ufc':past=[dict(c,**c.get('tracking',{})) for c in past]
+ label={'ufc':'UFC','nfl':'NFL','boxing':'Boxing','index':'Sports'}[sport]
+ stamp=(payload or {}).get('updated_at');updated=dt(stamp).astimezone(NY).strftime('%b %d, %Y · %I:%M %p ET') if stamp else 'No qualifying method published'
+ if sport=='index':
+  content='<h1>Sports method watchlists</h1><p class="sub">Qualifying matchups, the metrics behind each selection, and the historical results of the matching methods.</p><div class="sportlinks"><a href="/sports/ufc/">UFC picks</a><a href="/sports/nfl/">NFL picks</a><a href="/sports/boxing/">Boxing research</a></div>'
+ else:
+  content=f'<span class="eyebrow">Appwiza · {label}</span><h1>{label} qualifying matchups</h1><p class="sub">The same method-qualified picks used by our email scanner, with the reasons, available odds and historical evidence.</p><div class="bar"><span>Updated: {updated}</span><span>{len(upcoming)} upcoming · Newest match date first</span></div>'
+  if stamp and (now-dt(stamp)).total_seconds()>108000:content+='<p class="stale">The latest scan is more than 30 hours old. Quotes may be stale.</p>'
+  if sport=='boxing':content='<span class="eyebrow">Appwiza · Boxing</span><h1>Boxing research</h1><div class="empty"><h2>No qualifying picks yet</h2>Round statistics, fighter histories and historical odds are being assembled. No boxing method has been approved for this watchlist.</div>'
+  else:
+   content+='<h2>Upcoming selections</h2><div class="grid">'+''.join(card_html(c) for c in upcoming)+'</div>' if upcoming else '<div class="empty">No upcoming matchups qualify in the latest published scan.</div>'
+   if sport=='ufc':content+=ufc_record_html()
+   if past:content+='<details open><summary>Selection history and results ('+str(len(past))+')</summary><p class="muted">Original recorded selection and price, one unit per fight. Unconfirmed results remain pending. Recovered previews are labelled separately from confirmed email deliveries.</p><div class="grid">'+''.join(card_html(c) for c in past)+'</div></details>'
+ content+=downloads_html(sport)
+ nav=''.join(f'<a href="/sports/{s}/" '+('aria-current="page"' if sport==s else '')+f'>{l}</a>' for s,l in [('ufc','UFC'),('nfl','NFL'),('boxing','Boxing')])
+ if downloads_html(sport):nav+='<a href="#downloads">Downloads</a>'
+ return f'''<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="description" content="Appwiza sports method watchlists: qualifying picks and historical evidence."><title>{label} watchlist | Appwiza</title><link rel="stylesheet" href="/sports/style.css"></head><body><header><nav><a class="brand" href="/">appwiza.com</a><a href="/sports/">Sports</a>{nav}</nav></header><main>{content}<footer>UFC and NFL refresh with the daily 10:00 AM Eastern scan (including daylight saving time). Check quote timestamps and your sportsbook’s current price.<br><br>Historical win rates and ROI describe retrospectively selected groups at archived prices, not a matchup’s predicted probability or guaranteed return. No bets are placed by this website. Multiple matching methods remain one selection.</footer></main></body></html>'''
+def render_all():
+ public=ROOT/'public';public.mkdir(parents=True,exist_ok=True);public.chmod(0o755)
+ atomic(public/'style.css',CSS+'\n#downloads{margin-top:48px}#downloads summary{font-size:14px}#downloads li{overflow-wrap:anywhere}',0o644)
+ for sport in ['index','ufc','nfl','boxing']:
+  path=ROOT/'state'/(sport+'.json');payload=json.loads(path.read_text()) if path.exists() else None
+  dest=public/'index.html' if sport=='index' else public/sport/'index.html'
+  atomic(dest,page(sport,payload),0o644);dest.parent.chmod(0o755)
+
+=== BASE_YPP PYTHON REFERENCES ONLY ===
+
+=== APPWIZA NFL FILES ===
+/srv/appwiza-sports/public/downloads/nfl/earlier-research-nfl-rush-matchup-deep-dive.zip
+/srv/appwiza-sports/public/downloads/nfl/nfl-com-power-rankings.zip
+/srv/appwiza-sports/public/downloads/nfl/earlier-research-nfl-candidate-validation.zip
