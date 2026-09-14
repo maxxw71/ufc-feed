@@ -1,0 +1,12 @@
+NFL COMPLEXITY-REGULARIZED MULTI-VETO OPTIMIZER
+
+{
+  "methods": 3,
+  "multi_veto_accepted": 0,
+  "multi_veto_rejected": 2,
+  "other": 1
+}
+
+RS001: MULTI_VETO_REJECTED_KEEP_CURRENT | vetoes=2 [recent_edge_def_allowed_success_rate >= 0.04892 | recent_edge_early_down_epa >= 0.13403] | pre avg=+85.8% | full 37-15 win=71.2% ROI=+77.6% | hold n=15 ROI=+62.2% retain=60% | current single hold=+91.2% | LOO min=+72.5%
+RS002: PREHOLD_SELECTED_REJECTED_KEEP_CURRENT | vetoes=1 [recent_edge_rush_epa_per_carry >= 0.131053] | pre avg=+91.8% | full 60-29 win=67.4% ROI=+62.1% | hold n=29 ROI=+31.0% retain=78% | current single hold=+76.2% | LOO min=+55.8%
+RS003: MULTI_VETO_REJECTED_KEEP_CURRENT | vetoes=2 [recent_edge_def_allowed_giveaway_rate >= 0.00871904 | opp_coachq_staff_quality_mean >= 0.708888] | pre avg=+67.0% | full 75-42 win=64.1% ROI=+52.7% | hold n=43 ROI=+32.4% retain=67% | current single hold=+51.1% | LOO min=+49.7%
