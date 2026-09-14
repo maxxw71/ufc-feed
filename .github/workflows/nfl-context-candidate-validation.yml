@@ -1,0 +1,39 @@
+name: NFL context candidate validation
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/nfl_context_candidate_validation.py'
+      - '.github/workflows/nfl-context-candidate-validation.yml'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: nfl-context-candidate-validation
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    if: github.repository == 'maxxw71/ufc-feed' && github.ref == 'refs/heads/main'
+    runs-on: [self-hosted, Linux, X64, appwiza]
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate NFL context candidates
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          ROOT=/home/anestishkurti92/nfl-predictor-v1
+          CTX=/home/appwiza-runner/nfl-context-data
+          test -f "$CTX/method_audit/method_all_bets_context.csv"
+          NFL_CONTEXT_ROOT="$CTX" "$ROOT/venv/bin/python" "$GITHUB_WORKSPACE/scripts/nfl_context_candidate_validation.py"
+          cat "$CTX/method_validation/validation_report.txt"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: nfl-context-candidate-validation
+          path: /home/appwiza-runner/nfl-context-data/method_validation/
+          if-no-files-found: error
+          retention-days: 30
