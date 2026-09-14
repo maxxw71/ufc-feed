@@ -1,0 +1,36 @@
+NFL FINAL GAP + 44-7 AUDIT
+
+complete_pregame_rows=11406 cols=282 seasons=2006-2026
+injury_data_available -> injury_data_available:100.0%, unavailable_equiv:82.5%, adv_unavailable_equiv:82.5%, qb_unavail_equiv:82.5%, ol_unavail_equiv:82.5%, star_outs:82.5%
+travel -> travel_miles:95.6%, abs_tz_shift_hours:95.6%, altitude_change_ft:95.6%, consecutive_road_games:95.9%, international_game:95.9%, high_altitude_game:95.9%
+continuity -> returning_offense_snap_share:58.6%, returning_defense_snap_share:58.6%, returning_ol_snap_share:58.6%, returning_skill_snap_share:58.6%
+qb_coach -> qb_prior_starts:91.7%, qb_changed_from_prior_season:87.2%, head_coach_changed:91.4%, offensive_coordinator_changed:23.8%, defensive_coordinator_changed:23.8%
+weather_venue -> wind:MISSING, roof:MISSING, surface:MISSING
+rest_elo -> rest_edge:100.0%, elo_edge:100.0%
+
+odds_quotes rows=59390 cols=20 seasons=2006-2026
+odds_columns=game_id,season,gameday,source_date,date_offset_days,provider,phase,quote_timestamp,source,source_url,workbook_row,market,selection,line,decimal_odds,american_odds,home_team,away_team,event_id,provider_id
+market_top={"moneyline": 22524, "total": 18493, "spread": 18373}
+phase_top={"open": 30116, "close": 29274}
+selection_top={"home": 20457, "away": 20440, "over": 9250, "under": 9243}
+provider_top={"bet365": 23292, "Pinnacle": 12838, "ESPN BET": 10234, "FootballLocks (book unspecified)": 4250, "betr": 3146, "DraftKings": 2782, "Unibet": 2358, "Caesars Sportsbook": 490}
+odds_sample:
+game_id,season,gameday,source_date,date_offset_days,provider,phase,quote_timestamp,source,source_url,workbook_row,market,selection,line,decimal_odds,american_odds,home_team,away_team,event_id,provider_id
+2025_22_SEA_NE,2025,2026-02-08,2026-02-08,0.0,betr,open,,Australia Sports Betting,https://www.aussportsbetting.com/data/historical-nfl-results-and-odds-data/,2.0,moneyline,home,,2.85,185.0,,,,
+2025_22_SEA_NE,2025,2026-02-08,2026-02-08,0.0,betr,open,,Australia Sports Betting,https://www.aussportsbetting.com/data/historical-nfl-results-and-odds-data/,2.0,spread,home,3.5,2.0,100.0,,,,
+2025_22_SEA_NE,2025,2026-02-08,2026-02-08,0.0,betr,open,,Australia Sports Betting,https://www.aussportsbetting.com/data/historical-nfl-results-and-odds-data/,2.0,moneyline,away,,1.43,-232.55813953488376,,,,
+2025_22_SEA_NE,2025,2026-02-08,2026-02-08,0.0,betr,open,,Australia Sports Betting,https://www.aussportsbetting.com/data/historical-nfl-results-and-odds-data/,2.0,spread,away,-3.5,1.8,-125.0,,,,
+2025_22_SEA_NE,2025,2026-02-08,2026-02-08,0.0,betr,open,,Australia Sports Betting,https://www.aussportsbetting.com/data/historical-nfl-results-and-odds-data/,2.0,total,over,45.5,1.84,-119.04761904761904,,,,
+2025_22_SEA_NE,2025,2026-02-08,2026-02-08,0.0,betr,open,,Australia Sports Betting,https://www.aussportsbetting.com/data/historical-nfl-results-and-odds-data/,2.0,total,under,45.5,2.05,105.0,,,,
+2025_22_SEA_NE,2025,2026-02-08,2026-02-08,0.0,betr,close,,Australia Sports Betting,https://www.aussportsbetting.com/data/historical-nfl-results-and-odds-data/,2.0,moneyline,home,,4.7,370.0,,,,
+2025_22_SEA_NE,2025,2026-02-08,2026-02-08,0.0,betr,close,,Australia Sports Betting,https://www.aussportsbetting.com/data/historical-nfl-results-and-odds-data/,2.0,spread,home,7.5,1.92,-108.69565217391305,,,,
+2025_22_SEA_NE,2025,2026-02-08,2026-02-08,0.0,betr,close,,Australia Sports Betting,https://www.aussportsbetting.com/data/historical-nfl-results-and-odds-data/,2.0,moneyline,away,,1.18,-555.5555555555558,,,,
+2025_22_SEA_NE,2025,2026-02-08,2026-02-08,0.0,betr,close,,Australia Sports Betting,https://www.aussportsbetting.com/data/historical-nfl-results-and-odds-data/,2.0,spread,away,-7.5,1.82,-121.95121951219512,,,,
+2025_22_SEA_NE,2025,2026-02-08,2026-02-08,0.0,betr,close,,Australia Sports Betting,https://www.aussportsbetting.com/data/historical-nfl-results-and-odds-data/,2.0,total,over,29.5,1.88,-113.63636363636364,,,,
+2025_22_SEA_NE,2025,2026-02-08,2026-02-08,0.0,betr,close,,Australia Sports Betting,https://www.aussportsbetting.com/data/historical-nfl-results-and-odds-data/,2.0,total,under,29.5,1.85,-117.6470588235294,,,,
+
+
+schedule_context_columns=gameday,weekday,gametime,location,overtime,away_rest,home_rest,div_game,roof,surface,temp,wind,stadium_id,stadium
+
+44-7 SEARCH
+{"bets": "51", "file": "/home/anestishkurti92/nfl-predictor-v1/research_v2/home_opener_stress/sensitivity.csv", "losses": "11", "roi": "0.1363414986947494", "row": 12, "win_rate": "0.8", "wins": "44"}
