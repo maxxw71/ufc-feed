@@ -1,0 +1,40 @@
+NFL TRAVEL DEPLOYMENT AUDIT
+
+{
+  "creative_methods_audited": 18,
+  "travel_methods_ready": 13,
+  "travel_methods_watch": 5,
+  "travel_methods_research_only": 0,
+  "confirmed_vetoes_audited": 34,
+  "deployment_grade_vetoes": 13,
+  "methods_with_primary_travel_veto": 12
+}
+
+READY STANDALONE TRAVEL METHODS
+MODERN DOG35_44 AWAY | adv_prev_travel_miles >= 435.82 | n=233 ROI=+18.1% holdout=+25.8% seasons=10/14 | top-team share=6.4% (IND)
+LONG DOG35_44 AWAY | adv_altitude_change_ft <= -593 | n=128 ROI=+33.9% holdout=+24.4% seasons=13/19 | top-team share=8.6% (TB)
+MODERN DOG35_44 ANY | fatigue_load_index <= 0.64751 | n=139 ROI=+13.1% holdout=+17.0% seasons=10/14 | top-team share=6.9% (CLE)
+MODERN DOG35_44 AWAY | adv_prev_abs_tz_shift >= 1 | n=197 ROI=+13.0% holdout=+14.4% seasons=10/14 | top-team share=6.2% (IND)
+LONG DOG35_49 AWAY | road_games_last5_including_current <= 1 | n=226 ROI=+11.0% holdout=+13.8% seasons=13/20 | top-team share=5.3% (BUF)
+LONG FAV55_65 AWAY | adv_prior_road_games_last3 >= 1 | n=262 ROI=+11.6% holdout=+13.0% seasons=13/20 | top-team share=6.1% (ATL)
+LONG DOG35_44 ANY | adv_prior_long_trips_last3 >= 1 | n=288 ROI=+19.8% holdout=+12.8% seasons=14/20 | top-team share=6.9% (MIA)
+LONG DOG35_49 ANY | adv_prior_long_trips_last4 >= 1 | n=465 ROI=+11.3% holdout=+12.7% seasons=14/20 | top-team share=5.6% (WAS)
+LONG DOG35_44 AWAY | adv_prior_road_miles_last3 >= 394.61 | n=383 ROI=+14.1% holdout=+12.7% seasons=13/20 | top-team share=6.0% (IND)
+LONG FAV55_65 AWAY | adv_road_miles4_per_rest_day >= 0 | n=222 ROI=+12.1% holdout=+11.3% seasons=16/20 | top-team share=7.7% (ATL)
+LONG DOG35_49 AWAY | adv_prior_road_miles_last4 >= 949.9 | n=401 ROI=+13.7% holdout=+10.8% seasons=14/20 | top-team share=5.0% (IND)
+MODERN DOG35_44 AWAY | adv_prior_road_streak >= 1 | n=301 ROI=+11.0% holdout=+10.8% seasons=10/14 | top-team share=6.1% (IND)
+LONG DOG20_34 AWAY | road_games_last4_including_current <= 1 | n=276 ROI=+13.3% holdout=+10.4% seasons=13/20 | top-team share=6.2% (LV)
+
+PRIMARY DEPLOYMENT-GRADE TRAVEL VETOES
+NFL-H020 | VETO adv_road_miles_last4_including_current <= -520.7 | holdout ROI +26.7% -> +85.6% | removed 11L/1W | retain 65%
+NFL-H028 | VETO adv_abs_tz_shift_hours >= 0 | holdout ROI +23.3% -> +56.7% | removed 13L/8W | retain 51%
+NFL-H036 | VETO adv_prior_road_miles_last5 <= -449.28 | holdout ROI +17.3% -> +45.6% | removed 11L/4W | retain 67%
+NFL-H014 | VETO adv_prev_abs_tz_shift >= 1 | holdout ROI +33.3% -> +54.4% | removed 7L/3W | retain 75%
+NFL-H087 | VETO travel_miles >= 1025.2 | holdout ROI +11.0% -> +31.9% | removed 12L/3W | retain 64%
+NFL-H039 | VETO adv_prior_tz_hours_last4 <= -2 | holdout ROI +22.2% -> +41.1% | removed 6L/2W | retain 78%
+NFL-H017 | VETO adv_prior_road_miles_last5 <= -315.24 | holdout ROI +18.2% -> +36.8% | removed 21L/10W | retain 70%
+NFL-H006 | VETO adv_prior_tz_hours_last2 <= -1 | holdout ROI +26.8% -> +44.1% | removed 15L/8W | retain 70%
+NFL-H058 | VETO adv_tz_hours_last4_including_current <= -1 | holdout ROI +13.8% -> +28.4% | removed 36L/22W | retain 55%
+NFL-H092 | VETO extra_rest_ge8 >= 1 | holdout ROI +12.8% -> +26.7% | removed 9L/4W | retain 74%
+NFL-H079 | VETO fatigue_load_index >= 1.6136 | holdout ROI +12.4% -> +26.1% | removed 23L/13W | retain 61%
+NFL-H062 | VETO adv_prior_road_miles_last5 <= -305.33 | holdout ROI +12.0% -> +24.7% | removed 16L/9W | retain 71%
