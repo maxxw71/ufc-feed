@@ -1,0 +1,37 @@
+name: NFL streak priority deep dissection
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/nfl_streak_priority_deep_dissection.py'
+permissions:
+  contents: write
+jobs:
+  audit:
+    runs-on: [self-hosted, Linux, X64, appwiza]
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+        with: {fetch-depth: 0}
+      - name: Run priority dissection
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          /home/anestishkurti92/nfl-predictor-v1/venv/bin/python "$GITHUB_WORKSPACE/scripts/nfl_streak_priority_deep_dissection.py"
+      - name: Publish results
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          SRC=/home/appwiza-runner/nfl-context-data/streak_priority_deep_dissection
+          DEST="$GITHUB_WORKSPACE/nfl/streak_priority_deep_dissection"
+          mkdir -p "$DEST"
+          cp "$SRC"/* "$DEST"/
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git add nfl/streak_priority_deep_dissection
+          if ! git diff --cached --quiet; then
+            git commit -m 'Update priority streak dissection results'
+            git pull --rebase origin main
+            git push origin HEAD:main
+          fi
