@@ -197,7 +197,6 @@ def _raw_odds_identity_reasons(
     item = provider_items[0]
     reasons: list[str] = []
 
-    # The bookmaker item itself must be attached to the same ESPN event/competition.
     item_ref = _text(item.get("$ref"))
     if espn is None or f"/events/{espn}/competitions/{espn}/odds/" not in item_ref:
         reasons.append("raw_odds_event_mismatch")
@@ -385,3 +384,5 @@ def filter_records(records: Iterable[dict[str, Any]], schedule: Any, now: dateti
             approved.append(record)
 
     return approved, rejected
+
+# deployment retrigger marker 2026-09-14
