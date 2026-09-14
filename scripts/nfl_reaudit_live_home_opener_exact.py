@@ -2,11 +2,11 @@ from pathlib import Path
 import json, os
 import pandas as pd
 import numpy as np
+# Exact re-audit of currently live home-opener rules; always report win percentage with ROI.
 R=Path('/home/anestishkurti92/nfl-predictor-v1/research_v2')
 OUT=Path('/home/appwiza-runner/nfl-context-data/legacy_live_home_opener_exact');OUT.mkdir(parents=True,exist_ok=True)
 F=R/'home_opener_stress/fixed_rule_equity.csv'
 d=pd.read_csv(F,low_memory=False)
-# This file is the frozen historical candidate set used by the live home-opener rule.
 d=d[d.game_type.eq('REG') & d.completed.eq(True)].copy()
 d['edge']=pd.to_numeric(d.prior_win_pct,errors='coerce')-pd.to_numeric(d.opponent_prior_win_pct,errors='coerce')
 d['run_rank']=pd.to_numeric(d.last_rank_def_allowed_rush_epa_per_carry,errors='coerce')
@@ -37,7 +37,6 @@ for name,x in rules.items():
     x.to_csv(OUT/f'{name}_bets.csv',index=False)
 pd.DataFrame(rows).to_csv(OUT/'summary.csv',index=False)
 pd.concat(yr,ignore_index=True).to_csv(OUT/'by_season.csv',index=False)
-# Verify whether frozen file itself is already exactly the original rule candidate set.
 verify={'fixed_rule_rows':len(d),'all_rows_meet_original_conditions':bool(((d.run_rank<=10)&(d.edge>0)).all()),'min_edge':float(d.edge.min()),'max_run_rank':float(d.run_rank.max())}
 (OUT/'verification.json').write_text(json.dumps(verify,indent=2))
 lines=['LIVE HOME-OPENER LEGACY RULE RE-AUDIT','',json.dumps(verify,indent=2),'']
