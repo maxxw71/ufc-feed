@@ -1,0 +1,96 @@
+{
+  "version": "2026-09-14",
+  "validation": "Filters selected on 2006-2019 only and confirmed on frozen 2020-2025 holdout.",
+  "important": "Each rule is validated individually. Do not automatically OR multiple rules together unless that combined rule is separately validated.",
+  "rules": [
+    {
+      "method_id": "NFL-H003",
+      "feature": "recent_edge_def_allowed_pass_epa_per_dropback",
+      "operator": ">=",
+      "threshold": 0.21823825659497048,
+      "action": "veto_candidate",
+      "holdout_base_roi": 0.43744186046511624,
+      "holdout_filtered_roi": 0.6359999999999999,
+      "holdout_removed_losses": 6,
+      "holdout_removed_wins": 2
+    },
+    {
+      "method_id": "NFL-H002",
+      "feature": "dome_game",
+      "operator": ">=",
+      "threshold": 1.0,
+      "action": "confirmed_risk_flag",
+      "holdout_base_roi": 0.49489361702127654,
+      "holdout_filtered_roi": 0.75,
+      "holdout_removed_losses": 10,
+      "holdout_removed_wins": 9
+    },
+    {
+      "method_id": "NFL-H002",
+      "feature": "qb_prior_starts",
+      "operator": "<=",
+      "threshold": 12.7,
+      "action": "confirmed_risk_flag",
+      "holdout_base_roi": 0.49489361702127654,
+      "holdout_filtered_roi": 0.6208333333333332,
+      "holdout_removed_losses": 6,
+      "holdout_removed_wins": 5
+    },
+    {
+      "method_id": "NFL-H016",
+      "feature": "rank_edge_giveaway_rate",
+      "operator": "<=",
+      "threshold": -4.0,
+      "action": "veto_candidate",
+      "holdout_base_roi": 0.2613333333333333,
+      "holdout_filtered_roi": 0.4476923076923077,
+      "holdout_removed_losses": 11,
+      "holdout_removed_wins": 8
+    },
+    {
+      "method_id": "NFL-H006",
+      "feature": "grass_surface",
+      "operator": "<=",
+      "threshold": 0.0,
+      "action": "confirmed_risk_flag",
+      "holdout_base_roi": 0.26815789473684204,
+      "holdout_filtered_roi": 0.3958974358974358,
+      "holdout_removed_losses": 20,
+      "holdout_removed_wins": 17
+    },
+    {
+      "method_id": "NFL-H006",
+      "feature": "recent_edge_sack_or_hit_rate",
+      "operator": "<=",
+      "threshold": -0.02418698829105624,
+      "action": "confirmed_risk_flag",
+      "holdout_base_roi": 0.26815789473684204,
+      "holdout_filtered_roi": 0.3541304347826087,
+      "holdout_removed_losses": 16,
+      "holdout_removed_wins": 14
+    },
+    {
+      "method_id": "NFL-H006",
+      "feature": "adv_skill_unavail_equiv",
+      "operator": "<=",
+      "threshold": -0.6387499999999999,
+      "action": "veto_candidate",
+      "holdout_base_roi": 0.26815789473684204,
+      "holdout_filtered_roi": 0.3498529411764706,
+      "holdout_removed_losses": 6,
+      "holdout_removed_wins": 2
+    },
+    {
+      "method_id": "NFL-H029",
+      "feature": "rank_edge_punt_return_average",
+      "operator": "<=",
+      "threshold": -14.2,
+      "action": "veto_candidate",
+      "holdout_base_roi": 0.2178333333333333,
+      "holdout_filtered_roi": 0.31,
+      "holdout_removed_losses": 9,
+      "holdout_removed_wins": 6
+    }
+  ],
+  "no_confirmed_filter": ["NFL-H010", "NFL-H033"]
+}
