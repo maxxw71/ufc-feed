@@ -1,0 +1,40 @@
+name: NFL context data expansion
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/nfl_expand_context_data.py'
+      - '.github/workflows/nfl-context-expand.yml'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: nfl-context-data-expansion
+  cancel-in-progress: true
+
+jobs:
+  expand:
+    if: github.repository == 'maxxw71/ufc-feed' && github.ref == 'refs/heads/main'
+    runs-on: [self-hosted, Linux, X64, appwiza]
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download NFL player and context datasets
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          ROOT=/home/anestishkurti92/nfl-predictor-v1
+          test -x "$ROOT/venv/bin/python"
+          avail=$(df -Pk "$ROOT" | awk 'NR==2 {print $4}')
+          [ "$avail" -ge 4194304 ] || { echo 'Less than 4 GiB free; refusing large NFL expansion'; exit 3; }
+          "$ROOT/venv/bin/python" -m pip install -q --upgrade nflreadpy
+          cp "$GITHUB_WORKSPACE/scripts/nfl_expand_context_data.py" "$ROOT/nfl_expand_context_data.py.new"
+          mv "$ROOT/nfl_expand_context_data.py.new" "$ROOT/nfl_expand_context_data.py"
+          NFL_ROOT="$ROOT" "$ROOT/venv/bin/python" "$ROOT/nfl_expand_context_data.py"
+          echo '=== STATUS ==='
+          cat "$ROOT/NFL_CONTEXT_DATA_STATUS.json"
+          echo '=== DISK ==='
+          df -h "$ROOT"
