@@ -1,0 +1,23 @@
+{
+  "status": "SHADOW_PRIORITY_NOT_LIVE",
+  "generated": "2026-09-14",
+  "policy": "Require both independent methods to qualify the same team at actionable odds. Apply each method's approved non-overlapping safety veto. Do not treat historical win rate as a calibrated future-game probability.",
+  "pairs": [
+    {
+      "tier": "A_PLUS_SHADOW",
+      "coach_method": "CO005",
+      "football_method": "NFL-H017",
+      "raw": {"n": 22, "wins": 19, "losses": 3, "win_pct": 0.8636, "roi": 1.2009, "positive_seasons": "11/12", "max_season_share": 0.182, "loo_min_roi": 1.131},
+      "with_coach_veto": {"n": 18, "wins": 16, "losses": 2, "win_pct": 0.8889, "roi": 1.25, "positive_seasons": "9/10", "loo_min_roi": 1.171},
+      "coach_veto": "opp_coachq_oc_prior_quality <= 0.524609375"
+    },
+    {
+      "tier": "A_PLUS_SHADOW",
+      "coach_method": "CO017",
+      "football_method": "NFL-H029",
+      "raw": {"n": 18, "wins": 15, "losses": 3, "win_pct": 0.8333, "roi": 1.035, "positive_seasons": "11/12", "max_season_share": 0.167, "loo_min_roi": 0.969},
+      "with_coach_veto": {"n": 15, "wins": 13, "losses": 2, "win_pct": 0.8667, "roi": 1.095, "positive_seasons": "10/10", "loo_min_roi": 1.022},
+      "coach_veto": "rank_edge_passing_cpoe <= -10.2"
+    }
+  ]
+}
