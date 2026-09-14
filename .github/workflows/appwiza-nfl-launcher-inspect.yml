@@ -1,0 +1,65 @@
+name: Appwiza NFL launcher inspect
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/appwiza-nfl-launcher-inspect.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  inspect:
+    if: github.repository == 'maxxw71/ufc-feed' && github.ref == 'refs/heads/main'
+    runs-on: [self-hosted, Linux, X64, appwiza]
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Capture sanitized launcher and ownership report
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p nfl
+          REPORT=nfl/live_launcher_report.txt
+          ROOT=/home/anestishkurti92/nfl-predictor-v1
+          SCANNER="$ROOT/research_v2/nfl_home_opener_scanner.py"
+          : > "$REPORT"
+          echo '=== RUNNER ID ===' >> "$REPORT"
+          id >> "$REPORT" 2>&1 || true
+          echo >> "$REPORT"
+          echo '=== OWNERSHIP / MODE ===' >> "$REPORT"
+          stat -c '%U:%G %a %n' "$ROOT" "$ROOT/research_v2" "$SCANNER" >> "$REPORT" 2>&1 || true
+          echo >> "$REPORT"
+          echo '=== GIT ROOT / REMOTE ===' >> "$REPORT"
+          git -C "$ROOT" rev-parse --show-toplevel >> "$REPORT" 2>&1 || true
+          url=$(git -C "$ROOT" remote get-url origin 2>/dev/null || true)
+          if [ -n "$url" ]; then
+            printf '%s\n' "$url" | sed -E 's#(https?://)[^/@]+@#\1[redacted]@#' >> "$REPORT"
+          else
+            echo 'no_origin_remote' >> "$REPORT"
+          fi
+          git -C "$ROOT" status --short --branch 2>/dev/null | head -80 >> "$REPORT" || true
+          echo >> "$REPORT"
+          echo '=== SYSTEMD REFERENCES ===' >> "$REPORT"
+          grep -RniE 'nfl_home_opener_scanner|nfl-predictor-v1|nfl_2026_alerts' /etc/systemd/system /lib/systemd/system 2>/dev/null | \
+            grep -Eiv 'password|secret|token|api[_-]?key|credential' | head -120 >> "$REPORT" || true
+          echo >> "$REPORT"
+          echo '=== CRON REFERENCES ===' >> "$REPORT"
+          grep -RniE 'nfl_home_opener_scanner|nfl-predictor-v1|nfl_2026_alerts' /etc/crontab /etc/cron.d /var/spool/cron 2>/dev/null | \
+            grep -Eiv 'password|secret|token|api[_-]?key|credential' | head -120 >> "$REPORT" || true
+          echo >> "$REPORT"
+          echo '=== RUNNING PROCESS REFERENCES ===' >> "$REPORT"
+          ps -eo user,pid,args | grep -E 'nfl_home_opener_scanner|nfl-predictor-v1|nfl_2026_alerts' | grep -v grep | head -60 >> "$REPORT" || true
+          echo >> "$REPORT"
+          echo '=== RUNNER CRONTAB ===' >> "$REPORT"
+          crontab -l 2>/dev/null | grep -Ei 'nfl|predictor|scanner' | head -60 >> "$REPORT" || true
+
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add "$REPORT"
+          if ! git diff --cached --quiet; then
+            git commit -m 'Capture live NFL launcher report'
+            git push
+          fi
