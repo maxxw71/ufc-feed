@@ -1,0 +1,80 @@
+name: NFL dataset feature summary
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/nfl-dataset-feature-summary.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  summarize:
+    runs-on: [self-hosted, Linux, X64, appwiza]
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build concise feature summary
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+          import csv,re
+          root=Path('/home/anestishkurti92/nfl-predictor-v1/research_v2')
+          csvs=list(root.rglob('*.csv'))
+          headers=[]
+          for p in csvs:
+              try:
+                  with p.open('r',encoding='utf-8',errors='replace',newline='') as f:
+                      h=next(csv.reader(f),[])
+                  headers.append((p,[str(x).strip().lower() for x in h]))
+              except Exception:
+                  pass
+          groups={
+            'moneyline_market':['moneyline','market_prob','american_odds','decimal_odds'],
+            'spread_market':['spread','point_spread','ats'],
+            'totals_market':['total','over_under','ou_line'],
+            'open_close_line_history':['open','close','phase','quote_timestamp'],
+            'epa':['epa_per_play','off_epa','early_down_epa','redzone_epa'],
+            'success_rate':['success_rate','third_down_success'],
+            'cpoe':['cpoe'],
+            'explosive_rate':['explosive_rate'],
+            'sack_pressure':['sack_rate','sack_or_hit','pressure','qb_hit'],
+            'turnovers':['giveaway','turnover','takeaway','fumble','interception'],
+            'special_teams':['fg_accuracy','punt_net','punt_return','kick_return'],
+            'elo_power':['elo','power_rating','srs','dvoa'],
+            'rest_bye':['rest_edge','days_rest','bye','short_week'],
+            'qb_identity_continuity':['qb_','quarterback','qb_continuity'],
+            'ol_continuity':['ol_continuity','offensive_line','oline','o_line'],
+            'injury_availability':['injury','injured','inactive','availability','starter_out'],
+            'weather':['weather','wind','temperature','precip','humidity'],
+            'venue_surface_roof':['surface','roof','dome','venue'],
+            'travel_timezone_altitude':['travel','timezone','time_zone','distance','altitude'],
+            'coach_coordinator':['coach','coordinator'],
+          }
+          out=[]
+          out.append(f'csv_files_scanned={len(headers)}')
+          pbp=[]
+          for p in (root/'data'/'pbp').glob('play_by_play_*.parquet'):
+              m=re.search(r'(20\d{2}|19\d{2})',p.name)
+              if m: pbp.append(int(m.group(1)))
+          if pbp: out.append(f'play_by_play_years={min(pbp)}-{max(pbp)} count={len(set(pbp))}')
+          out.append('')
+          for name,keys in groups.items():
+              hits=[]
+              for p,h in headers:
+                  matched=sorted({c for c in h if any(k in c for k in keys)})
+                  if matched:
+                      hits.append((p,matched))
+              out.append(f'{name}={"YES" if hits else "NO"} files={len(hits)}')
+              for p,m in hits[:3]:
+                  out.append('  '+str(p)+' :: '+', '.join(m[:15]))
+          Path('nfl/dataset_feature_summary.txt').write_text('\n'.join(out)+'\n')
+          PY
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add nfl/dataset_feature_summary.txt
+          git commit -m 'Record NFL dataset feature summary' || true
+          git push || true
