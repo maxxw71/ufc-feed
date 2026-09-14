@@ -1,0 +1,18 @@
+TOP-3 RUN / SCHEDULE FINAL TIMING AUDIT
+
+{
+  "confirmed_timing_filters": 4,
+  "final_shadow_ready": 3,
+  "public_live": false
+}
+
+FINAL
+RS001 Heavy-road schedule + pressure edge | 40-20 (66.7%) ROI=+66.9% train=+65.3% val=+42.4% hold=+91.2% pos=85% | odds=+122 to +186 | one veto=FEATURE:opp_prior_road_miles_last3 <= 1084.2572731409475 | FINAL_SHADOW_READY
+RS002 Run-heavy + punt-net edge | 61-25 (70.9%) ROI=+71.8% train=+63.9% val=+93.9% hold=+76.2% pos=84% | odds=+100 to +186 | one veto=FEATURE:recent_edge_def_allowed_pass_epa_per_dropback >= 0.1544327526509944 | FINAL_SHADOW_READY
+RS003 Run-heavy + defensive YPP edge | 87-53 (62.1%) ROI=+49.5% train=+46.0% val=+54.2% hold=+51.1% pos=85% | odds=+100 to +186 | one veto=FEATURE:rank_edge_def_allowed_giveaway_rate >= 9.400000000000006 | FINAL_SHADOW_READY
+
+CONFIRMED TIMING CANDIDATES (compete for one veto slot)
+RS001 W15_16: pre_score=0.641 hold risk n=8 ROI=+25.1% safe=+87.6% retain=68%
+RS002 W4_6: pre_score=1.099 hold risk n=11 ROI=+32.6% safe=+56.6% retain=70%
+RS003 W5_6: pre_score=0.663 hold risk n=7 ROI=+6.4% safe=+41.0% retain=89%
+RS003 W5: pre_score=0.644 hold risk n=3 ROI=-16.7% safe=+39.9% retain=95%

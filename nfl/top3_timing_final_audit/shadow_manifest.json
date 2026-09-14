@@ -1,0 +1,81 @@
+{
+  "mode": "SHADOW_ONLY",
+  "public_website_enabled": false,
+  "email_enabled": false,
+  "bet_tracker_enabled": false,
+  "policy": "One total veto maximum: timing and feature vetoes compete; never stack. Narrowed price windows rejected by holdout revert to original discovery band.",
+  "methods": [
+    {
+      "method_id": "RS001",
+      "source": "TF001",
+      "name": "Heavy-road schedule + pressure edge",
+      "odds_range": "+122 to +186",
+      "conditions": [
+        [
+          "road_prev5_ge3",
+          ">=",
+          1.0
+        ],
+        [
+          "recent_edge_sack_or_hit_rate",
+          ">=",
+          0.00288736374754465
+        ]
+      ],
+      "single_veto_kind": "FEATURE",
+      "single_veto": "opp_prior_road_miles_last3 <= 1084.2572731409475",
+      "historical_record": "40-20",
+      "historical_win_pct": 0.6666666666666666,
+      "historical_roi": 0.6693333333333336,
+      "holdout_roi": 0.9116666666666666
+    },
+    {
+      "method_id": "RS002",
+      "source": "TF003",
+      "name": "Run-heavy + punt-net edge",
+      "odds_range": "+100 to +186",
+      "conditions": [
+        [
+          "pre_run_rate2",
+          ">=",
+          0.462580750311148
+        ],
+        [
+          "recent_edge_punt_net_average",
+          ">=",
+          3.68373015873016
+        ]
+      ],
+      "single_veto_kind": "FEATURE",
+      "single_veto": "recent_edge_def_allowed_pass_epa_per_dropback >= 0.1544327526509944",
+      "historical_record": "61-25",
+      "historical_win_pct": 0.7093023255813954,
+      "historical_roi": 0.7183720930232558,
+      "holdout_roi": 0.7623076923076921
+    },
+    {
+      "method_id": "RS003",
+      "source": "TF012",
+      "name": "Run-heavy + defensive YPP edge",
+      "odds_range": "+100 to +186",
+      "conditions": [
+        [
+          "pre_run_rate2",
+          ">=",
+          0.462580750311148
+        ],
+        [
+          "rank_edge_def_allowed_yards_per_play",
+          "<=",
+          -2.0
+        ]
+      ],
+      "single_veto_kind": "FEATURE",
+      "single_veto": "rank_edge_def_allowed_giveaway_rate >= 9.400000000000006",
+      "historical_record": "87-53",
+      "historical_win_pct": 0.6214285714285714,
+      "historical_roi": 0.4949285714285715,
+      "holdout_roi": 0.5106521739130435
+    }
+  ]
+}
