@@ -16,10 +16,6 @@ TEAM_NAMES={
  'Las Vegas Raiders':'LV','Los Angeles Chargers':'LAC','Los Angeles Rams':'LA','Miami Dolphins':'MIA','Minnesota Vikings':'MIN','New England Patriots':'NE','New Orleans Saints':'NO','New York Giants':'NYG',
  'New York Jets':'NYJ','Philadelphia Eagles':'PHI','Pittsburgh Steelers':'PIT','San Francisco 49ers':'SF','Seattle Seahawks':'SEA','Tampa Bay Buccaneers':'TB','Tennessee Titans':'TEN','Washington Commanders':'WAS'
 }
-# Official/current team-site overrides for teams not cleanly represented by the rollup,
-# plus LAC because the rollup text parser included section labels in the names.
-# TB has no formally titled DC on its current staff page; Todd Bowles is the defensive play-caller,
-# so the value is explicitly labeled rather than pretending he holds a DC title.
 OFFICIAL_2026={
  'GB':('Adam Stenavich','Jonathan Gannon','https://www.packers.com/team/coaches-roster/'),
  'JAX':('Grant Udinski','Anthony Campanile','https://www.jaguars.com/team/coaches-roster/'),
@@ -32,50 +28,59 @@ OFFICIAL_2026={
 
 def clean(s): return re.sub(r'\s+',' ',s).strip(' ,') if s else None
 
+def role_name(line, role):
+    suffix=' '+role
+    if not line.endswith(suffix): return None
+    name=clean(line[:-len(suffix)])
+    if not name or len(name.split())<2 or len(name.split())>6:return None
+    if name in {'Offense','Defense'}:return None
+    return name
+
 r=requests.get(URL,headers={'User-Agent':'Mozilla/5.0 (compatible; AppWizaNFLResearch/1.0)'},timeout=40); r.raise_for_status()
-text=unescape(re.sub(r'<[^>]+>',' ',r.text)); text=clean(text) or ''
-positions=[]
-for full,code in TEAM_NAMES.items():
-    i=text.find(full)
-    if i>=0: positions.append((i,full,code))
-positions.sort(); found={}
+# Preserve HTML text-node boundaries so the role label cannot absorb neighboring coaches/titles.
+raw=unescape(re.sub(r'<[^>]+>','\n',r.text))
+lines=[clean(x) for x in raw.splitlines()]
+lines=[x for x in lines if x]
+team_hits=[]
+for i,line in enumerate(lines):
+    for full,code in TEAM_NAMES.items():
+        if line==full:
+            team_hits.append((i,full,code)); break
+# Some responsive layouts repeat a team name. Keep the first occurrence that is followed by staff roles.
+first={}
+for i,full,code in team_hits:first.setdefault(code,(i,full,code))
+positions=sorted(first.values())
+found={}
 for idx,(start,full,code) in enumerate(positions):
-    end=positions[idx+1][0] if idx+1<len(positions) else min(len(text),start+6000)
-    block=text[start:end]
-    mo=re.search(r'([A-Z][A-Za-zÀ-ÖØ-öø-ÿ\.\'\- ]{2,80}?)\s+Offensive Coordinator\b',block)
-    md=re.search(r'([A-Z][A-Za-zÀ-ÖØ-öø-ÿ\.\'\- ]{2,80}?)\s+Defensive Coordinator\b',block)
-    def tail(m):
-        if not m:return None
-        s=clean(m.group(1)); toks=s.split()
-        if len(toks)>5:s=' '.join(toks[-4:])
-        return s
-    found[code]={'offensive_coordinator':tail(mo),'defensive_coordinator':tail(md)}
+    end=positions[idx+1][0] if idx+1<len(positions) else len(lines)
+    block=lines[start:end]
+    oc=dc=None
+    for line in block:
+        oc=oc or role_name(line,'Offensive Coordinator')
+        dc=dc or role_name(line,'Defensive Coordinator')
+    found[code]={'offensive_coordinator':oc,'defensive_coordinator':dc}
 valid={k:v for k,v in found.items() if v['offensive_coordinator'] and v['defensive_coordinator']}
 missing=sorted(set(TEAM_NAMES.values())-set(valid))
-print('2026 complete parsed teams:',len(valid),sorted(valid))
+print('2026 clean complete rollup teams:',len(valid),sorted(valid))
 print('2026 rollup missing/incomplete teams:',missing)
 for code in missing: print(code, found.get(code))
-if len(valid)<20: raise RuntimeError(f'Only parsed {len(valid)} complete 2026 staffs; source/parser appears broken')
+if len(valid)<20: raise RuntimeError(f'Only parsed {len(valid)} complete clean 2026 staffs; source/parser appears broken')
 
 staff=pd.read_csv(P)
 for code,v in valid.items():
     mask=(staff.season==2026)&(staff.team==code)
     staff.loc[mask,'offensive_coordinator']=v['offensive_coordinator']
     staff.loc[mask,'defensive_coordinator']=v['defensive_coordinator']
-    if 'offensive_coordinator_source' in staff: staff.loc[mask,'offensive_coordinator_source']='chatffb_current_rollup'
-    if 'defensive_coordinator_source' in staff: staff.loc[mask,'defensive_coordinator_source']='chatffb_current_rollup'
-    staff.loc[mask,'staff_source']='chatffb_2026_current_rollup'
-
-# Official overrides win over the secondary rollup.
+    if 'offensive_coordinator_source' in staff: staff.loc[mask,'offensive_coordinator_source']='chatffb_current_rollup_clean'
+    if 'defensive_coordinator_source' in staff: staff.loc[mask,'defensive_coordinator_source']='chatffb_current_rollup_clean'
+    staff.loc[mask,'staff_source']='chatffb_2026_current_rollup_clean'
 for code,(oc,dc,src) in OFFICIAL_2026.items():
     mask=(staff.season==2026)&(staff.team==code)
-    staff.loc[mask,'offensive_coordinator']=oc
-    staff.loc[mask,'defensive_coordinator']=dc
+    staff.loc[mask,'offensive_coordinator']=oc; staff.loc[mask,'defensive_coordinator']=dc
     if 'offensive_coordinator_source' in staff: staff.loc[mask,'offensive_coordinator_source']='official_team_site_2026'
     if 'defensive_coordinator_source' in staff: staff.loc[mask,'defensive_coordinator_source']='official_team_site_2026'
     staff.loc[mask,'staff_source']='official_team_site_2026'
     if 'source_page' in staff: staff.loc[mask,'source_page']=src
-
 staff=staff.sort_values(['team','season']).reset_index(drop=True)
 for role in ['head_coach','offensive_coordinator','defensive_coordinator']:
     prev=staff.groupby('team')[role].shift(1); known=staff[role].notna() & prev.notna()
@@ -87,11 +92,12 @@ staff.to_csv(P,index=False)
 try: status=json.loads(STATUS.read_text())
 except Exception: status={}
 remaining=staff[(staff.season==2026)&(staff.offensive_coordinator.isna()|staff.defensive_coordinator.isna())].team.astype(str).tolist()
-status['chatffb_2026']={'ok':True,'teams_parsed':len(valid),'rollup_missing_teams':missing,'url':URL}
+status['chatffb_2026']={'ok':True,'teams_parsed_clean':len(valid),'rollup_missing_teams':missing,'url':URL}
 status['official_2026_overrides']={'teams':sorted(OFFICIAL_2026),'remaining_incomplete_teams':remaining}
 status['oc_filled']=int(staff.offensive_coordinator.notna().sum()); status['dc_filled']=int(staff.defensive_coordinator.notna().sum())
 status['both_coordinators_filled']=int((staff.offensive_coordinator.notna()&staff.defensive_coordinator.notna()).sum())
 STATUS.write_text(json.dumps(status,indent=2,default=str))
+print(json.dumps(status['chatffb_2026'],indent=2))
 print(json.dumps(status['official_2026_overrides'],indent=2))
 print('=== 2026 all staffs ===')
 print(staff[staff.season.eq(2026)][['team','head_coach','offensive_coordinator','defensive_coordinator','offensive_coordinator_changed','defensive_coordinator_changed','staff_source']].sort_values('team').to_string(index=False))
