@@ -1,0 +1,78 @@
+NFL COACHING + EVERYTHING EXPANSION
+
+{
+  "source_table": "creative",
+  "staff_features": 70,
+  "canonical_methods_tested": 55,
+  "coaching_veto_candidates": 301,
+  "confirmed_coaching_vetoes": 96,
+  "new_coaching_methods_double_digit_holdout": 34
+}
+
+CONFIRMED COACHING VETOES
+NFL-H091: veto hc_prior_games >= 36.5 | holdout ROI +12.8% -> +54.8% | removed L/W 14/7
+NFL-H016: veto oc_prior_games >= 23 | holdout ROI +26.1% -> +64.2% | removed L/W 14/7
+NFL-H066: veto hc_prior_games <= 25 | holdout ROI +25.2% -> +56.8% | removed L/W 7/1
+NFL-H096: veto adv_dc_prior_role_seasons >= 2.3 | holdout ROI +11.6% -> +41.5% | removed L/W 7/1
+NFL-H066: veto dc_prior_games <= 21.5 | holdout ROI +25.2% -> +54.1% | removed L/W 7/1
+NFL-H066: veto dc_prior_games <= 13.75 | holdout ROI +25.2% -> +54.1% | removed L/W 7/1
+NFL-H066: veto dc_prior_games <= 10.25 | holdout ROI +25.2% -> +54.1% | removed L/W 7/1
+NFL-H015: veto adv_dc_prior_role_seasons >= 1 | holdout ROI +33.5% -> +61.8% | removed L/W 7/4
+NFL-H059: veto adv_dc_prior_games >= 44 | holdout ROI +24.2% -> +50.8% | removed L/W 7/1
+NFL-H075: veto oc_prior_role_seasons >= 2 | holdout ROI +26.1% -> +52.2% | removed L/W 7/4
+NFL-H093: veto adv_hc_prior_games <= -13 | holdout ROI +13.2% -> +38.2% | removed L/W 7/3
+NFL-H016: veto oc_prior_role_seasons >= 3 | holdout ROI +26.1% -> +50.9% | removed L/W 9/2
+NFL-H075: veto adv_dc_prior_games <= -14 | holdout ROI +26.1% -> +50.2% | removed L/W 5/1
+NFL-H059: veto dc_prior_role_seasons >= 5 | holdout ROI +24.2% -> +47.9% | removed L/W 8/5
+NFL-H080: veto dc_tenure_seasons >= 2 | holdout ROI +16.2% -> +38.2% | removed L/W 8/4
+NFL-H080: veto dc_tenure_seasons >= 1.6 | holdout ROI +16.2% -> +38.2% | removed L/W 8/4
+NFL-H080: veto dc_changed_season <= 0 | holdout ROI +16.2% -> +38.2% | removed L/W 8/4
+NFL-H093: veto adv_hc_tenure_seasons <= -1.45 | holdout ROI +13.2% -> +35.0% | removed L/W 6/2
+NFL-H005: veto oc_prior_role_seasons >= 3 | holdout ROI +36.0% -> +56.8% | removed L/W 7/3
+NFL-H016: veto adv_hc_prior_games <= -26 | holdout ROI +26.1% -> +46.7% | removed L/W 13/10
+NFL-H086: veto oc_prior_role_seasons >= 2 | holdout ROI +11.8% -> +30.7% | removed L/W 16/11
+NFL-H096: veto hc_prior_games <= 21.2 | holdout ROI +11.6% -> +30.2% | removed L/W 6/2
+NFL-H044: veto adv_oc_prior_games >= 14.75 | holdout ROI +16.0% -> +34.5% | removed L/W 7/2
+NFL-H036: veto oc_tenure_seasons >= 2.5 | holdout ROI +17.3% -> +35.1% | removed L/W 8/3
+NFL-H020: veto oc_prior_role_seasons >= 2.25 | holdout ROI +26.7% -> +44.3% | removed L/W 5/1
+NFL-H037: veto adv_hc_prior_win_pct >= 0.035714 | holdout ROI +16.5% -> +34.0% | removed L/W 14/11
+NFL-H082: veto adv_hc_changed_season <= -0.6 | holdout ROI +11.2% -> +28.4% | removed L/W 12/5
+NFL-H059: veto adv_dc_prior_role_seasons >= 4.5 | holdout ROI +24.2% -> +41.1% | removed L/W 5/1
+NFL-H015: veto adv_dc_prior_role_seasons >= 1.8 | holdout ROI +33.5% -> +50.1% | removed L/W 5/3
+NFL-H002: veto dc_prior_role_seasons >= 4 | holdout ROI +49.5% -> +66.0% | removed L/W 7/5
+
+TOP NEW COACHING METHODS
+STAFF+FOOTBALL | DOG20_34 AWAY | dc_prior_games >= 45 AND adv_returning_skill_snap_share <= -0.11762 | n=92 ROI=+47.8% | train +47.5% val +39.0% frozen holdout +54.2% | seasons 10/12
+STAFF+FOOTBALL | DOG35_44 ANY | oc_prior_games <= 13 AND rank_edge_def_allowed_explosive_rate <= -9.75 | n=134 ROI=+41.5% | train +46.4% val +35.7% frozen holdout +40.3% | seasons 10/16
+STAFF+FOOTBALL | DOG35_49 AWAY | adv_staff_change_count <= 0 AND recent_edge_explosive_rate <= -1.7048e-05 | n=192 ROI=+29.1% | train +27.7% val +31.9% frozen holdout +27.7% | seasons 16/19
+STAFF+FOOTBALL | DOG20_34 AWAY | dc_prior_games >= 45 AND adv_secondary_unavail_equiv >= 0.2625 | n=86 ROI=+49.2% | train +59.2% val +38.3% frozen holdout +42.7% | seasons 10/12
+STAFF+FOOTBALL | DOG35_49 AWAY | dc_prior_games <= 14 AND rank_edge_redzone_epa >= 1 | n=140 ROI=+32.9% | train +33.5% val +33.3% frozen holdout +31.6% | seasons 14/18
+STAFF+FOOTBALL | DOG35_44 AWAY | adv_staff_change_count <= 0 AND rank_edge_third_down_success >= 0 | n=128 ROI=+34.1% | train +34.6% val +38.3% frozen holdout +26.1% | seasons 15/18
+STAFF+FOOTBALL | DOG35_44 AWAY | dc_prior_games <= 14 AND rank_edge_punt_net_average >= -0.5 | n=122 ROI=+37.4% | train +41.5% val +41.8% frozen holdout +26.0% | seasons 12/18
+STAFF+FOOTBALL | DOG35_44 ANY | hc_prior_games_current_stint <= 33 AND rank_edge_third_down_success >= 0 | n=325 ROI=+24.5% | train +32.4% val +28.1% frozen holdout +13.0% | seasons 14/20
+STAFF+FOOTBALL | DOG35_49 AWAY | adv_staff_change_count <= 0 AND rank_edge_third_down_success >= 0 | n=189 ROI=+24.2% | train +25.6% val +24.9% frozen holdout +21.1% | seasons 14/18
+STAFF+FOOTBALL | DOG35_49 AWAY | adv_staff_change_count <= -1 AND recent_edge_explosive_rate <= -1.7048e-05 | n=85 ROI=+41.1% | train +37.2% val +57.9% frozen holdout +20.8% | seasons 13/16
+STAFF+FOOTBALL | DOG35_49 AWAY | adv_staff_change_count <= 0 AND rank_edge_punt_return_average >= 1 | n=180 ROI=+27.2% | train +32.8% val +26.9% frozen holdout +19.9% | seasons 15/19
+STAFF+FOOTBALL | DOG35_44 ANY | hc_prior_win_pct <= 0.46429 AND rank_edge_punt_return_average >= 9 | n=123 ROI=+44.9% | train +68.1% val +37.2% frozen holdout +21.9% | seasons 14/19
+STAFF+FOOTBALL | DOG35_44 HOME | oc_prior_games <= 32 AND recent_edge_off_epa <= -7.4473 | n=82 ROI=+32.7% | train +41.7% val +31.0% frozen holdout +27.0% | seasons 10/12
+STAFF+FOOTBALL | DOG35_49 AWAY | dc_prior_games <= 14 AND recent_edge_sack_or_hit_rate >= -0.043727 | n=206 ROI=+27.8% | train +30.9% val +34.0% frozen holdout +17.5% | seasons 14/20
+STAFF+FOOTBALL | DOG35_49 ANY | dc_prior_win_pct >= 0.65517 AND recent_edge_sack_or_hit_rate >= -0.043727 | n=210 ROI=+24.9% | train +28.0% val +36.1% frozen holdout +13.7% | seasons 13/20
+STAFF+FOOTBALL | DOG35_44 ANY | oc_prior_games <= 13 AND recent_edge_punt_return_average >= 4.4153 | n=110 ROI=+32.2% | train +38.2% val +41.4% frozen holdout +18.7% | seasons 10/14
+STAFF+FOOTBALL | DOG35_44 ANY | hc_prior_games <= 25 AND rank_edge_punt_return_average >= 9 | n=141 ROI=+46.1% | train +67.8% val +57.9% frozen holdout +11.0% | seasons 14/18
+STAFF+FOOTBALL | DOG35_49 AWAY | dc_prior_games <= 14 AND recent_edge_success_rate >= 0 | n=140 ROI=+31.3% | train +36.5% val +42.8% frozen holdout +15.7% | seasons 13/18
+STAFF+FOOTBALL | DOG35_44 ANY | hc_prior_games <= 36 AND rank_edge_punt_return_average >= 9 | n=188 ROI=+35.7% | train +51.7% val +39.2% frozen holdout +10.7% | seasons 14/19
+STAFF+FOOTBALL | DOG35_44 HOME | hc_prior_games <= 25 AND recent_edge_kick_return_average >= 3.8 | n=69 ROI=+47.6% | train +75.3% val +71.9% frozen holdout +11.6% | seasons 11/13
+STAFF+FOOTBALL | DOG35_49 AWAY | adv_full_staff_overhaul >= 0 AND rank_edge_punt_return_average >= 1 | n=228 ROI=+23.8% | train +34.4% val +21.4% frozen holdout +13.0% | seasons 14/19
+STAFF+FOOTBALL | DOG35_44 HOME | hc_prior_win_pct <= 0.5 AND recent_edge_off_epa <= -7.4473 | n=85 ROI=+29.5% | train +45.7% val +25.9% frozen holdout +20.6% | seasons 10/12
+STAFF+FOOTBALL | DOG35_44 HOME | oc_prior_games <= 32 AND recent_edge_sack_rate_allowed <= 0 | n=148 ROI=+22.7% | train +30.5% val +22.6% frozen holdout +15.9% | seasons 13/14
+STAFF+FOOTBALL | DOG35_44 HOME | oc_prior_games <= 36 AND rank_edge_kick_return_average >= 0 | n=191 ROI=+24.4% | train +35.8% val +26.6% frozen holdout +11.9% | seasons 14/20
+STAFF+FOOTBALL | DOG35_44 ANY | hc_prior_games <= 16 AND rank_edge_punt_return_average >= 9 | n=100 ROI=+48.2% | train +73.4% val +56.6% frozen holdout +11.8% | seasons 11/15
+STAFF+FOOTBALL | DOG35_44 HOME | hc_prior_win_pct <= 0.54545 AND recent_edge_sack_or_hit_rate <= 4.5281e-05 | n=166 ROI=+21.9% | train +29.0% val +27.5% frozen holdout +12.3% | seasons 12/14
+STAFF+FOOTBALL | DOG35_44 ANY | oc_prior_win_pct >= 0.6087 AND adv_prior_road_miles_last4 >= 0 | n=201 ROI=+23.7% | train +29.8% val +27.0% frozen holdout +11.0% | seasons 14/20
+STAFF+FOOTBALL | DOG35_49 AWAY | adv_staff_change_count <= 0 AND rank_edge_def_allowed_early_down_epa <= -10 | n=91 ROI=+30.3% | train +37.5% val +39.1% frozen holdout +12.9% | seasons 12/15
+STAFF+FOOTBALL | DOG35_44 HOME | oc_prior_games <= 32 AND recent_edge_sack_or_hit_rate <= 4.5281e-05 | n=140 ROI=+24.9% | train +41.6% val +19.9% frozen holdout +14.1% | seasons 11/13
+STAFF+FOOTBALL | DOG35_44 AWAY | adv_both_coords_changed >= 0 AND rank_edge_yards_per_play <= -10 | n=82 ROI=+33.4% | train +38.1% val +49.2% frozen holdout +10.6% | seasons 11/16
+STAFF+FOOTBALL | DOG20_34 AWAY | adv_dc_tenure_seasons <= -1 AND adv_altitude_change_ft >= 410 | n=71 ROI=+37.6% | train +62.9% val +39.0% frozen holdout +14.2% | seasons 7/11
+STAFF+FOOTBALL | DOG35_49 AWAY | dc_changed_season >= 1 AND rank_edge_pass_epa_per_dropback >= 10 | n=62 ROI=+37.4% | train +44.1% val +53.3% frozen holdout +12.4% | seasons 12/12
+STAFF+FOOTBALL | DOG35_44 HOME | oc_prior_role_seasons <= 2 AND rank_edge_def_allowed_explosive_rate >= -1 | n=108 ROI=+27.1% | train +49.4% val +28.1% frozen holdout +10.8% | seasons 12/14
+STAFF+FOOTBALL | DOG35_44 HOME | hc_prior_win_pct <= 0.54545 AND recent_edge_sack_rate_allowed <= -0.026657 | n=91 ROI=+28.0% | train +49.2% val +30.5% frozen holdout +10.4% | seasons 12/14
