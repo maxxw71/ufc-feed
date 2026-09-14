@@ -1,0 +1,5 @@
+before=user::rwx;user:appwiza-runner:rwx	#effective:r-x;group::r-x;mask::r-x;other::r-x;default:user::rwx;default:user:appwiza-runner:rwx;default:group::r-x;default:mask::rwx;default:other::r-x;;
+setfacl: /srv/appwiza-sports/public/nfl: Operation not permitted
+acl_mask_adjusted=no
+deploy_status=BLOCKED_BY_OWNER_ACL
+after=user::rwx;user:appwiza-runner:rwx	#effective:r-x;group::r-x;mask::r-x;other::r-x;default:user::rwx;default:user:appwiza-runner:rwx;default:group::r-x;default:mask::rwx;default:other::r-x;;
