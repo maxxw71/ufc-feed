@@ -1,0 +1,67 @@
+NFL CALENDAR / SCHEDULE / ROAD-STREAK / COLD / RUN-HEAVY DISCOVERY
+
+{
+  "rows": 8426,
+  "new_feature_coverage": {
+    "cal_monday": 8426,
+    "cal_thursday": 8426,
+    "cal_saturday": 8426,
+    "cal_primetime": 8426,
+    "cal_nov_or_later": 8426,
+    "cal_dec_or_jan": 8426,
+    "road_prior_streak": 8426,
+    "road_streak_including_current": 8426,
+    "fourth_straight_road": 8426,
+    "road_games_prev3": 8426,
+    "road_games_prev5": 8426,
+    "cold40_outdoor": 8426,
+    "freezing32_outdoor": 8426,
+    "late_cold40": 8426,
+    "late_freezing32": 8426,
+    "cal_temp": 5854,
+    "pre_run_rate": 8426,
+    "recent3_run_rate": 8426,
+    "run_rate_edge": 8426,
+    "recent3_run_rate_edge": 8426,
+    "opp_pre_run_rate": 8426,
+    "opp_recent3_run_rate": 8426
+  },
+  "run_rate_rows": 8426,
+  "temperature_rows": 5854,
+  "survivors": 320,
+  "preferred": 27,
+  "preferred_by_concept": {
+    "RUN_HEAVY": 16,
+    "ROAD_STREAK": 9,
+    "CALENDAR": 2
+  }
+}
+
+TOP PREFERRED
+NS001 RUN_HEAVY LONG PK_55 AWAY | 64-31 (67.4%) n=95 ROI=+36.6% train=+26.3% val=+40.9% hold=+49.2% pos=70% recent_delta=+15.6pp weather_only=False | [["opp_pre_run_rate", ">=", 0.3864734299516908], ["recent_edge_punt_return_average", ">=", 4.394444444444446]]
+NS002 RUN_HEAVY LONG DOG20_34 AWAY | 43-80 (35.0%) n=123 ROI=+22.8% train=+8.4% val=+17.5% hold=+58.1% pos=80% recent_delta=+45.1pp weather_only=False | [["recent3_run_rate", ">=", 0.47805328197721075], ["rank_edge_points_against", ">=", -5.0]]
+NS003 RUN_HEAVY LONG DOG35_49 AWAY | 73-52 (58.4%) n=125 ROI=+37.5% train=+48.3% val=+12.4% hold=+40.0% pos=79% recent_delta=+9.6pp weather_only=False | [["pre_run_rate", ">=", 0.4667437246300308], ["recent_edge_punt_return_average", ">=", 0.2999999999999989]]
+NS004 RUN_HEAVY LONG FAV55_65 AWAY | 72-22 (76.6%) n=94 ROI=+27.9% train=+21.8% val=+27.1% hold=+38.0% pos=80% recent_delta=+13.5pp weather_only=False | [["run_rate_edge", ">=", -0.03272698670140099], ["recent_edge_kick_return_average", ">=", 4.361805555555557]]
+NS005 RUN_HEAVY MODERN FAV65_75 AWAY | 88-17 (83.8%) n=105 ROI=+21.0% train=+14.0% val=+20.2% hold=+35.2% pos=80% recent_delta=+18.1pp weather_only=False | [["recent3_run_rate", "<=", 0.4], ["rank_edge_fg_accuracy", "<=", 10.5]]
+NS006 RUN_HEAVY LONG DOG35_49 ANY | 104-78 (57.1%) n=182 ROI=+36.9% train=+38.3% val=+33.6% hold=+37.2% pos=75% recent_delta=+1.2pp weather_only=False | [["pre_run_rate", ">=", 0.462580750311148], ["rank_edge_def_allowed_yards_per_play", "<=", -2.0]]
+NS007 RUN_HEAVY LONG DOG35_49 ANY | 71-61 (53.8%) n=132 ROI=+29.9% train=+27.4% val=+19.9% hold=+40.0% pos=70% recent_delta=+16.3pp weather_only=False | [["opp_recent3_run_rate", ">=", 0.48314135842526496], ["rank_edge_def_allowed_off_epa_per_play", "<=", -10.5]]
+NS008 ROAD_STREAK MODERN DOG35_44 HOME | 50-58 (46.3%) n=108 ROI=+17.4% train=+20.0% val=+18.5% hold=+43.2% pos=70% recent_delta=+24.0pp weather_only=False | [["road_prior_streak", ">=", 1.0], ["rank_edge_sack_or_hit_rate", "<=", -13.0]]
+NS009 RUN_HEAVY LONG DOG35_49 AWAY | 60-55 (52.2%) n=115 ROI=+24.8% train=+13.6% val=+28.6% hold=+36.7% pos=70% recent_delta=+15.6pp weather_only=False | [["opp_recent3_run_rate", ">=", 0.4876835335517534], ["recent_edge_punt_return_average", ">=", 0.2999999999999989]]
+NS010 ROAD_STREAK LONG FAV55_65 AWAY | 71-27 (72.4%) n=98 ROI=+21.1% train=+13.7% val=+19.6% hold=+27.3% pos=80% recent_delta=+10.7pp weather_only=False | [["road_prior_streak", ">=", 1.0], ["fatigue_load_index", ">=", 2.012837157583724]]
+NS011 ROAD_STREAK LONG FAV55_65 AWAY | 71-27 (72.4%) n=98 ROI=+21.1% train=+13.7% val=+19.6% hold=+27.3% pos=80% recent_delta=+10.7pp weather_only=False | [["road_streak_including_current", ">=", 2.0], ["fatigue_load_index", ">=", 2.012837157583724]]
+NS012 RUN_HEAVY LONG FAV65_75 ANY | 77-15 (83.7%) n=92 ROI=+19.2% train=+17.4% val=+16.2% hold=+27.7% pos=75% recent_delta=+10.9pp weather_only=False | [["opp_recent3_run_rate", "<=", 0.3764705882352941], ["rank_edge_def_allowed_sack_or_hit_rate", "<=", -8.0]]
+NS013 RUN_HEAVY LONG DOG35_49 ANY | 161-150 (51.8%) n=311 ROI=+23.3% train=+25.0% val=+13.5% hold=+28.2% pos=75% recent_delta=+9.0pp weather_only=False | [["pre_run_rate", ">=", 0.462580750311148], ["rank_edge_punt_return_average", ">=", -9.0]]
+NS014 ROAD_STREAK LONG FAV65_75 AWAY | 75-19 (79.8%) n=94 ROI=+14.4% train=+11.9% val=+11.8% hold=+21.2% pos=85% recent_delta=+9.4pp weather_only=False | [["road_prior_streak", ">=", 0.0], ["recent_edge_penalty_yards", "<=", -17.75]]
+NS015 RUN_HEAVY LONG DOG35_49 AWAY | 66-56 (54.1%) n=122 ROI=+26.2% train=+31.0% val=+12.8% hold=+29.1% pos=70% recent_delta=+7.2pp weather_only=False | [["pre_run_rate", ">=", 0.4667437246300308], ["rank_edge_punt_return_average", ">=", 1.0]]
+NS016 RUN_HEAVY LONG FAV55_65 AWAY | 80-33 (70.8%) n=113 ROI=+18.2% train=+20.8% val=+11.4% hold=+21.2% pos=84% recent_delta=+5.1pp weather_only=False | [["run_rate_edge", ">=", -0.03272698670140099], ["rank_edge_kick_return_average", ">=", 9.0]]
+NS017 RUN_HEAVY LONG DOG35_49 ANY | 110-99 (52.6%) n=209 ROI=+24.7% train=+32.5% val=+9.8% hold=+24.9% pos=75% recent_delta=+3.8pp weather_only=False | [["pre_run_rate", ">=", 0.462580750311148], ["rank_edge_punt_return_average", ">=", 1.0]]
+NS018 CALENDAR LONG FAV55_65 AWAY | 82-37 (68.9%) n=119 ROI=+15.1% train=+11.2% val=+16.6% hold=+17.3% pos=90% recent_delta=+3.4pp weather_only=False | [["cal_dec_or_jan", ">=", 1.0], ["rank_edge_punt_return_average", ">=", 1.0]]
+NS019 RUN_HEAVY LONG FAV55_65 AWAY | 156-69 (69.3%) n=225 ROI=+15.5% train=+11.2% val=+17.2% hold=+19.4% pos=80% recent_delta=+5.2pp weather_only=False | [["run_rate_edge", ">=", -0.03272698670140099], ["rank_edge_punt_return_average", ">=", 1.0]]
+NS020 ROAD_STREAK LONG DOG35_44 ANY | 65-68 (48.9%) n=133 ROI=+23.0% train=+8.7% val=+35.3% hold=+25.9% pos=75% recent_delta=+3.9pp weather_only=False | [["road_games_prev5", ">=", 3.0], ["rank_edge_def_allowed_explosive_rate", ">=", 7.0]]
+NS021 ROAD_STREAK MODERN DOG35_44 HOME | 48-51 (48.5%) n=99 ROI=+21.5% train=+26.7% val=+15.4% hold=+21.4% pos=75% recent_delta=+0.4pp weather_only=False | [["road_prior_streak", "<=", 1.0], ["rank_edge_def_allowed_early_down_epa", ">=", 5.25]]
+NS022 CALENDAR MODERN FAV55_65 AWAY | 79-40 (66.4%) n=119 ROI=+11.7% train=+14.1% val=+14.9% hold=+17.6% pos=80% recent_delta=+3.1pp weather_only=False | [["cal_dec_or_jan", ">=", 1.0], ["rank_edge_sack_rate_allowed", "<=", 4.0]]
+NS023 ROAD_STREAK LONG FAV55_65 AWAY | 91-41 (68.9%) n=132 ROI=+15.1% train=+15.0% val=+13.7% hold=+16.7% pos=70% recent_delta=+2.4pp weather_only=False | [["road_games_prev5", ">=", 2.0], ["recent_edge_def_allowed_yards_per_play", ">=", 0.7302054077592606]]
+NS024 ROAD_STREAK MODERN PK_55 AWAY | 75-58 (56.4%) n=133 ROI=+13.9% train=+20.1% val=+18.0% hold=+21.3% pos=70% recent_delta=+2.2pp weather_only=False | [["road_games_prev3", ">=", 2.0], ["recent_edge_def_allowed_early_down_epa", "<=", 0.1186483349028788]]
+NS025 RUN_HEAVY LONG DOG35_49 ANY | 100-107 (48.3%) n=207 ROI=+16.0% train=+9.7% val=+21.0% hold=+19.2% pos=70% recent_delta=+3.9pp weather_only=False | [["opp_recent3_run_rate", ">=", 0.48314135842526496], ["rank_edge_punt_return_average", ">=", 1.0]]
+NS026 ROAD_STREAK LONG FAV65_75 AWAY | 88-25 (77.9%) n=113 ROI=+11.6% train=+12.1% val=+9.9% hold=+12.8% pos=75% recent_delta=+1.8pp weather_only=False | [["road_prior_streak", ">=", 0.0], ["recent_edge_kick_return_average", ">=", 3.668055555555556]]
+NS027 RUN_HEAVY LONG FAV65_75 AWAY | 81-23 (77.9%) n=104 ROI=+12.3% train=+12.6% val=+10.0% hold=+13.1% pos=70% recent_delta=+1.8pp weather_only=False | [["recent3_run_rate_edge", "<=", -0.04185443170951321]]
