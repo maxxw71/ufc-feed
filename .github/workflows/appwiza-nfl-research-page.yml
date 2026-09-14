@@ -30,6 +30,7 @@ jobs:
         run: |
           set -Eeuo pipefail
           /home/anestishkurti92/nfl-predictor-v1/venv/bin/python "$GITHUB_WORKSPACE/scripts/nfl_build_research_page.py"
+          sed -i 's|href="/nfl/"|href="/sports/nfl/"|g' "$GITHUB_WORKSPACE/nfl/research_page/index.html"
       - name: Deploy research page without touching official tracker
         shell: bash
         run: |
