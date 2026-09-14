@@ -1,0 +1,77 @@
+csv_files_scanned=261
+play_by_play_years=2006-2026 count=21
+
+moneyline_market=YES files=133
+  /home/anestishkurti92/nfl-predictor-v1/research_v2/rest_offense_exploratory_candidate_bets.csv :: market_prob, moneyline
+  /home/anestishkurti92/nfl-predictor-v1/research_v2/corrected_pregame_core.csv :: market_prob, moneyline
+  /home/anestishkurti92/nfl-predictor-v1/research_v2/home_opener_stress/fixed_rule_equity.csv :: away_moneyline, closing_moneyline, home_moneyline
+spread_market=YES files=41
+  /home/anestishkurti92/nfl-predictor-v1/research_v2/home_opener_stress/fixed_rule_equity.csv :: ats_margin, away_spread_odds, home_spread_odds, spread_line
+  /home/anestishkurti92/nfl-predictor-v1/research_v2/home_opener_stress/espn_comparison.csv :: ats_margin, away_spread_odds, home_spread_odds, spread_line
+  /home/anestishkurti92/nfl-predictor-v1/research_v2/pair_candidate_validation/qualifiers_2026.csv :: away_spread_odds, home_spread_odds, spread_line
+totals_market=YES files=34
+  /home/anestishkurti92/nfl-predictor-v1/research_v2/home_opener_stress/fixed_rule_equity.csv :: total, total_line
+  /home/anestishkurti92/nfl-predictor-v1/research_v2/home_opener_stress/espn_comparison.csv :: total, total_line
+  /home/anestishkurti92/nfl-predictor-v1/research_v2/pair_candidate_validation/qualifiers_2026.csv :: total, total_line
+open_close_line_history=YES files=80
+  /home/anestishkurti92/nfl-predictor-v1/research_v2/consistent_high_win/2018_rule_13932_games.csv :: close_american_odds, close_decimal_odds, close_profit, close_provider, open_american_odds, open_decimal_odds, open_profit, open_provider
+  /home/anestishkurti92/nfl-predictor-v1/research_v2/consistent_high_win/2018_rule_13938_games.csv :: close_american_odds, close_decimal_odds, close_profit, close_provider, open_american_odds, open_decimal_odds, open_profit, open_provider
+  /home/anestishkurti92/nfl-predictor-v1/research_v2/consistent_high_win/2014_rule_8876_games.csv :: close_american_odds, close_decimal_odds, close_profit, close_provider, open_american_odds, open_decimal_odds, open_profit, open_provider
+epa=YES files=84
+  /home/anestishkurti92/nfl-predictor-v1/research_v2/home_opener_stress/fixed_rule_equity.csv :: last_pre_def_allowed_off_epa_per_play, last_pre_off_epa_per_play, last_rank_def_allowed_off_epa_per_play, last_rank_off_epa_per_play, opp_last_pre_def_allowed_off_epa_per_play, opp_last_pre_off_epa_per_play, opp_last_rank_def_allowed_off_epa_per_play, opp_last_rank_off_epa_per_play
+  /home/anestishkurti92/nfl-predictor-v1/research_v2/home_opener_stress/espn_comparison.csv :: last_pre_def_allowed_off_epa_per_play, last_pre_off_epa_per_play, last_rank_def_allowed_off_epa_per_play, last_rank_off_epa_per_play, opp_last_pre_def_allowed_off_epa_per_play, opp_last_pre_off_epa_per_play, opp_last_rank_def_allowed_off_epa_per_play, opp_last_rank_off_epa_per_play
+  /home/anestishkurti92/nfl-predictor-v1/research_v2/home_opener_stress/all_losses.csv :: last_rank_off_epa_per_play
+success_rate=YES files=80
+  /home/anestishkurti92/nfl-predictor-v1/research_v2/home_opener_stress/fixed_rule_equity.csv :: last_pre_def_allowed_success_rate, last_pre_success_rate, last_rank_def_allowed_success_rate, last_rank_success_rate, opp_last_pre_def_allowed_success_rate, opp_last_pre_success_rate, opp_last_rank_def_allowed_success_rate, opp_last_rank_success_rate
+  /home/anestishkurti92/nfl-predictor-v1/research_v2/home_opener_stress/espn_comparison.csv :: last_pre_def_allowed_success_rate, last_pre_success_rate, last_rank_def_allowed_success_rate, last_rank_success_rate, opp_last_pre_def_allowed_success_rate, opp_last_pre_success_rate, opp_last_rank_def_allowed_success_rate, opp_last_rank_success_rate
+  /home/anestishkurti92/nfl-predictor-v1/research_v2/consistent_high_win/2018_rule_13932_games.csv :: opp_pre_def_allowed_success_rate, opp_pre_success_rate, opp_pre_third_down_success, pre_def_allowed_success_rate, pre_success_rate, pre_third_down_success, rank_def_allowed_success_rate, rank_edge_def_allowed_success_rate, rank_edge_success_rate, rank_edge_third_down_success, rank_success_rate, recent_edge_def_allowed_success_rate, recent_edge_success_rate, recent_edge_third_down_success
+cpoe=YES files=53
+  /home/anestishkurti92/nfl-predictor-v1/research_v2/consistent_high_win/2018_rule_13932_games.csv :: opp_pre_passing_cpoe, pre_passing_cpoe, rank_edge_passing_cpoe, recent_edge_passing_cpoe
+  /home/anestishkurti92/nfl-predictor-v1/research_v2/consistent_high_win/2018_rule_13938_games.csv :: opp_pre_passing_cpoe, pre_passing_cpoe, rank_edge_passing_cpoe, recent_edge_passing_cpoe
+  /home/anestishkurti92/nfl-predictor-v1/research_v2/consistent_high_win/2014_rule_8876_games.csv :: opp_pre_passing_cpoe, pre_passing_cpoe, rank_edge_passing_cpoe, recent_edge_passing_cpoe
+explosive_rate=YES files=80
+  /home/anestishkurti92/nfl-predictor-v1/research_v2/home_opener_stress/fixed_rule_equity.csv :: last_pre_def_allowed_explosive_rate, last_pre_explosive_rate, last_rank_def_allowed_explosive_rate, last_rank_explosive_rate, opp_last_pre_def_allowed_explosive_rate, opp_last_pre_explosive_rate, opp_last_rank_def_allowed_explosive_rate, opp_last_rank_explosive_rate
+  /home/anestishkurti92/nfl-predictor-v1/research_v2/home_opener_stress/espn_comparison.csv :: last_pre_def_allowed_explosive_rate, last_pre_explosive_rate, last_rank_def_allowed_explosive_rate, last_rank_explosive_rate, opp_last_pre_def_allowed_explosive_rate, opp_last_pre_explosive_rate, opp_last_rank_def_allowed_explosive_rate, opp_last_rank_explosive_rate
+  /home/anestishkurti92/nfl-predictor-v1/research_v2/consistent_high_win/2018_rule_13932_games.csv :: opp_pre_def_allowed_explosive_rate, opp_pre_explosive_rate, pre_def_allowed_explosive_rate, pre_explosive_rate, rank_edge_def_allowed_explosive_rate, rank_edge_explosive_rate, recent_edge_def_allowed_explosive_rate, recent_edge_explosive_rate
+sack_pressure=YES files=83
+  /home/anestishkurti92/nfl-predictor-v1/research_v2/home_opener_stress/fixed_rule_equity.csv :: last_pre_def_allowed_sack_or_hit_rate, last_pre_sack_rate_allowed, last_rank_def_allowed_sack_or_hit_rate, last_rank_sack_rate_allowed, opp_last_pre_def_allowed_sack_or_hit_rate, opp_last_pre_sack_rate_allowed, opp_last_rank_def_allowed_sack_or_hit_rate, opp_last_rank_sack_rate_allowed
+  /home/anestishkurti92/nfl-predictor-v1/research_v2/home_opener_stress/espn_comparison.csv :: last_pre_def_allowed_sack_or_hit_rate, last_pre_sack_rate_allowed, last_rank_def_allowed_sack_or_hit_rate, last_rank_sack_rate_allowed, opp_last_pre_def_allowed_sack_or_hit_rate, opp_last_pre_sack_rate_allowed, opp_last_rank_def_allowed_sack_or_hit_rate, opp_last_rank_sack_rate_allowed
+  /home/anestishkurti92/nfl-predictor-v1/research_v2/consistent_high_win/2018_rule_13932_games.csv :: opp_pre_def_allowed_sack_or_hit_rate, opp_pre_sack_or_hit_rate, opp_pre_sack_rate_allowed, pre_def_allowed_sack_or_hit_rate, pre_sack_or_hit_rate, pre_sack_rate_allowed, rank_def_allowed_sack_or_hit_rate, rank_edge_def_allowed_sack_or_hit_rate, rank_edge_sack_or_hit_rate, rank_edge_sack_rate_allowed, rank_sack_or_hit_rate, rank_sack_rate_allowed, recent_edge_def_allowed_sack_or_hit_rate, recent_edge_sack_or_hit_rate, recent_edge_sack_rate_allowed
+turnovers=YES files=84
+  /home/anestishkurti92/nfl-predictor-v1/research_v2/home_opener_stress/fixed_rule_equity.csv :: last_pre_def_allowed_giveaway_rate, last_pre_giveaway_rate, last_rank_def_allowed_giveaway_rate, last_rank_giveaway_rate, opp_last_pre_def_allowed_giveaway_rate, opp_last_pre_giveaway_rate, opp_last_rank_def_allowed_giveaway_rate, opp_last_rank_giveaway_rate
+  /home/anestishkurti92/nfl-predictor-v1/research_v2/home_opener_stress/espn_comparison.csv :: last_pre_def_allowed_giveaway_rate, last_pre_giveaway_rate, last_rank_def_allowed_giveaway_rate, last_rank_giveaway_rate, opp_last_pre_def_allowed_giveaway_rate, opp_last_pre_giveaway_rate, opp_last_rank_def_allowed_giveaway_rate, opp_last_rank_giveaway_rate
+  /home/anestishkurti92/nfl-predictor-v1/research_v2/consistent_high_win/2018_rule_13932_games.csv :: opp_pre_def_allowed_giveaway_rate, opp_pre_giveaway_rate, pre_def_allowed_giveaway_rate, pre_giveaway_rate, rank_def_allowed_giveaway_rate, rank_edge_def_allowed_giveaway_rate, rank_edge_giveaway_rate, rank_giveaway_rate, recent_edge_def_allowed_giveaway_rate, recent_edge_giveaway_rate
+special_teams=YES files=53
+  /home/anestishkurti92/nfl-predictor-v1/research_v2/consistent_high_win/2018_rule_13932_games.csv :: opp_pre_fg_accuracy, opp_pre_kick_return_average, opp_pre_punt_net_average, opp_pre_punt_return_average, pre_fg_accuracy, pre_kick_return_average, pre_punt_net_average, pre_punt_return_average, rank_edge_fg_accuracy, rank_edge_kick_return_average, rank_edge_punt_net_average, rank_edge_punt_return_average, recent_edge_fg_accuracy, recent_edge_kick_return_average, recent_edge_punt_net_average
+  /home/anestishkurti92/nfl-predictor-v1/research_v2/consistent_high_win/2018_rule_13938_games.csv :: opp_pre_fg_accuracy, opp_pre_kick_return_average, opp_pre_punt_net_average, opp_pre_punt_return_average, pre_fg_accuracy, pre_kick_return_average, pre_punt_net_average, pre_punt_return_average, rank_edge_fg_accuracy, rank_edge_kick_return_average, rank_edge_punt_net_average, rank_edge_punt_return_average, recent_edge_fg_accuracy, recent_edge_kick_return_average, recent_edge_punt_net_average
+  /home/anestishkurti92/nfl-predictor-v1/research_v2/consistent_high_win/2014_rule_8876_games.csv :: opp_pre_fg_accuracy, opp_pre_kick_return_average, opp_pre_punt_net_average, opp_pre_punt_return_average, pre_fg_accuracy, pre_kick_return_average, pre_punt_net_average, pre_punt_return_average, rank_edge_fg_accuracy, rank_edge_kick_return_average, rank_edge_punt_net_average, rank_edge_punt_return_average, recent_edge_fg_accuracy, recent_edge_kick_return_average, recent_edge_punt_net_average
+elo_power=YES files=53
+  /home/anestishkurti92/nfl-predictor-v1/research_v2/consistent_high_win/2018_rule_13932_games.csv :: elo_edge
+  /home/anestishkurti92/nfl-predictor-v1/research_v2/consistent_high_win/2018_rule_13938_games.csv :: elo_edge
+  /home/anestishkurti92/nfl-predictor-v1/research_v2/consistent_high_win/2014_rule_8876_games.csv :: elo_edge
+rest_bye=YES files=58
+  /home/anestishkurti92/nfl-predictor-v1/research_v2/rest_offense_exploratory_candidate_bets.csv :: rest_edge
+  /home/anestishkurti92/nfl-predictor-v1/research_v2/corrected_pregame_core.csv :: rest_edge
+  /home/anestishkurti92/nfl-predictor-v1/research_v2/consistent_high_win/2018_rule_13932_games.csv :: rest_edge
+qb_identity_continuity=YES files=80
+  /home/anestishkurti92/nfl-predictor-v1/research_v2/home_opener_stress/fixed_rule_equity.csv :: away_qb_id, away_qb_name, home_qb_id, home_qb_name
+  /home/anestishkurti92/nfl-predictor-v1/research_v2/home_opener_stress/espn_comparison.csv :: away_qb_id, away_qb_name, home_qb_id, home_qb_name
+  /home/anestishkurti92/nfl-predictor-v1/research_v2/consistent_high_win/2018_rule_13932_games.csv :: opp_qb_changed_last_game, opp_qb_streak, qb_changed_last_game, qb_streak
+ol_continuity=YES files=47
+  /home/anestishkurti92/nfl-predictor-v1/research_v2/consistent_high_win/2018_rule_13932_games.csv :: ol_continuity, opp_ol_continuity
+  /home/anestishkurti92/nfl-predictor-v1/research_v2/consistent_high_win/2018_rule_13938_games.csv :: ol_continuity, opp_ol_continuity
+  /home/anestishkurti92/nfl-predictor-v1/research_v2/consistent_high_win/2014_rule_8876_games.csv :: ol_continuity, opp_ol_continuity
+injury_availability=NO files=0
+weather=YES files=33
+  /home/anestishkurti92/nfl-predictor-v1/research_v2/home_opener_stress/fixed_rule_equity.csv :: wind
+  /home/anestishkurti92/nfl-predictor-v1/research_v2/home_opener_stress/espn_comparison.csv :: wind
+  /home/anestishkurti92/nfl-predictor-v1/research_v2/pair_candidate_validation/qualifiers_2026.csv :: wind
+venue_surface_roof=YES files=42
+  /home/anestishkurti92/nfl-predictor-v1/research_v2/home_opener_stress/fixed_rule_equity.csv :: roof, surface
+  /home/anestishkurti92/nfl-predictor-v1/research_v2/home_opener_stress/espn_comparison.csv :: roof, surface
+  /home/anestishkurti92/nfl-predictor-v1/research_v2/consistent_high_win/earlier_selected_rules.csv :: venue
+travel_timezone_altitude=NO files=0
+coach_coordinator=YES files=33
+  /home/anestishkurti92/nfl-predictor-v1/research_v2/home_opener_stress/fixed_rule_equity.csv :: away_coach, home_coach
+  /home/anestishkurti92/nfl-predictor-v1/research_v2/home_opener_stress/espn_comparison.csv :: away_coach, home_coach
+  /home/anestishkurti92/nfl-predictor-v1/research_v2/pair_candidate_validation/qualifiers_2026.csv :: away_coach, home_coach
