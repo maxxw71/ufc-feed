@@ -41,7 +41,8 @@ b['novig_prob']=b.team_imp/(b.team_imp+b.opp_imp)
 b=b[b.novig_prob>.5].copy()
 b['profit100']=[profit100(o,w) for o,w in zip(b.moneyline,b.win)]
 
-# These are fixed football-motivated risk definitions, not an exhaustive optimizer.
+# Fixed football-motivated definitions. These are descriptive validation buckets,
+# not an optimizer and not automatic production vetoes.
 FACTORS={
  'QB_CHANGED': lambda d: d.qb_changed_from_prior_season.eq(1),
  'HC_CHANGED': lambda d: d.head_coach_changed.eq(1),
@@ -51,13 +52,24 @@ FACTORS={
  'RETURN_DEF_LT_50': lambda d: pd.to_numeric(d.returning_defense_snap_share,errors='coerce')<.50,
  'RETURN_DEF_LT_60': lambda d: pd.to_numeric(d.returning_defense_snap_share,errors='coerce')<.60,
  'RETURN_DEF_LT_70': lambda d: pd.to_numeric(d.returning_defense_snap_share,errors='coerce')<.70,
+ 'RETURN_OL_LT_60': lambda d: pd.to_numeric(d.returning_ol_snap_share,errors='coerce')<.60,
+ 'RETURN_OL_LT_70': lambda d: pd.to_numeric(d.returning_ol_snap_share,errors='coerce')<.70,
  'RETURN_SKILL_LT_60': lambda d: pd.to_numeric(d.returning_skill_snap_share,errors='coerce')<.60,
  'RETURN_SKILL_LT_70': lambda d: pd.to_numeric(d.returning_skill_snap_share,errors='coerce')<.70,
 }
+# Preseason hypotheses are prespecified from football logic and the 2026 Chargers audit.
+# The audited source is record/win-rate only; do not invent scoring margin.
+if 'preseason_win_pct' in b:
+    FACTORS['PRESEASON_LOSING']=lambda d: pd.to_numeric(d.preseason_win_pct,errors='coerce')<.50
+    FACTORS['PRESEASON_WINLESS']=lambda d: pd.to_numeric(d.preseason_win_pct,errors='coerce').eq(0)
+if 'preseason_form_disadvantage' in b:
+    FACTORS['PRESEASON_FORM_DISADVANTAGE']=lambda d: pd.to_numeric(d.preseason_form_disadvantage,errors='coerce').eq(1)
+if 'both_teams_preseason_losing' in b:
+    FACTORS['BOTH_PRESEASON_LOSING']=lambda d: pd.to_numeric(d.both_teams_preseason_losing,errors='coerce').eq(1)
 # Coordinator factors are included only if meaningful coverage exists.
-if 'offensive_coordinator_changed' in b and b.offensive_coordinator.notna().sum()>=100:
+if 'offensive_coordinator_changed' in b and 'offensive_coordinator' in b and b.offensive_coordinator.notna().sum()>=100:
     FACTORS['OC_CHANGED']=lambda d:d.offensive_coordinator_changed.eq(1)
-if 'defensive_coordinator_changed' in b and b.defensive_coordinator.notna().sum()>=100:
+if 'defensive_coordinator_changed' in b and 'defensive_coordinator' in b and b.defensive_coordinator.notna().sum()>=100:
     FACTORS['DC_CHANGED']=lambda d:d.defensive_coordinator_changed.eq(1)
 
 
@@ -84,8 +96,11 @@ for floor in [.60,.65,.70,.75,.80]:
         rows.append({'market_floor':floor,'factor':'BASE','bucket':'ALL',**{k:v for k,v in bs.items() if k!='yearly'}})
         detail[f'{floor:.2f}_BASE']=bs
     for name,fn in FACTORS.items():
-        mask=fn(base).fillna(False)
-        for bucket,m in [('RISK',mask),('NO_RISK',~mask)]:
+        raw=fn(base)
+        known=raw.notna() if hasattr(raw,'notna') else pd.Series(True,index=base.index)
+        risk=raw.fillna(False).astype(bool)
+        # Unknown context must never silently become a no-risk observation.
+        for bucket,m in [('RISK',known & risk),('NO_RISK',known & ~risk)]:
             z=base[m].copy(); st=stats(z)
             if st:
                 rows.append({'market_floor':floor,'factor':name,'bucket':bucket,**{k:v for k,v in st.items() if k!='yearly'}})
@@ -93,10 +108,12 @@ for floor in [.60,.65,.70,.75,.80]:
 
 # Simple prespecified risk counts at the Chargers-like big-favorite level.
 z=b[b.novig_prob>=.75].copy()
+component_names=['QB_CHANGED','HC_CHANGED','RETURN_OFF_LT_60','RETURN_DEF_LT_60','RETURN_OL_LT_60','RETURN_SKILL_LT_60','PRESEASON_LOSING']
 components=[]
-for name in ['QB_CHANGED','HC_CHANGED','RETURN_OFF_LT_60','RETURN_DEF_LT_60','RETURN_SKILL_LT_60']:
+for name in component_names:
     if name in FACTORS:
-        components.append(FACTORS[name](z).fillna(False).astype(int))
+        raw=FACTORS[name](z)
+        components.append(raw.fillna(False).astype(int))
 if components:
     z['risk_count']=sum(components)
     for k in [1,2,3]:
@@ -109,7 +126,6 @@ out=pd.DataFrame(rows).sort_values(['market_floor','factor','bucket'])
 out.to_csv(OUT/'early_season_context_summary.csv',index=False)
 (OUT/'early_season_context_detail.json').write_text(json.dumps(detail,indent=2,default=str))
 
-# Comparison table: factors where risk bucket loses meaningfully more often than no-risk.
 comp=[]
 for floor in [.60,.65,.70,.75,.80]:
     for name in FACTORS:
@@ -120,5 +136,16 @@ for floor in [.60,.65,.70,.75,.80]:
             comp.append({'market_floor':floor,'factor':name,'risk_n':int(A.n),'risk_win_pct':A.win_pct,'risk_roi_pct':A.roi_pct,
                          'no_risk_n':int(C.n),'no_risk_win_pct':C.win_pct,'no_risk_roi_pct':C.roi_pct,
                          'win_pct_gap_risk_minus_safe':A.win_pct-C.win_pct,'roi_gap_risk_minus_safe':A.roi_pct-C.roi_pct})
-pd.DataFrame(comp).to_csv(OUT/'early_season_risk_comparison.csv',index=False)
+compdf=pd.DataFrame(comp)
+compdf.to_csv(OUT/'early_season_risk_comparison.csv',index=False)
+
+# Compact preseason-only report for direct inspection of the hypothesis.
+pre_names=[x for x in FACTORS if x.startswith('PRESEASON_') or x=='BOTH_PRESEASON_LOSING']
+if len(compdf):
+    compdf[compdf.factor.isin(pre_names)].to_csv(OUT/'early_season_preseason_comparison.csv',index=False)
+
+print('=== FULL EARLY-SEASON SUMMARY ===')
 print(out.to_string(index=False))
+print('\n=== PRESEASON COMPARISONS ===')
+if len(compdf):
+    print(compdf[compdf.factor.isin(pre_names)].to_string(index=False))
