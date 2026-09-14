@@ -29,24 +29,62 @@ TEAM_NAMES={
  'SEA':['Seattle Seahawks'], 'SF':['San Francisco 49ers'], 'TB':['Tampa Bay Buccaneers'], 'TEN':['Tennessee Titans'],
  'WAS':['Washington Commanders','Washington Football Team','Washington Redskins'],
 }
+ESPN_CODE={'ARZ':'ARI','ARI':'ARI','ATL':'ATL','BLT':'BAL','BAL':'BAL','BUF':'BUF','CAR':'CAR','CHI':'CHI','CIN':'CIN',
+ 'CLV':'CLE','CLE':'CLE','DAL':'DAL','DEN':'DEN','DET':'DET','GB':'GB','HST':'HOU','HOU':'HOU','IND':'IND','JAX':'JAX','KC':'KC',
+ 'LAC':'LAC','LAR':'LA','LA':'LA','LV':'LV','OAK':'LV','MIA':'MIA','MIN':'MIN','NE':'NE','NO':'NO','NYG':'NYG','NYJ':'NYJ',
+ 'PHI':'PHI','PIT':'PIT','SEA':'SEA','SF':'SF','TB':'TB','TEN':'TEN','WAS':'WAS','WSH':'WAS'}
 
 def clean(s):
     if s is None:return None
-    s=re.sub(r'\s+',' ',s).strip(' |')
-    return s or None
+    s=re.sub(r'\s+',' ',str(s)).strip(' |')
+    return None if not s or s in {'0','-','—'} else s
 
 def extract_between(text,start,end):
-    # ESPN team-page layout has compact staff lines such as:
-    # HC Jonathan Gannon LT Paris Johnson Jr.; OC Drew Petzing LG Evan Brown; DC Nick Rallis RG ...
     m=re.search(rf'(?:^|\s){re.escape(start)}\s+(.+?)\s+{re.escape(end)}(?:\s|$)',text,re.I)
     return clean(m.group(1)) if m else None
 
 def identify_team(text):
-    low=text.lower()
-    hits=[]
+    low=text.lower(); hits=[]
     for code,names in TEAM_NAMES.items():
         if any(name.lower() in low for name in names):hits.append(code)
     return hits[0] if len(hits)==1 else None
+
+def parse_staff_layout(reader,season,url):
+    """Older ESPN guides put the complete HC/OC/DC table on the final page.
+    pypdf's normal text extraction reads it column-wise; layout mode preserves each row.
+    """
+    out={}
+    for page_no in range(max(0,len(reader.pages)-4),len(reader.pages)):
+        page=reader.pages[page_no]
+        try: layout=page.extract_text(extraction_mode='layout') or ''
+        except TypeError: layout=page.extract_text() or ''
+        if 'Head Coach' not in layout and 'Current Coaching Staffs' not in layout: continue
+        print(f'{season}: trying layout staff table on PDF page {page_no+1}',flush=True)
+        for rawline in layout.splitlines():
+            line=rawline.rstrip()
+            m=re.match(r'^\s*([A-Z]{2,3})\s+(.+?)\s*$',line)
+            if not m or m.group(1) not in ESPN_CODE: continue
+            team=ESPN_CODE[m.group(1)]; tail=m.group(2)
+            # Layout extraction preserves table columns as runs of 2+ spaces.
+            cells=[clean(x) for x in re.split(r'\s{2,}',tail.strip())]
+            cells=[x for x in cells if x is not None]
+            if len(cells)<3: continue
+            # Expected columns after Tm: Head Coach | Offensive Coordinator | Offensive Playcaller |
+            # Defensive Coordinator | General Manager. Some guides omit playcaller or GM, so use
+            # header positions below when possible, otherwise accept only unambiguous 4/5-cell rows.
+            hc=oc=dc=None
+            if len(cells)>=5:
+                hc,oc,_,dc=cells[:4]
+            elif len(cells)==4:
+                hc,oc,dc,_=cells
+            elif len(cells)==3:
+                hc,oc,dc=cells
+            if hc and (oc or dc):
+                out[team]={'season':season,'team':team,'head_coach_espn':hc,'offensive_coordinator':oc,
+                           'defensive_coordinator':dc,'staff_source':'espn_mike_clay_projection_guide_layout',
+                           'staff_page':url,'pdf_page':page_no+1}
+        if len(out)>=28: break
+    return out
 
 sess=requests.Session(); sess.headers.update({'User-Agent':'Mozilla/5.0 AppWiza NFL research'})
 rows=[]; season_status={}
@@ -54,19 +92,13 @@ for season,url in URLS.items():
     print('download',season,url,flush=True)
     r=sess.get(url,timeout=60); r.raise_for_status()
     if not r.content.startswith(b'%PDF'):raise RuntimeError(f'{season}: response was not PDF ({r.headers.get("content-type")})')
-    reader=PdfReader(BytesIO(r.content))
-    found={}
-    # Team projections are the first 32 content pages after the cover. Search a few extras defensively.
+    reader=PdfReader(BytesIO(r.content)); found={}
+    # Modern guides expose team names and HC/OC/DC cleanly on each of the first 32 team pages.
     for page_no,page in enumerate(reader.pages[1:min(36,len(reader.pages))],start=1):
-        raw=page.extract_text() or ''
-        text=re.sub(r'\s+',' ',raw)
-        team=identify_team(text)
+        raw=page.extract_text() or ''; text=re.sub(r'\s+',' ',raw); team=identify_team(text)
         if not team or team in found:continue
-        hc=extract_between(text,'HC','LT')
-        oc=extract_between(text,'OC','LG')
-        dc=extract_between(text,'DC','RG')
+        hc=extract_between(text,'HC','LT'); oc=extract_between(text,'OC','LG'); dc=extract_between(text,'DC','RG')
         if not (hc and oc and dc):
-            # Backup line-oriented extraction for PDF versions that preserve newlines more cleanly.
             lines=[re.sub(r'\s+',' ',x).strip() for x in raw.splitlines() if x.strip()]
             for line in lines:
                 if not hc and re.search(r'\bHC\b',line):hc=extract_between(' '+line+' ','HC','LT')
@@ -74,18 +106,22 @@ for season,url in URLS.items():
                 if not dc and re.search(r'\bDC\b',line):dc=extract_between(' '+line+' ','DC','RG')
         if hc or oc or dc:
             found[team]={'season':season,'team':team,'head_coach_espn':hc,'offensive_coordinator':oc,
-                         'defensive_coordinator':dc,'staff_source':'espn_mike_clay_projection_guide','staff_page':url,'pdf_page':page_no+1}
+                         'defensive_coordinator':dc,'staff_source':'espn_mike_clay_projection_guide_team_page','staff_page':url,'pdf_page':page_no+1}
+    # 2019-2022 use an older layout whose team pages lack full team-name/staff labels in extraction.
+    # Recover from the complete current-coaching-staff table using layout-preserving PDF text.
+    if len(found)<28:
+        fallback=parse_staff_layout(reader,season,url)
+        for team,rec in fallback.items():
+            if team not in found or not (found[team].get('offensive_coordinator') and found[team].get('defensive_coordinator')):
+                found[team]=rec
     rows.extend(found.values())
-    complete=sum(1 for x in found.values() if x['offensive_coordinator'] and x['defensive_coordinator'])
-    season_status[season]={'teams_found':len(found),'both_coordinators':complete,
-                           'missing_teams':sorted(set(TEAM_NAMES)-set(found))}
-    print(season,season_status[season],flush=True)
-    time.sleep(.5)
+    complete=sum(1 for x in found.values() if x.get('offensive_coordinator') and x.get('defensive_coordinator'))
+    season_status[season]={'teams_found':len(found),'both_coordinators':complete,'missing_teams':sorted(set(TEAM_NAMES)-set(found))}
+    print(season,season_status[season],flush=True); time.sleep(.5)
 
 df=pd.DataFrame(rows).sort_values(['season','team'])
 print(df[['season','team','offensive_coordinator','defensive_coordinator']].to_string(index=False))
 print('STATUS',season_status)
-# Require strong coverage but permit a handful of extraction/source omissions; unknowns remain null.
 expected=len(URLS)*32
 both=(df.offensive_coordinator.notna()&df.defensive_coordinator.notna()).sum() if len(df) else 0
 if len(df)<int(expected*.90) or both<int(expected*.85):
