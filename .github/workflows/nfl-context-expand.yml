@@ -27,17 +27,16 @@ jobs:
         run: |
           set -Eeuo pipefail
           ROOT=/home/anestishkurti92/nfl-predictor-v1
-          OWNER=anestishkurti92
+          CTX=/home/appwiza-runner/nfl-context-data
           test -x "$ROOT/venv/bin/python"
-          avail=$(df -Pk "$ROOT" | awk 'NR==2 {print $4}')
+          mkdir -p "$CTX/raw"
+          chmod 755 "$CTX" "$CTX/raw"
+          avail=$(df -Pk "$CTX" | awk 'NR==2 {print $4}')
           [ "$avail" -ge 4194304 ] || { echo 'Less than 4 GiB free; refusing large NFL expansion'; exit 3; }
-          TMP=/tmp/nfl_expand_context_data.py
-          cp "$GITHUB_WORKSPACE/scripts/nfl_expand_context_data.py" "$TMP"
-          chmod 644 "$TMP"
-          sudo -u "$OWNER" "$ROOT/venv/bin/python" -m pip install -q --upgrade nflreadpy
-          sudo -u "$OWNER" env NFL_ROOT="$ROOT" "$ROOT/venv/bin/python" "$TMP"
-          rm -f "$TMP"
+          NFL_SOURCE_ROOT="$ROOT" NFL_CONTEXT_ROOT="$CTX" "$ROOT/venv/bin/python" "$GITHUB_WORKSPACE/scripts/nfl_expand_context_data.py"
+          chmod -R a+rX "$CTX"
           echo '=== STATUS ==='
-          cat "$ROOT/NFL_CONTEXT_DATA_STATUS.json"
+          cat "$CTX/NFL_CONTEXT_DATA_STATUS.json"
           echo '=== DISK ==='
-          df -h "$ROOT"
+          du -sh "$CTX" || true
+          df -h "$CTX"
