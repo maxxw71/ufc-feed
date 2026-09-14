@@ -1,0 +1,76 @@
+NFL INJURY + TRAVEL + COMPLETE FEATURE METHOD MINING
+
+{
+  "base_rows": 11406,
+  "travel_rows": 10942,
+  "travel_known_pct": 99.68927070005483,
+  "injury_player_rows": 90482,
+  "injury_team_weeks": 8870,
+  "injury_seasons": [
+    2009,
+    2010,
+    2011,
+    2012,
+    2013,
+    2014,
+    2015,
+    2016,
+    2017,
+    2018,
+    2019,
+    2020,
+    2021,
+    2022,
+    2023,
+    2024,
+    2025,
+    2026
+  ],
+  "injury_2025_rows": 5783,
+  "injury_2026_rows": 3276,
+  "complete_rows": 11406,
+  "candidate_features": 94,
+  "qualified_methods": 1859
+}
+
+TOP POSITIVE-ROI METHODS
+LONG | DOG35_49 AWAY | recent_edge_third_down_success >= 0 AND rank_edge_punt_return_average >= -9 | n=416 W=216 WR=51.9% ROI=+23.0% | train +18.6% n=177 | val +16.3% n=115 | holdout +35.5% n=124 | neg seasons 5/20
+LONG | DOG35_49 AWAY | rank_edge_punt_return_average >= -5 AND recent_edge_third_down_success >= 0 | n=365 W=195 WR=53.4% ROI=+26.4% | train +24.6% n=157 | val +18.8% n=100 | holdout +36.0% n=108 | neg seasons 2/20
+LONG | DOG35_49 AWAY | rank_edge_punt_return_average >= 1 AND recent_edge_sack_rate_allowed >= 2.1355e-05 | n=267 W=142 WR=53.2% ROI=+27.4% | train +20.1% n=125 | val +28.6% n=74 | holdout +39.4% n=68 | neg seasons 5/20
+LONG | DOG35_49 AWAY | recent_edge_sack_rate_allowed >= 2.1355e-05 AND rank_edge_def_allowed_explosive_rate <= -6 | n=208 W=116 WR=55.8% ROI=+33.6% | train +26.7% n=101 | val +40.2% n=48 | holdout +40.1% n=59 | neg seasons 5/20
+LONG | DOG35_49 AWAY | rank_edge_punt_return_average >= -5 AND recent_edge_sack_rate_allowed >= 2.1355e-05 | n=352 W=181 WR=51.4% ROI=+22.5% | train +18.7% n=166 | val +15.7% n=98 | holdout +37.4% n=88 | neg seasons 6/20
+LONG | DOG35_49 AWAY | recent_edge_punt_return_average >= 2.4722 AND rank_edge_def_allowed_explosive_rate <= -6 | n=137 W=77 WR=56.2% ROI=+34.7% | train +22.3% n=61 | val +37.6% n=32 | holdout +49.7% n=44 | neg seasons 3/19
+LONG | DOG35_49 AWAY | rank_edge_punt_return_average >= 1 AND recent_edge_kick_return_average <= -3.9125 | n=136 W=78 WR=57.4% ROI=+38.1% | train +29.0% n=58 | val +40.7% n=38 | holdout +48.7% n=40 | neg seasons 3/20
+LONG | DOG35_49 ANY | recent_edge_third_down_success >= 0 AND rank_edge_punt_return_average >= -9 | n=676 W=333 WR=49.3% ROI=+16.4% | train +13.5% n=290 | val +13.6% n=176 | holdout +22.8% n=210 | neg seasons 5/20
+LONG | DOG35_49 AWAY | recent_edge_punt_return_average >= 2.4722 AND rank_edge_def_allowed_explosive_rate <= -10 | n=95 W=56 WR=58.9% ROI=+42.2% | train +34.1% n=40 | val +31.3% n=21 | holdout +58.4% n=34 | neg seasons 3/16
+LONG | DOG35_49 AWAY | rank_edge_def_allowed_yards_per_play <= -14 AND rank_edge_redzone_epa >= 1 | n=113 W=63 WR=55.8% ROI=+34.8% | train +30.7% n=38 | val +14.5% n=34 | holdout +55.3% n=41 | neg seasons 4/18
+LONG | DOG35_49 AWAY | rank_edge_punt_return_average >= 1 AND rank_edge_def_allowed_yards_per_play <= -1 | n=275 W=140 WR=50.9% ROI=+22.3% | train +14.3% n=113 | val +19.8% n=68 | holdout +33.6% n=94 | neg seasons 3/20
+LONG | DOG35_49 AWAY | recent_edge_punt_return_average >= 4.3264 AND rank_edge_def_allowed_explosive_rate <= -6 | n=106 W=61 WR=57.5% ROI=+37.5% | train +20.0% n=50 | val +62.4% n=21 | holdout +47.7% n=35 | neg seasons 4/19
+LONG | DOG35_49 AWAY | recent_edge_sack_or_hit_rate >= -0.023618 AND rank_edge_def_allowed_yards_per_play <= -1 | n=365 W=186 WR=51.0% ROI=+22.8% | train +23.1% n=158 | val +10.1% n=89 | holdout +31.9% n=118 | neg seasons 6/20
+LONG | DOG35_49 AWAY | rank_edge_punt_return_average >= -9 AND recent_edge_sack_rate_allowed >= 2.1355e-05 | n=405 W=201 WR=49.6% ROI=+18.0% | train +14.2% n=189 | val +11.3% n=106 | holdout +31.1% n=110 | neg seasons 6/20
+LONG | DOG35_49 AWAY | rank_edge_punt_return_average >= -9 AND rank_edge_rush_epa_per_carry >= 6 | n=278 W=146 WR=52.5% ROI=+24.2% | train +22.9% n=114 | val +15.7% n=76 | holdout +33.4% n=88 | neg seasons 5/20
+LONG | DOG35_49 AWAY | recent_edge_third_down_success >= 0 AND recent_edge_punt_return_average >= 4.3264 | n=150 W=85 WR=56.7% ROI=+35.3% | train +29.9% n=71 | val +37.5% n=35 | holdout +42.4% n=44 | neg seasons 6/20
+LONG | DOG35_49 AWAY | rank_edge_punt_return_average >= -5 AND recent_edge_kick_return_average <= -3.9125 | n=172 W=93 WR=54.1% ROI=+29.1% | train +25.2% n=72 | val +20.4% n=52 | holdout +44.4% n=48 | neg seasons 4/20
+LONG | DOG35_49 AWAY | rank_edge_punt_return_average >= -5 AND rank_edge_def_allowed_yards_per_play <= -1 | n=347 W=175 WR=50.4% ROI=+20.9% | train +19.6% n=144 | val +11.3% n=86 | holdout +29.4% n=117 | neg seasons 4/20
+LONG | DOG35_49 AWAY | rank_edge_punt_return_average >= -9 AND rank_edge_def_allowed_explosive_rate <= -6 | n=294 W=150 WR=51.0% ROI=+21.9% | train +17.7% n=131 | val +17.5% n=72 | holdout +31.5% n=91 | neg seasons 5/20
+LONG | DOG35_49 AWAY | recent_edge_third_down_success >= 0.083861 AND rank_edge_punt_return_average >= -9 | n=197 W=109 WR=55.3% ROI=+31.5% | train +37.2% n=86 | val +10.6% n=54 | holdout +42.8% n=57 | neg seasons 7/20
+LONG | DOG35_49 AWAY | rank_edge_punt_return_average >= -9 AND rank_edge_def_allowed_yards_per_play <= -1 | n=407 W=203 WR=49.9% ROI=+19.7% | train +19.1% n=165 | val +12.4% n=103 | holdout +26.0% n=139 | neg seasons 5/20
+LONG | DOG35_49 ANY | rank_edge_punt_return_average >= -5 AND recent_edge_third_down_success >= 0 | n=594 W=299 WR=50.3% ROI=+18.8% | train +18.1% n=257 | val +18.4% n=154 | holdout +20.0% n=183 | neg seasons 5/20
+LONG | DOG35_49 AWAY | rank_edge_rush_epa_per_carry >= 15 AND rank_edge_third_down_success >= -6 | n=116 W=67 WR=57.8% ROI=+35.4% | train +26.6% n=55 | val +36.0% n=32 | holdout +51.6% n=29 | neg seasons 4/20
+LONG | DOG35_49 AWAY | rank_edge_def_allowed_explosive_rate <= -10 AND recent_edge_sack_rate_allowed >= 2.1355e-05 | n=144 W=82 WR=56.9% ROI=+37.0% | train +35.4% n=61 | val +36.5% n=34 | holdout +39.2% n=49 | neg seasons 4/20
+LONG | DOG35_49 AWAY | rank_edge_def_allowed_yards_per_play <= -1 AND recent_edge_sack_rate_allowed >= 2.1355e-05 | n=280 W=144 WR=51.4% ROI=+23.0% | train +19.5% n=122 | val +19.6% n=68 | holdout +30.4% n=90 | neg seasons 5/20
+LONG | DOG35_49 AWAY | recent_edge_sack_or_hit_rate >= -0.023618 AND rank_edge_success_rate >= 10 | n=188 W=100 WR=53.2% ROI=+25.9% | train +22.9% n=94 | val +12.4% n=49 | holdout +46.7% n=45 | neg seasons 5/20
+LONG | DOG35_49 AWAY | recent_edge_sack_rate_allowed >= 0.016205 AND rank_edge_def_allowed_explosive_rate <= -6 | n=152 W=85 WR=55.9% ROI=+33.5% | train +26.6% n=76 | val +41.4% n=34 | holdout +39.7% n=42 | neg seasons 4/20
+LONG | DOG35_49 AWAY | rank_edge_sack_or_hit_rate >= 1 AND rank_edge_def_allowed_success_rate <= -1 | n=314 W=155 WR=49.4% ROI=+18.7% | train +14.0% n=136 | val +11.7% n=76 | holdout +30.3% n=102 | neg seasons 6/20
+LONG | DOG35_49 AWAY | rank_edge_rush_epa_per_carry >= 15 AND rank_edge_punt_return_average >= -9 | n=116 W=66 WR=56.9% ROI=+32.9% | train +22.0% n=49 | val +36.0% n=32 | holdout +45.5% n=35 | neg seasons 3/19
+LONG | DOG35_49 AWAY | recent_edge_sack_rate_allowed >= 2.1355e-05 AND rank_edge_redzone_epa >= 6 | n=205 W=107 WR=52.2% ROI=+23.6% | train +12.6% n=100 | val +35.4% n=44 | holdout +33.0% n=61 | neg seasons 5/20
+LONG | DOG35_49 AWAY | recent_edge_punt_return_average >= 2.4722 AND recent_edge_third_down_success >= 0 | n=202 W=112 WR=55.4% ROI=+32.8% | train +34.9% n=94 | val +24.3% n=50 | holdout +36.7% n=58 | neg seasons 3/20
+LONG | DOG35_49 AWAY | recent_edge_punt_return_average >= 0 AND rank_edge_def_allowed_explosive_rate <= -6 | n=200 W=107 WR=53.5% ROI=+27.9% | train +22.9% n=86 | val +30.5% n=47 | holdout +32.4% n=67 | neg seasons 4/20
+LONG | DOG35_49 AWAY | recent_edge_sack_rate_allowed >= 2.1355e-05 AND recent_edge_yards_per_play <= -0.37061 | n=164 W=84 WR=51.2% ROI=+23.8% | train +14.5% n=80 | val +19.7% n=40 | holdout +44.2% n=44 | neg seasons 7/20
+LONG | DOG35_49 AWAY | rank_edge_punt_return_average >= -9 AND rank_edge_rush_epa_per_carry >= 10 | n=197 W=104 WR=52.8% ROI=+24.7% | train +21.8% n=81 | val +14.2% n=57 | holdout +38.9% n=59 | neg seasons 3/20
+LONG | DOG35_49 AWAY | recent_edge_sack_or_hit_rate >= -0.023618 AND rank_edge_rush_epa_per_carry >= 10 | n=187 W=96 WR=51.3% ROI=+22.1% | train +12.8% n=82 | val +18.7% n=51 | holdout +39.4% n=54 | neg seasons 6/20
+LONG | DOG35_49 AWAY | recent_edge_sack_rate_allowed >= 2.1355e-05 AND rank_edge_def_allowed_success_rate <= -1 | n=289 W=148 WR=51.2% ROI=+22.2% | train +20.1% n=123 | val +16.3% n=71 | holdout +29.4% n=95 | neg seasons 5/20
+LONG | DOG35_49 AWAY | rank_edge_def_allowed_yards_per_play <= -1 AND recent_edge_sack_rate_allowed >= 0.016205 | n=203 W=108 WR=53.2% ROI=+27.2% | train +22.9% n=91 | val +26.8% n=47 | holdout +33.4% n=65 | neg seasons 5/20
+LONG | DOG35_49 AWAY | recent_edge_punt_return_average >= 0 AND recent_edge_third_down_success >= 0 | n=278 W=150 WR=54.0% ROI=+28.2% | train +31.0% n=124 | val +21.6% n=74 | holdout +30.0% n=80 | neg seasons 4/20
+LONG | DOG35_49 AWAY | rank_edge_def_allowed_yards_per_play <= -10 AND rank_edge_redzone_epa >= 1 | n=172 W=92 WR=53.5% ROI=+30.2% | train +33.0% n=67 | val +16.2% n=49 | holdout +39.1% n=56 | neg seasons 5/20
+LONG | DOG35_49 AWAY | rank_edge_off_epa_per_play >= 10 AND rank_edge_sack_rate_allowed >= 1 | n=135 W=76 WR=56.3% ROI=+32.8% | train +25.9% n=72 | val +33.9% n=31 | holdout +47.0% n=32 | neg seasons 3/17
