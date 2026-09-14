@@ -1,0 +1,48 @@
+name: Appwiza NFL scanner identity snippet inspect
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/appwiza-nfl-scanner-snippet-inspect.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  inspect:
+    if: github.repository == 'maxxw71/ufc-feed' && github.ref == 'refs/heads/main'
+    runs-on: [self-hosted, Linux, X64, appwiza]
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - name: Capture scanner identity snippets
+        shell: bash
+        run: |
+          set -euo pipefail
+          SRC=/home/anestishkurti92/nfl-predictor-v1/research_v2/nfl_home_opener_scanner.py
+          OUT=nfl/live_scanner_identity_snippets.txt
+          : > "$OUT"
+          python3 - "$SRC" >> "$OUT" <<'PY'
+          from pathlib import Path
+          import sys
+          lines=Path(sys.argv[1]).read_text(errors='replace').splitlines()
+          needles=('def current_odds','records =','records=[]','records.append','publish_nfl','nfl_email_design.render','selection_side','espn')
+          chosen=set()
+          for i,l in enumerate(lines):
+              if any(n in l for n in needles):
+                  chosen.update(range(max(0,i-20), min(len(lines),i+45)))
+          last=-2
+          for i in sorted(chosen):
+              if i>last+1: print('\n---')
+              print(f'{i+1}: {lines[i]}')
+              last=i
+          PY
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add "$OUT"
+          if ! git diff --cached --quiet; then
+            git commit -m 'Capture NFL scanner identity snippets'
+            git push
+          fi
