@@ -22,6 +22,7 @@ jobs:
     timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
+      # Re-run after the final 2021-2026 coordinator/context rebuild.
       - name: Audit frozen NFL methods against richer pregame context
         shell: bash
         run: |
