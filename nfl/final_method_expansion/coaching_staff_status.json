@@ -1,0 +1,140 @@
+{
+  "team_seasons": 672,
+  "head_coach_filled": 672,
+  "oc_filled": 32,
+  "dc_filled": 32,
+  "both_coordinators_filled": 32,
+  "by_season": {
+    "2006": {
+      "teams": 32,
+      "oc": 0,
+      "dc": 0
+    },
+    "2007": {
+      "teams": 32,
+      "oc": 0,
+      "dc": 0
+    },
+    "2008": {
+      "teams": 32,
+      "oc": 0,
+      "dc": 0
+    },
+    "2009": {
+      "teams": 32,
+      "oc": 0,
+      "dc": 0
+    },
+    "2010": {
+      "teams": 32,
+      "oc": 0,
+      "dc": 0
+    },
+    "2011": {
+      "teams": 32,
+      "oc": 0,
+      "dc": 0
+    },
+    "2012": {
+      "teams": 32,
+      "oc": 0,
+      "dc": 0
+    },
+    "2013": {
+      "teams": 32,
+      "oc": 0,
+      "dc": 0
+    },
+    "2014": {
+      "teams": 32,
+      "oc": 0,
+      "dc": 0
+    },
+    "2015": {
+      "teams": 32,
+      "oc": 0,
+      "dc": 0
+    },
+    "2016": {
+      "teams": 32,
+      "oc": 0,
+      "dc": 0
+    },
+    "2017": {
+      "teams": 32,
+      "oc": 0,
+      "dc": 0
+    },
+    "2018": {
+      "teams": 32,
+      "oc": 0,
+      "dc": 0
+    },
+    "2019": {
+      "teams": 32,
+      "oc": 0,
+      "dc": 0
+    },
+    "2020": {
+      "teams": 32,
+      "oc": 0,
+      "dc": 0
+    },
+    "2021": {
+      "teams": 32,
+      "oc": 0,
+      "dc": 0
+    },
+    "2022": {
+      "teams": 32,
+      "oc": 0,
+      "dc": 0
+    },
+    "2023": {
+      "teams": 32,
+      "oc": 0,
+      "dc": 0
+    },
+    "2024": {
+      "teams": 32,
+      "oc": 0,
+      "dc": 0
+    },
+    "2025": {
+      "teams": 32,
+      "oc": 32,
+      "dc": 32
+    },
+    "2026": {
+      "teams": 32,
+      "oc": 0,
+      "dc": 0
+    }
+  },
+  "sources": {
+    "altdraft": {
+      "ok": false,
+      "error": "ValueError('No tables found')"
+    },
+    "espn_2025": {
+      "ok": true,
+      "teams": 32,
+      "oc": 32,
+      "dc": 32
+    },
+    "current_2026_offense": {
+      "ok": false,
+      "error": "RuntimeError('2026 offensive coordinator table not found')"
+    },
+    "current_2026_defense": {
+      "ok": false,
+      "error": "RuntimeError('2026 defensive coordinator table not found')"
+    }
+  },
+  "output": "/home/appwiza-runner/nfl-context-data/raw/coaching_staff_2006_2026.csv",
+  "limitations": [
+    "Historical coordinator coverage begins in 2010; 2006-2009 remain unknown unless another audited source is added.",
+    "Unknown coordinator change values remain null, never zero.",
+    "2026 current coordinator names come from league-wide current coordinator tables and should be periodically refreshed."
+  ]
+}

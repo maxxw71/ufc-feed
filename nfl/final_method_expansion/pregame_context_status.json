@@ -1,0 +1,28 @@
+{
+  "rows": 10942,
+  "games": 5471,
+  "season_min": 2006,
+  "season_max": 2026,
+  "coverage_non_null": {
+    "qb_id": 10462,
+    "qb_prior_starts": 10462,
+    "qb_changed_from_prior_season": 9950,
+    "head_coach_changed": 10430,
+    "returning_offense_snap_share": 6686,
+    "returning_defense_snap_share": 6686,
+    "returning_ol_snap_share": 6686,
+    "returning_skill_snap_share": 6686,
+    "offensive_coordinator": 544,
+    "defensive_coordinator": 544,
+    "offensive_coordinator_changed": 0,
+    "defensive_coordinator_changed": 0
+  },
+  "output": "/home/appwiza-runner/nfl-context-data/derived/team_game_pregame_context_2006_2026.parquet",
+  "notes": [
+    "Weeks 1-3 are context-only for rolling team methods requiring >=3 prior current-season games.",
+    "Returning snap shares use the target season's first regular-season roster snapshot and PRIOR-season snaps only.",
+    "Weekly-roster PFR IDs are recovered from the player master by GSIS ID, with unique-name fallback only.",
+    "Injury feed is intentionally marked unavailable after 2024.",
+    "Low-continuity thresholds are candidate flags, not validated betting vetoes."
+  ]
+}
