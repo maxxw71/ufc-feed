@@ -1,0 +1,39 @@
+name: NFL coach-only discovery
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/nfl_coach_only_discovery.py'
+permissions:
+  contents: write
+jobs:
+  research:
+    runs-on: [self-hosted, Linux, X64, appwiza]
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with: {fetch-depth: 0}
+      - name: Run coach-only discovery
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          /home/anestishkurti92/nfl-predictor-v1/venv/bin/python "$GITHUB_WORKSPACE/scripts/nfl_coach_only_discovery.py"
+      - name: Publish
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          SRC=/home/appwiza-runner/nfl-context-data/coach_only_discovery
+          DEST="$GITHUB_WORKSPACE/nfl/coach_only_discovery"
+          mkdir -p "$DEST"
+          cp "$SRC"/*.csv "$DEST"/ 2>/dev/null || true
+          cp "$SRC"/*.json "$DEST"/ 2>/dev/null || true
+          cp "$SRC"/*.txt "$DEST"/ 2>/dev/null || true
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git add nfl/coach_only_discovery
+          if ! git diff --cached --quiet; then
+            git commit -m 'Update NFL coach-only discovery results'
+            git pull --rebase origin main
+            git push origin HEAD:main
+          fi
