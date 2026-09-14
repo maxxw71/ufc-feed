@@ -1,0 +1,41 @@
+NFL CURRENT LIVE LEGACY METHOD RE-AUDIT
+
+live_rules_detected=['original', 'stricter', 'pass_defense_offense24', 'late_road_protection_rest_v1']
+REG-only historical reconstruction; win percentage is reported alongside ROI.
+
+
+LATE METHOD META
+{
+  "rule": "late_road_protection_rest_v1",
+  "status": "source_captured",
+  "constants": {
+    "OL": [
+      "C",
+      "G",
+      "T",
+      "OT",
+      "OG",
+      "LT",
+      "LG",
+      "RT",
+      "RG"
+    ],
+    "RULE": "late_road_protection_rest_v1"
+  }
+}
+
+CHARGERS TRACE
+[
+  {
+    "file": "/home/anestishkurti92/nfl-predictor-v1/research_v2/home_opener_email_state/ledger.json",
+    "error": "permission_denied"
+  },
+  {
+    "file": "/home/anestishkurti92/nfl-predictor-v1/research_v2/home_opener_email_state/status.json",
+    "error": "permission_denied"
+  },
+  {
+    "file": "/home/anestishkurti92/nfl-predictor-v1/research_v2/home_opener_email_state/preview.txt",
+    "error": "permission_denied"
+  }
+]
