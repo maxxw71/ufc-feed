@@ -1,0 +1,40 @@
+name: NFL next-wave combination search
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/nfl_next_wave_combination_search.py'
+      - '.github/workflows/nfl-next-wave-combination-search.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  search:
+    runs-on: [self-hosted, Linux, X64, appwiza]
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+        with: {fetch-depth: 0}
+      - name: Run cross-domain search
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          /home/anestishkurti92/nfl-predictor-v1/venv/bin/python "$GITHUB_WORKSPACE/scripts/nfl_next_wave_combination_search.py"
+      - name: Publish results
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          SRC=/home/appwiza-runner/nfl-context-data/next_wave_combinations
+          DEST="$GITHUB_WORKSPACE/nfl/next_wave_combinations"
+          mkdir -p "$DEST"
+          cp "$SRC/summary.json" "$DEST/summary.json"
+          cp "$SRC/report.txt" "$DEST/report.txt"
+          cp "$SRC/next_wave_survivors.csv" "$DEST/next_wave_survivors.csv"
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git add nfl/next_wave_combinations
+          if ! git diff --cached --quiet; then
+            git commit -m 'Update NFL next-wave combination results'
+            git pull --rebase origin main
+            git push origin HEAD:main
+          fi
