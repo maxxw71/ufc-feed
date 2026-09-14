@@ -17,71 +17,34 @@ jobs:
     timeout-minutes: 8
     steps:
       - uses: actions/checkout@v4
-
-      - name: Capture focused sanitized live NFL selector report
+      - name: Locate validated YPP production evaluator
         shell: bash
         run: |
           set -euo pipefail
           mkdir -p nfl
-          REPORT=nfl/live_selector_report.txt
+          REPORT=nfl/live_ypp_evaluator_report.txt
           : > "$REPORT"
-
           ROOT=/home/anestishkurti92/nfl-predictor-v1
-          R2="$ROOT/research_v2"
           WEB=/srv/appwiza-sports
 
-          echo 'LIVE NFL SELECTOR REPORT' >> "$REPORT"
+          echo 'LIVE NFL YPP EVALUATOR REPORT' >> "$REPORT"
           date -u >> "$REPORT"
           echo >> "$REPORT"
 
-          echo '=== RELEVANT PROJECT FILES ===' >> "$REPORT"
-          find "$R2" "$WEB" -maxdepth 4 -type f \
-            \( -name '*.py' -o -name '*.sh' -o -name '*.js' -o -name '*.ts' \) \
-            ! -path '*/.git/*' ! -path '*/node_modules/*' ! -path '*/.venv/*' ! -path '*/venv*/*' \
-            ! -name '*.before_*' ! -name '*~' \
-            2>/dev/null | grep -Ei 'nfl|email|digest|alert|scanner|publish|report|pick|bet|app' | sort | head -220 >> "$REPORT" || true
-
-          echo >> "$REPORT"
-          echo '=== FOCUSED SELECTOR REFERENCES ===' >> "$REPORT"
-          for f in \
-            "$R2/nfl_email_candidate.py" \
-            "$R2/nfl_2026_alerts.py" \
-            "$R2/nfl_home_opener_scanner.py" \
-            "$R2/nfl_scanner_candidate.py" \
-            "$R2/nfl_tracker_candidate.py" \
-            "$R2/paper_tracker.py"; do
-            if [ -f "$f" ]; then
-              echo >> "$REPORT"
-              echo "--- FILE: $f ---" >> "$REPORT"
-              grep -nEi -C 8 'prior_games|week|market_prob|moneyline|recommend|approved|approval|bet(s|ting)?|pick(s)?|confidence|favorite|fallback|method|YPP|alert|email|publish' "$f" 2>/dev/null | \
-                grep -Eiv 'password|secret|token|api[_-]?key|authorization|credential|smtp[_-]?(pass|password|user|host)' | \
-                head -260 >> "$REPORT" || true
-            fi
-          done
-
-          echo >> "$REPORT"
-          echo '=== WEBSITE SELECTOR REFERENCES ===' >> "$REPORT"
-          timeout 20s grep -RniE -C 7 \
-            'prior_games|week|market_prob|moneyline|recommend|approved|approval|bet(s|ting)?|pick(s)?|confidence|favorite|fallback|method|YPP|alert' \
-            "$WEB" \
-            --include='*.py' --include='*.sh' --include='*.js' --include='*.ts' \
-            --exclude-dir=.git --exclude-dir=node_modules --exclude-dir=.venv --exclude-dir=venv \
+          echo '=== FILES / REFERENCES ===' >> "$REPORT"
+          timeout 30s grep -RniE -C 10 \
+            '6\.2|5\.8|55%|0\.55|YPP|yards.?per.?play|market[_ ]?prob|road favorite|away favorite|prior_games|prior games' \
+            "$ROOT" "$WEB" \
+            --include='*.py' --include='*.sh' --include='*.js' --include='*.ts' --include='*.json' --include='*.md' \
+            --exclude-dir=.git --exclude-dir=node_modules --exclude-dir=.venv --exclude-dir=venv --exclude-dir=venv.google-original \
             2>/dev/null | \
           grep -Eiv 'password|secret|token|api[_-]?key|authorization|credential|smtp[_-]?(pass|password|user|host)' | \
-          head -420 >> "$REPORT" || true
-
-          echo >> "$REPORT"
-          echo '=== CHARGERS / ARIZONA GENERATED OUTPUT REFERENCES ===' >> "$REPORT"
-          timeout 15s grep -RniE -C 4 'Chargers|Cardinals|\bLAC\b|\bARI\b' \
-            "$R2" "$WEB" \
-            --include='*.json' --include='*.csv' --include='*.html' --include='*.txt' \
-            --exclude-dir=.git --exclude-dir=node_modules --exclude-dir=.venv --exclude-dir=venv \
-            2>/dev/null | head -220 >> "$REPORT" || true
+          head -900 >> "$REPORT" || true
 
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add "$REPORT"
           if ! git diff --cached --quiet; then
-            git commit -m 'Capture focused live NFL selector report'
+            git commit -m 'Capture live validated NFL YPP evaluator report'
             git push
           fi
