@@ -5,7 +5,7 @@ on:
   push:
     branches: [main]
     paths:
-      - 'scripts/nfl_build_staff_history.py'
+      - 'scripts/nfl_build_staff_history_pfr.py'
       - '.github/workflows/nfl-staff-history.yml'
 
 permissions:
@@ -31,7 +31,7 @@ jobs:
           test -x "$ROOT/venv/bin/python"
           mkdir -p "$CTX/raw"
           chmod 755 "$CTX" "$CTX/raw"
-          NFL_SOURCE_ROOT="$ROOT" NFL_CONTEXT_ROOT="$CTX" "$ROOT/venv/bin/python" "$GITHUB_WORKSPACE/scripts/nfl_build_staff_history.py"
+          NFL_SOURCE_ROOT="$ROOT" NFL_CONTEXT_ROOT="$CTX" "$ROOT/venv/bin/python" "$GITHUB_WORKSPACE/scripts/nfl_build_staff_history_pfr.py"
           chmod -R a+rX "$CTX"
           echo '=== STAFF STATUS ==='
           cat "$CTX/NFL_COACHING_STAFF_STATUS.json"
