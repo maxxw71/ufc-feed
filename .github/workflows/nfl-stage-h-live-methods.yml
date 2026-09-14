@@ -1,0 +1,41 @@
+name: NFL stage H methods for shadow watchlist
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/nfl_stage_h_live_methods.py'
+      - '.github/workflows/nfl-stage-h-live-methods.yml'
+      - 'nfl/live_candidate_finalization/live_ready.csv'
+      - 'nfl/season_timing_audit/live_ready_timing.csv'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  stage:
+    runs-on: [self-hosted, Linux, X64, appwiza]
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with: {fetch-depth: 0}
+      - name: Build fail-closed shadow manifest
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          /home/anestishkurti92/nfl-predictor-v1/venv/bin/python "$GITHUB_WORKSPACE/scripts/nfl_stage_h_live_methods.py"
+      - name: Publish staging manifest
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          SRC=/home/appwiza-runner/nfl-context-data/live_staging
+          DEST="$GITHUB_WORKSPACE/nfl/live_stage"
+          mkdir -p "$DEST"
+          cp "$SRC/approved_h_methods.json" "$DEST/approved_h_methods.json"
+          cp "$SRC/report.txt" "$DEST/report.txt"
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git add nfl/live_stage
+          if ! git diff --cached --quiet; then
+            git commit -m 'Stage NFL H methods for shadow watchlist'
+            git pull --rebase origin main
+            git push origin HEAD:main
+          fi
