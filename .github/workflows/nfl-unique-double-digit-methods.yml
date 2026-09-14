@@ -1,0 +1,43 @@
+name: NFL unique double-digit method expansion
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/nfl_unique_double_digit_methods.py'
+      - '.github/workflows/nfl-unique-double-digit-methods.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  mine:
+    if: github.repository == 'maxxw71/ufc-feed' && github.ref == 'refs/heads/main'
+    runs-on: [self-hosted, Linux, X64, appwiza]
+    timeout-minutes: 55
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Mine unique double-digit ROI methods
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          /home/anestishkurti92/nfl-predictor-v1/venv/bin/python "$GITHUB_WORKSPACE/scripts/nfl_unique_double_digit_methods.py"
+      - name: Publish results
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          SRC=/home/appwiza-runner/nfl-context-data/final_method_expansion
+          DEST="$GITHUB_WORKSPACE/nfl/final_method_expansion"
+          mkdir -p "$DEST"
+          for f in final_coverage.json unique_method_report.txt unique_double_digit_methods.csv unique_methods_year_by_year.csv context_enriched_survivors.csv; do cp "$SRC/$f" "$DEST/$f"; done
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git add nfl/final_method_expansion
+          if ! git diff --cached --quiet; then
+            git commit -m 'Update NFL unique double-digit ROI methods'
+            git pull --rebase origin main
+            git push origin HEAD:main
+          fi
