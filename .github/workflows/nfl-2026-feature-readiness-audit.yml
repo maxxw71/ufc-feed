@@ -1,0 +1,40 @@
+name: NFL 2026 feature readiness audit
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/nfl_2026_feature_readiness_audit.py'
+      - '.github/workflows/nfl-2026-feature-readiness-audit.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  audit:
+    runs-on: [self-hosted, Linux, X64, appwiza]
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with: {fetch-depth: 0}
+      - name: Run 2026 readiness audit
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          /home/anestishkurti92/nfl-predictor-v1/venv/bin/python "$GITHUB_WORKSPACE/scripts/nfl_2026_feature_readiness_audit.py"
+      - name: Publish results
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          SRC=/home/appwiza-runner/nfl-context-data/live_2026_readiness
+          DEST="$GITHUB_WORKSPACE/nfl/live_2026_readiness"
+          mkdir -p "$DEST"
+          cp "$SRC/summary.json" "$DEST/summary.json"
+          cp "$SRC/report.txt" "$DEST/report.txt"
+          [ ! -f "$SRC/mature_unplayed_2026_rows.csv" ] || cp "$SRC/mature_unplayed_2026_rows.csv" "$DEST/mature_unplayed_2026_rows.csv"
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git add nfl/live_2026_readiness
+          if ! git diff --cached --quiet; then
+            git commit -m 'Update NFL 2026 live feature readiness'
+            git pull --rebase origin main
+            git push origin HEAD:main
+          fi
