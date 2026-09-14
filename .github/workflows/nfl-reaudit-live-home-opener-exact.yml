@@ -1,0 +1,33 @@
+name: NFL re-audit live home-opener exact
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/nfl_reaudit_live_home_opener_exact.py'
+permissions:
+  contents: write
+jobs:
+  audit:
+    runs-on: [self-hosted, Linux, X64, appwiza]
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with: {fetch-depth: 0}
+      - name: Run audit
+        run: /home/anestishkurti92/nfl-predictor-v1/venv/bin/python "$GITHUB_WORKSPACE/scripts/nfl_reaudit_live_home_opener_exact.py"
+      - name: Publish
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          SRC=/home/appwiza-runner/nfl-context-data/legacy_live_home_opener_exact
+          DEST="$GITHUB_WORKSPACE/nfl/legacy_live_home_opener_exact"
+          rm -rf "$DEST"; mkdir -p "$DEST"; cp -a "$SRC"/. "$DEST"/
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git add nfl/legacy_live_home_opener_exact
+          if ! git diff --cached --quiet; then
+            git commit -m 'Update exact legacy home-opener re-audit'
+            git pull --rebase origin main
+            git push origin HEAD:main
+          fi
