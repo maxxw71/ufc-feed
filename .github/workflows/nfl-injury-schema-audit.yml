@@ -1,0 +1,36 @@
+name: NFL injury schema audit
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  inspect:
+    if: github.repository == 'maxxw71/ufc-feed'
+    runs-on: [self-hosted, Linux, X64, appwiza]
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Inspect historical injury feed
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          PY=/home/anestishkurti92/nfl-predictor-v1/venv/bin/python
+          P=/home/appwiza-runner/nfl-context-data/raw/injuries_2009_2024.parquet
+          "$PY" - <<'PY'
+          import pandas as pd
+          p='/home/appwiza-runner/nfl-context-data/raw/injuries_2009_2024.parquet'
+          d=pd.read_parquet(p)
+          print('ROWS',len(d))
+          print('COLUMNS',list(d.columns))
+          print('DTYPES')
+          print(d.dtypes.to_string())
+          print('HEAD')
+          print(d.head(12).to_string(index=False))
+          for c in ['report_status','practice_status','position','team','season','week','game_type']:
+              if c in d:
+                  print('\nVALUE_COUNTS',c)
+                  print(d[c].value_counts(dropna=False).head(30).to_string())
+          PY
