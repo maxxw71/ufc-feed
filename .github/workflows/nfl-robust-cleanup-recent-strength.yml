@@ -1,0 +1,33 @@
+name: NFL robust cleanup and recent strength
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/nfl_robust_cleanup_recent_strength.py'
+permissions:
+  contents: write
+jobs:
+  audit:
+    runs-on: [self-hosted, Linux, X64, appwiza]
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with: {fetch-depth: 0}
+      - name: Rank and clean
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          /home/anestishkurti92/nfl-predictor-v1/venv/bin/python "$GITHUB_WORKSPACE/scripts/nfl_robust_cleanup_recent_strength.py"
+      - name: Publish
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git add nfl/robust_cleanup_recent_strength
+          if ! git diff --cached --quiet; then
+            git commit -m 'Update NFL robust cleanup and recent-strength ranking'
+            git pull --rebase origin main
+            git push origin HEAD:main
+          fi
