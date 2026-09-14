@@ -1,0 +1,52 @@
+name: Appwiza NFL research primary deploy
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/appwiza-nfl-research-primary-deploy.yml'
+      - 'nfl/research_page/index.html'
+permissions:
+  contents: write
+jobs:
+  deploy:
+    runs-on: [self-hosted, Linux, X64, appwiza]
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - name: Deploy to sports/nfl/research if authorized
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          ROOT=/srv/appwiza-sports/public/nfl
+          DEST=$ROOT/research
+          SRC="$GITHUB_WORKSPACE/nfl/research_page/index.html"
+          REPORT="$GITHUB_WORKSPACE/nfl/research_page/primary_deploy_report.txt"
+          : > "$REPORT"
+          echo "before=$(getfacl -cp "$ROOT" 2>&1 | tr '\n' ';')" >> "$REPORT"
+          if [ ! -w "$ROOT" ]; then
+            if setfacl -m m::rwx "$ROOT" 2>>"$REPORT"; then
+              echo 'acl_mask_adjusted=yes' >> "$REPORT"
+            else
+              echo 'acl_mask_adjusted=no' >> "$REPORT"
+            fi
+          fi
+          if [ -w "$ROOT" ]; then
+            mkdir -p "$DEST"
+            cp "$SRC" "$DEST/index.html"
+            chmod 0644 "$DEST/index.html" || true
+            echo 'deploy_status=SUCCESS_PRIMARY' >> "$REPORT"
+            echo 'public_url=https://appwiza.com/sports/nfl/research/' >> "$REPORT"
+            stat -c 'deployed=%U:%G %a %s %n' "$DEST/index.html" >> "$REPORT"
+          else
+            echo 'deploy_status=BLOCKED_BY_OWNER_ACL' >> "$REPORT"
+          fi
+          echo "after=$(getfacl -cp "$ROOT" 2>&1 | tr '\n' ';')" >> "$REPORT"
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git add nfl/research_page/primary_deploy_report.txt
+          if ! git diff --cached --quiet; then
+            git commit -m 'Record primary NFL research deploy attempt'
+            git pull --rebase origin main
+            git push origin HEAD:main
+          fi
