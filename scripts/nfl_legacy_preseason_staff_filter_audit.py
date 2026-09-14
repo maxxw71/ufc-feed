@@ -19,7 +19,6 @@ def scoreval(x):
     try:return float(x)
     except:return np.nan
 
-# Build/load preseason results from ESPN scoreboard; nflverse schedule excludes PRE by design.
 cache=OUT/'espn_preseason_team_seasons.csv'
 if cache.exists():
     pre=pd.read_csv(cache)
@@ -58,7 +57,6 @@ else:
     pre['pre_win_pct']=pre.pre_wins/pre.pre_games;pre['pre_margin_pg']=(pre.pre_pf-pre.pre_pa)/pre.pre_games
     pre.to_csv(cache,index=False)
 
-# Exact home-opener live methods.
 def load_method(path,name):
     d=pd.read_csv(path,low_memory=False);z=pd.DataFrame({'method':name,'season':num(d.season).astype(int),'week':num(d.week).astype(int),'game_id':d.game_id.astype(str),'team':d.home_team.replace(ALIASES),'opponent':d.away_team.replace(ALIASES),'moneyline':num(d.home_moneyline),'win':num(d.win),'profit_units':num(d.profit),'prior_win_pct':num(d.prior_win_pct),'opponent_prior_win_pct':num(d.opponent_prior_win_pct)})
     return z
@@ -66,11 +64,9 @@ bets=pd.concat([
  load_method(REPO/'nfl/legacy_live_home_opener_exact/original_bets.csv','original'),
  load_method(REPO/'nfl/legacy_live_home_opener_exact/stricter_bets.csv','stricter')],ignore_index=True)
 
-# Merge preseason selected and opponent.
 bets=bets.merge(pre.rename(columns={c:'team_'+c for c in pre.columns if c not in ['season','team']}),on=['season','team'],how='left')
 bets=bets.merge(pre.rename(columns={'team':'opponent',**{c:'opp_'+c for c in pre.columns if c not in ['season','team']}}),on=['season','opponent'],how='left')
 
-# Historical coaching context from enriched table (2006-25 only).
 d=pd.read_parquet(ENR);d=d[d.season.between(2007,2025)].copy();d.team=d.team.replace(ALIASES)
 want=[c for c in ['hc_changed_season','oc_changed_season','dc_changed_season','both_coords_changed','staff_change_count','full_staff_overhaul','new_oc_low_off_continuity','new_dc_low_def_continuity','returning_offense_share','returning_defense_share','returning_ol_share','returning_skill_share'] if c in d.columns]
 team=d[['game_id','team']+want].drop_duplicates(['game_id','team']).rename(columns={c:'team_'+c for c in want})
@@ -117,7 +113,6 @@ if len(res):
     res['score']=res.confirmed.astype(int)*10+res.old_loss_lift+res.recent_loss_lift+(res.safe_roi-res.base_roi)
     res=res.sort_values(['confirmed','score','risk_n'],ascending=[False,False,False]);res.to_csv(OUT/'filter_results.csv',index=False);res[res.confirmed].to_csv(OUT/'confirmed_filters.csv',index=False)
 
-# Authoritative current profile from team sources; kept separate from stale/incomplete historical staff scrape.
 charg={
  'game':'ARI at LAC, 2026 Week 1','result':'LAC lost 26-14',
  'selected_team':{'head_coach':'Jim Harbaugh','offensive_coordinator':'Mike McDaniel (new in 2026)','defensive_coordinator':'Chris OLeary (new DC in 2026; regular-season playcalling debut)','preseason':'1-2'},
@@ -134,3 +129,4 @@ if len(res):
     for _,r in res[res.confirmed].head(30).iterrows():lines.append(f"{r.method} | {r.flag} | risk n={int(r.risk_n)} win={100*r.risk_win_pct:.1f}% ROI={100*r.risk_roi:+.1f}% | safe win={100*r.safe_win_pct:.1f}% ROI={100*r.safe_roi:+.1f}% | loss lift old={100*r.old_loss_lift:+.1f}pp recent={100*r.recent_loss_lift:+.1f}pp")
 lines+=['','CHARGERS PROFILE',json.dumps(charg,indent=2)]
 (OUT/'report.txt').write_text('\n'.join(lines)+'\n');print('\n'.join(lines[:80]))
+# trigger after workflow creation
