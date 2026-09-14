@@ -1,4 +1,4 @@
-NFL SEASON TIMING + MATURITY AUDIT
+NFL SEASON TIMING + MATURITY AUDIT (REGULAR SEASON ONLY)
 
 {
   "methods_audited": 244,
@@ -6,19 +6,21 @@ NFL SEASON TIMING + MATURITY AUDIT
   "live_ready_week4_ok": 8,
   "live_ready_start_week7_or_later": 4,
   "all_min_week": 4,
-  "global_maturity_rule": "prior_games >= 3 completed games for selected team"
+  "all_max_week": 18,
+  "global_maturity_rule": "prior_games >= 3 completed games for selected team",
+  "regular_season_only": true
 }
 
 LIVE READY TIMING
-NFL-H002 | start=W4 (WEEK4_OK_AFTER_3_COMPLETED_GAMES) | historical weeks 4-21, median W11.0 | W4-6 n=30 ROI=+70.4% (pre +60.2% / hold +83.8%) | W7-10 n=41 ROI=+30.4% | W11-14 n=37 ROI=+1.5% | W15-18 n=30 ROI=+48.1%
-NFL-H003 | start=W4 (WEEK4_OK_AFTER_3_COMPLETED_GAMES) | historical weeks 4-20, median W11.0 | W4-6 n=28 ROI=+51.2% (pre +20.1% / hold +129.0%) | W7-10 n=47 ROI=+55.9% | W11-14 n=56 ROI=+14.8% | W15-18 n=39 ROI=+61.0%
-NFL-H008 | start=W4 (WEEK4_OK_AFTER_3_COMPLETED_GAMES) | historical weeks 4-21, median W11.0 | W4-6 n=28 ROI=+56.4% (pre +60.9% / hold +46.7%) | W7-10 n=37 ROI=+32.8% | W11-14 n=39 ROI=+11.8% | W15-18 n=34 ROI=+51.2%
-NFL-H027 | start=W4 (WEEK4_OK_AFTER_3_COMPLETED_GAMES) | historical weeks 4-20, median W12.0 | W4-6 n=28 ROI=+54.1% (pre +62.8% / hold +35.8%) | W7-10 n=33 ROI=+40.0% | W11-14 n=45 ROI=+30.4% | W15-18 n=38 ROI=+20.1%
-NFL-H029 | start=W4 (WEEK4_OK_AFTER_3_COMPLETED_GAMES) | historical weeks 4-21, median W11.0 | W4-6 n=41 ROI=+50.6% (pre +52.2% / hold +47.2%) | W7-10 n=51 ROI=+5.4% | W11-14 n=54 ROI=-7.7% | W15-18 n=40 ROI=+44.9%
-NFL-H017 | start=W4 (WEEK4_OK_AFTER_3_COMPLETED_GAMES) | historical weeks 4-21, median W11.0 | W4-6 n=68 ROI=+26.8% (pre +20.2% / hold +38.9%) | W7-10 n=84 ROI=+43.6% | W11-14 n=81 ROI=-21.3% | W15-18 n=77 ROI=+29.9%
-NFL-H036 | start=W4 (WEEK4_OK_AFTER_3_COMPLETED_GAMES) | historical weeks 4-20, median W11.0 | W4-6 n=28 ROI=+52.4% (pre +33.3% / hold +86.6%) | W7-10 n=37 ROI=+52.7% | W11-14 n=42 ROI=+2.7% | W15-18 n=31 ROI=+35.7%
-NFL-H033 | start=W4 (WEEK4_OK_AFTER_3_COMPLETED_GAMES) | historical weeks 4-21, median W11.0 | W4-6 n=56 ROI=+36.1% (pre +42.0% / hold +21.4%) | W7-10 n=72 ROI=+37.7% | W11-14 n=82 ROI=-0.1% | W15-18 n=66 ROI=+12.5%
-NFL-H010 | start=W7 (EARLY_WINDOW_WEAK_START_WEEK7) | historical weeks 4-20, median W10.0 | W4-6 n=21 ROI=+33.5% (pre +8.9% / hold +112.2%) | W7-10 n=34 ROI=+40.7% | W11-14 n=25 ROI=+27.2% | W15-18 n=26 ROI=+90.7%
+NFL-H002 | start=W4 (WEEK4_OK_AFTER_3_COMPLETED_GAMES) | historical weeks 4-18, median W10.0 | W4-6 n=30 ROI=+70.4% (pre +60.2% / hold +83.8%) | W7-10 n=41 ROI=+30.4% | W11-14 n=37 ROI=+1.5% | W15-18 n=29 ROI=+46.0%
+NFL-H003 | start=W4 (WEEK4_OK_AFTER_3_COMPLETED_GAMES) | historical weeks 4-17, median W11.0 | W4-6 n=28 ROI=+51.2% (pre +20.1% / hold +129.0%) | W7-10 n=47 ROI=+55.9% | W11-14 n=56 ROI=+14.8% | W15-18 n=36 ROI=+53.5%
+NFL-H008 | start=W4 (WEEK4_OK_AFTER_3_COMPLETED_GAMES) | historical weeks 4-18, median W11.0 | W4-6 n=28 ROI=+56.4% (pre +60.9% / hold +46.7%) | W7-10 n=37 ROI=+32.8% | W11-14 n=39 ROI=+11.8% | W15-18 n=32 ROI=+52.7%
+NFL-H027 | start=W4 (WEEK4_OK_AFTER_3_COMPLETED_GAMES) | historical weeks 4-18, median W11.0 | W4-6 n=28 ROI=+54.1% (pre +62.8% / hold +35.8%) | W7-10 n=33 ROI=+40.0% | W11-14 n=45 ROI=+30.4% | W15-18 n=34 ROI=+27.9%
+NFL-H017 | start=W4 (WEEK4_OK_AFTER_3_COMPLETED_GAMES) | historical weeks 4-18, median W11.0 | W4-6 n=68 ROI=+26.8% (pre +20.2% / hold +38.9%) | W7-10 n=84 ROI=+43.6% | W11-14 n=81 ROI=-21.3% | W15-18 n=74 ROI=+25.2%
+NFL-H029 | start=W4 (WEEK4_OK_AFTER_3_COMPLETED_GAMES) | historical weeks 4-18, median W10.5 | W4-6 n=41 ROI=+50.6% (pre +52.2% / hold +47.2%) | W7-10 n=51 ROI=+5.4% | W11-14 n=54 ROI=-7.7% | W15-18 n=38 ROI=+40.7%
+NFL-H036 | start=W4 (WEEK4_OK_AFTER_3_COMPLETED_GAMES) | historical weeks 4-18, median W11.0 | W4-6 n=28 ROI=+52.4% (pre +33.3% / hold +86.6%) | W7-10 n=37 ROI=+52.7% | W11-14 n=42 ROI=+2.7% | W15-18 n=30 ROI=+31.7%
+NFL-H033 | start=W4 (WEEK4_OK_AFTER_3_COMPLETED_GAMES) | historical weeks 4-18, median W11.0 | W4-6 n=56 ROI=+36.1% (pre +42.0% / hold +21.4%) | W7-10 n=72 ROI=+37.7% | W11-14 n=82 ROI=-0.1% | W15-18 n=61 ROI=+14.7%
+NFL-H010 | start=W7 (EARLY_WINDOW_WEAK_START_WEEK7) | historical weeks 4-17, median W10.0 | W4-6 n=21 ROI=+33.5% (pre +8.9% / hold +112.2%) | W7-10 n=34 ROI=+40.7% | W11-14 n=25 ROI=+27.2% | W15-18 n=26 ROI=+90.7%
 NFL-H005 | start=W7 (INSUFFICIENT_EARLY_EVIDENCE_START_WEEK7) | historical weeks 4-18, median W11.0 | W4-6 n=14 ROI=+59.5% (pre +74.7% / hold +21.5%) | W7-10 n=26 ROI=+35.4% | W11-14 n=18 ROI=+38.8% | W15-18 n=27 ROI=+56.5%
-NFL-H028 | start=W7 (EARLY_WINDOW_WEAK_START_WEEK7) | historical weeks 4-20, median W10.0 | W4-6 n=44 ROI=+5.1% (pre +12.0% / hold -7.0%) | W7-10 n=55 ROI=+25.8% | W11-14 n=39 ROI=+13.9% | W15-18 n=36 ROI=+62.0%
-NFL-H035 | start=W7 (EARLY_WINDOW_WEAK_START_WEEK7) | historical weeks 4-22, median W11.0 | W4-6 n=30 ROI=+16.4% (pre +36.2% / hold -9.4%) | W7-10 n=36 ROI=+41.3% | W11-14 n=42 ROI=+42.1% | W15-18 n=32 ROI=+10.9%
+NFL-H028 | start=W7 (EARLY_WINDOW_WEAK_START_WEEK7) | historical weeks 4-17, median W10.0 | W4-6 n=44 ROI=+5.1% (pre +12.0% / hold -7.0%) | W7-10 n=55 ROI=+25.8% | W11-14 n=39 ROI=+13.9% | W15-18 n=34 ROI=+64.4%
+NFL-H035 | start=W7 (EARLY_WINDOW_WEAK_START_WEEK7) | historical weeks 4-18, median W11.0 | W4-6 n=30 ROI=+16.4% (pre +36.2% / hold -9.4%) | W7-10 n=36 ROI=+41.3% | W11-14 n=42 ROI=+42.1% | W15-18 n=31 ROI=+7.6%
