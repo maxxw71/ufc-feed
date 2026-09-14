@@ -1,0 +1,36 @@
+name: NFL prospective market snapshot
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '17 * * * *'
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/nfl_snapshot_market.py'
+      - '.github/workflows/nfl-market-snapshot.yml'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: nfl-market-snapshot
+  cancel-in-progress: true
+
+jobs:
+  snapshot:
+    if: github.repository == 'maxxw71/ufc-feed'
+    runs-on: [self-hosted, Linux, X64, appwiza]
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Snapshot current NFL market lines
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          ROOT=/home/anestishkurti92/nfl-predictor-v1
+          CTX=/home/appwiza-runner/nfl-context-data
+          test -x "$ROOT/venv/bin/python"
+          mkdir -p "$CTX/market_snapshots"
+          NFL_CONTEXT_ROOT="$CTX" "$ROOT/venv/bin/python" "$GITHUB_WORKSPACE/scripts/nfl_snapshot_market.py"
+          chmod -R a+rX "$CTX/market_snapshots"
