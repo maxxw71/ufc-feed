@@ -8,7 +8,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   inspect:
@@ -17,16 +17,51 @@ jobs:
     timeout-minutes: 8
     steps:
       - uses: actions/checkout@v4
-      - name: Trace live NFL email selector
+
+      - name: Capture sanitized live NFL selector report
         shell: bash
         run: |
-          set -u
+          set -euo pipefail
+          mkdir -p nfl
+          REPORT=nfl/live_selector_report.txt
+          : > "$REPORT"
+
           ROOT=/home/anestishkurti92/nfl-predictor-v1
-          echo '=== CANDIDATE EMAIL / REPORT FILES ==='
-          find "$ROOT" /srv/appwiza-sports -maxdepth 4 -type f \( -iname '*email*.py' -o -iname '*report*.py' -o -iname '*digest*.py' -o -iname '*pick*.py' -o -iname 'app.py' \) -print 2>/dev/null | head -120 || true
-          echo
-          echo '=== SELECTOR LOGIC SNIPPETS ==='
-          grep -RniE -C 5 'prior_games|market_prob|moneyline|recommend|bet(s|ting)?|pick(s)?|confidence|favorite|week[ _<>=]|send_.*(mail|email)|smtp|method' "$ROOT" /srv/appwiza-sports --include='*.py' 2>/dev/null | head -900 || true
-          echo
-          echo '=== CHARGERS / ARIZONA IN GENERATED OUTPUTS ==='
-          grep -RniE -C 4 'Chargers|Cardinals|\bLAC\b|\bARI\b' "$ROOT" /srv/appwiza-sports --include='*.json' --include='*.csv' --include='*.html' --include='*.txt' 2>/dev/null | head -500 || true
+          WEB=/srv/appwiza-sports
+
+          echo 'LIVE NFL SELECTOR REPORT' >> "$REPORT"
+          date -u >> "$REPORT"
+          echo >> "$REPORT"
+
+          echo '=== CANDIDATE FILES ===' >> "$REPORT"
+          find "$ROOT" "$WEB" -maxdepth 5 -type f \
+            \( -name '*.py' -o -name '*.sh' -o -name '*.js' -o -name '*.ts' \) \
+            ! -path '*/.git/*' ! -path '*/node_modules/*' ! -path '*/.venv/*' ! -path '*/venv/*' \
+            2>/dev/null | grep -Ei 'nfl|email|digest|publish|report|pick|bet|app' | head -180 >> "$REPORT" || true
+
+          echo >> "$REPORT"
+          echo '=== SAFE SELECTOR REFERENCES ===' >> "$REPORT"
+          timeout 30s grep -RniE -C 4 \
+            'prior_games|market_prob|moneyline|recommend|approved|approval|bet(s|ting)?|pick(s)?|confidence|favorite|fallback|week[ _<>=]|method|YPP|Chargers|Cardinals|LAC|ARI' \
+            "$ROOT" "$WEB" \
+            --include='*.py' --include='*.sh' --include='*.js' --include='*.ts' \
+            --exclude-dir=.git --exclude-dir=node_modules --exclude-dir=.venv --exclude-dir=venv \
+            2>/dev/null | \
+          grep -Eiv 'password|secret|token|api[_-]?key|authorization|credential|smtp[_-]?(pass|password|user|host)' | \
+          head -700 >> "$REPORT" || true
+
+          echo >> "$REPORT"
+          echo '=== CHARGERS / ARIZONA GENERATED OUTPUT REFERENCES ===' >> "$REPORT"
+          timeout 20s grep -RniE -C 3 'Chargers|Cardinals|\bLAC\b|\bARI\b' \
+            "$ROOT" "$WEB" \
+            --include='*.json' --include='*.csv' --include='*.html' --include='*.txt' \
+            --exclude-dir=.git --exclude-dir=node_modules --exclude-dir=.venv --exclude-dir=venv \
+            2>/dev/null | head -250 >> "$REPORT" || true
+
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add "$REPORT"
+          if ! git diff --cached --quiet; then
+            git commit -m 'Capture sanitized live NFL selector report'
+            git push
+          fi
