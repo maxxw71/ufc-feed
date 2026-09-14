@@ -1,0 +1,36 @@
+=== SUDO LIST ===
+sudo: Sorry, user appwiza-runner may not run sudo on ubuntu-4gb-fsn1-1.
+
+=== DEPLOY HELPERS ===
+trading:trading 755 376 /opt/trading-bot/deploy/deploy.sh
+#!/usr/bin/env bash
+set -euo pipefail
+
+APP_DIR="${APP_DIR:-/opt/trading-bot}"
+SERVICE_NAME="${SERVICE_NAME:-trading-bot}"
+
+cd "$APP_DIR"
+
+git pull --ff-only
+npm ci --omit=dev
+
+if [[ -f data/nasdaqlisted.txt && -f data/otherlisted.txt ]]; then
+  node scripts/build-universe.mjs
+fi
+
+sudo systemctl restart "$SERVICE_NAME"
+sudo systemctl --no-pager --full status "$SERVICE_NAME"
+
+=== PARENT ACCESS ===
+f: /home/anestishkurti92/nfl-predictor-v1/research_v2/nfl_home_opener_scanner.py
+drwxr-xr-x root            root            /
+drwxr-xr-x root            root            home
+lrwxrwxrwx root            root            anestishkurti92 -> /opt/appwiza-sports-imports/google-ufc-model-20260913/home
+drwxr-xr-x root            root              /
+drwxr-xr-x root            root              opt
+drwx--x--x root            root              appwiza-sports-imports
+drwx--x--x root            root              google-ufc-model-20260913
+drwxrwxr-x anestishkurti92 anestishkurti92   home
+drwxrwxr-x anestishkurti92 anestishkurti92 nfl-predictor-v1
+drwxrwxr-x anestishkurti92 anestishkurti92 research_v2
+-rw-r--r-- anestishkurti92 anestishkurti92 nfl_home_opener_scanner.py
