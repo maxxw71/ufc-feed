@@ -1,0 +1,26 @@
+name: NFL 44-7 detail probe
+on:
+  push:
+    branches: [main]
+    paths: ['scripts/nfl_44_detail_probe.py','.github/workflows/nfl-44-detail-probe.yml']
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  probe:
+    if: github.repository == 'maxxw71/ufc-feed' && github.ref == 'refs/heads/main'
+    runs-on: [self-hosted, Linux, X64, appwiza]
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with: {fetch-depth: 0}
+      - run: /home/anestishkurti92/nfl-predictor-v1/venv/bin/python "$GITHUB_WORKSPACE/scripts/nfl_44_detail_probe.py"
+      - shell: bash
+        run: |
+          set -Eeuo pipefail
+          mkdir -p nfl/final_method_expansion
+          cp /home/appwiza-runner/nfl-context-data/final_method_expansion/fortyfour_detail.txt nfl/final_method_expansion/fortyfour_detail.txt
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git add nfl/final_method_expansion/fortyfour_detail.txt
+          if ! git diff --cached --quiet; then git commit -m 'Update NFL 44-7 detail probe'; git pull --rebase origin main; git push origin HEAD:main; fi
