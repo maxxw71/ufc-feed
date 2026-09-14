@@ -26,3 +26,5 @@ A method is not limited to one veto. The objective is to maximize robust prospec
 - Never select or tune thresholds using the holdout period.
 
 This policy supersedes the previous blanket one-veto maximum. One veto remains preferable when it captures nearly all of the robust improvement, but multiple vetoes are allowed when the evidence supports them.
+
+_Optimizer trigger: 2026-09-14._
