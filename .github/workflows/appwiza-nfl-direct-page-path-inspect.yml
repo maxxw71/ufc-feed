@@ -1,0 +1,46 @@
+name: Appwiza NFL direct page path inspect
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/appwiza-nfl-direct-page-path-inspect.yml'
+permissions:
+  contents: write
+jobs:
+  inspect:
+    runs-on: [self-hosted, Linux, X64, appwiza]
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - name: Inspect exact NFL public write options
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          R=nfl/direct_page_path_report.txt
+          ROOT=/srv/appwiza-sports/public/nfl
+          IDX=$ROOT/index.html
+          : > "$R"
+          echo '=== EXACT ACCESS ===' >> "$R"
+          id >> "$R"
+          for p in "$ROOT" "$IDX" /srv/appwiza-sports/public/style.css; do
+            echo "--- $p" >> "$R"
+            stat -c '%U:%G %a %s %n' "$p" >> "$R" 2>&1 || true
+            getfacl -p "$p" >> "$R" 2>&1 || true
+            if [ -r "$p" ]; then echo READABLE >> "$R"; fi
+            if [ -w "$p" ]; then echo WRITABLE >> "$R"; else echo READONLY >> "$R"; fi
+          done
+          echo '=== NFL TREE ===' >> "$R"
+          find "$ROOT" -maxdepth 3 -printf '%M %u:%g %p -> %l\n' 2>/dev/null | head -200 >> "$R" || true
+          echo '=== CHILD DIR WRITABILITY ===' >> "$R"
+          find "$ROOT" -mindepth 1 -maxdepth 2 -type d -print0 2>/dev/null | while IFS= read -r -d '' d; do if [ -w "$d" ]; then echo "WRITABLE_DIR $d"; else echo "READONLY_DIR $d"; fi; done >> "$R" || true
+          echo '=== PUBLISHER / TIMER REWRITE CLUES ===' >> "$R"
+          grep -RniE 'render_all\(|publish_nfl\(|save\(.nfl|public/nfl/index.html' /opt/sports-publisher /home/anestishkurti92/nfl-predictor-v1/research_v2 2>/dev/null | head -160 >> "$R" || true
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git add "$R"
+          if ! git diff --cached --quiet; then
+            git commit -m 'Capture direct NFL page write paths'
+            git pull --rebase origin main
+            git push origin HEAD:main
+          fi
