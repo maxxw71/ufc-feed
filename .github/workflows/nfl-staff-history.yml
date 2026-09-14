@@ -6,6 +6,7 @@ on:
     branches: [main]
     paths:
       - 'data/nfl/coordinator_history_pfr_2006_2026.csv'
+      - 'data/nfl/coordinator_history_espn_2019_2025.csv'
       - 'scripts/nfl_import_coordinator_history.py'
       - 'scripts/nfl_patch_2026_staff.py'
       - 'scripts/nfl_build_pregame_context.py'
@@ -25,7 +26,7 @@ jobs:
     timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
-      - name: Build audited 2006-2026 NFL HC OC DC history
+      - name: Build audited NFL HC OC DC history and pregame context
         shell: bash
         run: |
           set -Eeuo pipefail
@@ -33,8 +34,8 @@ jobs:
           CTX=/home/appwiza-runner/nfl-context-data
           test -x "$ROOT/venv/bin/python"
           mkdir -p "$CTX/raw" "$CTX/derived"
-          if [ ! -s "$GITHUB_WORKSPACE/data/nfl/coordinator_history_pfr_2006_2026.csv" ]; then
-            echo 'Hosted coordinator table not published yet; waiting for NFL hosted coordinator scrape.'
+          if [ ! -s "$GITHUB_WORKSPACE/data/nfl/coordinator_history_pfr_2006_2026.csv" ] && [ ! -s "$GITHUB_WORKSPACE/data/nfl/coordinator_history_espn_2019_2025.csv" ]; then
+            echo 'Coordinator source table not published yet; waiting for hosted collection.'
             exit 0
           fi
           export NFL_SOURCE_ROOT="$ROOT"
