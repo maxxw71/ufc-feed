@@ -1,0 +1,60 @@
+NFL CREATIVE TRAVEL/FATIGUE EXPANSION
+{
+  "creative_features": 112,
+  "canonical_methods_tested": 55,
+  "confirmed_creative_vetoes": 34,
+  "methods_with_confirmed_creative_veto": 26,
+  "creative_standalone_methods": 18
+}
+
+TOP CONFIRMED CREATIVE VETOES
+NFL-H020 | VETO adv_road_miles_last4_including_current <= -520.7 | holdout +26.7% -> +85.6% | removed 11L/1W | n 34->22
+NFL-H020 | VETO adv_prior_road_miles_last2 <= 85.371 | holdout +26.7% -> +80.8% | removed 12L/4W | n 34->18
+NFL-H028 | VETO adv_abs_tz_shift_hours >= 0 | holdout +23.3% -> +56.7% | removed 13L/8W | n 43->22
+NFL-H016 | VETO adv_prior_road_miles_last4 <= 198.02 | holdout +26.1% -> +58.3% | removed 16L/12W | n 45->17
+NFL-H036 | VETO adv_prior_road_miles_last5 <= -449.28 | holdout +17.3% -> +45.6% | removed 11L/4W | n 46->31
+NFL-H093 | VETO adv_road_miles_last5_including_current <= -1125.1 | holdout +13.2% -> +38.7% | removed 7L/3W | n 28->18
+NFL-H019 | VETO prior_road_miles_last2 <= 272.43 | holdout +29.4% -> +54.1% | removed 10L/7W | n 33->16
+NFL-H049 | VETO adv_prior_road_miles_last4 <= 266.04 | holdout +29.4% -> +53.1% | removed 14L/12W | n 42->16
+NFL-H036 | VETO road_miles4_per_rest_day >= 265.19 | holdout +17.3% -> +39.0% | removed 13L/9W | n 46->24
+NFL-H014 | VETO adv_prev_abs_tz_shift >= 1 | holdout +33.3% -> +54.4% | removed 7L/3W | n 40->30
+NFL-H087 | VETO travel_miles >= 1025.2 | holdout +11.0% -> +31.9% | removed 12L/3W | n 42->27
+NFL-H039 | VETO adv_prior_tz_hours_last4 <= -2 | holdout +22.2% -> +41.1% | removed 6L/2W | n 36->28
+NFL-H039 | VETO adv_prior_tz_hours_last4 <= -1.8 | holdout +22.2% -> +41.1% | removed 6L/2W | n 36->28
+NFL-H017 | VETO adv_prior_road_miles_last5 <= -315.24 | holdout +18.2% -> +36.8% | removed 21L/10W | n 102->71
+NFL-H015 | VETO adv_road_games_last5_including_current <= -1 | holdout +33.5% -> +51.5% | removed 8L/7W | n 30->15
+NFL-H006 | VETO adv_prior_tz_hours_last2 <= -1 | holdout +26.8% -> +44.1% | removed 15L/8W | n 76->53
+NFL-H093 | VETO adv_prior_road_miles_last4 <= -225.31 | holdout +13.2% -> +28.3% | removed 5L/2W | n 28->21
+NFL-H058 | VETO adv_tz_hours_last4_including_current <= -1 | holdout +13.8% -> +28.4% | removed 36L/22W | n 130->72
+NFL-H092 | VETO extra_rest_ge8 >= 1 | holdout +12.8% -> +26.7% | removed 9L/4W | n 50->37
+NFL-H004 | VETO prior_road_miles_last2 <= 261.46 | holdout +47.6% -> +61.3% | removed 8L/9W | n 34->17
+NFL-H079 | VETO fatigue_load_index >= 1.6136 | holdout +12.4% -> +26.1% | removed 23L/13W | n 93->57
+NFL-H010 | VETO abs_tz_shift_hours <= 0 | holdout +32.2% -> +45.8% | removed 9L/9W | n 40->22
+NFL-H010 | VETO adv_abs_tz_shift_hours >= 0 | holdout +32.2% -> +45.8% | removed 9L/9W | n 40->22
+NFL-H062 | VETO adv_prior_road_miles_last5 <= -305.33 | holdout +12.0% -> +24.7% | removed 16L/9W | n 86->61
+NFL-H096 | VETO adv_prior_road_miles_last2 <= -102.51 | holdout +11.6% -> +24.1% | removed 4L/1W | n 31->26
+NFL-H014 | VETO adv_prev_travel_miles >= 318.92 | holdout +33.3% -> +44.9% | removed 7L/6W | n 40->27
+NFL-H059 | VETO adv_road_miles_last4_including_current <= -2523.2 | holdout +24.2% -> +35.2% | removed 3L/0W | n 37->34
+NFL-H016 | VETO adv_prior_road_miles_last3 <= 156.61 | holdout +26.1% -> +36.8% | removed 11L/9W | n 45->25
+NFL-H091 | VETO prior_road_miles_last4 >= 4036.8 | holdout +12.8% -> +22.8% | removed 3L/0W | n 37->34
+NFL-H022 | VETO adv_tz_hours_last4_including_current >= 2 | holdout +21.1% -> +30.0% | removed 7L/5W | n 40->28
+
+TOP CREATIVE STANDALONE METHODS
+MODERN DOG35_44 AWAY | adv_prev_travel_miles >= 435.82 | n=233 ROI=+18.1% | train +14.0% val +9.8% frozen +25.8% | +seasons 10/14
+LONG DOG35_49 ANY | adv_prior_long_trips_last4 >= 1 | n=465 ROI=+11.3% | train +12.3% val +8.1% frozen +12.7% | +seasons 14/20
+LONG DOG35_44 AWAY | adv_altitude_change_ft <= -593 | n=128 ROI=+33.9% | train +55.6% val +17.9% frozen +24.4% | +seasons 13/19
+LONG DOG35_44 ANY | adv_prior_long_trips_last3 >= 1 | n=288 ROI=+19.8% | train +28.9% val +17.6% frozen +12.8% | +seasons 14/20
+MODERN DOG35_44 AWAY | adv_prior_road_streak >= 1 | n=301 ROI=+11.0% | train +6.3% val +21.6% frozen +10.8% | +seasons 10/14
+MODERN DOG35_44 AWAY | adv_prev_abs_tz_shift >= 1 | n=197 ROI=+13.0% | train +8.0% val +21.8% frozen +14.4% | +seasons 10/14
+LONG DOG35_44 AWAY | adv_prior_road_miles_last3 >= 394.61 | n=383 ROI=+14.1% | train +19.9% val +8.7% frozen +12.7% | +seasons 13/20
+LONG DOG20_34 AWAY | road_games_last4_including_current <= 1 | n=276 ROI=+13.3% | train +5.9% val +24.9% frozen +10.4% | +seasons 13/20
+LONG DOG35_49 AWAY | adv_prior_road_miles_last4 >= 949.9 | n=401 ROI=+13.7% | train +19.4% val +10.2% frozen +10.8% | +seasons 14/20
+LONG DOG35_49 AWAY | road_games_last4_including_current <= 1 | n=288 ROI=+12.5% | train +13.1% val +12.2% frozen +12.1% | +seasons 12/20
+MODERN DOG35_44 ANY | fatigue_load_index <= 0.64751 | n=139 ROI=+13.1% | train +8.0% val +14.6% frozen +17.0% | +seasons 10/14
+LONG FAV55_65 AWAY | adv_prior_road_games_last3 >= 1 | n=262 ROI=+11.6% | train +12.1% val +9.3% frozen +13.0% | +seasons 13/20
+LONG DOG35_49 AWAY | road_games_last5_including_current <= 1 | n=226 ROI=+11.0% | train +10.9% val +8.0% frozen +13.8% | +seasons 13/20
+MODERN FAV65_75 ANY | adv_travel_miles_per_rest_day <= -157.42 | n=97 ROI=+12.2% | train +6.9% val +10.1% frozen +19.7% | +seasons 10/14
+MODERN FAV65_75 AWAY | adv_travel_miles_per_rest_day <= -157.42 | n=96 ROI=+12.0% | train +6.9% val +8.6% frozen +19.7% | +seasons 10/14
+MODERN DOG35_44 HOME | fatigue_load_index <= 0.64751 | n=123 ROI=+10.9% | train +6.9% val +12.5% frozen +13.7% | +seasons 9/14
+LONG FAV55_65 AWAY | adv_road_miles4_per_rest_day >= 0 | n=222 ROI=+12.1% | train +15.9% val +8.3% frozen +11.3% | +seasons 16/20
+MODERN FAV65_75 ANY | adv_fatigue_load_index <= -1.9631 | n=96 ROI=+10.5% | train +9.4% val +14.4% frozen +10.0% | +seasons 11/14
