@@ -1,0 +1,75 @@
+NFL FROZEN HOLDOUT DISCOVERY
+
+{
+  "candidate_features": 106,
+  "frozen_candidates_before_holdout": 450,
+  "survivors_double_digit_holdout": 96,
+  "canonical_methods": 55,
+  "unique_signal_families": 36,
+  "tier_A": 44,
+  "tier_B": 52
+}
+
+HOLDOUT WAS NOT USED FOR THRESHOLD, PAIR, OR DEDUP SELECTION.
+
+TOP SURVIVORS
+NFL-H001 [A] EFFICIENCY+OTHER | DOG20_34 AWAY | rank_edge_def_allowed_success_rate <= -9 AND recent_edge_penalty_yards >= 14.667 | n=117 ROI=+61.4% | train=+87.5% n=45 val=+47.5% n=35 FROZEN holdout=+42.9% n=37 | +seasons 14/18
+NFL-H002 [A] EXPLOSIVENESS+SPECIAL_TEAMS | DOG35_49 AWAY | rank_edge_def_allowed_explosive_rate <= -6 AND recent_edge_punt_return_average >= 2.4958 | n=143 ROI=+35.5% | train=+24.3% n=57 val=+35.1% n=39 FROZEN holdout=+49.5% n=47 | +seasons 16/19
+NFL-H003 [A] PASS_PROTECTION_RUSH+THIRD_DOWN | DOG35_44 AWAY | rank_edge_third_down_success >= 0 AND rank_edge_sack_or_hit_rate >= 5 | n=173 ROI=+43.2% | train=+56.2% n=79 val=+22.5% n=51 FROZEN holdout=+43.7% n=43 | +seasons 18/20
+NFL-H004 [A] PASS_PROTECTION_RUSH+THIRD_DOWN | DOG35_44 AWAY | rank_edge_third_down_success >= 0 AND rank_edge_sack_or_hit_rate >= 10 | n=128 ROI=+51.4% | train=+67.9% n=57 val=+29.5% n=37 FROZEN holdout=+47.6% n=34 | +seasons 17/19
+NFL-H005 [A] EFFICIENCY+THIRD_DOWN | DOG35_44 ANY | rank_edge_third_down_success >= 0 AND rank_edge_off_epa_per_play >= 10 | n=143 ROI=+41.6% | train=+50.8% n=59 val=+34.3% n=43 FROZEN holdout=+36.0% n=41 | +seasons 15/18
+NFL-H006 [A] EFFICIENCY+THIRD_DOWN | DOG35_44 ANY | rank_edge_third_down_success >= 0 AND recent_edge_def_allowed_yards_per_play <= -0.33707 | n=252 ROI=+27.3% | train=+25.7% n=97 val=+29.7% n=79 FROZEN holdout=+26.8% n=76 | +seasons 14/20
+NFL-H007 [A] EFFICIENCY+THIRD_DOWN | DOG35_49 AWAY | rank_edge_def_allowed_early_down_epa <= -10 AND rank_edge_third_down_success >= 0 | n=171 ROI=+41.8% | train=+61.4% n=64 val=+30.5% n=57 FROZEN holdout=+29.6% n=50 | +seasons 15/20
+NFL-H008 [A] SPECIAL_TEAMS+THIRD_DOWN | DOG35_44 ANY | rank_edge_third_down_success >= 0 AND recent_edge_kick_return_average >= 2.1667 | n=206 ROI=+29.4% | train=+23.8% n=76 val=+40.8% n=66 FROZEN holdout=+24.5% n=64 | +seasons 14/20
+NFL-H009 [A] SPECIAL_TEAMS+THIRD_DOWN | DOG35_49 ANY | rank_edge_third_down_success >= 0 AND recent_edge_punt_return_average >= 2.4958 | n=302 ROI=+23.6% | train=+24.3% n=104 val=+26.6% n=106 FROZEN holdout=+19.5% n=92 | +seasons 16/20
+NFL-H010 [A] PASSING+THIRD_DOWN | DOG35_49 AWAY | rank_edge_third_down_success >= 0 AND rank_edge_pass_epa_per_dropback >= 10 | n=162 ROI=+31.9% | train=+36.4% n=64 val=+26.9% n=58 FROZEN holdout=+32.2% n=40 | +seasons 13/18
+NFL-H011 [A] PASS_PROTECTION_RUSH+THIRD_DOWN | DOG35_44 AWAY | rank_edge_third_down_success >= 0 AND recent_edge_sack_or_hit_rate >= -0.022791 | n=269 ROI=+33.3% | train=+42.6% n=123 val=+32.6% n=78 FROZEN holdout=+17.3% n=68 | +seasons 14/20
+NFL-H012 [A] EFFICIENCY+THIRD_DOWN | DOG35_49 AWAY | rank_edge_third_down_success >= 0 AND recent_edge_def_allowed_early_down_epa <= -0.065105 | n=228 ROI=+34.2% | train=+54.2% n=91 val=+20.1% n=73 FROZEN holdout=+21.9% n=64 | +seasons 16/20
+NFL-H013 [A] SPECIAL_TEAMS+THIRD_DOWN | DOG35_44 ANY | rank_edge_third_down_success >= 0 AND recent_edge_punt_return_average >= 2.4958 | n=210 ROI=+27.8% | train=+27.5% n=75 val=+34.1% n=69 FROZEN holdout=+21.6% n=66 | +seasons 16/20
+NFL-H014 [A] EXPLOSIVENESS+SPECIAL_TEAMS | DOG35_49 AWAY | recent_edge_def_allowed_explosive_rate <= -0.01345 AND recent_edge_punt_return_average >= 2.4958 | n=134 ROI=+27.9% | train=+24.8% n=53 val=+26.6% n=41 FROZEN holdout=+33.3% n=40 | +seasons 16/20
+NFL-H015 [A] EXPLOSIVENESS+THIRD_DOWN | DOG35_44 AWAY | rank_edge_def_allowed_explosive_rate <= -9.75 AND rank_edge_third_down_success >= 0 | n=118 ROI=+36.8% | train=+41.2% n=55 val=+32.3% n=33 FROZEN holdout=+33.5% n=30 | +seasons 13/18
+NFL-H016 [A] MARKET_MOVEMENT+PASS_PROTECTION_RUSH | DOG35_44 AWAY | rank_edge_sack_or_hit_rate >= 5 AND base_vs_open_prob_move <= -0.0023583 | n=176 ROI=+30.8% | train=+33.3% n=85 val=+30.6% n=46 FROZEN holdout=+26.1% n=45 | +seasons 15/19
+NFL-H017 [A] EXPLOSIVENESS+PASS_PROTECTION_RUSH | DOG35_49 AWAY | recent_edge_sack_or_hit_rate >= -0.043727 AND rank_edge_def_allowed_explosive_rate <= -6 | n=327 ROI=+19.1% | train=+17.0% n=132 val=+23.1% n=93 FROZEN holdout=+18.2% n=102 | +seasons 14/20
+NFL-H018 [A] EFFICIENCY+THIRD_DOWN | DOG35_44 ANY | rank_edge_third_down_success >= 0 AND rank_edge_off_epa_per_play >= 6 | n=224 ROI=+25.8% | train=+28.8% n=94 val=+25.1% n=68 FROZEN holdout=+22.0% n=62 | +seasons 14/20
+NFL-H019 [A] PASS_PROTECTION_RUSH+RED_ZONE | DOG35_44 AWAY | rank_edge_sack_or_hit_rate >= 10 AND rank_edge_redzone_epa >= 1 | n=114 ROI=+36.8% | train=+41.7% n=48 val=+37.2% n=33 FROZEN holdout=+29.4% n=33 | +seasons 13/17
+NFL-H020 [A] EXPLOSIVENESS+PASS_PROTECTION_RUSH | DOG35_44 AWAY | recent_edge_sack_or_hit_rate >= 4.5281e-05 AND rank_edge_def_allowed_explosive_rate <= -9.75 | n=108 ROI=+36.1% | train=+35.2% n=41 val=+47.0% n=33 FROZEN holdout=+26.7% n=34 | +seasons 13/19
+NFL-H021 [A] EXPLOSIVENESS+PASS_PROTECTION_RUSH | DOG35_44 AWAY | rank_edge_def_allowed_explosive_rate <= -9.75 AND recent_edge_sack_or_hit_rate >= -0.022791 | n=143 ROI=+31.1% | train=+35.1% n=56 val=+30.8% n=45 FROZEN holdout=+26.1% n=42 | +seasons 15/19
+NFL-H022 [A] RUSHING+SPECIAL_TEAMS | DOG35_44 ANY | rank_edge_rush_epa_per_carry >= 14 AND rank_edge_punt_return_average >= -9 | n=129 ROI=+32.2% | train=+27.7% n=52 val=+50.6% n=37 FROZEN holdout=+21.1% n=40 | +seasons 13/19
+NFL-H023 [A] EXPLOSIVENESS+THIRD_DOWN | DOG35_44 AWAY | rank_edge_third_down_success >= 0 AND rank_edge_def_allowed_explosive_rate <= -6 | n=159 ROI=+31.3% | train=+36.6% n=77 val=+27.1% n=42 FROZEN holdout=+25.4% n=40 | +seasons 14/20
+NFL-H024 [A] EFFICIENCY+THIRD_DOWN | DOG35_49 AWAY | rank_edge_third_down_success >= 0 AND recent_edge_def_allowed_off_epa_per_play <= -0.18186 | n=107 ROI=+37.2% | train=+48.1% n=44 val=+30.6% n=31 FROZEN holdout=+28.8% n=32 | +seasons 15/18
+NFL-H025 [A] SPECIAL_TEAMS+THIRD_DOWN | DOG35_49 AWAY | rank_edge_third_down_success >= 0 AND recent_edge_punt_net_average >= 3.6067 | n=138 ROI=+34.0% | train=+37.1% n=55 val=+42.2% n=44 FROZEN holdout=+20.5% n=39 | +seasons 13/18
+NFL-H026 [A] EXPLOSIVENESS+SPECIAL_TEAMS | DOG35_49 AWAY | recent_edge_punt_return_average >= 4.4153 AND recent_edge_explosive_rate <= -1.7048e-05 | n=138 ROI=+30.7% | train=+33.8% n=58 val=+35.2% n=36 FROZEN holdout=+23.1% n=44 | +seasons 16/18
+NFL-H027 [A] EFFICIENCY+SPECIAL_TEAMS | DOG35_49 AWAY | recent_edge_punt_return_average >= 4.4153 AND recent_edge_success_rate >= 0 | n=147 ROI=+33.1% | train=+46.2% n=59 val=+25.8% n=45 FROZEN holdout=+22.9% n=43 | +seasons 16/20
+NFL-H028 [A] PASSING+PASS_PROTECTION_RUSH | DOG35_49 AWAY | recent_edge_sack_or_hit_rate >= -0.043727 AND rank_edge_pass_epa_per_dropback >= 10 | n=175 ROI=+24.7% | train=+24.1% n=72 val=+26.3% n=60 FROZEN holdout=+23.3% n=43 | +seasons 12/17
+NFL-H029 [A] PASS_PROTECTION_RUSH | DOG35_49 AWAY | rank_edge_def_allowed_sack_or_hit_rate >= 14 | n=196 ROI=+21.1% | train=+20.8% n=75 val=+20.7% n=61 FROZEN holdout=+21.8% n=60 | +seasons 14/20
+NFL-H030 [A] SPECIAL_TEAMS+THIRD_DOWN | DOG35_44 ANY | rank_edge_third_down_success >= 0 AND rank_edge_punt_return_average >= 9 | n=156 ROI=+27.8% | train=+34.9% n=59 val=+27.0% n=45 FROZEN holdout=+20.6% n=52 | +seasons 15/19
+NFL-H031 [A] MARKET_MOVEMENT+RED_ZONE | DOG35_44 AWAY | base_vs_open_prob_move <= -0.0073623 AND rank_edge_redzone_epa >= 1 | n=203 ROI=+22.2% | train=+25.3% n=76 val=+23.5% n=51 FROZEN holdout=+18.3% n=76 | +seasons 13/19
+NFL-H032 [A] EXPLOSIVENESS+PASS_PROTECTION_RUSH | DOG35_49 AWAY | rank_edge_def_allowed_sack_or_hit_rate >= 14 AND recent_edge_explosive_rate <= -1.7048e-05 | n=107 ROI=+34.3% | train=+39.3% n=49 val=+34.3% n=28 FROZEN holdout=+26.0% n=30 | +seasons 15/20
+NFL-H033 [A] SPECIAL_TEAMS | DOG35_49 AWAY | recent_edge_punt_return_average >= 4.4153 | n=286 ROI=+19.9% | train=+24.8% n=115 val=+17.0% n=83 FROZEN holdout=+16.1% n=88 | +seasons 15/20
+NFL-H034 [A] EXPLOSIVENESS+PASS_PROTECTION_RUSH | DOG35_44 AWAY | recent_edge_sack_or_hit_rate >= -0.043727 AND rank_edge_def_allowed_explosive_rate <= -6 | n=242 ROI=+21.5% | train=+23.9% n=97 val=+23.5% n=72 FROZEN holdout=+16.2% n=73 | +seasons 14/20
+NFL-H035 [A] PASSING+SPECIAL_TEAMS | DOG35_49 AWAY | rank_edge_def_allowed_pass_epa_per_dropback <= -6 AND recent_edge_punt_net_average >= 2.046 | n=145 ROI=+29.7% | train=+35.3% n=48 val=+40.2% n=45 FROZEN holdout=+15.4% n=52 | +seasons 15/20
+NFL-H036 [A] EXPLOSIVENESS+PASSING | DOG35_49 AWAY | rank_edge_def_allowed_explosive_rate <= -9.75 AND rank_edge_def_allowed_pass_epa_per_dropback <= -6 | n=142 ROI=+33.3% | train=+50.7% n=52 val=+29.6% n=44 FROZEN holdout=+17.3% n=46 | +seasons 15/20
+NFL-H037 [A] PASSING+THIRD_DOWN | DOG35_49 AWAY | rank_edge_third_down_success >= 6 AND rank_edge_def_allowed_pass_epa_per_dropback <= -6 | n=176 ROI=+31.1% | train=+49.5% n=70 val=+20.8% n=59 FROZEN holdout=+16.5% n=47 | +seasons 14/20
+NFL-H038 [A] EXPLOSIVENESS+PASS_PROTECTION_RUSH | DOG35_44 HOME | recent_edge_sack_rate_allowed <= -0.015023 AND rank_edge_def_allowed_explosive_rate >= -1 | n=98 ROI=+30.8% | train=+39.8% n=32 val=+54.4% n=17 FROZEN holdout=+16.7% n=49 | +seasons 11/14
+NFL-H039 [A] OTHER+TURNOVERS | DOG35_44 ANY | rank_edge_giveaway_rate >= 0 AND rank_edge_penalty_yards >= 14 | n=100 ROI=+28.4% | train=+28.9% n=32 val=+35.0% n=32 FROZEN holdout=+22.2% n=36 | +seasons 11/15
+NFL-H040 [A] EXPLOSIVENESS | DOG35_44 HOME | rank_edge_def_allowed_explosive_rate >= 9 | n=81 ROI=+32.6% | train=+41.3% n=28 val=+47.1% n=15 FROZEN holdout=+20.5% n=38 | +seasons 11/13
+NFL-H041 [A] SPECIAL_TEAMS+THIRD_DOWN | DOG35_44 ANY | rank_edge_third_down_success >= 0 AND recent_edge_punt_net_average >= 3.6067 | n=134 ROI=+28.2% | train=+30.2% n=49 val=+38.6% n=42 FROZEN holdout=+15.7% n=43 | +seasons 14/19
+NFL-H042 [A] PASSING+SPECIAL_TEAMS | DOG35_49 AWAY | rank_edge_def_allowed_pass_epa_per_dropback <= -6 AND recent_edge_punt_return_average >= 2.4958 | n=136 ROI=+29.2% | train=+40.4% n=47 val=+31.6% n=44 FROZEN holdout=+15.2% n=45 | +seasons 13/19
+NFL-H043 [A] PASSING+PASS_PROTECTION_RUSH | DOG35_44 AWAY | recent_edge_sack_or_hit_rate >= -0.043727 AND recent_edge_def_allowed_pass_epa_per_dropback <= -0.28308 | n=88 ROI=+34.1% | train=+43.2% n=31 val=+43.9% n=25 FROZEN holdout=+17.7% n=32 | +seasons 14/17
+NFL-H044 [A] RED_ZONE+SPECIAL_TEAMS | DOG35_44 AWAY | rank_edge_redzone_epa >= 1 AND recent_edge_kick_return_average <= -2.1667 | n=127 ROI=+26.0% | train=+28.6% n=45 val=+32.6% n=42 FROZEN holdout=+16.0% n=40 | +seasons 13/19
+NFL-H045 [B] EFFICIENCY+THIRD_DOWN | DOG20_34 AWAY | rank_edge_def_allowed_success_rate <= -9 AND rank_edge_third_down_success >= 6 | n=102 ROI=+50.9% | train=+50.8% n=40 val=+27.0% n=34 FROZEN holdout=+80.1% n=28 | +seasons 12/17
+NFL-H046 [B] PASSING+THIRD_DOWN | DOG35_44 AWAY | rank_edge_pass_epa_per_dropback >= 10 AND rank_edge_third_down_success >= 0 | n=105 ROI=+47.6% | train=+49.4% n=43 val=+37.0% n=37 FROZEN holdout=+60.4% n=25 | +seasons 11/15
+NFL-H047 [B] EXPLOSIVENESS+THIRD_DOWN | DOG35_44 ANY | rank_edge_third_down_success >= 0 AND rank_edge_def_allowed_explosive_rate <= -15 | n=119 ROI=+43.8% | train=+38.1% n=54 val=+63.8% n=37 FROZEN holdout=+28.3% n=28 | +seasons 13/17
+NFL-H048 [B] PASSING+PASS_PROTECTION_RUSH | DOG35_44 AWAY | rank_edge_pass_epa_per_dropback >= 10 AND recent_edge_sack_or_hit_rate >= -0.043727 | n=111 ROI=+37.9% | train=+39.3% n=43 val=+35.5% n=39 FROZEN holdout=+38.9% n=29 | +seasons 11/15
+NFL-H049 [B] MARKET_MOVEMENT+PASS_PROTECTION_RUSH | DOG35_44 AWAY | base_vs_open_prob_move <= -0.012195 AND rank_edge_sack_or_hit_rate >= 5 | n=121 ROI=+35.0% | train=+32.2% n=41 val=+44.3% n=38 FROZEN holdout=+29.4% n=42 | +seasons 11/17
+NFL-H050 [B] EXPLOSIVENESS+PASS_PROTECTION_RUSH | DOG35_44 AWAY | rank_edge_sack_or_hit_rate >= 5 AND rank_edge_def_allowed_explosive_rate <= -6 | n=129 ROI=+40.9% | train=+53.7% n=59 val=+28.3% n=34 FROZEN holdout=+31.8% n=36 | +seasons 13/20
+NFL-H051 [B] PASS_PROTECTION_RUSH+RED_ZONE | DOG35_44 AWAY | rank_edge_redzone_epa >= 1 AND rank_edge_sack_or_hit_rate >= 5 | n=167 ROI=+30.7% | train=+31.2% n=71 val=+36.9% n=46 FROZEN holdout=+24.3% n=50 | +seasons 12/19
+NFL-H052 [B] SPECIAL_TEAMS+THIRD_DOWN | DOG35_44 ANY | rank_edge_third_down_success >= 0 AND rank_edge_punt_return_average >= -9 | n=425 ROI=+22.0% | train=+27.6% n=168 val=+24.9% n=129 FROZEN holdout=+11.9% n=128 | +seasons 16/20
+NFL-H053 [B] EFFICIENCY+QB_CONTEXT | DOG20_34 AWAY | qb_prior_starts >= 38 AND rank_edge_def_allowed_success_rate <= -9 | n=164 ROI=+26.6% | train=+29.1% n=54 val=+26.8% n=53 FROZEN holdout=+23.9% n=57 | +seasons 11/17
+NFL-H054 [B] SPECIAL_TEAMS+THIRD_DOWN | DOG35_49 AWAY | recent_edge_third_down_success >= 0.048481 AND recent_edge_punt_return_average >= 4.4153 | n=109 ROI=+34.1% | train=+39.8% n=47 val=+27.7% n=33 FROZEN holdout=+32.2% n=29 | +seasons 15/20
+NFL-H055 [B] PASSING+THIRD_DOWN | DOG35_49 AWAY | recent_edge_third_down_success >= 0.048481 AND rank_edge_pass_epa_per_dropback >= 10 | n=114 ROI=+32.0% | train=+36.3% n=46 val=+26.8% n=41 FROZEN holdout=+32.5% n=27 | +seasons 11/18
+NFL-H056 [B] PASSING | DOG35_44 AWAY | rank_edge_pass_epa_per_dropback >= 10 | n=131 ROI=+29.7% | train=+35.4% n=53 val=+23.6% n=45 FROZEN holdout=+28.8% n=33 | +seasons 10/16
+NFL-H057 [B] RED_ZONE+THIRD_DOWN | DOG35_44 AWAY | rank_edge_third_down_success >= 0 AND rank_edge_redzone_epa >= 1 | n=224 ROI=+31.1% | train=+45.5% n=85 val=+31.1% n=73 FROZEN holdout=+12.5% n=66 | +seasons 16/20
+NFL-H058 [B] PASS_PROTECTION_RUSH | DOG35_44 AWAY | recent_edge_sack_or_hit_rate >= 4.5281e-05 | n=419 ROI=+17.6% | train=+23.3% n=166 val=+13.9% n=123 FROZEN holdout=+13.8% n=130 | +seasons 14/20
+NFL-H059 [B] RED_ZONE+THIRD_DOWN | DOG35_49 AWAY | rank_edge_redzone_epa >= 14 AND rank_edge_third_down_success >= 0 | n=120 ROI=+30.9% | train=+36.7% n=35 val=+31.7% n=48 FROZEN holdout=+24.2% n=37 | +seasons 12/19
+NFL-H060 [B] EXPLOSIVENESS+PASS_PROTECTION_RUSH | DOG35_44 AWAY | recent_edge_sack_or_hit_rate >= 0.022791 AND rank_edge_def_allowed_explosive_rate <= -6 | n=116 ROI=+39.7% | train=+62.0% n=45 val=+31.5% n=35 FROZEN holdout=+19.7% n=36 | +seasons 13/20
