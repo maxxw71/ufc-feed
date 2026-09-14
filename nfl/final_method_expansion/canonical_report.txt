@@ -1,0 +1,88 @@
+NFL CANONICAL METHOD CATALOG
+
+{
+  "strict_unique_betset_methods": 472,
+  "canonical_methods": 147,
+  "flagship_semantic_families": 64,
+  "semantic_signatures": 64,
+  "price_bands": [
+    "DOG20_34",
+    "DOG35_44",
+    "DOG35_49",
+    "FAV55_65",
+    "FAV65_75",
+    "FAV75_85",
+    "PK_55"
+  ],
+  "venues": [
+    "ANY",
+    "AWAY",
+    "HOME"
+  ]
+}
+
+FLAGSHIP UNIQUE FAMILIES
+NFL-F01 -> NFL-U001 [A] SPECIAL_TEAMS+THIRD_DOWN | DOG35_49 AWAY | rank_edge_punt_return_average >= -5 AND recent_edge_third_down_success >= 0 | n=365 ROI=+26.4% | train +24.6% val +18.8% holdout +36.0% | positive seasons 18/20
+NFL-F02 -> NFL-U002 [A] QB_CONTEXT+SPECIAL_TEAMS | DOG35_49 AWAY | qb_prior_starts <= 41.45 AND rank_edge_punt_return_average >= -5 | n=132 ROI=+48.5% | train +44.8% val +56.4% holdout +47.6% | positive seasons 16/19
+NFL-F03 -> NFL-U003 [A] EXPLOSIVENESS+PASS_PROTECTION_RUSH | DOG35_49 AWAY | recent_edge_sack_rate_allowed >= 2.1355e-05 AND rank_edge_def_allowed_explosive_rate <= -6 | n=208 ROI=+33.6% | train +26.7% val +40.2% holdout +40.1% | positive seasons 15/20
+NFL-F04 -> NFL-U004 [A] PASS_PROTECTION_RUSH+SPECIAL_TEAMS | DOG35_49 AWAY | rank_edge_punt_return_average >= 1 AND recent_edge_sack_rate_allowed >= 2.1355e-05 | n=267 ROI=+27.4% | train +20.1% val +28.6% holdout +39.4% | positive seasons 15/20
+NFL-F05 -> NFL-U006 [A] QB_CONTEXT+THIRD_DOWN | DOG35_49 AWAY | qb_prior_starts <= 41.45 AND rank_edge_third_down_success >= 0 | n=201 ROI=+40.2% | train +44.3% val +38.8% holdout +33.4% | positive seasons 16/19
+NFL-F06 -> NFL-U007 [A] SPECIAL_TEAMS | DOG35_49 AWAY | rank_edge_punt_return_average >= 1 AND recent_edge_kick_return_average <= -3.9125 | n=136 ROI=+38.1% | train +29.0% val +40.7% holdout +48.7% | positive seasons 17/20
+NFL-F07 -> NFL-U008 [A] EXPLOSIVENESS+SPECIAL_TEAMS | DOG35_49 AWAY | recent_edge_punt_return_average >= 2.4722 AND rank_edge_def_allowed_explosive_rate <= -6 | n=137 ROI=+34.7% | train +22.3% val +37.6% holdout +49.7% | positive seasons 16/19
+NFL-F08 -> NFL-U014 [A] REST_SCHEDULING+THIRD_DOWN | DOG35_49 ANY | rest_days >= 7 AND rank_edge_third_down_success >= 0 | n=529 ROI=+21.8% | train +24.3% val +22.6% holdout +17.1% | positive seasons 17/20
+NFL-F09 -> NFL-U016 [A] EFFICIENCY+SPECIAL_TEAMS | DOG35_49 AWAY | rank_edge_punt_return_average >= 1 AND rank_edge_def_allowed_yards_per_play <= -1 | n=275 ROI=+22.3% | train +14.3% val +19.8% holdout +33.6% | positive seasons 17/20
+NFL-F10 -> NFL-U017 [A] EFFICIENCY+THIRD_DOWN | DOG35_49 AWAY | rank_edge_def_allowed_off_epa_per_play <= -10 AND recent_edge_third_down_success >= 0 | n=172 ROI=+37.7% | train +52.5% val +20.0% holdout +35.2% | positive seasons 15/20
+NFL-F11 -> NFL-U019 [A] RUSHING+SPECIAL_TEAMS | DOG35_49 AWAY | rank_edge_punt_return_average >= -9 AND rank_edge_rush_epa_per_carry >= 6 | n=278 ROI=+24.2% | train +22.9% val +15.7% holdout +33.4% | positive seasons 15/20
+NFL-F12 -> NFL-U024 [A] PASS_PROTECTION_RUSH+QB_CONTEXT | DOG35_49 AWAY | qb_prior_starts <= 41.45 AND recent_edge_sack_or_hit_rate >= -0.023618 | n=193 ROI=+32.8% | train +31.0% val +41.3% holdout +28.9% | positive seasons 14/19
+NFL-F13 -> NFL-U027 [A] PASSING+THIRD_DOWN | DOG35_49 AWAY | rank_edge_def_allowed_pass_epa_per_dropback <= -6 AND recent_edge_third_down_success >= 0 | n=224 ROI=+31.6% | train +36.6% val +33.5% holdout +23.3% | positive seasons 16/20
+NFL-F14 -> NFL-U028 [A] REST_SCHEDULING+SPECIAL_TEAMS | DOG35_49 ANY | rest_days >= 7 AND rank_edge_punt_return_average >= -5 | n=322 ROI=+28.7% | train +37.3% val +25.7% holdout +19.1% | positive seasons 15/20
+NFL-F15 -> NFL-U030 [A] PASS_PROTECTION_RUSH+THIRD_DOWN | DOG35_49 AWAY | recent_edge_sack_or_hit_rate >= -0.023618 AND recent_edge_third_down_success >= 0 | n=386 ROI=+23.2% | train +25.6% val +18.7% holdout +23.5% | positive seasons 15/20
+NFL-F16 -> NFL-U033 [A] EFFICIENCY+PASS_PROTECTION_RUSH | DOG35_49 AWAY | rank_edge_def_allowed_yards_per_play <= -1 AND recent_edge_sack_rate_allowed >= 2.1355e-05 | n=280 ROI=+23.0% | train +19.5% val +19.6% holdout +30.4% | positive seasons 15/20
+NFL-F17 -> NFL-U035 [A] PASS_PROTECTION_RUSH+RED_ZONE | DOG35_49 AWAY | recent_edge_sack_rate_allowed >= 2.1355e-05 AND rank_edge_redzone_epa >= 6 | n=205 ROI=+23.6% | train +12.6% val +35.4% holdout +33.0% | positive seasons 15/20
+NFL-F18 -> NFL-U042 [A] EFFICIENCY+RED_ZONE | DOG35_49 AWAY | rank_edge_def_allowed_yards_per_play <= -10 AND rank_edge_redzone_epa >= 1 | n=172 ROI=+30.2% | train +33.0% val +16.2% holdout +39.1% | positive seasons 15/20
+NFL-F19 -> NFL-U046 [A] PASSING+RUSHING | DOG35_49 AWAY | rank_edge_def_allowed_pass_epa_per_dropback <= -6 AND recent_edge_rush_epa_per_carry >= 0.06573 | n=164 ROI=+31.2% | train +29.5% val +33.2% holdout +31.6% | positive seasons 13/18
+NFL-F20 -> NFL-U060 [A] EXPLOSIVENESS | DOG35_49 AWAY | recent_edge_explosive_rate <= -1.7048e-05 AND rank_edge_def_allowed_explosive_rate <= -10 | n=129 ROI=+30.4% | train +20.9% val +37.9% holdout +36.1% | positive seasons 14/19
+NFL-F21 -> NFL-U065 [A] EXPLOSIVENESS+PASSING | DOG35_49 AWAY | rank_edge_def_allowed_pass_epa_per_dropback <= -6 AND recent_edge_explosive_rate <= -1.7048e-05 | n=175 ROI=+31.7% | train +37.4% val +27.5% holdout +28.3% | positive seasons 15/20
+NFL-F22 -> NFL-U082 [A] EFFICIENCY+TURNOVERS | DOG35_49 AWAY | recent_edge_giveaway_rate >= 0 AND rank_edge_def_allowed_yards_per_play <= -1 | n=298 ROI=+20.5% | train +17.9% val +19.6% holdout +24.3% | positive seasons 14/20
+NFL-F23 -> NFL-U083 [A] EXPLOSIVENESS+THIRD_DOWN | DOG35_49 ANY | recent_edge_third_down_success >= 0 AND rank_edge_def_allowed_explosive_rate <= -10 | n=277 ROI=+21.2% | train +16.0% val +27.8% holdout +22.4% | positive seasons 14/20
+NFL-F24 -> NFL-U097 [A] EFFICIENCY+EXPLOSIVENESS | DOG35_49 AWAY | rank_edge_def_allowed_yards_per_play <= -1 AND recent_edge_explosive_rate <= -1.7048e-05 | n=256 ROI=+20.2% | train +14.8% val +16.2% holdout +29.4% | positive seasons 14/20
+NFL-F25 -> NFL-U112 [A] RUSHING | DOG35_49 AWAY | rank_edge_rush_epa_per_carry >= 15 | n=157 ROI=+31.7% | train +34.9% val +29.5% holdout +28.6% | positive seasons 15/20
+NFL-F26 -> NFL-U114 [A] PASSING+RED_ZONE | DOG35_49 AWAY | rank_edge_def_allowed_pass_epa_per_dropback <= -6 AND rank_edge_redzone_epa >= 1 | n=227 ROI=+29.5% | train +39.6% val +21.1% holdout +22.1% | positive seasons 17/20
+NFL-F27 -> NFL-U129 [A] EFFICIENCY+RUSHING | DOG35_49 AWAY | rank_edge_rush_epa_per_carry >= 6 AND recent_edge_yards_per_play <= 0 | n=155 ROI=+28.7% | train +29.2% val +31.8% holdout +25.7% | positive seasons 15/20
+NFL-F28 -> NFL-U134 [A] PASSING+PASS_PROTECTION_RUSH | DOG35_49 AWAY | rank_edge_def_allowed_pass_epa_per_dropback <= -6 AND rank_edge_sack_rate_allowed >= 1 | n=233 ROI=+29.5% | train +42.6% val +23.5% holdout +17.3% | positive seasons 16/20
+NFL-F29 -> NFL-U154 [A] PASS_PROTECTION_RUSH+RUSHING | DOG35_49 AWAY | rank_edge_sack_rate_allowed >= 1 AND rank_edge_rush_epa_per_carry >= 6 | n=190 ROI=+19.4% | train +10.1% val +18.8% holdout +34.7% | positive seasons 15/19
+NFL-F30 -> NFL-U158 [A] EFFICIENCY+QB_CONTEXT | DOG35_49 AWAY | qb_prior_starts <= 41.45 AND recent_edge_def_allowed_early_down_epa <= -0.00037085 | n=146 ROI=+39.5% | train +51.1% val +30.1% holdout +23.1% | positive seasons 13/18
+NFL-F31 -> NFL-U163 [A] PASSING+SPECIAL_TEAMS | DOG35_49 AWAY | rank_edge_punt_return_average >= -5 AND rank_edge_pass_epa_per_dropback <= -10 | n=143 ROI=+25.2% | train +21.3% val +22.1% holdout +30.4% | positive seasons 14/19
+NFL-F32 -> NFL-U179 [A] SPECIAL_TEAMS+TURNOVERS | DOG35_49 AWAY | rank_edge_giveaway_rate >= -5 AND rank_edge_punt_return_average >= 9 | n=210 ROI=+23.9% | train +23.0% val +30.8% holdout +19.1% | positive seasons 15/20
+NFL-F33 -> NFL-U188 [A] PASSING+TURNOVERS | DOG35_49 AWAY | rank_edge_def_allowed_pass_epa_per_dropback <= -6 AND rank_edge_giveaway_rate >= -5 | n=271 ROI=+23.0% | train +31.6% val +20.4% holdout +15.4% | positive seasons 15/20
+NFL-F34 -> NFL-U228 [A] EFFICIENCY+OTHER | DOG35_49 AWAY | base_vs_open_prob_move <= -0.012504 AND recent_edge_def_allowed_early_down_epa <= -0.00037085 | n=130 ROI=+28.5% | train +32.6% val +47.6% holdout +16.1% | positive seasons 14/17
+NFL-F35 -> NFL-U244 [A] OTHER+PASSING | DOG35_49 AWAY | base_vs_open_prob_move <= -0.0016515 AND rank_edge_def_allowed_pass_epa_per_dropback <= -6 | n=125 ROI=+33.0% | train +41.6% val +25.4% holdout +24.9% | positive seasons 13/17
+NFL-F36 -> NFL-U249 [A] RED_ZONE+SPECIAL_TEAMS | DOG35_49 AWAY | rank_edge_punt_return_average >= 9 AND rank_edge_redzone_epa >= -9 | n=226 ROI=+18.9% | train +16.3% val +20.6% holdout +21.3% | positive seasons 15/20
+NFL-F37 -> NFL-U272 [A] EFFICIENCY+PASSING | DOG35_49 AWAY | rank_edge_off_epa_per_play >= 10 AND rank_edge_pass_epa_per_dropback >= 6 | n=176 ROI=+26.0% | train +30.1% val +21.8% holdout +21.7% | positive seasons 16/19
+NFL-F38 -> NFL-U285 [A] PASS_PROTECTION_RUSH | DOG35_49 AWAY | rank_edge_def_allowed_sack_or_hit_rate >= 14 | n=184 ROI=+18.9% | train +13.3% val +25.9% holdout +20.3% | positive seasons 14/20
+NFL-F39 -> NFL-U286 [A] OTHER+THIRD_DOWN | DOG35_49 AWAY | base_vs_open_prob_move <= -0.012504 AND rank_edge_third_down_success >= 0 | n=132 ROI=+27.5% | train +32.8% val +25.9% holdout +21.6% | positive seasons 14/17
+NFL-F40 -> NFL-U329 [A] RED_ZONE+THIRD_DOWN | DOG35_49 AWAY | recent_edge_third_down_success >= -0.048545 AND rank_edge_redzone_epa >= 9 | n=217 ROI=+17.7% | train +17.1% val +19.7% holdout +16.9% | positive seasons 14/20
+NFL-F41 -> NFL-U340 [A] PASSING+QB_CONTEXT | DOG35_49 AWAY | qb_prior_starts <= 41.45 AND rank_edge_def_allowed_pass_epa_per_dropback <= -6 | n=122 ROI=+31.9% | train +40.6% val +28.3% holdout +18.0% | positive seasons 14/17
+NFL-F42 -> NFL-U433 [A] EFFICIENCY | FAV55_65 HOME | recent_edge_def_allowed_yards_per_play <= -0.95206 | n=140 ROI=+14.4% | train +10.3% val +21.5% holdout +28.2% | positive seasons 15/20
+NFL-F43 -> NFL-U441 [A] RED_ZONE | FAV55_65 AWAY | recent_edge_redzone_epa <= -0.2035 | n=171 ROI=+12.4% | train +6.2% val +16.4% holdout +15.9% | positive seasons 15/20
+NFL-F44 -> NFL-U022 [B] RUSHING+THIRD_DOWN | DOG35_49 AWAY | rank_edge_rush_epa_per_carry >= 15 AND rank_edge_third_down_success >= -6 | n=116 ROI=+35.4% | train +26.6% val +36.0% holdout +51.6% | positive seasons 16/20
+NFL-F45 -> NFL-U146 [B] RED_ZONE+RUSHING | DOG35_49 AWAY | rank_edge_rush_epa_per_carry >= 15 AND rank_edge_redzone_epa >= -9 | n=129 ROI=+33.8% | train +39.4% val +29.8% holdout +29.1% | positive seasons 13/19
+NFL-F46 -> NFL-U157 [B] PASSING+TRAVEL_CIRCADIAN | DOG35_49 AWAY | westward_tz_hours >= 1 AND rank_edge_def_allowed_pass_epa_per_dropback <= -6 | n=94 ROI=+36.3% | train +41.8% val +28.9% holdout +37.1% | positive seasons 12/16
+NFL-F47 -> NFL-U171 [B] PASS_PROTECTION_RUSH+TURNOVERS | DOG35_49 AWAY | rank_edge_giveaway_rate >= -5 AND recent_edge_sack_or_hit_rate >= -0.023618 | n=493 ROI=+16.5% | train +20.1% val +10.0% holdout +16.6% | positive seasons 15/20
+NFL-F48 -> NFL-U175 [B] RUSHING+TURNOVERS | DOG35_49 AWAY | rank_edge_giveaway_rate >= -5 AND rank_edge_rush_epa_per_carry >= 15 | n=117 ROI=+35.4% | train +41.4% val +30.0% holdout +29.5% | positive seasons 12/17
+NFL-F49 -> NFL-U224 [B] THIRD_DOWN+TRAVEL_CIRCADIAN | DOG35_49 ANY | westward_tz_hours >= 1 AND rank_edge_third_down_success >= 0 | n=110 ROI=+40.1% | train +59.7% val +30.5% holdout +20.3% | positive seasons 12/16
+NFL-F50 -> NFL-U225 [B] THIRD_DOWN+TURNOVERS | DOG35_49 AWAY | recent_edge_third_down_success >= 0 AND recent_edge_giveaway_rate >= -0.0071892 | n=393 ROI=+17.6% | train +21.7% val +14.3% holdout +14.6% | positive seasons 15/20
+NFL-F51 -> NFL-U226 [B] RED_ZONE+TURNOVERS | DOG35_49 AWAY | recent_edge_giveaway_rate >= 0 AND rank_edge_redzone_epa >= 1 | n=280 ROI=+19.1% | train +21.1% val +14.2% holdout +20.5% | positive seasons 16/20
+NFL-F52 -> NFL-U230 [B] EXPLOSIVENESS+RED_ZONE | DOG35_49 AWAY | recent_edge_explosive_rate <= -1.7048e-05 AND rank_edge_redzone_epa >= 6 | n=179 ROI=+23.8% | train +22.2% val +38.3% holdout +15.4% | positive seasons 15/20
+NFL-F53 -> NFL-U232 [B] THIRD_DOWN | DOG35_49 AWAY | recent_edge_third_down_success >= 0 AND rank_edge_third_down_success >= -6 | n=496 ROI=+15.3% | train +19.0% val +11.2% holdout +13.9% | positive seasons 15/20
+NFL-F54 -> NFL-U288 [B] PASS_PROTECTION_RUSH+TRAVEL_CIRCADIAN | DOG35_49 AWAY | westward_tz_hours >= 1 AND recent_edge_sack_or_hit_rate >= -0.023618 | n=110 ROI=+30.7% | train +38.3% val +17.9% holdout +29.2% | positive seasons 14/17
+NFL-F55 -> NFL-U310 [B] EXPLOSIVENESS+TURNOVERS | DOG35_49 AWAY | recent_edge_giveaway_rate >= -0.0071892 AND rank_edge_def_allowed_explosive_rate <= -10 | n=194 ROI=+19.1% | train +17.1% val +28.1% holdout +14.5% | positive seasons 15/20
+NFL-F56 -> NFL-U355 [B] TRAVEL_CIRCADIAN | DOG35_49 ANY | westward_tz_hours >= 2 | n=135 ROI=+20.3% | train +21.8% val +12.1% holdout +24.8% | positive seasons 14/19
+NFL-F57 -> NFL-U384 [B] OTHER+PASS_PROTECTION_RUSH | DOG35_49 AWAY | base_vs_open_prob_move <= -0.0016515 AND recent_edge_sack_or_hit_rate >= -0.023618 | n=206 ROI=+22.0% | train +26.4% val +24.1% holdout +11.0% | positive seasons 15/20
+NFL-F58 -> NFL-U386 [B] OTHER+SPECIAL_TEAMS | DOG35_49 ANY | base_vs_open_prob_move <= -0.0016515 AND rank_edge_punt_return_average >= -5 | n=217 ROI=+22.2% | train +31.0% val +20.6% holdout +10.2% | positive seasons 13/20
+NFL-F59 -> NFL-U395 [B] PASSING | DOG35_49 AWAY | recent_edge_def_allowed_pass_epa_per_dropback <= -0.28354 | n=162 ROI=+20.8% | train +27.4% val +27.5% holdout +10.6% | positive seasons 15/20
+NFL-F60 -> NFL-U406 [B] EXPLOSIVENESS+RUSHING | DOG35_49 AWAY | recent_edge_explosive_rate <= -1.7048e-05 AND rank_edge_rush_epa_per_carry >= 10 | n=102 ROI=+23.4% | train +22.4% val +28.6% holdout +20.1% | positive seasons 15/20
+NFL-F61 -> NFL-U437 [B] TURNOVERS | DOG35_49 HOME | rank_edge_giveaway_rate <= -15 | n=179 ROI=+13.0% | train +8.5% val +15.8% holdout +15.8% | positive seasons 13/20
+NFL-F62 -> NFL-U464 [B] ROSTER_CONTINUITY | PK_55 ANY | adv_returning_skill_snap_share >= 0.076329 | n=101 ROI=+18.1% | train +27.4% val +14.1% holdout +12.8% | positive seasons 9/12
+NFL-F63 -> NFL-U009 [C] INJURY_AVAILABILITY | DOG20_34 AWAY | adv_secondary_unavail_equiv >= 0.35 | n=212 ROI=+22.2% | train +24.9% val +23.4% holdout +56.1% | positive seasons 11/17
+NFL-F64 -> NFL-U309 [C] SPECIAL_TEAMS+TRAVEL_CIRCADIAN | DOG35_49 AWAY | westward_tz_hours >= 1 AND recent_edge_punt_return_average >= 0 | n=82 ROI=+36.6% | train +50.6% val +41.7% holdout +17.2% | positive seasons 9/14
