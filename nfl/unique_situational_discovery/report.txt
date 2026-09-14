@@ -1,0 +1,55 @@
+NFL UNIQUE SITUATIONAL DISCOVERY
+
+{
+  "feature_families": {
+    "REST": [
+      "short_rest6",
+      "short_rest5",
+      "long_rest9",
+      "post_bye12",
+      "rest_edge_days",
+      "rest_disadv3",
+      "rest_adv3",
+      "opp_post_bye12"
+    ],
+    "REMATCH": [
+      "second_meeting",
+      "same_opp_prior_meetings",
+      "revenge_after_loss",
+      "repeat_after_win"
+    ],
+    "QB_CONTINUITY": [
+      "qb_prior_starts"
+    ],
+    "MARKET": [
+      "base_vs_open_prob_move"
+    ],
+    "COACH_TRANSITION": [
+      "coachq_staff_upgrade_count",
+      "coachq_staff_downgrade_count",
+      "coachq_hc_quality_delta_vs_departed",
+      "coachq_oc_quality_delta_vs_departed",
+      "coachq_dc_quality_delta_vs_departed",
+      "adv_staff_quality_mean"
+    ]
+  },
+  "survivors": 206,
+  "preferred": 11,
+  "preferred_by_concept": {
+    "COACH_TRANSITION": 6,
+    "MARKET": 5
+  }
+}
+
+TOP PREFERRED
+US001 COACH_TRANSITION MODERN PK_55 AWAY | 55-37 (59.8%) n=92 ROI=+21.0% train=+9.8% val=+40.2% hold=+51.6% pos=72% recent=+26.6pp | [["coachq_oc_quality_delta_vs_departed", ">=", -0.04843750000000002], ["recent_edge_def_allowed_off_epa_per_play", "<=", 0.0331033173168197]]
+US002 COACH_TRANSITION MODERN DOG20_34 AWAY | 48-78 (38.1%) n=126 ROI=+26.7% train=+42.9% val=+18.2% hold=+51.0% pos=74% recent=+20.4pp | [["adv_staff_quality_mean", ">=", -0.03400997150997165], ["rank_edge_point_margin", ">=", -4.0]]
+US003 MARKET LONG DOG35_44 AWAY | 59-48 (55.1%) n=107 ROI=+37.9% train=+45.3% val=+24.7% hold=+35.4% pos=70% recent=+0.4pp | [["base_vs_open_prob_move", "<=", 0.0012466327867221988], ["rank_edge_sack_or_hit_rate", ">=", 11.0]]
+US004 MARKET LONG DOG35_44 AWAY | 123-115 (51.7%) n=238 ROI=+29.4% train=+33.3% val=+22.0% hold=+29.7% pos=80% recent=+2.0pp | [["base_vs_open_prob_move", "<=", 0.0012466327867221988], ["recent_edge_sack_or_hit_rate", ">=", 0.00288736374754465]]
+US005 COACH_TRANSITION LONG DOG35_49 ANY | 115-108 (51.6%) n=223 ROI=+21.7% train=+10.8% val=+39.3% hold=+29.5% pos=80% recent=+4.5pp | [["coachq_staff_downgrade_count", "<=", 0.0], ["recent_edge_sack_rate_allowed", ">=", 0.025842498759532852]]
+US006 MARKET LONG DOG35_44 HOME | 45-45 (50.0%) n=90 ROI=+26.4% train=+9.0% val=+45.8% hold=+34.2% pos=70% recent=+6.7pp | [["base_vs_open_prob_move", "<=", 0.005367326400536665], ["recent_edge_off_epa_per_play", "<=", -0.20080270924992735]]
+US007 MARKET MODERN FAV65_75 AWAY | 190-52 (78.5%) n=242 ROI=+12.9% train=+14.3% val=+16.2% hold=+17.1% pos=85% recent=+1.8pp | [["base_vs_open_prob_move", "<=", 0.03023218463362254], ["rank_edge_fg_accuracy", "<=", 10.5]]
+US008 COACH_TRANSITION LONG DOG35_49 ANY | 140-136 (50.7%) n=276 ROI=+21.4% train=+22.2% val=+20.4% hold=+21.2% pos=80% recent=-0.1pp | [["coachq_staff_downgrade_count", "<=", 0.0], ["rank_edge_def_allowed_off_epa_per_play", "<=", -10.5]]
+US009 COACH_TRANSITION LONG DOG35_49 ANY | 137-140 (49.5%) n=277 ROI=+17.5% train=+21.5% val=+15.0% hold=+18.3% pos=83% recent=+0.0pp | [["coachq_dc_quality_delta_vs_departed", ">=", -0.015625], ["recent_edge_punt_return_average", ">=", 0.0277777777777776]]
+US010 COACH_TRANSITION MODERN FAV55_65 ANY | 104-50 (67.5%) n=154 ROI=+11.3% train=+10.6% val=+14.2% hold=+16.9% pos=74% recent=+4.5pp | [["adv_staff_quality_mean", ">=", 0.010906107781107899], ["rank_edge_punt_return_average", ">=", 10.0]]
+US011 MARKET MODERN DOG35_49 AWAY | 157-175 (47.3%) n=332 ROI=+14.8% train=+15.4% val=+8.6% hold=+11.0% pos=75% recent=-1.0pp | [["base_vs_open_prob_move", "<=", 0.0], ["rank_edge_def_allowed_success_rate", "<=", -1.0]]

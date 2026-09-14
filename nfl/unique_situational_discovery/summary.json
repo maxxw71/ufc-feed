@@ -1,0 +1,40 @@
+{
+  "feature_families": {
+    "REST": [
+      "short_rest6",
+      "short_rest5",
+      "long_rest9",
+      "post_bye12",
+      "rest_edge_days",
+      "rest_disadv3",
+      "rest_adv3",
+      "opp_post_bye12"
+    ],
+    "REMATCH": [
+      "second_meeting",
+      "same_opp_prior_meetings",
+      "revenge_after_loss",
+      "repeat_after_win"
+    ],
+    "QB_CONTINUITY": [
+      "qb_prior_starts"
+    ],
+    "MARKET": [
+      "base_vs_open_prob_move"
+    ],
+    "COACH_TRANSITION": [
+      "coachq_staff_upgrade_count",
+      "coachq_staff_downgrade_count",
+      "coachq_hc_quality_delta_vs_departed",
+      "coachq_oc_quality_delta_vs_departed",
+      "coachq_dc_quality_delta_vs_departed",
+      "adv_staff_quality_mean"
+    ]
+  },
+  "survivors": 206,
+  "preferred": 11,
+  "preferred_by_concept": {
+    "COACH_TRANSITION": 6,
+    "MARKET": 5
+  }
+}
