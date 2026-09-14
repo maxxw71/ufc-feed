@@ -1,0 +1,52 @@
+name: Appwiza NFL research publish path inspect
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/appwiza-nfl-research-publish-path-inspect.yml'
+permissions:
+  contents: write
+jobs:
+  inspect:
+    runs-on: [self-hosted, Linux, X64, appwiza]
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - name: Inspect non-privileged publication paths
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          REPORT=nfl/research_page/publish_path_report.txt
+          mkdir -p nfl/research_page
+          : > "$REPORT"
+          echo '=== ID ===' >> "$REPORT"; id >> "$REPORT" 2>&1 || true
+          echo '=== PATHS / ACLS ===' >> "$REPORT"
+          for p in /srv/appwiza-sports /srv/appwiza-sports/public /srv/appwiza-sports/public/nfl /srv/appwiza-sports/state /opt/sports-publisher; do
+            echo "--- $p" >> "$REPORT"
+            stat -c '%U:%G %a %n' "$p" >> "$REPORT" 2>&1 || true
+            test -w "$p" && echo WRITABLE >> "$REPORT" || echo READONLY >> "$REPORT"
+            getfacl -p "$p" >> "$REPORT" 2>&1 || true
+          done
+          echo '=== PUBLIC TREE / SYMLINKS ===' >> "$REPORT"
+          find /srv/appwiza-sports/public -maxdepth 3 -printf '%M %u:%g %p -> %l\n' 2>/dev/null | head -220 >> "$REPORT" || true
+          echo '=== NGINX / WEB CONFIG REFERENCES ===' >> "$REPORT"
+          grep -RniE -C 4 'appwiza-sports|/sports/|location.*/nfl|root.*/srv' /etc/nginx /etc/caddy /etc/apache2 2>/dev/null | head -360 >> "$REPORT" || true
+          echo '=== SPORTS PUBLISHER SERVICES / TIMERS ===' >> "$REPORT"
+          systemctl list-unit-files --type=service --type=timer 2>/dev/null | grep -Ei 'sports|appwiza|publish|nfl' >> "$REPORT" || true
+          for u in $(systemctl list-unit-files --type=service --type=timer 2>/dev/null | awk '/sports|appwiza|publish|nfl/{print $1}'); do
+            echo "--- $u" >> "$REPORT"
+            systemctl cat "$u" >> "$REPORT" 2>&1 || true
+          done
+          echo '=== WRITABLE DIRECTORIES UNDER SPORTS ROOT ===' >> "$REPORT"
+          find /srv/appwiza-sports -maxdepth 3 -type d -writable -print 2>/dev/null | head -120 >> "$REPORT" || true
+          echo '=== PUBLISHER EXECUTABLES ===' >> "$REPORT"
+          find /opt/sports-publisher /usr/local/bin -maxdepth 2 -type f \( -name '*publish*' -o -name '*sports*' -o -name '*appwiza*' \) -printf '%M %u:%g %p\n' 2>/dev/null | head -160 >> "$REPORT" || true
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git add "$REPORT"
+          if ! git diff --cached --quiet; then
+            git commit -m 'Capture NFL research page publish path report'
+            git pull --rebase origin main
+            git push origin HEAD:main
+          fi
