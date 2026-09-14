@@ -1,0 +1,39 @@
+name: NFL coach quality expansion
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/nfl_coach_quality_expansion.py'
+permissions:
+  contents: write
+jobs:
+  research:
+    runs-on: [self-hosted, Linux, X64, appwiza]
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with: {fetch-depth: 0}
+      - name: Run coach quality expansion
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          /home/anestishkurti92/nfl-predictor-v1/venv/bin/python "$GITHUB_WORKSPACE/scripts/nfl_coach_quality_expansion.py"
+      - name: Publish
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          SRC=/home/appwiza-runner/nfl-context-data/coach_quality_expansion
+          DEST="$GITHUB_WORKSPACE/nfl/coach_quality_expansion"
+          mkdir -p "$DEST"
+          cp "$SRC"/*.csv "$DEST"/ 2>/dev/null || true
+          cp "$SRC"/*.json "$DEST"/ 2>/dev/null || true
+          cp "$SRC"/*.txt "$DEST"/ 2>/dev/null || true
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git add nfl/coach_quality_expansion
+          if ! git diff --cached --quiet; then
+            git commit -m 'Update NFL coach quality expansion results'
+            git pull --rebase origin main
+            git push origin HEAD:main
+          fi
