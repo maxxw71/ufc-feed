@@ -1,0 +1,37 @@
+name: NFL preseason veto stress test
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/nfl_stress_preseason_veto.py'
+permissions:
+  contents: write
+jobs:
+  audit:
+    runs-on: [self-hosted, Linux, X64, appwiza]
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with: {fetch-depth: 0}
+      - name: Run stress test
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          /home/anestishkurti92/nfl-predictor-v1/venv/bin/python "$GITHUB_WORKSPACE/scripts/nfl_stress_preseason_veto.py"
+      - name: Publish
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          SRC=/home/appwiza-runner/nfl-context-data/preseason_veto_stress
+          DEST="$GITHUB_WORKSPACE/nfl/preseason_veto_stress"
+          mkdir -p "$DEST"
+          cp "$SRC"/* "$DEST"/
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git add nfl/preseason_veto_stress
+          if ! git diff --cached --quiet; then
+            git commit -m 'Update NFL preseason veto stress test'
+            git pull --rebase origin main
+            git push origin HEAD:main
+          fi
