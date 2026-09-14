@@ -1,0 +1,23 @@
+NFL UNIQUE SITUATIONAL DEEP DISSECTION
+
+{
+  "input_methods": 11,
+  "shadow_ready": 10,
+  "watch": 1,
+  "multi_veto_accepted": 1,
+  "single_veto_accepted": 5,
+  "no_stack_or_rejected": 5
+}
+
+FINAL
+US001 COACH_TRANSITION | base 55-37 win=59.8% ROI=+21.0% hold=+51.6% | final 55-37 win=59.8% ROI=+21.0% hold=+51.6% pos=72% | vetoes=0 [] | odds=-122 to +108 TIGHTEN_CONFIRMED | overlap=0.05 NFL-H017 | SHADOW_READY
+US002 COACH_TRANSITION | base 48-78 win=38.1% ROI=+26.7% hold=+51.0% | final 48-78 win=38.1% ROI=+26.7% hold=+51.0% pos=74% | vetoes=0 [] | odds=+186 to +400 REVERT_TO_ORIGINAL_AFTER_HOLDOUT_REJECT | overlap=0.17 CO048 | SHADOW_READY
+US004 MARKET | base 123-115 win=51.7% ROI=+29.4% hold=+29.7% | final 85-58 win=59.4% ROI=+49.0% hold=+36.9% pos=89% | vetoes=2 [FEATURE:rank_edge_passing_cpoe <= -9.0 | FEATURE:recent_edge_giveaway_rate <= -0.016206011594845] | odds=+133 to +178 TIGHTEN_CONFIRMED | overlap=0.33 NFL-H003 | SHADOW_READY
+US006 MARKET | base 45-45 win=50.0% ROI=+26.4% hold=+34.2% | final 45-45 win=50.0% ROI=+26.4% hold=+34.2% pos=70% | vetoes=0 [] | odds=+122 to +186 REVERT_TO_ORIGINAL_AFTER_HOLDOUT_REJECT | overlap=0.09 CO026 | SHADOW_READY
+US009 COACH_TRANSITION | base 137-140 win=49.5% ROI=+17.5% hold=+18.3% | final 93-73 win=56.0% ROI=+33.2% hold=+33.7% pos=83% | vetoes=1 [FEATURE:rank_edge_punt_return_average <= 3.299999999999997] | odds=-100 to +186 REVERT_TO_ORIGINAL_AFTER_HOLDOUT_REJECT | overlap=0.15 NFL-H033 | SHADOW_READY
+US007 MARKET | base 190-52 win=78.5% ROI=+12.9% hold=+17.1% | final 127-25 win=83.6% ROI=+20.5% hold=+30.9% pos=80% | vetoes=1 [FEATURE:recent_edge_def_allowed_explosive_rate <= 0.0023370835186801364] | odds=-300 to -213 TIGHTEN_CONFIRMED | overlap=0.19 CO016 | SHADOW_READY
+US005 COACH_TRANSITION | base 115-108 win=51.6% ROI=+21.7% hold=+29.5% | final 115-108 win=51.6% ROI=+21.7% hold=+29.5% pos=80% | vetoes=0 [] | odds=+127 to +186 TIGHTEN_CONFIRMED | overlap=0.14 NFL-H017 | SHADOW_READY
+US008 COACH_TRANSITION | base 140-136 win=50.7% ROI=+21.4% hold=+21.2% | final 109-78 win=58.3% ROI=+40.0% hold=+23.7% pos=75% | vetoes=1 [TIMING:W11_14 IN 11-14] | odds=+117 to +170 TIGHTEN_CONFIRMED | overlap=0.12 NFL-H036 | SHADOW_READY
+US011 MARKET | base 157-175 win=47.3% ROI=+14.8% hold=+11.0% | final 120-102 win=54.1% ROI=+31.8% hold=+19.7% pos=80% | vetoes=1 [FEATURE:adv_prior_road_miles_last4 <= -132.39674298637522] | odds=-100 to +186 KEEP_ORIGINAL | overlap=0.18 NFL-H017 | SHADOW_READY
+US010 COACH_TRANSITION | base 104-50 win=67.5% ROI=+11.3% hold=+16.9% | final 104-50 win=67.5% ROI=+11.3% hold=+16.9% pos=74% | vetoes=0 [] | odds=-186 to -122 KEEP_ORIGINAL | overlap=0.03 CO018 | SHADOW_READY
+US003 MARKET | base 59-48 win=55.1% ROI=+37.9% hold=+35.4% | final 39-22 win=63.9% ROI=+59.7% hold=+53.8% pos=78% | vetoes=1 [FEATURE:adv_prev_travel_miles <= 0.0] | odds=+138 to +178 TIGHTEN_CONFIRMED | overlap=0.38 NFL-H003 | WATCH
