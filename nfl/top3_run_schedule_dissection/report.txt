@@ -1,0 +1,30 @@
+TOP-3 RUN / SCHEDULE METHOD DEEP DISSECTION
+
+{
+  "input_methods": 3,
+  "shadow_ready": 0,
+  "watch": 3,
+  "research_only": 0,
+  "selected_single_vetoes": 3
+}
+
+FINAL
+RS001 (TF001) 0: 48-38 (55.8%) ROI=+39.3% | train=+26.2% val=+30.6% hold=+67.6% pos=85% | price=+122 to +163 TIGHTEN_PREHOLD_SELECTED | veto=opp_road_miles4_per_rest_day <= 269.499463680691 | overlap=0.14 | WATCH
+RS002 (TF003) 1: 72-44 (62.1%) ROI=+50.3% | train=+51.5% val=+47.9% hold=+49.5% pos=75% | price=+108 to +186 TIGHTEN_PREHOLD_SELECTED | veto=recent_edge_def_allowed_pass_epa_per_dropback >= 0.1544327526509944 | overlap=0.23 | WATCH
+RS003 (TF012) 2: 104-78 (57.1%) ROI=+36.9% | train=+38.3% val=+33.6% hold=+37.2% pos=75% | price=+113 to +163 TIGHTEN_PREHOLD_SELECTED | veto=rank_edge_def_allowed_giveaway_rate >= 9.400000000000006 | overlap=0.10 | WATCH
+
+SELECTED ONE-VETO MAX
+RS001: opp_road_miles4_per_rest_day <= 269.499 | train risk 26 win=34.6% ROI=-13.5% -> safe=+99.9% | val risk 10 ROI=-29.9% -> safe=+85.6% | hold risk 13 win=46.2% ROI=+17.2% -> safe=+122.2% retain=48%
+RS002: recent_edge_def_allowed_pass_epa_per_dropback >= 0.154433 | train risk 12 win=41.7% ROI=+1.8% -> safe=+63.9% | val risk 7 ROI=-31.0% -> safe=+93.9% | hold risk 11 win=36.4% ROI=-13.8% -> safe=+76.2% retain=70%
+RS003: rank_edge_def_allowed_giveaway_rate >= 9.4 | train risk 16 win=43.8% ROI=+8.1% -> safe=+46.0% | val risk 8 ROI=-46.1% -> safe=+54.2% | hold risk 18 win=44.4% ROI=+1.8% -> safe=+51.1% retain=72%
+
+MAX OVERLAPS
+RS001 vs NFL-H003 (H) Jaccard=0.145 intersect=32
+RS001 vs NFL-H010 (H) Jaccard=0.097 intersect=17
+RS001 vs NFL-H028 (H) Jaccard=0.089 intersect=21
+RS002 vs RS003 (TOP3) Jaccard=0.226 intersect=55
+RS002 vs NFL-H035 (H) Jaccard=0.067 intersect=16
+RS002 vs NFL-H003 (H) Jaccard=0.060 intersect=16
+RS003 vs NFL-H017 (H) Jaccard=0.096 intersect=43
+RS003 vs NFL-H003 (H) Jaccard=0.067 intersect=22
+RS003 vs NFL-H002 (H) Jaccard=0.063 intersect=19
