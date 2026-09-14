@@ -1,0 +1,61 @@
+name: Appwiza NFL research lab page
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/nfl_build_research_page.py'
+      - 'nfl/live_candidate_finalization/**'
+      - 'nfl/coach_only_final_sieve/**'
+      - 'nfl/top3_timing_final_audit/**'
+      - 'nfl/unique_situational_deep_dissection/**'
+      - 'nfl/streak_priority_deep_dissection/**'
+      - 'nfl/streak_bounceback_division_discovery/**'
+      - 'nfl/legacy_live_home_opener_exact/**'
+      - 'nfl/legacy_live_secondary_exact/**'
+      - 'nfl/coach_consensus_priority.json'
+      - 'nfl/rs_h_consensus_priority.json'
+permissions:
+  contents: write
+jobs:
+  build-deploy:
+    runs-on: [self-hosted, Linux, X64, appwiza]
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with: {fetch-depth: 0}
+      - name: Build research page
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          /home/anestishkurti92/nfl-predictor-v1/venv/bin/python "$GITHUB_WORKSPACE/scripts/nfl_build_research_page.py"
+      - name: Deploy without touching official tracker
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          LIVE_ROOT=/srv/appwiza-sports/public/nfl
+          LIVE_DIR="$LIVE_ROOT/research"
+          REPORT="$GITHUB_WORKSPACE/nfl/research_page/deploy_report.txt"
+          {
+            echo "runner=$(id)"
+            echo "live_root=$LIVE_ROOT"
+            stat -c 'root_stat=%U:%G %a %n' "$LIVE_ROOT" 2>/dev/null || true
+            echo "official_tracker_untouched=$LIVE_ROOT/index.html"
+          } > "$REPORT"
+          if [ -d "$LIVE_ROOT" ] && [ -w "$LIVE_ROOT" ]; then
+            mkdir -p "$LIVE_DIR"
+            cp "$GITHUB_WORKSPACE/nfl/research_page/index.html" "$LIVE_DIR/index.html"
+            chmod 0644 "$LIVE_DIR/index.html" || true
+            echo "deploy_status=SUCCESS" >> "$REPORT"
+            stat -c 'deployed=%U:%G %a %s %n' "$LIVE_DIR/index.html" >> "$REPORT" || true
+          else
+            echo "deploy_status=NO_WRITE_ACCESS" >> "$REPORT"
+          fi
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git add nfl/research_page
+          if ! git diff --cached --quiet; then
+            git commit -m 'Update Appwiza NFL research lab page'
+            git pull --rebase origin main
+            git push origin HEAD:main
+          fi
