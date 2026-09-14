@@ -1,0 +1,45 @@
+name: NFL priority method loss forensics
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/nfl_priority_method_loss_forensics.py'
+      - '.github/workflows/nfl-priority-loss-forensics.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  audit:
+    runs-on: [self-hosted, Linux, X64, appwiza]
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+        with: {fetch-depth: 0}
+      - name: Run loss forensics
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          ROOT=/home/anestishkurti92/nfl-predictor-v1
+          test -x "$ROOT/venv/bin/python"
+          "$ROOT/venv/bin/python" "$GITHUB_WORKSPACE/scripts/nfl_priority_method_loss_forensics.py"
+      - name: Publish results
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          SRC=/home/appwiza-runner/nfl-context-data/priority_method_loss_forensics
+          DEST="$GITHUB_WORKSPACE/nfl/priority_method_loss_forensics"
+          mkdir -p "$DEST"
+          cp "$SRC/report.txt" "$DEST/report.txt"
+          cp "$SRC/summary.json" "$DEST/summary.json"
+          cp "$SRC/priority_method_baselines.csv" "$DEST/priority_method_baselines.csv"
+          cp "$SRC/veto_candidates_selected_preholdout.csv" "$DEST/veto_candidates_selected_preholdout.csv"
+          cp "$SRC/confirmed_holdout_veto_filters.csv" "$DEST/confirmed_holdout_veto_filters.csv"
+          cp "$SRC/holdout_losses_with_flags.csv" "$DEST/holdout_losses_with_flags.csv"
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git add nfl/priority_method_loss_forensics
+          if ! git diff --cached --quiet; then
+            git commit -m 'Update NFL priority loss forensics'
+            git pull --rebase origin main
+            git push origin HEAD:main
+          fi
