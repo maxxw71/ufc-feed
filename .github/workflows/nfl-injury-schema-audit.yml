@@ -2,6 +2,10 @@ name: NFL injury schema audit
 
 on:
   workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/nfl-injury-schema-audit.yml'
 
 permissions:
   contents: read
@@ -18,7 +22,6 @@ jobs:
         run: |
           set -Eeuo pipefail
           PY=/home/anestishkurti92/nfl-predictor-v1/venv/bin/python
-          P=/home/appwiza-runner/nfl-context-data/raw/injuries_2009_2024.parquet
           "$PY" - <<'PY'
           import pandas as pd
           p='/home/appwiza-runner/nfl-context-data/raw/injuries_2009_2024.parquet'
