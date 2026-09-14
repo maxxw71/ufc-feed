@@ -1,0 +1,38 @@
+name: NFL multi-veto optimizer
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/nfl_multiveto_optimizer.py'
+      - 'nfl/MULTI_VETO_POLICY.md'
+permissions:
+  contents: write
+jobs:
+  audit:
+    runs-on: [self-hosted, Linux, X64, appwiza]
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+        with: {fetch-depth: 0}
+      - name: Run optimizer
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          /home/anestishkurti92/nfl-predictor-v1/venv/bin/python "$GITHUB_WORKSPACE/scripts/nfl_multiveto_optimizer.py"
+      - name: Publish
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          SRC=/home/appwiza-runner/nfl-context-data/multiveto_optimizer
+          DEST="$GITHUB_WORKSPACE/nfl/multiveto_optimizer"
+          mkdir -p "$DEST"
+          cp "$SRC"/* "$DEST"/
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git add nfl/multiveto_optimizer
+          if ! git diff --cached --quiet; then
+            git commit -m 'Update NFL multi-veto optimizer results'
+            git pull --rebase origin main
+            git push origin HEAD:main
+          fi
