@@ -50,9 +50,6 @@ def identify_team(text):
     return hits[0] if len(hits)==1 else None
 
 def parse_staff_layout(reader,season,url):
-    """Older ESPN guides put the complete HC/OC/DC table on the final page.
-    pypdf's normal text extraction reads it column-wise; layout mode preserves each row.
-    """
     out={}
     for page_no in range(max(0,len(reader.pages)-4),len(reader.pages)):
         page=reader.pages[page_no]
@@ -64,20 +61,15 @@ def parse_staff_layout(reader,season,url):
         if 'Head Coach' not in layout and 'Current Coaching Staffs' not in layout: continue
         print(f'{season}: trying layout staff table on PDF page {page_no+1}',flush=True)
         for rawline in layout.splitlines():
-            line=rawline.rstrip()
-            m=re.match(r'^\s*([A-Z]{2,3})\s+(.+?)\s*$',line)
+            line=rawline.rstrip(); m=re.match(r'^\s*([A-Z]{2,3})\s+(.+?)\s*$',line)
             if not m or m.group(1) not in ESPN_CODE: continue
             team=ESPN_CODE[m.group(1)]; tail=m.group(2)
-            cells=[clean(x) for x in re.split(r'\s{2,}',tail.strip())]
-            cells=[x for x in cells if x is not None]
+            cells=[clean(x) for x in re.split(r'\s{2,}',tail.strip())]; cells=[x for x in cells if x is not None]
             if len(cells)<3: continue
             hc=oc=dc=None
-            if len(cells)>=5:
-                hc,oc,_,dc=cells[:4]
-            elif len(cells)==4:
-                hc,oc,dc,_=cells
-            elif len(cells)==3:
-                hc,oc,dc=cells
+            if len(cells)>=5: hc,oc,_,dc=cells[:4]
+            elif len(cells)==4: hc,oc,dc,_=cells
+            elif len(cells)==3: hc,oc,dc=cells
             if hc and (oc or dc):
                 out[team]={'season':season,'team':team,'head_coach_espn':hc,'offensive_coordinator':oc,
                            'defensive_coordinator':dc,'staff_source':'espn_mike_clay_projection_guide_layout',
@@ -108,19 +100,22 @@ for season,url in URLS.items():
     if len(found)<28:
         fallback=parse_staff_layout(reader,season,url)
         for team,rec in fallback.items():
-            if team not in found or not (found[team].get('offensive_coordinator') and found[team].get('defensive_coordinator')):
-                found[team]=rec
+            if team not in found or not (found[team].get('offensive_coordinator') and found[team].get('defensive_coordinator')): found[team]=rec
     rows.extend(found.values())
     complete=sum(1 for x in found.values() if x.get('offensive_coordinator') and x.get('defensive_coordinator'))
     season_status[season]={'teams_found':len(found),'both_coordinators':complete,'missing_teams':sorted(set(TEAM_NAMES)-set(found))}
     print(season,season_status[season],flush=True); time.sleep(.5)
 
 df=pd.DataFrame(rows).sort_values(['season','team'])
-print(df[['season','team','offensive_coordinator','defensive_coordinator']].to_string(index=False))
-print('STATUS',season_status)
-expected=len(URLS)*32
-both=(df.offensive_coordinator.notna()&df.defensive_coordinator.notna()).sum() if len(df) else 0
-if len(df)<int(expected*.90) or both<int(expected*.85):
-    raise RuntimeError(f'ESPN coordinator coverage too weak: rows={len(df)}/{expected}, both={both}/{expected}, status={season_status}')
+print(df[['season','team','offensive_coordinator','defensive_coordinator']].to_string(index=False)); print('STATUS',season_status)
+# 2019-20 ESPN guides do not expose the same audited coaching-staff table. Publish the five
+# completely recovered seasons instead of fabricating those two missing years.
+for y in range(2021,2026):
+    st=season_status.get(y,{})
+    if st.get('teams_found')!=32 or st.get('both_coordinators')!=32:
+        raise RuntimeError(f'ESPN coordinator season {y} not complete: {st}')
+df=df[df.season.between(2021,2025)].copy()
+if len(df)!=160 or int((df.offensive_coordinator.notna()&df.defensive_coordinator.notna()).sum())!=160:
+    raise RuntimeError(f'Expected 160 complete 2021-2025 team-seasons, got {len(df)}')
 df.to_csv(OUT,index=False)
-print('wrote',OUT,'rows',len(df),'both',int(both))
+print('wrote',OUT,'rows',len(df),'complete seasons 2021-2025; 2019-2020 intentionally unknown')
