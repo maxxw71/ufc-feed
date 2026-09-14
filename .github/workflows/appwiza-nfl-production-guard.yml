@@ -1,0 +1,190 @@
+name: Deploy Appwiza NFL production approval guard
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'nfl/production_approval_guard.py'
+      - 'nfl/test_production_approval_guard.py'
+      - '.github/workflows/appwiza-nfl-production-guard.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  deploy:
+    if: github.repository == 'maxxw71/ufc-feed' && github.ref == 'refs/heads/main'
+    runs-on: [self-hosted, Linux, X64, appwiza]
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Test approval guard
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd nfl
+          python3 test_production_approval_guard.py
+
+      - name: Deploy guard and patch live selectors
+        shell: bash
+        run: |
+          set -euo pipefail
+          ROOT=/home/anestishkurti92/nfl-predictor-v1
+          R2="$ROOT/research_v2"
+          TS=$(date -u +%Y%m%dT%H%M%SZ)
+          BACKUP="$ROOT/backups/production_guard_$TS"
+          mkdir -p "$BACKUP"
+
+          TARGETS=(
+            "$R2/nfl_home_opener_scanner.py"
+            "$R2/nfl_email_candidate.py"
+            "$R2/nfl_scanner_candidate.py"
+            "$R2/nfl_tracker_candidate.py"
+          )
+
+          for f in "${TARGETS[@]}"; do
+            if [ -f "$f" ]; then cp -a "$f" "$BACKUP/$(basename "$f")"; fi
+          done
+          if [ -f "$R2/production_approval_guard.py" ]; then
+            cp -a "$R2/production_approval_guard.py" "$BACKUP/production_approval_guard.py.previous"
+          fi
+
+          rollback() {
+            echo 'Deployment failed; restoring selector backups.' >&2
+            for f in "${TARGETS[@]}"; do
+              b="$BACKUP/$(basename "$f")"
+              if [ -f "$b" ]; then cp -a "$b" "$f"; fi
+            done
+            if [ -f "$BACKUP/production_approval_guard.py.previous" ]; then
+              cp -a "$BACKUP/production_approval_guard.py.previous" "$R2/production_approval_guard.py"
+            else
+              rm -f "$R2/production_approval_guard.py"
+            fi
+          }
+          trap rollback ERR
+
+          install -m 0644 nfl/production_approval_guard.py "$R2/production_approval_guard.py.tmp"
+          mv "$R2/production_approval_guard.py.tmp" "$R2/production_approval_guard.py"
+
+          python3 - "$R2" <<'PY'
+          from pathlib import Path
+          import sys
+
+          root = Path(sys.argv[1])
+          targets = [
+              root / 'nfl_home_opener_scanner.py',
+              root / 'nfl_email_candidate.py',
+              root / 'nfl_scanner_candidate.py',
+              root / 'nfl_tracker_candidate.py',
+          ]
+          marker = "late_records,late_status=late.scan(G,R,now,current_odds);records.extend(late_records)"
+          gate = " records,production_rejections=production_gate.approve(records,now)\n atomic(S/'production_rejections.json',{'scanned_at':now.isoformat(),'rejections':production_rejections})"
+          patched = []
+          for path in targets:
+              if not path.exists():
+                  continue
+              text = path.read_text()
+              if 'import production_approval_guard as production_gate' not in text:
+                  needle = 'import nfl_email_design\n'
+                  if needle not in text:
+                      raise RuntimeError(f'Cannot find import anchor in {path}')
+                  text = text.replace(needle, needle + 'import production_approval_guard as production_gate\n', 1)
+              if 'production_gate.approve(records,now)' not in text:
+                  if marker not in text:
+                      raise RuntimeError(f'Cannot find records-finalization anchor in {path}')
+                  text = text.replace(marker, marker + '\n' + gate, 1)
+              tmp = path.with_suffix(path.suffix + '.guardtmp')
+              tmp.write_text(text)
+              tmp.replace(path)
+              patched.append(str(path))
+          if str(root / 'nfl_home_opener_scanner.py') not in patched:
+              raise RuntimeError('Production scanner was not found')
+          print('\n'.join(patched))
+          PY
+
+          python3 -m py_compile "$R2/production_approval_guard.py" \
+            "$R2/nfl_home_opener_scanner.py" \
+            "$R2/nfl_email_candidate.py" \
+            "$R2/nfl_scanner_candidate.py" \
+            "$R2/nfl_tracker_candidate.py"
+
+          PYTHONPATH="$R2" python3 - <<'PY'
+          from datetime import datetime, timedelta, timezone
+          import production_approval_guard as g
+          now=datetime(2026,9,14,5,15,tzinfo=timezone.utc)
+          base={
+            'game_id':'2026_04_TEST','week':4,'method':'base_ypp_v1',
+            'selection_side':'away','prior_games':3,'opponent_prior_games':3,
+            'pre_off_ypp':6.3,'opp_pre_def_ypp_allowed':6.0,
+            'kickoff':(now+timedelta(days=1)).isoformat(),
+            'odds':{'moneyline':-150,'retrieved_at':now.isoformat()}}
+          ok,bad=g.approve([base],now)
+          assert len(ok)==1 and not bad
+          wk1=dict(base);wk1['game_id']='2026_01_LAC_ARI';wk1['week']=1;wk1['odds']=dict(base['odds'],moneyline=-500)
+          ok,bad=g.approve([wk1],now)
+          assert not ok and 'insufficient_history' in bad[0]['reasons']
+          print('live guard regression: PASS')
+          PY
+
+          python3 - "$R2/nfl_home_opener_scanner.py" <<'PY'
+          from pathlib import Path
+          import sys
+          text=Path(sys.argv[1]).read_text()
+          gate=text.index('production_gate.approve(records,now)')
+          publish=text.index('sports_publish.safe_call(sports_publish.publish_nfl,records,now,nfl_email_design)')
+          render=text.index('nfl_email_design.render(records,now)', publish)
+          assert gate < publish < render
+          assert "qualifies_pass_defense(int(x.week)" in text
+          print('site/email parity source check: PASS')
+          PY
+
+          sha256sum nfl/production_approval_guard.py "$R2/production_approval_guard.py" | awk '{print $1}' | uniq | awk 'END{if(NR!=1)exit 1}'
+          trap - ERR
+
+          mkdir -p nfl
+          {
+            echo "deployed_at=$TS"
+            echo "production_root=$R2"
+            echo "backup=$BACKUP"
+            echo "approved_methods=base_ypp_v1"
+            echo "min_week=4"
+            echo "min_prior_games=3"
+            echo "week1_regression=PASS"
+            echo "site_email_same_guarded_records=PASS"
+          } > nfl/live_production_guard_deploy_report.txt
+
+      - name: Refresh public NFL page without sending email
+        shell: bash
+        run: |
+          set -u
+          ROOT=/home/anestishkurti92/nfl-predictor-v1
+          R2="$ROOT/research_v2"
+          REPORT=nfl/live_production_guard_deploy_report.txt
+          PY=''
+          for p in "$ROOT/venv/bin/python" "$ROOT/.venv/bin/python" "$ROOT/venv.google-original/bin/python" "$(command -v python3 2>/dev/null || true)"; do
+            if [ -n "$p" ] && [ -x "$p" ] && "$p" -c 'import pandas,polars,requests' >/dev/null 2>&1; then PY="$p"; break; fi
+          done
+          if [ -n "$PY" ]; then
+            if (cd "$R2" && timeout 150s "$PY" nfl_home_opener_scanner.py) > /tmp/nfl_guard_refresh.log 2>&1; then
+              echo 'public_refresh=PASS' >> "$REPORT"
+            else
+              echo 'public_refresh=WARNING_failed_no_email_sent' >> "$REPORT"
+              tail -20 /tmp/nfl_guard_refresh.log | sed -E 's/(password|secret|token|api[_-]?key).*/[redacted]/Ig' >> "$REPORT" || true
+            fi
+          else
+            echo 'public_refresh=WARNING_no_compatible_python_found' >> "$REPORT"
+          fi
+
+      - name: Commit sanitized deployment report
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add nfl/live_production_guard_deploy_report.txt
+          if ! git diff --cached --quiet; then
+            git commit -m 'Record live NFL production guard deployment'
+            git push
+          fi
