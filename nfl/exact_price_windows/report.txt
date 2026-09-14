@@ -1,0 +1,47 @@
+NFL EXACT PRICE-WINDOW AUDIT
+
+{
+  "methods_audited": 36,
+  "tighten_live_price": 12,
+  "keep_original_band": 19,
+  "watch_narrow_window": 5
+}
+
+All candidate narrower windows were selected using training+validation only; holdout was opened afterward to confirm or reject tightening.
+
+NFL-H028 [KEEP_ORIGINAL_BAND] +100 to +186 -> +100 to +186 | holdout +23.3% -> +24.9% | n 43->34 | full +24.7%->+27.9%
+NFL-H027 [KEEP_ORIGINAL_BAND] +100 to +186 -> +100 to +186 | holdout +22.9% -> +22.9% | n 43->43 | full +33.1%->+33.1%
+NFL-H053 [KEEP_ORIGINAL_BAND] +186 to +400 -> +186 to +400 | holdout +23.9% -> +23.9% | n 57->57 | full +26.6%->+26.6%
+NFL-H062 [KEEP_ORIGINAL_BAND] +100 to +186 -> +100 to +186 | holdout +12.0% -> +10.8% | n 86->74 | full +26.2%->+29.1%
+NFL-H035 [KEEP_ORIGINAL_BAND] +100 to +186 -> +100 to +186 | holdout +15.4% -> +13.4% | n 52->48 | full +29.7%->+33.9%
+NFL-H082 [KEEP_ORIGINAL_BAND] +100 to +186 -> +100 to +186 | holdout +11.2% -> +6.9% | n 60->43 | full +22.7%->+28.4%
+NFL-H075 [KEEP_ORIGINAL_BAND] +122 to +186 -> +122 to +186 | holdout +26.1% -> +18.1% | n 27->25 | full +30.1%->+31.4%
+NFL-H017 [KEEP_ORIGINAL_BAND] +100 to +186 -> +100 to +186 | holdout +18.2% -> +9.6% | n 102->59 | full +19.1%->+26.7%
+NFL-H086 [KEEP_ORIGINAL_BAND] +100 to +186 -> +100 to +186 | holdout +11.8% -> +3.1% | n 52->41 | full +26.5%->+29.0%
+NFL-H039 [KEEP_ORIGINAL_BAND] +122 to +186 -> +122 to +186 | holdout +22.2% -> +12.9% | n 36->29 | full +28.4%->+30.8%
+NFL-H040 [KEEP_ORIGINAL_BAND] +122 to +186 -> +122 to +186 | holdout +20.5% -> +9.9% | n 38->29 | full +22.1%->+20.2%
+NFL-H079 [KEEP_ORIGINAL_BAND] +122 to +186 -> +122 to +186 | holdout +12.4% -> +0.7% | n 93->61 | full +17.8%->+19.9%
+NFL-H015 [KEEP_ORIGINAL_BAND] +122 to +186 -> +122 to +186 | holdout +33.5% -> +21.7% | n 30->17 | full +36.8%->+48.2%
+NFL-H069 [KEEP_ORIGINAL_BAND] +100 to +186 -> +100 to +186 | holdout +11.8% -> -0.2% | n 136->77 | full +14.0%->+22.5%
+NFL-H036 [KEEP_ORIGINAL_BAND] +100 to +186 -> +100 to +186 | holdout +17.3% -> +4.0% | n 46->31 | full +33.3%->+38.2%
+NFL-H033 [KEEP_ORIGINAL_BAND] +100 to +186 -> +100 to +186 | holdout +16.1% -> +1.7% | n 88->68 | full +19.9%->+21.2%
+NFL-H002 [KEEP_ORIGINAL_BAND] +100 to +186 -> +100 to +186 | holdout +49.5% -> +33.1% | n 47->32 | full +35.5%->+36.9%
+NFL-H029 [KEEP_ORIGINAL_BAND] +100 to +186 -> +100 to +186 | holdout +21.8% -> +5.0% | n 60->43 | full +21.1%->+25.0%
+NFL-H003 [KEEP_ORIGINAL_BAND] +122 to +186 -> +122 to +186 | holdout +43.7% -> +12.9% | n 43->23 | full +43.2%->+51.0%
+NFL-H066 [TIGHTEN_LIVE_PRICE] +186 to +400 -> +205 to +311 | holdout +25.2% -> +85.3% | n 29->18 | full +28.2%->+53.8%
+NFL-H010 [TIGHTEN_LIVE_PRICE] +100 to +186 -> +121 to +186 | holdout +32.2% -> +60.4% | n 40->25 | full +31.9%->+46.9%
+NFL-H031 [TIGHTEN_LIVE_PRICE] +122 to +186 -> +140 to +186 | holdout +18.3% -> +39.6% | n 76->43 | full +22.2%->+33.0%
+NFL-H065 [TIGHTEN_LIVE_PRICE] +122 to +186 -> +138 to +186 | holdout +10.2% -> +21.6% | n 120->73 | full +20.1%->+30.9%
+NFL-H081 [TIGHTEN_LIVE_PRICE] +122 to +186 -> +137 to +186 | holdout +15.9% -> +21.8% | n 38->23 | full +25.4%->+31.6%
+NFL-H087 [TIGHTEN_LIVE_PRICE] +186 to +400 -> +198 to +400 | holdout +11.0% -> +16.6% | n 42->40 | full +27.9%->+33.2%
+NFL-H005 [TIGHTEN_LIVE_PRICE] +122 to +186 -> +134 to +173 | holdout +36.0% -> +41.5% | n 41->21 | full +41.6%->+46.8%
+NFL-H096 [TIGHTEN_LIVE_PRICE] +100 to +186 -> +124 to +186 | holdout +11.6% -> +16.4% | n 31->19 | full +26.8%->+41.8%
+NFL-H008 [TIGHTEN_LIVE_PRICE] +122 to +186 -> +136 to +186 | holdout +24.5% -> +29.0% | n 64->44 | full +29.4%->+37.2%
+NFL-H022 [TIGHTEN_LIVE_PRICE] +122 to +186 -> +131 to +186 | holdout +21.1% -> +23.7% | n 40->30 | full +32.2%->+39.2%
+NFL-H095 [TIGHTEN_LIVE_PRICE] +122 to +186 -> +137 to +174 | holdout +10.0% -> +12.3% | n 33->18 | full +23.7%->+34.6%
+NFL-H044 [TIGHTEN_LIVE_PRICE] +122 to +186 -> +133 to +173 | holdout +16.0% -> +18.1% | n 40->23 | full +26.0%->+38.3%
+NFL-H019 [WATCH_NARROW_WINDOW] +122 to +186 -> +122 to +186 | holdout +29.4% -> +65.3% | n 33->11 | full +36.8%->+71.7%
+NFL-H006 [WATCH_NARROW_WINDOW] +122 to +186 -> +122 to +186 | holdout +26.8% -> +45.0% | n 76->37 | full +27.3%->+39.3%
+NFL-H056 [WATCH_NARROW_WINDOW] +122 to +186 -> +122 to +186 | holdout +28.8% -> +27.9% | n 33->16 | full +29.7%->+43.9%
+NFL-H016 [WATCH_NARROW_WINDOW] +122 to +186 -> +122 to +186 | holdout +26.1% -> +21.4% | n 45->21 | full +30.8%->+42.5%
+NFL-H057 [WATCH_NARROW_WINDOW] +122 to +186 -> +122 to +186 | holdout +12.5% -> +4.0% | n 66->32 | full +31.1%->+49.1%
