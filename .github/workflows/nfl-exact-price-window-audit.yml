@@ -1,0 +1,41 @@
+name: NFL exact price-window audit
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/nfl_exact_price_window_audit.py'
+      - '.github/workflows/nfl-exact-price-window-audit.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  audit:
+    runs-on: [self-hosted, Linux, X64, appwiza]
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+        with: {fetch-depth: 0}
+      - name: Run exact price-window audit
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          /home/anestishkurti92/nfl-predictor-v1/venv/bin/python "$GITHUB_WORKSPACE/scripts/nfl_exact_price_window_audit.py"
+      - name: Publish results
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          SRC=/home/appwiza-runner/nfl-context-data/exact_price_windows
+          DEST="$GITHUB_WORKSPACE/nfl/exact_price_windows"
+          mkdir -p "$DEST"
+          cp "$SRC/summary.json" "$DEST/summary.json"
+          cp "$SRC/report.txt" "$DEST/report.txt"
+          cp "$SRC/method_price_windows.csv" "$DEST/method_price_windows.csv"
+          cp "$SRC/preholdout_price_candidates.csv" "$DEST/preholdout_price_candidates.csv"
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git add nfl/exact_price_windows
+          if ! git diff --cached --quiet; then
+            git commit -m 'Update NFL exact price-window audit'
+            git pull --rebase origin main
+            git push origin HEAD:main
+          fi
