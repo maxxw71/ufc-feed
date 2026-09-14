@@ -9,7 +9,7 @@ OUT=CTX/'coach_consensus_stability';OUT.mkdir(parents=True,exist_ok=True)
 DATA=CTX/'coach_quality_expansion'/'coach_quality_enriched_team_sides.parquet'
 CO=REPO/'nfl/coach_only_deployment_audit/live_ready.csv'
 H=REPO/'nfl/live_candidate_finalization/live_ready.csv'
-SIEVE=REPO/'nfl/coach_only_final_sieve/selected_vetoes.csv'
+SIEVE=REPO/'nfl/coach_only_final_sieve/selected_single_veto.csv'
 
 def num(x):return pd.to_numeric(x,errors='coerce')
 def implied(ml):ml=num(ml);return np.where(ml<0,(-ml)/((-ml)+100),100/(ml+100))
@@ -76,4 +76,4 @@ pd.DataFrame(rows).to_csv(OUT/'summary.csv',index=False);pd.DataFrame(yearly).to
 lines=['COACH + H CONSENSUS STABILITY','']
 for r in rows:lines.append(f"{r['pair']} {r['version']} | {r['wins']}-{r['losses']} ({100*r['win_pct']:.1f}%) n={r['n']} ROI={100*r['roi']:+.1f}% | positive seasons={r['positive_seasons']}/{r['active_seasons']} ({100*r['positive_season_ratio']:.0f}%) max season share={100*r['max_season_share']:.1f}% | LOO min ROI={100*r['loo_min_roi']:+.1f}% all profitable={r['loo_all_profitable']}")
 (OUT/'report.txt').write_text('\n'.join(lines)+'\n');print('\n'.join(lines))
-# trigger 2026-09-14b
+# trigger 2026-09-14c
