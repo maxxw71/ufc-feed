@@ -25,16 +25,17 @@ jobs:
           find /opt /home/anestishkurti92 /srv/appwiza-sports -type f \( -iname '*nfl*' -o -iname '*email*' -o -iname '*digest*' -o -iname '*sports*publish*' \) -print 2>/dev/null | head -300 || true
           echo
           echo '=== NFL METHOD / PICK REFERENCES ==='
-          grep -RniE 'YPP|LEAKY|NFL.*method|method.*NFL|nfl_picks|NFL Picks|walk.?forward|ROI|confidence|moneyline|week' /opt /home/anestishkurti92 /srv/appwiza-sports 2>/dev/null | head -700 || true
+          grep -RniE 'YPP|LEAKY|PASS RUSH|WEAK PROTECTION|PASS OFF|ELITE PASS|EPA|SCORING|BALANCED|ELITE DEF|NFL.*method|method.*NFL|nfl_picks|NFL Picks|walk.?forward|ROI|confidence|moneyline|week' /opt /home/anestishkurti92 /srv/appwiza-sports 2>/dev/null | head -1000 || true
           echo
           echo '=== EMAIL / DIGEST REFERENCES ==='
           grep -RniE 'send.*mail|send.*email|digest|subject=.*NFL|NFL.*email|email.*NFL|smtp' /opt /home/anestishkurti92 /srv/appwiza-sports 2>/dev/null | head -500 || true
           echo
           echo '=== NFL PUBLIC PAGE TOKENS ==='
           if [ -f /srv/appwiza-sports/public/nfl/index.html ]; then
-            grep -n -E 'Method|YPP|ROI|Win Rate|NFL|confidence|week' /srv/appwiza-sports/public/nfl/index.html | head -350 || true
+            grep -n -E 'Method|YPP|ROI|Win Rate|NFL|confidence|week|preseason|context' /srv/appwiza-sports/public/nfl/index.html | head -450 || true
           fi
           echo
           echo '=== NEW CONTEXT LAYER ==='
           ls -lh /home/appwiza-runner/nfl-context-data/derived 2>/dev/null || true
           cat /home/appwiza-runner/nfl-context-data/NFL_PREGAME_CONTEXT_STATUS.json 2>/dev/null || true
+          cat /home/appwiza-runner/nfl-context-data/NFL_PRESEASON_CONTEXT_STATUS.json 2>/dev/null || true
