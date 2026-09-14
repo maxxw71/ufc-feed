@@ -1,0 +1,37 @@
+name: NFL audit current live legacy methods
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/nfl_audit_current_live_legacy_methods.py'
+permissions:
+  contents: write
+jobs:
+  audit:
+    runs-on: [self-hosted, Linux, X64, appwiza]
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with: {fetch-depth: 0}
+      - name: Run legacy live method audit
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          /home/anestishkurti92/nfl-predictor-v1/venv/bin/python "$GITHUB_WORKSPACE/scripts/nfl_audit_current_live_legacy_methods.py"
+      - name: Publish audit
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          SRC=/home/appwiza-runner/nfl-context-data/legacy_live_method_reaudit
+          DEST="$GITHUB_WORKSPACE/nfl/legacy_live_method_reaudit"
+          rm -rf "$DEST"; mkdir -p "$DEST"
+          cp -a "$SRC"/. "$DEST"/
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git add nfl/legacy_live_method_reaudit
+          if ! git diff --cached --quiet; then
+            git commit -m 'Update legacy live NFL method re-audit'
+            git pull --rebase origin main
+            git push origin HEAD:main
+          fi
