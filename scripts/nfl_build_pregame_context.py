@@ -25,6 +25,10 @@ def primary(values):
 
 def safe_num(s): return pd.to_numeric(s, errors="coerce")
 
+def norm_name(x):
+    if pd.isna(x): return None
+    return ''.join(ch for ch in str(x).lower() if ch.isalnum()) or None
+
 # ---- Schedule -> one row per team-game. Everything used below is known before kickoff. ----
 s = pd.read_parquet(SCHEDULES)
 s = s[s.game_type.eq("REG")].copy()
@@ -81,12 +85,13 @@ q=g[g.qb_id.notna()].sort_values(["gameday_dt","game_id","team_canon"]).copy()
 q["qb_prior_starts"] = q.groupby("qb_id").cumcount()
 g=g.merge(q[["game_id","team_canon","qb_prior_starts"]],on=["game_id","team_canon"],how="left")
 
-# ---- Player master: QB age / experience / draft pedigree. ----
+# ---- Player master: QB age / experience / draft pedigree + cross-ID map. ----
 players_path=RAW/"players.parquet"
+players=None
 if players_path.exists():
-    p=pd.read_parquet(players_path)
-    cols=[c for c in ["gsis_id","birth_date","years_of_experience","rookie_season","draft_year","draft_round","draft_pick","height","weight"] if c in p.columns]
-    p=p[cols].drop_duplicates("gsis_id")
+    players=pd.read_parquet(players_path)
+    cols=[c for c in ["gsis_id","birth_date","years_of_experience","rookie_season","draft_year","draft_round","draft_pick","height","weight"] if c in players.columns]
+    p=players[cols].drop_duplicates("gsis_id")
     p=p.rename(columns={c:f"qb_{c}" for c in cols if c!="gsis_id"}).rename(columns={"gsis_id":"qb_id"})
     g=g.merge(p,on="qb_id",how="left")
     if "qb_birth_date" in g.columns:
@@ -101,6 +106,8 @@ if snaps_path.exists() and roster_path.exists():
     sn=pd.read_parquet(snaps_path)
     sn=sn[sn.game_type.eq("REG")].copy() if "game_type" in sn.columns else sn.copy()
     sn["team_canon"]=sn.team.map(canon)
+    sn["pfr_player_id"]=sn.pfr_player_id.where(sn.pfr_player_id.notna(),None)
+    sn=sn[sn.pfr_player_id.notna()].copy()
     sn["pfr_player_id"]=sn.pfr_player_id.astype(str)
     sn["offense_snaps"]=safe_num(sn.offense_snaps).fillna(0)
     sn["defense_snaps"]=safe_num(sn.defense_snaps).fillna(0)
@@ -123,8 +130,25 @@ if snaps_path.exists() and roster_path.exists():
     wr["week_num"]=safe_num(wr.week)
     minw=wr.groupby(["season","team_canon"])["week_num"].transform("min")
     wr=wr[wr.week_num.eq(minw)].copy()
-    wr=wr[wr.pfr_id.notna()].copy()
-    wr["pfr_player_id"]=wr.pfr_id.astype(str)
+
+    # nflverse weekly rosters can omit PFR IDs for active players (especially OL).
+    # Recover them from the master player crosswalk by GSIS ID before matching to PFR snap IDs.
+    wr["resolved_pfr_id"]=wr.get("pfr_id")
+    if players is not None and {"gsis_id","pfr_id"}.issubset(players.columns) and "gsis_id" in wr.columns:
+        x=players[["gsis_id","pfr_id"]].dropna().drop_duplicates("gsis_id").rename(columns={"pfr_id":"master_pfr_id"})
+        wr=wr.merge(x,on="gsis_id",how="left")
+        wr["resolved_pfr_id"]=wr["resolved_pfr_id"].fillna(wr.master_pfr_id)
+    # Unique-name fallback only when both feeds contain one unambiguous player with that normalized name.
+    if "full_name" in wr.columns:
+        wr["name_key"]=wr.full_name.map(norm_name)
+        snap_names=sn[["pfr_player_id","player"]].drop_duplicates().copy()
+        snap_names["name_key"]=snap_names.player.map(norm_name)
+        uniq=snap_names.dropna(subset=["name_key"]).groupby("name_key").filter(lambda z:z.pfr_player_id.nunique()==1)
+        name_map=uniq.drop_duplicates("name_key")[["name_key","pfr_player_id"]].rename(columns={"pfr_player_id":"name_pfr_id"})
+        wr=wr.merge(name_map,on="name_key",how="left")
+        wr["resolved_pfr_id"]=wr["resolved_pfr_id"].fillna(wr.name_pfr_id)
+    wr=wr[wr.resolved_pfr_id.notna()].copy()
+    wr["pfr_player_id"]=wr.resolved_pfr_id.astype(str)
     wr=wr[["season","team_canon","pfr_player_id"]].drop_duplicates()
     m=wr.merge(prior,left_on=["season","team_canon","pfr_player_id"],right_on=["target_season","team_canon","pfr_player_id"],how="left")
     for c in ["offense_snaps","defense_snaps","ol_snaps","skill_snaps"]:
@@ -168,6 +192,11 @@ if staff_path.exists():
     st["team_canon"]=st.team.map(canon)
     take=[c for c in ["season","team_canon","offensive_coordinator","defensive_coordinator","offensive_coordinator_changed","defensive_coordinator_changed","coordinator_changes","major_staff_changes","staff_source"] if c in st.columns]
     g=g.merge(st[take].drop_duplicates(["season","team_canon"]),on=["season","team_canon"],how="left")
+    # Unknown current/previous coordinator must remain unknown, never masquerade as 'no change'.
+    if "offensive_coordinator_changed" in g and "offensive_coordinator" in g:
+        g.loc[g.offensive_coordinator.isna(),"offensive_coordinator_changed"]=np.nan
+    if "defensive_coordinator_changed" in g and "defensive_coordinator" in g:
+        g.loc[g.defensive_coordinator.isna(),"defensive_coordinator_changed"]=np.nan
 
 # Descriptive flags only; thresholds are NOT production vetoes until historical validation.
 g["low_offense_continuity_flag"]=(safe_num(g.get("returning_offense_snap_share"))<.65).astype("Int64") if "returning_offense_snap_share" in g else pd.Series(pd.NA,index=g.index,dtype="Int64")
@@ -185,6 +214,6 @@ coverage={c:int(g[c].notna().sum()) for c in [
     "returning_offense_snap_share","returning_defense_snap_share","returning_ol_snap_share","returning_skill_snap_share",
     "offensive_coordinator","defensive_coordinator","offensive_coordinator_changed","defensive_coordinator_changed"
 ] if c in g.columns}
-status={"rows":len(g),"games":int(g.game_id.nunique()),"season_min":int(g.season.min()),"season_max":int(g.season.max()),"coverage_non_null":coverage,"output":str(out_path),"notes":["Weeks 1-3 are context-only for rolling team methods requiring >=3 prior current-season games.","Returning snap shares use the target season's first regular-season roster snapshot and PRIOR-season snaps only.","Injury feed is intentionally marked unavailable after 2024.","Low-continuity thresholds are candidate flags, not validated betting vetoes."]}
+status={"rows":len(g),"games":int(g.game_id.nunique()),"season_min":int(g.season.min()),"season_max":int(g.season.max()),"coverage_non_null":coverage,"output":str(out_path),"notes":["Weeks 1-3 are context-only for rolling team methods requiring >=3 prior current-season games.","Returning snap shares use the target season's first regular-season roster snapshot and PRIOR-season snaps only.","Weekly-roster PFR IDs are recovered from the player master by GSIS ID, with unique-name fallback only.","Injury feed is intentionally marked unavailable after 2024.","Low-continuity thresholds are candidate flags, not validated betting vetoes."]}
 (CTX/"NFL_PREGAME_CONTEXT_STATUS.json").write_text(json.dumps(status,indent=2))
 print(json.dumps(status,indent=2))
