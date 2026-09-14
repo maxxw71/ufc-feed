@@ -1,0 +1,52 @@
+name: NFL coordinator history backfill
+on:
+  push:
+    branches: [main]
+    paths: ['.github/workflows/nfl-staff-backfill-refresh.yml']
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  backfill:
+    runs-on: [self-hosted, Linux, X64, appwiza]
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+        with: {fetch-depth: 0}
+      - name: Build coordinator history
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          ROOT=/home/anestishkurti92/nfl-predictor-v1
+          CTX=/home/appwiza-runner/nfl-context-data
+          VENDOR="$CTX/vendor"
+          mkdir -p "$VENDOR"
+          if ! PYTHONPATH="$VENDOR" "$ROOT/venv/bin/python" -c 'import requests,bs4,lxml,html5lib,pypdf' 2>/dev/null; then
+            "$ROOT/venv/bin/python" -m pip install -q --upgrade --target "$VENDOR" requests beautifulsoup4 lxml html5lib pypdf
+          fi
+          export PYTHONPATH="$VENDOR${PYTHONPATH:+:$PYTHONPATH}"
+          NFL_SOURCE_ROOT="$ROOT" NFL_CONTEXT_ROOT="$CTX" "$ROOT/venv/bin/python" "$GITHUB_WORKSPACE/scripts/nfl_build_staff_history_bulk.py"
+      - name: Rebuild pregame context using refreshed staff
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          ROOT=/home/anestishkurti92/nfl-predictor-v1
+          CTX=/home/appwiza-runner/nfl-context-data
+          VENDOR="$CTX/vendor"
+          export PYTHONPATH="$VENDOR${PYTHONPATH:+:$PYTHONPATH}"
+          NFL_SOURCE_ROOT="$ROOT" NFL_CONTEXT_ROOT="$CTX" "$ROOT/venv/bin/python" "$GITHUB_WORKSPACE/scripts/nfl_build_pregame_context.py"
+      - name: Publish status
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          mkdir -p nfl/final_method_expansion
+          cp /home/appwiza-runner/nfl-context-data/NFL_COACHING_STAFF_STATUS.json nfl/final_method_expansion/coaching_staff_status.json
+          cp /home/appwiza-runner/nfl-context-data/NFL_PREGAME_CONTEXT_STATUS.json nfl/final_method_expansion/pregame_context_status.json
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git add nfl/final_method_expansion
+          if ! git diff --cached --quiet; then
+            git commit -m 'Update NFL coordinator history coverage'
+            git pull --rebase origin main
+            git push origin HEAD:main
+          fi
