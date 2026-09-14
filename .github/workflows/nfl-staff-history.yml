@@ -27,10 +27,13 @@ jobs:
         run: |
           set -Eeuo pipefail
           ROOT=/home/anestishkurti92/nfl-predictor-v1
+          OWNER=anestishkurti92
           test -x "$ROOT/venv/bin/python"
-          cp "$GITHUB_WORKSPACE/scripts/nfl_build_staff_history.py" "$ROOT/nfl_build_staff_history.py.new"
-          mv "$ROOT/nfl_build_staff_history.py.new" "$ROOT/nfl_build_staff_history.py"
-          NFL_ROOT="$ROOT" "$ROOT/venv/bin/python" "$ROOT/nfl_build_staff_history.py"
+          TMP=/tmp/nfl_build_staff_history.py
+          cp "$GITHUB_WORKSPACE/scripts/nfl_build_staff_history.py" "$TMP"
+          chmod 644 "$TMP"
+          sudo -u "$OWNER" env NFL_ROOT="$ROOT" "$ROOT/venv/bin/python" "$TMP"
+          rm -f "$TMP"
           echo '=== STAFF STATUS ==='
           cat "$ROOT/NFL_COACHING_STAFF_STATUS.json"
           echo '=== 2025-26 SAMPLE ==='
