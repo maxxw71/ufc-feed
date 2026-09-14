@@ -1,10 +1,10 @@
 from __future__ import annotations
 
 from pathlib import Path
+from html import unescape
 import json, os, re, requests
 import numpy as np
 import pandas as pd
-from bs4 import BeautifulSoup
 
 CTX=Path(os.environ.get('NFL_CONTEXT_ROOT','/home/appwiza-runner/nfl-context-data'))
 P=CTX/'raw'/'coaching_staff_2006_2026.csv'
@@ -20,7 +20,8 @@ TEAM_NAMES={
 def clean(s): return re.sub(r'\s+',' ',s).strip(' ,') if s else None
 
 r=requests.get(URL,headers={'User-Agent':'Mozilla/5.0 (compatible; AppWizaNFLResearch/1.0)'},timeout=40); r.raise_for_status()
-text=BeautifulSoup(r.text,'html.parser').get_text(' ',strip=True)
+text=unescape(re.sub(r'<[^>]+>',' ',r.text))
+text=clean(text) or ''
 positions=[]
 for full,code in TEAM_NAMES.items():
     i=text.find(full)
