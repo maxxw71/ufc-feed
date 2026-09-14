@@ -5,8 +5,7 @@ on:
   push:
     branches: [main]
     paths:
-      - 'scripts/nfl_build_staff_history_bulk.py'
-      - 'scripts/nfl_patch_2026_staff.py'
+      - 'scripts/nfl_build_staff_history_wikipedia.py'
       - '.github/workflows/nfl-staff-history.yml'
 
 permissions:
@@ -20,7 +19,7 @@ jobs:
   build:
     if: github.repository == 'maxxw71/ufc-feed' && github.ref == 'refs/heads/main'
     runs-on: [self-hosted, Linux, X64, appwiza]
-    timeout-minutes: 12
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
       - name: Build 2006-2026 NFL HC OC DC history
@@ -29,17 +28,11 @@ jobs:
           set -Eeuo pipefail
           ROOT=/home/anestishkurti92/nfl-predictor-v1
           CTX=/home/appwiza-runner/nfl-context-data
-          VENDOR="$CTX/vendor"
           test -x "$ROOT/venv/bin/python"
-          mkdir -p "$CTX/raw" "$VENDOR"
-          if ! PYTHONPATH="$VENDOR" "$ROOT/venv/bin/python" -c 'import pypdf, lxml, html5lib, bs4' 2>/dev/null; then
-            "$ROOT/venv/bin/python" -m pip install -q --upgrade --target "$VENDOR" pypdf lxml html5lib beautifulsoup4
-          fi
-          export PYTHONPATH="$VENDOR"
+          mkdir -p "$CTX/raw"
           export NFL_SOURCE_ROOT="$ROOT"
           export NFL_CONTEXT_ROOT="$CTX"
-          "$ROOT/venv/bin/python" "$GITHUB_WORKSPACE/scripts/nfl_build_staff_history_bulk.py"
-          "$ROOT/venv/bin/python" "$GITHUB_WORKSPACE/scripts/nfl_patch_2026_staff.py"
+          "$ROOT/venv/bin/python" "$GITHUB_WORKSPACE/scripts/nfl_build_staff_history_wikipedia.py"
           chmod -R a+rX "$CTX"
           echo '=== STAFF STATUS ==='
           cat "$CTX/NFL_COACHING_STAFF_STATUS.json"
