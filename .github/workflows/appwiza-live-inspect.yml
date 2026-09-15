@@ -17,7 +17,7 @@ jobs:
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
-      - name: Inspect UFC publisher and current dashboard inputs
+      - name: Inspect UFC page inputs
         shell: bash
         run: |
           set -u
@@ -27,28 +27,12 @@ jobs:
           echo '=== UFC STATE FILES ==='
           find /srv/appwiza-sports/state -maxdepth 2 -type f -printf '%p %s bytes\n' 2>/dev/null | sort | head -120 || true
           echo
-          echo '=== PUBLISHER CANDIDATES ==='
-          find /opt /home/anestishkurti92 -type f \( -iname '*sports*publish*' -o -iname '*public*page*' -o -iname '*ufc*publish*' -o -iname '*ufc*page*' \) -print 2>/dev/null | head -160 || true
+          echo '=== UFC PROJECT FILES ==='
+          find /home/anestishkurti92/ufc-predictor-v1 -maxdepth 3 -type f -print 2>/dev/null | sort | head -240 || true
           echo
-          echo '=== UFC PAGE TITLE SOURCE MATCHES ==='
-          grep -RnilF 'UFC qualifying matchups' /opt /home/anestishkurti92 2>/dev/null | head -50 || true
+          echo '=== PAGE SOURCE MATCHES ==='
+          grep -RnilF 'UFC qualifying matchups' /home/anestishkurti92/ufc-predictor-v1 2>/dev/null | head -50 || true
+          grep -RnilF 'Upcoming selections' /home/anestishkurti92/ufc-predictor-v1 2>/dev/null | head -50 || true
           echo
-          echo '=== UFC UPCOMING SECTION SOURCE MATCHES ==='
-          grep -RnilF 'Upcoming selections' /opt /home/anestishkurti92 2>/dev/null | head -50 || true
-          echo
-          echo '=== CURRENT UFC HTML HEAD/SECTIONS ==='
-          sed -n '1,260p' /srv/appwiza-sports/public/ufc/index.html 2>/dev/null || true
-          echo
-          echo '=== UFC JSON STATE PREVIEW ==='
-          for f in /srv/appwiza-sports/state/ufc*.json /srv/appwiza-sports/state/*ufc*.json; do
-            [ -f "$f" ] || continue
-            echo "--- $f ---"
-            python3 - "$f" <<'PY'
-import json,sys
-p=sys.argv[1]
-try:
- d=json.load(open(p))
- print(json.dumps(d,indent=2)[:20000])
-except Exception as e: print(e)
-PY
-          done
+          echo '=== CURRENT UFC HTML HEAD ==='
+          sed -n '1,300p' /srv/appwiza-sports/public/ufc/index.html 2>/dev/null || true
