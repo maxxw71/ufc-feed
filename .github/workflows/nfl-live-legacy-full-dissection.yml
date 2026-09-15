@@ -6,6 +6,7 @@ on:
     paths:
       - 'scripts/nfl_live_legacy_full_dissection.py'
       - 'scripts/nfl_live_legacy_full_dissection_input_patch.py'
+      - 'scripts/nfl_live_legacy_leakage_guard_patch.py'
       - '.github/workflows/nfl-live-legacy-full-dissection.yml'
 permissions:
   contents: write
@@ -26,6 +27,7 @@ jobs:
         run: |
           set -Eeuo pipefail
           /home/anestishkurti92/nfl-predictor-v1/venv/bin/python scripts/nfl_live_legacy_full_dissection_input_patch.py
+          /home/anestishkurti92/nfl-predictor-v1/venv/bin/python scripts/nfl_live_legacy_leakage_guard_patch.py
       - name: Run full legacy dissection
         shell: bash
         run: |
@@ -39,13 +41,12 @@ jobs:
           DEST=nfl/live_legacy_full_dissection
           mkdir -p "$DEST"
           cp "$SRC"/* "$DEST"/
-          # Runtime patch is intentionally not a repository change.
           git restore scripts/nfl_live_legacy_full_dissection.py
           git config user.name github-actions
           git config user.email github-actions@github.com
           git add "$DEST"
           if ! git diff --cached --quiet; then
-            git commit -m 'Publish full dissection of current NFL live methods'
+            git commit -m 'Publish leakage-safe full dissection of current NFL live methods'
             git pull --rebase origin main
             git push origin HEAD:main
           fi
