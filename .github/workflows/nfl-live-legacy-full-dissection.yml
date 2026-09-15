@@ -5,6 +5,7 @@ on:
     branches: [main]
     paths:
       - 'scripts/nfl_live_legacy_full_dissection.py'
+      - 'scripts/nfl_live_legacy_full_dissection_input_patch.py'
       - '.github/workflows/nfl-live-legacy-full-dissection.yml'
 permissions:
   contents: write
@@ -20,6 +21,11 @@ jobs:
         run: |
           set -Eeuo pipefail
           /home/anestishkurti92/nfl-predictor-v1/venv/bin/python scripts/nfl_build_preseason_history.py
+      - name: Patch audit to verified exact historical bet inputs
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          /home/anestishkurti92/nfl-predictor-v1/venv/bin/python scripts/nfl_live_legacy_full_dissection_input_patch.py
       - name: Run full legacy dissection
         shell: bash
         run: |
