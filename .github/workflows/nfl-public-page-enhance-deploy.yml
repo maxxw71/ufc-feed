@@ -5,6 +5,7 @@ on:
     branches: [main]
     paths:
       - 'nfl/nfl_public_page.py'
+      - 'nfl/live_2026_current_snapshot/current_board_fresh_context.csv'
       - '.github/workflows/nfl-public-page-enhance-deploy.yml'
 permissions:
   contents: write
@@ -15,14 +16,17 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with: {fetch-depth: 0}
-      - name: Install presentation enhancer and patch scanner
+      - name: Install presentation enhancer and fresh board context
         shell: bash
         run: |
           set -Eeuo pipefail
           LIVE=/home/anestishkurti92/nfl-predictor-v1/research_v2
           SCANNER="$LIVE/nfl_home_opener_scanner.py"
+          mkdir -p "$LIVE/page_context"
           cp nfl/nfl_public_page.py "$LIVE/nfl_public_page.py.new"
           mv "$LIVE/nfl_public_page.py.new" "$LIVE/nfl_public_page.py"
+          cp nfl/live_2026_current_snapshot/current_board_fresh_context.csv "$LIVE/page_context/current_board_fresh_context.csv.new"
+          mv "$LIVE/page_context/current_board_fresh_context.csv.new" "$LIVE/page_context/current_board_fresh_context.csv"
           python3 - "$SCANNER" <<'PY'
           from pathlib import Path
           p=Path(__import__('sys').argv[1]);s=p.read_text()
@@ -57,10 +61,21 @@ jobs:
             echo "overall_record=$(grep -c 'Overall record' "$PAGE" || true)"
             echo "completed_table=$(grep -c 'Completed selections' "$PAGE" || true)"
             echo "downloads_collapsed=$(grep -c 'downloads-block' "$PAGE" || true)"
+            echo "deep_audit=$(grep -c '2026 deep audit' "$PAGE" || true)"
+            echo "coaching_context=$(grep -c 'Coaching context' "$PAGE" || true)"
+            echo "refined_veto=$(grep -c 'Refined veto' "$PAGE" || true)"
             echo "dashboard_css=$(test -f /srv/appwiza-sports/public/nfl/dashboard.css && echo yes || echo no)"
+            echo "fresh_context=$(test -s /home/anestishkurti92/nfl-predictor-v1/research_v2/page_context/current_board_fresh_context.csv && echo yes || echo no)"
             stat -c 'page=%U:%G %a %s %n' "$PAGE"
           } > "$R"
           git config user.name github-actions
           git config user.email github-actions@github.com
           git add "$R"
-          if ! git diff --cached --quiet; then git commit -m 'Record NFL dashboard enhancement deploy'; git pull --rebase origin main; git push origin HEAD:main; fi
+          if ! git diff --cached --quiet; then
+            git commit -m 'Record NFL dashboard enhancement deploy'
+            for n in 1 2 3; do
+              git pull --rebase origin main && git push origin HEAD:main && break
+              test "$n" -lt 3 || exit 1
+              sleep $((n*2))
+            done
+          fi
