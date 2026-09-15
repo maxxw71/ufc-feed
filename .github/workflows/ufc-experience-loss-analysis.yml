@@ -1,0 +1,163 @@
+name: UFC Experience Mismatch Loss Analysis
+
+on:
+  push:
+    paths:
+      - '.github/workflows/ufc-experience-loss-analysis.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  analyze:
+    runs-on: [self-hosted, appwiza]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Analyze losses and fine-tune exclusions
+        shell: bash
+        run: |
+          set -euo pipefail
+          ROOT=/home/anestishkurti92/ufc-predictor-v1
+          OUT="$GITHUB_WORKSPACE/ufc_unique_method_discovery"
+          mkdir -p "$OUT"
+          PY="$ROOT/venv/bin/python"; [ -x "$PY" ] || PY="$ROOT/venv.google-original/bin/python"
+          ROOT="$ROOT" OUT="$OUT" "$PY" - <<'PY'
+          import os, itertools
+          from pathlib import Path
+          import numpy as np, pandas as pd
+
+          root=Path(os.environ['ROOT']); out=Path(os.environ['OUT'])
+          d=pd.read_csv(root/'new_category_discovery/prefight_favorite_features.csv',low_memory=False)
+          d['event_date']=pd.to_datetime(d.event_date,errors='coerce')
+          for c in d.columns:
+              if c not in ['event_date','favorite','opponent','won']:
+                  d[c]=pd.to_numeric(d[c],errors='coerce')
+          if d.won.dtype != bool:
+              d['won']=d.won.astype(str).str.lower().map({'true':True,'1':True,'yes':True,'false':False,'0':False,'no':False})
+          d=d.dropna(subset=['event_date','favorite','opponent','market_prob','fav_decimal','profit100','won']).copy()
+
+          # Core method found previously.
+          core=d[(d.market_prob>=.575)&(d.market_prob<=.775)&(d.f_fights>=8)&(d.o_fights<=3)&((d.f_win_pct-d.o_win_pct)>=.05)].copy()
+          core['year']=core.event_date.dt.year
+          core['age_gap']=core.age_adv
+          core['reach_gap']=core.reach_adv
+          core['exp_gap']=core.f_fights-core.o_fights
+          core['layoff_gap']=core.o_layoff-core.f_layoff
+          core['winpct_gap']=core.f_win_pct-core.o_win_pct
+          core['last3_gap']=core.f_last3-core.o_last3
+          core['last5_gap']=core.f_last5-core.o_last5
+          core['sig_diff_gap']=core.f_sig_diff_pm-core.o_sig_diff_pm
+          core['sig_def_gap']=core.f_sig_def-core.o_sig_def
+          core['kd_gap']=core.f_kd15-core.o_kd15
+          core['kd_abs_gap']=core.o_kd_abs15-core.f_kd_abs15
+          core['td_l_gap']=core.f_td_l15-core.o_td_l15
+          core['td_a_gap']=core.f_td_a15-core.o_td_a15
+          core['td_def_gap']=core.f_td_def-core.o_td_def
+          core['sub_gap']=core.f_sub15-core.o_sub15
+          core['ctrl_gap']=core.f_ctrl15-core.o_ctrl15
+          core['ctrl_allowed_gap']=core.o_ctrl_allowed15-core.f_ctrl_allowed15
+          core['ground_gap']=core.f_ground_l15-core.o_ground_l15
+          core['finish_win_gap']=core.f_finish_win_pct-core.o_finish_win_pct
+          core['finish_loss_safety_gap']=core.o_finish_loss_pct-core.f_finish_loss_pct
+
+          detail_cols=['event_date','year','favorite','opponent','won','market_prob','fav_decimal','profit100','age_adv','reach_adv','f_fights','o_fights','exp_gap','f_win_pct','o_win_pct','winpct_gap','f_last3','o_last3','last3_gap','f_last5','o_last5','last5_gap','f_layoff','o_layoff','layoff_gap','f_sig_l_pm','o_sig_l_pm','f_sig_abs_pm','o_sig_abs_pm','f_sig_diff_pm','o_sig_diff_pm','sig_diff_gap','f_sig_acc','o_sig_acc','f_sig_def','o_sig_def','sig_def_gap','f_kd15','o_kd15','kd_gap','f_kd_abs15','o_kd_abs15','kd_abs_gap','f_td_l15','o_td_l15','td_l_gap','f_td_a15','o_td_a15','td_a_gap','f_td_acc','o_td_acc','f_td_def','o_td_def','td_def_gap','f_sub15','o_sub15','sub_gap','f_ctrl15','o_ctrl15','ctrl_gap','f_ctrl_allowed15','o_ctrl_allowed15','ctrl_allowed_gap','f_ground_l15','o_ground_l15','ground_gap','f_finish_win_pct','o_finish_win_pct','finish_win_gap','f_finish_loss_pct','o_finish_loss_pct','finish_loss_safety_gap']
+          core[detail_cols].to_csv(out/'experience_mismatch_all_52.csv',index=False)
+          core.loc[~core.won,detail_cols].to_csv(out/'experience_mismatch_losses_7.csv',index=False)
+
+          def stats(g):
+              n=len(g)
+              if not n:return dict(n=0,w=0,roi=np.nan,wr=np.nan,p=0)
+              p=float(g.profit100.sum()); w=int(g.won.sum())
+              return dict(n=n,w=w,roi=p/(100*n),wr=w/n,p=p)
+
+          # Winner-vs-loser feature comparison to see where failures cluster.
+          features=['market_prob','age_adv','reach_adv','exp_gap','winpct_gap','last3_gap','last5_gap','layoff_gap','sig_diff_gap','sig_def_gap','kd_gap','kd_abs_gap','td_l_gap','td_a_gap','td_def_gap','sub_gap','ctrl_gap','ctrl_allowed_gap','ground_gap','finish_win_gap','finish_loss_safety_gap']
+          comp=[]
+          for f in features:
+              win=core.loc[core.won,f].dropna(); los=core.loc[~core.won,f].dropna()
+              comp.append(dict(feature=f,win_n=len(win),loss_n=len(los),win_mean=win.mean() if len(win) else np.nan,loss_mean=los.mean() if len(los) else np.nan,mean_diff=(win.mean()-los.mean()) if len(win) and len(los) else np.nan,win_median=win.median() if len(win) else np.nan,loss_median=los.median() if len(los) else np.nan))
+          pd.DataFrame(comp).to_csv(out/'experience_mismatch_win_loss_feature_comparison.csv',index=False)
+
+          # Simple, interpretable candidate exclusions. Each removes a risky subset from the 52-fight core.
+          candidates=[]
+          tests={
+            'favorite_not_older': core.age_adv>=0,
+            'favorite_younger_2plus': core.age_adv>=2,
+            'favorite_not_shorter_reach': core.reach_adv>=0,
+            'favorite_reach_adv_2plus': core.reach_adv>=2,
+            'market_60plus': core.market_prob>=.60,
+            'market_625plus': core.market_prob>=.625,
+            'market_75max': core.market_prob<=.75,
+            'opp_max_2_ufc_fights': core.o_fights<=2,
+            'favorite_10plus_ufc_fights': core.f_fights>=10,
+            'experience_gap_6plus': core.exp_gap>=6,
+            'career_win_gap_10plus': core.winpct_gap>=.10,
+            'favorite_recent3_not_worse': core.last3_gap>=0,
+            'favorite_recent5_not_worse': core.last5_gap>=0,
+            'favorite_layoff_not_longer': core.layoff_gap>=0,
+            'favorite_sig_diff_not_worse': core.sig_diff_gap>=0,
+            'favorite_sig_def_not_worse': core.sig_def_gap>=0,
+            'favorite_td_def_not_worse': core.td_def_gap>=0,
+            'favorite_td_output_not_worse': core.td_l_gap>=0,
+            'favorite_control_not_worse': core.ctrl_gap>=0,
+            'favorite_control_safety': core.ctrl_allowed_gap>=0,
+            'favorite_not_more_finish_vulnerable': core.finish_loss_safety_gap>=0,
+          }
+          base=stats(core)
+          for name,mask in tests.items():
+              g=core[mask.fillna(False)].copy(); s=stats(g)
+              old=stats(g[g.event_date<pd.Timestamp('2020-01-01')]); recent=stats(g[g.event_date>=pd.Timestamp('2020-01-01')])
+              removed=core[~mask.fillna(False)]
+              rs=stats(removed)
+              candidates.append(dict(rule=name,n=s['n'],wins=s['w'],win_rate=s['wr'],roi=s['roi'],profit=s['p'],pre2020_n=old['n'],pre2020_roi=old['roi'],recent_n=recent['n'],recent_roi=recent['roi'],removed_n=rs['n'],removed_wins=rs['w'],removed_losses=rs['n']-rs['w'],removed_roi=rs['roi'],roi_lift=s['roi']-base['roi']))
+
+          # Two-factor exclusions, restricted to reasonable filters that leave >=35 bets.
+          names=list(tests)
+          for a,b in itertools.combinations(names,2):
+              mask=tests[a].fillna(False)&tests[b].fillna(False)
+              g=core[mask].copy()
+              if len(g)<35: continue
+              s=stats(g); old=stats(g[g.event_date<pd.Timestamp('2020-01-01')]); recent=stats(g[g.event_date>=pd.Timestamp('2020-01-01')])
+              if old['n']<12 or recent['n']<15: continue
+              removed=core[~mask]; rs=stats(removed)
+              candidates.append(dict(rule=a+' + '+b,n=s['n'],wins=s['w'],win_rate=s['wr'],roi=s['roi'],profit=s['p'],pre2020_n=old['n'],pre2020_roi=old['roi'],recent_n=recent['n'],recent_roi=recent['roi'],removed_n=rs['n'],removed_wins=rs['w'],removed_losses=rs['n']-rs['w'],removed_roi=rs['roi'],roi_lift=s['roi']-base['roi']))
+
+          c=pd.DataFrame(candidates)
+          c['positive_both_eras']=(c.pre2020_roi>0)&(c.recent_roi>0)
+          c['losses']=c.n-c.wins
+          c=c.sort_values(['positive_both_eras','roi','n'],ascending=[False,False,False])
+          c.to_csv(out/'experience_mismatch_exclusion_tests.csv',index=False)
+
+          # Robust shortlist: preserve >=40 bets, >=15 old, >=18 recent, positive both eras, improve core ROI.
+          robust=c[(c.n>=40)&(c.pre2020_n>=15)&(c.recent_n>=18)&(c.pre2020_roi>0)&(c.recent_roi>0)&(c.roi>base['roi'])].copy()
+          robust.to_csv(out/'experience_mismatch_robust_finetunes.csv',index=False)
+
+          lines=['UFC EXPERIENCE MISMATCH — LOSS ANALYSIS','='*110,
+                 f"CORE: {base['n']} bets | {base['w']}-{base['n']-base['w']} | win {base['wr']*100:.1f}% | ROI {base['roi']*100:+.2f}% | P/L ${base['p']:+,.0f}",'',
+                 'ALL LOSSES','-'*110]
+          for _,r in core[~core.won].sort_values('event_date').iterrows():
+              lines.append(f"{r.event_date.date()} | {r.favorite} lost to {r.opponent} | mkt {r.market_prob*100:.1f}% | age {r.age_adv:+.1f}y | reach {r.reach_adv:+.1f}in | UFC exp {int(r.f_fights)}-{int(r.o_fights)} | career gap {r.winpct_gap:+.1%} | last3 {r.last3_gap:+.2f} | layoff gap {r.layoff_gap:+.0f}d | sigdiff {r.sig_diff_gap:+.2f} | TDdef {r.td_def_gap:+.2f} | ctrl {r.ctrl_gap:+.2f} | sub {r.sub_gap:+.2f}")
+
+          lines += ['','WIN vs LOSS FEATURE MEANS','-'*110]
+          for r in comp:
+              if pd.notna(r['loss_mean']): lines.append(f"{r['feature']:<28} wins {r['win_mean']:+.3f} | losses {r['loss_mean']:+.3f} | diff {r['mean_diff']:+.3f}")
+
+          lines += ['','BEST ROBUST FINE-TUNES','-'*110]
+          if robust.empty: lines.append('No exclusion improved the core while preserving the required sample and positive ROI in both eras.')
+          else:
+              for _,r in robust.head(20).iterrows():
+                  lines.append(f"{r.rule} | n={int(r.n)} {int(r.wins)}-{int(r.losses)} win={r.win_rate*100:.1f}% ROI={r.roi*100:+.2f}% lift={r.roi_lift*100:+.2f}pp | pre={r.pre2020_roi*100:+.2f}% recent={r.recent_roi*100:+.2f}% | removed {int(r.removed_n)} ({int(r.removed_losses)} losses) removedROI={r.removed_roi*100:+.1f}%")
+          (out/'experience_mismatch_loss_report.txt').write_text('\n'.join(lines)+'\n')
+          print('\n'.join(lines))
+          PY
+      - name: Commit research outputs
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name appwiza-research-bot
+          git config user.email actions@users.noreply.github.com
+          git add ufc_unique_method_discovery/experience_mismatch_*.csv ufc_unique_method_discovery/experience_mismatch_loss_report.txt
+          git diff --cached --quiet && exit 0
+          git commit -m 'Analyze UFC experience mismatch losses and fine tunes'
+          git push
