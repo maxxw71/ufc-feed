@@ -1,0 +1,20 @@
+name: UFC Auto Research Schema Inspect
+on:
+  push:
+    paths:
+      - '.github/workflows/ufc-autoresearch-schema-inspect.yml'
+jobs:
+  inspect:
+    runs-on: [self-hosted, appwiza]
+    steps:
+      - shell: bash
+        run: |
+          set -euo pipefail
+          ssh -i /home/appwiza-runner/.ssh/appwiza_vps -o StrictHostKeyChecking=no anestishkurti92@127.0.0.1 'cd /home/anestishkurti92/ufc-predictor-v1 && venv/bin/python - <<'"'"'PY'"'"'
+          import pandas as pd
+          for p in ["new_category_discovery/prefight_favorite_features.csv","historical_backtest/recent_master_2024_2026.csv"]:
+              d=pd.read_csv(p,nrows=3)
+              print("===",p,"===")
+              print("COLUMNS",list(d.columns))
+              print(d.head(2).to_string(index=False))
+          PY'
