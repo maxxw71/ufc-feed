@@ -1,0 +1,35 @@
+name: UFC Auto Research Inspect
+on:
+  workflow_dispatch:
+jobs:
+  inspect:
+    runs-on: [self-hosted, appwiza]
+    steps:
+      - name: Inspect production UFC research environment
+        shell: bash
+        run: |
+          set -euo pipefail
+          SSH_KEY=/home/appwiza-runner/.ssh/appwiza_vps
+          ssh -i "$SSH_KEY" -o StrictHostKeyChecking=no anestishkurti92@127.0.0.1 'bash -s' <<'EOF'
+          set -u
+          cd /home/anestishkurti92/ufc-predictor-v1
+          echo '=== PROJECT FILES ==='
+          find . -maxdepth 2 -type f | sort | head -180
+          echo '=== TIMERS ==='
+          systemctl list-timers --all --no-pager | grep -Ei 'ufc|research' || true
+          echo '=== UFC UNIT FILES ==='
+          systemctl cat ufc-model-watcher.timer 2>/dev/null || true
+          systemctl cat ufc-model-watcher.service 2>/dev/null || true
+          echo '=== EMAIL/SMTP CODE REFERENCES ==='
+          grep -RniE 'SMTP|smtplib|sendmail|EMAIL_TO|EMAIL_FROM|MAIL_' --include='*.py' . 2>/dev/null | head -120 || true
+          echo '=== ENV VAR NAMES ONLY ==='
+          for f in .env .env.*; do [ -f "$f" ] || continue; echo "FILE $f"; sed -n 's/^\([A-Za-z_][A-Za-z0-9_]*\)=.*/\1/p' "$f" | sort; done
+          echo '=== RESEARCH DIRS ==='
+          find . -maxdepth 3 -type d | grep -Ei 'research|backtest|discovery|market|histor' | sort | head -120 || true
+          echo '=== DATA FILE SIZES ==='
+          find . -maxdepth 3 -type f \( -name '*.csv' -o -name '*.json' -o -name '*.parquet' -o -name '*.db' -o -name '*.sqlite*' \) -printf '%s %p\n' 2>/dev/null | sort -nr | head -80
+          echo '=== RESOURCES ==='
+          free -h
+          df -h /home /srv 2>/dev/null || true
+          nproc
+          EOF
