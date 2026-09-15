@@ -1,0 +1,193 @@
+{
+  "season": 2026,
+  "week": 1,
+  "mode": "postweek",
+  "generated_utc": "2026-09-15T04:35:02.629077+00:00",
+  "latest_fully_completed_week_at_run": 1,
+  "next_unplayed_week_at_run": 2,
+  "sources": {
+    "schedule": "nflreadpy.load_schedules",
+    "team_stats": {
+      "status": "saved",
+      "loader": "load_team_stats",
+      "rows": 32,
+      "columns": 138
+    },
+    "player_stats": {
+      "status": "saved",
+      "loader": "load_player_stats",
+      "rows": 1118,
+      "columns": 150
+    },
+    "pbp": {
+      "status": "saved",
+      "loader": "load_pbp",
+      "rows": 2756,
+      "columns": 372
+    },
+    "injuries": {
+      "status": "saved",
+      "loader": "load_injuries",
+      "rows": 182,
+      "columns": 16
+    },
+    "snap_counts": {
+      "status": "saved",
+      "loader": "load_snap_counts",
+      "rows": 1397,
+      "columns": 16
+    },
+    "rosters_weekly": {
+      "status": "saved",
+      "loader": "load_rosters_weekly",
+      "rows": 2963,
+      "columns": 36
+    },
+    "depth_charts": {
+      "status": "saved",
+      "loader": "load_depth_charts",
+      "rows": 518581,
+      "columns": 12
+    },
+    "market_snapshots": {
+      "status": "saved",
+      "rows": 71,
+      "files_scanned": 2,
+      "parse_errors": 0
+    },
+    "pregame_context": {
+      "status": "saved",
+      "rows": 32,
+      "columns": 54,
+      "source_path": "/home/appwiza-runner/nfl-context-data/derived/team_game_pregame_context_2006_2026.parquet"
+    },
+    "complete_pregame_team_sides": {
+      "status": "saved",
+      "rows": 32,
+      "columns": 282,
+      "source_path": "/home/appwiza-runner/nfl-context-data/injury_travel_mining/complete_pregame_team_sides.parquet"
+    },
+    "travel_context": {
+      "status": "saved",
+      "rows": 32,
+      "columns": 17,
+      "source_path": "/home/appwiza-runner/nfl-context-data/injury_travel_mining/travel_team_game_2006_2026.parquet"
+    },
+    "coach_quality_enriched": {
+      "status": "saved",
+      "rows": 0,
+      "columns": 649,
+      "source_path": "/home/appwiza-runner/nfl-context-data/coach_quality_expansion/coach_quality_enriched_team_sides.parquet"
+    }
+  },
+  "files": {
+    "approved_h_methods.json": {
+      "bytes": 14301,
+      "sha256": "644239c8fb86b9d0303df3e9fcf23a4e26e340cdccc6ec95fb1cb2b7faf0c3e0"
+    },
+    "coach_only_final_sieve.csv": {
+      "bytes": 1752,
+      "sha256": "e866b560e0b15df85af4173764c13d4d283b2084089b2d0fadbe09698bffd722"
+    },
+    "coach_quality_enriched.parquet": {
+      "bytes": 352990,
+      "sha256": "0b7242b4f193a0c2379cc08a4dc7fbddb5ab640ebfa5d6d9f117db8008a78440"
+    },
+    "complete_pregame_team_sides.parquet": {
+      "bytes": 194791,
+      "sha256": "2be2695924cb360116e9c3f6dee26fddf8fe14615c3265da590b25b2d36f5671"
+    },
+    "coordinator_history.csv": {
+      "bytes": 32443,
+      "sha256": "5e5ed45aecd9f3f41f94fb7393f9bb998a9604088dc05981623eacebf883471d"
+    },
+    "current_board_snapshot.csv": {
+      "bytes": 3052,
+      "sha256": "7d99f7f733e07694ad892a3cbe0affa929d864df8268d4fb8b36ae09c4cb194b"
+    },
+    "depth_charts.parquet": {
+      "bytes": 1363873,
+      "sha256": "cf5363a46dc0e6cf4fe0fee97a653a5fe9e41f5b4eca14f6770e12e7d570d0ac"
+    },
+    "injuries.parquet": {
+      "bytes": 15885,
+      "sha256": "1de52f3dc05319bfb66dc6dded9478426183d83e08911d0d3ccc29de0561b36a"
+    },
+    "legacy_board_snapshot.csv": {
+      "bytes": 18307,
+      "sha256": "293736db30e7087316dfee0aea75624434074718024957d7fb106a7757be67a1"
+    },
+    "market_snapshots.jsonl.gz": {
+      "bytes": 2604,
+      "sha256": "0a4f90bddf7f7e221d9945156557c73e1c40e713a7ead0e6c5560006ad9d89e5"
+    },
+    "pbp.parquet": {
+      "bytes": 1202960,
+      "sha256": "c22d8e1cca270f60adb7c43a7c0fd99485226c5131215d7fd0c9b14bcaa7c74a"
+    },
+    "player_stats.parquet": {
+      "bytes": 162391,
+      "sha256": "aa92f63a574035e7fd6429e549a8dd30a6e564fcc637d73025a59be89010685e"
+    },
+    "pregame_context.parquet": {
+      "bytes": 39841,
+      "sha256": "a3b641c51e27a5fdc0c8a6d66f37989841264b8f674a9c630b4a544169143280"
+    },
+    "rosters_weekly.parquet": {
+      "bytes": 371680,
+      "sha256": "e27690f6f659b26a99f16c3355a1bea7be713ac86aaa39ba55c7772a492811b3"
+    },
+    "schedule.csv": {
+      "bytes": 5766,
+      "sha256": "d1bc0b1149f588fc9dacf5c90c16c9a2b789027f34e5cc648b9b77d3b40703f2"
+    },
+    "schedule.parquet": {
+      "bytes": 29786,
+      "sha256": "a961f44051f693b48da2ca959b7c55288960a352310d0e3ce6a322f66b735c3b"
+    },
+    "snap_counts.parquet": {
+      "bytes": 39616,
+      "sha256": "82b005a756f6b8ea32fc15ec999cf43fa52fd4f084c10f42e651961c82832e06"
+    },
+    "team_stats.parquet": {
+      "bytes": 87286,
+      "sha256": "9bf656622127e7bccc5a8f569200fb2348d620c58a2ae88b4d5ee80e71b37e52"
+    },
+    "travel_context.parquet": {
+      "bytes": 11808,
+      "sha256": "a78cbdaa10b2eadf7c7b23f3da2f9c02edd9712c305e33811461c9f9f76df19e"
+    }
+  },
+  "notes": [
+    "pregame and postweek snapshots are stored separately to prevent outcome leakage",
+    "weeks 1-3 current-season performance is research context; mature live rolling methods require >=3 prior completed games",
+    "Git history preserves earlier revisions if an upstream stat correction changes a finalized file later"
+  ],
+  "available_nflreadpy_loaders": [
+    "load_combine",
+    "load_contracts",
+    "load_depth_charts",
+    "load_draft_picks",
+    "load_ff_opportunity",
+    "load_ff_playerids",
+    "load_ff_rankings",
+    "load_ffverse",
+    "load_ftn_charting",
+    "load_injuries",
+    "load_nextgen_stats",
+    "load_officials",
+    "load_participation",
+    "load_pbp",
+    "load_pfr_advstats",
+    "load_player_stats",
+    "load_players",
+    "load_rosters",
+    "load_rosters_weekly",
+    "load_schedules",
+    "load_snap_counts",
+    "load_stats",
+    "load_team_stats",
+    "load_teams",
+    "load_trades"
+  ]
+}
