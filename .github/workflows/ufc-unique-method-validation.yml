@@ -20,6 +20,7 @@ jobs:
           set -euo pipefail
           ROOT=/home/anestishkurti92/ufc-predictor-v1
           OUT="$GITHUB_WORKSPACE/ufc_unique_method_discovery"
+          mkdir -p "$OUT"
           PY="$ROOT/venv/bin/python"; [ -x "$PY" ] || PY="$ROOT/venv.google-original/bin/python"
           ROOT="$ROOT" OUT="$OUT" "$PY" - <<'PY'
           import os
@@ -31,7 +32,8 @@ jobs:
           for c in d.columns:
               if c not in ['event_date','favorite','opponent','won']:
                   d[c]=pd.to_numeric(d[c],errors='coerce')
-          if d.won.dtype != bool: d['won']=d.won.astype(str).str.lower().map({'true':1,'false':0,'1':1,'0':0}).astype('boolean')
+          if d.won.dtype != bool:
+              d['won']=d.won.astype(str).str.lower().map({'true':1,'false':0,'1':1,'0':0}).astype('boolean')
           d['layoff_gap']=d.o_layoff-d.f_layoff; d['winpct_gap']=d.f_win_pct-d.o_win_pct
           def stats(g):
               n=len(g); p=float(g.profit100.sum()) if n else 0
@@ -49,28 +51,23 @@ jobs:
           for name,m in rules.items():
               g=d[m.fillna(False)].copy(); n,w,roi=stats(g)
               lines += ['',f'{name}: {n} bets, {w}-{n-w}, win {w/n*100:.1f}%, ROI {roi*100:+.2f}%']
-              # yearly
               ys=[]
               for y,gg in g.groupby(g.event_date.dt.year):
-                  nn,ww,rr=stats(gg); ys.append((int(y),nn,ww,rr))
-                  allrows.append(dict(rule=name,year=int(y),n=nn,wins=ww,roi=rr))
+                  nn,ww,rr=stats(gg); ys.append((int(y),nn,ww,rr)); allrows.append(dict(rule=name,year=int(y),n=nn,wins=ww,roi=rr))
               lines.append('  Yearly: '+' | '.join(f'{y}: {nn} bets {rr*100:+.1f}%' for y,nn,ww,rr in ys))
-              # rolling chronological thirds
               g=g.sort_values('event_date').reset_index(drop=True)
-              chunks=np.array_split(g,3)
+              edges=np.linspace(0,len(g),4,dtype=int)
               vals=[]
-              for i,c in enumerate(chunks,1):
-                  nn,ww,rr=stats(c); vals.append(f'T{i} n={nn} ROI={rr*100:+.1f}%')
+              for i in range(3):
+                  c=g.iloc[edges[i]:edges[i+1]]; nn,ww,rr=stats(c); vals.append(f'T{i+1} n={nn} ROI={rr*100:+.1f}%')
               lines.append('  Chronological thirds: '+' | '.join(vals))
-              # leave one year out
               lo=[]
               for y in sorted(g.event_date.dt.year.dropna().unique()):
                   gg=g[g.event_date.dt.year!=y]; nn,ww,rr=stats(gg); lo.append(rr)
               if lo: lines.append(f'  Leave-one-year-out ROI range: {min(lo)*100:+.2f}% to {max(lo)*100:+.2f}%')
-              # bootstrap fight-level ROI
               if n:
-                  rng=np.random.default_rng(71); vals=[]; arr=g.profit100.to_numpy(float)
-                  for _ in range(10000): vals.append(rng.choice(arr,size=n,replace=True).mean()/100)
+                  rng=np.random.default_rng(71); arr=g.profit100.to_numpy(float)
+                  vals=np.array([rng.choice(arr,size=n,replace=True).mean()/100 for _ in range(10000)])
                   q=np.quantile(vals,[.025,.5,.975]); lines.append(f'  Bootstrap ROI 95% CI: {q[0]*100:+.2f}% to {q[2]*100:+.2f}% (median {q[1]*100:+.2f}%)')
           pd.DataFrame(allrows).to_csv(out/'validation_yearly.csv',index=False)
           (out/'validation_report.txt').write_text('\n'.join(lines)+'\n')
