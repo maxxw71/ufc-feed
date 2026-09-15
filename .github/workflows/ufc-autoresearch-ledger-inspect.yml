@@ -13,23 +13,17 @@ jobs:
           set -euo pipefail
           KEY=/home/appwiza-runner/.ssh/appwiza_vps
           ssh -i "$KEY" -o StrictHostKeyChecking=no anestishkurti92@127.0.0.1 'bash -s' <<'EOF'
-          echo '=== UFC PUBLIC STATE ==='
-          if [ -r /srv/appwiza-sports/state/ufc.json ]; then
-            python3 - <<'PY'
-          import json
-          p='/srv/appwiza-sports/state/ufc.json'
-          d=json.load(open(p))
-          print('type',type(d).__name__)
-          if isinstance(d,dict):
-              print('keys',list(d)[:80])
-              for k,v in d.items():
-                  if isinstance(v,list): print(k,'list',len(v),'sample_keys',list(v[0])[:40] if v and isinstance(v[0],dict) else None)
-                  elif isinstance(v,dict): print(k,'dict',len(v),'sample_keys',list(v)[:30])
-                  else: print(k,type(v).__name__,str(v)[:120])
+          set -e
+          cd /home/anestishkurti92/ufc-predictor-v1
+          OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 venv/bin/python ufc_autoresearch_runner.py snapshot
+          echo '=== OFFICIAL HISTORY ==='
+          find auto_research/official_history -maxdepth 1 -type f -printf '%f %s bytes\n' 2>/dev/null | sort || true
+          echo '=== DB SOURCES ==='
+          venv/bin/python - <<'PY'
+          import sqlite3
+          db=sqlite3.connect('auto_research/state/research.sqlite3')
+          for row in db.execute("SELECT source,COUNT(*),MAX(captured_at) FROM source_snapshots GROUP BY source ORDER BY source"):
+              print(row)
+          print('official_auto_promotions',db.execute('SELECT COUNT(*) FROM candidates WHERE official != 0').fetchone()[0])
           PY
-          else
-            echo 'not-readable'
-          fi
-          echo '=== BETTING LEDGER FILES ==='
-          find /home/anestishkurti92/betting-ledger -maxdepth 3 -type f 2>/dev/null | sort | head -120 || true
           EOF
