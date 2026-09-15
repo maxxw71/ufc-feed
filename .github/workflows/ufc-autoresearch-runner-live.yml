@@ -1,0 +1,31 @@
+name: UFC Auto Research Runner Live
+on:
+  push:
+    paths:
+      - 'scripts/ufc_autoresearch_runner.py'
+      - '.github/workflows/ufc-autoresearch-runner-live.yml'
+jobs:
+  deploy:
+    runs-on: [self-hosted, appwiza]
+    steps:
+      - shell: bash
+        run: |
+          set -euo pipefail
+          KEY=/home/appwiza-runner/.ssh/appwiza_vps
+          TMP=$(mktemp)
+          curl -fsSL https://raw.githubusercontent.com/maxxw71/ufc-feed/main/scripts/ufc_autoresearch_runner.py -o "$TMP"
+          scp -i "$KEY" -o StrictHostKeyChecking=no "$TMP" anestishkurti92@127.0.0.1:/home/anestishkurti92/ufc-predictor-v1/ufc_autoresearch_runner.py
+          rm -f "$TMP"
+          ssh -i "$KEY" -o StrictHostKeyChecking=no anestishkurti92@127.0.0.1 'bash -s' <<'EOF'
+          set -euo pipefail
+          cd /home/anestishkurti92/ufc-predictor-v1
+          chmod 700 ufc_autoresearch_runner.py
+          venv/bin/python -m py_compile ufc_autoresearch_runner.py
+          OLD=$(crontab -l 2>/dev/null || true)
+          NEW=$(printf '%s\n' "$OLD" | sed 's/ufc_autoresearch.py/ufc_autoresearch_runner.py/g')
+          printf '%s\n' "$NEW" | crontab -
+          OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 venv/bin/python ufc_autoresearch_runner.py digest
+          echo '=== UFC AUTORESEARCH CRON ==='
+          crontab -l | sed -n '/# BEGIN APPWIZA UFC AUTORESEARCH/,/# END APPWIZA UFC AUTORESEARCH/p'
+          tail -10 auto_research/autoresearch.log
+          EOF
