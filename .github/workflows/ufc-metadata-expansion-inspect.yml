@@ -1,0 +1,21 @@
+name: UFC Metadata Expansion Inspect
+on:
+  push:
+    paths:
+      - '.github/workflows/ufc-metadata-expansion-inspect.yml'
+jobs:
+  inspect:
+    runs-on: [self-hosted, appwiza]
+    steps:
+      - shell: bash
+        run: |
+          set -euo pipefail
+          KEY=/home/appwiza-runner/.ssh/appwiza_vps
+          ssh -i "$KEY" -o StrictHostKeyChecking=no anestishkurti92@127.0.0.1 'cd /home/anestishkurti92/ufc-predictor-v1 && venv/bin/python - <<'"'"'PY'"'"'
+          import pandas as pd
+          for p in ["raw/rankings.csv","raw/individuals.csv"]:
+              d=pd.read_csv(p,nrows=8,low_memory=False)
+              print("===",p,"===")
+              print("columns",list(d.columns))
+              print(d.head(5).to_string(index=False))
+          PY'
