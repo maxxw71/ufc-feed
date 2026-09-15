@@ -15,7 +15,7 @@ jobs:
           set -euo pipefail
           KEY=/home/appwiza-runner/.ssh/appwiza_vps
           TMP=$(mktemp)
-          curl -fsSL https://raw.githubusercontent.com/maxxw71/ufc-feed/main/scripts/ufc_feature_expansion.py -o "$TMP"
+          curl -fsSL https://raw.githubusercontent.com/maxxw71/ufc-feed/97bf0e1ebc1269a9efd8d4ea69e6e60456f0ac3c/scripts/ufc_feature_expansion.py -o "$TMP"
           scp -i "$KEY" -o StrictHostKeyChecking=no "$TMP" anestishkurti92@127.0.0.1:/home/anestishkurti92/ufc-predictor-v1/ufc_feature_expansion.py
           rm -f "$TMP"
           ssh -i "$KEY" -o StrictHostKeyChecking=no anestishkurti92@127.0.0.1 'bash -s' <<'EOF'
@@ -28,13 +28,18 @@ jobs:
           cat feature_expansion/feature_expansion_meta.json
           echo '=== VALIDATE ==='
           venv/bin/python - <<'PY'
-          import pandas as pd, json, os
+          import pandas as pd, json, os, sys
           p='feature_expansion/prefight_favorite_features_v2.csv'
+          m=json.load(open('feature_expansion/feature_expansion_meta.json'))
+          assert m.get('same_event_guard') is True, m
+          assert m.get('backward_only_normalization') is True, m
           d=pd.read_csv(p,low_memory=False)
           new=[c for c in d.columns if c.startswith('f2_')]
+          assert len(d)==3344
+          assert len(new)>=120
           print('rows',len(d),'columns',len(d.columns),'f2_features',len(new))
+          print('same_event_guard',m['same_event_guard'],'backward_only_normalization',m['backward_only_normalization'])
           print('date_min',d.event_date.min(),'date_max',d.event_date.max())
-          print('non_null_top',d[new].notna().sum().sort_values(ascending=False).head(20).to_dict())
           print('file_bytes',os.path.getsize(p))
           PY
           EOF
