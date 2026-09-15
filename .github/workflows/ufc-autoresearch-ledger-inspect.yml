@@ -1,0 +1,34 @@
+name: UFC Auto Research Ledger Inspect
+on:
+  push:
+    paths:
+      - '.github/workflows/ufc-autoresearch-ledger-inspect.yml'
+jobs:
+  inspect:
+    runs-on: [self-hosted, appwiza]
+    steps:
+      - shell: bash
+        run: |
+          set -euo pipefail
+          KEY=/home/appwiza-runner/.ssh/appwiza_vps
+          ssh -i "$KEY" -o StrictHostKeyChecking=no anestishkurti92@127.0.0.1 'bash -s' <<'EOF'
+          echo '=== UFC PUBLIC STATE ==='
+          if [ -r /srv/appwiza-sports/state/ufc.json ]; then
+            python3 - <<'PY'
+          import json
+          p='/srv/appwiza-sports/state/ufc.json'
+          d=json.load(open(p))
+          print('type',type(d).__name__)
+          if isinstance(d,dict):
+              print('keys',list(d)[:80])
+              for k,v in d.items():
+                  if isinstance(v,list): print(k,'list',len(v),'sample_keys',list(v[0])[:40] if v and isinstance(v[0],dict) else None)
+                  elif isinstance(v,dict): print(k,'dict',len(v),'sample_keys',list(v)[:30])
+                  else: print(k,type(v).__name__,str(v)[:120])
+          PY
+          else
+            echo 'not-readable'
+          fi
+          echo '=== BETTING LEDGER FILES ==='
+          find /home/anestishkurti92/betting-ledger -maxdepth 3 -type f 2>/dev/null | sort | head -120 || true
+          EOF
