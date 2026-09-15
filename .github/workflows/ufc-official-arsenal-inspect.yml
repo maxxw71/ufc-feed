@@ -8,10 +8,6 @@ jobs:
     runs-on: [self-hosted, appwiza]
     steps:
       - uses: actions/checkout@v4
-      - name: Reset to current main
-        run: |
-          git fetch origin main
-          git reset --hard origin/main
       - name: Inspect current UFC production watcher and state wiring
         shell: bash
         run: |
@@ -25,22 +21,19 @@ jobs:
           import sys
           lines=Path(sys.argv[1]).read_text().splitlines(); chunks=[]
           keys=['methods','qualifies','structural_edge','striking_methods','skill_veto','state','ledger','publish','event_block','predict_bout','selection']
-          seen=set()
           for i,line in enumerate(lines):
               if any(k in line for k in keys):
                   a=max(0,i-5); b=min(len(lines),i+14)
-                  key=(a,b)
-                  if key in seen: continue
-                  seen.add(key)
                   chunks.append(f'--- lines {a+1}-{b} ---\n'+'\n'.join(f'{j+1}: {lines[j]}' for j in range(a,b)))
-          Path(sys.argv[2]).write_text('\n\n'.join(chunks[:260]))
+          Path(sys.argv[2]).write_text('\n\n'.join(chunks[:300]))
           PY
-      - name: Commit inspection
+      - name: Push diagnostic to isolated branch
         shell: bash
         run: |
           git config user.name 'appwiza-research-bot'
           git config user.email 'actions@users.noreply.github.com'
-          git add ufc_unique_method_discovery/official_arsenal_inspect.txt
-          git commit -m 'Capture UFC official arsenal wiring' || exit 0
-          git push origin HEAD:main
-# trigger 3
+          git checkout -B ufc-inspect-output
+          git add -f ufc_unique_method_discovery/official_arsenal_inspect.txt
+          git commit -m 'UFC official arsenal diagnostic output' || true
+          git push -f origin ufc-inspect-output
+# trigger 4
