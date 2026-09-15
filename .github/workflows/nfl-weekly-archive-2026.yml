@@ -1,0 +1,77 @@
+name: NFL 2026 prospective weekly archive
+
+on:
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: 'Archive mode'
+        required: true
+        default: 'both'
+        type: choice
+        options: [both, pregame, postweek]
+  schedule:
+    # Freeze next-week pregame context Thursday before the first game.
+    - cron: '5 15 * * 4'
+    # Finalize the prior week Tuesday after Monday night football.
+    - cron: '35 12 * * 2'
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/nfl_archive_weekly_2026.py'
+      - '.github/workflows/nfl-weekly-archive-2026.yml'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: nfl-2026-weekly-archive
+  cancel-in-progress: false
+
+jobs:
+  archive:
+    runs-on: [self-hosted, Linux, X64, appwiza]
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+        with: {fetch-depth: 0}
+      - name: Resolve archive mode
+        id: mode
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          MODE='both'
+          if [ '${{ github.event_name }}' = 'schedule' ]; then
+            if [ '${{ github.event.schedule }}' = '35 12 * * 2' ]; then MODE='postweek'; else MODE='pregame'; fi
+          elif [ '${{ github.event_name }}' = 'workflow_dispatch' ]; then
+            MODE='${{ inputs.mode }}'
+          fi
+          echo "mode=$MODE" >> "$GITHUB_OUTPUT"
+          echo "Resolved mode: $MODE"
+      - name: Archive pregame snapshot
+        if: steps.mode.outputs.mode == 'both' || steps.mode.outputs.mode == 'pregame'
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          NFL_CONTEXT_ROOT=/home/appwiza-runner/nfl-context-data NFL_SEASON=2026 ARCHIVE_MODE=pregame \
+            /home/anestishkurti92/nfl-predictor-v1/venv/bin/python scripts/nfl_archive_weekly_2026.py
+      - name: Archive postweek snapshot
+        if: steps.mode.outputs.mode == 'both' || steps.mode.outputs.mode == 'postweek'
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          NFL_CONTEXT_ROOT=/home/appwiza-runner/nfl-context-data NFL_SEASON=2026 ARCHIVE_MODE=postweek \
+            /home/anestishkurti92/nfl-predictor-v1/venv/bin/python scripts/nfl_archive_weekly_2026.py
+      - name: Publish archive
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git add nfl/weekly_archive/2026
+          if ! git diff --cached --quiet; then
+            git commit -m 'Archive 2026 NFL weekly prospective data'
+            git pull --rebase origin main
+            git push origin HEAD:main
+          else
+            echo 'No archive changes.'
+          fi
