@@ -18,23 +18,45 @@ jobs:
       - name: Inventory UFC research datasets
         shell: bash
         run: |
-          set -euo pipefail
-          ROOT=/home/anestishkurti92/ufc-predictor-v1
+          set -u
           OUT="$GITHUB_WORKSPACE/ufc_unique_method_discovery"
           mkdir -p "$OUT"
+          ROOT=""
+          for p in \
+            /home/anestishkurti92/ufc-predictor-v1 \
+            /home/anestishkurtz92/ufc-model/ufc-predictor-v1 \
+            /opt/appwiza-sports-imports/google-ufc-model-20260913/home/ufc-model/ufc-predictor-v1 \
+            /opt/appwiza-sports-imports/google-ufc-model-20260913/home/ufc-model; do
+            if [ -d "$p" ]; then ROOT="$p"; break; fi
+          done
+          if [ -z "$ROOT" ]; then
+            ROOT=$(find /home /opt -maxdepth 6 -type d -name 'ufc-predictor-v1' 2>/dev/null | head -1 || true)
+          fi
           {
             echo "UFC RESEARCH DATASET INVENTORY"
             echo "Generated: $(date -u +%FT%TZ)"
-            echo "Root: $ROOT"
+            echo "Root: ${ROOT:-NOT_FOUND}"
+            echo
+            echo "== UFC-LIKE DIRECTORIES =="
+            find /home /opt -maxdepth 5 -type d \( -iname '*ufc*' -o -iname '*mma*' \) 2>/dev/null | head -120 || true
             echo
             echo "== CSV FILES =="
-            find "$ROOT" -type f -name '*.csv' -printf '%s\t%p\n' 2>/dev/null | sort -nr | head -120
+            if [ -n "$ROOT" ]; then
+              find "$ROOT" -type f -name '*.csv' -printf '%s\t%p\n' 2>/dev/null | sort -nr | head -160 || true
+            fi
           } > "$OUT/inventory.txt"
 
-          python3 - <<'PY' >> "$OUT/inventory.txt"
+          ROOT="$ROOT" python3 - <<'PY' >> "$OUT/inventory.txt"
+          import os
           from pathlib import Path
-          import pandas as pd
-          root=Path('/home/anestishkurti92/ufc-predictor-v1')
+          try:
+              import pandas as pd
+          except Exception as e:
+              print('\nPANDAS_IMPORT_ERROR', repr(e)); raise SystemExit(0)
+          root=Path(os.environ.get('ROOT','')) if os.environ.get('ROOT') else None
+          print('\n== SCHEMAS ==')
+          if not root:
+              print('NO ROOT FOUND'); raise SystemExit(0)
           candidates=[
               root/'favorite_loss_risk_analysis/enriched_market_sample.csv',
               root/'combined_age_reach_backtest/reach_market_sample.csv',
@@ -42,7 +64,6 @@ jobs:
               root/'historical_backtest/walkforward_fight_results.csv',
               root/'new_category_discovery/lower_overlap_candidates.csv',
           ]
-          print('\n== SCHEMAS ==')
           for p in candidates:
               print(f'\n--- {p} ---')
               if not p.exists():
