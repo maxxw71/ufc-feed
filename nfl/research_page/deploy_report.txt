@@ -1,10 +1,9 @@
 runner=uid=1001(appwiza-runner) gid=1001(appwiza-runner) groups=1001(appwiza-runner)
 primary_root=/srv/appwiza-sports/public/nfl
 fallback_root=/srv/appwiza-sports/public/downloads/nfl
-primary_stat=anestishkurti92:anestishkurti92 755 /srv/appwiza-sports/public/nfl
+primary_stat=anestishkurti92:anestishkurti92 775 /srv/appwiza-sports/public/nfl
 fallback_stat=anestishkurti92:anestishkurti92 775 /srv/appwiza-sports/public/downloads/nfl
 official_tracker_untouched=/srv/appwiza-sports/public/nfl/index.html
-deploy_status=SUCCESS_FALLBACK
-public_url=https://appwiza.com/sports/downloads/nfl/research/
-primary_blocker=ACL_MASK_READONLY_ON_NFL_DIRECTORY
-deployed=appwiza-runner:appwiza-runner 664 17054 /srv/appwiza-sports/public/downloads/nfl/research/index.html
+deploy_status=SUCCESS_PRIMARY
+public_url=https://appwiza.com/sports/nfl/research/
+deployed=appwiza-runner:appwiza-runner 644 17054 /srv/appwiza-sports/public/nfl/research/index.html
