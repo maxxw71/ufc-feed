@@ -1,0 +1,44 @@
+UFC EXPERIENCE MISMATCH — LOSS ANALYSIS
+==============================================================================================================
+CORE: 52 bets | 45-7 | win 86.5% | ROI +26.35% | P/L $+1,370
+
+ALL LOSSES
+--------------------------------------------------------------------------------------------------------------
+2015-06-20 | Dennis Siver lost to Tatsuya Kawajiri | mkt 58.0% | age +nany | reach +nanin | UFC exp 9-2 | career gap +16.7% | last3 +0.17 | layoff gap +282d | sigdiff +1.39 | TDdef +0.06 | ctrl -2.98 | sub -1.15
+2018-12-08 | Chad Laprise lost to Dhiego Lima | mkt 77.3% | age +nany | reach +nanin | UFC exp 8-1 | career gap +62.5% | last3 +0.67 | layoff gap +1099d | sigdiff +6.00 | TDdef +nan | ctrl +2.62 | sub +0.00
+2019-09-28 | Alex Oliveira lost to Nicolas Dalby | mkt 58.8% | age +nany | reach +nanin | UFC exp 13-3 | career gap +28.2% | last3 +0.00 | layoff gap +966d | sigdiff +2.01 | TDdef -0.01 | ctrl +3.98 | sub +0.63
+2022-04-30 | Andre Fili lost to Joanderson Brito | mkt 69.1% | age +nany | reach +nanin | UFC exp 16-1 | career gap +56.2% | last3 +0.33 | layoff gap -441d | sigdiff +1.10 | TDdef +0.64 | ctrl -2.63 | sub +0.16
+2023-05-13 | Ji Yeon Kim lost to Mandy Bohm | mkt 67.8% | age +nany | reach +nanin | UFC exp 9-1 | career gap +33.3% | last3 +0.00 | layoff gap +7d | sigdiff -0.85 | TDdef -0.24 | ctrl +0.15 | sub -1.00
+2024-07-27 | Molly McCann lost to Bruna Brasil | mkt 73.1% | age +nany | reach +nanin | UFC exp 10-1 | career gap +50.0% | last3 +0.33 | layoff gap +98d | sigdiff +5.57 | TDdef +0.43 | ctrl -0.79 | sub +0.58
+2024-11-16 | Mickey Gall lost to Ramiz Brahimaj | mkt 60.4% | age +nany | reach +nanin | UFC exp 10-3 | career gap +50.0% | last3 +0.33 | layoff gap -770d | sigdiff +0.86 | TDdef -0.08 | ctrl +1.48 | sub +1.39
+
+WIN vs LOSS FEATURE MEANS
+--------------------------------------------------------------------------------------------------------------
+market_prob                  wins +0.666 | losses +0.663 | diff +0.002
+exp_gap                      wins +8.578 | losses +9.000 | diff -0.422
+winpct_gap                   wins +0.294 | losses +0.424 | diff -0.130
+last3_gap                    wins +0.244 | losses +0.262 | diff -0.017
+last5_gap                    wins +0.247 | losses +0.367 | diff -0.119
+layoff_gap                   wins +82.200 | losses +177.286 | diff -95.086
+sig_diff_gap                 wins +1.469 | losses +2.297 | diff -0.828
+sig_def_gap                  wins +0.076 | losses +0.057 | diff +0.019
+kd_gap                       wins -0.170 | losses +0.356 | diff -0.527
+kd_abs_gap                   wins +0.108 | losses +1.714 | diff -1.606
+td_l_gap                     wins -0.093 | losses +0.346 | diff -0.440
+td_a_gap                     wins +0.182 | losses -0.119 | diff +0.301
+td_def_gap                   wins +0.108 | losses +0.135 | diff -0.027
+sub_gap                      wins +0.213 | losses +0.088 | diff +0.126
+ctrl_gap                     wins +0.519 | losses +0.262 | diff +0.257
+ctrl_allowed_gap             wins +1.442 | losses +2.978 | diff -1.536
+ground_gap                   wins +2.532 | losses +2.798 | diff -0.266
+finish_win_gap               wins -0.103 | losses +0.021 | diff -0.124
+finish_loss_safety_gap       wins +0.073 | losses -0.176 | diff +0.249
+
+BEST ROBUST FINE-TUNES
+--------------------------------------------------------------------------------------------------------------
+market_60plus + market_75max | n=40 36-4 win=90.0% ROI=+30.05% lift=+3.70pp | pre=+44.35% recent=+19.48% | removed 12 (3 losses) removedROI=+14.0%
+market_75max | n=48 42-6 win=87.5% ROI=+28.96% lift=+2.62pp | pre=+34.18% recent=+24.54% | removed 4 (1 losses) removedROI=-5.0%
+market_75max + favorite_sig_diff_not_worse | n=40 35-5 win=87.5% ROI=+28.53% lift=+2.18pp | pre=+31.29% recent=+26.27% | removed 12 (2 losses) removedROI=+19.1%
+market_75max + favorite_recent3_not_worse | n=45 39-6 win=86.7% ROI=+28.18% lift=+1.83pp | pre=+32.84% recent=+24.10% | removed 7 (1 losses) removedROI=+14.6%
+market_60plus | n=44 39-5 win=88.6% ROI=+26.86% lift=+0.51pp | pre=+35.84% recent=+20.03% | removed 8 (2 losses) removedROI=+23.5%
+market_60plus + favorite_recent3_not_worse | n=42 37-5 win=88.1% ROI=+26.72% lift=+0.37pp | pre=+35.84% recent=+19.18% | removed 10 (2 losses) removedROI=+24.8%
