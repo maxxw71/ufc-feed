@@ -10,11 +10,7 @@ jobs:
       - shell: bash
         run: |
           set -euo pipefail
-          ssh -i /home/appwiza-runner/.ssh/appwiza_vps -o StrictHostKeyChecking=no anestishkurti92@127.0.0.1 'cd /home/anestishkurti92/ufc-predictor-v1 && venv/bin/python - <<'"'"'PY'"'"'
-          import pandas as pd
-          for p in ["new_category_discovery/prefight_favorite_features.csv","historical_backtest/recent_master_2024_2026.csv"]:
-              d=pd.read_csv(p,nrows=3)
-              print("===",p,"===")
-              print("COLUMNS",list(d.columns))
-              print(d.head(2).to_string(index=False))
-          PY'
+          KEY=/home/appwiza-runner/.ssh/appwiza_vps
+          curl -fsSL https://raw.githubusercontent.com/maxxw71/ufc-feed/main/scripts/patch_ufc_autoresearch_live.py -o /tmp/patch_ufc_autoresearch_live.py
+          scp -i "$KEY" -o StrictHostKeyChecking=no /tmp/patch_ufc_autoresearch_live.py anestishkurti92@127.0.0.1:/tmp/patch_ufc_autoresearch_live.py
+          ssh -i "$KEY" -o StrictHostKeyChecking=no anestishkurti92@127.0.0.1 'cd /home/anestishkurti92/ufc-predictor-v1 && venv/bin/python /tmp/patch_ufc_autoresearch_live.py && venv/bin/python -m py_compile ufc_autoresearch.py && OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 venv/bin/python ufc_autoresearch.py digest && tail -8 auto_research/autoresearch.log'
