@@ -8,6 +8,7 @@ on:
       - 'ufc/ufc_public_page.py'
       - 'nfl/nfl_public_page.py'
       - 'scripts/sync_ufc_nfl_presentation.py'
+      - 'scripts/fix_ufc_external_dashboard_css.py'
       - '.github/workflows/ufc-public-dashboard-deploy.yml'
 
 permissions:
@@ -24,6 +25,7 @@ jobs:
         run: |
           set -Eeuo pipefail
           python3 scripts/sync_ufc_nfl_presentation.py
+          python3 scripts/fix_ufc_external_dashboard_css.py
           python3 -m py_compile ufc/ufc_public_page.py
       - name: Deploy UFC dashboard over local SSH
         shell: bash
@@ -34,19 +36,23 @@ jobs:
           SSH="ssh -i $KEY -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=accept-new $HOST"
           cat ufc/ufc_public_page.py | $SSH 'cat > /home/anestishkurti92/ufc-predictor-v1/ufc_public_page.py'
           $SSH 'export HOME=/home/anestishkurti92; export PYTHONPATH=/home/anestishkurti92/ufc-predictor-v1:/home/anestishkurti92/betting-ledger/code:/opt/sports-publisher; /home/anestishkurti92/ufc-predictor-v1/venv/bin/python -c "import sports_publish,ufc_public_page; ufc_public_page.safe_enhance(sports_publish)"'
-      - name: Verify public page uses NFL components
+      - name: Verify public page and external dashboard CSS
         shell: bash
         run: |
           set -Eeuo pipefail
           curl -fsSL https://appwiza.com/sports/ufc/ > /tmp/ufc-live.html
+          curl -fsSL https://appwiza.com/sports/ufc/dashboard.css > /tmp/ufc-dashboard.css
+          grep -q '/sports/ufc/dashboard.css?v=' /tmp/ufc-live.html
           grep -q 'Overall record' /tmp/ufc-live.html
           grep -q 'Available selections' /tmp/ufc-live.html
           grep -q 'Completed selections' /tmp/ufc-live.html
-          grep -q 'Research downloads' /tmp/ufc-live.html
           grep -q 'class="audit-table"' /tmp/ufc-live.html
           grep -q 'class="history-table"' /tmp/ufc-live.html
           grep -q 'class="grid upcoming-grid"' /tmp/ufc-live.html
-          grep -q 'Appwiza NFL dashboard additions' /tmp/ufc-live.html
+          grep -q 'record-strip' /tmp/ufc-dashboard.css
+          grep -q 'research-cta' /tmp/ufc-dashboard.css
+          grep -q 'audit-table' /tmp/ufc-dashboard.css
+          grep -q 'history-table' /tmp/ufc-dashboard.css
           grep -q '2-1' /tmp/ufc-live.html
           grep -q 'Manon Fiorot' /tmp/ufc-live.html
-          echo 'UFC now uses NFL CSS/table/card presentation components'
+          echo 'UFC dashboard CSS is externally served and verified like NFL'
