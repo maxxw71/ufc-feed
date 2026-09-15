@@ -6,6 +6,8 @@ on:
     branches: [main]
     paths:
       - 'ufc/ufc_public_page.py'
+      - 'nfl/nfl_public_page.py'
+      - 'scripts/sync_ufc_nfl_presentation.py'
       - '.github/workflows/ufc-public-dashboard-deploy.yml'
 
 permissions:
@@ -17,6 +19,12 @@ jobs:
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
+      - name: Sync UFC presentation to NFL
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          python3 scripts/sync_ufc_nfl_presentation.py
+          python3 -m py_compile ufc/ufc_public_page.py
       - name: Deploy UFC dashboard over local SSH
         shell: bash
         run: |
@@ -26,7 +34,7 @@ jobs:
           SSH="ssh -i $KEY -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=accept-new $HOST"
           cat ufc/ufc_public_page.py | $SSH 'cat > /home/anestishkurti92/ufc-predictor-v1/ufc_public_page.py'
           $SSH 'export HOME=/home/anestishkurti92; export PYTHONPATH=/home/anestishkurti92/ufc-predictor-v1:/home/anestishkurti92/betting-ledger/code:/opt/sports-publisher; /home/anestishkurti92/ufc-predictor-v1/venv/bin/python -c "import sports_publish,ufc_public_page; ufc_public_page.safe_enhance(sports_publish)"'
-      - name: Verify public page
+      - name: Verify public page uses NFL components
         shell: bash
         run: |
           set -Eeuo pipefail
@@ -35,6 +43,10 @@ jobs:
           grep -q 'Available selections' /tmp/ufc-live.html
           grep -q 'Completed selections' /tmp/ufc-live.html
           grep -q 'Research downloads' /tmp/ufc-live.html
+          grep -q 'class="audit-table"' /tmp/ufc-live.html
+          grep -q 'class="history-table"' /tmp/ufc-live.html
+          grep -q 'class="grid upcoming-grid"' /tmp/ufc-live.html
+          grep -q 'Appwiza NFL dashboard additions' /tmp/ufc-live.html
           grep -q '2-1' /tmp/ufc-live.html
           grep -q 'Manon Fiorot' /tmp/ufc-live.html
-          echo 'UFC NFL-style dashboard live verification passed'
+          echo 'UFC now uses NFL CSS/table/card presentation components'
