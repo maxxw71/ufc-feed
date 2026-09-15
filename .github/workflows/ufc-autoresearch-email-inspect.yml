@@ -1,0 +1,24 @@
+name: UFC Auto Research Email Inspect
+on:
+  push:
+    paths:
+      - '.github/workflows/ufc-autoresearch-email-inspect.yml'
+  workflow_dispatch:
+jobs:
+  inspect:
+    runs-on: [self-hosted, appwiza]
+    steps:
+      - name: Inspect email hooks
+        shell: bash
+        run: |
+          set -euo pipefail
+          SSH_KEY=/home/appwiza-runner/.ssh/appwiza_vps
+          ssh -i "$SSH_KEY" -o StrictHostKeyChecking=no anestishkurti92@127.0.0.1 'bash -s' <<'EOF'
+          cd /home/anestishkurti92/ufc-predictor-v1
+          echo '=== WATCHER SYMBOLS ==='
+          grep -nE '^def |send|mail|gmail|subject|recipient|EMAIL|SMTP' ufc_email_watcher.py | head -180 || true
+          echo '=== WATCHER TOP ==='
+          sed -n '1,180p' ufc_email_watcher.py
+          echo '=== HISTORICAL EMAIL FUNCTION ==='
+          sed -n '570,650p' ufc_historical_backtest.py
+          EOF
