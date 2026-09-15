@@ -32,8 +32,9 @@ jobs:
           set -Eeuo pipefail
           curl -fsSL https://appwiza.com/sports/ufc/ > /tmp/ufc-live.html
           grep -q 'Overall record' /tmp/ufc-live.html
-          grep -q 'Upcoming picks' /tmp/ufc-live.html
+          grep -q 'Available selections' /tmp/ufc-live.html
           grep -q 'Completed selections' /tmp/ufc-live.html
+          grep -q 'Research downloads' /tmp/ufc-live.html
           grep -q '2-1' /tmp/ufc-live.html
           grep -q 'Manon Fiorot' /tmp/ufc-live.html
-          echo 'UFC dashboard live verification passed'
+          echo 'UFC NFL-style dashboard live verification passed'
