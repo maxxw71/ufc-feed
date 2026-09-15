@@ -3,6 +3,8 @@ on:
   push:
     paths:
       - '.github/workflows/ufc-official-arsenal-inspect.yml'
+permissions:
+  contents: write
 jobs:
   inspect:
     runs-on: [self-hosted, appwiza]
@@ -36,4 +38,4 @@ jobs:
           git add -f ufc_unique_method_discovery/official_arsenal_inspect.txt
           git commit -m 'UFC official arsenal diagnostic output' || true
           git push -f origin ufc-inspect-output
-# trigger 4
+# trigger 5
