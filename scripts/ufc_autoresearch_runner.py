@@ -5,6 +5,10 @@ from pathlib import Path
 import ufc_autoresearch as ar
 
 ROOT=Path.home()/"ufc-predictor-v1"
+EXPANDED=ROOT/"feature_expansion"/"prefight_favorite_features_v2.csv"
+if EXPANDED.exists():
+    ar.PREFIGHT=EXPANDED
+
 OFFICIAL_ARCHIVE=ROOT/"auto_research"/"official_history"
 OFFICIAL_ARCHIVE.mkdir(parents=True,exist_ok=True)
 PUBLIC_STATE=Path('/srv/appwiza-sports/state/ufc.json')
@@ -12,6 +16,7 @@ LEDGER_DB=Path.home()/"betting-ledger"/"assumed_bets.sqlite3"
 
 _base_schema=ar.schema
 _base_snapshot=ar.snapshot_source
+_base_eligible=ar.eligible_features
 
 def schema(df):
     datec,winc,probc,oddsc=_base_schema(df)
@@ -22,6 +27,25 @@ def schema(df):
     return datec,winc,probc,oddsc
 
 ar.schema=schema
+
+def eligible_features(df,excluded):
+    base=_base_eligible(df,excluded)
+    f2=[]
+    for c in df.columns:
+        if not c.startswith('f2_') or c in excluded: continue
+        try:
+            s=df[c]
+            if s.notna().sum()>=200 and s.nunique(dropna=True)>=5 and str(s.dtype)!='object': f2.append(c)
+        except Exception: pass
+    # Differences first, then fighter/opponent levels; retain proven original features too.
+    f2=sorted(set(f2),key=lambda c:(0 if c.startswith('f2_diff_') else 1,c))
+    seen=set(); out=[]
+    for c in f2+base:
+        if c not in seen:
+            seen.add(c); out.append(c)
+    return out[:140]
+
+ar.eligible_features=eligible_features
 
 def digest(path):
     h=hashlib.sha256()
@@ -81,14 +105,15 @@ def send_digest(extra=None):
         for r in tops
     ) or '<tr><td colspan="6">No shadow candidate currently clears the robustness gates.</td></tr>'
     lasttxt='None yet' if not last else f"{last[0]} · {last[5]} · {last[2] or 0} rows · {last[3] or 0:,} tested · {last[4] or 0} survivors"
+    dataset_name=ar.PREFIGHT.name
     body=f'''<div style="font-family:Arial,sans-serif;max-width:900px;margin:auto;color:#172033">
     <h2>UFC Research Daily</h2>
     <p><b>Research is autonomous; promotion is not.</b> No candidate can enter the official/live arsenal without explicit approval.</p>
-    <p><b>Last research:</b> {html.escape(lasttxt)}<br><b>Research runs retained:</b> {runs}<br><b>Shadow candidates retained:</b> {shadows}<br><b>Immutable source/official snapshots retained:</b> {snaps}</p>
+    <p><b>Research dataset:</b> {html.escape(dataset_name)}<br><b>Last research:</b> {html.escape(lasttxt)}<br><b>Research runs retained:</b> {runs}<br><b>Shadow candidates retained:</b> {shadows}<br><b>Immutable source/official snapshots retained:</b> {snaps}</p>
     <p><b>Appwiza UFC tracker:</b> {cards} stored cards · {active} not withdrawn · {settled} with settlement-like tracking state. Official tracker and betting-ledger changes are archived immutably for future win/loss analysis.</p>
     <h3>Best current shadow candidates</h3>
     <table style="border-collapse:collapse;width:100%"><tr><th align="left">Rule</th><th>Bets</th><th>W-L</th><th>ROI</th><th>Holdout ROI</th><th>Seen</th></tr>{rows}</table>
-    <p style="font-size:13px;color:#596273">Candidates are screened with a chronological 70/30 train/holdout split, minimum sample gates, era consistency checks and yearly consistency checks. These are research findings, not official selections.</p>
+    <p style="font-size:13px;color:#596273">Candidates are screened with a chronological 70/30 train/holdout split, minimum sample gates, era consistency checks and yearly consistency checks. Expanded features include opponent strength, damage/decline, cardio/round trends, five-round experience and data-driven style metrics. These are research findings, not official selections.</p>
     </div>'''
     try:
         import ufc_email_watcher as watcher
