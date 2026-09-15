@@ -23,10 +23,12 @@ jobs:
         run: |
           set -Eeuo pipefail
           P=/opt/sports-publisher/sports_publish.py
-          B=/opt/sports-publisher/sports_publish.py.pre-ufc-dashboard-$(date +%Y%m%d-%H%M%S).bak
-          cp "$P" "$B"
-          python3 scripts/ufc_public_dashboard_patch.py
-          python3 -m py_compile "$P"
+          T=/tmp/sports_publish.ufc-dashboard.py
+          cp "$P" "$T"
+          python3 scripts/ufc_public_dashboard_patch.py "$T"
+          python3 -m py_compile "$T"
+          sudo -n cp "$P" "/opt/sports-publisher/sports_publish.py.pre-ufc-dashboard.bak"
+          sudo -n install -o root -g root -m 0644 "$T" "$P"
           python3 - <<'PY'
           import sys
           sys.path.insert(0,'/opt/sports-publisher')
