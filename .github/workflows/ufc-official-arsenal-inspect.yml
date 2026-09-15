@@ -18,25 +18,15 @@ jobs:
           mkdir -p "$(dirname "$OUT")"
           python3 - "$W" "$OUT" <<'PY'
           from pathlib import Path
-          import re,sys
+          import sys
           w=Path(sys.argv[1]); out=Path(sys.argv[2])
-          s=w.read_text()
-          pats=[
-            r'^def predict_bout\(.*?\):',
-            r'^def event_block\(.*?\):',
-            r'^def selection_state\(.*?\):',
-            r'^def .*state.*\(.*?\):',
-            r'^def run\(.*?\):',
-          ]
-          lines=s.splitlines()
-          chunks=[]
+          s=w.read_text(); lines=s.splitlines(); chunks=[]
           keys=['methods','method','qualifies','structural_edge','striking_methods','skill_veto','state','ledger','publish','event_block','predict_bout']
           for i,line in enumerate(lines):
               if any(k in line for k in keys):
                   a=max(0,i-4); b=min(len(lines),i+12)
                   chunks.append(f'--- lines {a+1}-{b} ---\n'+'\n'.join(f'{j+1}: {lines[j]}' for j in range(a,b)))
-          out.write_text('\n\n'.join(chunks[:180]))
-          print(out)
+          out.write_text('\n\n'.join(chunks[:220]))
           PY
           echo >> "$OUT"
           echo '=== CURRENT SERVICES / FILES ===' >> "$OUT"
@@ -51,3 +41,4 @@ jobs:
           git commit -m 'Inspect UFC official arsenal wiring' || exit 0
           git pull --rebase origin main
           git push origin HEAD:main
+# trigger 2
