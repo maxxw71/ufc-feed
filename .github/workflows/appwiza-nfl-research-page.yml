@@ -5,6 +5,7 @@ on:
     branches: [main]
     paths:
       - 'scripts/nfl_build_research_page.py'
+      - 'scripts/nfl_restyle_research_page.py'
       - 'scripts/nfl_research_page_trigger.txt'
       - 'nfl/live_candidate_finalization/**'
       - 'nfl/coach_only_final_sieve/**'
@@ -29,8 +30,9 @@ jobs:
         shell: bash
         run: |
           set -Eeuo pipefail
-          /home/anestishkurti92/nfl-predictor-v1/venv/bin/python "$GITHUB_WORKSPACE/scripts/nfl_build_research_page.py"
-          sed -i 's|href="/nfl/"|href="/sports/nfl/"|g' "$GITHUB_WORKSPACE/nfl/research_page/index.html"
+          PY=/home/anestishkurti92/nfl-predictor-v1/venv/bin/python
+          "$PY" "$GITHUB_WORKSPACE/scripts/nfl_build_research_page.py"
+          "$PY" "$GITHUB_WORKSPACE/scripts/nfl_restyle_research_page.py"
       - name: Deploy research page without touching official tracker
         shell: bash
         run: |
