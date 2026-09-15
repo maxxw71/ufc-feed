@@ -2,7 +2,7 @@
   "season": 2026,
   "week": 1,
   "mode": "postweek",
-  "generated_utc": "2026-09-15T05:40:49.081980+00:00",
+  "generated_utc": "2026-09-15T17:12:10.955467+00:00",
   "latest_fully_completed_week_at_run": 1,
   "next_unplayed_week_at_run": 2,
   "sources": {
@@ -34,7 +34,7 @@
     "snap_counts": {
       "status": "saved",
       "loader": "load_snap_counts",
-      "rows": 1397,
+      "rows": 1492,
       "columns": 16
     },
     "rosters_weekly": {
@@ -46,7 +46,7 @@
     "depth_charts": {
       "status": "saved",
       "loader": "load_depth_charts",
-      "rows": 518581,
+      "rows": 520792,
       "columns": 12
     },
     "participation": {
@@ -54,8 +54,10 @@
       "error": "load_participation:ValueError:Season must be between 2016 and 2025"
     },
     "ftn_charting": {
-      "status": "unavailable",
-      "error": "load_ftn_charting:ConnectionError:Failed to download https://github.com/nflverse/nflverse-data/releases/download/ftn_charting/ftn_charting_2026.parquet: 404 Client Error: Not Found for url: https://github.com/nflverse/nflverse-data/releases/download/ftn_charting/ftn_charting_2026.parquet"
+      "status": "saved",
+      "loader": "load_ftn_charting",
+      "rows": 2520,
+      "columns": 29
     },
     "officials": {
       "status": "saved",
@@ -66,19 +68,19 @@
     "nextgen_passing": {
       "status": "saved",
       "loader": "load_nextgen_stats",
-      "rows": 30,
+      "rows": 32,
       "columns": 29
     },
     "nextgen_receiving": {
       "status": "saved",
       "loader": "load_nextgen_stats",
-      "rows": 68,
+      "rows": 73,
       "columns": 23
     },
     "nextgen_rushing": {
       "status": "saved",
       "loader": "load_nextgen_stats",
-      "rows": 33,
+      "rows": 34,
       "columns": 22
     },
     "pfr_adv_pass": {
@@ -108,12 +110,12 @@
     "ff_opportunity_weekly": {
       "status": "saved",
       "loader": "load_ff_opportunity",
-      "rows": 317,
+      "rows": 338,
       "columns": 159
     },
     "market_snapshots": {
       "status": "saved",
-      "rows": 71,
+      "rows": 73,
       "files_scanned": 2,
       "parse_errors": 0
     },
@@ -176,12 +178,16 @@
       "sha256": "69263a129abe7731c3bfa3e2aa371d7afce216d2194fc07e093de86105cfc4b7"
     },
     "depth_charts.parquet": {
-      "bytes": 1363873,
-      "sha256": "cf5363a46dc0e6cf4fe0fee97a653a5fe9e41f5b4eca14f6770e12e7d570d0ac"
+      "bytes": 1357208,
+      "sha256": "e40379b0e0bd3a0da651606f292642bf5c6368c31f1c902d358827fb5da4dc16"
     },
     "ff_opportunity_weekly.parquet": {
-      "bytes": 174484,
-      "sha256": "095b422252809db46e964c022b976ec97d74afcd84f9c76c63dddb55e1770f02"
+      "bytes": 178262,
+      "sha256": "e808479d2c5e28493960bd482bc394a8578008dc4b33365e8ffba3c83df2ceb2"
+    },
+    "ftn_charting.parquet": {
+      "bytes": 40769,
+      "sha256": "661eeabcb7e21517e479b7eb290fdbe6ff7e3b7c396c4cfdfa7dcd7247d30567"
     },
     "injuries.parquet": {
       "bytes": 15885,
@@ -192,28 +198,28 @@
       "sha256": "293736db30e7087316dfee0aea75624434074718024957d7fb106a7757be67a1"
     },
     "market_snapshots.jsonl.gz": {
-      "bytes": 2604,
-      "sha256": "7dc6453334443a0546775c6a95590a070f1d28a1173e1bc2eb04ea2befcd9388"
+      "bytes": 2651,
+      "sha256": "cd2b57e148ef65afcd5078fa25181411894502fbbecd1180a472befca66545f3"
     },
     "nextgen_passing.parquet": {
-      "bytes": 23564,
-      "sha256": "2e61fd834f35864f8bcc42764e73d5d9862259aa010a867b1d58aa55b860e961"
+      "bytes": 23874,
+      "sha256": "901ae77d440c42b4b890a7bd012e831f351c174cb101d73a22642b0d74c807c1"
     },
     "nextgen_receiving.parquet": {
-      "bytes": 22062,
-      "sha256": "31fb60d180bdcaa84930d3b087ed766230d9777355230886dd5ccf46f015a0e8"
+      "bytes": 22592,
+      "sha256": "8f6697d92a3d444e70715ffbea5600f656cb42f3c45b3f85fa6b8ef12e64bc25"
     },
     "nextgen_rushing.parquet": {
-      "bytes": 17912,
-      "sha256": "a2ad27a53a0fd942f2980e7c2d9ad07b89c76f94a465f60b80c9a05122d288b8"
+      "bytes": 18047,
+      "sha256": "81ae869af5e6d7834a838e72b01ad46cd074f7db6c2b5bc93ea82bc022a71738"
     },
     "officials.parquet": {
       "bytes": 7687,
       "sha256": "4856c49497068a6abd8c5248e308d9a46a94b3cbdff90fc8d775caf7f575f4f3"
     },
     "pbp.parquet": {
-      "bytes": 1202960,
-      "sha256": "c22d8e1cca270f60adb7c43a7c0fd99485226c5131215d7fd0c9b14bcaa7c74a"
+      "bytes": 1202998,
+      "sha256": "7ef9fd7c8355b72c82c1ee8c5d29eae1c175ec385986db4111e00a3373ff927d"
     },
     "pfr_adv_def.parquet": {
       "bytes": 21215,
@@ -240,20 +246,20 @@
       "sha256": "a3b641c51e27a5fdc0c8a6d66f37989841264b8f674a9c630b4a544169143280"
     },
     "rosters_weekly.parquet": {
-      "bytes": 371680,
-      "sha256": "e27690f6f659b26a99f16c3355a1bea7be713ac86aaa39ba55c7772a492811b3"
+      "bytes": 371753,
+      "sha256": "cf89fa6cb94fed11a25e00c6c6a04e85f09c72c12a60a5b6b6ecc839b8a3b3a3"
     },
     "schedule.csv": {
-      "bytes": 5766,
-      "sha256": "d1bc0b1149f588fc9dacf5c90c16c9a2b789027f34e5cc648b9b77d3b40703f2"
+      "bytes": 5790,
+      "sha256": "45182e6510e52d36f7db491429dbcce108b8859d65243dd32cba1791b2c85f25"
     },
     "schedule.parquet": {
-      "bytes": 29786,
-      "sha256": "a961f44051f693b48da2ca959b7c55288960a352310d0e3ce6a322f66b735c3b"
+      "bytes": 29825,
+      "sha256": "af7014c2111ad28115b17474df949ad592d3efd3f8bc7b6d2a44775d2f186b2f"
     },
     "snap_counts.parquet": {
-      "bytes": 39616,
-      "sha256": "82b005a756f6b8ea32fc15ec999cf43fa52fd4f084c10f42e651961c82832e06"
+      "bytes": 41542,
+      "sha256": "118e0a7e66860f44db11f6350edcfbd63510da3de71b328caba0d44b3e0dbec5"
     },
     "team_stats.parquet": {
       "bytes": 87286,
