@@ -2,7 +2,7 @@
   "season": 2026,
   "week": 2,
   "mode": "pregame",
-  "generated_utc": "2026-09-15T05:31:25.460738+00:00",
+  "generated_utc": "2026-09-15T05:38:33.437297+00:00",
   "latest_fully_completed_week_at_run": 1,
   "next_unplayed_week_at_run": 2,
   "sources": {
@@ -136,8 +136,10 @@
       "source_path": "/home/appwiza-runner/nfl-context-data/injury_travel_mining/travel_team_game_2006_2026.parquet"
     },
     "coach_quality_live_2026": {
-      "status": "missing",
-      "path": "/home/appwiza-runner/nfl-context-data/coach_quality_live/coach_quality_2026_team_sides.parquet"
+      "status": "saved",
+      "rows": 32,
+      "columns": 112,
+      "source_path": "/home/appwiza-runner/nfl-context-data/coach_quality_live/coach_quality_2026_team_sides.parquet"
     }
   },
   "files": {
@@ -152,6 +154,14 @@
     "coach_quality_enriched.parquet": {
       "bytes": 352990,
       "sha256": "0b7242b4f193a0c2379cc08a4dc7fbddb5ab640ebfa5d6d9f117db8008a78440"
+    },
+    "coach_quality_live_2026.parquet": {
+      "bytes": 93495,
+      "sha256": "7aa7d25973b4340c2b4ae405b5fff39b01f6e4256ab7b9cad0715391bc63ebea"
+    },
+    "coach_quality_team_seasons_2026.csv": {
+      "bytes": 9968,
+      "sha256": "49d55c4b42212b087e552bfdc8f00ff88cf9c2ef1a92c7801a5aa366be1ab2ce"
     },
     "complete_pregame_team_sides.parquet": {
       "bytes": 196604,
@@ -183,7 +193,7 @@
     },
     "market_snapshots.jsonl.gz": {
       "bytes": 3446,
-      "sha256": "fe0b17ac75154730d484eae23b1cff58c6f33b9d17cfb0519963ec733e4bc2d9"
+      "sha256": "cb3924be7b4ae0b3dd81b97fa766293a6d7384700b0f1a5926438942dba6e4b4"
     },
     "nextgen_passing.parquet": {
       "bytes": 14962,
