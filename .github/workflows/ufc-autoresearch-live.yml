@@ -1,0 +1,67 @@
+name: UFC Autonomous Research Live
+on:
+  push:
+    paths:
+      - 'scripts/ufc_autoresearch.py'
+      - '.github/workflows/ufc-autoresearch-live.yml'
+  workflow_dispatch:
+jobs:
+  deploy:
+    runs-on: [self-hosted, appwiza]
+    timeout-minutes: 15
+    steps:
+      - name: Install and verify autonomous UFC research
+        shell: bash
+        run: |
+          set -euo pipefail
+          SSH_KEY=/home/appwiza-runner/.ssh/appwiza_vps
+          TMP=$(mktemp)
+          curl -fsSL https://raw.githubusercontent.com/maxxw71/ufc-feed/main/scripts/ufc_autoresearch.py -o "$TMP"
+          scp -i "$SSH_KEY" -o StrictHostKeyChecking=no "$TMP" anestishkurti92@127.0.0.1:/home/anestishkurti92/ufc-predictor-v1/ufc_autoresearch.py
+          rm -f "$TMP"
+          ssh -i "$SSH_KEY" -o StrictHostKeyChecking=no anestishkurti92@127.0.0.1 'bash -s' <<'EOF'
+          set -euo pipefail
+          ROOT=/home/anestishkurti92/ufc-predictor-v1
+          cd "$ROOT"
+          chmod 700 ufc_autoresearch.py
+          mkdir -p auto_research/{raw,snapshots,reports,state}
+          venv/bin/python -m py_compile ufc_autoresearch.py
+          echo '[20%] Python syntax verified'
+
+          OLD=$(crontab -l 2>/dev/null || true)
+          CLEAN=$(printf '%s\n' "$OLD" | sed '/# BEGIN APPWIZA UFC AUTORESEARCH/,/# END APPWIZA UFC AUTORESEARCH/d')
+          {
+            printf '%s\n' "$CLEAN"
+            echo '# BEGIN APPWIZA UFC AUTORESEARCH'
+            echo 'CRON_TZ=America/New_York'
+            echo '20 0,6,12,18 * * * cd /home/anestishkurti92/ufc-predictor-v1 && nice -n 12 timeout 10m venv/bin/python ufc_autoresearch.py snapshot >> auto_research/cron.log 2>&1'
+            echo '30 10 * * * cd /home/anestishkurti92/ufc-predictor-v1 && nice -n 12 timeout 30m venv/bin/python ufc_autoresearch.py daily >> auto_research/cron.log 2>&1'
+            echo '15 3 * * 1 cd /home/anestishkurti92/ufc-predictor-v1 && nice -n 15 timeout 90m venv/bin/python ufc_autoresearch.py weekly >> auto_research/cron.log 2>&1'
+            echo '15 4 1 * * cd /home/anestishkurti92/ufc-predictor-v1 && nice -n 15 timeout 120m venv/bin/python ufc_autoresearch.py monthly >> auto_research/cron.log 2>&1'
+            echo '# END APPWIZA UFC AUTORESEARCH'
+          } | crontab -
+          echo '[40%] Cron schedule installed'
+
+          # First immutable source snapshot and lightweight discovery smoke test.
+          OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 nice -n 12 timeout 10m venv/bin/python ufc_autoresearch.py snapshot
+          echo '[60%] Source snapshot passed'
+          OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 nice -n 12 timeout 20m venv/bin/python ufc_autoresearch.py daily
+          echo '[80%] Initial research + digest passed'
+
+          echo '=== AUTORESEARCH CRON ==='
+          crontab -l | sed -n '/# BEGIN APPWIZA UFC AUTORESEARCH/,/# END APPWIZA UFC AUTORESEARCH/p'
+          echo '=== DATABASE ==='
+          venv/bin/python - <<'PY'
+          import sqlite3
+          p='auto_research/state/research.sqlite3'
+          db=sqlite3.connect(p)
+          for t in ['source_snapshots','research_runs','candidates','candidate_observations','data_events']:
+              print(t,db.execute(f'SELECT COUNT(*) FROM {t}').fetchone()[0])
+          print('last_run',db.execute('SELECT mode,status,dataset_rows,candidates_tested,survivors FROM research_runs ORDER BY id DESC LIMIT 1').fetchone())
+          print('official_autopromotions',db.execute('SELECT COUNT(*) FROM candidates WHERE official != 0').fetchone()[0])
+          PY
+          echo '=== RESOURCES AFTER RUN ==='
+          free -h
+          df -h /home | tail -1
+          echo '[100%] UFC AUTONOMOUS RESEARCH ACTIVE'
+          EOF
