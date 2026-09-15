@@ -1,0 +1,8 @@
+from pathlib import Path
+p=Path('scripts/nfl_live_legacy_full_dissection.py')
+s=p.read_text()
+old="""# Reuse exact live-rule reconstruction so this audit cannot silently drift from the scanner.\nns=runpy.run_path(str(REPO/'scripts/nfl_audit_current_live_legacy_methods.py'))\nbets=ns['bets'].copy(); rich=ns['d'].copy(); metrics0=ns['metrics']\nnum=lambda x:pd.to_numeric(x,errors='coerce')\n"""
+new="""# Use the already-verified exact live-method bet lists, then enrich by game/team.\n# These files are the source behind the published 75-16 / 55-9 exact audit and\n# avoid reconstructing an old ranking field from a newer feature store.\nparts=[]\nfor mid,fn in [('original','original_bets.csv'),('stricter','stricter_bets.csv')]:\n    z=pd.read_csv(REPO/'nfl/legacy_live_home_opener_exact'/fn)\n    z['method']=mid; z['team']=z['home_team']; z['opponent']=z['away_team']\n    z['moneyline']=pd.to_numeric(z['ml'] if 'ml' in z else z['home_moneyline'],errors='coerce')\n    z['profit_units']=pd.to_numeric(z['profit'],errors='coerce')\n    z['record_gap']=pd.to_numeric(z['prior_win_pct'],errors='coerce')-pd.to_numeric(z['opponent_prior_win_pct'],errors='coerce')\n    z['run_def_rank']=pd.to_numeric(z['run_rank'],errors='coerce')\n    parts.append(z)\nbets=pd.concat(parts,ignore_index=True)\nrich=pd.read_parquet(CTX/'coaching_everything/coaching_enriched_team_sides_2006_2025.parquet')\nnum=lambda x:pd.to_numeric(x,errors='coerce')\n"""
+if old not in s: raise SystemExit('expected legacy input block not found')
+p.write_text(s.replace(old,new,1))
+print('patched dissection to verified exact bet inputs')
