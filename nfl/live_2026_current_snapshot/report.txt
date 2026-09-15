@@ -1,10 +1,12 @@
-NFL 2026 CURRENT BOARD — FRESH CURRENT-SEASON + COACHING CONTEXT
-generated_utc=2026-09-15T04:33:48.661876+00:00
+NFL 2026 CURRENT BOARD — FRESH CURRENT-SEASON + DYNAMIC COACHING CONTEXT
+generated_utc=2026-09-15T05:32:31.845473+00:00
 Fresh schedule/game_id is authoritative. Completed or week-mismatched board rows are flagged, not treated as upcoming.
+Dynamic coach quality uses seasons strictly before 2026; Week 1+ outcomes do not leak into coach ratings.
 Current-season samples before Week 4 are CONTEXT ONLY; mature rolling methods still require >=3 prior completed games.
 
 NO (Saints) vs LV | board W3, schedule W3 | ML=-185.0 | method=stricter | status=UPCOMING
   Coaching: HC change=no, OC change=unknown, DC change=unknown
+  Staff: HC=nan; OC=nan; DC=nan
   Preseason=1-2 pass=False | prior 2026 games=1 record=0-1 avg margin=-1.0
     W1 vs DET: L 30-31 margin=-1 | passing_yards=410, rushing_yards=91, receiving_yards=410, passing_epa=-1.01, rushing_epa=-1.66, passing_cpoe=-1.21, completions=35, attempts=56, carries=25
   Opponent prior-2026 record=1-0, avg margin=+14.0
@@ -13,10 +15,12 @@ TEN (Titans) vs NYJ | board W2, schedule W1 | ML=-375.0 | method=stricter | stat
   IDENTITY WARNING: board week=2 but fresh schedule game_id says week=1.
   TARGET ALREADY FINAL: TEN 10-23 NYJ. This is not an upcoming bet.
   Coaching: HC change=yes, OC change=yes, DC change=yes
+  Staff: HC=nan; OC=nan; DC=nan
   Preseason=2-1 pass=True | no completed 2026 games before authoritative target week
 
 BAL (Ravens) vs NO | board W2, schedule W2 | ML=-375.0 | method=original | status=UPCOMING
   Coaching: HC change=yes, OC change=yes, DC change=yes
+  Staff: HC=nan; OC=nan; DC=nan
   Preseason=3-0 pass=True | prior 2026 games=1 record=1-0 avg margin=+18.0
     W1 vs IND: W 41-23 margin=+18 | passing_yards=324, rushing_yards=202, receiving_yards=324, passing_epa=10.3, rushing_epa=6.66, passing_cpoe=4.8, completions=17, attempts=25, carries=37
   Opponent prior-2026 record=0-1, avg margin=-1.0
