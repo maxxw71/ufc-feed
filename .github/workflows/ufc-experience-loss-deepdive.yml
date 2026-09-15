@@ -1,0 +1,129 @@
+name: UFC Experience Mismatch Deep Dive
+
+on:
+  push:
+    paths:
+      - '.github/workflows/ufc-experience-loss-deepdive.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  deepdive:
+    runs-on: [self-hosted, appwiza]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Deep dive losses and opponent styles
+        shell: bash
+        run: |
+          set -euo pipefail
+          ROOT=/home/anestishkurti92/ufc-predictor-v1
+          OUT="$GITHUB_WORKSPACE/ufc_unique_method_discovery"
+          mkdir -p "$OUT"
+          PY="$ROOT/venv/bin/python"; [ -x "$PY" ] || PY="$ROOT/venv.google-original/bin/python"
+          ROOT="$ROOT" OUT="$OUT" "$PY" - <<'PY'
+          import os,itertools
+          from pathlib import Path
+          import numpy as np,pandas as pd
+          root=Path(os.environ['ROOT']); out=Path(os.environ['OUT'])
+          d=pd.read_csv(root/'new_category_discovery/prefight_favorite_features.csv',low_memory=False)
+          d['event_date']=pd.to_datetime(d.event_date,errors='coerce').dt.normalize()
+          for c in d.columns:
+              if c not in ['event_date','favorite','opponent','won']:
+                  d[c]=pd.to_numeric(d[c],errors='coerce')
+          if d.won.dtype!=bool:d['won']=d.won.astype(str).str.lower().map({'true':True,'1':True,'yes':True,'false':False,'0':False,'no':False})
+          core=d[(d.market_prob>=.575)&(d.market_prob<=.775)&(d.f_fights>=8)&(d.o_fights<=3)&((d.f_win_pct-d.o_win_pct)>=.05)].copy()
+
+          # Join structural age/reach attributes.
+          e=pd.read_csv(root/'favorite_loss_risk_analysis/enriched_market_sample.csv',low_memory=False)
+          e['event_date']=pd.to_datetime(e.event_date,errors='coerce').dt.normalize()
+          keep=['event_date','favorite','underdog','fav_age','dog_age','fav_younger_by','fav_reach_adv','fav_height_adv','fav_stance','dog_stance','stance_mismatch','division']
+          e=e[keep].drop_duplicates(['event_date','favorite','underdog'])
+          core=core.merge(e,left_on=['event_date','favorite','opponent'],right_on=['event_date','favorite','underdog'],how='left')
+
+          # Join actual outcome/method from UFCStats market sample.
+          r=pd.read_csv(root/'combined_age_reach_backtest/reach_market_sample.csv',low_memory=False)
+          r['event_date']=pd.to_datetime(r.event_date,errors='coerce').dt.normalize()
+          rows=[]
+          for _,x in core.iterrows():
+              q=r[r.event_date.eq(x.event_date) & (((r.player1==x.favorite)&(r.player2==x.opponent))|((r.player2==x.favorite)&(r.player1==x.opponent)))]
+              if q.empty: rows.append((np.nan,np.nan,np.nan)); continue
+              z=q.iloc[0]; rows.append((z.get('method'),z.get('round'),z.get('time')))
+          core[['fight_method','fight_round','fight_time']]=pd.DataFrame(rows,index=core.index)
+
+          # Derived matchup/style signals from prefight history.
+          core['age_gap']=core.fav_younger_by
+          core['reach_gap']=core.fav_reach_adv
+          core['height_gap']=core.fav_height_adv
+          core['opp_wrestling_pressure']=core.o_td_a15
+          core['opp_wrestling_success']=core.o_td_l15
+          core['opp_control']=core.o_ctrl15
+          core['opp_ground']=core.o_ground_l15
+          core['opp_sub_pressure']=core.o_sub15
+          core['opp_kd_threat']=core.o_kd15
+          core['opp_sig_diff']=core.o_sig_diff_pm
+          core['opp_finish_rate']=core.o_finish_win_pct
+          core['fav_finish_vuln']=core.f_finish_loss_pct
+          core['style_danger_score']=(core.o_td_l15.fillna(0)>=1.0).astype(int)+(core.o_ctrl15.fillna(0)>=3).astype(int)+(core.o_sub15.fillna(0)>=0.5).astype(int)+(core.o_ground_l15.fillna(0)>=4).astype(int)
+
+          def st(g):
+              n=len(g)
+              if not n:return (0,0,np.nan,np.nan)
+              w=int(g.won.sum());roi=float(g.profit100.sum())/(100*n);return n,w,w/n,roi
+
+          # Test interpretable risk vetoes on the full 52, including age/reach and opponent style.
+          tests={
+            'fav_not_older':core.age_gap>=0,
+            'fav_younger_2plus':core.age_gap>=2,
+            'fav_younger_4plus':core.age_gap>=4,
+            'fav_not_shorter':core.reach_gap>=0,
+            'fav_reach_2plus':core.reach_gap>=2,
+            'fav_not_shorter_height':core.height_gap>=0,
+            'avoid_opp_td_success_1plus':core.o_td_l15<1.0,
+            'avoid_opp_td_attempt_3plus':core.o_td_a15<3.0,
+            'avoid_opp_control_3plus':core.o_ctrl15<3.0,
+            'avoid_opp_control_5plus':core.o_ctrl15<5.0,
+            'avoid_opp_sub_0.5plus':core.o_sub15<0.5,
+            'avoid_opp_ground_4plus':core.o_ground_l15<4.0,
+            'avoid_opp_style_score_2plus':core.style_danger_score<2,
+            'avoid_opp_finish_rate_60plus':core.o_finish_win_pct<.60,
+            'avoid_fav_finish_vuln_40plus':core.f_finish_loss_pct<.40,
+            'avoid_fav_finish_vuln_50plus':core.f_finish_loss_pct<.50,
+          }
+          base=st(core); rec=[]
+          for name,m in tests.items():
+              g=core[m.fillna(False)]; n,w,wr,roi=st(g); old=st(g[g.event_date<pd.Timestamp('2020-01-01')]);new=st(g[g.event_date>=pd.Timestamp('2020-01-01')]);rem=core[~m.fillna(False)];rn,rw,rwr,rroi=st(rem)
+              rec.append(dict(rule=name,n=n,wins=w,win_rate=wr,roi=roi,pre_n=old[0],pre_roi=old[3],recent_n=new[0],recent_roi=new[3],removed_n=rn,removed_losses=rn-rw,removed_roi=rroi,lift=roi-base[3]))
+          for a,b in itertools.combinations(tests,2):
+              m=tests[a].fillna(False)&tests[b].fillna(False);g=core[m]
+              if len(g)<35:continue
+              n,w,wr,roi=st(g);old=st(g[g.event_date<pd.Timestamp('2020-01-01')]);new=st(g[g.event_date>=pd.Timestamp('2020-01-01')])
+              if old[0]<12 or new[0]<15:continue
+              rem=core[~m];rn,rw,rwr,rroi=st(rem)
+              rec.append(dict(rule=a+' + '+b,n=n,wins=w,win_rate=wr,roi=roi,pre_n=old[0],pre_roi=old[3],recent_n=new[0],recent_roi=new[3],removed_n=rn,removed_losses=rn-rw,removed_roi=rroi,lift=roi-base[3]))
+          z=pd.DataFrame(rec);z['positive_both']=(z.pre_roi>0)&(z.recent_roi>0);z=z.sort_values(['positive_both','roi','n'],ascending=[False,False,False]);z.to_csv(out/'experience_mismatch_style_veto_tests.csv',index=False)
+
+          detail=['event_date','favorite','opponent','market_prob','won','fight_method','fight_round','fav_age','dog_age','age_gap','reach_gap','height_gap','f_fights','o_fights','f_win_pct','o_win_pct','f_last3','o_last3','f_last5','o_last5','f_layoff','o_layoff','f_sig_diff_pm','o_sig_diff_pm','f_sig_def','o_sig_def','f_td_l15','o_td_l15','f_td_a15','o_td_a15','f_td_def','o_td_def','f_sub15','o_sub15','f_ctrl15','o_ctrl15','f_ctrl_allowed15','o_ctrl_allowed15','f_ground_l15','o_ground_l15','f_finish_win_pct','o_finish_win_pct','f_finish_loss_pct','o_finish_loss_pct','style_danger_score','division']
+          core[detail].to_csv(out/'experience_mismatch_deep_detail.csv',index=False)
+
+          lines=['UFC EXPERIENCE MISMATCH — DEEP LOSS PROFILE','='*118,'']
+          for _,x in core[~core.won].sort_values('event_date').iterrows():
+              lines.append(f"{x.event_date.date()} | {x.favorite} lost to {x.opponent} | {x.fight_method} R{x.fight_round}")
+              lines.append(f"  Market {x.market_prob*100:.1f}% | age edge {x.age_gap:+.1f}y | reach {x.reach_gap:+.1f}in | height {x.height_gap:+.1f}in | UFC exp {int(x.f_fights)}-{int(x.o_fights)}")
+              lines.append(f"  Opp style: TD landed/15 {x.o_td_l15:.2f}, attempts/15 {x.o_td_a15:.2f}, control/15 {x.o_ctrl15:.2f}, ground/15 {x.o_ground_l15:.2f}, subs/15 {x.o_sub15:.2f}, KD/15 {x.o_kd15:.2f}, finish win% {x.o_finish_win_pct:.1%}")
+              lines.append(f"  Favorite vuln: sigdiff {x.f_sig_diff_pm:+.2f}, TDdef {x.f_td_def:.1%}, ctrl allowed/15 {x.f_ctrl_allowed15:.2f}, finish-loss% {x.f_finish_loss_pct:.1%}")
+          lines+=['','TOP STYLE/STRUCTURAL VETOES (preserve >=35)','-'*118]
+          for _,x in z[(z.n>=35)&(z.pre_n>=12)&(z.recent_n>=15)&(z.pre_roi>0)&(z.recent_roi>0)&(z.roi>base[3])].head(25).iterrows():
+              lines.append(f"{x.rule} | n={int(x.n)} {int(x.wins)}-{int(x.n-x.wins)} | ROI {x.roi*100:+.2f}% (lift {x.lift*100:+.2f}pp) | pre {x.pre_roi*100:+.2f}% | recent {x.recent_roi*100:+.2f}% | removed {int(x.removed_n)}, losses removed {int(x.removed_losses)}")
+          (out/'experience_mismatch_deep_report.txt').write_text('\n'.join(lines)+'\n');print('\n'.join(lines))
+          PY
+      - name: Commit outputs
+        shell: bash
+        run: |
+          git config user.name appwiza-research-bot
+          git config user.email actions@users.noreply.github.com
+          git add ufc_unique_method_discovery/experience_mismatch_deep* ufc_unique_method_discovery/experience_mismatch_style_veto_tests.csv
+          git diff --cached --quiet && exit 0
+          git commit -m 'Deep dive UFC experience mismatch losses'
+          git push
