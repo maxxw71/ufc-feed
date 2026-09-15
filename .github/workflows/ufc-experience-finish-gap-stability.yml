@@ -1,0 +1,70 @@
+name: UFC Experience Finish Gap Stability
+
+on:
+  push:
+    paths:
+      - '.github/workflows/ufc-experience-finish-gap-stability.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  analyze:
+    runs-on: [self-hosted, appwiza]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Test finish-gap neighborhood and residual losses
+        shell: bash
+        run: |
+          set -euo pipefail
+          ROOT=/home/anestishkurti92/ufc-predictor-v1
+          OUT="$GITHUB_WORKSPACE/ufc_unique_method_discovery"
+          mkdir -p "$OUT"
+          PY="$ROOT/venv/bin/python"; [ -x "$PY" ] || PY="$ROOT/venv.google-original/bin/python"
+          ROOT="$ROOT" OUT="$OUT" "$PY" - <<'PY'
+          import os
+          from pathlib import Path
+          import numpy as np,pandas as pd
+          root=Path(os.environ['ROOT']); out=Path(os.environ['OUT'])
+          d=pd.read_csv(root/'new_category_discovery/prefight_favorite_features.csv',low_memory=False)
+          d['event_date']=pd.to_datetime(d.event_date,errors='coerce')
+          for c in d.columns:
+              if c not in ['event_date','favorite','opponent','won']:
+                  d[c]=pd.to_numeric(d[c],errors='coerce')
+          if d.won.dtype!=bool:
+              d['won']=d.won.astype(str).str.lower().map({'true':1,'false':0,'1':1,'0':0}).astype('boolean')
+          d['winpct_gap']=d.f_win_pct-d.o_win_pct
+          d['finish_loss_gap']=d.f_finish_loss_pct-d.o_finish_loss_pct
+          base=d[(d.market_prob>=.575)&(d.market_prob<=.75)&(d.f_fights>=8)&(d.o_fights<=3)&(d.winpct_gap>=.05)].copy()
+          def met(g):
+              n=len(g); w=int(g.won.fillna(False).sum()); p=float(g.profit100.sum())
+              return n,w,n-w,p/(100*n) if n else np.nan
+          rows=[]
+          for th in np.arange(-.10,.81,.05):
+              g=base[base.finish_loss_gap<=th].copy(); n,w,l,roi=met(g)
+              old=met(g[g.event_date<pd.Timestamp('2020-01-01')]); rec=met(g[g.event_date>=pd.Timestamp('2020-01-01')])
+              rows.append(dict(threshold=round(float(th),2),n=n,wins=w,losses=l,win_rate=w/n if n else np.nan,roi=roi,pre_n=old[0],pre_roi=old[3],recent_n=rec[0],recent_roi=rec[3]))
+          r=pd.DataFrame(rows); r.to_csv(out/'experience_finish_gap_stability.csv',index=False)
+          lines=['UFC EXPERIENCE MISMATCH — FINISH-LOSS GAP STABILITY','='*108,'Threshold means: veteran favorite finish-loss% minus opponent finish-loss% must be <= threshold.','']
+          for _,z in r.iterrows():
+              if z.n>=20:
+                  lines.append(f"gap<={z.threshold:+.2f} | n={int(z.n):2d} {int(z.wins)}-{int(z.losses)} win={z.win_rate*100:5.1f}% ROI={z.roi*100:+6.2f}% | pre n={int(z.pre_n):2d} {z.pre_roi*100:+6.2f}% | recent n={int(z.recent_n):2d} {z.recent_roi*100:+6.2f}%")
+          for th in [.30,.35,.40,.45,.50]:
+              g=base[base.finish_loss_gap<=th].copy(); losses=g[~g.won.fillna(False)]
+              lines += ['',f'RESIDUAL LOSSES AT GAP <= {th:.2f} ({len(losses)}):']
+              for _,x in losses.sort_values('event_date').iterrows():
+                  lines.append(f"  {x.event_date.date()} | {x.favorite} lost to {x.opponent} | mkt {x.market_prob*100:.1f}% | UFC exp {int(x.f_fights)}-{int(x.o_fights)} | fav finish-loss {x.f_finish_loss_pct*100:.1f}% vs opp {x.o_finish_loss_pct*100:.1f}% | gap {x.finish_loss_gap*100:+.1f}pp | fav KD absorbed/15 {x.f_kd_abs15:.2f} | opp KD/15 {x.o_kd15:.2f} | opp TD att/15 {x.o_td_a15:.2f} | opp ctrl/15 {x.o_ctrl15:.2f}")
+          (out/'experience_finish_gap_stability_report.txt').write_text('\n'.join(lines)+'\n')
+          print('\n'.join(lines))
+          PY
+      - name: Commit outputs
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name appwiza-research-bot
+          git config user.email actions@users.noreply.github.com
+          git add ufc_unique_method_discovery/experience_finish_gap_stability.csv ufc_unique_method_discovery/experience_finish_gap_stability_report.txt
+          git diff --cached --quiet && exit 0
+          git commit -m 'Add UFC experience finish-gap stability results'
+          git push
