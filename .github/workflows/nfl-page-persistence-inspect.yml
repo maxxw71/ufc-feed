@@ -1,0 +1,39 @@
+name: NFL page persistence inspect
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths: ['.github/workflows/nfl-page-persistence-inspect.yml']
+permissions:
+  contents: write
+jobs:
+  inspect:
+    runs-on: [self-hosted, Linux, X64, appwiza]
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - name: Inspect persistent edit points
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          R=nfl/page_persistence_report.txt
+          : > "$R"
+          echo '=== TIMER ===' >> "$R"
+          cat /etc/systemd/system/nfl-home-opener.timer >> "$R" 2>&1 || true
+          echo >> "$R"
+          echo '=== SCANNER ACCESS ===' >> "$R"
+          for p in /home/anestishkurti92/nfl-predictor-v1/research_v2 /home/anestishkurti92/nfl-predictor-v1/research_v2/nfl_home_opener_scanner.py; do
+            stat -c '%U:%G %a %n' "$p" >> "$R" 2>&1 || true
+            getfacl -p "$p" >> "$R" 2>&1 || true
+            if [ -w "$p" ]; then echo WRITABLE >> "$R"; else echo READONLY >> "$R"; fi
+          done
+          echo >> "$R"
+          echo '=== SCANNER IMPORTS / PUBLISH ===' >> "$R"
+          grep -nE -C 6 'sports_publish|sys.path|publish_nfl|if __name__' /home/anestishkurti92/nfl-predictor-v1/research_v2/nfl_home_opener_scanner.py >> "$R" 2>&1 || true
+          echo >> "$R"
+          echo '=== PUBLIC NFL INDEX HEAD ===' >> "$R"
+          sed -n '1,180p' /srv/appwiza-sports/public/nfl/index.html >> "$R" 2>&1 || true
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git add "$R"
+          if ! git diff --cached --quiet; then git commit -m 'Inspect NFL page persistence path'; git pull --rebase origin main; git push origin HEAD:main; fi
