@@ -1,14 +1,14 @@
 NFL LIVE HOME-OPENER FULL DISSECTION
 
-historical_bets=155 enriched_features_screened=107
+historical_bets=155 enriched_features_screened=102
 REG only. Weather excluded. Veto candidates selected on 2007-2019 train/validation; 2020-25 opened only after stack freeze.
 
 BASE original: 75-16 win=82.4% ROI=+16.0% | train +16.0% val +17.6% hold +14.2% | pos seasons 13/18
 BASE stricter: 55-9 win=85.9% ROI=+17.2% | train +5.2% val +33.8% hold +12.4% | pos seasons 14/18
 
 ENRICHED FINAL DECISION
-original: ENRICHED_VETO_CONFIRMED | final 66-0 win=100.0% ROI=+43.1% hold=+41.9% | ats_margin <= -4.2
-stricter: ENRICHED_VETO_CONFIRMED | final 50-0 win=100.0% ROI=+38.0% hold=+36.7% | ats_margin <= -5.5
+original: ENRICHED_VETO_CONFIRMED | final 58-9 win=86.6% ROI=+23.0% hold=+20.5% | opp_last_rank_def_allowed_giveaway_rate <= 14.8
+stricter: NO_NEW_ENRICHED_STACK_CONFIRMED | final 55-9 win=85.9% ROI=+17.2% hold=+12.4% | 
 
 PRICE BUCKETS
 original <= -400: n=23 22-1 win=95.7% ROI=+12.3% recent=+19.8%

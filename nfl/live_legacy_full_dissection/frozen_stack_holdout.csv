@@ -1,7 +1,7 @@
 method,depth,vetoes,pre_roi,holdout_n,holdout_win_pct,holdout_roi,full_n,full_win_pct,full_roi,confirmed
-original,1,ats_margin <= -4.2,0.43352948238099415,24,1.0,0.4190828180459614,66,1.0,0.43128089728042635,True
-original,2,ats_margin <= -4.2 | opp_last_rank_def_allowed_giveaway_rate <= 14.8,0.4490357878331128,19,1.0,0.39527505543941294,53,1.0,0.44432685159915236,True
-original,3,ats_margin <= -4.2 | over_odds >= -103 | under_odds <= -107,0.400533161938332,4,1.0,0.5692576001306786,37,1.0,0.4213923809282104,False
-stricter,1,ats_margin <= -5.5,0.38736016524300754,18,1.0,0.3671799730143285,50,1.0,0.38009529604068304,True
-stricter,2,ats_margin <= -5.5 | total <= 29.2,0.40470668343855976,18,1.0,0.3671799730143285,47,1.0,0.3937160280705101,True
-stricter,3,ats_margin <= -5.5 | last_pre_success_rate >= 0.435727 | total <= 29.2,0.4264941511483466,9,1.0,0.4686701096492432,32,1.0,0.4438207444591424,False
+original,1,opp_last_rank_def_allowed_giveaway_rate <= 14.8,0.24301444736538613,22,0.8636363636363636,0.20501027515222034,67,0.8656716417910447,0.23041177698782597,True
+original,2,opp_last_rank_def_allowed_giveaway_rate <= 14.8 | opp_last_pre_rush_epa_per_carry >= -0.0526385,0.32870716931339905,13,0.9230769230769231,0.26416578348888253,47,0.9361702127659575,0.3110098494889275,False
+original,3,over_odds >= -103 | opp_last_rank_def_allowed_rush_epa_per_carry <= 13.8 | last_pre_pass_epa_per_dropback >= 0.210529,0.35480077004924593,16,0.75,0.05235893050845557,47,0.8936170212765957,0.2553908530730079,False
+stricter,1,last_pre_def_allowed_success_rate >= 0.393685,0.2843754290875558,6,1.0,0.28115780441401056,32,0.96875,0.26061986166449996,False
+stricter,2,opp_last_rank_def_allowed_rush_epa_per_carry <= 12.8 | last_pre_success_rate >= 0.435727,0.36759168039672885,7,1.0,0.48285480530970476,29,1.0,0.40546594594250834,False
+stricter,3,opp_last_pre_rush_epa_per_carry >= -0.0571947 | opp_last_rank_def_allowed_rush_epa_per_carry <= 12.8 | last_rank_points_against <= 2.8,0.37169038224230894,9,0.7777777777777778,0.04972404482886193,30,0.9333333333333333,0.2802641993328449,False
