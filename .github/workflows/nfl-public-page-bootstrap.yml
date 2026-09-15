@@ -1,0 +1,41 @@
+name: NFL public page bootstrap
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'nfl/nfl_public_page_bootstrap.py'
+      - '.github/workflows/nfl-public-page-bootstrap.yml'
+permissions:
+  contents: write
+jobs:
+  bootstrap:
+    runs-on: [self-hosted, Linux, X64, appwiza]
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - name: Reformat current public NFL page
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          /home/anestishkurti92/nfl-predictor-v1/venv/bin/python nfl/nfl_public_page_bootstrap.py
+      - name: Verify public page changes
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          P=/srv/appwiza-sports/public/nfl/index.html
+          R=nfl/public_page_bootstrap_report.txt
+          {
+            echo "research_link=$(grep -c '/sports/nfl/research/' "$P" || true)"
+            echo "overall_record=$(grep -c 'Overall record' "$P" || true)"
+            echo "available_by_date=$(grep -c 'date-block' "$P" || true)"
+            echo "completed_table=$(grep -c 'history-table' "$P" || true)"
+            echo "downloads_collapsed=$(grep -c 'downloads-block' "$P" || true)"
+            echo "dashboard_css=$(test -f /srv/appwiza-sports/public/nfl/dashboard.css && echo yes || echo no)"
+            stat -c 'page=%U:%G %a %s %n' "$P"
+          } > "$R"
+          cat "$R"
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git add "$R"
+          if ! git diff --cached --quiet; then git commit -m 'Record NFL public page bootstrap'; git pull --rebase origin main; git push origin HEAD:main; fi
