@@ -10,7 +10,7 @@ if MARKER not in s:
     anchor = "def downloads_html(sport):\n"
     if anchor not in s:
         raise SystemExit('downloads_html anchor missing')
-    helper = r'''# UFC_DASHBOARD_V1
+    helper = r"""# UFC_DASHBOARD_V1
 def ufc_dashboard_record(cards,upcoming):
  w=sum(c.get('result')=='win' for c in cards);l=sum(c.get('result')=='loss' for c in cards);p=sum(c.get('result')=='push' for c in cards)
  priced=[c for c in cards if c.get('profit_units') is not None and c.get('result') in {'win','loss','push'}]
@@ -46,7 +46,7 @@ def ufc_withdrawn_details(cards):
  if not withdrawn:return ''
  return '<details class="withdrawn"><summary>No longer qualifying / withdrawn ('+str(len(withdrawn))+')</summary><div class="grid">'+''.join(card_html(c) for c in sorted(withdrawn,key=lambda x:dt(x['start'])))+'</div></details>'
 
-'''
+"""
     s=s.replace(anchor,helper+anchor,1)
 
 css_anchor="@media(max-width:750px){.grid{grid-template-columns:1fr}main{padding:28px 16px}.card{padding:20px}nav{gap:15px;padding:16px}.stats{gap:24px}}'''"
