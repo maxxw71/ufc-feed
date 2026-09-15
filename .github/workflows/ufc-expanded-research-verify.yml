@@ -1,0 +1,30 @@
+name: UFC Expanded Research Verify
+on:
+  push:
+    paths:
+      - '.github/workflows/ufc-expanded-research-verify.yml'
+  workflow_dispatch:
+jobs:
+  verify:
+    runs-on: [self-hosted, appwiza]
+    timeout-minutes: 20
+    steps:
+      - shell: bash
+        run: |
+          set -euo pipefail
+          KEY=/home/appwiza-runner/.ssh/appwiza_vps
+          ssh -i "$KEY" -o StrictHostKeyChecking=no anestishkurti92@127.0.0.1 'bash -s' <<'EOF'
+          set -euo pipefail
+          cd /home/anestishkurti92/ufc-predictor-v1
+          OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 nice -n 12 timeout 15m venv/bin/python ufc_autoresearch_runner.py daily
+          venv/bin/python - <<'PY'
+          import sqlite3
+          db=sqlite3.connect('auto_research/state/research.sqlite3')
+          print('last_run',db.execute('select mode,status,dataset_rows,candidates_tested,survivors,dataset_sha from research_runs order by id desc limit 1').fetchone())
+          print('shadow_total',db.execute("select count(*) from candidates where status='shadow_candidate' and official=0").fetchone()[0])
+          for r in db.execute("select name,bets,wins,losses,roi,train_roi,holdout_roi,yearly_positive_ratio,times_seen from candidates where official=0 order by holdout_roi desc,roi desc limit 10"):
+              print('candidate',r)
+          print('official_autopromotions',db.execute('select count(*) from candidates where official != 0').fetchone()[0])
+          PY
+          free -h
+          EOF
