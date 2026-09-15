@@ -6,8 +6,6 @@ on:
     paths:
       - 'nfl/nfl_public_page.py'
       - 'nfl/live_2026_current_snapshot/current_board_fresh_context.csv'
-      - 'scripts/nfl_patch_public_page_deep_audit.py'
-      - 'scripts/nfl_suppress_veto_available.py'
       - '.github/workflows/nfl-public-page-enhance-deploy.yml'
 permissions:
   contents: write
@@ -18,7 +16,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with: {fetch-depth: 0}
-      - name: Install future scanner enhancer and fresh board context
+      - name: Install persistent NFL dashboard enhancer
         shell: bash
         run: |
           set -Eeuo pipefail
@@ -31,11 +29,12 @@ jobs:
           mv "$LIVE/page_context/current_board_fresh_context.csv.new" "$LIVE/page_context/current_board_fresh_context.csv"
           python3 - "$SCANNER" <<'PY'
           from pathlib import Path
-          p=Path(__import__('sys').argv[1]);s=p.read_text()
+          import sys
+          p=Path(sys.argv[1]);s=p.read_text()
           if 'import nfl_public_page' not in s:
-              needle='import sports_publish\n'
-              if needle not in s: raise SystemExit('sports_publish import anchor missing')
-              s=s.replace(needle,needle+'import nfl_public_page\n',1)
+              anchor='import sports_publish\n'
+              if anchor not in s: raise SystemExit('sports_publish import anchor missing')
+              s=s.replace(anchor,anchor+'import nfl_public_page\n',1)
           call='sports_publish.publish_nfl(records,now,nfl_email_design)'
           enhanced=call+'\n nfl_public_page.safe_enhance(now,ledger,sports_publish)'
           if 'nfl_public_page.safe_enhance' not in s:
@@ -44,61 +43,41 @@ jobs:
           p.write_text(s)
           PY
           /home/anestishkurti92/nfl-predictor-v1/venv/bin/python -m py_compile "$LIVE/nfl_public_page.py" "$SCANNER"
-      - name: Patch fresh deep audit into current public page
+      - name: Regenerate NFL page through live scanner without email
         shell: bash
         run: |
           set -Eeuo pipefail
-          export NFL_PUBLIC_PAGE=/srv/appwiza-sports/public/nfl/index.html
-          export NFL_BOARD_CONTEXT="$GITHUB_WORKSPACE/nfl/live_2026_current_snapshot/current_board_fresh_context.csv"
-          /home/anestishkurti92/nfl-predictor-v1/venv/bin/python scripts/nfl_patch_public_page_deep_audit.py
-          /home/anestishkurti92/nfl-predictor-v1/venv/bin/python scripts/nfl_suppress_veto_available.py
-      - name: Verify and publish deploy report
+          cd /home/anestishkurti92/nfl-predictor-v1/research_v2
+          /home/anestishkurti92/nfl-predictor-v1/venv/bin/python nfl_home_opener_scanner.py --manual
+      - name: Verify restored NFL structure and actionable board
         shell: bash
         run: |
           set -Eeuo pipefail
-          R=nfl/public_page_enhance_report.txt
           PAGE=/srv/appwiza-sports/public/nfl/index.html
-          python3 - "$PAGE" <<'PY' > /tmp/nfl_available_verify.txt
+          python3 - "$PAGE" <<'PY' > /tmp/nfl_restore_verify.txt
           from pathlib import Path
           import sys
           s=Path(sys.argv[1]).read_text()
-          a='<h2>Available selections</h2>'
-          i=s.find(a)
-          j=s.find('<div class="section-kicker">Tracked results</div>',i)
-          if j < 0: j=s.find('<h2>Completed selections</h2>',i)
-          seg=s[i:j] if i>=0 and j>=0 else ''
-          print('available_saints_to_win='+str(seg.lower().count('saints to win')))
-          print('available_titans_to_win='+str(seg.lower().count('titans to win')))
-          print('available_ravens_to_win='+str(seg.lower().count('ravens to win')))
+          a=s.find('<h2>Available selections</h2>')
+          b=s.find('<div class="section-kicker">Tracked results</div>',a)
+          seg=s[a:b] if a>=0 and b>=0 else ''
+          print('actionable_label='+str('Actionable now' in s))
+          print('ravens='+str(seg.lower().count('ravens to win')))
+          print('saints='+str(seg.lower().count('saints to win')))
+          print('titans='+str(seg.lower().count('titans to win')))
+          print('research='+str('NFL Research Lab' in s))
+          print('deep_audit='+str('2026 deep audit' in s))
+          print('completed='+str('Completed selections' in s))
+          print('downloads_collapsed='+str('<details class="downloads-block"' in s))
           PY
-          {
-            echo "scanner_patch=$(grep -c 'nfl_public_page.safe_enhance' /home/anestishkurti92/nfl-predictor-v1/research_v2/nfl_home_opener_scanner.py || true)"
-            echo "research_link=$(grep -c '/sports/nfl/research/' "$PAGE" || true)"
-            echo "overall_record=$(grep -c 'Overall record' "$PAGE" || true)"
-            echo "completed_table=$(grep -c 'Completed selections' "$PAGE" || true)"
-            echo "deep_audit=$(grep -c '2026 deep audit' "$PAGE" || true)"
-            echo "coaching_context=$(grep -c 'Coaching + games already played' "$PAGE" || true)"
-            echo "refined_veto=$(grep -c 'Refined veto' "$PAGE" || true)"
-            echo "saints_no_bet=$(grep -c 'NO BET' "$PAGE" || true)"
-            cat /tmp/nfl_available_verify.txt
-            echo "deep_css=$(test -f /srv/appwiza-sports/public/nfl/deep-audit.css && echo yes || echo no)"
-            echo "fresh_context=$(test -s /home/anestishkurti92/nfl-predictor-v1/research_v2/page_context/current_board_fresh_context.csv && echo yes || echo no)"
-            stat -c 'page=%U:%G %a %s %n' "$PAGE"
-          } > "$R"
-          cat "$R"
-          grep -q '2026 deep audit' "$PAGE"
-          grep -q 'Coaching + games already played' "$PAGE"
-          grep -q 'NO BET' "$PAGE"
-          grep -q '^available_saints_to_win=0$' /tmp/nfl_available_verify.txt
-          grep -q '^available_titans_to_win=0$' /tmp/nfl_available_verify.txt
-          git config user.name github-actions
-          git config user.email github-actions@github.com
-          git add "$R"
-          if ! git diff --cached --quiet; then
-            git commit -m 'Record NFL dashboard enhancement deploy'
-            for n in 1 2 3; do
-              git pull --rebase origin main && git push origin HEAD:main && break
-              test "$n" -lt 3 || exit 1
-              sleep $((n*2))
-            done
-          fi
+          cat /tmp/nfl_restore_verify.txt
+          grep -q '^actionable_label=True$' /tmp/nfl_restore_verify.txt
+          grep -q '^ravens=1$' /tmp/nfl_restore_verify.txt
+          grep -q '^saints=0$' /tmp/nfl_restore_verify.txt
+          grep -q '^titans=0$' /tmp/nfl_restore_verify.txt
+          grep -q '^research=True$' /tmp/nfl_restore_verify.txt
+          grep -q '^deep_audit=True$' /tmp/nfl_restore_verify.txt
+          grep -q '^completed=True$' /tmp/nfl_restore_verify.txt
+          grep -q '^downloads_collapsed=True$' /tmp/nfl_restore_verify.txt
+          curl -fsSL https://appwiza.com/sports/nfl/ | grep -q 'Actionable now'
+          echo 'NFL persistent dashboard restored and live'
