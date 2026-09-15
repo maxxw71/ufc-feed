@@ -2,7 +2,7 @@
   "season": 2026,
   "week": 2,
   "mode": "pregame",
-  "generated_utc": "2026-09-15T04:39:05.577518+00:00",
+  "generated_utc": "2026-09-15T05:31:25.460738+00:00",
   "latest_fully_completed_week_at_run": 1,
   "next_unplayed_week_at_run": 2,
   "sources": {
@@ -135,11 +135,9 @@
       "columns": 17,
       "source_path": "/home/appwiza-runner/nfl-context-data/injury_travel_mining/travel_team_game_2006_2026.parquet"
     },
-    "coach_quality_enriched": {
-      "status": "saved",
-      "rows": 0,
-      "columns": 649,
-      "source_path": "/home/appwiza-runner/nfl-context-data/coach_quality_expansion/coach_quality_enriched_team_sides.parquet"
+    "coach_quality_live_2026": {
+      "status": "missing",
+      "path": "/home/appwiza-runner/nfl-context-data/coach_quality_live/coach_quality_2026_team_sides.parquet"
     }
   },
   "files": {
@@ -185,7 +183,7 @@
     },
     "market_snapshots.jsonl.gz": {
       "bytes": 3446,
-      "sha256": "9b6714ac9949f40c3dba7de162a939068e2532fe54efb7a66fc57b75359df863"
+      "sha256": "fe0b17ac75154730d484eae23b1cff58c6f33b9d17cfb0519963ec733e4bc2d9"
     },
     "nextgen_passing.parquet": {
       "bytes": 14962,
@@ -236,12 +234,12 @@
       "sha256": "dd39b32aed584209a123aa3db6919c880e48a3d482d5c181e8df32cc1bd1f4c9"
     },
     "schedule.csv": {
-      "bytes": 4993,
-      "sha256": "fa162123be295848c72532eca4dd6894d2dc4ba57f7d35f7562118f84efa4e83"
+      "bytes": 4992,
+      "sha256": "378924d72407f5e448d8722f4790bfe656af3cc55e6ab5407be9b86a8d150ee0"
     },
     "schedule.parquet": {
-      "bytes": 28224,
-      "sha256": "2ac8889a907e79a5387f7c6b1e579d12f4e0f36cb66960a7cd8867149a09d2b7"
+      "bytes": 28220,
+      "sha256": "f8130e4a24e248720ff19ca187ed77b9938158f80a7224d07751c5ae71197446"
     },
     "snap_counts.parquet": {
       "bytes": 7472,
@@ -259,6 +257,7 @@
   "notes": [
     "pregame and postweek snapshots are stored separately to prevent outcome leakage",
     "weeks 1-3 current-season performance is research context; mature live rolling methods require >=3 prior completed games",
+    "coach quality is rebuilt prospectively from staff identity plus seasons strictly before 2026; no 2026 outcomes enter coach quality scores",
     "Git history preserves earlier revisions if an upstream stat correction changes a finalized file later"
   ],
   "available_nflreadpy_loaders": [
