@@ -1,0 +1,23 @@
+name: NFL scanner snapshot
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths: ['.github/workflows/nfl-scanner-snapshot.yml']
+permissions:
+  contents: write
+jobs:
+  snapshot:
+    runs-on: [self-hosted, Linux, X64, appwiza]
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Snapshot scanner
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          cp /home/anestishkurti92/nfl-predictor-v1/research_v2/nfl_home_opener_scanner.py nfl/scanner_snapshot.py
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git add nfl/scanner_snapshot.py
+          if ! git diff --cached --quiet; then git commit -m 'Snapshot current NFL scanner'; git pull --rebase origin main; git push origin HEAD:main; fi
