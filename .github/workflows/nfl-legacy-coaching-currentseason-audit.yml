@@ -1,0 +1,38 @@
+name: NFL legacy coaching current-season audit
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/nfl_legacy_coaching_currentseason_audit.py'
+      - '.github/workflows/nfl-legacy-coaching-currentseason-audit.yml'
+      - 'nfl/live_2026_current_snapshot/**'
+
+permissions:
+  contents: write
+
+jobs:
+  audit:
+    runs-on: [self-hosted, Linux, X64, appwiza]
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+        with: {fetch-depth: 0}
+      - name: Audit coaching and current-season form
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          /home/anestishkurti92/nfl-predictor-v1/venv/bin/python scripts/nfl_legacy_coaching_currentseason_audit.py
+      - name: Publish results
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git add nfl/legacy_coaching_currentseason_audit
+          if ! git diff --cached --quiet; then
+            git commit -m 'Publish NFL coaching current-season legacy audit'
+            git pull --rebase origin main
+            git push origin HEAD:main
+          fi
