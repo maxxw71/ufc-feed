@@ -32,13 +32,15 @@ jobs:
         run: |
           set -Eeuo pipefail
           /home/anestishkurti92/nfl-predictor-v1/venv/bin/python scripts/nfl_current_board_2026_fresh_context.py
-      - name: Publish fresh context and coach layer
+      - name: Publish fresh context
         shell: bash
         run: |
           set -Eeuo pipefail
           git config user.name github-actions
           git config user.email github-actions@github.com
-          git add nfl/live_2026_current_snapshot nfl/live_coach_quality_2026
+          # The dedicated coach-quality workflow owns nfl/live_coach_quality_2026.
+          # Keeping one writer per output path prevents concurrent add/add rebase conflicts.
+          git add nfl/live_2026_current_snapshot
           if ! git diff --cached --quiet; then
             git commit -m 'Update fresh 2026 NFL current-board context'
             git pull --rebase origin main
