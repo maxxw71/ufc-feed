@@ -1,0 +1,26 @@
+UFC EXPERIENCE MISMATCH — DECLINING VETERAN SCORE
+======================================================================================================================
+BASE refined sample: 41 bets | 37-4 | win 90.2% | ROI +33.65%
+
+LOSSES + RISK COMPONENTS
+----------------------------------------------------------------------------------------------------------------------
+2022-04-30 | Andre Fili lost to Joanderson Brito | mkt 69.1% | active risks: older_2plus, older_4plus, negative_sig_diff, high_ctrl_allowed_3, recent3_below_500, finish_vuln_40, career_under_60
+2023-05-13 | Ji Yeon Kim lost to Mandy Bohm | mkt 67.8% | active risks: low_td_def_50, low_td_def_60, recent3_below_500, recent5_below_500, career_under_60
+2024-07-27 | Molly McCann lost to Bruna Brasil | mkt 73.1% | active risks: older_2plus, low_td_def_50, low_td_def_60, high_ctrl_allowed_3, high_ctrl_allowed_4, recent3_below_500, finish_vuln_40, finish_vuln_50, career_under_60
+2024-11-16 | Mickey Gall lost to Ramiz Brahimaj | mkt 60.4% | active risks: negative_sig_diff, low_td_def_50, low_td_def_60, high_ctrl_allowed_3, high_ctrl_allowed_4, recent3_below_500, recent5_below_500, finish_vuln_40, kd_abs_050, career_under_60
+
+ROBUST SCORE VETOES
+----------------------------------------------------------------------------------------------------------------------
+no_age             veto score>=3 | n=30 29-1 win= 96.7% ROI=+44.87% lift=+11.22pp | pre=+50.42% recent=+40.02% | removed 11 incl 3 losses
+decline_balanced   veto score>=4 | n=32 31-1 win= 96.9% ROI=+44.34% lift=+10.70pp | pre=+48.67% recent=+40.02% | removed 9 incl 3 losses
+age_defense        veto score>=4 | n=35 34-1 win= 97.1% ROI=+43.48% lift=+9.83pp | pre=+47.44% recent=+39.28% | removed 6 incl 3 losses
+hard_decline       veto score>=4 | n=38 36-2 win= 94.7% ROI=+40.85% lift=+7.20pp | pre=+47.44% recent=+34.91% | removed 3 incl 2 losses
+hard_decline       veto score>=5 | n=40 37-3 win= 92.5% ROI=+36.99% lift=+3.34pp | pre=+47.44% recent=+28.43% | removed 1 incl 1 losses
+no_age             veto score>=5 | n=40 37-3 win= 92.5% ROI=+36.99% lift=+3.34pp | pre=+47.44% recent=+28.43% | removed 1 incl 1 losses
+no_age             veto score>=6 | n=40 37-3 win= 92.5% ROI=+36.99% lift=+3.34pp | pre=+47.44% recent=+28.43% | removed 1 incl 1 losses
+no_age             veto score>=4 | n=37 34-3 win= 91.9% ROI=+36.32% lift=+2.67pp | pre=+48.21% recent=+26.21% | removed 4 incl 1 losses
+decline_balanced   veto score>=5 | n=38 35-3 win= 92.1% ROI=+36.27% lift=+2.62pp | pre=+47.44% recent=+26.21% | removed 3 incl 1 losses
+decline_balanced   veto score>=6 | n=41 37-4 win= 90.2% ROI=+33.65% lift=+0.00pp | pre=+47.44% recent=+22.85% | removed 0 incl 0 losses
+hard_decline       veto score>=6 | n=41 37-4 win= 90.2% ROI=+33.65% lift=+0.00pp | pre=+47.44% recent=+22.85% | removed 0 incl 0 losses
+hard_decline       veto score>=7 | n=41 37-4 win= 90.2% ROI=+33.65% lift=+0.00pp | pre=+47.44% recent=+22.85% | removed 0 incl 0 losses
+age_defense        veto score>=5 | n=40 36-4 win= 90.0% ROI=+33.43% lift=-0.22pp | pre=+47.44% recent=+21.96% | removed 1 incl 0 losses
