@@ -1,167 +1,48 @@
 UFC RESEARCH DATASET INVENTORY
-Generated: 2026-09-15T20:08:50Z
+Generated: 2026-09-15T20:09:21Z
 Root: /home/anestishkurti92/ufc-predictor-v1
 
-== UFC-LIKE DIRECTORIES ==
-/home/appwiza-runner/actions-runner/_work/_temp/_runner_file_commands
-/home/appwiza-runner/actions-runner/_work/ufc-feed
-/home/appwiza-runner/actions-runner/_work/ufc-feed/ufc-feed
-/opt/sports-envs/ufc-model
-/opt/sports-envs/ufc-age-v2
-/opt/sports-envs/ufc-predictor-v1
+== KEY FILE HEADERS ==
+--- /home/anestishkurti92/ufc-predictor-v1/favorite_loss_risk_analysis/enriched_market_sample.csv ---
+event_date,year,division,favorite,underdog,market_prob,american_odds,favorite_won,profit_100,fav_age,dog_age,fav_younger_by,fav_reach_adv,fav_height_adv,fav_stance,dog_stance,stance_mismatch,fav_older_1y+,fav_older_3y+,fav_older_5y+,fav_age_35+,fav_age_37+,fav_reach_disadv_1+,fav_reach_disadv_2+,fav_reach_disadv_4+,fav_shorter_1+,fav_shorter_2+,fav_shorter_3+,older3_and_reach2_disadv,older3_and_shorter2,reach2_and_shorter2,older3_reach2_shorter2
+--- /home/anestishkurti92/ufc-predictor-v1/combined_age_reach_backtest/reach_market_sample.csv ---
+result,player1,player2,player1_url,player2_url,weightclass,method,round,time,time_format,referee,details,player1_nickname,player2_nickname,event_date,event_location,event_url,p1_rd1_KD,p1_rd2_KD,p1_rd3_KD,p1_rd4_KD,p1_rd5_KD,p1_rd1_Sig_str,p1_rd2_Sig_str,p1_rd3_Sig_str,p1_rd4_Sig_str,p1_rd5_Sig_str,p1_rd1_Total_str,p1_rd2_Total_str,p1_rd3_Total_str,p1_rd4_Total_str,p1_rd5_Total_str,p1_rd1_Td,p1_rd2_Td,p1_rd3_Td,p1_rd4_Td,p1_rd5_Td,p1_rd1_Sub_att,p1_rd2_Sub_att,p1_rd3_Sub_att,p1_rd4_Sub_att,p1_rd5_Sub_att,p1_rd1_Rev,p1_rd2_Rev,p1_rd3_Rev,p1_rd4_Rev,p1_rd5_Rev,p1_rd1_Ctrl,p1_rd2_Ctrl,p1_rd3_Ctrl,p1_rd4_Ctrl,p1_rd5_Ctrl,p2_rd1_KD,p2_rd2_KD,p2_rd3_KD,p2_rd4_KD,p2_rd5_KD,p2_rd1_Sig_str,p2_rd2_Sig_str,p2_rd3_Sig_str,p2_rd4_Sig_str,p2_rd5_Sig_str,p2_rd1_Total_str,p2_rd2_Total_str,p2_rd3_Total_str,p2_rd4_Total_str,p2_rd5_Total_str,p2_rd1_Td,p2_rd2_Td,p2_rd3_Td,p2_rd4_Td,p2_rd5_Td,p2_rd1_Sub_att,p2_rd2_Sub_att,p2_rd3_Sub_att,p2_rd4_Sub_att,p2_rd5_Sub_att,p2_rd1_Rev,p2_rd2_Rev,p2_rd3_Rev,p2_rd4_Rev,p2_rd5_Rev,p2_rd1_Ctrl,p2_rd2_Ctrl,p2_rd3_Ctrl,p2_rd4_Ctrl,p2_rd5_Ctrl,p1_rd1_Head,p1_rd2_Head,p1_rd3_Head,p1_rd4_Head,p1_rd5_Head,p1_rd1_Body,p1_rd2_Body,p1_rd3_Body,p1_rd4_Body,p1_rd5_Body,p1_rd1_Leg,p1_rd2_Leg,p1_rd3_Leg,p1_rd4_Leg,p1_rd5_Leg,p1_rd1_Distance,p1_rd2_Distance,p1_rd3_Distance,p1_rd4_Distance,p1_rd5_Distance,p1_rd1_Clinch,p1_rd2_Clinch,p1_rd3_Clinch,p1_rd4_Clinch,p1_rd5_Clinch,p1_rd1_Ground,p1_rd2_Ground,p1_rd3_Ground,p1_rd4_Ground,p1_rd5_Ground,p2_rd1_Head,p2_rd2_Head,p2_rd3_Head,p2_rd4_Head,p2_rd5_Head,p2_rd1_Body,p2_rd2_Body,p2_rd3_Body,p2_rd4_Body,p2_rd5_Body,p2_rd1_Leg,p2_rd2_Leg,p2_rd3_Leg,p2_rd4_Leg,p2_rd5_Leg,p2_rd1_Distance,p2_rd2_Distance,p2_rd3_Distance,p2_rd4_Distance,p2_rd5_Distance,p2_rd1_Clinch,p2_rd2_Clinch,p2_rd3_Clinch,p2_rd4_Clinch,p2_rd5_Clinch,p2_rd1_Ground,p2_rd2_Ground,p2_rd3_Ground,p2_rd4_Ground,p2_rd5_Ground,division,result_norm,u1,u2,r1,r2,reach_diff,reach_gap,longer_is_p1,p1_won,longer_won,pair_key,market_prob,market_fav_is_p1,market_fav_longer,market_fav_won,fav_decimal,american_odds,profit_100
+--- /home/anestishkurti92/ufc-predictor-v1/raw/competitions.csv ---
+result,player1,player2,player1_url,player2_url,weightclass,method,round,time,time_format,referee,details,player1_nickname,player2_nickname,event_date,event_location,event_url,p1_rd1_KD,p1_rd2_KD,p1_rd3_KD,p1_rd4_KD,p1_rd5_KD,p1_rd1_Sig_str,p1_rd2_Sig_str,p1_rd3_Sig_str,p1_rd4_Sig_str,p1_rd5_Sig_str,p1_rd1_Total_str,p1_rd2_Total_str,p1_rd3_Total_str,p1_rd4_Total_str,p1_rd5_Total_str,p1_rd1_Td,p1_rd2_Td,p1_rd3_Td,p1_rd4_Td,p1_rd5_Td,p1_rd1_Sub_att,p1_rd2_Sub_att,p1_rd3_Sub_att,p1_rd4_Sub_att,p1_rd5_Sub_att,p1_rd1_Rev,p1_rd2_Rev,p1_rd3_Rev,p1_rd4_Rev,p1_rd5_Rev,p1_rd1_Ctrl,p1_rd2_Ctrl,p1_rd3_Ctrl,p1_rd4_Ctrl,p1_rd5_Ctrl,p2_rd1_KD,p2_rd2_KD,p2_rd3_KD,p2_rd4_KD,p2_rd5_KD,p2_rd1_Sig_str,p2_rd2_Sig_str,p2_rd3_Sig_str,p2_rd4_Sig_str,p2_rd5_Sig_str,p2_rd1_Total_str,p2_rd2_Total_str,p2_rd3_Total_str,p2_rd4_Total_str,p2_rd5_Total_str,p2_rd1_Td,p2_rd2_Td,p2_rd3_Td,p2_rd4_Td,p2_rd5_Td,p2_rd1_Sub_att,p2_rd2_Sub_att,p2_rd3_Sub_att,p2_rd4_Sub_att,p2_rd5_Sub_att,p2_rd1_Rev,p2_rd2_Rev,p2_rd3_Rev,p2_rd4_Rev,p2_rd5_Rev,p2_rd1_Ctrl,p2_rd2_Ctrl,p2_rd3_Ctrl,p2_rd4_Ctrl,p2_rd5_Ctrl,p1_rd1_Head,p1_rd2_Head,p1_rd3_Head,p1_rd4_Head,p1_rd5_Head,p1_rd1_Body,p1_rd2_Body,p1_rd3_Body,p1_rd4_Body,p1_rd5_Body,p1_rd1_Leg,p1_rd2_Leg,p1_rd3_Leg,p1_rd4_Leg,p1_rd5_Leg,p1_rd1_Distance,p1_rd2_Distance,p1_rd3_Distance,p1_rd4_Distance,p1_rd5_Distance,p1_rd1_Clinch,p1_rd2_Clinch,p1_rd3_Clinch,p1_rd4_Clinch,p1_rd5_Clinch,p1_rd1_Ground,p1_rd2_Ground,p1_rd3_Ground,p1_rd4_Ground,p1_rd5_Ground,p2_rd1_Head,p2_rd2_Head,p2_rd3_Head,p2_rd4_Head,p2_rd5_Head,p2_rd1_Body,p2_rd2_Body,p2_rd3_Body,p2_rd4_Body,p2_rd5_Body,p2_rd1_Leg,p2_rd2_Leg,p2_rd3_Leg,p2_rd4_Leg,p2_rd5_Leg,p2_rd1_Distance,p2_rd2_Distance,p2_rd3_Distance,p2_rd4_Distance,p2_rd5_Distance,p2_rd1_Clinch,p2_rd2_Clinch,p2_rd3_Clinch,p2_rd4_Clinch,p2_rd5_Clinch,p2_rd1_Ground,p2_rd2_Ground,p2_rd3_Ground,p2_rd4_Ground,p2_rd5_Ground
+--- /home/anestishkurti92/ufc-predictor-v1/historical_backtest/walkforward_fight_results.csv ---
+date,fighter_a,fighter_b,target,division,age_a,age_b,age_diff,age_gap,older_age,younger_age,age_gap_x_older,a_over30,b_over30,a_over35,b_over35,a_over37,b_over37,female,division__Women's Strawweight,division__Women's Flyweight,division__Women's Bantamweight,division__Women's Featherweight,division__Flyweight,division__Bantamweight,division__Featherweight,division__Lightweight,division__Welterweight,division__Middleweight,division__Light Heavyweight,division__Heavyweight,division__Catch Weight,division__Open Weight,division__Unknown,odds_a_decimal,odds_b_decimal,market_no_vig_a,market_no_vig_b,odds_source,odds_event,model_p_a,walkforward_train_fights,retrain_cutoff,model_p_b,edge_a,edge_b,bet_a,bet_fighter,bet_odds_decimal,bet_model_p,bet_market_p,edge,expected_roi,bet_won,profit_units,age_gap_bin,bet_is_favorite
+--- /home/anestishkurti92/ufc-predictor-v1/new_category_discovery/prefight_favorite_features.csv ---
+event_date,favorite,opponent,market_prob,fav_decimal,profit100,won,age_adv,reach_adv,f_fights,f_wins,f_losses,f_win_pct,f_last3,f_last5,f_layoff,f_sig_l_pm,f_sig_abs_pm,f_sig_diff_pm,f_sig_acc,f_sig_def,f_kd15,f_kd_abs15,f_td_l15,f_td_a15,f_td_acc,f_td_def,f_sub15,f_ctrl15,f_ctrl_allowed15,f_ground_l15,f_finish_win_pct,f_finish_loss_pct,o_fights,o_wins,o_losses,o_win_pct,o_last3,o_last5,o_layoff,o_sig_l_pm,o_sig_abs_pm,o_sig_diff_pm,o_sig_acc,o_sig_def,o_kd15,o_kd_abs15,o_td_l15,o_td_a15,o_td_acc,o_td_def,o_sub15,o_ctrl15,o_ctrl_allowed15,o_ground_l15,o_finish_win_pct,o_finish_loss_pct
+--- /home/anestishkurti92/ufc-predictor-v1/wrestling_stability_positive_roi/all_favorite_sides_with_prefight_wrestling.csv ---
+event_date,fighter,opponent,division,won,is_favorite,market_prob,fav_decimal,w_fights,w_win_pct,w_td_l15,w_td_a15,w_td_acc,w_td_def,w_sub15,w_rev15,w_ctrl15,w_ctrl_allowed15,w_ground_l15,o_fights,o_win_pct,o_td_l15,o_td_a15,o_td_acc,o_td_def,o_sub15,o_rev15,o_ctrl15,o_ctrl_allowed15,o_ground_l15,profit100
 
-== CSV FILES ==
-7126345	/home/anestishkurti92/ufc-predictor-v1/ufcstats_competitions_skill_cache.csv
-7126345	/home/anestishkurti92/ufc-predictor-v1/structural_edge_performance_analysis/competitions.csv
-7126345	/home/anestishkurti92/ufc-predictor-v1/raw/competitions.csv
-5590427	/home/anestishkurti92/ufc-predictor-v1/ufc_reach_method_analysis/reach_market_sample.csv
-5590427	/home/anestishkurti92/ufc-predictor-v1/combined_age_reach_backtest/reach_market_sample.csv
-4361248	/home/anestishkurti92/ufc-predictor-v1/raw/rankings.csv
-3562082	/home/anestishkurti92/ufc-predictor-v1/market_anchor_backtest/market_anchor_fight_results.csv
-3509334	/home/anestishkurti92/ufc-predictor-v1/historical_backtest/walkforward_fight_results.csv
-3421397	/home/anestishkurti92/ufc-predictor-v1/historical_backtest/current_model_retrospective_NOT_OOS.csv
-3110995	/home/anestishkurti92/ufc-predictor-v1/market_anchor_backtest/market_anchor_walkforward_predictions.csv
-2746971	/home/anestishkurti92/ufc-predictor-v1/historical_backtest/complete_ufc_data.csv
-2153967	/home/anestishkurti92/ufc-predictor-v1/new_category_discovery/prefight_favorite_features.csv
-1585340	/home/anestishkurti92/ufc-predictor-v1/historical_backtest/moneyline.csv
-1363618	/home/anestishkurti92/ufc-predictor-v1/favorite_loss_risk_analysis/enriched_market_sample.csv
-1360320	/home/anestishkurti92/ufc-predictor-v1/hybrid_70_agegap/all_70plus_market_favorites.csv
-1270344	/home/anestishkurti92/ufc-predictor-v1/wrestling_stability_positive_roi/all_favorite_sides_with_prefight_wrestling.csv
-1194238	/home/anestishkurti92/ufc-predictor-v1/market_anchor_backtest/market_70plus_bets_50usd.csv
-575653	/home/anestishkurti92/ufc-predictor-v1/hybrid_price_history/qualifying_hybrid_fights.csv
-538005	/home/anestishkurti92/ufc-predictor-v1/hybrid_70_agegap_robustness/all_rule_bets.csv
-534721	/home/anestishkurti92/ufc-predictor-v1/raw/individuals.csv
-534721	/home/anestishkurti92/ufc-predictor-v1/favorite_loss_risk_analysis/individuals.csv
-520564	/home/anestishkurti92/ufc-predictor-v1/skill_veto_official_samples/reach_415_with_skill_veto.csv
-471266	/home/anestishkurti92/ufc-predictor-v1/model_v2/training_fight_index.csv
-471266	/home/anestishkurti92/ufc-predictor-v1/model/training_fight_index.csv
-421829	/home/anestishkurti92/ufc-predictor-v1/skill_veto_all_methods/all_original_signals_with_skill_veto.csv
-398046	/home/anestishkurti92/ufc-predictor-v1/wrestling_stability_fast/positive_roi_candidates.csv
-357423	/home/anestishkurti92/ufc-predictor-v1/new_category_discovery/all_discovery_rules.csv
-327908	/home/anestishkurti92/ufc-predictor-v1/wrestling_mismatch_analysis/all_wrestling_thresholds.csv
-218497	/home/anestishkurti92/ufc-predictor-v1/skill_veto_official_samples/age_889_with_skill_veto.csv
-200548	/home/anestishkurti92/ufc-predictor-v1/historical_backtest/recent_master_2024_2026.csv
-161531	/home/anestishkurti92/ufc-predictor-v1/skill_veto_official_samples/premium_133_with_skill_veto.csv
-156719	/home/anestishkurti92/ufc-predictor-v1/historical_backtest/master_2006_2026/hybrid_master_2006_2026.csv
-146825	/home/anestishkurti92/ufc-predictor-v1/ufc_age_reach_overlap/age_plus_reach4.csv
-131864	/home/anestishkurti92/ufc-predictor-v1/historical_backtest/master_2006_2026/hybrid_2006_2023.csv
-130469	/home/anestishkurti92/ufc-predictor-v1/striking_family_stability/all_striking_family_results.csv
-119913	/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/datasets/data/breast_cancer.csv
-93247	/home/anestishkurti92/ufc-predictor-v1/structural_edge_performance_analysis/structural_edge_with_prefight_performance.csv
-86659	/home/anestishkurti92/ufc-predictor-v1/wrestling_mismatch_analysis/robust_wrestling_candidates.csv
-74099	/home/anestishkurti92/ufc-predictor-v1/threshold_stability_analysis/all_threshold_results.csv
-68922	/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/numpy/_core/tests/data/umath-validation-set-log10.csv
-68917	/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/numpy/_core/tests/data/umath-validation-set-log2.csv
-61365	/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/numpy/_core/tests/data/umath-validation-set-arccosh.csv
-61365	/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/numpy/_core/tests/data/umath-validation-set-arccos.csv
-61339	/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/numpy/_core/tests/data/umath-validation-set-arctanh.csv
-61339	/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/numpy/_core/tests/data/umath-validation-set-arcsin.csv
-60869	/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/numpy/_core/tests/data/umath-validation-set-cosh.csv
-60846	/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/numpy/_core/tests/data/umath-validation-set-cbrt.csv
-60305	/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/numpy/_core/tests/data/umath-validation-set-arctan.csv
-60303	/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/numpy/_core/tests/data/umath-validation-set-log1p.csv
-60299	/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/numpy/_core/tests/data/umath-validation-set-tanh.csv
-60299	/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/numpy/_core/tests/data/umath-validation-set-tan.csv
-60299	/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/numpy/_core/tests/data/umath-validation-set-expm1.csv
-60293	/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/numpy/_core/tests/data/umath-validation-set-sinh.csv
-60289	/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/numpy/_core/tests/data/umath-validation-set-arcsinh.csv
-59122	/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/numpy/_core/tests/data/umath-validation-set-cos.csv
-58624	/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/numpy/_core/tests/data/umath-validation-set-exp2.csv
-58611	/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/numpy/_core/tests/data/umath-validation-set-sin.csv
-50615	/home/anestishkurti92/ufc-predictor-v1/threshold_stability_analysis/stability_ranked.csv
-41454	/home/anestishkurti92/ufc-predictor-v1/wrestling_mismatch_analysis/anchor_examples.csv
-38877	/home/anestishkurti92/ufc-predictor-v1/striking_portfolio_100/all_strategy_signal_bets.csv
-38534	/home/anestishkurti92/ufc-predictor-v1/striking_family_stability/striking_td_defense_all.csv
-35541	/home/anestishkurti92/ufc-predictor-v1/striking_family_stability/pace_defense_all.csv
-34295	/home/anestishkurti92/ufc-predictor-v1/threshold_stability_analysis/robust_threshold_results.csv
-32679	/home/anestishkurti92/ufc-predictor-v1/favorite_loss_risk_analysis/higher_roi_candidates.csv
-31178	/home/anestishkurti92/ufc-predictor-v1/structural_edge_failure_analysis/structural_edge_83_fights.csv
-30956	/home/anestishkurti92/ufc-predictor-v1/striking_family_stability/striking_differential_all.csv
-26056	/home/anestishkurti92/ufc-predictor-v1/striking_portfolio_100/unique_fight_portfolio.csv
-25010	/home/anestishkurti92/ufc-predictor-v1/historical_backtest/master_2006_2026/hybrid_2024_2026.csv
-24887	/home/anestishkurti92/ufc-predictor-v1/new_category_discovery/lower_overlap_candidates.csv
-24887	/home/anestishkurti92/ufc-predictor-v1/new_category_discovery/candidates_roi_9plus.csv
-23852	/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/numpy/random/tests/data/philox-testset-1.csv
-23845	/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/numpy/random/tests/data/pcg64-testset-2.csv
-23840	/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/numpy/random/tests/data/sfc64-testset-1.csv
-23839	/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/numpy/random/tests/data/pcg64dxsm-testset-2.csv
-23839	/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/numpy/random/tests/data/pcg64-testset-1.csv
-23838	/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/numpy/random/tests/data/philox-testset-2.csv
-23833	/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/numpy/random/tests/data/sfc64-testset-2.csv
-23833	/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/numpy/random/tests/data/pcg64dxsm-testset-1.csv
-21599	/home/anestishkurti92/ufc-predictor-v1/striking_family_stability/striking_defense_all.csv
-18204	/home/anestishkurti92/ufc-predictor-v1/striking_family_stability/all_9pct_positive_both_eras.csv
-17837	/home/anestishkurti92/ufc-predictor-v1/favorite_loss_risk_analysis/top_100_heavy_favorite_losses.csv
-17491	/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/numpy/_core/tests/data/umath-validation-set-exp.csv
-15879	/home/anestishkurti92/ufc-predictor-v1/striking_family_stability/stable_striking_candidates.csv
-15844	/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/numpy/random/tests/data/mt19937-testset-1.csv
-15825	/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/numpy/random/tests/data/mt19937-testset-2.csv
-13871	/home/anestishkurti92/ufc-predictor-v1/underdog_structural_edge_analysis/top_100_underdog_wins_with_structural_edges.csv
-12879	/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/scipy/signal/tests/data/GLB.Ts+dSST.csv
-11939	/home/anestishkurti92/ufc-predictor-v1/underdog_structural_edge_analysis/underdog_rule_results.csv
-11692	/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/numpy/_core/tests/data/umath-validation-set-log.csv
-11429	/home/anestishkurti92/ufc-predictor-v1/structural_edge_striking_wrestling_stability/wrestling_grappling_filters.csv
-11384	/home/anestishkurti92/ufc-predictor-v1/favorite_loss_risk_analysis/risk_flags.csv
-11157	/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/datasets/data/wine_data.csv
-6564	/home/anestishkurti92/ufc-predictor-v1/skill_veto_all_methods/skill_veto_threshold_sensitivity.csv
-5867	/home/anestishkurti92/ufc-predictor-v1/threshold_stability_analysis/plateau_8_to_12_roi.csv
-5143	/home/anestishkurti92/ufc-predictor-v1/structural_edge_performance_analysis/performance_exclusion_candidates.csv
-4886	/home/anestishkurti92/ufc-predictor-v1/model/feature_importance.csv
-3931	/home/anestishkurti92/ufc-predictor-v1/model_v2/model_family_selection.csv
-3831	/home/anestishkurti92/ufc-predictor-v1/hybrid_70_agegap_robustness/rolling_3yr_summary.csv
-3779	/home/anestishkurti92/ufc-predictor-v1/hybrid_70_agegap_robustness/yearly_summary.csv
-3715	/home/anestishkurti92/ufc-predictor-v1/structural_edge_striking_wrestling_stability/losses_wrestling_context.csv
-2807	/home/anestishkurti92/ufc-predictor-v1/hybrid_70_agegap/yearly_younger3_summary.csv
-2734	/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/datasets/data/iris.csv
-2732	/home/anestishkurti92/ufc-predictor-v1/structural_edge_failure_analysis/exclusion_candidates.csv
-2585	/home/anestishkurti92/ufc-predictor-v1/historical_backtest/year_summary_edge5.csv
-2452	/home/anestishkurti92/ufc-predictor-v1/opponent_wrestling_threshold_expansion/all_opponent_threshold_combinations.csv
-2418	/home/anestishkurti92/ufc-predictor-v1/market_anchor_backtest/age_model_70plus_bets_50usd.csv
-2390	/home/anestishkurti92/ufc-predictor-v1/hybrid_70_agegap/hybrid_rule_summary.csv
-2356	/home/anestishkurti92/ufc-predictor-v1/structural_edge_striking_wrestling_stability/validated_wrestling_filters.csv
-2277	/home/anestishkurti92/ufc-predictor-v1/wrestling_mismatch_analysis/submission_ground_modifiers.csv
-2261	/home/anestishkurti92/ufc-predictor-v1/hybrid_70_agegap/age_gap_bucket_summary.csv
-2228	/home/anestishkurti92/ufc-predictor-v1/structural_edge_failure_analysis/all_structural_edge_losses.csv
-2218	/home/anestishkurti92/ufc-predictor-v1/historical_backtest/threshold_summary.csv
-2155	/home/anestishkurti92/ufc-predictor-v1/structural_edge_performance_analysis/losses_with_prefight_performance.csv
-2155	/home/anestishkurti92/ufc-predictor-v1/historical_backtest/division_summary_edge5.csv
-1930	/home/anestishkurti92/ufc-predictor-v1/structural_edge_performance_analysis/validated_performance_filters.csv
-1901	/home/anestishkurti92/ufc-predictor-v1/hybrid_price_history/roi_by_max_line.csv
-1864	/home/anestishkurti92/ufc-predictor-v1/structural_edge_failure_analysis/risk_flags.csv
-1776	/home/anestishkurti92/ufc-predictor-v1/structural_edge_striking_wrestling_stability/striking_threshold_stability.csv
-1680	/home/anestishkurti92/ufc-predictor-v1/structural_edge_striking_wrestling_stability/combined_striking_wrestling_filters.csv
-1632	/home/anestishkurti92/ufc-predictor-v1/structural_edge_performance_analysis/winner_loser_feature_comparison.csv
-1624	/home/anestishkurti92/ufc-predictor-v1/hybrid_70_agegap_robustness/time_split_summary.csv
-1621	/home/anestishkurti92/ufc-predictor-v1/historical_backtest/age_gap_summary_edge5.csv
-1615	/home/anestishkurti92/ufc-predictor-v1/underdog_structural_edge_analysis/robust_underdog_candidates.csv
-1572	/home/anestishkurti92/ufc-predictor-v1/hybrid_70_agegap/market_band_age_side_summary.csv
-1539	/home/anestishkurti92/ufc-predictor-v1/combined_age_reach_backtest/combined_age_reach_yearly_2006_2026.csv
-1529	/home/anestishkurti92/ufc-predictor-v1/market_anchor_backtest/market_anchor_edge_thresholds.csv
-1368	/home/anestishkurti92/ufc-predictor-v1/opponent_wrestling_threshold_expansion/all_combinations_roi_10plus.csv
-1324	/home/anestishkurti92/ufc-predictor-v1/historical_backtest/master_2006_2026/yearly_master.csv
-1267	/home/anestishkurti92/ufc-predictor-v1/hybrid_price_history/roi_by_price_tax.csv
-1126	/home/anestishkurti92/ufc-predictor-v1/opponent_wrestling_threshold_expansion/roi_10plus_positive_both_eras.csv
-1069	/home/anestishkurti92/ufc-predictor-v1/skill_veto_all_methods/skill_veto_summary.csv
-992	/home/anestishkurti92/ufc-predictor-v1/hybrid_price_history/roi_by_moneyline_band.csv
-986	/home/anestishkurti92/ufc-predictor-v1/hybrid_price_history/roi_by_market_probability.csv
-864	/home/anestishkurti92/ufc-predictor-v1/market_anchor_backtest/age_model_confidence_thresholds.csv
-809	/home/anestishkurti92/ufc-predictor-v1/striking_portfolio_100/unique_portfolio_by_year.csv
-801	/home/anestishkurti92/ufc-predictor-v1/structural_edge_failure_analysis/division_breakdown.csv
-796	/home/anestishkurti92/ufc-predictor-v1/skill_veto_official_samples/official_skill_veto_summary.csv
-780	/home/anestishkurti92/ufc-predictor-v1/wrestling_mismatch_analysis/opponent_tdd_modifier.csv
-773	/home/anestishkurti92/ufc-predictor-v1/hybrid_70_agegap_robustness/age_gap_threshold_stability.csv
-671	/home/anestishkurti92/ufc-predictor-v1/wrestling_mismatch_analysis/opponent_control_vulnerability.csv
-668	/home/anestishkurti92/ufc-predictor-v1/opponent_wrestling_threshold_expansion/opponent_control_only.csv
-645	/home/anestishkurti92/ufc-predictor-v1/striking_portfolio_100/overlap_groups.csv
-640	/home/anestishkurti92/ufc-predictor-v1/hybrid_70_agegap_robustness/source_summary.csv
-571	/home/anestishkurti92/ufc-predictor-v1/opponent_wrestling_threshold_expansion/opponent_td_attempts_only.csv
-460	/home/anestishkurti92/ufc-predictor-v1/historical_backtest/source_summary_edge5.csv
-425	/home/anestishkurti92/ufc-predictor-v1/opponent_wrestling_threshold_expansion/roi_matrix_percent.csv
-424	/home/anestishkurti92/ufc-predictor-v1/historical_backtest/master_2006_2026/price_bands_master.csv
-315	/home/anestishkurti92/ufc-predictor-v1/striking_portfolio_100/strategy_summary.csv
-298	/home/anestishkurti92/ufc-predictor-v1/market_anchor_backtest/age_model_70plus_buckets.csv
-273	/home/anestishkurti92/ufc-predictor-v1/historical_backtest/master_2006_2026/summary.csv
-219	/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/datasets/data/linnerud_physiological.csv
-212	/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/datasets/data/linnerud_exercise.csv
+== SCHEMAS / ROW COUNTS ==
 
-PANDAS_IMPORT_ERROR ModuleNotFoundError("No module named 'pandas'")
+--- /home/anestishkurti92/ufc-predictor-v1/favorite_loss_risk_analysis/enriched_market_sample.csv ---
+rows: 4781 cols: 32
+columns: event_date|year|division|favorite|underdog|market_prob|american_odds|favorite_won|profit_100|fav_age|dog_age|fav_younger_by|fav_reach_adv|fav_height_adv|fav_stance|dog_stance|stance_mismatch|fav_older_1y+|fav_older_3y+|fav_older_5y+|fav_age_35+|fav_age_37+|fav_reach_disadv_1+|fav_reach_disadv_2+|fav_reach_disadv_4+|fav_shorter_1+|fav_shorter_2+|fav_shorter_3+|older3_and_reach2_disadv|older3_and_shorter2|reach2_and_shorter2|older3_reach2_shorter2
+event_date: 2010-03-21 00:00:00 -> 2025-09-06 00:00:00
+
+--- /home/anestishkurti92/ufc-predictor-v1/combined_age_reach_backtest/reach_market_sample.csv ---
+rows: 4781 cols: 166
+columns: result|player1|player2|player1_url|player2_url|weightclass|method|round|time|time_format|referee|details|player1_nickname|player2_nickname|event_date|event_location|event_url|p1_rd1_KD|p1_rd2_KD|p1_rd3_KD|p1_rd4_KD|p1_rd5_KD|p1_rd1_Sig_str|p1_rd2_Sig_str|p1_rd3_Sig_str|p1_rd4_Sig_str|p1_rd5_Sig_str|p1_rd1_Total_str|p1_rd2_Total_str|p1_rd3_Total_str|p1_rd4_Total_str|p1_rd5_Total_str|p1_rd1_Td|p1_rd2_Td|p1_rd3_Td|p1_rd4_Td|p1_rd5_Td|p1_rd1_Sub_att|p1_rd2_Sub_att|p1_rd3_Sub_att|p1_rd4_Sub_att|p1_rd5_Sub_att|p1_rd1_Rev|p1_rd2_Rev|p1_rd3_Rev|p1_rd4_Rev|p1_rd5_Rev|p1_rd1_Ctrl|p1_rd2_Ctrl|p1_rd3_Ctrl|p1_rd4_Ctrl|p1_rd5_Ctrl|p2_rd1_KD|p2_rd2_KD|p2_rd3_KD|p2_rd4_KD|p2_rd5_KD|p2_rd1_Sig_str|p2_rd2_Sig_str|p2_rd3_Sig_str|p2_rd4_Sig_str|p2_rd5_Sig_str|p2_rd1_Total_str|p2_rd2_Total_str|p2_rd3_Total_str|p2_rd4_Total_str|p2_rd5_Total_str|p2_rd1_Td|p2_rd2_Td|p2_rd3_Td|p2_rd4_Td|p2_rd5_Td|p2_rd1_Sub_att|p2_rd2_Sub_att|p2_rd3_Sub_att|p2_rd4_Sub_att|p2_rd5_Sub_att|p2_rd1_Rev|p2_rd2_Rev|p2_rd3_Rev|p2_rd4_Rev|p2_rd5_Rev|p2_rd1_Ctrl|p2_rd2_Ctrl|p2_rd3_Ctrl|p2_rd4_Ctrl|p2_rd5_Ctrl|p1_rd1_Head|p1_rd2_Head|p1_rd3_Head|p1_rd4_Head|p1_rd5_Head|p1_rd1_Body|p1_rd2_Body|p1_rd3_Body|p1_rd4_Body|p1_rd5_Body|p1_rd1_Leg|p1_rd2_Leg|p1_rd3_Leg|p1_rd4_Leg|p1_rd5_Leg|p1_rd1_Distance|p1_rd2_Distance|p1_rd3_Distance|p1_rd4_Distance|p1_rd5_Distance|p1_rd1_Clinch|p1_rd2_Clinch|p1_rd3_Clinch|p1_rd4_Clinch|p1_rd5_Clinch|p1_rd1_Ground|p1_rd2_Ground|p1_rd3_Ground|p1_rd4_Ground|p1_rd5_Ground|p2_rd1_Head|p2_rd2_Head|p2_rd3_Head|p2_rd4_Head|p2_rd5_Head|p2_rd1_Body|p2_rd2_Body|p2_rd3_Body|p2_rd4_Body|p2_rd5_Body|p2_rd1_Leg|p2_rd2_Leg|p2_rd3_Leg|p2_rd4_Leg|p2_rd5_Leg|p2_rd1_Distance|p2_rd2_Distance|p2_rd3_Distance|p2_rd4_Distance|p2_rd5_Distance|p2_rd1_Clinch|p2_rd2_Clinch|p2_rd3_Clinch|p2_rd4_Clinch|p2_rd5_Clinch|p2_rd1_Ground|p2_rd2_Ground|p2_rd3_Ground|p2_rd4_Ground|p2_rd5_Ground|division|result_norm|u1|u2|r1|r2|reach_diff|reach_gap|longer_is_p1|p1_won|longer_won|pair_key|market_prob|market_fav_is_p1|market_fav_longer|market_fav_won|fav_decimal|american_odds|profit_100
+event_date: 2010-03-21 00:00:00 -> 2025-09-06 00:00:00
+
+--- /home/anestishkurti92/ufc-predictor-v1/raw/competitions.csv ---
+rows: 8794 cols: 147
+columns: result|player1|player2|player1_url|player2_url|weightclass|method|round|time|time_format|referee|details|player1_nickname|player2_nickname|event_date|event_location|event_url|p1_rd1_KD|p1_rd2_KD|p1_rd3_KD|p1_rd4_KD|p1_rd5_KD|p1_rd1_Sig_str|p1_rd2_Sig_str|p1_rd3_Sig_str|p1_rd4_Sig_str|p1_rd5_Sig_str|p1_rd1_Total_str|p1_rd2_Total_str|p1_rd3_Total_str|p1_rd4_Total_str|p1_rd5_Total_str|p1_rd1_Td|p1_rd2_Td|p1_rd3_Td|p1_rd4_Td|p1_rd5_Td|p1_rd1_Sub_att|p1_rd2_Sub_att|p1_rd3_Sub_att|p1_rd4_Sub_att|p1_rd5_Sub_att|p1_rd1_Rev|p1_rd2_Rev|p1_rd3_Rev|p1_rd4_Rev|p1_rd5_Rev|p1_rd1_Ctrl|p1_rd2_Ctrl|p1_rd3_Ctrl|p1_rd4_Ctrl|p1_rd5_Ctrl|p2_rd1_KD|p2_rd2_KD|p2_rd3_KD|p2_rd4_KD|p2_rd5_KD|p2_rd1_Sig_str|p2_rd2_Sig_str|p2_rd3_Sig_str|p2_rd4_Sig_str|p2_rd5_Sig_str|p2_rd1_Total_str|p2_rd2_Total_str|p2_rd3_Total_str|p2_rd4_Total_str|p2_rd5_Total_str|p2_rd1_Td|p2_rd2_Td|p2_rd3_Td|p2_rd4_Td|p2_rd5_Td|p2_rd1_Sub_att|p2_rd2_Sub_att|p2_rd3_Sub_att|p2_rd4_Sub_att|p2_rd5_Sub_att|p2_rd1_Rev|p2_rd2_Rev|p2_rd3_Rev|p2_rd4_Rev|p2_rd5_Rev|p2_rd1_Ctrl|p2_rd2_Ctrl|p2_rd3_Ctrl|p2_rd4_Ctrl|p2_rd5_Ctrl|p1_rd1_Head|p1_rd2_Head|p1_rd3_Head|p1_rd4_Head|p1_rd5_Head|p1_rd1_Body|p1_rd2_Body|p1_rd3_Body|p1_rd4_Body|p1_rd5_Body|p1_rd1_Leg|p1_rd2_Leg|p1_rd3_Leg|p1_rd4_Leg|p1_rd5_Leg|p1_rd1_Distance|p1_rd2_Distance|p1_rd3_Distance|p1_rd4_Distance|p1_rd5_Distance|p1_rd1_Clinch|p1_rd2_Clinch|p1_rd3_Clinch|p1_rd4_Clinch|p1_rd5_Clinch|p1_rd1_Ground|p1_rd2_Ground|p1_rd3_Ground|p1_rd4_Ground|p1_rd5_Ground|p2_rd1_Head|p2_rd2_Head|p2_rd3_Head|p2_rd4_Head|p2_rd5_Head|p2_rd1_Body|p2_rd2_Body|p2_rd3_Body|p2_rd4_Body|p2_rd5_Body|p2_rd1_Leg|p2_rd2_Leg|p2_rd3_Leg|p2_rd4_Leg|p2_rd5_Leg|p2_rd1_Distance|p2_rd2_Distance|p2_rd3_Distance|p2_rd4_Distance|p2_rd5_Distance|p2_rd1_Clinch|p2_rd2_Clinch|p2_rd3_Clinch|p2_rd4_Clinch|p2_rd5_Clinch|p2_rd1_Ground|p2_rd2_Ground|p2_rd3_Ground|p2_rd4_Ground|p2_rd5_Ground
+event_date: 1994-03-11 00:00:00 -> 2026-08-08 00:00:00
+
+--- /home/anestishkurti92/ufc-predictor-v1/historical_backtest/walkforward_fight_results.csv ---
+rows: 5845 cols: 57
+columns: date|fighter_a|fighter_b|target|division|age_a|age_b|age_diff|age_gap|older_age|younger_age|age_gap_x_older|a_over30|b_over30|a_over35|b_over35|a_over37|b_over37|female|division__Women's Strawweight|division__Women's Flyweight|division__Women's Bantamweight|division__Women's Featherweight|division__Flyweight|division__Bantamweight|division__Featherweight|division__Lightweight|division__Welterweight|division__Middleweight|division__Light Heavyweight|division__Heavyweight|division__Catch Weight|division__Open Weight|division__Unknown|odds_a_decimal|odds_b_decimal|market_no_vig_a|market_no_vig_b|odds_source|odds_event|model_p_a|walkforward_train_fights|retrain_cutoff|model_p_b|edge_a|edge_b|bet_a|bet_fighter|bet_odds_decimal|bet_model_p|bet_market_p|edge|expected_roi|bet_won|profit_units|age_gap_bin|bet_is_favorite
+
+--- /home/anestishkurti92/ufc-predictor-v1/new_category_discovery/prefight_favorite_features.csv ---
+rows: 3344 cols: 57
+columns: event_date|favorite|opponent|market_prob|fav_decimal|profit100|won|age_adv|reach_adv|f_fights|f_wins|f_losses|f_win_pct|f_last3|f_last5|f_layoff|f_sig_l_pm|f_sig_abs_pm|f_sig_diff_pm|f_sig_acc|f_sig_def|f_kd15|f_kd_abs15|f_td_l15|f_td_a15|f_td_acc|f_td_def|f_sub15|f_ctrl15|f_ctrl_allowed15|f_ground_l15|f_finish_win_pct|f_finish_loss_pct|o_fights|o_wins|o_losses|o_win_pct|o_last3|o_last5|o_layoff|o_sig_l_pm|o_sig_abs_pm|o_sig_diff_pm|o_sig_acc|o_sig_def|o_kd15|o_kd_abs15|o_td_l15|o_td_a15|o_td_acc|o_td_def|o_sub15|o_ctrl15|o_ctrl_allowed15|o_ground_l15|o_finish_win_pct|o_finish_loss_pct
+event_date: 2010-08-01 00:00:00 -> 2025-09-06 00:00:00
+
+--- /home/anestishkurti92/ufc-predictor-v1/wrestling_stability_positive_roi/all_favorite_sides_with_prefight_wrestling.csv ---
+rows: 3344 cols: 31
+columns: event_date|fighter|opponent|division|won|is_favorite|market_prob|fav_decimal|w_fights|w_win_pct|w_td_l15|w_td_a15|w_td_acc|w_td_def|w_sub15|w_rev15|w_ctrl15|w_ctrl_allowed15|w_ground_l15|o_fights|o_win_pct|o_td_l15|o_td_a15|o_td_acc|o_td_def|o_sub15|o_rev15|o_ctrl15|o_ctrl_allowed15|o_ground_l15|profit100
+event_date: 2010-08-01 00:00:00 -> 2025-09-06 00:00:00
