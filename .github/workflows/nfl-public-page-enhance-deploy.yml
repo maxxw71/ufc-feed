@@ -1,0 +1,66 @@
+name: NFL public page enhance deploy
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'nfl/nfl_public_page.py'
+      - '.github/workflows/nfl-public-page-enhance-deploy.yml'
+permissions:
+  contents: write
+jobs:
+  deploy:
+    runs-on: [self-hosted, Linux, X64, appwiza]
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+        with: {fetch-depth: 0}
+      - name: Install presentation enhancer and patch scanner
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          LIVE=/home/anestishkurti92/nfl-predictor-v1/research_v2
+          SCANNER="$LIVE/nfl_home_opener_scanner.py"
+          cp nfl/nfl_public_page.py "$LIVE/nfl_public_page.py.new"
+          mv "$LIVE/nfl_public_page.py.new" "$LIVE/nfl_public_page.py"
+          python3 - "$SCANNER" <<'PY'
+          from pathlib import Path
+          p=Path(__import__('sys').argv[1]);s=p.read_text()
+          if 'import nfl_public_page' not in s:
+              needle='import sports_publish\n'
+              if needle not in s: raise SystemExit('sports_publish import anchor missing')
+              s=s.replace(needle,needle+'import nfl_public_page\n',1)
+          call='sports_publish.publish_nfl(records,now,nfl_email_design)'
+          enhanced=call+'\n nfl_public_page.safe_enhance(now,ledger,sports_publish)'
+          if 'nfl_public_page.safe_enhance' not in s:
+              if call not in s: raise SystemExit('publish call anchor missing')
+              s=s.replace(call,enhanced,1)
+          p.write_text(s)
+          PY
+          /home/anestishkurti92/nfl-predictor-v1/venv/bin/python -m py_compile "$LIVE/nfl_public_page.py" "$SCANNER"
+      - name: Refresh public NFL page without sending email
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          LIVE=/home/anestishkurti92/nfl-predictor-v1/research_v2
+          cd "$LIVE"
+          HOME=/home/anestishkurti92 /home/anestishkurti92/nfl-predictor-v1/venv/bin/python nfl_home_opener_scanner.py
+      - name: Verify and publish deploy report
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          R=nfl/public_page_enhance_report.txt
+          PAGE=/srv/appwiza-sports/public/nfl/index.html
+          {
+            echo "scanner_patch=$(grep -c 'nfl_public_page.safe_enhance' /home/anestishkurti92/nfl-predictor-v1/research_v2/nfl_home_opener_scanner.py || true)"
+            echo "research_link=$(grep -c '/sports/nfl/research/' "$PAGE" || true)"
+            echo "overall_record=$(grep -c 'Overall record' "$PAGE" || true)"
+            echo "completed_table=$(grep -c 'Completed selections' "$PAGE" || true)"
+            echo "downloads_collapsed=$(grep -c 'downloads-block' "$PAGE" || true)"
+            echo "dashboard_css=$(test -f /srv/appwiza-sports/public/nfl/dashboard.css && echo yes || echo no)"
+            stat -c 'page=%U:%G %a %s %n' "$PAGE"
+          } > "$R"
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git add "$R"
+          if ! git diff --cached --quiet; then git commit -m 'Record NFL dashboard enhancement deploy'; git pull --rebase origin main; git push origin HEAD:main; fi
