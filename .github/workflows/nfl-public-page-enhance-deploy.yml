@@ -42,48 +42,34 @@ jobs:
           p.write_text(s)
           PY
           /home/anestishkurti92/nfl-predictor-v1/venv/bin/python -m py_compile "$LIVE/nfl_public_page.py" "$SCANNER"
-      - name: Refresh public NFL page without sending email
+      - name: Diagnose publisher runtime
         shell: bash
         run: |
           set -Eeuo pipefail
-          LIVE=/home/anestishkurti92/nfl-predictor-v1/research_v2
-          cd "$LIVE"
-          BET_TRACKER="$(find /home/anestishkurti92/nfl-predictor-v1 /opt/appwiza-sports-imports -type f -name bet_tracker.py 2>/dev/null | head -1 || true)"
-          if [ -n "$BET_TRACKER" ]; then
-            export PYTHONPATH="$(dirname "$BET_TRACKER"):$LIVE:${PYTHONPATH:-}"
-            echo "Using bet_tracker from $(dirname "$BET_TRACKER")"
-          else
-            echo "bet_tracker.py not found in expected project/import roots" >&2
-            exit 1
-          fi
-          HOME=/home/anestishkurti92 /home/anestishkurti92/nfl-predictor-v1/venv/bin/python nfl_home_opener_scanner.py
-      - name: Verify and publish deploy report
+          echo '--- matching modules ---'
+          find /home/anestishkurti92 /opt/appwiza-sports-imports /srv/appwiza-sports -type f \( -name sports_publish.py -o -name bet_tracker.py -o -iname '*ledger*.json' -o -iname '*email_state*.json' \) 2>/dev/null | head -80 || true
+          echo '--- state summary ---'
+          /home/anestishkurti92/nfl-predictor-v1/venv/bin/python - <<'PY'
+          import json
+          from pathlib import Path
+          p=Path('/srv/appwiza-sports/state/nfl.json')
+          print('state_exists',p.exists(),'size',p.stat().st_size if p.exists() else None)
+          if p.exists():
+              d=json.loads(p.read_text())
+              print('state_keys',sorted(d.keys()))
+              cards=d.get('cards') or []
+              print('cards',len(cards))
+              for c in cards[:5]:
+                  print('card_keys',sorted(c.keys()))
+                  print('card_sample',{k:c.get(k) for k in ['id','selection','fixture','start','price','withdrawn','result','settlement']})
+          PY
+          echo '--- existing page markers ---'
+          grep -o 'Overall record</span><b>[^<]*' /srv/appwiza-sports/public/nfl/index.html | head -1 || true
+          grep -o 'Tracked ROI</span><b[^>]*>[^<]*' /srv/appwiza-sports/public/nfl/index.html | head -1 || true
+      - name: Verify current page only
         shell: bash
         run: |
           set -Eeuo pipefail
-          R=nfl/public_page_enhance_report.txt
           PAGE=/srv/appwiza-sports/public/nfl/index.html
-          {
-            echo "scanner_patch=$(grep -c 'nfl_public_page.safe_enhance' /home/anestishkurti92/nfl-predictor-v1/research_v2/nfl_home_opener_scanner.py || true)"
-            echo "research_link=$(grep -c '/sports/nfl/research/' "$PAGE" || true)"
-            echo "overall_record=$(grep -c 'Overall record' "$PAGE" || true)"
-            echo "completed_table=$(grep -c 'Completed selections' "$PAGE" || true)"
-            echo "downloads_collapsed=$(grep -c 'downloads-block' "$PAGE" || true)"
-            echo "deep_audit=$(grep -c '2026 deep audit' "$PAGE" || true)"
-            echo "coaching_context=$(grep -c 'Coaching context' "$PAGE" || true)"
-            echo "refined_veto=$(grep -c 'Refined veto' "$PAGE" || true)"
-            echo "dashboard_css=$(test -f /srv/appwiza-sports/public/nfl/dashboard.css && echo yes || echo no)"
-            echo "fresh_context=$(test -s /home/anestishkurti92/nfl-predictor-v1/research_v2/page_context/current_board_fresh_context.csv && echo yes || echo no)"
-            stat -c 'page=%U:%G %a %s %n' "$PAGE"
-          } > "$R"
-          git config user.name github-actions
-          git config user.email github-actions@github.com
-          git add "$R"
-          if ! git diff --cached --quiet; then
-            git commit -m 'Record NFL dashboard enhancement deploy'
-            for n in 1 2 3; do
-              git pull --rebase origin main && git push origin HEAD:main && break
-              test "$n" -lt 3 || exit 1
-              sleep $((n*2))
-            done
-          fi
+          test -s "$PAGE"
+          grep -q '/sports/nfl/research/' "$PAGE"
