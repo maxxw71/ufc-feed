@@ -1,0 +1,85 @@
+name: UFC Experience Mismatch Durability Veto
+
+on:
+  push:
+    paths:
+      - '.github/workflows/ufc-experience-durability-veto.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  analyze:
+    runs-on: [self-hosted, appwiza]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Test durability and finish-risk vetoes
+        shell: bash
+        run: |
+          set -euo pipefail
+          ROOT=/home/anestishkurti92/ufc-predictor-v1
+          OUT="$GITHUB_WORKSPACE/ufc_unique_method_discovery"
+          mkdir -p "$OUT"
+          PY="$ROOT/venv/bin/python"; [ -x "$PY" ] || PY="$ROOT/venv.google-original/bin/python"
+          ROOT="$ROOT" OUT="$OUT" "$PY" - <<'PY'
+          import os,itertools
+          from pathlib import Path
+          import numpy as np,pandas as pd
+          root=Path(os.environ['ROOT']); out=Path(os.environ['OUT'])
+          d=pd.read_csv(root/'new_category_discovery/prefight_favorite_features.csv',low_memory=False)
+          d['event_date']=pd.to_datetime(d.event_date,errors='coerce')
+          for c in d.columns:
+              if c not in ['event_date','favorite','opponent','won']:
+                  d[c]=pd.to_numeric(d[c],errors='coerce')
+          if d.won.dtype!=bool:
+              d['won']=d.won.astype(str).str.lower().map({'true':1,'false':0,'1':1,'0':0}).astype('boolean')
+          d['winpct_gap']=d.f_win_pct-d.o_win_pct
+          d['finish_loss_gap']=d.f_finish_loss_pct-d.o_finish_loss_pct
+          d['opp_finish_edge']=d.o_finish_win_pct-d.f_finish_win_pct
+          d['fav_ko_vuln']=d.f_kd_abs15
+          d['opp_power']=d.o_kd15
+          base=d[(d.market_prob>=.575)&(d.market_prob<=.75)&(d.f_fights>=8)&(d.o_fights<=3)&(d.winpct_gap>=.05)].copy()
+          def met(g):
+              n=len(g); wins=int(g.won.fillna(False).sum()); p=float(g.profit100.sum())
+              return dict(n=n,wins=wins,losses=n-wins,win=wins/n if n else np.nan,roi=p/(100*n) if n else np.nan,profit=p)
+          bm=met(base)
+          rows=[]
+          def add(name,mask):
+              g=base[mask.fillna(False)].copy(); m=met(g)
+              old=met(g[g.event_date<pd.Timestamp('2020-01-01')]); rec=met(g[g.event_date>=pd.Timestamp('2020-01-01')])
+              rem=base[~mask.fillna(False)].copy(); rm=met(rem)
+              rows.append(dict(rule=name,**m,pre_n=old['n'],pre_roi=old['roi'],recent_n=rec['n'],recent_roi=rec['roi'],removed_n=rm['n'],removed_losses=rm['losses'],removed_roi=rm['roi'],roi_lift=m['roi']-bm['roi']))
+          # single veto grids
+          for x in [.3,.4,.5,.6,.7]: add(f'fav_finish_loss_pct<{x:.1f}',base.f_finish_loss_pct<x)
+          for x in [.3,.4,.5,.6,.7]: add(f'opp_finish_win_pct<{x:.1f}',base.o_finish_win_pct<x)
+          for x in [.2,.3,.4,.5]: add(f'finish_loss_gap<={x:.1f}',base.finish_loss_gap<=x)
+          for x in [.2,.3,.4,.5]: add(f'opp_finish_edge<={x:.1f}',base.opp_finish_edge<=x)
+          for x in [.5,.75,1.0,1.25,1.5]: add(f'fav_kd_abs15<={x:.2f}',base.fav_ko_vuln<=x)
+          for x in [.25,.5,.75,1.0]: add(f'opp_kd15<={x:.2f}',base.opp_power<=x)
+          # sensible combos
+          for fl,kd in itertools.product([.4,.5,.6],[.75,1.0,1.25]):
+              add(f'fav_finish_loss<{fl:.1f}+kd_abs<={kd:.2f}',(base.f_finish_loss_pct<fl)&(base.fav_ko_vuln<=kd))
+          for fl,of in itertools.product([.4,.5,.6],[.4,.5,.6]):
+              add(f'fav_finish_loss<{fl:.1f}+opp_finish<{of:.1f}',(base.f_finish_loss_pct<fl)&(base.o_finish_win_pct<of))
+          r=pd.DataFrame(rows)
+          r.to_csv(out/'experience_mismatch_durability_veto_grid.csv',index=False)
+          robust=r[(r.n>=30)&(r.pre_n>=10)&(r.recent_n>=12)&(r.pre_roi>0)&(r.recent_roi>0)].sort_values(['roi_lift','n'],ascending=[False,False])
+          lines=['UFC EXPERIENCE MISMATCH — DURABILITY / FINISH-RISK VETO STUDY','='*112,
+                 f'BASE 57.5%-75%: {bm["n"]} bets | {bm["wins"]}-{bm["losses"]} | win {bm["win"]*100:.1f}% | ROI {bm["roi"]*100:+.2f}%','',
+                 'TOP ROBUST VETOES (n>=30, pre>=10, recent>=12, ROI positive both eras)','-'*112]
+          for _,z in robust.head(25).iterrows():
+              lines.append(f"{z.rule:<48} n={int(z.n):2d} {int(z.wins)}-{int(z.losses)} win={z.win*100:5.1f}% ROI={z.roi*100:+6.2f}% lift={z.roi_lift*100:+5.2f}pp | pre={z.pre_roi*100:+6.2f}% recent={z.recent_roi*100:+6.2f}% | removed {int(z.removed_n)} incl {int(z.removed_losses)} losses, removedROI={z.removed_roi*100:+6.2f}%")
+          (out/'experience_mismatch_durability_report.txt').write_text('\n'.join(lines)+'\n')
+          print('\n'.join(lines))
+          PY
+      - name: Commit outputs
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name appwiza-research-bot
+          git config user.email actions@users.noreply.github.com
+          git add ufc_unique_method_discovery/experience_mismatch_durability_veto_grid.csv ufc_unique_method_discovery/experience_mismatch_durability_report.txt
+          git diff --cached --quiet && exit 0
+          git commit -m 'Add UFC experience mismatch durability veto study'
+          git push
