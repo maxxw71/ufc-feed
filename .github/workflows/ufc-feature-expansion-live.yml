@@ -1,0 +1,40 @@
+name: UFC Feature Expansion Live
+on:
+  push:
+    paths:
+      - 'scripts/ufc_feature_expansion.py'
+      - '.github/workflows/ufc-feature-expansion-live.yml'
+  workflow_dispatch:
+jobs:
+  build:
+    runs-on: [self-hosted, appwiza]
+    timeout-minutes: 20
+    steps:
+      - shell: bash
+        run: |
+          set -euo pipefail
+          KEY=/home/appwiza-runner/.ssh/appwiza_vps
+          TMP=$(mktemp)
+          curl -fsSL https://raw.githubusercontent.com/maxxw71/ufc-feed/main/scripts/ufc_feature_expansion.py -o "$TMP"
+          scp -i "$KEY" -o StrictHostKeyChecking=no "$TMP" anestishkurti92@127.0.0.1:/home/anestishkurti92/ufc-predictor-v1/ufc_feature_expansion.py
+          rm -f "$TMP"
+          ssh -i "$KEY" -o StrictHostKeyChecking=no anestishkurti92@127.0.0.1 'bash -s' <<'EOF'
+          set -euo pipefail
+          cd /home/anestishkurti92/ufc-predictor-v1
+          chmod 700 ufc_feature_expansion.py
+          venv/bin/python -m py_compile ufc_feature_expansion.py
+          OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 nice -n 12 timeout 15m venv/bin/python ufc_feature_expansion.py
+          echo '=== FEATURE EXPANSION META ==='
+          cat feature_expansion/feature_expansion_meta.json
+          echo '=== VALIDATE ==='
+          venv/bin/python - <<'PY'
+          import pandas as pd, json, os
+          p='feature_expansion/prefight_favorite_features_v2.csv'
+          d=pd.read_csv(p,low_memory=False)
+          new=[c for c in d.columns if c.startswith('f2_')]
+          print('rows',len(d),'columns',len(d.columns),'f2_features',len(new))
+          print('date_min',d.event_date.min(),'date_max',d.event_date.max())
+          print('non_null_top',d[new].notna().sum().sort_values(ascending=False).head(20).to_dict())
+          print('file_bytes',os.path.getsize(p))
+          PY
+          EOF
