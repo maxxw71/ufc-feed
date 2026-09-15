@@ -1,0 +1,32 @@
+name: UFC Find Working Methods
+on:
+  push:
+    paths:
+      - '.github/workflows/ufc-find-working-methods.yml'
+jobs:
+  find:
+    runs-on: [self-hosted, appwiza]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Find UFC working-methods files
+        shell: bash
+        run: |
+          set -euo pipefail
+          OUT=ufc_unique_method_discovery/working_methods_locations.txt
+          mkdir -p "$(dirname "$OUT")"
+          {
+            echo 'Search under UFC project:'
+            find /home/anestishkurti92/ufc-predictor-v1 -maxdepth 4 -type f \( -iname '*method*' -o -iname '*research*' -o -iname '*.json' -o -iname '*.md' -o -iname '*.html' \) 2>/dev/null | sort
+            echo
+            echo 'Grep working/validated/promising references:'
+            grep -RIlE 'working methods|working_method|validated methods|promising methods|Striking Differential|Age.*Reach|structural edge' /home/anestishkurti92/ufc-predictor-v1 /srv/appwiza-sports 2>/dev/null | head -200 || true
+          } > "$OUT"
+      - name: Commit inventory
+        shell: bash
+        run: |
+          git config user.name 'appwiza-research-bot'
+          git config user.email 'actions@users.noreply.github.com'
+          git add ufc_unique_method_discovery/working_methods_locations.txt
+          git commit -m 'Locate UFC working methods files' || exit 0
+          git pull --rebase origin main
+          git push origin HEAD:main
