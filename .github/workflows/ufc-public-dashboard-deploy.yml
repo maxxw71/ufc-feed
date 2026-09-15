@@ -1,0 +1,49 @@
+name: UFC public dashboard deploy
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/ufc_public_dashboard_patch.py'
+      - '.github/workflows/ufc-public-dashboard-deploy.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    if: github.repository == 'maxxw71/ufc-feed' && github.ref == 'refs/heads/main'
+    runs-on: [self-hosted, Linux, X64, appwiza]
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Patch persistent UFC dashboard renderer
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          P=/opt/sports-publisher/sports_publish.py
+          B=/opt/sports-publisher/sports_publish.py.pre-ufc-dashboard-$(date +%Y%m%d-%H%M%S).bak
+          cp "$P" "$B"
+          python3 scripts/ufc_public_dashboard_patch.py
+          python3 -m py_compile "$P"
+          python3 - <<'PY'
+          import sys
+          sys.path.insert(0,'/opt/sports-publisher')
+          import sports_publish
+          sports_publish.render_all()
+          PY
+      - name: Verify public UFC dashboard
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          P=/srv/appwiza-sports/public/ufc/index.html
+          grep -q 'Overall record' "$P"
+          grep -q 'Upcoming picks' "$P"
+          grep -q 'Completed selections' "$P"
+          grep -q 'history-table' "$P"
+          grep -q 'Manon Fiorot' "$P"
+          grep -q 'LOSS' "$P"
+          grep -q '2-1' "$P"
+          echo 'UFC dashboard verification passed'
+          grep -oE 'Overall record|Win rate|Tracked ROI|Net units|Upcoming picks|Completed selections|2-1|-18\.2%' "$P" | sort | uniq -c
