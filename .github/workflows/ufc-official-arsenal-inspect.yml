@@ -10,24 +10,25 @@ jobs:
     runs-on: [self-hosted, appwiza]
     steps:
       - uses: actions/checkout@v4
-      - name: Inspect current UFC production watcher and state wiring
+      - name: Inspect current UFC production watcher and publisher
         shell: bash
         run: |
           set -euo pipefail
-          ROOT=/home/anestishkurti92/ufc-predictor-v1
-          W="$ROOT/ufc_email_watcher.py"
           OUT=ufc_unique_method_discovery/official_arsenal_inspect.txt
           mkdir -p "$(dirname "$OUT")"
-          python3 - "$W" "$OUT" <<'PY'
+          python3 - "$OUT" <<'PY'
           from pathlib import Path
           import sys
-          lines=Path(sys.argv[1]).read_text().splitlines(); chunks=[]
-          keys=['methods','qualifies','structural_edge','striking_methods','skill_veto','state','ledger','publish','event_block','predict_bout','selection']
-          for i,line in enumerate(lines):
-              if any(k in line for k in keys):
-                  a=max(0,i-5); b=min(len(lines),i+14)
-                  chunks.append(f'--- lines {a+1}-{b} ---\n'+'\n'.join(f'{j+1}: {lines[j]}' for j in range(a,b)))
-          Path(sys.argv[2]).write_text('\n\n'.join(chunks[:300]))
+          out=[]
+          for path,keys in [
+            ('/home/anestishkurti92/ufc-predictor-v1/ufc_email_watcher.py',['methods','qualifies','structural_edge','striking_methods','skill_veto','state','ledger','publish','event_block','predict_bout','selection']),
+            ('/opt/sports-publisher/sports_publish.py',['publish_ufc','methods','method','striking','structural','hybrid','qualifies','selection'])]:
+              lines=Path(path).read_text().splitlines(); out.append('===== '+path+' =====')
+              for i,line in enumerate(lines):
+                  if any(k in line for k in keys):
+                      a=max(0,i-5); b=min(len(lines),i+14)
+                      out.append(f'--- lines {a+1}-{b} ---\n'+'\n'.join(f'{j+1}: {lines[j]}' for j in range(a,b)))
+          Path(sys.argv[1]).write_text('\n\n'.join(out))
           PY
       - name: Push diagnostic to isolated branch
         shell: bash
@@ -36,6 +37,6 @@ jobs:
           git config user.email 'actions@users.noreply.github.com'
           git checkout -B ufc-inspect-output
           git add -f ufc_unique_method_discovery/official_arsenal_inspect.txt
-          git commit -m 'UFC official arsenal diagnostic output' || true
+          git commit -m 'UFC watcher and publisher diagnostic' || true
           git push -f origin ufc-inspect-output
-# trigger 5
+# trigger 6
