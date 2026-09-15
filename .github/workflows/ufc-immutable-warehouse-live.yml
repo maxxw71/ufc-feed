@@ -1,0 +1,44 @@
+name: UFC Immutable Warehouse Live
+on:
+  push:
+    paths:
+      - 'scripts/ufc_immutable_warehouse.py'
+      - '.github/workflows/ufc-immutable-warehouse-live.yml'
+  workflow_dispatch:
+jobs:
+  deploy:
+    runs-on: [self-hosted, appwiza]
+    steps:
+      - shell: bash
+        run: |
+          set -euo pipefail
+          KEY=/home/appwiza-runner/.ssh/appwiza_vps
+          TMP=$(mktemp)
+          curl -fsSL https://raw.githubusercontent.com/maxxw71/ufc-feed/main/scripts/ufc_immutable_warehouse.py -o "$TMP"
+          scp -i "$KEY" -o StrictHostKeyChecking=no "$TMP" anestishkurti92@127.0.0.1:/home/anestishkurti92/ufc-predictor-v1/ufc_immutable_warehouse.py
+          rm -f "$TMP"
+          ssh -i "$KEY" -o StrictHostKeyChecking=no anestishkurti92@127.0.0.1 'bash -s' <<'EOF'
+          set -euo pipefail
+          cd /home/anestishkurti92/ufc-predictor-v1
+          chmod 700 ufc_immutable_warehouse.py
+          venv/bin/python -m py_compile ufc_immutable_warehouse.py
+          venv/bin/python ufc_immutable_warehouse.py
+          OLD=$(crontab -l 2>/dev/null || true)
+          CLEAN=$(printf '%s\n' "$OLD" | sed '/# BEGIN APPWIZA UFC IMMUTABLE/,/# END APPWIZA UFC IMMUTABLE/d')
+          {
+            printf '%s\n' "$CLEAN"
+            echo '# BEGIN APPWIZA UFC IMMUTABLE'
+            echo 'CRON_TZ=America/New_York'
+            echo '25 0,6,12,18 * * * cd /home/anestishkurti92/ufc-predictor-v1 && nice -n 12 timeout 10m venv/bin/python ufc_immutable_warehouse.py >> auto_research/immutable.log 2>&1'
+            echo '# END APPWIZA UFC IMMUTABLE'
+          } | crontab -
+          echo '=== IMMUTABLE STATUS ==='
+          venv/bin/python - <<'PY'
+          import sqlite3
+          db=sqlite3.connect('auto_research/state/immutable_warehouse.sqlite3')
+          print('canonical',db.execute("select count(*) from canonical_rows where source='ufcstats'").fetchone()[0])
+          print('pending_revisions',db.execute("select count(*) from revisions where source='ufcstats'").fetchone()[0])
+          print('appwiza_snapshots',db.execute('select count(*) from appwiza_snapshots').fetchone()[0])
+          print('latest_ingest',db.execute('select new_rows,unchanged_rows,revisions,rejected_old_unknown from ingest_runs order by id desc limit 1').fetchone())
+          PY
+          EOF
