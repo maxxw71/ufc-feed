@@ -17,21 +17,38 @@ jobs:
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
-      - name: Inspect missing UFC helpers and live usages
+      - name: Inspect UFC publisher and current dashboard inputs
         shell: bash
         run: |
           set -u
-          echo '=== FILE NAMES MATCHING HELPERS ==='
-          find /opt /home/anestishkurti92 -type f \( -iname '*bet*tracker*' -o -iname '*ufc*email*design*' -o -iname '*sports*publish*' \) -print 2>/dev/null | head -200 || true
+          echo '=== UFC PUBLIC FILES ==='
+          find /srv/appwiza-sports/public/ufc -maxdepth 2 -type f -printf '%p %s bytes\n' 2>/dev/null | sort | head -120 || true
           echo
-          echo '=== CONTENT DEFINITIONS / USAGES ==='
-          grep -RniE 'def ufc_picks|def method_cards|class .*Tracker|bet_tracker\.|ufc_email_design\.' /opt /home/anestishkurti92 2>/dev/null | head -260 || true
+          echo '=== UFC STATE FILES ==='
+          find /srv/appwiza-sports/state -maxdepth 2 -type f -printf '%p %s bytes\n' 2>/dev/null | sort | head -120 || true
           echo
-          echo '=== WATCHER BET TRACKER CONTEXT ==='
-          grep -n -B4 -A8 -E 'bet_tracker\.|ufc_email_design\.' /home/anestishkurti92/ufc-predictor-v1/ufc_email_watcher.py 2>/dev/null | head -260 || true
+          echo '=== PUBLISHER CANDIDATES ==='
+          find /opt /home/anestishkurti92 -type f \( -iname '*sports*publish*' -o -iname '*public*page*' -o -iname '*ufc*publish*' -o -iname '*ufc*page*' \) -print 2>/dev/null | head -160 || true
           echo
-          echo '=== WATCHER BACKUPS ==='
-          ls -lt /home/anestishkurti92/ufc-predictor-v1/ufc_email_watcher.py* 2>/dev/null | head -30 || true
+          echo '=== UFC PAGE TITLE SOURCE MATCHES ==='
+          grep -RnilF 'UFC qualifying matchups' /opt /home/anestishkurti92 2>/dev/null | head -50 || true
           echo
-          echo '=== CURRENT LIVE PAGE TOKENS ==='
-          grep -oE 'Striking \+ TD Defense[^<]*|40 / 40|94\.4%|17\.64%|23\.08%' /srv/appwiza-sports/public/ufc/index.html 2>/dev/null | sort | uniq -c || true
+          echo '=== UFC UPCOMING SECTION SOURCE MATCHES ==='
+          grep -RnilF 'Upcoming selections' /opt /home/anestishkurti92 2>/dev/null | head -50 || true
+          echo
+          echo '=== CURRENT UFC HTML HEAD/SECTIONS ==='
+          sed -n '1,260p' /srv/appwiza-sports/public/ufc/index.html 2>/dev/null || true
+          echo
+          echo '=== UFC JSON STATE PREVIEW ==='
+          for f in /srv/appwiza-sports/state/ufc*.json /srv/appwiza-sports/state/*ufc*.json; do
+            [ -f "$f" ] || continue
+            echo "--- $f ---"
+            python3 - "$f" <<'PY'
+import json,sys
+p=sys.argv[1]
+try:
+ d=json.load(open(p))
+ print(json.dumps(d,indent=2)[:20000])
+except Exception as e: print(e)
+PY
+          done
