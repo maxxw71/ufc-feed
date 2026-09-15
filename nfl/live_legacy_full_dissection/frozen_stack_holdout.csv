@@ -1,0 +1,7 @@
+method,depth,vetoes,pre_roi,holdout_n,holdout_win_pct,holdout_roi,full_n,full_win_pct,full_roi,confirmed
+original,1,ats_margin <= -4.2,0.43352948238099415,24,1.0,0.4190828180459614,66,1.0,0.43128089728042635,True
+original,2,ats_margin <= -4.2 | opp_last_rank_def_allowed_giveaway_rate <= 14.8,0.4490357878331128,19,1.0,0.39527505543941294,53,1.0,0.44432685159915236,True
+original,3,ats_margin <= -4.2 | over_odds >= -103 | under_odds <= -107,0.400533161938332,4,1.0,0.5692576001306786,37,1.0,0.4213923809282104,False
+stricter,1,ats_margin <= -5.5,0.38736016524300754,18,1.0,0.3671799730143285,50,1.0,0.38009529604068304,True
+stricter,2,ats_margin <= -5.5 | total <= 29.2,0.40470668343855976,18,1.0,0.3671799730143285,47,1.0,0.3937160280705101,True
+stricter,3,ats_margin <= -5.5 | last_pre_success_rate >= 0.435727 | total <= 29.2,0.4264941511483466,9,1.0,0.4686701096492432,32,1.0,0.4438207444591424,False
