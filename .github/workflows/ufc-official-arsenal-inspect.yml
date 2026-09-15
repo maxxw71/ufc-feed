@@ -10,33 +10,27 @@ jobs:
     runs-on: [self-hosted, appwiza]
     steps:
       - uses: actions/checkout@v4
-      - name: Inspect live UFC modules over local SSH
+      - name: Find UFC pick implementation
         shell: bash
         run: |
-          set -euo pipefail
-          KEY=/home/appwiza-runner/.ssh/appwiza_vps
-          HOST=anestishkurti92@127.0.0.1
-          SSH="ssh -i $KEY -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=accept-new $HOST"
+          set -u
           OUT=ufc_unique_method_discovery/official_arsenal_inspect.txt
           mkdir -p "$(dirname "$OUT")"
-          $SSH 'export HOME=/home/anestishkurti92; cd /home/anestishkurti92/ufc-predictor-v1; source venv/bin/activate; python - <<'"'"'PY'"'"'
-import inspect,importlib.util,sys
-from pathlib import Path
-wp=Path("/home/anestishkurti92/ufc-predictor-v1/ufc_email_watcher.py")
-spec=importlib.util.spec_from_file_location("watcher_runtime",wp)
-w=importlib.util.module_from_spec(spec);spec.loader.exec_module(w)
-print("BET_TRACKER_FILE",getattr(w.bet_tracker,"__file__",None))
-print(inspect.getsource(w.bet_tracker.ufc_picks))
-print("UFC_EMAIL_DESIGN_FILE",getattr(w.ufc_email_design,"__file__",None))
-print(inspect.getsource(w.ufc_email_design.method_cards))
-PY' > "$OUT"
-      - name: Push diagnostic to isolated branch
+          {
+            echo '=== ufc_picks locations ==='
+            grep -R -n --include='*.py' 'def ufc_picks' /home/anestishkurti92 /opt 2>/dev/null || true
+            echo '=== bet_tracker locations ==='
+            find /home/anestishkurti92 /opt -name '*bet*tracker*.py' -o -name 'bet_tracker.py' 2>/dev/null || true
+            echo '=== design method cards ==='
+            grep -n -A60 -B5 'def method_cards' /home/anestishkurti92/ufc-predictor-v1/ufc_email_design.py 2>/dev/null || true
+          } > "$OUT"
+      - name: Push diagnostic
         shell: bash
         run: |
           git config user.name 'appwiza-research-bot'
           git config user.email 'actions@users.noreply.github.com'
           git checkout -B ufc-inspect-output
           git add -f ufc_unique_method_discovery/official_arsenal_inspect.txt
-          git commit -m 'UFC live runtime hook diagnostic' || true
+          git commit -m 'Find UFC pick implementation' || true
           git push -f origin ufc-inspect-output
-# trigger 11
+# trigger 12
