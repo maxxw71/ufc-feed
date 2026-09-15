@@ -10,26 +10,32 @@ jobs:
     runs-on: [self-hosted, appwiza]
     steps:
       - uses: actions/checkout@v4
-      - name: Inspect runtime UFC hooks via watcher import
+      - name: Locate and inspect UFC tracker modules
         shell: bash
         run: |
           set -euo pipefail
           OUT=ufc_unique_method_discovery/official_arsenal_inspect.txt
           mkdir -p "$(dirname "$OUT")"
-          cd /home/anestishkurti92/ufc-predictor-v1
-          source venv/bin/activate
-          python - "$OUT" <<'PY'
-          import sys,inspect,importlib.util
+          BT=$(find /home/anestishkurti92 /opt -type f -name 'bet_tracker.py' 2>/dev/null | head -1 || true)
+          UD=$(find /home/anestishkurti92 /opt -type f -name 'ufc_email_design.py' 2>/dev/null | head -1 || true)
+          echo "BET_TRACKER=$BT" > "$OUT"
+          echo "UFC_DESIGN=$UD" >> "$OUT"
+          python3 - "$BT" "$UD" "$OUT" <<'PY'
+          import ast,sys
           from pathlib import Path
-          wp=Path('/home/anestishkurti92/ufc-predictor-v1/ufc_email_watcher.py')
-          spec=importlib.util.spec_from_file_location('watcher_runtime',wp)
-          w=importlib.util.module_from_spec(spec);spec.loader.exec_module(w)
-          parts=[]
-          parts.append('BET_TRACKER_FILE='+str(getattr(w.bet_tracker,'__file__',None)))
-          parts.append(inspect.getsource(w.bet_tracker.ufc_picks))
-          parts.append('UFC_EMAIL_DESIGN_FILE='+str(getattr(w.ufc_email_design,'__file__',None)))
-          parts.append(inspect.getsource(w.ufc_email_design.method_cards))
-          Path(sys.argv[1]).write_text('\n\n'.join(parts))
+          bt,ud,out=map(Path,sys.argv[1:4])
+          text=out.read_text()
+          def grab(path,names):
+              if not path.exists(): return '\nMISSING '+str(path)+'\n'
+              src=path.read_text(); tree=ast.parse(src); lines=src.splitlines(); chunks=[]
+              for node in tree.body:
+                  if isinstance(node,(ast.FunctionDef,ast.AsyncFunctionDef)) and node.name in names:
+                      a=node.lineno-1; b=getattr(node,'end_lineno',node.lineno)
+                      chunks.append('\n'.join(f'{i+1}: {lines[i]}' for i in range(a,b)))
+              return '\n\n'.join(chunks)
+          text+='\n\n===== BET TRACKER =====\n'+grab(bt,{'ufc_picks','footer','stage'})
+          text+='\n\n===== UFC DESIGN =====\n'+grab(ud,{'method_cards','shell'})
+          out.write_text(text)
           PY
       - name: Push diagnostic to isolated branch
         shell: bash
@@ -38,6 +44,6 @@ jobs:
           git config user.email 'actions@users.noreply.github.com'
           git checkout -B ufc-inspect-output
           git add -f ufc_unique_method_discovery/official_arsenal_inspect.txt
-          git commit -m 'UFC runtime hook diagnostic via watcher' || true
+          git commit -m 'Locate UFC tracker modules' || true
           git push -f origin ufc-inspect-output
-# trigger 9
+# trigger 10
