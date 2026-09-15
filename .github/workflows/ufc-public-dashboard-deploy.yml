@@ -5,7 +5,7 @@ on:
   push:
     branches: [main]
     paths:
-      - 'scripts/ufc_public_dashboard_patch.py'
+      - 'ufc/ufc_public_page.py'
       - '.github/workflows/ufc-public-dashboard-deploy.yml'
 
 permissions:
@@ -18,30 +18,48 @@ jobs:
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
-      - name: Patch and install UFC dashboard as site owner
+      - name: Install persistent UFC dashboard enhancer
         shell: bash
         run: |
           set -Eeuo pipefail
-          P=/opt/sports-publisher/sports_publish.py
-          T=/tmp/sports_publish.ufc-dashboard.py
-          SSH='ssh -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=accept-new anestishkurti92@127.0.0.1'
-          cp "$P" "$T"
-          python3 scripts/ufc_public_dashboard_patch.py "$T"
-          python3 -m py_compile "$T"
-          $SSH 'set -e; test -w /opt/sports-publisher/sports_publish.py; cp /opt/sports-publisher/sports_publish.py /opt/sports-publisher/sports_publish.py.pre-ufc-dashboard.bak'
-          cat "$T" | $SSH 'cat > /opt/sports-publisher/sports_publish.py; chmod 0644 /opt/sports-publisher/sports_publish.py; python3 -m py_compile /opt/sports-publisher/sports_publish.py'
-          $SSH "python3 -c \"import sys; sys.path.insert(0,'/opt/sports-publisher'); import sports_publish; sports_publish.render_all()\""
-      - name: Verify public UFC dashboard
+          KEY=/home/appwiza-runner/.ssh/appwiza_vps
+          SSH="ssh -i $KEY -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=accept-new anestishkurti92@127.0.0.1"
+          cat ufc/ufc_public_page.py | $SSH 'cat > /home/anestishkurti92/ufc-predictor-v1/ufc_public_page.py'
+          $SSH 'python3 - <<'"'"'PY'"'"'
+from pathlib import Path
+import py_compile, shutil, time
+p=Path("/home/anestishkurti92/ufc-predictor-v1/ufc_email_watcher.py")
+s=p.read_text()
+backup=p.with_name(p.name+f".pre-public-dashboard.{int(time.time())}.bak")
+changed=False
+if "import ufc_public_page" not in s:
+    anchor="import sports_publish\n"
+    if anchor not in s: raise SystemExit("sports_publish import anchor missing")
+    s=s.replace(anchor,anchor+"import ufc_public_page\n",1); changed=True
+call="sports_publish.safe_call(sports_publish.publish_ufc,events,preds_by_event,globals())"
+if "ufc_public_page.safe_enhance(sports_publish)" not in s:
+    if call not in s: raise SystemExit("publish_ufc call anchor missing")
+    s=s.replace(call,call+"\n        ufc_public_page.safe_enhance(sports_publish)",1); changed=True
+if changed:
+    shutil.copy2(p,backup)
+    p.write_text(s)
+py_compile.compile(str(p),doraise=True)
+print("watcher_dashboard_hook", "patched" if changed else "already-installed")
+PY'
+      - name: Republish UFC page through live stack
         shell: bash
         run: |
           set -Eeuo pipefail
-          P=/srv/appwiza-sports/public/ufc/index.html
-          grep -q 'Overall record' "$P"
-          grep -q 'Upcoming picks' "$P"
-          grep -q 'Completed selections' "$P"
-          grep -q 'history-table' "$P"
-          grep -q 'Manon Fiorot' "$P"
-          grep -q 'LOSS' "$P"
-          grep -q '2-1' "$P"
-          echo 'UFC dashboard verification passed'
-          grep -oE 'Overall record|Win rate|Tracked ROI|Net units|Upcoming picks|Completed selections|2-1|-18\.2%' "$P" | sort | uniq -c
+          KEY=/home/appwiza-runner/.ssh/appwiza_vps
+          SSH="ssh -i $KEY -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=accept-new anestishkurti92@127.0.0.1"
+          $SSH 'set -Eeuo pipefail; export HOME=/home/anestishkurti92; export PYTHONPATH=/home/anestishkurti92/ufc-predictor-v1:/home/anestishkurti92/betting-ledger/code:/opt/sports-publisher; /home/anestishkurti92/ufc-predictor-v1/venv/bin/python /opt/sports-publisher/initial_ufc.py; /home/anestishkurti92/ufc-predictor-v1/venv/bin/python -c "import sports_publish,ufc_public_page; ufc_public_page.safe_enhance(sports_publish)"'
+      - name: Verify live UFC dashboard
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          KEY=/home/appwiza-runner/.ssh/appwiza_vps
+          SSH="ssh -i $KEY -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=accept-new anestishkurti92@127.0.0.1"
+          $SSH 'grep -q "Overall record" /srv/appwiza-sports/public/ufc/index.html; grep -q "Upcoming picks" /srv/appwiza-sports/public/ufc/index.html; grep -q "Completed selections" /srv/appwiza-sports/public/ufc/index.html; grep -q "Manon Fiorot" /srv/appwiza-sports/public/ufc/index.html; grep -q "LOSS" /srv/appwiza-sports/public/ufc/index.html; grep -q "2-1" /srv/appwiza-sports/public/ufc/index.html; stat -c "%U:%G %a %s %n" /srv/appwiza-sports/public/ufc/index.html'
+          curl -fsSL https://appwiza.com/sports/ufc/ | grep -q 'Overall record'
+          curl -fsSL https://appwiza.com/sports/ufc/ | grep -q 'Completed selections'
+          echo 'UFC dashboard live verification passed'
