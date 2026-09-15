@@ -16,6 +16,42 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with: {fetch-depth: 0}
+      - name: Fix selected-team audit identity matcher
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+          p=Path('nfl/nfl_public_page.py')
+          s=p.read_text()
+          old='''def _row_for_card(card, amap):
+    candidates=[str(card.get('selection','')).strip().lower()]
+    fixture=str(card.get('fixture','')).lower()
+    for k,r in amap.items():
+        if k and (k in candidates or (len(k)>=3 and re.search(r'(?<![a-z])'+re.escape(k)+r'(?![a-z])',fixture))):
+            return r
+    return amap.get(candidates[0]) if candidates else None
+'''
+          new='''def _row_for_card(card, amap):
+    selected=str(card.get('selection') or '').strip().lower()
+    if not selected:return None
+    if selected in amap:return amap[selected]
+    seen=set()
+    for r in amap.values():
+        marker=id(r)
+        if marker in seen:continue
+        seen.add(marker)
+        labels=[str(r.get('selection') or '').strip().lower(),str(r.get('team') or '').strip().lower()]
+        for label in labels:
+            if label and (selected==label or (len(label)>=3 and re.search(r'(?<![a-z])'+re.escape(label)+r'(?![a-z])',selected))):
+                return r
+    return None
+'''
+          if old in s:s=s.replace(old,new,1)
+          elif new not in s:raise SystemExit('audit matcher anchor missing')
+          p.write_text(s)
+          PY
+          python3 -m py_compile nfl/nfl_public_page.py
       - name: Install persistent NFL dashboard enhancer
         shell: bash
         run: |
@@ -81,4 +117,16 @@ jobs:
           grep -q '^completed=True$' /tmp/nfl_restore_verify.txt
           grep -q '^downloads_collapsed=True$' /tmp/nfl_restore_verify.txt
           curl -fsSL https://appwiza.com/sports/nfl/ | grep -q 'Actionable now'
+      - name: Persist matcher fix
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git add nfl/nfl_public_page.py
+          if ! git diff --cached --quiet; then
+            git commit -m 'Fix NFL deep-audit card identity matching'
+            git pull --rebase origin main
+            git push origin HEAD:main
+          fi
           echo 'NFL persistent dashboard restored and live'
