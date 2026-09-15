@@ -43,14 +43,13 @@ jobs:
           p.write_text(s)
           PY
           /home/anestishkurti92/nfl-predictor-v1/venv/bin/python -m py_compile "$LIVE/nfl_public_page.py" "$SCANNER"
-      - name: Regenerate NFL page through live scanner without email
+      - name: Regenerate NFL page as site owner without email
         shell: bash
         run: |
           set -Eeuo pipefail
-          export HOME=/home/anestishkurti92
-          export PYTHONPATH=/home/anestishkurti92/nfl-predictor-v1/research_v2:/home/anestishkurti92/betting-ledger/code:/opt/sports-publisher
-          cd /home/anestishkurti92/nfl-predictor-v1/research_v2
-          /home/anestishkurti92/nfl-predictor-v1/venv/bin/python nfl_home_opener_scanner.py --manual
+          KEY=/home/appwiza-runner/.ssh/appwiza_vps
+          SSH="ssh -i $KEY -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=accept-new anestishkurti92@127.0.0.1"
+          $SSH 'set -Eeuo pipefail; export HOME=/home/anestishkurti92; export PYTHONPATH=/home/anestishkurti92/nfl-predictor-v1/research_v2:/home/anestishkurti92/betting-ledger/code:/opt/sports-publisher; cd /home/anestishkurti92/nfl-predictor-v1/research_v2; /home/anestishkurti92/nfl-predictor-v1/venv/bin/python nfl_home_opener_scanner.py --manual'
       - name: Verify restored NFL structure and actionable board
         shell: bash
         run: |
