@@ -1,0 +1,17 @@
+name: UFC Auto Research Hotfix
+on:
+  push:
+    paths:
+      - 'scripts/patch_ufc_autoresearch_live.py'
+      - '.github/workflows/ufc-autoresearch-hotfix.yml'
+jobs:
+  hotfix:
+    runs-on: [self-hosted, appwiza]
+    steps:
+      - shell: bash
+        run: |
+          set -euo pipefail
+          KEY=/home/appwiza-runner/.ssh/appwiza_vps
+          curl -fsSL https://raw.githubusercontent.com/maxxw71/ufc-feed/main/scripts/patch_ufc_autoresearch_live.py -o /tmp/patch_ufc_autoresearch_live.py
+          scp -i "$KEY" -o StrictHostKeyChecking=no /tmp/patch_ufc_autoresearch_live.py anestishkurti92@127.0.0.1:/tmp/patch_ufc_autoresearch_live.py
+          ssh -i "$KEY" -o StrictHostKeyChecking=no anestishkurti92@127.0.0.1 'cd /home/anestishkurti92/ufc-predictor-v1 && venv/bin/python /tmp/patch_ufc_autoresearch_live.py && venv/bin/python -m py_compile ufc_autoresearch.py && OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 venv/bin/python ufc_autoresearch.py digest && tail -8 auto_research/autoresearch.log'
