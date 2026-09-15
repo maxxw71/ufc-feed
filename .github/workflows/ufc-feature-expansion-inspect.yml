@@ -1,0 +1,29 @@
+name: UFC Feature Expansion Inspect
+on:
+  push:
+    paths:
+      - '.github/workflows/ufc-feature-expansion-inspect.yml'
+  workflow_dispatch:
+jobs:
+  inspect:
+    runs-on: [self-hosted, appwiza]
+    steps:
+      - shell: bash
+        run: |
+          set -euo pipefail
+          KEY=/home/appwiza-runner/.ssh/appwiza_vps
+          ssh -i "$KEY" -o StrictHostKeyChecking=no anestishkurti92@127.0.0.1 'bash -s' <<'EOF'
+          cd /home/anestishkurti92/ufc-predictor-v1
+          echo '=== RAW COMPETITIONS SCHEMA ==='
+          venv/bin/python - <<'PY'
+          import pandas as pd
+          p='raw/competitions.csv'
+          d=pd.read_csv(p,nrows=5,low_memory=False)
+          print('columns',list(d.columns))
+          print(d.head(2).to_string(index=False))
+          PY
+          echo '=== DISCOVERY SCRIPTS ==='
+          find scripts -maxdepth 2 -type f 2>/dev/null | sort | grep -Ei 'discover|category|prefight|feature|ufc' | head -120 || true
+          echo '=== BUILDER REFERENCES ==='
+          grep -RniE 'prefight_favorite_features|finish_loss_pct|ctrl_allowed15|last3|last5' scripts *.py 2>/dev/null | head -180 || true
+          EOF
