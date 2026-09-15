@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 from pathlib import Path
-import re
+import sys
 
-P = Path('/opt/sports-publisher/sports_publish.py')
+P = Path(sys.argv[1] if len(sys.argv) > 1 else '/opt/sports-publisher/sports_publish.py')
 s = P.read_text()
 
 MARKER = '# UFC_DASHBOARD_V1'
@@ -53,13 +53,15 @@ css_anchor="@media(max-width:750px){.grid{grid-template-columns:1fr}main{padding
 if css_anchor not in s:
     raise SystemExit('CSS anchor missing')
 css_extra=r'''.record-strip{display:grid;grid-template-columns:repeat(5,minmax(120px,1fr));gap:12px;margin:18px 0 30px}.record-box{background:#fff;border:1px solid #dce3ec;border-radius:13px;padding:16px;box-shadow:0 4px 16px rgba(19,35,59,.04)}.record-box span{display:block;color:#627187;font-size:12px;text-transform:uppercase;letter-spacing:.05em;font-weight:700}.record-box b{display:block;margin-top:4px;font-size:24px;line-height:1.15;color:#142137}.record-box .positive{color:#12734e}.record-box .negative{color:#b42318}.section-kicker{color:#167597;font-size:12px;letter-spacing:.09em;text-transform:uppercase;font-weight:800;margin:30px 0 4px}.grid.upcoming-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.history-table-wrap{overflow:auto;background:#fff;border:1px solid #dce3ec;border-radius:12px;box-shadow:0 4px 16px rgba(19,35,59,.035);margin-bottom:28px}.history-table{width:100%;border-collapse:collapse;min-width:850px}.history-table th,.history-table td{text-align:left;padding:11px 12px;border-bottom:1px solid #e7edf3;font-size:13px;vertical-align:middle}.history-table th{background:#eef3f8;color:#41536c;font-size:11px;text-transform:uppercase;letter-spacing:.05em}.history-table tr:last-child td{border-bottom:0}.history-table .win{color:#12734e;font-weight:800}.history-table .loss{color:#b42318;font-weight:800}.history-table .push{color:#765b12;font-weight:800}.history-table .pending{color:#627187;font-weight:700}.history-table .profit{font-variant-numeric:tabular-nums;font-weight:750}.result-source{font-size:11px;font-weight:600}.empty-compact{background:#fff;border:1px dashed #aebdd0;border-radius:12px;padding:22px;color:#627187}.withdrawn{margin-top:22px}.withdrawn summary{font-size:15px;color:#526176}@media(max-width:900px){.record-strip{grid-template-columns:repeat(2,minmax(0,1fr))}.grid.upcoming-grid{grid-template-columns:1fr}}@media(max-width:520px){.record-strip{grid-template-columns:1fr 1fr}.record-box{padding:13px}.record-box b{font-size:20px}}'''
-s=s.replace(css_anchor,css_extra+css_anchor,1)
+if '.record-strip{' not in s:
+    s=s.replace(css_anchor,css_extra+css_anchor,1)
 
 old = """   else:\n    content+='<h2>Upcoming selections</h2><div class=\"grid\">'+''.join(card_html(c) for c in upcoming)+'</div>' if upcoming else '<div class=\"empty\">No upcoming matchups qualify in the latest published scan.</div>'\n    if sport=='ufc':content+=ufc_record_html()\n    if past:content+='<details open><summary>Selection history and results ('+str(len(past))+')</summary><p class=\"muted\">Original recorded selection and price, one unit per fight. Unconfirmed results remain pending. Recovered previews are labelled separately from confirmed email deliveries.</p><div class=\"grid\">'+''.join(card_html(c) for c in past)+'</div></details>'\n"""
 new = """   else:\n    if sport=='ufc':\n     content+=ufc_dashboard_record(cards,upcoming)\n     content+='<div class=\"section-kicker\">Current board</div><h2>Upcoming picks</h2>'\n     content+='<div class=\"grid upcoming-grid\">'+''.join(card_html(c) for c in sorted(upcoming,key=lambda x:dt(x['start'])))+'</div>' if upcoming else '<div class=\"empty-compact\">No upcoming matchups qualify in the latest published scan.</div>'\n     content+='<div class=\"section-kicker\">Tracked results</div><h2>Completed selections</h2><p class=\"muted\">One unit per tracked selection at the original recorded moneyline. Pending or void results are excluded from ROI.</p>'+ufc_results_table(cards)+ufc_withdrawn_details(cards)\n    else:\n     content+='<h2>Upcoming selections</h2><div class=\"grid\">'+''.join(card_html(c) for c in upcoming)+'</div>' if upcoming else '<div class=\"empty\">No upcoming matchups qualify in the latest published scan.</div>'\n     if past:content+='<details open><summary>Selection history and results ('+str(len(past))+')</summary><p class=\"muted\">Original recorded selection and price, one unit per fight. Unconfirmed results remain pending. Recovered previews are labelled separately from confirmed email deliveries.</p><div class=\"grid\">'+''.join(card_html(c) for c in past)+'</div></details>'\n"""
-if old not in s:
+if old in s:
+    s=s.replace(old,new,1)
+elif 'ufc_dashboard_record(cards,upcoming)' not in s:
     raise SystemExit('page rendering anchor missing')
-s=s.replace(old,new,1)
 
 P.write_text(s)
 print('patched',P)
