@@ -48,6 +48,14 @@ jobs:
           set -Eeuo pipefail
           LIVE=/home/anestishkurti92/nfl-predictor-v1/research_v2
           cd "$LIVE"
+          BET_TRACKER="$(find /home/anestishkurti92/nfl-predictor-v1 /opt/appwiza-sports-imports -type f -name bet_tracker.py 2>/dev/null | head -1 || true)"
+          if [ -n "$BET_TRACKER" ]; then
+            export PYTHONPATH="$(dirname "$BET_TRACKER"):$LIVE:${PYTHONPATH:-}"
+            echo "Using bet_tracker from $(dirname "$BET_TRACKER")"
+          else
+            echo "bet_tracker.py not found in expected project/import roots" >&2
+            exit 1
+          fi
           HOME=/home/anestishkurti92 /home/anestishkurti92/nfl-predictor-v1/venv/bin/python nfl_home_opener_scanner.py
       - name: Verify and publish deploy report
         shell: bash
