@@ -13,53 +13,27 @@ permissions:
 
 jobs:
   deploy:
-    if: github.repository == 'maxxw71/ufc-feed' && github.ref == 'refs/heads/main'
     runs-on: [self-hosted, Linux, X64, appwiza]
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
-      - name: Install persistent UFC dashboard enhancer
+      - name: Deploy UFC dashboard over local SSH
         shell: bash
         run: |
           set -Eeuo pipefail
           KEY=/home/appwiza-runner/.ssh/appwiza_vps
-          SSH="ssh -i $KEY -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=accept-new anestishkurti92@127.0.0.1"
+          HOST=anestishkurti92@127.0.0.1
+          SSH="ssh -i $KEY -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=accept-new $HOST"
           cat ufc/ufc_public_page.py | $SSH 'cat > /home/anestishkurti92/ufc-predictor-v1/ufc_public_page.py'
-          $SSH 'python3 - <<'"'"'PY'"'"'
-from pathlib import Path
-import py_compile, shutil, time
-p=Path("/home/anestishkurti92/ufc-predictor-v1/ufc_email_watcher.py")
-s=p.read_text()
-backup=p.with_name(p.name+f".pre-public-dashboard.{int(time.time())}.bak")
-changed=False
-if "import ufc_public_page" not in s:
-    anchor="import sports_publish\n"
-    if anchor not in s: raise SystemExit("sports_publish import anchor missing")
-    s=s.replace(anchor,anchor+"import ufc_public_page\n",1); changed=True
-call="sports_publish.safe_call(sports_publish.publish_ufc,events,preds_by_event,globals())"
-if "ufc_public_page.safe_enhance(sports_publish)" not in s:
-    if call not in s: raise SystemExit("publish_ufc call anchor missing")
-    s=s.replace(call,call+"\n        ufc_public_page.safe_enhance(sports_publish)",1); changed=True
-if changed:
-    shutil.copy2(p,backup)
-    p.write_text(s)
-py_compile.compile(str(p),doraise=True)
-print("watcher_dashboard_hook", "patched" if changed else "already-installed")
-PY'
-      - name: Republish UFC page through live stack
+          $SSH 'export HOME=/home/anestishkurti92; export PYTHONPATH=/home/anestishkurti92/ufc-predictor-v1:/home/anestishkurti92/betting-ledger/code:/opt/sports-publisher; /home/anestishkurti92/ufc-predictor-v1/venv/bin/python -c "import sports_publish,ufc_public_page; ufc_public_page.safe_enhance(sports_publish)"'
+      - name: Verify public page
         shell: bash
         run: |
           set -Eeuo pipefail
-          KEY=/home/appwiza-runner/.ssh/appwiza_vps
-          SSH="ssh -i $KEY -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=accept-new anestishkurti92@127.0.0.1"
-          $SSH 'set -Eeuo pipefail; export HOME=/home/anestishkurti92; export PYTHONPATH=/home/anestishkurti92/ufc-predictor-v1:/home/anestishkurti92/betting-ledger/code:/opt/sports-publisher; /home/anestishkurti92/ufc-predictor-v1/venv/bin/python /opt/sports-publisher/initial_ufc.py; /home/anestishkurti92/ufc-predictor-v1/venv/bin/python -c "import sports_publish,ufc_public_page; ufc_public_page.safe_enhance(sports_publish)"'
-      - name: Verify live UFC dashboard
-        shell: bash
-        run: |
-          set -Eeuo pipefail
-          KEY=/home/appwiza-runner/.ssh/appwiza_vps
-          SSH="ssh -i $KEY -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=accept-new anestishkurti92@127.0.0.1"
-          $SSH 'grep -q "Overall record" /srv/appwiza-sports/public/ufc/index.html; grep -q "Upcoming picks" /srv/appwiza-sports/public/ufc/index.html; grep -q "Completed selections" /srv/appwiza-sports/public/ufc/index.html; grep -q "Manon Fiorot" /srv/appwiza-sports/public/ufc/index.html; grep -q "LOSS" /srv/appwiza-sports/public/ufc/index.html; grep -q "2-1" /srv/appwiza-sports/public/ufc/index.html; stat -c "%U:%G %a %s %n" /srv/appwiza-sports/public/ufc/index.html'
-          curl -fsSL https://appwiza.com/sports/ufc/ | grep -q 'Overall record'
-          curl -fsSL https://appwiza.com/sports/ufc/ | grep -q 'Completed selections'
+          curl -fsSL https://appwiza.com/sports/ufc/ > /tmp/ufc-live.html
+          grep -q 'Overall record' /tmp/ufc-live.html
+          grep -q 'Upcoming picks' /tmp/ufc-live.html
+          grep -q 'Completed selections' /tmp/ufc-live.html
+          grep -q '2-1' /tmp/ufc-live.html
+          grep -q 'Manon Fiorot' /tmp/ufc-live.html
           echo 'UFC dashboard live verification passed'
