@@ -17,22 +17,15 @@ jobs:
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
-      - name: Inspect UFC page inputs
+      - name: Inspect UFC publisher hooks
         shell: bash
         run: |
           set -u
-          echo '=== UFC PUBLIC FILES ==='
-          find /srv/appwiza-sports/public/ufc -maxdepth 2 -type f -printf '%p %s bytes\n' 2>/dev/null | sort | head -120 || true
+          echo '=== WATCHER SPORTS PUBLISH CONTEXT ==='
+          grep -n -B8 -A14 -E 'sports_publish|publish_ufc|bet_tracker|ufc_picks' /home/anestishkurti92/ufc-predictor-v1/ufc_email_watcher.py 2>/dev/null | head -500 || true
           echo
-          echo '=== UFC STATE FILES ==='
-          find /srv/appwiza-sports/state -maxdepth 2 -type f -printf '%p %s bytes\n' 2>/dev/null | sort | head -120 || true
+          echo '=== PUBLISH MODULE LOCATIONS ==='
+          find /home/anestishkurti92 /opt -type f -name 'sports_publish.py' -print 2>/dev/null | head -30 || true
           echo
-          echo '=== UFC PROJECT FILES ==='
-          find /home/anestishkurti92/ufc-predictor-v1 -maxdepth 3 -type f -print 2>/dev/null | sort | head -240 || true
-          echo
-          echo '=== PAGE SOURCE MATCHES ==='
-          grep -RnilF 'UFC qualifying matchups' /home/anestishkurti92/ufc-predictor-v1 2>/dev/null | head -50 || true
-          grep -RnilF 'Upcoming selections' /home/anestishkurti92/ufc-predictor-v1 2>/dev/null | head -50 || true
-          echo
-          echo '=== CURRENT UFC HTML HEAD ==='
-          sed -n '1,300p' /srv/appwiza-sports/public/ufc/index.html 2>/dev/null || true
+          echo '=== TRACKER CANDIDATE HEAD ==='
+          sed -n '1,260p' /home/anestishkurti92/ufc-predictor-v1/ufc_tracker_candidate.py 2>/dev/null || true
