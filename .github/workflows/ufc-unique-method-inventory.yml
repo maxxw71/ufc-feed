@@ -19,60 +19,52 @@ jobs:
         shell: bash
         run: |
           set -u
+          ROOT=/home/anestishkurti92/ufc-predictor-v1
           OUT="$GITHUB_WORKSPACE/ufc_unique_method_discovery"
           mkdir -p "$OUT"
-          ROOT=""
-          for p in \
-            /home/anestishkurti92/ufc-predictor-v1 \
-            /home/anestishkurtz92/ufc-model/ufc-predictor-v1 \
-            /opt/appwiza-sports-imports/google-ufc-model-20260913/home/ufc-model/ufc-predictor-v1 \
-            /opt/appwiza-sports-imports/google-ufc-model-20260913/home/ufc-model; do
-            if [ -d "$p" ]; then ROOT="$p"; break; fi
-          done
-          if [ -z "$ROOT" ]; then
-            ROOT=$(find /home /opt -maxdepth 6 -type d -name 'ufc-predictor-v1' 2>/dev/null | head -1 || true)
-          fi
           {
             echo "UFC RESEARCH DATASET INVENTORY"
             echo "Generated: $(date -u +%FT%TZ)"
-            echo "Root: ${ROOT:-NOT_FOUND}"
+            echo "Root: $ROOT"
             echo
-            echo "== UFC-LIKE DIRECTORIES =="
-            find /home /opt -maxdepth 5 -type d \( -iname '*ufc*' -o -iname '*mma*' \) 2>/dev/null | head -120 || true
-            echo
-            echo "== CSV FILES =="
-            if [ -n "$ROOT" ]; then
-              find "$ROOT" -type f -name '*.csv' -printf '%s\t%p\n' 2>/dev/null | sort -nr | head -160 || true
-            fi
+            echo "== KEY FILE HEADERS =="
+            for f in \
+              "$ROOT/favorite_loss_risk_analysis/enriched_market_sample.csv" \
+              "$ROOT/combined_age_reach_backtest/reach_market_sample.csv" \
+              "$ROOT/raw/competitions.csv" \
+              "$ROOT/historical_backtest/walkforward_fight_results.csv" \
+              "$ROOT/new_category_discovery/prefight_favorite_features.csv" \
+              "$ROOT/wrestling_stability_positive_roi/all_favorite_sides_with_prefight_wrestling.csv"; do
+              echo "--- $f ---"
+              if [ -f "$f" ]; then head -1 "$f"; else echo MISSING; fi
+            done
           } > "$OUT/inventory.txt"
 
-          ROOT="$ROOT" python3 - <<'PY' >> "$OUT/inventory.txt"
+          PY="$ROOT/venv/bin/python"
+          if [ ! -x "$PY" ]; then PY="$ROOT/venv.google-original/bin/python"; fi
+          ROOT="$ROOT" "$PY" - <<'PY' >> "$OUT/inventory.txt"
           import os
           from pathlib import Path
-          try:
-              import pandas as pd
-          except Exception as e:
-              print('\nPANDAS_IMPORT_ERROR', repr(e)); raise SystemExit(0)
-          root=Path(os.environ.get('ROOT','')) if os.environ.get('ROOT') else None
-          print('\n== SCHEMAS ==')
-          if not root:
-              print('NO ROOT FOUND'); raise SystemExit(0)
+          import pandas as pd
+          root=Path(os.environ['ROOT'])
+          print('\n== SCHEMAS / ROW COUNTS ==')
           candidates=[
               root/'favorite_loss_risk_analysis/enriched_market_sample.csv',
               root/'combined_age_reach_backtest/reach_market_sample.csv',
               root/'raw/competitions.csv',
               root/'historical_backtest/walkforward_fight_results.csv',
-              root/'new_category_discovery/lower_overlap_candidates.csv',
+              root/'new_category_discovery/prefight_favorite_features.csv',
+              root/'wrestling_stability_positive_roi/all_favorite_sides_with_prefight_wrestling.csv',
           ]
           for p in candidates:
               print(f'\n--- {p} ---')
-              if not p.exists():
-                  print('MISSING'); continue
-              try:
-                  d=pd.read_csv(p, low_memory=False, nrows=5)
-                  print('columns:', '|'.join(map(str,d.columns)))
-              except Exception as e:
-                  print('ERROR',repr(e))
+              if not p.exists(): print('MISSING'); continue
+              d=pd.read_csv(p, low_memory=False)
+              print('rows:',len(d),'cols:',len(d.columns))
+              print('columns:', '|'.join(map(str,d.columns)))
+              if 'event_date' in d.columns:
+                  x=pd.to_datetime(d['event_date'],errors='coerce')
+                  print('event_date:',x.min(),'->',x.max())
           PY
 
       - name: Commit inventory
@@ -83,5 +75,5 @@ jobs:
           git config user.email 'actions@users.noreply.github.com'
           git add ufc_unique_method_discovery/inventory.txt
           git diff --cached --quiet && exit 0
-          git commit -m 'Add UFC research dataset inventory'
+          git commit -m 'Refresh UFC research dataset inventory'
           git push
