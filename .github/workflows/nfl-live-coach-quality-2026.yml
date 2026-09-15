@@ -1,0 +1,41 @@
+name: NFL 2026 live coach quality
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/nfl_build_live_coach_quality_2026.py'
+      - 'data/nfl/coordinator_history_espn_2019_2026.csv'
+      - '.github/workflows/nfl-live-coach-quality-2026.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: [self-hosted, Linux, X64, appwiza]
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with: {fetch-depth: 0}
+      - name: Build dynamic 2026 coach quality layer
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          NFL_CONTEXT_ROOT=/home/appwiza-runner/nfl-context-data NFL_SEASON=2026 \
+            /home/anestishkurti92/nfl-predictor-v1/venv/bin/python scripts/nfl_build_live_coach_quality_2026.py
+      - name: Publish audit outputs
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git add nfl/live_coach_quality_2026
+          if ! git diff --cached --quiet; then
+            git commit -m 'Update dynamic 2026 NFL coach quality layer'
+            git pull --rebase origin main
+            git push origin HEAD:main
+          else
+            echo 'No coach quality changes.'
+          fi
