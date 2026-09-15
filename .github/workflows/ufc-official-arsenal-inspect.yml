@@ -8,30 +8,34 @@ permissions:
 jobs:
   inspect:
     runs-on: [self-hosted, appwiza]
+    env:
+      HOME: /home/anestishkurti92
     steps:
       - uses: actions/checkout@v4
-      - name: Inspect actual UFC tracker module
+      - name: Inspect UFC tracker in service environment
         shell: bash
         run: |
           set -euo pipefail
-          OUT=ufc_unique_method_discovery/official_arsenal_inspect.txt
+          OUT="$GITHUB_WORKSPACE/ufc_unique_method_discovery/official_arsenal_inspect.txt"
           mkdir -p "$(dirname "$OUT")"
           cd /home/anestishkurti92/ufc-predictor-v1
           source venv/bin/activate
           python - "$OUT" <<'PY'
           import sys,inspect
           from pathlib import Path
+          sys.path.insert(0,'/opt/sports-publisher')
           sys.path.insert(0,'/home/anestishkurti92/betting-ledger/code')
           import bet_tracker
-          p=Path(sys.argv[1])
-          p.write_text('FILE='+str(bet_tracker.__file__)+'\n\n'+inspect.getsource(bet_tracker.ufc_picks))
+          out=['FILE='+str(getattr(bet_tracker,'__file__',None)),inspect.getsource(bet_tracker.ufc_picks)]
+          Path(sys.argv[1]).write_text('\n\n'.join(out))
           PY
       - name: Push diagnostic
+        working-directory: ${{ github.workspace }}
         run: |
           git config user.name appwiza-research-bot
           git config user.email actions@users.noreply.github.com
           git checkout -B ufc-inspect-output
           git add -f ufc_unique_method_discovery/official_arsenal_inspect.txt
-          git commit -m 'Inspect actual UFC tracker module' || true
+          git commit -m 'Inspect UFC tracker service environment' || true
           git push -f origin ufc-inspect-output
-# trigger 14
+# trigger 15
