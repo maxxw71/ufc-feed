@@ -1,0 +1,101 @@
+name: UFC Experience Decline Simple Validation
+
+on:
+  push:
+    paths:
+      - '.github/workflows/ufc-experience-decline-simple.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  validate:
+    runs-on: [self-hosted, appwiza]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Search simple decline risk combinations
+        shell: bash
+        run: |
+          set -euo pipefail
+          ROOT=/home/anestishkurti92/ufc-predictor-v1
+          OUT="$GITHUB_WORKSPACE/ufc_unique_method_discovery"
+          mkdir -p "$OUT"
+          PY="$ROOT/venv/bin/python"; [ -x "$PY" ] || PY="$ROOT/venv.google-original/bin/python"
+          ROOT="$ROOT" OUT="$OUT" "$PY" - <<'PY'
+          import os,itertools
+          from pathlib import Path
+          import numpy as np,pandas as pd
+          root=Path(os.environ['ROOT']); out=Path(os.environ['OUT'])
+          d=pd.read_csv(root/'new_category_discovery/prefight_favorite_features.csv',low_memory=False)
+          d['event_date']=pd.to_datetime(d.event_date,errors='coerce')
+          for c in d.columns:
+              if c not in ['event_date','favorite','opponent','won']:
+                  d[c]=pd.to_numeric(d[c],errors='coerce')
+          if d.won.dtype!=bool:
+              d['won']=d.won.astype(str).str.lower().map({'true':1,'false':0,'1':1,'0':0}).astype('boolean')
+          d['winpct_gap']=d.f_win_pct-d.o_win_pct
+          d['finish_loss_gap']=d.f_finish_loss_pct-d.o_finish_loss_pct
+          core=d[(d.market_prob>=.575)&(d.market_prob<=.75)&(d.f_fights>=8)&(d.o_fights<=3)&(d.winpct_gap>=.05)&(d.finish_loss_gap<=.60)].copy()
+          e=pd.read_csv(root/'favorite_loss_risk_analysis/enriched_market_sample.csv',low_memory=False)
+          e['event_date']=pd.to_datetime(e.event_date,errors='coerce')
+          e=e[['event_date','favorite','underdog','fav_younger_by']]
+          core=core.merge(e,left_on=['event_date','favorite','opponent'],right_on=['event_date','favorite','underdog'],how='left')
+
+          flags={
+            'older2': core.fav_younger_by<=-2,
+            'neg_strike': core.f_sig_diff_pm<0,
+            'tdd_under60': core.f_td_def<.60,
+            'ctrl_allowed3': core.f_ctrl_allowed15>=3,
+            'recent5_under500': core.f_last5<.50,
+            'finish_vuln40': core.f_finish_loss_pct>=.40,
+            'kd_abs050': core.f_kd_abs15>=.50,
+          }
+          for k,v in flags.items(): core[k]=v.fillna(False)
+          def met(g):
+              n=len(g); p=float(g.profit100.sum()) if n else 0
+              return n,int(g.won.fillna(False).sum()),p/(100*n) if n else np.nan
+          bn,bw,broi=met(core)
+          rows=[]
+          # Veto if ALL flags in a combination are true. Search simple 2- and 3-way interactions.
+          for size in [2,3]:
+              for combo in itertools.combinations(flags,size):
+                  risk=np.logical_and.reduce([core[c].to_numpy(bool) for c in combo])
+                  g=core[~risk].copy(); rem=core[risk].copy()
+                  n,w,roi=met(g); rn,rw,rroi=met(rem)
+                  old=g[g.event_date<pd.Timestamp('2020-01-01')]; rec=g[g.event_date>=pd.Timestamp('2020-01-01')]
+                  on,ow,oroi=met(old); nn,nw,nroi=met(rec)
+                  if n>=30 and on>=10 and nn>=12 and roi>0 and oroi>0 and nroi>0:
+                      # chronological thirds
+                      gs=g.sort_values('event_date').reset_index(drop=True); edges=np.linspace(0,n,4,dtype=int); thirds=[]
+                      for i in range(3): thirds.append(met(gs.iloc[edges[i]:edges[i+1]])[2])
+                      rows.append(dict(combo=' & '.join(combo),size=size,n=n,wins=w,losses=n-w,win_rate=w/n,roi=roi,lift=roi-broi,
+                                       pre_n=on,pre_roi=oroi,recent_n=nn,recent_roi=nroi,removed_n=rn,removed_losses=rn-rw,removed_roi=rroi,
+                                       t1_roi=thirds[0],t2_roi=thirds[1],t3_roi=thirds[2]))
+          r=pd.DataFrame(rows).sort_values(['removed_losses','roi','n'],ascending=[False,False,False])
+          r.to_csv(out/'simple_decline_rules.csv',index=False)
+          lines=['UFC EXPERIENCE MISMATCH — SIMPLE DECLINE RULE VALIDATION','='*116,
+                 f'BASE: {bn} bets | {bw}-{bn-bw} | ROI {broi*100:+.2f}%','',
+                 'Best simple 2/3-condition vetoes (risk means ALL named conditions are present):','-'*116]
+          for _,z in r.head(25).iterrows():
+              lines.append(f"{z.combo:<55} n={int(z.n):2d} {int(z.wins)}-{int(z.losses)} win={z.win_rate*100:5.1f}% ROI={z.roi*100:+6.2f}% | pre={z.pre_roi*100:+6.2f}% recent={z.recent_roi*100:+6.2f}% | thirds {z.t1_roi*100:+5.1f}/{z.t2_roi*100:+5.1f}/{z.t3_roi*100:+5.1f} | removed {int(z.removed_n)} incl {int(z.removed_losses)} losses")
+          # bootstrap top candidate
+          if len(r):
+              top=r.iloc[0]; combo=top.combo.split(' & '); risk=np.logical_and.reduce([core[c].to_numpy(bool) for c in combo]); g=core[~risk]
+              arr=g.profit100.to_numpy(float); rng=np.random.default_rng(912); vals=np.array([rng.choice(arr,size=len(arr),replace=True).mean()/100 for _ in range(20000)])
+              q=np.quantile(vals,[.025,.5,.975]); lines += ['',f'TOP CANDIDATE BOOTSTRAP 95% ROI CI: {q[0]*100:+.2f}% to {q[2]*100:+.2f}% (median {q[1]*100:+.2f}%)']
+              lines.append('Residual losses:')
+              for _,z in g[~g.won.fillna(False)].sort_values('event_date').iterrows(): lines.append(f"  {z.event_date.date()} | {z.favorite} lost to {z.opponent} | mkt {z.market_prob*100:.1f}%")
+          (out/'simple_decline_report.txt').write_text('\n'.join(lines)+'\n')
+          print('\n'.join(lines))
+          PY
+      - name: Commit outputs
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name appwiza-research-bot
+          git config user.email actions@users.noreply.github.com
+          git add ufc_unique_method_discovery/simple_decline_rules.csv ufc_unique_method_discovery/simple_decline_report.txt
+          git diff --cached --quiet && exit 0
+          git commit -m 'Validate simple UFC decline risk rules'
+          git push
