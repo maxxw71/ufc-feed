@@ -1,5 +1,5 @@
 {
-  "generated_utc": "2026-09-15T04:32:27.477163+00:00",
+  "generated_utc": "2026-09-15T04:33:48.696988+00:00",
   "season": 2026,
   "board_rows": 3,
   "completed_team_game_rows": 32,
@@ -19,5 +19,8 @@
     "passing_first_downs",
     "rushing_first_downs"
   ],
-  "policy": "Weeks 1-3 current-season data are small-sample context only. Mature rolling methods require >=3 prior completed games. Coaching unknown stays unknown."
+  "actionable_rows": 2,
+  "stale_completed_rows": 1,
+  "week_mismatch_rows": 1,
+  "policy": "Fresh schedule/game_id overrides page week. Weeks 1-3 current stats are context only; >=3 prior games required for mature rolling methods. Coaching unknown stays unknown."
 }
