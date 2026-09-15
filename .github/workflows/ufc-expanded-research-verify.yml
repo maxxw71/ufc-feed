@@ -16,6 +16,13 @@ jobs:
           ssh -i "$KEY" -o StrictHostKeyChecking=no anestishkurti92@127.0.0.1 'bash -s' <<'EOF'
           set -euo pipefail
           cd /home/anestishkurti92/ufc-predictor-v1
+          python3 - <<'PY'
+          import json
+          m=json.load(open('feature_expansion/feature_expansion_meta.json'))
+          assert m.get('same_event_guard') is True
+          assert m.get('backward_only_normalization') is True
+          print('feature_meta_ok',m['columns'],m['added_columns'])
+          PY
           OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 nice -n 12 timeout 15m venv/bin/python ufc_autoresearch_runner.py daily
           venv/bin/python - <<'PY'
           import sqlite3
