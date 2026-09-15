@@ -8,9 +8,11 @@ import numpy as np
 import nflreadpy as nfl
 
 REPO = Path(__file__).resolve().parents[1]
+CTX = Path('/home/appwiza-runner/nfl-context-data')
 OUT = REPO / "nfl" / "live_2026_current_snapshot"
 OUT.mkdir(parents=True, exist_ok=True)
 BOARD = REPO / "nfl" / "live_legacy_full_dissection" / "current_board_deep_context.csv"
+LIVE_COACH = CTX / "coach_quality_live" / "coach_quality_2026_team_sides.parquet"
 SEASON = 2026
 
 TEAM_MAP = {"SD":"LAC","OAK":"LV","STL":"LA","LAR":"LA"}
@@ -23,10 +25,26 @@ def yesno(x):
     try: return "yes" if float(x) == 1 else "no"
     except Exception: return str(x)
 def to_pd(x): return x.to_pandas() if hasattr(x, "to_pandas") else pd.DataFrame(x)
+def first_known(row, names):
+    for c in names:
+        if c in row.index and pd.notna(row.get(c)): return row.get(c)
+    return np.nan
 
 board = pd.read_csv(BOARD)
 board["team"] = board["team"].map(canon)
 board["opponent"] = board["opponent"].map(canon)
+
+# Attach the dynamically rebuilt 2026 coaching layer. Prefix it so stale historical-board fields can never override it.
+live_coach_cols=[]
+if LIVE_COACH.exists():
+    lc=pd.read_parquet(LIVE_COACH)
+    lc["team"]=lc.team.map(canon)
+    wanted=[c for c in lc.columns if c in {"game_id","team"} or c.startswith("coachq_") or c.startswith("opp_coachq_") or c.startswith("adv_")]
+    lc=lc[wanted].drop_duplicates(["game_id","team"])
+    rename={c:"live_"+c for c in lc.columns if c not in ["game_id","team"]}
+    lc=lc.rename(columns=rename)
+    live_coach_cols=list(rename.values())
+    board=board.merge(lc,on=["game_id","team"],how="left")
 
 sched = to_pd(nfl.load_schedules([SEASON]))
 sched = sched[(num(sched.get("season")) == SEASON) & sched.get("game_type", "REG").astype(str).eq("REG")].copy()
@@ -58,7 +76,7 @@ if len(team) and {"team","week"}.issubset(team.columns):
     t=team.copy(); t["week"]=num(t.week).astype("Int64")
     weekly=weekly.merge(t[["team","week"]+core_cols].drop_duplicates(["team","week"]),on=["team","week"],how="left")
 
-coach_cols=[c for c in [
+legacy_coach_cols=[c for c in [
     "head_coach","offensive_coordinator","defensive_coordinator",
     "head_coach_changed","offensive_coordinator_changed","defensive_coordinator_changed",
     "hc_changed_season","oc_changed_season","dc_changed_season","staff_change_count","major_staff_changes",
@@ -69,9 +87,10 @@ coach_cols=[c for c in [
 ] if c in board.columns]
 
 rows=[]; lines=[]
-lines.append("NFL 2026 CURRENT BOARD — FRESH CURRENT-SEASON + COACHING CONTEXT")
+lines.append("NFL 2026 CURRENT BOARD — FRESH CURRENT-SEASON + DYNAMIC COACHING CONTEXT")
 lines.append(f"generated_utc={datetime.now(timezone.utc).isoformat()}")
 lines.append("Fresh schedule/game_id is authoritative. Completed or week-mismatched board rows are flagged, not treated as upcoming.")
+lines.append("Dynamic coach quality uses seasons strictly before 2026; Week 1+ outcomes do not leak into coach ratings.")
 lines.append("Current-season samples before Week 4 are CONTEXT ONLY; mature rolling methods still require >=3 prior completed games.")
 lines.append("")
 
@@ -111,24 +130,32 @@ for _,b in board.iterrows():
         "opp_current_games_available":int(len(oppprior)),"opp_current_wins":int(oppprior.won.sum()) if len(oppprior) else 0,
         "opp_current_losses":int(len(oppprior)-oppprior.won.sum()) if len(oppprior) else 0,"opp_current_point_margin_avg":float(oppprior.point_margin.mean()) if len(oppprior) else np.nan,
     }
-    for c in coach_cols: rec[c]=b.get(c)
+    for c in legacy_coach_cols+live_coach_cols: rec[c]=b.get(c)
     for c in core_cols:
         rec[f"current_{c}_avg"] = float(num(prior[c]).mean()) if len(prior) and num(prior[c]).notna().any() else np.nan
         rec[f"opp_current_{c}_avg"] = float(num(oppprior[c]).mean()) if len(oppprior) and num(oppprior[c]).notna().any() else np.nan
     rows.append(rec)
 
-    changes=[]
-    for label,cands in [("HC",["hc_changed_season","head_coach_changed"]),("OC",["oc_changed_season","offensive_coordinator_changed"]),("DC",["dc_changed_season","defensive_coordinator_changed"])]:
-        val=np.nan
-        for c in cands:
-            if c in b.index and pd.notna(b.get(c)): val=b.get(c); break
-        changes.append(f"{label} change={yesno(val)}")
+    hc_change=first_known(b,["live_coachq_hc_changed_quality","hc_changed_season","head_coach_changed"])
+    oc_change=first_known(b,["live_coachq_oc_changed_quality","oc_changed_season","offensive_coordinator_changed"])
+    dc_change=first_known(b,["live_coachq_dc_changed_quality","dc_changed_season","defensive_coordinator_changed"])
+    hc=first_known(b,["live_coachq_head_coach","head_coach"])
+    oc=first_known(b,["live_coachq_offensive_coordinator","offensive_coordinator"])
+    dc=first_known(b,["live_coachq_defensive_coordinator","defensive_coordinator"])
     lines.append(f"{tm} ({b.get('selection')}) vs {opp} | board W{board_week}, schedule W{schedule_week} | ML={b.get('moneyline')} | method={b.get('method')} | status={target_status}")
     if week_mismatch: lines.append(f"  IDENTITY WARNING: board week={board_week} but fresh schedule game_id says week={schedule_week}.")
     if completed: lines.append(f"  TARGET ALREADY FINAL: {tm} {int(target_pf)}-{int(target_pa)} {opp}. This is not an upcoming bet.")
-    lines.append("  Coaching: " + ", ".join(changes))
-    names=[f"HC={b.get('head_coach')}" if pd.notna(b.get('head_coach')) else None,f"OC={b.get('offensive_coordinator')}" if pd.notna(b.get('offensive_coordinator')) else None,f"DC={b.get('defensive_coordinator')}" if pd.notna(b.get('defensive_coordinator')) else None]
-    if any(names): lines.append("  Staff: " + "; ".join(x for x in names if x))
+    lines.append(f"  Coaching: HC change={yesno(hc_change)}, OC change={yesno(oc_change)}, DC change={yesno(dc_change)}")
+    lines.append(f"  Staff: HC={hc}; OC={oc}; DC={dc}")
+    if "live_coachq_staff_quality_mean" in b.index:
+        lines.append(
+            "  Coach quality: mean={} min={} upgrades={} downgrades={} | HC/OC/DC prior role seasons={}/{}/{} | team tenure={}/{}/{}".format(
+                b.get("live_coachq_staff_quality_mean"), b.get("live_coachq_staff_quality_min"),
+                b.get("live_coachq_staff_upgrade_count"), b.get("live_coachq_staff_downgrade_count"),
+                b.get("live_coachq_hc_prior_role_seasons"), b.get("live_coachq_oc_prior_role_seasons"), b.get("live_coachq_dc_prior_role_seasons"),
+                b.get("live_coachq_hc_current_team_tenure_seasons"), b.get("live_coachq_oc_current_team_tenure_seasons"), b.get("live_coachq_dc_current_team_tenure_seasons")
+            )
+        )
     if len(prior):
         lines.append(f"  Preseason={b.get('preseason_record_equiv')} pass={b.get('preseason_policy_pass')} | prior 2026 games={len(prior)} record={int(prior.won.sum())}-{int(len(prior)-prior.won.sum())} avg margin={prior.point_margin.mean():+.1f}")
         for _,g in prior.iterrows():
@@ -146,6 +173,6 @@ out=pd.DataFrame(rows)
 out.to_csv(OUT/"current_board_fresh_context.csv",index=False)
 weekly.to_csv(OUT/"completed_2026_team_week_context.csv",index=False)
 (OUT/"report.txt").write_text("\n".join(lines)+"\n")
-meta={"generated_utc":datetime.now(timezone.utc).isoformat(),"season":SEASON,"board_rows":len(board),"completed_team_game_rows":len(weekly),"team_weekly_fields_used":core_cols,"actionable_rows":int((out.target_status=="UPCOMING").sum()),"stale_completed_rows":int((out.target_status=="COMPLETED_STALE_BOARD").sum()),"week_mismatch_rows":int(out.week_mismatch.sum()),"policy":"Fresh schedule/game_id overrides page week. Weeks 1-3 current stats are context only; >=3 prior games required for mature rolling methods. Coaching unknown stays unknown."}
+meta={"generated_utc":datetime.now(timezone.utc).isoformat(),"season":SEASON,"board_rows":len(board),"completed_team_game_rows":len(weekly),"team_weekly_fields_used":core_cols,"dynamic_coach_layer_loaded":bool(live_coach_cols),"dynamic_coach_fields":len(live_coach_cols),"actionable_rows":int((out.target_status=="UPCOMING").sum()),"stale_completed_rows":int((out.target_status=="COMPLETED_STALE_BOARD").sum()),"week_mismatch_rows":int(out.week_mismatch.sum()),"policy":"Fresh schedule/game_id overrides page week. Coach quality uses prior seasons only. Weeks 1-3 current stats are context only; >=3 prior games required for mature rolling methods."}
 (OUT/"summary.json").write_text(json.dumps(meta,indent=2,default=str))
 print("\n".join(lines))
