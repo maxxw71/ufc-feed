@@ -1,0 +1,121 @@
+name: UFC Experience Decline Score
+
+on:
+  push:
+    paths:
+      - '.github/workflows/ufc-experience-decline-score.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  analyze:
+    runs-on: [self-hosted, appwiza]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build declining veteran risk scores
+        shell: bash
+        run: |
+          set -euo pipefail
+          ROOT=/home/anestishkurti92/ufc-predictor-v1
+          OUT="$GITHUB_WORKSPACE/ufc_unique_method_discovery"
+          mkdir -p "$OUT"
+          PY="$ROOT/venv/bin/python"; [ -x "$PY" ] || PY="$ROOT/venv.google-original/bin/python"
+          ROOT="$ROOT" OUT="$OUT" "$PY" - <<'PY'
+          import os,itertools
+          from pathlib import Path
+          import numpy as np,pandas as pd
+          root=Path(os.environ['ROOT']); out=Path(os.environ['OUT'])
+          d=pd.read_csv(root/'new_category_discovery/prefight_favorite_features.csv',low_memory=False)
+          d['event_date']=pd.to_datetime(d.event_date,errors='coerce')
+          for c in d.columns:
+              if c not in ['event_date','favorite','opponent','won']:
+                  d[c]=pd.to_numeric(d[c],errors='coerce')
+          if d.won.dtype!=bool:
+              d['won']=d.won.astype(str).str.lower().map({'true':1,'false':0,'1':1,'0':0}).astype('boolean')
+          d['winpct_gap']=d.f_win_pct-d.o_win_pct
+          d['finish_loss_gap']=d.f_finish_loss_pct-d.o_finish_loss_pct
+          core=d[(d.market_prob>=.575)&(d.market_prob<=.75)&(d.f_fights>=8)&(d.o_fights<=3)&(d.winpct_gap>=.05)&(d.finish_loss_gap<=.60)].copy()
+
+          # age from enriched sample
+          e=pd.read_csv(root/'favorite_loss_risk_analysis/enriched_market_sample.csv',low_memory=False)
+          e['event_date']=pd.to_datetime(e.event_date,errors='coerce')
+          e=e[['event_date','favorite','underdog','fav_younger_by','fav_age','dog_age','fav_reach_adv','fav_height_adv']].copy()
+          core=core.merge(e,left_on=['event_date','favorite','opponent'],right_on=['event_date','favorite','underdog'],how='left')
+
+          # risk components deliberately broad and interpretable
+          comps={
+            'older_2plus': core.fav_younger_by<=-2,
+            'older_4plus': core.fav_younger_by<=-4,
+            'negative_sig_diff': core.f_sig_diff_pm<0,
+            'low_td_def_50': core.f_td_def<.50,
+            'low_td_def_60': core.f_td_def<.60,
+            'high_ctrl_allowed_3': core.f_ctrl_allowed15>=3,
+            'high_ctrl_allowed_4': core.f_ctrl_allowed15>=4,
+            'recent3_below_500': core.f_last3<.50,
+            'recent5_below_500': core.f_last5<.50,
+            'finish_vuln_40': core.f_finish_loss_pct>=.40,
+            'finish_vuln_50': core.f_finish_loss_pct>=.50,
+            'kd_abs_050': core.f_kd_abs15>=.50,
+            'career_under_60': core.f_win_pct<.60,
+          }
+          for k,v in comps.items(): core[k]=v.fillna(False).astype(int)
+
+          def met(g):
+              n=len(g); p=float(g.profit100.sum()) if n else 0
+              return n,int(g.won.fillna(False).sum()),(p/(100*n) if n else np.nan)
+
+          rows=[]
+          # score families: use groups of sensible components, then veto score >= threshold
+          families={
+            'age_defense':['older_2plus','low_td_def_60','high_ctrl_allowed_3','negative_sig_diff','finish_vuln_40'],
+            'decline_balanced':['older_2plus','negative_sig_diff','low_td_def_60','high_ctrl_allowed_3','recent5_below_500','finish_vuln_40'],
+            'hard_decline':['older_4plus','negative_sig_diff','low_td_def_50','high_ctrl_allowed_4','recent3_below_500','finish_vuln_50','kd_abs_050'],
+            'no_age':['negative_sig_diff','low_td_def_60','high_ctrl_allowed_3','recent5_below_500','finish_vuln_40','kd_abs_050'],
+          }
+          for fam,cols in families.items():
+              score=core[cols].sum(axis=1)
+              for veto_at in range(1,len(cols)+1):
+                  g=core[score<veto_at].copy(); rem=core[score>=veto_at].copy()
+                  n,w,roi=met(g); rn,rw,rroi=met(rem)
+                  old=g[g.event_date<pd.Timestamp('2020-01-01')]; rec=g[g.event_date>=pd.Timestamp('2020-01-01')]
+                  on,ow,oroi=met(old); nn,nw,nroi=met(rec)
+                  rows.append(dict(family=fam,veto_score_at=veto_at,n=n,wins=w,losses=n-w,win_rate=w/n if n else np.nan,roi=roi,
+                                   pre_n=on,pre_roi=oroi,recent_n=nn,recent_roi=nroi,removed_n=rn,removed_losses=rn-rw,removed_roi=rroi,
+                                   components='|'.join(cols)))
+          r=pd.DataFrame(rows)
+          r['robust']=(r.n>=30)&(r.pre_n>=10)&(r.recent_n>=12)&(r.roi>0)&(r.pre_roi>0)&(r.recent_roi>0)
+          r['lift']=r.roi-(core.profit100.sum()/(100*len(core)))
+          r.to_csv(out/'decline_score_results.csv',index=False)
+
+          lines=['UFC EXPERIENCE MISMATCH — DECLINING VETERAN SCORE','='*118]
+          bn,bw,broi=met(core)
+          lines.append(f'BASE refined sample: {bn} bets | {bw}-{bn-bw} | win {bw/bn*100:.1f}% | ROI {broi*100:+.2f}%')
+          lines.append('')
+          lines.append('LOSSES + RISK COMPONENTS')
+          lines.append('-'*118)
+          for _,z in core[~core.won.fillna(False)].sort_values('event_date').iterrows():
+              active=[k for k in comps if z[k]==1]
+              lines.append(f"{z.event_date.date()} | {z.favorite} lost to {z.opponent} | mkt {z.market_prob*100:.1f}% | active risks: {', '.join(active) if active else 'none'}")
+          lines.append('')
+          lines.append('ROBUST SCORE VETOES')
+          lines.append('-'*118)
+          rr=r[r.robust].sort_values(['roi','n'],ascending=[False,False])
+          if rr.empty: lines.append('No robust score veto improved the method.')
+          else:
+              for _,z in rr.head(20).iterrows():
+                  lines.append(f"{z.family:<18} veto score>={int(z.veto_score_at)} | n={int(z.n):2d} {int(z.wins)}-{int(z.losses)} win={z.win_rate*100:5.1f}% ROI={z.roi*100:+6.2f}% lift={z.lift*100:+5.2f}pp | pre={z.pre_roi*100:+6.2f}% recent={z.recent_roi*100:+6.2f}% | removed {int(z.removed_n)} incl {int(z.removed_losses)} losses")
+          (out/'decline_score_report.txt').write_text('\n'.join(lines)+'\n')
+          print('\n'.join(lines))
+          PY
+      - name: Commit outputs
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name appwiza-research-bot
+          git config user.email actions@users.noreply.github.com
+          git add ufc_unique_method_discovery/decline_score_results.csv ufc_unique_method_discovery/decline_score_report.txt
+          git diff --cached --quiet && exit 0
+          git commit -m 'Analyze declining veteran risk score'
+          git push
