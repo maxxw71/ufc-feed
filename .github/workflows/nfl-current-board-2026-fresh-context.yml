@@ -1,0 +1,38 @@
+name: NFL 2026 current board fresh context
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/nfl_current_board_2026_fresh_context.py'
+      - '.github/workflows/nfl-current-board-2026-fresh-context.yml'
+      - 'nfl/live_legacy_full_dissection/current_board_deep_context.csv'
+
+permissions:
+  contents: write
+
+jobs:
+  audit:
+    runs-on: [self-hosted, Linux, X64, appwiza]
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with: {fetch-depth: 0}
+      - name: Build fresh 2026 board context
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          /home/anestishkurti92/nfl-predictor-v1/venv/bin/python scripts/nfl_current_board_2026_fresh_context.py
+      - name: Publish fresh context
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git add nfl/live_2026_current_snapshot
+          if ! git diff --cached --quiet; then
+            git commit -m 'Update fresh 2026 NFL current-board context'
+            git pull --rebase origin main
+            git push origin HEAD:main
+          fi
