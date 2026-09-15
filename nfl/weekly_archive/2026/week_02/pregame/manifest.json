@@ -2,7 +2,7 @@
   "season": 2026,
   "week": 2,
   "mode": "pregame",
-  "generated_utc": "2026-09-15T04:34:57.306196+00:00",
+  "generated_utc": "2026-09-15T04:39:05.577518+00:00",
   "latest_fully_completed_week_at_run": 1,
   "next_unplayed_week_at_run": 2,
   "sources": {
@@ -48,6 +48,68 @@
       "loader": "load_depth_charts",
       "rows": 518581,
       "columns": 12
+    },
+    "participation": {
+      "status": "unavailable",
+      "error": "load_participation:ValueError:Season must be between 2016 and 2025"
+    },
+    "ftn_charting": {
+      "status": "unavailable",
+      "error": "load_ftn_charting:ConnectionError:Failed to download https://github.com/nflverse/nflverse-data/releases/download/ftn_charting/ftn_charting_2026.parquet: 404 Client Error: Not Found for url: https://github.com/nflverse/nflverse-data/releases/download/ftn_charting/ftn_charting_2026.parquet"
+    },
+    "officials": {
+      "status": "saved",
+      "loader": "load_officials",
+      "rows": 0,
+      "columns": 9
+    },
+    "nextgen_passing": {
+      "status": "saved",
+      "loader": "load_nextgen_stats",
+      "rows": 0,
+      "columns": 29
+    },
+    "nextgen_receiving": {
+      "status": "saved",
+      "loader": "load_nextgen_stats",
+      "rows": 0,
+      "columns": 23
+    },
+    "nextgen_rushing": {
+      "status": "saved",
+      "loader": "load_nextgen_stats",
+      "rows": 0,
+      "columns": 22
+    },
+    "pfr_adv_pass": {
+      "status": "saved",
+      "loader": "load_pfr_advstats",
+      "rows": 0,
+      "columns": 24
+    },
+    "pfr_adv_rush": {
+      "status": "saved",
+      "loader": "load_pfr_advstats",
+      "rows": 0,
+      "columns": 16
+    },
+    "pfr_adv_rec": {
+      "status": "saved",
+      "loader": "load_pfr_advstats",
+      "rows": 0,
+      "columns": 17
+    },
+    "pfr_adv_def": {
+      "status": "saved",
+      "loader": "load_pfr_advstats",
+      "rows": 0,
+      "columns": 29
+    },
+    "ff_opportunity_weekly": {
+      "status": "saved",
+      "loader": "load_ff_opportunity",
+      "rows": 0,
+      "columns": 159
     },
     "market_snapshots": {
       "status": "saved",
@@ -109,6 +171,10 @@
       "bytes": 1363873,
       "sha256": "cf5363a46dc0e6cf4fe0fee97a653a5fe9e41f5b4eca14f6770e12e7d570d0ac"
     },
+    "ff_opportunity_weekly.parquet": {
+      "bytes": 84298,
+      "sha256": "50976b4b25b3f83bdd2b1f35af1325adabf18aeac0694c51d5f510b51140164b"
+    },
     "injuries.parquet": {
       "bytes": 7862,
       "sha256": "212ee29d1fd911f055c085a7aba3e5febf227c482b3e0418811cc6e6ceeede50"
@@ -119,11 +185,43 @@
     },
     "market_snapshots.jsonl.gz": {
       "bytes": 3446,
-      "sha256": "e2000c708a86e55c87d47bf74e67362a0fd0d6b1da4857287f264ff1a58a8b31"
+      "sha256": "9b6714ac9949f40c3dba7de162a939068e2532fe54efb7a66fc57b75359df863"
+    },
+    "nextgen_passing.parquet": {
+      "bytes": 14962,
+      "sha256": "5327bb8ba9119a4ff062bed65997fbe7aae0d429555249dfab47e9d9c54f54a2"
+    },
+    "nextgen_receiving.parquet": {
+      "bytes": 11510,
+      "sha256": "793da2de53d285de6f4754a4ef6adb4d96ec2f2d4aa0b2770d6e9f375ae77004"
+    },
+    "nextgen_rushing.parquet": {
+      "bytes": 11380,
+      "sha256": "dd78350d8c57e9d9c060c5c31307466e9dd3c23dc72b32c6387dd3bceee45635"
+    },
+    "officials.parquet": {
+      "bytes": 4485,
+      "sha256": "45e454673b21eadcea94aaf76216d983264130ad77ba6374e1de5c23608c5165"
     },
     "pbp.parquet": {
       "bytes": 181300,
       "sha256": "9a76a58795ec7b9d723a78431c7b3ff09b88248d1c040ff78a89b5c967966727"
+    },
+    "pfr_adv_def.parquet": {
+      "bytes": 14557,
+      "sha256": "9de2bf8262176720aa88383a0f38fb2b1d3aef57e2074c8272876947b925b812"
+    },
+    "pfr_adv_pass.parquet": {
+      "bytes": 11723,
+      "sha256": "bd014e6815aef624ed2d5a02186cbb6637f31ccafc3c663f32fa8775a07402dd"
+    },
+    "pfr_adv_rec.parquet": {
+      "bytes": 8417,
+      "sha256": "d090634b56c9d4b6721a2fda5f417b17d0c9cc470349d880971299767e2e9ad8"
+    },
+    "pfr_adv_rush.parquet": {
+      "bytes": 8359,
+      "sha256": "2f3f0b22f892dc1e6773b9b7e8379f31bac8f6cab49e016c083c8e9bd3c91d35"
     },
     "player_stats.parquet": {
       "bytes": 70351,
