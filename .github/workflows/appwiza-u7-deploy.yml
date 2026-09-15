@@ -23,4 +23,5 @@ jobs:
         shell: bash
         run: |
           set -Eeuo pipefail
+          # Existing production UFC republish path.
           python3 scripts/deploy_appwiza_u7_from_repo.py --publish
