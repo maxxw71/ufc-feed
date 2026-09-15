@@ -1,0 +1,163 @@
+name: UFC Unique Method Discovery
+
+on:
+  push:
+    paths:
+      - '.github/workflows/ufc-unique-method-discovery.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  discover:
+    runs-on: [self-hosted, appwiza]
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Run unique-method discovery
+        shell: bash
+        run: |
+          set -euo pipefail
+          ROOT=/home/anestishkurti92/ufc-predictor-v1
+          OUT="$GITHUB_WORKSPACE/ufc_unique_method_discovery"
+          mkdir -p "$OUT"
+          PY="$ROOT/venv/bin/python"
+          [ -x "$PY" ] || PY="$ROOT/venv.google-original/bin/python"
+          ROOT="$ROOT" OUT="$OUT" "$PY" - <<'PY'
+          import os, itertools, math
+          from pathlib import Path
+          import numpy as np
+          import pandas as pd
+
+          root=Path(os.environ['ROOT']); out=Path(os.environ['OUT'])
+          src=root/'new_category_discovery/prefight_favorite_features.csv'
+          d=pd.read_csv(src, low_memory=False)
+          d['event_date']=pd.to_datetime(d['event_date'], errors='coerce')
+          num=[c for c in d.columns if c not in {'event_date','favorite','opponent','won'}]
+          for c in num: d[c]=pd.to_numeric(d[c], errors='coerce')
+          if d['won'].dtype != bool:
+              d['won']=d['won'].astype(str).str.lower().map({'true':True,'1':True,'yes':True,'false':False,'0':False,'no':False})
+          d=d.dropna(subset=['event_date','favorite','market_prob','fav_decimal','profit100','won']).copy()
+
+          # Underused point-in-time features.
+          d['layoff_gap']=d['o_layoff']-d['f_layoff']
+          d['experience_gap']=d['f_fights']-d['o_fights']
+          d['winpct_gap']=d['f_win_pct']-d['o_win_pct']
+          d['last3_gap']=d['f_last3']-d['o_last3']
+          d['last5_gap']=d['f_last5']-d['o_last5']
+          d['fav_momentum']=d['f_last3']-d['f_last5']
+          d['opp_momentum']=d['o_last3']-d['o_last5']
+          d['momentum_gap']=d['fav_momentum']-d['opp_momentum']
+          d['durability_gap']=d['o_finish_loss_pct']-d['f_finish_loss_pct']
+          d['consistency_f']=(d['f_last3']-d['f_last5']).abs()
+          d['consistency_o']=(d['o_last3']-d['o_last5']).abs()
+
+          def met(g):
+              n=len(g)
+              if not n: return (0,0,np.nan,np.nan,0.0)
+              wins=int(g.won.astype(bool).sum()); p=float(g.profit100.sum())
+              return n,wins,wins/n,p/(100*n),p
+
+          existing=set()
+          for p in [root/'striking_portfolio_100/all_strategy_signal_bets.csv',
+                    root/'skill_veto_all_methods/all_original_signals_with_skill_veto.csv',
+                    root/'structural_edge_failure_analysis/structural_edge_83_fights.csv']:
+              if not p.exists(): continue
+              try: x=pd.read_csv(p,low_memory=False)
+              except: continue
+              dc=next((c for c in ['event_date','date'] if c in x.columns),None)
+              fc=next((c for c in ['favorite','fighter','bet_fighter'] if c in x.columns),None)
+              if dc and fc:
+                  dt=pd.to_datetime(x[dc],errors='coerce')
+                  for a,b in zip(dt,x[fc]):
+                      if pd.notna(a) and pd.notna(b): existing.add((a.normalize(),str(b).strip().lower()))
+
+          rows=[]
+          def add(family, rule, mask):
+              g=d[mask.fillna(False)].copy()
+              n,w,wr,roi,p=met(g)
+              old=g[g.event_date<pd.Timestamp('2020-01-01')]; rec=g[g.event_date>=pd.Timestamp('2020-01-01')]
+              on,ow,owr,oroi,op=met(old); rn,rw,rwr,rroi,rp=met(rec)
+              keys={(a.normalize(),str(b).strip().lower()) for a,b in zip(g.event_date,g.favorite) if pd.notna(a)}
+              overlap=(len(keys & existing)/len(keys)) if keys and existing else np.nan
+              rows.append(dict(family=family,rule=rule,n=n,wins=w,win_rate=wr,roi=roi,profit100=p,
+                               pre2020_n=on,pre2020_roi=oroi,recent_n=rn,recent_roi=rroi,
+                               existing_overlap=overlap))
+
+          mmins=[.55,.575,.60,.625,.65]; mmaxs=[.70,.725,.75,.775,.80]
+          # 1. Ring-rust differential: opponent materially rustier than favorite.
+          for lo,og,fg,mi,ma in itertools.product([90,120,180,240,365],[180,240,300,365,450],[120,180,240,300],mmins,mmaxs):
+              if mi>=ma: continue
+              mask=(d.market_prob>=mi)&(d.market_prob<=ma)&(d.layoff_gap>=lo)&(d.o_layoff>=og)&(d.f_layoff<=fg)&(d.f_fights>=3)&(d.o_fights>=3)
+              add('RING_RUST_EDGE',f'mkt {mi:.3f}-{ma:.3f}; layoff_gap>={lo}; opp_layoff>={og}; fav_layoff<={fg}',mask)
+
+          # 2. Experience + freshness: deeper UFC sample and shorter layoff.
+          for eg,lg,mi,ma in itertools.product([3,5,8,10,12],[60,90,120,180],mmins,mmaxs):
+              if mi>=ma: continue
+              mask=(d.market_prob>=mi)&(d.market_prob<=ma)&(d.experience_gap>=eg)&(d.layoff_gap>=lg)&(d.f_fights>=6)
+              add('EXPERIENCE_FRESHNESS',f'mkt {mi:.3f}-{ma:.3f}; exp_gap>={eg}; layoff_gap>={lg}; fav_fights>=6',mask)
+
+          # 3. Long-term quality despite recent-form disadvantage: contrarian recency test.
+          for wg,rd,mi,ma in itertools.product([.05,.10,.15,.20],[.05,.10,.15,.20],mmins,mmaxs):
+              if mi>=ma: continue
+              mask=(d.market_prob>=mi)&(d.market_prob<=ma)&(d.winpct_gap>=wg)&(d.last3_gap<=-rd)&(d.f_fights>=6)&(d.o_fights>=4)
+              add('FORM_REVERSION',f'mkt {mi:.3f}-{ma:.3f}; career_win_gap>={wg:.2f}; last3_gap<=-{rd:.2f}',mask)
+
+          # 4. Stable recent form vs volatile opponent, independent of strike/wrestling stats.
+          for fc,ov,wg,mi,ma in itertools.product([.10,.15,.20],[.20,.25,.30],[0,.05,.10],mmins,mmaxs):
+              if mi>=ma: continue
+              mask=(d.market_prob>=mi)&(d.market_prob<=ma)&(d.consistency_f<=fc)&(d.consistency_o>=ov)&(d.winpct_gap>=wg)&(d.f_fights>=6)&(d.o_fights>=5)
+              add('FORM_STABILITY',f'mkt {mi:.3f}-{ma:.3f}; fav |L3-L5|<={fc:.2f}; opp |L3-L5|>={ov:.2f}; career_gap>={wg:.2f}',mask)
+
+          # 5. Experienced favorite facing a thin-sample opponent.
+          for ff,og,wg,mi,ma in itertools.product([8,10,12,15],[3,4,5,6],[0,.05,.10,.15],mmins,mmaxs):
+              if mi>=ma: continue
+              mask=(d.market_prob>=mi)&(d.market_prob<=ma)&(d.f_fights>=ff)&(d.o_fights<=og)&(d.winpct_gap>=wg)
+              add('BATTLE_TESTED_VS_THIN_SAMPLE',f'mkt {mi:.3f}-{ma:.3f}; fav_fights>={ff}; opp_fights<={og}; career_gap>={wg:.2f}',mask)
+
+          r=pd.DataFrame(rows).replace([np.inf,-np.inf],np.nan)
+          r.to_csv(out/'all_unique_method_rules.csv',index=False)
+          robust=r[(r.n>=50)&(r.pre2020_n>=18)&(r.recent_n>=20)&(r.roi>0)&(r.pre2020_roi>0)&(r.recent_roi>0)].copy()
+          robust['worst_era_roi']=robust[['pre2020_roi','recent_roi']].min(axis=1)
+          robust['novelty']=1-robust.existing_overlap.fillna(0)
+          robust['score']=robust.worst_era_roi + .35*robust.roi + .03*robust.novelty
+          robust=robust.sort_values(['score','n'],ascending=[False,False])
+          robust.to_csv(out/'robust_unique_method_candidates.csv',index=False)
+
+          # Collapse near-duplicate threshold variants: best per family plus candidates with larger sample.
+          report=[]
+          report += ['UFC UNIQUE METHOD DISCOVERY','='*100,
+                     f'Priced prefight sample: {len(d)} fights | {d.event_date.min().date()} -> {d.event_date.max().date()}',
+                     'Research/shadow only. $100 flat favorite stake. Validation requires positive ROI pre-2020 and 2020+.',
+                     'Families intentionally emphasize layoff, experience, and form dynamics rather than existing striking/wrestling/age/reach rules.','']
+          if robust.empty:
+              report.append('NO ROBUST CANDIDATES met n>=50, pre>=18, recent>=20, positive ROI both eras.')
+          else:
+              report.append('BEST ROBUST CANDIDATE BY FAMILY')
+              report.append('-'*100)
+              for fam,g in robust.groupby('family',sort=False):
+                  z=g.iloc[0]
+                  report.append(f"{fam}: {z.rule}")
+                  report.append(f"  {int(z.n)} bets | {int(z.wins)} wins | {z.win_rate*100:.1f}% win | ROI {z.roi*100:+.2f}% | P/L ${z.profit100:+,.0f}")
+                  report.append(f"  pre-2020: n={int(z.pre2020_n)} ROI {z.pre2020_roi*100:+.2f}% | 2020+: n={int(z.recent_n)} ROI {z.recent_roi*100:+.2f}% | existing overlap {z.existing_overlap*100:.1f}%")
+              report += ['', 'TOP 20 ROBUST RULES', '-'*100]
+              for _,z in robust.head(20).iterrows():
+                  report.append(f"{z.family:<28} n={int(z.n):3d} win={z.win_rate*100:5.1f}% ROI={z.roi*100:+6.2f}% pre={z.pre2020_roi*100:+6.2f}% recent={z.recent_roi*100:+6.2f}% overlap={z.existing_overlap*100:5.1f}% | {z.rule}")
+
+              # Export fights for best family rule by recreating mask through rule row index is cumbersome;
+              # save family-best metadata only; downstream validation can pin exact threshold before promotion.
+          (out/'report.txt').write_text('\n'.join(report)+'\n')
+          print('\n'.join(report))
+          PY
+
+      - name: Commit research results
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'appwiza-research-bot'
+          git config user.email 'actions@users.noreply.github.com'
+          git add ufc_unique_method_discovery/all_unique_method_rules.csv ufc_unique_method_discovery/robust_unique_method_candidates.csv ufc_unique_method_discovery/report.txt
+          git diff --cached --quiet && exit 0
+          git commit -m 'Add UFC unique method discovery results'
+          git push
