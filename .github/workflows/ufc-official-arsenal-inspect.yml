@@ -1,0 +1,53 @@
+name: UFC Official Arsenal Inspect
+on:
+  push:
+    paths:
+      - '.github/workflows/ufc-official-arsenal-inspect.yml'
+jobs:
+  inspect:
+    runs-on: [self-hosted, appwiza]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Inspect current UFC production watcher and state wiring
+        shell: bash
+        run: |
+          set -euo pipefail
+          ROOT=/home/anestishkurti92/ufc-predictor-v1
+          W="$ROOT/ufc_email_watcher.py"
+          OUT=ufc_unique_method_discovery/official_arsenal_inspect.txt
+          mkdir -p "$(dirname "$OUT")"
+          python3 - "$W" "$OUT" <<'PY'
+          from pathlib import Path
+          import re,sys
+          w=Path(sys.argv[1]); out=Path(sys.argv[2])
+          s=w.read_text()
+          pats=[
+            r'^def predict_bout\(.*?\):',
+            r'^def event_block\(.*?\):',
+            r'^def selection_state\(.*?\):',
+            r'^def .*state.*\(.*?\):',
+            r'^def run\(.*?\):',
+          ]
+          lines=s.splitlines()
+          chunks=[]
+          keys=['methods','method','qualifies','structural_edge','striking_methods','skill_veto','state','ledger','publish','event_block','predict_bout']
+          for i,line in enumerate(lines):
+              if any(k in line for k in keys):
+                  a=max(0,i-4); b=min(len(lines),i+12)
+                  chunks.append(f'--- lines {a+1}-{b} ---\n'+'\n'.join(f'{j+1}: {lines[j]}' for j in range(a,b)))
+          out.write_text('\n\n'.join(chunks[:180]))
+          print(out)
+          PY
+          echo >> "$OUT"
+          echo '=== CURRENT SERVICES / FILES ===' >> "$OUT"
+          ls -l "$ROOT"/ufc_email_watcher.py "$ROOT"/ufc_public_page.py 2>/dev/null >> "$OUT" || true
+          systemctl status ufc-model-watcher.timer --no-pager 2>/dev/null | head -30 >> "$OUT" || true
+      - name: Commit inspection
+        shell: bash
+        run: |
+          git config user.name 'appwiza-research-bot'
+          git config user.email 'actions@users.noreply.github.com'
+          git add ufc_unique_method_discovery/official_arsenal_inspect.txt
+          git commit -m 'Inspect UFC official arsenal wiring' || exit 0
+          git pull --rebase origin main
+          git push origin HEAD:main
