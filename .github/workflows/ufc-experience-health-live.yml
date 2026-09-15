@@ -8,22 +8,54 @@ permissions:
   contents: write
 jobs:
   deploy:
-    runs-on: [self-hosted, appwiza]
-    env:
-      HOME: /home/anestishkurti92
+    runs-on: [self-hosted, Linux, X64, appwiza]
     steps:
       - uses: actions/checkout@v4
-      - name: Deploy U9 to official UFC arsenal
+      - name: Prepare production-safe U9 installer
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+          s=Path('scripts/apply_live_experience_health.sh').read_text()
+          s=s.replace('export HOME=/home/anestishkurti92\n','')
+          s=s.replace('ENV_FILE="$HOME/.config/ufc-watcher.env"\n','')
+          s=s.replace('[ -f "$ENV_FILE" ] || { echo "ERROR: Missing $ENV_FILE"; exit 3; }\n','')
+          old='''set -a\nsource "$ENV_FILE"\nset +a\n\necho "[ 80%] Running official watcher and publishing site state..."\npython "$WATCHER" --run --force-initial\n\necho "[ 90%] Restarting scheduled watcher..."\nsudo systemctl daemon-reload\nsudo systemctl restart ufc-model-watcher.timer\n'''
+          new='''echo "[ 80%] Restarting production watcher through systemd (uses existing production environment)..."\nsudo systemctl daemon-reload\nsudo systemctl restart ufc-model-watcher.timer\nsudo systemctl restart ufc-model-watcher.service || sudo systemctl start ufc-model-watcher.service\n'''
+          if old not in s:
+              raise SystemExit('Could not locate watcher-run block in installer')
+          s=s.replace(old,new)
+          Path('/tmp/apply_live_experience_health_prod.sh').write_text(s)
+          PY
+          chmod +x /tmp/apply_live_experience_health_prod.sh
+      - name: Deploy U9 over local SSH
         id: deploy
         continue-on-error: true
         shell: bash
         run: |
-          chmod +x "$GITHUB_WORKSPACE/scripts/apply_live_experience_health.sh"
           set +e
-          "$GITHUB_WORKSPACE/scripts/apply_live_experience_health.sh" > "$GITHUB_WORKSPACE/ufc_u9_deploy.log" 2>&1
+          KEY=/home/appwiza-runner/.ssh/appwiza_vps
+          HOST=anestishkurti92@127.0.0.1
+          SSH="ssh -i $KEY -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=accept-new $HOST"
+          cat /tmp/apply_live_experience_health_prod.sh | $SSH 'export HOME=/home/anestishkurti92; bash -s' > "$GITHUB_WORKSPACE/ufc_u9_deploy.log" 2>&1
           rc=$?
           echo "exit_code=$rc" >> "$GITHUB_OUTPUT"
           exit 0
+      - name: Verify live watcher and public UFC page
+        if: steps.deploy.outputs.exit_code == '0'
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          KEY=/home/appwiza-runner/.ssh/appwiza_vps
+          HOST=anestishkurti92@127.0.0.1
+          SSH="ssh -i $KEY -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=accept-new $HOST"
+          $SSH "grep -q 'EXPERIENCE_HEALTH_RULE_V1' /home/anestishkurti92/ufc-predictor-v1/ufc_email_watcher.py"
+          $SSH "python3 -m py_compile /home/anestishkurti92/ufc-predictor-v1/ufc_email_watcher.py"
+          $SSH "systemctl is-active ufc-model-watcher.timer"
+          curl -fsSL https://appwiza.com/sports/ufc/ > /tmp/ufc-u9-live.html
+          grep -q 'Available selections' /tmp/ufc-u9-live.html
+          echo 'U9 watcher marker, syntax, timer, and public UFC page verified.'
       - name: Save deploy diagnostic
         shell: bash
         run: |
