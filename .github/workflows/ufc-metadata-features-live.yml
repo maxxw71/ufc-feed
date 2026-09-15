@@ -1,0 +1,19 @@
+name: UFC Metadata Features Live
+on:
+  push:
+    paths:
+      - 'scripts/ufc_metadata_features.py'
+      - '.github/workflows/ufc-metadata-features-live.yml'
+jobs:
+  build:
+    runs-on: [self-hosted, appwiza]
+    steps:
+      - shell: bash
+        run: |
+          set -euo pipefail
+          K=/home/appwiza-runner/.ssh/appwiza_vps
+          T=$(mktemp)
+          curl -fsSL https://raw.githubusercontent.com/maxxw71/ufc-feed/main/scripts/ufc_metadata_features.py -o "$T"
+          scp -i "$K" -o StrictHostKeyChecking=no "$T" anestishkurti92@127.0.0.1:/home/anestishkurti92/ufc-predictor-v1/ufc_metadata_features.py
+          rm -f "$T"
+          ssh -i "$K" -o StrictHostKeyChecking=no anestishkurti92@127.0.0.1 'cd /home/anestishkurti92/ufc-predictor-v1 && chmod 700 ufc_metadata_features.py && venv/bin/python -m py_compile ufc_metadata_features.py && OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 nice -n 12 timeout 10m venv/bin/python ufc_metadata_features.py && python3 -c "import json; m=json.load(open(\"feature_expansion/metadata_features_meta.json\")); assert m[\"ranking_point_in_time\"] is True; print(m)"'
