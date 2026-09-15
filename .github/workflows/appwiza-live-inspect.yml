@@ -17,15 +17,18 @@ jobs:
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
-      - name: Inspect UFC publisher hooks
+      - name: Inspect UFC publisher implementation
         shell: bash
         run: |
           set -u
-          echo '=== WATCHER SPORTS PUBLISH CONTEXT ==='
-          grep -n -B8 -A14 -E 'sports_publish|publish_ufc|bet_tracker|ufc_picks' /home/anestishkurti92/ufc-predictor-v1/ufc_email_watcher.py 2>/dev/null | head -500 || true
+          P=/opt/sports-publisher/sports_publish.py
+          echo '=== FUNCTION INDEX ==='
+          grep -nE '^def (publish_ufc|ufc_record_html|card_html|downloads_html|safe_call)' "$P" || true
           echo
-          echo '=== PUBLISH MODULE LOCATIONS ==='
-          find /home/anestishkurti92 /opt -type f -name 'sports_publish.py' -print 2>/dev/null | head -30 || true
+          echo '=== UFC PUBLISH BLOCK ==='
+          line=$(grep -n '^def publish_ufc' "$P" | head -1 | cut -d: -f1)
+          if [ -n "$line" ]; then start=$((line-20)); [ "$start" -lt 1 ] && start=1; end=$((line+220)); sed -n "${start},${end}p" "$P"; fi
           echo
-          echo '=== TRACKER CANDIDATE HEAD ==='
-          sed -n '1,260p' /home/anestishkurti92/ufc-predictor-v1/ufc_tracker_candidate.py 2>/dev/null || true
+          echo '=== UFC RECORD BLOCK ==='
+          line=$(grep -n '^def ufc_record_html' "$P" | head -1 | cut -d: -f1)
+          if [ -n "$line" ]; then start=$((line-20)); [ "$start" -lt 1 ] && start=1; end=$((line+180)); sed -n "${start},${end}p" "$P"; fi
