@@ -37,12 +37,17 @@ def remove_card(segment: str, selection: str) -> tuple[str,int]:
     return segment,total
 
 
+def selection_present(segment: str, selection: str) -> bool:
+    return bool(re.search(re.escape(selection.strip())+r'\s+to\s+win',segment,re.I))
+
+
 def main():
     if not PAGE.exists(): raise SystemExit(f'missing page: {PAGE}')
     if not CONTEXT.exists(): raise SystemExit(f'missing context: {CONTEXT}')
     with CONTEXT.open(newline='',encoding='utf-8') as f:
         rows=list(csv.DictReader(f))
     blocked=blocked_rows(rows)
+    blocked_names={str(r.get('selection') or r.get('team') or '').strip() for r in blocked}
     html=PAGE.read_text()
     start_marker='<h2>Available selections</h2>'
     end_markers=['<div class="section-kicker">Tracked results</div>','<h2>Completed selections</h2>','<details class="downloads-block"']
@@ -52,23 +57,53 @@ def main():
     if not ends: raise SystemExit('Could not find end of available section')
     end=min(ends)
     before,segment,after=html[:start],html[start:end],html[end:]
+
+    # Guard valid deep-audit selections that are already present. Suppression must
+    # never make an unrelated KEEP/MONITOR card disappear as collateral damage.
+    protected_before={}
+    for r in rows:
+        sel=(r.get('selection') or r.get('team') or '').strip()
+        if sel and sel not in blocked_names:
+            protected_before[sel]=selection_present(segment,sel)
+
     removed={}
     for r in blocked:
         sel=(r.get('selection') or r.get('team') or '').strip()
         if not sel: continue
         segment,n=remove_card(segment,sel)
         removed[sel]=n
-    # Remove date groups left empty after suppressing their only card.
-    segment=re.sub(r'(?is)<section\b[^>]*class=["\'][^"\']*\bdate-block\b[^"\']*["\'][^>]*>.*?<div\b[^>]*class=["\'][^"\']*\bupcoming-grid\b[^"\']*["\'][^>]*>\s*</div>\s*</section>','',segment)
-    # Hard safety check: a veto/stale selection must not remain as a "to win" card in Available.
+
+    # Remove only a date-block whose *own* upcoming-grid is empty. The tempered
+    # section match is intentional: a plain .*? can cross into later date blocks
+    # and accidentally delete valid selections (for example Ravens while cleaning
+    # an emptied Saints block).
+    empty_date_block=(
+        r'(?is)<section\b[^>]*class=["\'][^"\']*\bdate-block\b[^"\']*["\'][^>]*>'
+        r'(?:(?!</section>).)*?'
+        r'<div\b[^>]*class=["\'][^"\']*\bupcoming-grid\b[^"\']*["\'][^>]*>\s*</div>\s*'
+        r'</section>'
+    )
+    segment=re.sub(empty_date_block,'',segment)
+
+    # Hard safety checks.
     leftovers=[]
     for r in blocked:
         sel=(r.get('selection') or r.get('team') or '').strip()
-        if sel and re.search(re.escape(sel)+r'\s+to\s+win',segment,re.I): leftovers.append(sel)
+        if sel and selection_present(segment,sel): leftovers.append(sel)
     if leftovers:
         raise SystemExit('Blocked selections still present in Available: '+', '.join(leftovers))
+
+    lost=[sel for sel,was_present in protected_before.items() if was_present and not selection_present(segment,sel)]
+    if lost:
+        raise SystemExit('Suppression removed non-blocked selections: '+', '.join(lost))
+
     PAGE.write_text(before+segment+after)
-    print('NFL_AVAILABLE_SUPPRESSION',{'blocked':[r.get('selection') or r.get('team') for r in blocked],'removed':removed,'page_bytes':PAGE.stat().st_size})
+    print('NFL_AVAILABLE_SUPPRESSION',{
+        'blocked':[r.get('selection') or r.get('team') for r in blocked],
+        'removed':removed,
+        'protected_present':[s for s,v in protected_before.items() if v],
+        'page_bytes':PAGE.stat().st_size,
+    })
 
 if __name__=='__main__':
     main()
