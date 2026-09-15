@@ -1,0 +1,66 @@
+name: UFC Unique Method Inventory
+
+on:
+  push:
+    paths:
+      - '.github/workflows/ufc-unique-method-inventory.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  inventory:
+    runs-on: [self-hosted, appwiza]
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Inventory UFC research datasets
+        shell: bash
+        run: |
+          set -euo pipefail
+          ROOT=/home/anestishkurti92/ufc-predictor-v1
+          OUT="$GITHUB_WORKSPACE/ufc_unique_method_discovery"
+          mkdir -p "$OUT"
+          {
+            echo "UFC RESEARCH DATASET INVENTORY"
+            echo "Generated: $(date -u +%FT%TZ)"
+            echo "Root: $ROOT"
+            echo
+            echo "== CSV FILES =="
+            find "$ROOT" -type f -name '*.csv' -printf '%s\t%p\n' 2>/dev/null | sort -nr | head -120
+          } > "$OUT/inventory.txt"
+
+          python3 - <<'PY' >> "$OUT/inventory.txt"
+          from pathlib import Path
+          import pandas as pd
+          root=Path('/home/anestishkurti92/ufc-predictor-v1')
+          candidates=[
+              root/'favorite_loss_risk_analysis/enriched_market_sample.csv',
+              root/'combined_age_reach_backtest/reach_market_sample.csv',
+              root/'raw/competitions.csv',
+              root/'historical_backtest/walkforward_fight_results.csv',
+              root/'new_category_discovery/lower_overlap_candidates.csv',
+          ]
+          print('\n== SCHEMAS ==')
+          for p in candidates:
+              print(f'\n--- {p} ---')
+              if not p.exists():
+                  print('MISSING'); continue
+              try:
+                  d=pd.read_csv(p, low_memory=False, nrows=5)
+                  print('columns:', '|'.join(map(str,d.columns)))
+              except Exception as e:
+                  print('ERROR',repr(e))
+          PY
+
+      - name: Commit inventory
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'appwiza-research-bot'
+          git config user.email 'actions@users.noreply.github.com'
+          git add ufc_unique_method_discovery/inventory.txt
+          git diff --cached --quiet && exit 0
+          git commit -m 'Add UFC research dataset inventory'
+          git push
