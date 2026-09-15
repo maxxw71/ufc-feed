@@ -10,36 +10,26 @@ jobs:
     runs-on: [self-hosted, appwiza]
     steps:
       - uses: actions/checkout@v4
-      - name: Inspect official UFC decision/render hooks
+      - name: Inspect runtime UFC hooks
         shell: bash
         run: |
           set -euo pipefail
           OUT=ufc_unique_method_discovery/official_arsenal_inspect.txt
           mkdir -p "$(dirname "$OUT")"
-          python3 - "$OUT" <<'PY'
+          cd /home/anestishkurti92/ufc-predictor-v1
+          source venv/bin/activate
+          python - "$OUT" <<'PY'
+          import sys,inspect
           from pathlib import Path
-          import sys
-          targets=[
-            ('/home/anestishkurti92/ufc-predictor-v1/ufc_email_watcher.py',['predict_bout','striking_methods','event_block']),
-            ('/home/anestishkurti92/betting-ledger/code/bet_tracker.py',['def ufc_picks','ufc_picks','structural','striking','method']),
-            ('/home/anestishkurti92/ufc-predictor-v1/ufc_email_design.py',['def method_cards','method_cards','structural','striking','history','checks']),
-            ('/opt/sports-publisher/sports_publish.py',['def publish_ufc','method_cards','ufc_picks'])]
-          out=[]
-          for path,keys in targets:
-              p=Path(path); out.append('===== '+path+' =====')
-              if not p.exists(): out.append('MISSING'); continue
-              lines=p.read_text().splitlines()
-              hits=[]
-              for i,line in enumerate(lines):
-                  if any(k in line for k in keys): hits.append(i)
-              spans=[]
-              for i in hits:
-                  a=max(0,i-12); b=min(len(lines),i+45)
-                  if spans and a<=spans[-1][1]: spans[-1]=(spans[-1][0],max(spans[-1][1],b))
-                  else: spans.append((a,b))
-              for a,b in spans[:50]:
-                  out.append(f'--- lines {a+1}-{b} ---\n'+'\n'.join(f'{j+1}: {lines[j]}' for j in range(a,b)))
-          Path(sys.argv[1]).write_text('\n\n'.join(out))
+          sys.path.insert(0,'/opt/sports-publisher')
+          sys.path.insert(0,str(Path.home()/'betting-ledger'/'code'))
+          import bet_tracker,ufc_email_design
+          parts=[]
+          parts.append('BET_TRACKER_FILE='+str(getattr(bet_tracker,'__file__',None)))
+          parts.append(inspect.getsource(bet_tracker.ufc_picks))
+          parts.append('UFC_EMAIL_DESIGN_FILE='+str(getattr(ufc_email_design,'__file__',None)))
+          parts.append(inspect.getsource(ufc_email_design.method_cards))
+          Path(sys.argv[1]).write_text('\n\n'.join(parts))
           PY
       - name: Push diagnostic to isolated branch
         shell: bash
@@ -48,6 +38,6 @@ jobs:
           git config user.email 'actions@users.noreply.github.com'
           git checkout -B ufc-inspect-output
           git add -f ufc_unique_method_discovery/official_arsenal_inspect.txt
-          git commit -m 'UFC official decision hook diagnostic' || true
+          git commit -m 'UFC runtime hook diagnostic' || true
           git push -f origin ufc-inspect-output
-# trigger 7
+# trigger 8
