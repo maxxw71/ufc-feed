@@ -1,0 +1,9 @@
+from pathlib import Path
+p=Path('scripts/nfl_live_legacy_full_dissection.py')
+s=p.read_text()
+anchor="""    lc=c.lower()\n    if c in exclude_exact:continue\n"""
+replacement="""    lc=c.lower()\n    # Strict pregame whitelist. This deliberately rejects ATS margin, scores, totals,\n    # spread/closing fields, IDs, and any generic numeric column whose timing is not\n    # explicitly established. Add new families here only after their timing is audited.\n    allowed_prefixes=('coachq_','opp_coachq_','adv_','rank_edge_','recent_edge_',\n        'pre_','opp_pre_','last_pre_','opp_last_pre_','last_rank_','opp_last_rank_',\n        'prior_','opp_prior_','returning_','opp_returning_','qb_','opp_qb_',\n        'injury_','opp_injury_','out_','opp_out_','travel_','opp_travel_',\n        'road_','opp_road_','rest','opp_rest','fatigue_','opp_fatigue_',\n        'tz_','opp_tz_','preseason_','opp_preseason_','head_coach_changed',\n        'offensive_coordinator_changed','defensive_coordinator_changed')\n    allowed_exact={'dome_game','grass_surface','surface','roof','high_altitude_game',\n        'international_game','neutral_site','short_week_le6','very_short_week_le5',\n        'extra_rest_ge8','back_to_back_road','third_straight_road','third_road_in_four',\n        'fourth_road_in_five','major_staff_changes','staff_change_count','full_staff_stable',\n        'full_staff_overhaul','hc_changed_season','oc_changed_season','dc_changed_season',\n        'hc_tenure_seasons','oc_tenure_seasons','dc_tenure_seasons'}\n    if c not in allowed_exact and not any(lc.startswith(q) for q in allowed_prefixes):continue\n    if c in exclude_exact:continue\n"""
+if anchor not in s: raise SystemExit('feature-loop anchor missing')
+s=s.replace(anchor,replacement,1)
+p.write_text(s)
+print('installed strict pregame feature whitelist')
