@@ -22,13 +22,9 @@ jobs:
           s=s.replace('ENV_FILE="$HOME/.config/ufc-watcher.env"\n','')
           s=s.replace('[ -f "$ENV_FILE" ] || { echo "ERROR: Missing $ENV_FILE"; exit 3; }\n','')
           old='''set -a\nsource "$ENV_FILE"\nset +a\n\necho "[ 80%] Running official watcher and publishing site state..."\npython "$WATCHER" --run --force-initial\n\necho "[ 90%] Restarting scheduled watcher..."\nsudo systemctl daemon-reload\nsudo systemctl restart ufc-model-watcher.timer\n'''
-          new='''echo "[ 80%] U9 code installed; systemd restart will be performed by the authorized runner."\n'''
+          new='''echo "[ 80%] U9 code installed. Existing active timer will load it on the next watcher execution."\n'''
           if old in s:
               s=s.replace(old,new)
-          else:
-              # Also handle the already-transformed wording from an earlier deploy attempt.
-              import re
-              s=re.sub(r'echo "\[ 80%\] Restarting production watcher through systemd.*?sudo systemctl restart ufc-model-watcher\.service \|\| sudo systemctl start ufc-model-watcher\.service\n',new,s,flags=re.S)
           Path('/tmp/apply_live_experience_health_prod.sh').write_text(s)
           PY
           chmod +x /tmp/apply_live_experience_health_prod.sh
@@ -45,15 +41,7 @@ jobs:
           rc=$?
           echo "exit_code=$rc" >> "$GITHUB_OUTPUT"
           exit 0
-      - name: Restart production UFC watcher
-        if: steps.deploy.outputs.exit_code == '0'
-        shell: bash
-        run: |
-          set -Eeuo pipefail
-          sudo systemctl daemon-reload
-          sudo systemctl restart ufc-model-watcher.timer
-          sudo systemctl restart ufc-model-watcher.service || sudo systemctl start ufc-model-watcher.service
-      - name: Verify live watcher and public UFC page
+      - name: Verify live watcher, active timer, and public UFC page
         if: steps.deploy.outputs.exit_code == '0'
         shell: bash
         run: |
@@ -63,10 +51,10 @@ jobs:
           SSH="ssh -i $KEY -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=accept-new $HOST"
           $SSH "grep -q 'EXPERIENCE_HEALTH_RULE_V1' /home/anestishkurti92/ufc-predictor-v1/ufc_email_watcher.py"
           $SSH "/home/anestishkurti92/ufc-predictor-v1/venv/bin/python -m py_compile /home/anestishkurti92/ufc-predictor-v1/ufc_email_watcher.py"
-          systemctl is-active ufc-model-watcher.timer
+          $SSH "systemctl is-active ufc-model-watcher.timer"
           curl -fsSL https://appwiza.com/sports/ufc/ > /tmp/ufc-u9-live.html
           grep -q 'Available selections' /tmp/ufc-u9-live.html
-          echo 'U9 watcher marker, syntax, timer, and public UFC page verified.'
+          echo 'U9 live watcher marker, syntax, active timer, and public UFC page verified.'
       - name: Save deploy diagnostic
         shell: bash
         run: |
