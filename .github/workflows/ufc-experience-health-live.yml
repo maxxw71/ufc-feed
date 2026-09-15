@@ -5,7 +5,7 @@ on:
       - 'scripts/apply_live_experience_health.sh'
       - '.github/workflows/ufc-experience-health-live.yml'
 permissions:
-  contents: read
+  contents: write
 jobs:
   deploy:
     runs-on: [self-hosted, appwiza]
@@ -14,7 +14,25 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Deploy U9 to official UFC arsenal
+        id: deploy
+        continue-on-error: true
         shell: bash
         run: |
           chmod +x "$GITHUB_WORKSPACE/scripts/apply_live_experience_health.sh"
-          "$GITHUB_WORKSPACE/scripts/apply_live_experience_health.sh"
+          set +e
+          "$GITHUB_WORKSPACE/scripts/apply_live_experience_health.sh" > "$GITHUB_WORKSPACE/ufc_u9_deploy.log" 2>&1
+          rc=$?
+          echo "exit_code=$rc" >> "$GITHUB_OUTPUT"
+          exit 0
+      - name: Save deploy diagnostic
+        shell: bash
+        run: |
+          git config user.name appwiza-research-bot
+          git config user.email actions@users.noreply.github.com
+          git checkout -B ufc-u9-deploy-output
+          git add -f ufc_u9_deploy.log
+          git commit -m 'UFC U9 deploy diagnostic' || true
+          git push -f origin ufc-u9-deploy-output
+      - name: Fail if deployment failed
+        if: steps.deploy.outputs.exit_code != '0'
+        run: exit 1
