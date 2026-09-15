@@ -38,8 +38,11 @@ jobs:
           set -Eeuo pipefail
           git config user.name github-actions
           git config user.email github-actions@github.com
-          # The dedicated coach-quality workflow owns nfl/live_coach_quality_2026.
-          # Keeping one writer per output path prevents concurrent add/add rebase conflicts.
+          # The dedicated coach-quality workflow owns this tracked directory. The builder
+          # updates it locally so the audit can consume the fresh values, then we restore it
+          # before rebasing to keep this workflow a single-writer for current-board output.
+          git restore --worktree --staged nfl/live_coach_quality_2026 || true
+          git clean -fd -- nfl/live_coach_quality_2026 || true
           git add nfl/live_2026_current_snapshot
           if ! git diff --cached --quiet; then
             git commit -m 'Update fresh 2026 NFL current-board context'
