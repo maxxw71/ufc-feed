@@ -39,6 +39,8 @@ jobs:
           DEST=nfl/live_legacy_full_dissection
           mkdir -p "$DEST"
           cp "$SRC"/* "$DEST"/
+          # Runtime patch is intentionally not a repository change.
+          git restore scripts/nfl_live_legacy_full_dissection.py
           git config user.name github-actions
           git config user.email github-actions@github.com
           git add "$DEST"
