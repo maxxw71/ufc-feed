@@ -1,9 +1,17 @@
 #!/usr/bin/env python3
-import html, os, sys
+import hashlib, html, json, os, shutil
 from datetime import datetime
+from pathlib import Path
 import ufc_autoresearch as ar
 
+ROOT=Path.home()/"ufc-predictor-v1"
+OFFICIAL_ARCHIVE=ROOT/"auto_research"/"official_history"
+OFFICIAL_ARCHIVE.mkdir(parents=True,exist_ok=True)
+PUBLIC_STATE=Path('/srv/appwiza-sports/state/ufc.json')
+LEDGER_DB=Path.home()/"betting-ledger"/"assumed_bets.sqlite3"
+
 _base_schema=ar.schema
+_base_snapshot=ar.snapshot_source
 
 def schema(df):
     datec,winc,probc,oddsc=_base_schema(df)
@@ -15,11 +23,58 @@ def schema(df):
 
 ar.schema=schema
 
+def digest(path):
+    h=hashlib.sha256()
+    with path.open('rb') as f:
+        for chunk in iter(lambda:f.read(1024*1024),b''): h.update(chunk)
+    return h.hexdigest()
+
+def archive_one(path,label,suffix):
+    if not path.exists() or not os.access(path,os.R_OK): return None
+    h=digest(path); current=OFFICIAL_ARCHIVE/f'{label}_current{suffix}'
+    old=digest(current) if current.exists() else None
+    if h==old: return None
+    stamp=datetime.now().strftime('%Y%m%d_%H%M%S')
+    dst=OFFICIAL_ARCHIVE/f'{label}_{stamp}_{h[:10]}{suffix}'
+    shutil.copy2(path,dst); shutil.copy2(path,current)
+    with ar.conn() as db:
+        try:
+            db.execute("INSERT OR IGNORE INTO source_snapshots(captured_at,source,sha256,path,rows,bytes) VALUES(?,?,?,?,?,?)",
+                       (ar.now(),label,h,str(dst),None,dst.stat().st_size))
+            db.execute("INSERT INTO data_events(observed_at,source,event_type,detail_json) VALUES(?,?,?,?)",
+                       (ar.now(),label,'official_history_changed',json.dumps({'previous_sha':old,'new_sha':h,'archive':str(dst)})))
+            db.commit()
+        except Exception:
+            pass
+    ar.log(f'Archived Appwiza {label} history: {dst.name}')
+    return dst
+
+def snapshot_source(send_event=True):
+    result=_base_snapshot(send_event)
+    archive_one(PUBLIC_STATE,'appwiza_ufc_state','.json')
+    archive_one(LEDGER_DB,'appwiza_betting_ledger','.sqlite3')
+    return result
+
+ar.snapshot_source=snapshot_source
+
+def official_history_summary():
+    cards=0; settled=0; active=0
+    try:
+        d=json.loads(PUBLIC_STATE.read_text())
+        cards=len(d.get('cards',[]))
+        for x in d.get('cards',[]):
+            tr=x.get('tracking') if isinstance(x,dict) else None
+            txt=json.dumps(tr or {}).lower()
+            if any(k in txt for k in ('won','lost','settled','win','loss')): settled+=1
+            if not x.get('withdrawn'): active+=1
+    except Exception: pass
+    return cards,active,settled
+
 def send_digest(extra=None):
     vals=ar.envvals()
     for k in ('RESEND_API_KEY','UFC_ALERT_EMAIL','UFC_ALERT_FROM'):
         if vals.get(k): os.environ[k]=vals[k]
-    runs,shadows,snaps,last=ar.counts()
+    runs,shadows,snaps,last=ar.counts(); cards,active,settled=official_history_summary()
     tops=ar.top_candidates(5)
     rows=''.join(
         f"<tr><td>{html.escape(r[1])}</td><td>{r[2]}</td><td>{r[3]}-{r[4]}</td><td>{100*r[6]:+.1f}%</td><td>{100*r[8]:+.1f}%</td><td>{r[11]}</td></tr>"
@@ -29,7 +84,8 @@ def send_digest(extra=None):
     body=f'''<div style="font-family:Arial,sans-serif;max-width:900px;margin:auto;color:#172033">
     <h2>UFC Research Daily</h2>
     <p><b>Research is autonomous; promotion is not.</b> No candidate can enter the official/live arsenal without explicit approval.</p>
-    <p><b>Last research:</b> {html.escape(lasttxt)}<br><b>Research runs retained:</b> {runs}<br><b>Shadow candidates retained:</b> {shadows}<br><b>Immutable source snapshots retained:</b> {snaps}</p>
+    <p><b>Last research:</b> {html.escape(lasttxt)}<br><b>Research runs retained:</b> {runs}<br><b>Shadow candidates retained:</b> {shadows}<br><b>Immutable source/official snapshots retained:</b> {snaps}</p>
+    <p><b>Appwiza UFC tracker:</b> {cards} stored cards · {active} not withdrawn · {settled} with settlement-like tracking state. Official tracker and betting-ledger changes are archived immutably for future win/loss analysis.</p>
     <h3>Best current shadow candidates</h3>
     <table style="border-collapse:collapse;width:100%"><tr><th align="left">Rule</th><th>Bets</th><th>W-L</th><th>ROI</th><th>Holdout ROI</th><th>Seen</th></tr>{rows}</table>
     <p style="font-size:13px;color:#596273">Candidates are screened with a chronological 70/30 train/holdout split, minimum sample gates, era consistency checks and yearly consistency checks. These are research findings, not official selections.</p>
