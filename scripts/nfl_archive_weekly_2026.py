@@ -70,7 +70,7 @@ week_sched=sched[num(sched.week_num).eq(week)].copy()
 game_ids=set(week_sched.get('game_id',pd.Series(dtype=str)).dropna().astype(str))
 out=ROOT/f'week_{week:02d}'/MODE
 out.mkdir(parents=True,exist_ok=True)
-manifest={'season':SEASON,'week':week,'mode':MODE,'generated_utc':now.isoformat(),'latest_fully_completed_week_at_run':latest_complete,'next_unplayed_week_at_run':next_week,'sources':{},'files':{},'notes':['pregame and postweek snapshots are stored separately to prevent outcome leakage','weeks 1-3 current-season performance is research context; mature live rolling methods require >=3 prior completed games','Git history preserves earlier revisions if an upstream stat correction changes a finalized file later']}
+manifest={'season':SEASON,'week':week,'mode':MODE,'generated_utc':now.isoformat(),'latest_fully_completed_week_at_run':latest_complete,'next_unplayed_week_at_run':next_week,'sources':{},'files':{},'notes':['pregame and postweek snapshots are stored separately to prevent outcome leakage','weeks 1-3 current-season performance is research context; mature live rolling methods require >=3 prior completed games','coach quality is rebuilt prospectively from staff identity plus seasons strictly before 2026; no 2026 outcomes enter coach quality scores','Git history preserves earlier revisions if an upstream stat correction changes a finalized file later']}
 
 safe_parquet(week_sched,out/'schedule.parquet'); week_sched.to_csv(out/'schedule.csv',index=False)
 manifest['sources']['schedule']='nflreadpy.load_schedules'
@@ -127,7 +127,7 @@ local_sources={
  'pregame_context': CTX/'derived'/'team_game_pregame_context_2006_2026.parquet',
  'complete_pregame_team_sides': CTX/'injury_travel_mining'/'complete_pregame_team_sides.parquet',
  'travel_context': CTX/'injury_travel_mining'/'travel_team_game_2006_2026.parquet',
- 'coach_quality_enriched': CTX/'coach_quality_expansion'/'coach_quality_enriched_team_sides.parquet',
+ 'coach_quality_live_2026': CTX/'coach_quality_live'/'coach_quality_2026_team_sides.parquet',
 }
 for label,p in local_sources.items():
     if not p.exists(): manifest['sources'][label]={'status':'missing','path':str(p)}; continue
@@ -138,6 +138,7 @@ for label,p in local_sources.items():
 
 copy_candidates={
  'coordinator_history.csv': REPO/'data'/'nfl'/'coordinator_history_espn_2019_2026.csv',
+ 'coach_quality_team_seasons_2026.csv': REPO/'nfl'/'live_coach_quality_2026'/'coach_quality_team_seasons_2026.csv',
  'current_board_snapshot.csv': REPO/'nfl'/'live_2026_current_snapshot'/'current_board_fresh_context.csv',
  'legacy_board_snapshot.csv': REPO/'nfl'/'live_legacy_full_dissection'/'current_board_deep_context.csv',
  'approved_h_methods.json': REPO/'nfl'/'live_stage'/'approved_h_methods.json',
