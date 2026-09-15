@@ -18,6 +18,8 @@ on:
     branches: [main]
     paths:
       - 'scripts/nfl_archive_weekly_2026.py'
+      - 'scripts/nfl_build_live_coach_quality_2026.py'
+      - 'data/nfl/coordinator_history_espn_2019_2026.csv'
       - '.github/workflows/nfl-weekly-archive-2026.yml'
 
 permissions:
@@ -47,6 +49,12 @@ jobs:
           fi
           echo "mode=$MODE" >> "$GITHUB_OUTPUT"
           echo "Resolved mode: $MODE"
+      - name: Rebuild live 2026 coach quality
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          NFL_CONTEXT_ROOT=/home/appwiza-runner/nfl-context-data NFL_SEASON=2026 \
+            /home/anestishkurti92/nfl-predictor-v1/venv/bin/python scripts/nfl_build_live_coach_quality_2026.py
       - name: Archive pregame snapshot
         if: steps.mode.outputs.mode == 'both' || steps.mode.outputs.mode == 'pregame'
         shell: bash
@@ -61,13 +69,13 @@ jobs:
           set -Eeuo pipefail
           NFL_CONTEXT_ROOT=/home/appwiza-runner/nfl-context-data NFL_SEASON=2026 ARCHIVE_MODE=postweek \
             /home/anestishkurti92/nfl-predictor-v1/venv/bin/python scripts/nfl_archive_weekly_2026.py
-      - name: Publish archive
+      - name: Publish archive and coach layer
         shell: bash
         run: |
           set -Eeuo pipefail
           git config user.name github-actions
           git config user.email github-actions@github.com
-          git add nfl/weekly_archive/2026
+          git add nfl/weekly_archive/2026 nfl/live_coach_quality_2026
           if ! git diff --cached --quiet; then
             git commit -m 'Archive 2026 NFL weekly prospective data'
             git pull --rebase origin main
