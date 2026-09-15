@@ -6,6 +6,8 @@ on:
     branches: [main]
     paths:
       - 'scripts/nfl_current_board_2026_fresh_context.py'
+      - 'scripts/nfl_build_live_coach_quality_2026.py'
+      - 'data/nfl/coordinator_history_espn_2019_2026.csv'
       - '.github/workflows/nfl-current-board-2026-fresh-context.yml'
       - 'nfl/live_legacy_full_dissection/current_board_deep_context.csv'
 
@@ -15,22 +17,28 @@ permissions:
 jobs:
   audit:
     runs-on: [self-hosted, Linux, X64, appwiza]
-    timeout-minutes: 20
+    timeout-minutes: 25
     steps:
       - uses: actions/checkout@v4
         with: {fetch-depth: 0}
+      - name: Rebuild live 2026 coach quality
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          NFL_CONTEXT_ROOT=/home/appwiza-runner/nfl-context-data NFL_SEASON=2026 \
+            /home/anestishkurti92/nfl-predictor-v1/venv/bin/python scripts/nfl_build_live_coach_quality_2026.py
       - name: Build fresh 2026 board context
         shell: bash
         run: |
           set -Eeuo pipefail
           /home/anestishkurti92/nfl-predictor-v1/venv/bin/python scripts/nfl_current_board_2026_fresh_context.py
-      - name: Publish fresh context
+      - name: Publish fresh context and coach layer
         shell: bash
         run: |
           set -Eeuo pipefail
           git config user.name github-actions
           git config user.email github-actions@github.com
-          git add nfl/live_2026_current_snapshot
+          git add nfl/live_2026_current_snapshot nfl/live_coach_quality_2026
           if ! git diff --cached --quiet; then
             git commit -m 'Update fresh 2026 NFL current-board context'
             git pull --rebase origin main
