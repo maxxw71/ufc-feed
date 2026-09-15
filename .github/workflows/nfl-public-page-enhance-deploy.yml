@@ -47,6 +47,8 @@ jobs:
         shell: bash
         run: |
           set -Eeuo pipefail
+          export HOME=/home/anestishkurti92
+          export PYTHONPATH=/home/anestishkurti92/nfl-predictor-v1/research_v2:/home/anestishkurti92/betting-ledger/code:/opt/sports-publisher
           cd /home/anestishkurti92/nfl-predictor-v1/research_v2
           /home/anestishkurti92/nfl-predictor-v1/venv/bin/python nfl_home_opener_scanner.py --manual
       - name: Verify restored NFL structure and actionable board
