@@ -1,0 +1,43 @@
+name: NFL live legacy full dissection
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/nfl_live_legacy_full_dissection.py'
+      - '.github/workflows/nfl-live-legacy-full-dissection.yml'
+permissions:
+  contents: write
+jobs:
+  audit:
+    runs-on: [self-hosted, Linux, X64, appwiza]
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+        with: {fetch-depth: 0}
+      - name: Refresh preseason context
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          /home/anestishkurti92/nfl-predictor-v1/venv/bin/python scripts/nfl_build_preseason_history.py
+      - name: Run full legacy dissection
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          /home/anestishkurti92/nfl-predictor-v1/venv/bin/python scripts/nfl_live_legacy_full_dissection.py
+      - name: Publish results
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          SRC=/home/appwiza-runner/nfl-context-data/live_legacy_full_dissection
+          DEST=nfl/live_legacy_full_dissection
+          mkdir -p "$DEST"
+          cp "$SRC"/* "$DEST"/
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git add "$DEST"
+          if ! git diff --cached --quiet; then
+            git commit -m 'Publish full dissection of current NFL live methods'
+            git pull --rebase origin main
+            git push origin HEAD:main
+          fi
