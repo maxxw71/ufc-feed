@@ -1,0 +1,20 @@
+name: UFC Experience Health Live
+on:
+  push:
+    paths:
+      - 'scripts/apply_live_experience_health.sh'
+      - '.github/workflows/ufc-experience-health-live.yml'
+permissions:
+  contents: read
+jobs:
+  deploy:
+    runs-on: [self-hosted, appwiza]
+    env:
+      HOME: /home/anestishkurti92
+    steps:
+      - uses: actions/checkout@v4
+      - name: Deploy U9 to official UFC arsenal
+        shell: bash
+        run: |
+          chmod +x "$GITHUB_WORKSPACE/scripts/apply_live_experience_health.sh"
+          "$GITHUB_WORKSPACE/scripts/apply_live_experience_health.sh"
