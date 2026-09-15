@@ -10,27 +10,28 @@ jobs:
     runs-on: [self-hosted, appwiza]
     steps:
       - uses: actions/checkout@v4
-      - name: Inspect UFC tracker with sudo
+      - name: Inspect actual UFC tracker module
         shell: bash
         run: |
-          set -u
+          set -euo pipefail
           OUT=ufc_unique_method_discovery/official_arsenal_inspect.txt
           mkdir -p "$(dirname "$OUT")"
-          {
-            echo '=== ufc_picks locations ==='
-            sudo grep -R -n --include='*.py' 'def ufc_picks' /home/anestishkurti92 /opt 2>/dev/null || true
-            echo '=== import references ==='
-            sudo grep -R -n --include='*.py' 'ufc_picks' /home/anestishkurti92/betting-ledger /opt 2>/dev/null | head -100 || true
-          } > "$OUT"
-          P=$(sudo grep -R -l --include='*.py' 'def ufc_picks' /home/anestishkurti92 /opt 2>/dev/null | head -1 || true)
-          if [ -n "$P" ]; then sudo sed -n '/def ufc_picks/,/^def /p' "$P" | head -160 >> "$OUT"; fi
+          cd /home/anestishkurti92/ufc-predictor-v1
+          source venv/bin/activate
+          python - "$OUT" <<'PY'
+          import sys,inspect
+          from pathlib import Path
+          sys.path.insert(0,'/home/anestishkurti92/betting-ledger/code')
+          import bet_tracker
+          p=Path(sys.argv[1])
+          p.write_text('FILE='+str(bet_tracker.__file__)+'\n\n'+inspect.getsource(bet_tracker.ufc_picks))
+          PY
       - name: Push diagnostic
-        shell: bash
         run: |
-          git config user.name 'appwiza-research-bot'
-          git config user.email 'actions@users.noreply.github.com'
+          git config user.name appwiza-research-bot
+          git config user.email actions@users.noreply.github.com
           git checkout -B ufc-inspect-output
           git add -f ufc_unique_method_discovery/official_arsenal_inspect.txt
-          git commit -m 'Inspect UFC tracker with sudo' || true
+          git commit -m 'Inspect actual UFC tracker module' || true
           git push -f origin ufc-inspect-output
-# trigger 13
+# trigger 14
