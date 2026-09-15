@@ -1,0 +1,35 @@
+UFC EXPERIENCE MISMATCH — SIMPLE DECLINE RULE VALIDATION
+====================================================================================================================
+BASE: 41 bets | 37-4 | ROI +33.65%
+
+Best simple 2/3-condition vetoes (risk means ALL named conditions are present):
+--------------------------------------------------------------------------------------------------------------------
+ctrl_allowed3 & finish_vuln40                           n=34 33-1 win= 97.1% ROI=+44.42% | pre=+48.50% recent=+40.79% | thirds +49.6/+46.4/+37.9 | removed 7 incl 3 losses
+tdd_under60 & ctrl_allowed3                             n=31 29-2 win= 93.5% ROI=+40.93% | pre=+50.47% recent=+33.06% | thirds +50.5/+50.7/+23.3 | removed 10 incl 2 losses
+tdd_under60 & recent5_under500                          n=34 32-2 win= 94.1% ROI=+40.76% | pre=+49.78% recent=+33.65% | thirds +49.6/+47.6/+26.4 | removed 7 incl 2 losses
+tdd_under60 & ctrl_allowed3 & finish_vuln40             n=37 35-2 win= 94.6% ROI=+40.61% | pre=+48.21% recent=+34.15% | thirds +49.2/+47.3/+26.5 | removed 4 incl 2 losses
+neg_strike & ctrl_allowed3 & finish_vuln40              n=38 36-2 win= 94.7% ROI=+40.45% | pre=+47.44% recent=+34.15% | thirds +48.3/+47.1/+26.5 | removed 3 incl 2 losses
+older2 & ctrl_allowed3 & finish_vuln40                  n=36 34-2 win= 94.4% ROI=+40.13% | pre=+47.68% recent=+33.38% | thirds +48.3/+47.4/+24.7 | removed 5 incl 2 losses
+older2 & ctrl_allowed3                                  n=32 30-2 win= 93.8% ROI=+40.12% | pre=+48.16% recent=+32.08% | thirds +49.8/+47.0/+24.4 | removed 9 incl 2 losses
+neg_strike & ctrl_allowed3                              n=37 35-2 win= 94.6% ROI=+40.01% | pre=+47.44% recent=+32.97% | thirds +48.3/+46.3/+26.5 | removed 4 incl 2 losses
+neg_strike & finish_vuln40                              n=36 34-2 win= 94.4% ROI=+39.93% | pre=+47.83% recent=+32.85% | thirds +48.7/+44.6/+26.4 | removed 5 incl 2 losses
+tdd_under60 & finish_vuln40                             n=30 28-2 win= 93.3% ROI=+38.28% | pre=+49.07% recent=+28.83% | thirds +50.2/+45.1/+19.6 | removed 11 incl 2 losses
+ctrl_allowed3 & recent5_under500                        n=36 33-3 win= 91.7% ROI=+37.36% | pre=+49.78% recent=+28.48% | thirds +49.2/+49.8/+13.1 | removed 5 incl 1 losses
+tdd_under60 & ctrl_allowed3 & recent5_under500          n=36 33-3 win= 91.7% ROI=+37.36% | pre=+49.78% recent=+28.48% | thirds +49.2/+49.8/+13.1 | removed 5 incl 1 losses
+recent5_under500 & kd_abs050                            n=39 36-3 win= 92.3% ROI=+37.18% | pre=+47.44% recent=+28.39% | thirds +48.1/+45.7/+17.7 | removed 2 incl 1 losses
+ctrl_allowed3 & recent5_under500 & finish_vuln40        n=39 36-3 win= 92.3% ROI=+37.05% | pre=+48.21% recent=+28.43% | thirds +48.8/+45.7/+16.7 | removed 2 incl 1 losses
+neg_strike & kd_abs050                                  n=40 37-3 win= 92.5% ROI=+36.99% | pre=+47.44% recent=+28.43% | thirds +48.1/+45.7/+18.6 | removed 1 incl 1 losses
+tdd_under60 & kd_abs050                                 n=40 37-3 win= 92.5% ROI=+36.99% | pre=+47.44% recent=+28.43% | thirds +48.1/+45.7/+18.6 | removed 1 incl 1 losses
+ctrl_allowed3 & kd_abs050                               n=40 37-3 win= 92.5% ROI=+36.99% | pre=+47.44% recent=+28.43% | thirds +48.1/+45.7/+18.6 | removed 1 incl 1 losses
+neg_strike & tdd_under60 & kd_abs050                    n=40 37-3 win= 92.5% ROI=+36.99% | pre=+47.44% recent=+28.43% | thirds +48.1/+45.7/+18.6 | removed 1 incl 1 losses
+neg_strike & ctrl_allowed3 & recent5_under500           n=40 37-3 win= 92.5% ROI=+36.99% | pre=+47.44% recent=+28.43% | thirds +48.1/+45.7/+18.6 | removed 1 incl 1 losses
+neg_strike & ctrl_allowed3 & kd_abs050                  n=40 37-3 win= 92.5% ROI=+36.99% | pre=+47.44% recent=+28.43% | thirds +48.1/+45.7/+18.6 | removed 1 incl 1 losses
+neg_strike & recent5_under500 & kd_abs050               n=40 37-3 win= 92.5% ROI=+36.99% | pre=+47.44% recent=+28.43% | thirds +48.1/+45.7/+18.6 | removed 1 incl 1 losses
+neg_strike & finish_vuln40 & kd_abs050                  n=40 37-3 win= 92.5% ROI=+36.99% | pre=+47.44% recent=+28.43% | thirds +48.1/+45.7/+18.6 | removed 1 incl 1 losses
+tdd_under60 & ctrl_allowed3 & kd_abs050                 n=40 37-3 win= 92.5% ROI=+36.99% | pre=+47.44% recent=+28.43% | thirds +48.1/+45.7/+18.6 | removed 1 incl 1 losses
+tdd_under60 & recent5_under500 & kd_abs050              n=40 37-3 win= 92.5% ROI=+36.99% | pre=+47.44% recent=+28.43% | thirds +48.1/+45.7/+18.6 | removed 1 incl 1 losses
+tdd_under60 & finish_vuln40 & kd_abs050                 n=40 37-3 win= 92.5% ROI=+36.99% | pre=+47.44% recent=+28.43% | thirds +48.1/+45.7/+18.6 | removed 1 incl 1 losses
+
+TOP CANDIDATE BOOTSTRAP 95% ROI CI: +33.52% to +51.72% (median +44.93%)
+Residual losses:
+  2023-05-13 | Ji Yeon Kim lost to Mandy Bohm | mkt 67.8%
