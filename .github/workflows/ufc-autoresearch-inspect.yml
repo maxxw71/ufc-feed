@@ -1,6 +1,9 @@
 name: UFC Auto Research Inspect
 on:
   workflow_dispatch:
+  push:
+    paths:
+      - '.github/workflows/ufc-autoresearch-inspect.yml'
 jobs:
   inspect:
     runs-on: [self-hosted, appwiza]
