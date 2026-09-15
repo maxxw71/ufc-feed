@@ -12,23 +12,16 @@ permissions:
 
 jobs:
   inspect:
-    if: github.repository == 'maxxw71/ufc-feed' && github.ref == 'refs/heads/main'
     runs-on: [self-hosted, Linux, X64, appwiza]
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
-      - name: Inspect UFC publisher implementation
+      - name: Inspect UFC public permissions
         shell: bash
         run: |
           set -u
-          P=/opt/sports-publisher/sports_publish.py
-          echo '=== FUNCTION INDEX ==='
-          grep -nE '^def (publish_ufc|ufc_record_html|card_html|downloads_html|safe_call)' "$P" || true
-          echo
-          echo '=== UFC PUBLISH BLOCK ==='
-          line=$(grep -n '^def publish_ufc' "$P" | head -1 | cut -d: -f1)
-          if [ -n "$line" ]; then start=$((line-20)); [ "$start" -lt 1 ] && start=1; end=$((line+220)); sed -n "${start},${end}p" "$P"; fi
-          echo
-          echo '=== UFC RECORD BLOCK ==='
-          line=$(grep -n '^def ufc_record_html' "$P" | head -1 | cut -d: -f1)
-          if [ -n "$line" ]; then start=$((line-20)); [ "$start" -lt 1 ] && start=1; end=$((line+180)); sed -n "${start},${end}p" "$P"; fi
+          id
+          stat -c '%A %a %U:%G %n' /opt/sports-publisher /opt/sports-publisher/sports_publish.py /srv/appwiza-sports/public /srv/appwiza-sports/public/ufc /srv/appwiza-sports/public/ufc/index.html /srv/appwiza-sports/state /srv/appwiza-sports/state/ufc.json 2>/dev/null || true
+          test -w /srv/appwiza-sports/public/ufc/index.html && echo UFC_HTML_WRITABLE=yes || echo UFC_HTML_WRITABLE=no
+          test -w /srv/appwiza-sports/public/ufc && echo UFC_DIR_WRITABLE=yes || echo UFC_DIR_WRITABLE=no
+          test -w /srv/appwiza-sports/public/style.css && echo CSS_WRITABLE=yes || echo CSS_WRITABLE=no
