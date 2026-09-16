@@ -47,7 +47,7 @@ jobs:
                       if c.startswith(('f2_','f3_','f4_','f5_','f6_')): rr[c]=z.get(c,np.nan)
               rows.append(rr)
           u2x=pd.DataFrame(rows); printj('U2_BASE',summary(u2x,'won','fav_decimal'))
-          tests={'skill_veto_keep':~u2x['skill_veto_flag'].fillna(False)}
+          tests={'skill_veto_keep':~u2x['skill_veto_flag'].fillna(False).astype(bool)}
           for c,t,op in [('f2_diff_sig_diff_pm',-1.0,'>'),('f2_diff_td_def',-0.20,'>'),('f2_diff_days_since_ko_loss',0,'>='),('f5_diff_current_lose_streak',1,'<='),('f6_diff_split_loss_count',1,'<=')]:
               if c in u2x:
                   s=pd.to_numeric(u2x[c],errors='coerce'); tests[c+op+str(t)]=(s>t if op=='>' else s>=t if op=='>=' else s<=t)
