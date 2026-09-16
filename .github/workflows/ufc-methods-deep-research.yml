@@ -19,16 +19,13 @@ jobs:
           mkdir -p method_deep_research
           venv/bin/python - <<'PY'
           import pandas as pd, numpy as np, json, re
-          from pathlib import Path
-          ROOT=Path('.')
-          out=[]
           def norm(s): return re.sub(r'[^a-z0-9]+',' ',str(s or '').lower()).strip()
           def summary(d, won='won', dec='fav_decimal', date='event_date'):
               x=d.copy(); w=x[won].astype(bool); od=pd.to_numeric(x[dec],errors='coerce'); m=od.notna()&(od>1)
               x=x.loc[m].copy(); w=w.loc[m]; od=od.loc[m]
               p=np.where(w,od-1,-1.0)
               ans={'n':len(x),'wins':int(w.sum()),'losses':int((~w).sum()),'win_rate':float(w.mean()),'roi':float(np.mean(p))}
-              dt=pd.to_datetime(x[date],errors='coerce');
+              dt=pd.to_datetime(x[date],errors='coerce')
               for label,mask in [('pre2020',dt.dt.year<2020),('recent2020p',dt.dt.year>=2020)]:
                   if mask.sum():
                       pp=np.where(w[mask],od[mask]-1,-1.0); ans[label+'_n']=int(mask.sum()); ans[label+'_roi']=float(np.mean(pp))
@@ -37,27 +34,21 @@ jobs:
 
           v6=pd.read_csv('feature_expansion/prefight_favorite_features_v6.csv',low_memory=False)
           v6['_key']=v6.apply(lambda r:(str(pd.to_datetime(r['event_date']).date()),)+tuple(sorted((norm(r['favorite']),norm(r['opponent'])))),axis=1)
-          vmap=v6.set_index('_key',drop=False)
+          vdict={k:g.iloc[0] for k,g in v6.groupby('_key',sort=False)}
 
           print('=== U2 REACH SKILL VETO / NEW FEATURE FILTERS ===')
-          u2=pd.read_csv('skill_veto_official_samples/reach_415_with_skill_veto.csv',low_memory=False)
-          u2=u2.rename(columns={'_won':'won'})
+          u2=pd.read_csv('skill_veto_official_samples/reach_415_with_skill_veto.csv',low_memory=False).rename(columns={'_won':'won'})
           u2['_key']=u2.apply(lambda r:(str(pd.to_datetime(r['event_date']).date()),)+tuple(sorted((norm(r['favorite']),norm(r['underdog'])))),axis=1)
           rows=[]
           for _,r in u2.iterrows():
-              z=vmap.loc[r['_key']] if r['_key'] in vmap.index else None
-              rr=r.to_dict()
+              rr=r.to_dict(); z=vdict.get(r['_key'])
               if z is not None:
-                  if isinstance(z,pd.DataFrame): z=z.iloc[0]
                   for c in v6.columns:
                       if c.startswith(('f2_','f3_','f4_','f5_','f6_')): rr[c]=z.get(c,np.nan)
               rows.append(rr)
-          u2x=pd.DataFrame(rows)
-          printj('U2_BASE',summary(u2x,'won','fav_decimal'))
+          u2x=pd.DataFrame(rows); printj('U2_BASE',summary(u2x,'won','fav_decimal'))
           tests={'skill_veto_keep':~u2x['skill_veto_flag'].fillna(False)}
-          for c,t,op in [
-              ('f2_diff_sig_diff_pm',-1.0,'>'),('f2_diff_td_def',-0.20,'>'),('f2_diff_days_since_ko_loss',0,'>='),
-              ('f5_diff_current_lose_streak',1,'<='),('f6_diff_split_loss_count',1,'<=')]:
+          for c,t,op in [('f2_diff_sig_diff_pm',-1.0,'>'),('f2_diff_td_def',-0.20,'>'),('f2_diff_days_since_ko_loss',0,'>='),('f5_diff_current_lose_streak',1,'<='),('f6_diff_split_loss_count',1,'<=')]:
               if c in u2x:
                   s=pd.to_numeric(u2x[c],errors='coerce'); tests[c+op+str(t)]=(s>t if op=='>' else s>=t if op=='>=' else s<=t)
           for name,m in tests.items():
@@ -65,15 +56,13 @@ jobs:
               if len(q)>=40: printj('U2_FILTER_'+name,summary(q,'won','fav_decimal'))
 
           print('=== U3 STRUCTURAL EDGE NEW FEATURE FILTERS ===')
-          u3=pd.read_csv('structural_edge_failure_analysis/structural_edge_83_fights.csv',low_memory=False)
-          u3=u3.rename(columns={'favorite_won':'won','profit_100':'profit100'})
-          u3['fav_decimal']=np.where(pd.to_numeric(u3['american_odds'],errors='coerce')<0,1+100/(-pd.to_numeric(u3['american_odds'],errors='coerce')),1+pd.to_numeric(u3['american_odds'],errors='coerce')/100)
+          u3=pd.read_csv('structural_edge_failure_analysis/structural_edge_83_fights.csv',low_memory=False).rename(columns={'favorite_won':'won','profit_100':'profit100'})
+          ao=pd.to_numeric(u3['american_odds'],errors='coerce');u3['fav_decimal']=np.where(ao<0,1+100/(-ao),1+ao/100)
           u3['_key']=u3.apply(lambda r:(str(pd.to_datetime(r['event_date']).date()),)+tuple(sorted((norm(r['favorite']),norm(r['underdog'])))),axis=1)
           rows=[]
           for _,r in u3.iterrows():
-              rr=r.to_dict(); z=vmap.loc[r['_key']] if r['_key'] in vmap.index else None
+              rr=r.to_dict(); z=vdict.get(r['_key'])
               if z is not None:
-                  if isinstance(z,pd.DataFrame): z=z.iloc[0]
                   for c in v6.columns:
                       if c.startswith(('f2_','f3_','f4_','f5_','f6_')): rr[c]=z.get(c,np.nan)
               rows.append(rr)
@@ -85,8 +74,7 @@ jobs:
               for quant in [.15,.25,.35,.65,.75,.85]:
                   t=float(s.quantile(quant))
                   for op in ['>=','<=']:
-                      m=s>=t if op=='>=' else s<=t
-                      q=u3x[m.fillna(False)]
+                      m=s>=t if op=='>=' else s<=t; q=u3x[m.fillna(False)]
                       if len(q)<45: continue
                       sm=summary(q,'won','fav_decimal')
                       if sm.get('pre2020_n',0)>=20 and sm.get('recent2020p_n',0)>=10 and sm['roi']>0.121 and sm.get('pre2020_roi',-9)>0 and sm.get('recent2020p_roi',-9)>0:
@@ -96,11 +84,7 @@ jobs:
           print('=== U5 ROBUST NEIGHBORHOOD ===')
           wr=pd.read_csv('wrestling_mismatch_analysis/robust_wrestling_candidates.csv',low_memory=False)
           print('U5_cols',list(wr.columns))
-          # prioritize definitions positive in both eras and reasonable favorite sample size
-          cols={c.lower():c for c in wr.columns}
-          favroi=next((c for c in wr if 'roi' in c.lower() and 'fav' in c.lower()),None)
-          pre=next((c for c in wr if 'pre' in c.lower() and ('edge' in c.lower() or 'roi' in c.lower())),None)
-          recent=next((c for c in wr if ('recent' in c.lower() or '2020' in c.lower()) and ('edge' in c.lower() or 'roi' in c.lower())),None)
+          favroi=next((c for c in wr if 'roi' in c.lower() and 'fav' in c.lower()),None); pre=next((c for c in wr if 'pre' in c.lower() and ('edge' in c.lower() or 'roi' in c.lower())),None); recent=next((c for c in wr if ('recent' in c.lower() or '2020' in c.lower()) and ('edge' in c.lower() or 'roi' in c.lower())),None)
           if favroi:
               z=wr.copy(); z[favroi]=pd.to_numeric(z[favroi],errors='coerce')
               if pre: z=z[pd.to_numeric(z[pre],errors='coerce')>0]
@@ -111,23 +95,22 @@ jobs:
           files={'U6':'striking_family_stability/pace_defense_all.csv','U7':'striking_family_stability/striking_td_defense_all.csv','U8':'striking_family_stability/striking_differential_all.csv'}
           for n,p in files.items():
               d=pd.read_csv(p); stable=d[(d['n']>=40)&(d['pre_n']>=15)&(d['recent_n']>=15)&(d['roi']>0)&(d['pre_roi']>0)&(d['recent_roi']>0)].copy()
-              print(n,'stable_count',len(stable),'of',len(d))
-              print(stable.sort_values(['roi','n'],ascending=[False,False]).head(20).to_string(index=False))
+              print(n,'stable_count',len(stable),'of',len(d)); print(stable.sort_values(['roi','n'],ascending=[False,False]).head(20).to_string(index=False))
 
           print('=== U10 THRESHOLD NEIGHBORHOOD ===')
+          s10=pd.to_numeric(v6['f2_diff_days_since_ko_loss'],errors='coerce')
           for t in [30,60,75,90,105,120,150,180,240,365]:
-              s=pd.to_numeric(v6['f2_diff_days_since_ko_loss'],errors='coerce'); q=v6[s>=t]
+              q=v6[s10>=t]
               if len(q)>=40: printj('U10_T'+str(t),summary(q,'won','fav_decimal'))
 
           print('=== U11 THRESHOLD NEIGHBORHOOD ===')
-          s=pd.to_numeric(v6['f2_diff_strong_opp_sig_diff'],errors='coerce')
+          s11=pd.to_numeric(v6['f2_diff_strong_opp_sig_diff'],errors='coerce')
           for t in [1.0,1.5,2.0,2.3,2.5,2.623,2.75,3.0,3.5,4.0]:
-              q=v6[s>=t]
+              q=v6[s11>=t]
               if len(q)>=40: printj('U11_T'+str(t),summary(q,'won','fav_decimal'))
 
           print('=== U10/U11 OVERLAP ===')
-          a=pd.to_numeric(v6['f2_diff_days_since_ko_loss'],errors='coerce')>=105
-          b=pd.to_numeric(v6['f2_diff_strong_opp_sig_diff'],errors='coerce')>=2.623
+          a=s10>=105;b=s11>=2.623
           for tag,m in [('U10_only',a&~b),('U11_only',b&~a),('both',a&b),('union',a|b)]:
               q=v6[m.fillna(False)]
               if len(q): printj(tag,summary(q,'won','fav_decimal'))
