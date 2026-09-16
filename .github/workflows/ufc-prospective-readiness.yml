@@ -1,0 +1,22 @@
+name: UFC Prospective Readiness
+on:
+  push:
+    paths: ['.github/workflows/ufc-prospective-readiness.yml']
+  workflow_dispatch:
+jobs:
+  inspect:
+    runs-on: [self-hosted, appwiza]
+    steps:
+      - shell: bash
+        run: |
+          set -euo pipefail
+          K=/home/appwiza-runner/.ssh/appwiza_vps
+          ssh -i "$K" -o StrictHostKeyChecking=no anestishkurti92@127.0.0.1 'cd /home/anestishkurti92/ufc-predictor-v1 && venv/bin/python - <<"PY"
+          import sqlite3,pandas as pd,json
+          c=sqlite3.connect("auto_research/state/prospective_ufc.sqlite3")
+          d=pd.read_sql_query("select * from bout_quotes",c)
+          print("rows",len(d))
+          for col in ["event_date","event_start","p_a","p_b","dec_a","dec_b","book","quote_at"]:
+              print(col,"nonnull",int(d[col].notna().sum()),"nonempty",int((d[col].fillna("").astype(str).str.len()>0).sum()))
+          print(d[["event_date","event_start","fighter_a","fighter_b","p_a","p_b","dec_a","dec_b","book","quote_at"]].head(20).to_string(index=False))
+          PY'
