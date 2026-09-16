@@ -1,0 +1,37 @@
+name: UFC U10 Live
+on:
+  push:
+    paths:
+      - 'scripts/apply_live_ko_recovery.sh'
+      - '.github/workflows/ufc-u10-live.yml'
+  workflow_dispatch:
+jobs:
+  deploy:
+    runs-on: [self-hosted, appwiza]
+    timeout-minutes: 15
+    steps:
+      - shell: bash
+        run: |
+          set -euo pipefail
+          K=/home/appwiza-runner/.ssh/appwiza_vps
+          T=$(mktemp)
+          curl -fsSL https://raw.githubusercontent.com/maxxw71/ufc-feed/main/scripts/apply_live_ko_recovery.sh -o "$T"
+          scp -i "$K" -o StrictHostKeyChecking=no "$T" anestishkurti92@127.0.0.1:/home/anestishkurti92/apply_live_ko_recovery.sh
+          rm -f "$T"
+          ssh -i "$K" -o StrictHostKeyChecking=no anestishkurti92@127.0.0.1 'bash -s' <<'EOF'
+          set -euo pipefail
+          chmod 700 /home/anestishkurti92/apply_live_ko_recovery.sh
+          /home/anestishkurti92/apply_live_ko_recovery.sh
+          cd /home/anestishkurti92/ufc-predictor-v1
+          venv/bin/python - <<'PY'
+          import importlib.util,sqlite3
+          from pathlib import Path
+          p=Path('ufc_email_watcher.py');spec=importlib.util.spec_from_file_location('w',p);w=importlib.util.module_from_spec(spec);spec.loader.exec_module(w)
+          assert hasattr(w,'compute_ko_recovery')
+          assert w.KO_RECOVERY_HISTORY['bets']==333
+          db=sqlite3.connect('auto_research/state/research.sqlite3')
+          print('U10_db',db.execute("select name,status,official,bets,wins,losses,roi from candidates where name='f2_diff_days_since_ko_loss >= 105'").fetchone())
+          print('U10_live_verified',w.KO_RECOVERY_HISTORY)
+          PY
+          sudo systemctl restart ufc-model-watcher.timer
+          EOF
