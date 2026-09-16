@@ -3,6 +3,7 @@ on:
   push:
     paths:
       - 'scripts/ufc_prospective_pipeline.py'
+      - 'scripts/patch_ufc_prospective_market.py'
       - '.github/workflows/ufc-prospective-pipeline-live.yml'
   workflow_dispatch:
 jobs:
@@ -15,14 +16,18 @@ jobs:
           set -euo pipefail
           K=/home/appwiza-runner/.ssh/appwiza_vps
           SRC=https://raw.githubusercontent.com/maxxw71/ufc-feed/4755d9f4dfcdd1e3e977266dcac1ac573d81cfad/scripts/ufc_prospective_pipeline.py
-          T=$(mktemp)
+          PATCH=https://raw.githubusercontent.com/maxxw71/ufc-feed/5e00048e7453480fc57ec3957ae862edfc1dd756/scripts/patch_ufc_prospective_market.py
+          T=$(mktemp); P=$(mktemp)
           curl -fsSL "$SRC" -o "$T"
+          curl -fsSL "$PATCH" -o "$P"
           scp -i "$K" -o StrictHostKeyChecking=no "$T" anestishkurti92@127.0.0.1:/home/anestishkurti92/ufc-predictor-v1/ufc_prospective_pipeline.py
-          rm -f "$T"
+          scp -i "$K" -o StrictHostKeyChecking=no "$P" anestishkurti92@127.0.0.1:/home/anestishkurti92/ufc-predictor-v1/patch_ufc_prospective_market.py
+          rm -f "$T" "$P"
           ssh -i "$K" -o StrictHostKeyChecking=no anestishkurti92@127.0.0.1 'bash -s' <<'EOF'
           set -euo pipefail
           cd /home/anestishkurti92/ufc-predictor-v1
           chmod 700 ufc_prospective_pipeline.py
+          venv/bin/python patch_ufc_prospective_market.py
           venv/bin/python -m py_compile ufc_prospective_pipeline.py
           for f in ufc_feature_expansion.py ufc_metadata_features.py ufc_weight_history_features.py ufc_context_crosscheck_features.py ufc_career_context_features.py; do
             test -f "$f" || { echo "MISSING $f"; exit 3; }
@@ -30,7 +35,7 @@ jobs:
           venv/bin/python ufc_prospective_pipeline.py capture
           venv/bin/python ufc_prospective_pipeline.py status
           CR=/tmp/ufc_prospective_cron
-          crontab -l 2>/dev/null | grep -v 'ufc_prospective_pipeline.py' > "$CR" || true
+          crontab -l 2>/dev/null | grep -v 'ufc_prospective_pipeline.py' | awk '!seen[$0]++' > "$CR" || true
           cat >> "$CR" <<'CRON'
           CRON_TZ=America/New_York
           10 0,6,12,18 * * * cd /home/anestishkurti92/ufc-predictor-v1 && timeout 10m nice -n 10 venv/bin/python ufc_prospective_pipeline.py capture >> auto_research/prospective.log 2>&1
@@ -42,6 +47,13 @@ jobs:
           crontab -l | grep -E 'CRON_TZ|ufc_prospective_pipeline'
           echo '=== FINALIZE INITIAL ==='
           venv/bin/python ufc_prospective_pipeline.py finalize
+          echo '=== QUOTE READINESS ==='
+          venv/bin/python - <<'PY'
+          import sqlite3,pandas as pd
+          c=sqlite3.connect('auto_research/state/prospective_ufc.sqlite3');d=pd.read_sql_query('select * from bout_quotes',c)
+          print('rows',len(d),'starts',int((d.event_start.fillna('').str.len()>0).sum()),'probs',int(d.p_a.notna().sum()),'prices',int(d.dec_a.notna().sum()),'books',int((d.book.fillna('').str.len()>0).sum()),'quote_at',int((d.quote_at.fillna('').str.len()>0).sum()))
+          print(d[['event_date','event_start','fighter_a','fighter_b','p_a','p_b','dec_a','dec_b','book','quote_at']].head(8).to_string(index=False))
+          PY
           echo '=== STATUS ==='
           venv/bin/python ufc_prospective_pipeline.py status
           EOF
