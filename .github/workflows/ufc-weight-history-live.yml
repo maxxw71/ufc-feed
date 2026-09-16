@@ -1,0 +1,36 @@
+name: UFC Weight History Live
+on:
+  push:
+    paths:
+      - 'scripts/ufc_weight_history_features.py'
+      - '.github/workflows/ufc-weight-history-live.yml'
+  workflow_dispatch:
+jobs:
+  build:
+    runs-on: [self-hosted, appwiza]
+    timeout-minutes: 15
+    steps:
+      - shell: bash
+        run: |
+          set -euo pipefail
+          K=/home/appwiza-runner/.ssh/appwiza_vps
+          T=$(mktemp)
+          curl -fsSL https://raw.githubusercontent.com/maxxw71/ufc-feed/main/scripts/ufc_weight_history_features.py -o "$T"
+          scp -i "$K" -o StrictHostKeyChecking=no "$T" anestishkurti92@127.0.0.1:/home/anestishkurti92/ufc-predictor-v1/ufc_weight_history_features.py
+          rm -f "$T"
+          ssh -i "$K" -o StrictHostKeyChecking=no anestishkurti92@127.0.0.1 'bash -s' <<'EOF'
+          set -euo pipefail
+          cd /home/anestishkurti92/ufc-predictor-v1
+          chmod 700 ufc_weight_history_features.py
+          venv/bin/python -m py_compile ufc_weight_history_features.py
+          OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 nice -n 12 timeout 10m venv/bin/python ufc_weight_history_features.py
+          python3 - <<'PY'
+          import json,pandas as pd
+          m=json.load(open('feature_expansion/weight_history_meta.json'))
+          assert m['point_in_time_strict_before_fight'] is True
+          d=pd.read_csv('feature_expansion/prefight_favorite_features_v4.csv',low_memory=False)
+          cols=[c for c in d if c.startswith('f4_')]
+          print('weight_meta',m)
+          print('rows',len(d),'columns',len(d.columns),'f4_features',len(cols))
+          PY
+          EOF
