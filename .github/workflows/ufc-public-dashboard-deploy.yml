@@ -1,6 +1,5 @@
 name: UFC public dashboard deploy
 
-# Redeploy trigger after the Sep 16 generic 10:00 AM publisher overwrote UFC presentation.
 on:
   workflow_dispatch:
   push:
@@ -10,6 +9,7 @@ on:
       - 'nfl/nfl_public_page.py'
       - 'scripts/sync_ufc_nfl_presentation.py'
       - 'scripts/fix_ufc_external_dashboard_css.py'
+      - 'scripts/install_ufc_dashboard_hook.py'
       - '.github/workflows/ufc-public-dashboard-deploy.yml'
 
 permissions:
@@ -28,7 +28,8 @@ jobs:
           python3 scripts/sync_ufc_nfl_presentation.py
           python3 scripts/fix_ufc_external_dashboard_css.py
           python3 -m py_compile ufc/ufc_public_page.py
-      - name: Deploy UFC dashboard over local SSH
+          python3 -m py_compile scripts/install_ufc_dashboard_hook.py
+      - name: Deploy UFC dashboard and persistent post-publish hook
         shell: bash
         run: |
           set -Eeuo pipefail
@@ -36,7 +37,11 @@ jobs:
           HOST=anestishkurti92@127.0.0.1
           SSH="ssh -i $KEY -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=accept-new $HOST"
           cat ufc/ufc_public_page.py | $SSH 'cat > /home/anestishkurti92/ufc-predictor-v1/ufc_public_page.py'
+          cat scripts/install_ufc_dashboard_hook.py | $SSH 'cat > /home/anestishkurti92/ufc-predictor-v1/install_ufc_dashboard_hook.py'
+          $SSH 'export HOME=/home/anestishkurti92; /home/anestishkurti92/ufc-predictor-v1/venv/bin/python /home/anestishkurti92/ufc-predictor-v1/install_ufc_dashboard_hook.py'
           $SSH 'export HOME=/home/anestishkurti92; export PYTHONPATH=/home/anestishkurti92/ufc-predictor-v1:/home/anestishkurti92/betting-ledger/code:/opt/sports-publisher; /home/anestishkurti92/ufc-predictor-v1/venv/bin/python -c "import sports_publish,ufc_public_page; ufc_public_page.safe_enhance(sports_publish)"'
+          $SSH 'grep -q "UFC_PUBLIC_DASHBOARD_HOOK" /home/anestishkurti92/ufc-predictor-v1/ufc_email_watcher.py'
+          $SSH '/home/anestishkurti92/ufc-predictor-v1/venv/bin/python -m py_compile /home/anestishkurti92/ufc-predictor-v1/ufc_email_watcher.py'
       - name: Verify public page and external dashboard CSS
         shell: bash
         run: |
@@ -56,4 +61,4 @@ jobs:
           grep -q 'history-table' /tmp/ufc-dashboard.css
           grep -q '2-1' /tmp/ufc-live.html
           grep -q 'Manon Fiorot' /tmp/ufc-live.html
-          echo 'UFC dashboard CSS is externally served and verified like NFL'
+          echo 'UFC dashboard and post-publish hook are verified'
