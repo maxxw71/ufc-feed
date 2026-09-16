@@ -5,10 +5,11 @@ from pathlib import Path
 import ufc_autoresearch as ar
 
 ROOT=Path.home()/"ufc-predictor-v1"
-V3=ROOT/"feature_expansion"/"prefight_favorite_features_v3.csv"
-V2=ROOT/"feature_expansion"/"prefight_favorite_features_v2.csv"
-if V3.exists(): ar.PREFIGHT=V3
-elif V2.exists(): ar.PREFIGHT=V2
+for name in ["prefight_favorite_features_v6.csv","prefight_favorite_features_v5.csv","prefight_favorite_features_v4.csv","prefight_favorite_features_v3.csv","prefight_favorite_features_v2.csv"]:
+    p=ROOT/"feature_expansion"/name
+    if p.exists():
+        ar.PREFIGHT=p
+        break
 
 OFFICIAL_ARCHIVE=ROOT/"auto_research"/"official_history"
 OFFICIAL_ARCHIVE.mkdir(parents=True,exist_ok=True)
@@ -28,17 +29,18 @@ ar.schema=schema
 
 def eligible_features(df,excluded):
     base=_base_eligible(df,excluded); extra=[]
+    prefixes=('f2_','f3_','f4_','f5_','f6_')
     for c in df.columns:
-        if not (c.startswith('f2_') or c.startswith('f3_')) or c in excluded: continue
+        if not c.startswith(prefixes) or c in excluded: continue
         try:
             s=df[c]
-            if s.notna().sum()>=200 and s.nunique(dropna=True)>=5 and str(s.dtype)!='object': extra.append(c)
+            if s.notna().sum()>=120 and s.nunique(dropna=True)>=2 and str(s.dtype)!='object': extra.append(c)
         except Exception: pass
     extra=sorted(set(extra),key=lambda c:(0 if ('_diff_' in c or c.endswith('_adv')) else 1,c))
     out=[];seen=set()
     for c in extra+base:
         if c not in seen: seen.add(c);out.append(c)
-    return out[:160]
+    return out[:220]
 ar.eligible_features=eligible_features
 
 def digest(path):
@@ -82,7 +84,7 @@ def send_digest(extra=None):
     runs,shadows,snaps,last=ar.counts();cards,active,settled=official_history_summary();tops=ar.top_candidates(5)
     rows=''.join(f"<tr><td>{html.escape(r[1])}</td><td>{r[2]}</td><td>{r[3]}-{r[4]}</td><td>{100*r[6]:+.1f}%</td><td>{100*r[8]:+.1f}%</td><td>{r[11]}</td></tr>" for r in tops) or '<tr><td colspan="6">No shadow candidate currently clears the robustness gates.</td></tr>'
     lasttxt='None yet' if not last else f"{last[0]} · {last[5]} · {last[2] or 0} rows · {last[3] or 0:,} tested · {last[4] or 0} survivors"
-    body=f'''<div style="font-family:Arial,sans-serif;max-width:900px;margin:auto;color:#172033"><h2>UFC Research Daily</h2><p><b>Research is autonomous; promotion is not.</b> No candidate can enter the official/live arsenal without explicit approval.</p><p><b>Research dataset:</b> {html.escape(ar.PREFIGHT.name)}<br><b>Last research:</b> {html.escape(lasttxt)}<br><b>Research runs retained:</b> {runs}<br><b>Shadow candidates retained:</b> {shadows}<br><b>Immutable source/official snapshots retained:</b> {snaps}</p><p><b>Appwiza UFC tracker:</b> {cards} stored cards · {active} not withdrawn · {settled} with settlement-like tracking state.</p><h3>Best current shadow candidates</h3><table style="border-collapse:collapse;width:100%"><tr><th align="left">Rule</th><th>Bets</th><th>W-L</th><th>ROI</th><th>Holdout ROI</th><th>Seen</th></tr>{rows}</table><p style="font-size:13px;color:#596273">Expanded features include opponent strength, damage/decline, cardio/round trends, five-round experience, style metrics, historical rankings, height and stance. These are research findings, not official selections.</p></div>'''
+    body=f'''<div style="font-family:Arial,sans-serif;max-width:900px;margin:auto;color:#172033"><h2>UFC Research Daily</h2><p><b>Research is autonomous; promotion is not.</b> No candidate can enter the official/live arsenal without explicit approval.</p><p><b>Research dataset:</b> {html.escape(ar.PREFIGHT.name)}<br><b>Last research:</b> {html.escape(lasttxt)}<br><b>Research runs retained:</b> {runs}<br><b>Shadow candidates retained:</b> {shadows}<br><b>Immutable source/official snapshots retained:</b> {snaps}</p><p><b>Appwiza UFC tracker:</b> {cards} stored cards · {active} not withdrawn · {settled} with settlement-like tracking state.</p><h3>Best current shadow candidates</h3><table style="border-collapse:collapse;width:100%"><tr><th align="left">Rule</th><th>Bets</th><th>W-L</th><th>ROI</th><th>Holdout ROI</th><th>Seen</th></tr>{rows}</table><p style="font-size:13px;color:#596273">Research now includes opponent strength, damage/decline, cardio/round trends, style, rankings, stance/height, documented weight-cut history, win/loss streaks, title experience, actual weigh-in weights, division movement and decision volatility. These are research findings, not official selections.</p></div>'''
     try:
         import ufc_email_watcher as watcher;watcher.send_email(f"UFC Research Daily — {datetime.now().strftime('%Y-%m-%d')}",body);ar.log('Daily research email sent through official watcher transport');return True
     except Exception as e:ar.log(f'Daily research email through watcher failed: {e}');return False
