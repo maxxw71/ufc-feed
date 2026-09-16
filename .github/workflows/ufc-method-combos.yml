@@ -1,0 +1,104 @@
+name: UFC Method Combinations
+on:
+  push:
+    paths: ['.github/workflows/ufc-method-combos.yml']
+  workflow_dispatch:
+jobs:
+  analyze:
+    runs-on: [self-hosted, appwiza]
+    timeout-minutes: 20
+    steps:
+      - shell: bash
+        run: |
+          set -euo pipefail
+          K=/home/appwiza-runner/.ssh/appwiza_vps
+          ssh -i "$K" -o StrictHostKeyChecking=no anestishkurti92@127.0.0.1 'bash -s' <<'EOF'
+          set -euo pipefail
+          cd /home/anestishkurti92/ufc-predictor-v1
+          mkdir -p method_deep_research
+          venv/bin/python - <<'PY'
+          import pandas as pd,numpy as np,re,json
+          from collections import Counter
+          def norm(s):return re.sub(r'[^a-z0-9]+',' ',str(s or '').lower()).strip()
+          def key(dt,a,b):
+              try:d=str(pd.Timestamp(dt).date())
+              except:return None
+              return (d,)+tuple(sorted((norm(a),norm(b))))
+          d=pd.read_csv('feature_expansion/prefight_favorite_features_v6.csv',low_memory=False)
+          d['_key']=[key(x.event_date,x.favorite,x.opponent) for x in d.itertuples()]
+          sets={f'U{i}':set() for i in range(1,11)}
+          # U1 exact rule
+          sets['U1']=set(d.loc[(pd.to_numeric(d.market_prob,errors='coerce')>=.70)&(pd.to_numeric(d.age_adv,errors='coerce')>=3),'_key'])
+          # U2 historical official sample membership
+          u2=pd.read_csv('skill_veto_official_samples/reach_415_with_skill_veto.csv',low_memory=False)
+          sets['U2']={key(r.event_date,r.favorite,r.underdog) for r in u2.itertuples()}
+          # U3 membership
+          u3=pd.read_csv('structural_edge_failure_analysis/structural_edge_83_fights.csv',low_memory=False)
+          sets['U3']={key(r.event_date,r.favorite,r.underdog) for r in u3.itertuples()}
+          # U4 membership
+          u4=pd.read_csv('ufc_age_reach_overlap/age_plus_reach4.csv',low_memory=False)
+          sets['U4']={key(r.event_date,r.player1,r.player2) for r in u4.itertuples()}
+          # U5 exact deployed broad wrestling rule
+          num=lambda c:pd.to_numeric(d[c],errors='coerce')
+          m5=(num('f_fights')>=2)&(num('o_fights')>=2)&(num('f_td_a15')>=5)&(num('f_td_l15')>=1)&(num('f_ctrl15')>=1)&(num('o_td_a15')<=2)&(num('o_ctrl15')<=.75)
+          sets['U5']=set(d.loc[m5,'_key'])
+          # U6 exact deployed
+          m6=(num('market_prob')>=.65)&(num('f_fights')>=3)&(num('o_fights')>=3)&((num('f_sig_l_pm')-num('o_sig_l_pm'))>=.25)&((num('f_sig_def')-num('o_sig_def'))>=.15)
+          sets['U6']=set(d.loc[m6,'_key'])
+          # U7 current risk-gated deployed rule
+          power=num('o_kd15')*num('f_kd_abs15')
+          m7=(num('market_prob')>=.70)&(num('f_fights')>=4)&(num('o_fights')>=4)&((num('f_sig_diff_pm')-num('o_sig_diff_pm'))>=1)&((num('f_td_def')-num('o_td_def'))>=.10)&(num('age_adv')>=-3)&(power<.12)
+          sets['U7']=set(d.loc[m7,'_key'])
+          # U8 exact deployed
+          m8=(num('market_prob')>=.75)&(num('f_fights')>=4)&(num('o_fights')>=4)&((num('f_sig_diff_pm')-num('o_sig_diff_pm'))>=1)&(num('f_sig_diff_pm')>=.5)
+          sets['U8']=set(d.loc[m8,'_key'])
+          # U9 exact deployed
+          wg=num('f_win_pct')-num('o_win_pct');fg=num('f_finish_loss_pct')-num('o_finish_loss_pct');veto=(num('f_ctrl_allowed15')>=3)&(num('f_finish_loss_pct')>=.40)
+          m9=(num('market_prob')>=.575)&(num('market_prob')<=.75)&(num('f_fights')>=8)&(num('o_fights')<=3)&(wg>=.05)&(fg<=.60)&(~veto)
+          sets['U9']=set(d.loc[m9,'_key'])
+          # U10 newly official
+          m10=num('f2_diff_days_since_ko_loss')>=105
+          sets['U10']=set(d.loc[m10,'_key'])
+          # restrict sample memberships to v6 universe
+          universe=set(d['_key']);sets={k:(v & universe) for k,v in sets.items()}
+          methods=[]
+          for k in d['_key']:
+              methods.append(tuple(x for x in sets if k in sets[x]))
+          d['methods']=methods;d['method_count']=[len(x) for x in methods]
+          won=d['won'].astype(bool);od=num('fav_decimal');d['profit']=np.where(won,od-1,-1.0)
+          def sm(q):
+              if len(q)==0:return None
+              return {'n':len(q),'wins':int(q.won.astype(bool).sum()),'losses':int((~q.won.astype(bool)).sum()),'win_pct':float(q.won.astype(bool).mean()),'roi':float(q.profit.mean())}
+          print('=== METHOD COUNTS IN COMMON V6 UNIVERSE ===')
+          for m in sets:print(m,len(sets[m]))
+          print('=== BY NUMBER OF SIMULTANEOUS METHODS ===')
+          for n in range(1,8):
+              q=d[d.method_count==n]
+              if len(q):print('EXACT',n,json.dumps(sm(q),sort_keys=True))
+          for n in range(2,7):
+              q=d[d.method_count>=n]
+              if len(q):print('AT_LEAST',n,json.dumps(sm(q),sort_keys=True))
+          print('=== EXACT COMBINATIONS N>=5 ===')
+          rows=[]
+          for combo,g in d[d.method_count>=2].groupby('methods'):
+              if len(g)>=5:
+                  z=sm(g);rows.append((z['n'],z['roi'],z['win_pct'],combo,z))
+          for _,_,_,combo,z in sorted(rows,key=lambda x:(x[0],x[1]),reverse=True):print('+'.join(combo),json.dumps(z,sort_keys=True))
+          print('=== PAIRWISE OVERLAPS N>=5 ===')
+          pairs=[]
+          names=list(sets)
+          for i,a in enumerate(names):
+              for b in names[i+1:]:
+                  q=d[d['_key'].isin(sets[a]&sets[b])]
+                  if len(q)>=5:pairs.append((len(q),float(q.profit.mean()),a,b,sm(q)))
+          for _,_,a,b,z in sorted(pairs,reverse=True)[:40]:print(a+'+'+b,json.dumps(z,sort_keys=True))
+          print('=== HIGHEST-CONVICTION HISTORICAL EXAMPLES ===')
+          ex=d[d.method_count>=3].sort_values(['method_count','event_date'],ascending=[False,False])
+          for r in ex.head(60).itertuples():
+              print(r.event_date,'|',r.favorite,'vs',r.opponent,'|','+'.join(r.methods),'|',('W' if bool(r.won) else 'L'),'| dec',round(float(r.fav_decimal),3),'| profit',round(float(r.profit),3))
+          # persist reports
+          d[['event_date','favorite','opponent','market_prob','fav_decimal','won','profit','methods','method_count']].to_csv('method_deep_research/method_combo_fights.csv',index=False)
+          report={'method_counts':{k:len(v) for k,v in sets.items()},'at_least':{str(n):sm(d[d.method_count>=n]) for n in range(2,7)}}
+          open('method_deep_research/method_combo_summary.json','w').write(json.dumps(report,indent=2,default=str))
+          PY
+          EOF
