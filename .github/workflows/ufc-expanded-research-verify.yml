@@ -7,7 +7,7 @@ on:
 jobs:
   verify:
     runs-on: [self-hosted, appwiza]
-    timeout-minutes: 20
+    timeout-minutes: 25
     steps:
       - shell: bash
         run: |
@@ -16,20 +16,28 @@ jobs:
           ssh -i "$KEY" -o StrictHostKeyChecking=no anestishkurti92@127.0.0.1 'bash -s' <<'EOF'
           set -euo pipefail
           cd /home/anestishkurti92/ufc-predictor-v1
-          python3 - <<'PY'
-          import json
+          venv/bin/python - <<'PY'
+          import json,pandas as pd,ufc_autoresearch_runner as r,ufc_autoresearch as a
           m=json.load(open('feature_expansion/feature_expansion_meta.json'))
-          assert m.get('same_event_guard') is True
-          assert m.get('backward_only_normalization') is True
-          print('feature_meta_ok',m['columns'],m['added_columns'])
+          assert m.get('same_event_guard') is True and m.get('backward_only_normalization') is True
+          wm=json.load(open('feature_expansion/weight_history_meta.json'))
+          assert wm.get('point_in_time_strict_before_fight') is True
+          cm=json.load(open('feature_expansion/context_crosscheck_meta.json'))
+          assert cm.get('prefight_fields_verified_by_source_dictionary') is True
+          xm=json.load(open('feature_expansion/career_context_meta.json'))
+          assert xm.get('strict_before_fight_date') is True and xm.get('same_event_results_excluded') is True
+          assert a.PREFIGHT.name=='prefight_favorite_features_v6.csv',a.PREFIGHT
+          d=pd.read_csv(a.PREFIGHT,low_memory=False)
+          print('warehouse',a.PREFIGHT,'rows',len(d),'columns',len(d.columns))
+          for p in ('f2_','f3_','f4_','f5_','f6_'): print(p,sum(c.startswith(p) for c in d.columns))
           PY
-          OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 nice -n 12 timeout 15m venv/bin/python ufc_autoresearch_runner.py daily
+          OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 nice -n 12 timeout 20m venv/bin/python ufc_autoresearch_runner.py daily
           venv/bin/python - <<'PY'
           import sqlite3
           db=sqlite3.connect('auto_research/state/research.sqlite3')
           print('last_run',db.execute('select mode,status,dataset_rows,candidates_tested,survivors,dataset_sha from research_runs order by id desc limit 1').fetchone())
           print('shadow_total',db.execute("select count(*) from candidates where status='shadow_candidate' and official=0").fetchone()[0])
-          for r in db.execute("select name,bets,wins,losses,roi,train_roi,holdout_roi,yearly_positive_ratio,times_seen from candidates where official=0 order by holdout_roi desc,roi desc limit 10"):
+          for r in db.execute("select name,bets,wins,losses,roi,train_roi,holdout_roi,yearly_positive_ratio,times_seen from candidates where official=0 order by holdout_roi desc,roi desc limit 12"):
               print('candidate',r)
           print('official_autopromotions',db.execute('select count(*) from candidates where official != 0').fetchone()[0])
           PY
