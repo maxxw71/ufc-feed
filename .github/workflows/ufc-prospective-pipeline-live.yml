@@ -1,0 +1,47 @@
+name: UFC Prospective Pipeline Live
+on:
+  push:
+    paths:
+      - 'scripts/ufc_prospective_pipeline.py'
+      - '.github/workflows/ufc-prospective-pipeline-live.yml'
+  workflow_dispatch:
+jobs:
+  deploy:
+    runs-on: [self-hosted, appwiza]
+    timeout-minutes: 30
+    steps:
+      - shell: bash
+        run: |
+          set -euo pipefail
+          K=/home/appwiza-runner/.ssh/appwiza_vps
+          SRC=https://raw.githubusercontent.com/maxxw71/ufc-feed/4755d9f4dfcdd1e3e977266dcac1ac573d81cfad/scripts/ufc_prospective_pipeline.py
+          T=$(mktemp)
+          curl -fsSL "$SRC" -o "$T"
+          scp -i "$K" -o StrictHostKeyChecking=no "$T" anestishkurti92@127.0.0.1:/home/anestishkurti92/ufc-predictor-v1/ufc_prospective_pipeline.py
+          rm -f "$T"
+          ssh -i "$K" -o StrictHostKeyChecking=no anestishkurti92@127.0.0.1 'bash -s' <<'EOF'
+          set -euo pipefail
+          cd /home/anestishkurti92/ufc-predictor-v1
+          chmod 700 ufc_prospective_pipeline.py
+          venv/bin/python -m py_compile ufc_prospective_pipeline.py
+          for f in ufc_feature_expansion.py ufc_metadata_features.py ufc_weight_history_features.py ufc_context_crosscheck_features.py ufc_career_context_features.py; do
+            test -f "$f" || { echo "MISSING $f"; exit 3; }
+          done
+          venv/bin/python ufc_prospective_pipeline.py capture
+          venv/bin/python ufc_prospective_pipeline.py status
+          CR=/tmp/ufc_prospective_cron
+          crontab -l 2>/dev/null | grep -v 'ufc_prospective_pipeline.py' > "$CR" || true
+          cat >> "$CR" <<'CRON'
+          CRON_TZ=America/New_York
+          10 0,6,12,18 * * * cd /home/anestishkurti92/ufc-predictor-v1 && timeout 10m nice -n 10 venv/bin/python ufc_prospective_pipeline.py capture >> auto_research/prospective.log 2>&1
+          40 0,6,12,18 * * * cd /home/anestishkurti92/ufc-predictor-v1 && timeout 45m nice -n 12 venv/bin/python ufc_prospective_pipeline.py finalize >> auto_research/prospective.log 2>&1
+          CRON
+          crontab "$CR"
+          rm -f "$CR"
+          echo '=== PROSPECTIVE CRON ==='
+          crontab -l | grep -E 'CRON_TZ|ufc_prospective_pipeline'
+          echo '=== FINALIZE INITIAL ==='
+          venv/bin/python ufc_prospective_pipeline.py finalize
+          echo '=== STATUS ==='
+          venv/bin/python ufc_prospective_pipeline.py status
+          EOF
