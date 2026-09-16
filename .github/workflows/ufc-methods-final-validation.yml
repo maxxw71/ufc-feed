@@ -1,0 +1,61 @@
+name: UFC Methods Final Validation
+on:
+  push:
+    paths:
+      - '.github/workflows/ufc-methods-final-validation.yml'
+  workflow_dispatch:
+jobs:
+  validate:
+    runs-on: [self-hosted, appwiza]
+    timeout-minutes: 30
+    steps:
+      - shell: bash
+        run: |
+          set -euo pipefail
+          K=/home/appwiza-runner/.ssh/appwiza_vps
+          ssh -i "$K" -o StrictHostKeyChecking=no anestishkurti92@127.0.0.1 'bash -s' <<'EOF'
+          set -euo pipefail
+          cd /home/anestishkurti92/ufc-predictor-v1
+          venv/bin/python - <<'PY'
+          import pandas as pd, numpy as np, re, json
+          rng=np.random.default_rng(20260916)
+          def norm(s): return re.sub(r'[^a-z0-9]+',' ',str(s or '').lower()).strip()
+          def profits(d):
+              w=d['won'].astype(bool).to_numpy(); od=pd.to_numeric(d['fav_decimal'],errors='coerce').to_numpy(); m=np.isfinite(od)&(od>1)
+              return np.where(w[m],od[m]-1,-1.0)
+          def boot(d,n=5000):
+              p=profits(d)
+              vals=np.empty(n)
+              for i in range(n): vals[i]=rng.choice(p,size=len(p),replace=True).mean()
+              return {'n':len(p),'roi':float(p.mean()),'ci_low':float(np.quantile(vals,.025)),'ci_high':float(np.quantile(vals,.975)),'prob_positive':float((vals>0).mean())}
+          def loyo(d):
+              years=pd.to_datetime(d['event_date']).dt.year
+              out=[]
+              for y in sorted(years.unique()):
+                  q=d[years!=y]
+                  if len(q): out.append((int(y),float(profits(q).mean()),len(q)))
+              return {'min_roi':min(x[1] for x in out),'max_roi':max(x[1] for x in out),'all_positive':all(x[1]>0 for x in out),'rows':out}
+          v6=pd.read_csv('feature_expansion/prefight_favorite_features_v6.csv',low_memory=False)
+          s10=pd.to_numeric(v6['f2_diff_days_since_ko_loss'],errors='coerce')
+          s11=pd.to_numeric(v6['f2_diff_strong_opp_sig_diff'],errors='coerce')
+          for tag,m in [('U10_90',s10>=90),('U10_105',s10>=105),('U10_120',s10>=120),('U11_2.3',s11>=2.3),('U11_2.5',s11>=2.5),('U11_2.623',s11>=2.623),('U11_2.75',s11>=2.75)]:
+              q=v6[m.fillna(False)][['event_date','won','fav_decimal']].copy()
+              print(tag,'BOOT',json.dumps(boot(q),sort_keys=True))
+              print(tag,'LOYO',json.dumps(loyo(q),sort_keys=True))
+
+          u2=pd.read_csv('skill_veto_official_samples/reach_415_with_skill_veto.csv',low_memory=False).rename(columns={'_won':'won'})
+          # canonical veto neighborhood: remove if either striking-diff deficit <= threshold OR TD-def deficit <= threshold
+          for sig in [-0.5,-0.75,-1.0,-1.25,-1.5]:
+              for td in [-0.10,-0.15,-0.20,-0.25,-0.30]:
+                  a=pd.to_numeric(u2['diff_sig_diff_pm'],errors='coerce');b=pd.to_numeric(u2['diff_td_def'],errors='coerce')
+                  keep=~((a<=sig)|(b<=td))
+                  q=u2[keep.fillna(True)][['event_date','won','fav_decimal']].copy()
+                  p=profits(q); yrs=pd.to_datetime(q.event_date).dt.year
+                  pre=profits(q[yrs<2020]).mean() if (yrs<2020).sum() else np.nan
+                  rec=profits(q[yrs>=2020]).mean() if (yrs>=2020).sum() else np.nan
+                  if len(q)>=250 and p.mean()>.05 and pre>0 and rec>0:
+                      print('U2_GRID',json.dumps({'sig':sig,'td':td,'n':len(q),'roi':float(p.mean()),'pre':float(pre),'recent':float(rec)},sort_keys=True))
+          q=u2[~u2['skill_veto_flag'].fillna(False).astype(bool)][['event_date','won','fav_decimal']].copy()
+          print('U2_CANON_BOOT',json.dumps(boot(q),sort_keys=True));print('U2_CANON_LOYO',json.dumps(loyo(q),sort_keys=True))
+          PY
+          EOF
