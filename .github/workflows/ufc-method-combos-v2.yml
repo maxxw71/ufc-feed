@@ -1,0 +1,84 @@
+name: UFC Method Combinations V2
+on:
+  push:
+    paths: ['.github/workflows/ufc-method-combos-v2.yml']
+  workflow_dispatch:
+jobs:
+  analyze:
+    runs-on: [self-hosted, appwiza]
+    timeout-minutes: 20
+    steps:
+      - shell: bash
+        run: |
+          set -euo pipefail
+          K=/home/appwiza-runner/.ssh/appwiza_vps
+          ssh -i "$K" -o StrictHostKeyChecking=no anestishkurti92@127.0.0.1 'bash -s' <<'EOF'
+          set -euo pipefail
+          cd /home/anestishkurti92/ufc-predictor-v1
+          venv/bin/python - <<'PY'
+          import pandas as pd,numpy as np,re,json
+          def norm(s):return re.sub(r'[^a-z0-9]+',' ',str(s or '').lower()).strip()
+          def key(dt,a,b):
+              try:return (str(pd.Timestamp(dt).date()),)+tuple(sorted((norm(a),norm(b))))
+              except:return None
+          d=pd.read_csv('feature_expansion/prefight_favorite_features_v6.csv',low_memory=False)
+          d['_key']=[key(r.event_date,r.favorite,r.opponent) for r in d.itertuples()]
+          universe=set(d._key);sets={f'U{i}':set() for i in range(1,11)}
+          # Exact archived memberships where available
+          u1=pd.read_csv('hybrid_70_agegap_robustness/all_rule_bets.csv',low_memory=False)
+          sets['U1']={key(r.date,r.fighter_a,r.fighter_b) for r in u1.itertuples()}
+          u2=pd.read_csv('skill_veto_official_samples/reach_415_with_skill_veto.csv',low_memory=False)
+          sets['U2']={key(r.event_date,r.favorite,r.underdog) for r in u2.itertuples()}
+          u3=pd.read_csv('structural_edge_failure_analysis/structural_edge_83_fights.csv',low_memory=False)
+          sets['U3']={key(r.event_date,r.favorite,r.underdog) for r in u3.itertuples()}
+          u4=pd.read_csv('ufc_age_reach_overlap/age_plus_reach4.csv',low_memory=False)
+          sets['U4']={key(r.event_date,r.player1,r.player2) for r in u4.itertuples()}
+          num=lambda c:pd.to_numeric(d[c],errors='coerce')
+          m5=(num('f_fights')>=2)&(num('o_fights')>=2)&(num('f_td_a15')>=5)&(num('f_td_l15')>=1)&(num('f_ctrl15')>=1)&(num('o_td_a15')<=2)&(num('o_ctrl15')<=.75)
+          sets['U5']=set(d.loc[m5,'_key'])
+          m6=(num('market_prob')>=.65)&(num('f_fights')>=3)&(num('o_fights')>=3)&((num('f_sig_l_pm')-num('o_sig_l_pm'))>=.25)&((num('f_sig_def')-num('o_sig_def'))>=.15)
+          sets['U6']=set(d.loc[m6,'_key'])
+          # Exact risk-gated U7 membership from its validated 54-bet parent file.
+          u7p='ufc_striking_td_postmortem/baseline_bets_with_age.csv'
+          u7=pd.read_csv(u7p,low_memory=False)
+          u7=u7[(pd.to_numeric(u7.age_adv_repaired,errors='coerce')>=-3)&(pd.to_numeric(u7.power_risk_product,errors='coerce')<.12)]
+          sets['U7']={key(r.event_date,r.favorite,r.opponent) for r in u7.itertuples()}
+          m8=(num('market_prob')>=.75)&(num('f_fights')>=4)&(num('o_fights')>=4)&((num('f_sig_diff_pm')-num('o_sig_diff_pm'))>=1)&(num('f_sig_diff_pm')>=.5)
+          sets['U8']=set(d.loc[m8,'_key'])
+          wg=num('f_win_pct')-num('o_win_pct');fg=num('f_finish_loss_pct')-num('o_finish_loss_pct');veto=(num('f_ctrl_allowed15')>=3)&(num('f_finish_loss_pct')>=.40)
+          m9=(num('market_prob')>=.575)&(num('market_prob')<=.75)&(num('f_fights')>=8)&(num('o_fights')<=3)&(wg>=.05)&(fg<=.60)&(~veto)
+          sets['U9']=set(d.loc[m9,'_key'])
+          sets['U10']=set(d.loc[num('f2_diff_days_since_ko_loss')>=105,'_key'])
+          sets={k:(v&universe) for k,v in sets.items()}
+          d['methods']=[tuple(m for m in sets if k in sets[m]) for k in d._key];d['method_count']=d.methods.map(len)
+          d['profit']=np.where(d.won.astype(bool),num('fav_decimal')-1,-1.0)
+          def sm(q):
+              return {'n':len(q),'wins':int(q.won.astype(bool).sum()),'losses':int((~q.won.astype(bool)).sum()),'win_pct':float(q.won.astype(bool).mean()),'roi':float(q.profit.mean())} if len(q) else None
+          print('METHOD_COUNTS',json.dumps({k:len(v) for k,v in sets.items()},sort_keys=True))
+          for n in range(1,8):
+              q=d[d.method_count==n]
+              if len(q):print('EXACT',n,json.dumps(sm(q),sort_keys=True))
+          for n in range(2,7):
+              q=d[d.method_count>=n]
+              if len(q):print('AT_LEAST',n,json.dumps(sm(q),sort_keys=True))
+          print('=== EXACT COMBOS N>=5 ===')
+          rr=[]
+          for combo,g in d[d.method_count>=2].groupby('methods'):
+              if len(g)>=5: rr.append((len(g),float(g.profit.mean()),combo,sm(g)))
+          for _,_,c,z in sorted(rr,key=lambda x:(x[0],x[1]),reverse=True):print('+'.join(c),json.dumps(z,sort_keys=True))
+          print('=== PAIRS N>=5 ===')
+          pp=[];names=list(sets)
+          for i,a in enumerate(names):
+              for b in names[i+1:]:
+                  q=d[d._key.isin(sets[a]&sets[b])]
+                  if len(q)>=5:pp.append((len(q),float(q.profit.mean()),a,b,sm(q)))
+          for _,_,a,b,z in sorted(pp,reverse=True):print(a+'+'+b,json.dumps(z,sort_keys=True))
+          print('=== 3+ EXAMPLES ===')
+          ex=d[d.method_count>=3].sort_values(['method_count','event_date'],ascending=[False,False])
+          for r in ex.head(80).itertuples():print(r.event_date,'|',r.favorite,'vs',r.opponent,'|','+'.join(r.methods),'|',('W' if bool(r.won) else 'L'),'|',round(float(r.fav_decimal),3),'|',round(float(r.profit),3))
+          d[['event_date','favorite','opponent','market_prob','fav_decimal','won','profit','methods','method_count']].to_csv('method_deep_research/method_combo_fights_v2.csv',index=False)
+          open('method_deep_research/method_combo_summary_v2.json','w').write(json.dumps({'method_counts':{k:len(v) for k,v in sets.items()},'at_least':{str(n):sm(d[d.method_count>=n]) for n in range(2,7)}},indent=2))
+          PY
+          systemctl is-active ufc-model-watcher.timer || true
+          grep -n 'KO_RECOVERY_RULE_V1' ufc_email_watcher.py | tail -1 || true
+          EOF
