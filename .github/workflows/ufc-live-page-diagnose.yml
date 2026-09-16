@@ -15,49 +15,23 @@ jobs:
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
-      - name: Backup and diagnose UFC live page
+      - name: Inspect recurring UFC publisher path
         shell: bash
         run: |
-          set -u
-          echo '=== identity ==='
-          id
-          date -Is
-
-          echo '=== backup current live UFC page before any repair ==='
-          STAMP="$(date -u +%Y%m%dT%H%M%SZ)"
-          BACKUP_ROOT="/srv/appwiza-sports/backups/ufc-page-repair-${STAMP}"
-          mkdir -p "$BACKUP_ROOT"
-          cp -a /srv/appwiza-sports/public/ufc "$BACKUP_ROOT/ufc" 2>/dev/null || true
-          cp -a /srv/appwiza-sports/public/style.css "$BACKUP_ROOT/style.css" 2>/dev/null || true
-          echo "BACKUP_ROOT=$BACKUP_ROOT"
-
-          echo '=== live UFC directory ==='
-          find /srv/appwiza-sports/public/ufc -maxdepth 2 -type f -printf '%TY-%Tm-%Td %TH:%TM:%TS %s %p\n' 2>/dev/null | sort | head -200 || true
-
-          echo '=== live index asset references / title ==='
-          grep -nE '<title|stylesheet|style\.css|scripts\.js|ufc-tools|fighters-picker|prop-bias|qualifying matchups|watchlist' /srv/appwiza-sports/public/ufc/index.html 2>/dev/null | head -120 || true
-
-          echo '=== live index first 80 lines ==='
-          sed -n '1,80p' /srv/appwiza-sports/public/ufc/index.html 2>/dev/null || true
-
-          echo '=== sports publisher UFC/index write paths ==='
-          if [ -f /opt/sports-publisher/sports_publish.py ]; then
-            grep -nEi 'ufc|index\.html|write_text|open\(|public/ufc|render|template|style\.css' /opt/sports-publisher/sports_publish.py | head -240 || true
-          fi
-
-          echo '=== publisher directory ==='
-          find /opt/sports-publisher -maxdepth 2 -type f -printf '%TY-%Tm-%Td %TH:%TM %p\n' 2>/dev/null | sort | tail -120 || true
-
-          echo '=== systemd timers/services mentioning sports/ufc/publish ==='
-          systemctl list-timers --all --no-pager 2>/dev/null | grep -Ei 'ufc|sports|publish|appwiza' || true
-          systemctl list-units --type=service --all --no-pager 2>/dev/null | grep -Ei 'ufc|sports|publish|appwiza' || true
-
-          echo '=== cron references ==='
-          crontab -l 2>/dev/null | grep -Ei 'ufc|sports|publish|appwiza' || true
-          grep -RniE 'ufc|sports_publish|appwiza-sports' /etc/cron.d /etc/cron.daily /etc/cron.hourly 2>/dev/null | head -200 || true
-
-          echo '=== known prior UFC snapshot candidates ==='
-          find /home/anestishkurti92/ufc_snapshot_2026-08-29_10-14-13 /srv/appwiza-sports -type f \( -name 'index.html' -o -name 'style.css' -o -name 'scripts.js' -o -name 'ufc-tools.js' \) -printf '%TY-%Tm-%Td %TH:%TM:%TS %s %p\n' 2>/dev/null | sort | head -300 || true
-
-          echo '=== recent files that may be UFC page backups/templates ==='
-          find /home/anestishkurti92 /srv/appwiza-sports /opt/sports-publisher -maxdepth 6 -type f \( -iname '*ufc*html*' -o -iname '*ufc*backup*' -o -iname 'index.html.bak*' -o -iname '*ufc*template*' \) -printf '%TY-%Tm-%Td %TH:%TM:%TS %s %p\n' 2>/dev/null | sort | tail -300 || true
+          set -Eeuo pipefail
+          echo '=== timer ==='
+          systemctl cat ufc-model-watcher.timer || true
+          echo '=== service ==='
+          systemctl cat ufc-model-watcher.service || true
+          echo '=== service properties ==='
+          systemctl show ufc-model-watcher.service -p ExecStart -p User -p Group -p WorkingDirectory -p Environment --no-pager || true
+          echo '=== timer properties ==='
+          systemctl show ufc-model-watcher.timer -p OnCalendar -p NextElapseUSecRealtime -p LastTriggerUSec --no-pager || true
+          echo '=== unit files ==='
+          ls -l /etc/systemd/system/ufc-model-watcher.* /lib/systemd/system/ufc-model-watcher.* 2>/dev/null || true
+          echo '=== likely watcher source ==='
+          grep -RniE 'sports_publish|render_all|publish_ufc|safe_enhance|ufc_public_page' /home/anestishkurti92/ufc-predictor-v1 /opt/sports-publisher 2>/dev/null | head -240 || true
+          echo '=== current UFC custom module ==='
+          ls -l /home/anestishkurti92/ufc-predictor-v1/ufc_public_page.py /opt/sports-publisher/ufc_public_page.py 2>/dev/null || true
+          echo '=== current page markers ==='
+          grep -oE '/sports/ufc/dashboard.css\?v=[^" ]+|Overall record|Available selections|Completed selections|UFC method-selection record' /srv/appwiza-sports/public/ufc/index.html | sort -u || true
