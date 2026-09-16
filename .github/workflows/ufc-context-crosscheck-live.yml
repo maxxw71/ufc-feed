@@ -1,0 +1,36 @@
+name: UFC Context Crosscheck Live
+on:
+  push:
+    paths:
+      - 'scripts/ufc_context_crosscheck_features.py'
+      - '.github/workflows/ufc-context-crosscheck-live.yml'
+  workflow_dispatch:
+jobs:
+  build:
+    runs-on: [self-hosted, appwiza]
+    timeout-minutes: 15
+    steps:
+      - shell: bash
+        run: |
+          set -euo pipefail
+          K=/home/appwiza-runner/.ssh/appwiza_vps
+          T=$(mktemp)
+          curl -fsSL https://raw.githubusercontent.com/maxxw71/ufc-feed/main/scripts/ufc_context_crosscheck_features.py -o "$T"
+          scp -i "$K" -o StrictHostKeyChecking=no "$T" anestishkurti92@127.0.0.1:/home/anestishkurti92/ufc-predictor-v1/ufc_context_crosscheck_features.py
+          rm -f "$T"
+          ssh -i "$K" -o StrictHostKeyChecking=no anestishkurti92@127.0.0.1 'bash -s' <<'EOF'
+          set -euo pipefail
+          cd /home/anestishkurti92/ufc-predictor-v1
+          chmod 700 ufc_context_crosscheck_features.py
+          venv/bin/python -m py_compile ufc_context_crosscheck_features.py
+          OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 nice -n 12 timeout 10m venv/bin/python ufc_context_crosscheck_features.py
+          venv/bin/python - <<'PY'
+          import json,pandas as pd
+          m=json.load(open('feature_expansion/context_crosscheck_meta.json'))
+          assert m['prefight_fields_verified_by_source_dictionary'] is True
+          d=pd.read_csv('feature_expansion/prefight_favorite_features_v5.csv',low_memory=False)
+          cols=[c for c in d if c.startswith('f5_')]
+          print('context_meta',m)
+          print('rows',len(d),'columns',len(d.columns),'f5_features',len(cols))
+          PY
+          EOF
