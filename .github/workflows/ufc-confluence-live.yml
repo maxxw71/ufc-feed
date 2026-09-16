@@ -1,0 +1,34 @@
+name: UFC Confluence Live
+on:
+  push:
+    paths:
+      - 'scripts/ufc_confluence_layer.py'
+      - '.github/workflows/ufc-confluence-live.yml'
+  workflow_dispatch:
+jobs:
+  deploy:
+    runs-on: [self-hosted, appwiza]
+    timeout-minutes: 15
+    steps:
+      - shell: bash
+        run: |
+          set -euo pipefail
+          K=/home/appwiza-runner/.ssh/appwiza_vps
+          ssh -i "$K" -o StrictHostKeyChecking=no anestishkurti92@127.0.0.1 'bash -s' <<'EOF'
+          set -euo pipefail
+          cd /home/anestishkurti92/ufc-predictor-v1
+          curl -fsSL https://raw.githubusercontent.com/maxxw71/ufc-feed/main/scripts/ufc_confluence_layer.py -o ufc_confluence_layer.py
+          cp ufc_email_watcher.py ufc_email_watcher.py.pre-confluence.$(date +%Y%m%d-%H%M%S).bak
+          venv/bin/python ufc_confluence_layer.py
+          venv/bin/python -m py_compile ufc_email_watcher.py
+          venv/bin/python - <<'PY'
+          import importlib.util
+          from pathlib import Path
+          p=Path('ufc_email_watcher.py');spec=importlib.util.spec_from_file_location('w',p);w=importlib.util.module_from_spec(spec);spec.loader.exec_module(w)
+          assert hasattr(w,'compute_method_confluence')
+          print('confluence_history',w._UFC_CONFLUENCE_HISTORY)
+          print('timer_active_check follows')
+          PY
+          systemctl is-active ufc-model-watcher.timer || true
+          grep -n 'UFC_CONFLUENCE_LAYER_V1' ufc_email_watcher.py | tail -1
+          EOF
