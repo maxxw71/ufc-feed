@@ -16,6 +16,7 @@ jobs:
           K=/home/appwiza-runner/.ssh/appwiza_vps
           T=$(mktemp)
           curl -fsSL https://raw.githubusercontent.com/maxxw71/ufc-feed/main/scripts/apply_live_ko_recovery.sh -o "$T"
+          sed -i 's|^python - "$WATCHER"|"$ROOT/venv/bin/python" - "$WATCHER"|' "$T"
           scp -i "$K" -o StrictHostKeyChecking=no "$T" anestishkurti92@127.0.0.1:/home/anestishkurti92/apply_live_ko_recovery.sh
           rm -f "$T"
           ssh -i "$K" -o StrictHostKeyChecking=no anestishkurti92@127.0.0.1 'bash -s' <<'EOF'
