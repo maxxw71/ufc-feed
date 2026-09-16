@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 from __future__ import annotations
-import json
 from pathlib import Path
 
 ROOT=Path.home()/"ufc-predictor-v1"
@@ -12,7 +11,6 @@ FAMILY_MAP={
     'U9':'experience','U10':'recovery'
 }
 
-# Historical confluence summary from common point-in-time v6 universe.
 HIST={
     'exact':{
         '1':{'n':757,'wins':556,'losses':201,'win_pct':0.7344782034,'roi':0.0328387552},
@@ -37,7 +35,7 @@ _UFC_METHOD_FAMILIES={
  'U1':'structural','U2':'structural','U3':'structural','U4':'structural',
  'U5':'wrestling','U6':'striking','U7':'striking','U8':'striking',
  'U9':'experience','U10':'recovery'}
-_UFC_CONFLUENCE_HISTORY={hist}
+_UFC_CONFLUENCE_HISTORY=__HISTORY__
 
 def _confluence_method_ids(p,w=None):
     ids=[]
@@ -66,7 +64,6 @@ def predict_bout(*args,**kwargs):
     out['confluence']=compute_method_confluence(out,None)
     return out
 
-# Decorate canonical method cards with confluence telemetry; never add a bet method.
 _orig_method_cards_confluence=ufc_email_design.method_cards
 def _confluence_cards(p,w):
     cards=list(_orig_method_cards_confluence(p,w))
@@ -85,7 +82,6 @@ def _confluence_cards(p,w):
     return cards
 ufc_email_design.method_cards=_confluence_cards
 
-# Add confluence metadata to every official pick after the normal tracker decides whether it exists.
 _orig_ufc_picks_confluence=bet_tracker.ufc_picks
 def _confluence_ufc_picks(event,preds):
     base=list(_orig_ufc_picks_confluence(event,preds))
@@ -108,7 +104,7 @@ def main():
     marker='if __name__ == "__main__":'
     if marker not in s: marker="if __name__ == '__main__':"
     if marker not in s: raise RuntimeError('watcher main marker missing')
-    addon=ADDON.format(hist=repr(HIST))
+    addon=ADDON.replace('__HISTORY__',repr(HIST))
     WATCHER.write_text(s.replace(marker,addon+'\n'+marker,1))
     print('confluence layer patched')
 
