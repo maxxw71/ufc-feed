@@ -18,6 +18,7 @@ def main() -> None:
         print('UFC dashboard post-publish hook already installed')
         return
 
+    original_mode = TARGET.stat().st_mode & 0o777
     lines = text.splitlines(keepends=True)
     out: list[str] = []
     installed = False
@@ -48,6 +49,7 @@ def main() -> None:
 
     tmp = TARGET.with_name(TARGET.name + '.tmp-dashboard-hook')
     tmp.write_text(''.join(out))
+    tmp.chmod(original_mode)
     py_compile.compile(str(tmp), doraise=True)
     tmp.replace(TARGET)
     py_compile.compile(str(TARGET), doraise=True)
