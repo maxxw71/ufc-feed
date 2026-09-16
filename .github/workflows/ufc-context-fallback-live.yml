@@ -1,0 +1,34 @@
+name: UFC Context Fallback Live
+on:
+  push:
+    paths:
+      - 'scripts/ufc_context_crosscheck_features.py'
+      - '.github/workflows/ufc-context-fallback-live.yml'
+jobs:
+  deploy:
+    runs-on: [self-hosted, appwiza]
+    timeout-minutes: 20
+    steps:
+      - shell: bash
+        run: |
+          set -euo pipefail
+          K=/home/appwiza-runner/.ssh/appwiza_vps
+          SRC=https://raw.githubusercontent.com/maxxw71/ufc-feed/cad1ecdd14515f3bbf49095fcba4cc85e0145829/scripts/ufc_context_crosscheck_features.py
+          T=$(mktemp); curl -fsSL "$SRC" -o "$T"
+          scp -i "$K" -o StrictHostKeyChecking=no "$T" anestishkurti92@127.0.0.1:/home/anestishkurti92/ufc-predictor-v1/ufc_context_crosscheck_features.py
+          rm -f "$T"
+          ssh -i "$K" -o StrictHostKeyChecking=no anestishkurti92@127.0.0.1 'bash -s' <<'EOF'
+          set -euo pipefail
+          cd /home/anestishkurti92/ufc-predictor-v1
+          venv/bin/python -m py_compile ufc_context_crosscheck_features.py
+          venv/bin/python ufc_context_crosscheck_features.py
+          venv/bin/python ufc_career_context_features.py
+          venv/bin/python - <<'PY'
+          import json,pandas as pd
+          m=json.load(open('feature_expansion/context_crosscheck_meta.json'))
+          d=pd.read_csv('feature_expansion/prefight_favorite_features_v6.csv',low_memory=False)
+          print('context_meta',m)
+          print('v6_rows',len(d),'v6_columns',len(d.columns))
+          print('f5_columns',len([c for c in d if c.startswith('f5_')]))
+          PY
+          EOF
