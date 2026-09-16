@@ -1,0 +1,30 @@
+name: UFC Methods Deep Research
+on:
+  push:
+    paths:
+      - '.github/workflows/ufc-methods-deep-research.yml'
+  workflow_dispatch:
+jobs:
+  inspect:
+    runs-on: [self-hosted, appwiza]
+    timeout-minutes: 30
+    steps:
+      - shell: bash
+        run: |
+          set -euo pipefail
+          K=/home/appwiza-runner/.ssh/appwiza_vps
+          ssh -i "$K" -o StrictHostKeyChecking=no anestishkurti92@127.0.0.1 'bash -s' <<'EOF'
+          set -euo pipefail
+          cd /home/anestishkurti92/ufc-predictor-v1
+          echo '=== METHOD DEFINITIONS / REFERENCES ==='
+          grep -RniE 'U1|U2|U3|U4|U5|U6|U7|U8|Age Hybrid|Reach Hybrid|Structural Edge|Age \+ Reach|Wrestling Mismatch|Pace \+ Defense|Striking \+ TD Defense|Striking Differential' . --exclude='*.csv' --exclude='*.sqlite3' --exclude='*.log' | head -400 || true
+          echo '=== DATA FILES ==='
+          find . -maxdepth 3 -type f | grep -Ei '(backtest|method|hybrid|structural|wrest|pace|strik|reach|age)' | sort | head -250 || true
+          echo '=== CURRENT SHADOWS ==='
+          venv/bin/python - <<'PY'
+          import sqlite3
+          db=sqlite3.connect('auto_research/state/research.sqlite3')
+          for r in db.execute("select name,bets,wins,losses,roi,train_roi,holdout_roi,early_roi,recent_roi,yearly_positive_ratio,times_seen from candidates where official=0 order by holdout_roi desc,roi desc"):
+              print(r)
+          PY
+          EOF
