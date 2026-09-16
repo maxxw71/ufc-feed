@@ -1,0 +1,30 @@
+name: UFC U7 Combo Reconstruct
+on:
+  push:
+    paths: ['.github/workflows/ufc-u7-combo-reconstruct.yml']
+jobs:
+  inspect:
+    runs-on: [self-hosted, appwiza]
+    steps:
+      - shell: bash
+        run: |
+          set -euo pipefail
+          K=/home/appwiza-runner/.ssh/appwiza_vps
+          ssh -i "$K" -o StrictHostKeyChecking=no anestishkurti92@127.0.0.1 'bash -s' <<'EOF'
+          cd /home/anestishkurti92/ufc-predictor-v1
+          venv/bin/python - <<'PY'
+          import pandas as pd,numpy as np
+          d=pd.read_csv('feature_expansion/prefight_favorite_features_v6.csv',low_memory=False)
+          n=lambda c:pd.to_numeric(d[c],errors='coerce')
+          raw=(n('market_prob')>=.70)&(n('f_fights')>=4)&(n('o_fights')>=4)&((n('f_sig_diff_pm')-n('o_sig_diff_pm'))>=1)&((n('f_td_def')-n('o_td_def'))>=.10)
+          print('raw_u7',raw.sum())
+          q=d[raw].copy();print('age_adv describe',pd.to_numeric(q.age_adv,errors='coerce').describe().to_dict());print('age rows',q[['event_date','favorite','opponent','age_adv']].head(12).to_string(index=False))
+          power=pd.to_numeric(q.o_kd15,errors='coerce')*pd.to_numeric(q.f_kd_abs15,errors='coerce')
+          print('power nonnull',power.notna().sum(),'pass<.12',(power<.12).sum(),'desc',power.describe().to_dict())
+          for desc,agem in [('age>=-3',pd.to_numeric(q.age_adv,errors='coerce')>=-3),('age<=3',pd.to_numeric(q.age_adv,errors='coerce')<=3),('age<=-3',pd.to_numeric(q.age_adv,errors='coerce')<=-3),('age>=3',pd.to_numeric(q.age_adv,errors='coerce')>=3)]:
+              m=agem&(power<.12);print(desc,'combo_count',m.sum())
+          print('columns kd',[c for c in d.columns if 'kd' in c.lower()][:80])
+          PY
+          systemctl is-active ufc-model-watcher.timer || true
+          grep -n 'KO_RECOVERY_RULE_V1' ufc_email_watcher.py | tail -1 || true
+          EOF
