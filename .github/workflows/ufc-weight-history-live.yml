@@ -24,7 +24,7 @@ jobs:
           chmod 700 ufc_weight_history_features.py
           venv/bin/python -m py_compile ufc_weight_history_features.py
           OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 nice -n 12 timeout 10m venv/bin/python ufc_weight_history_features.py
-          python3 - <<'PY'
+          venv/bin/python - <<'PY'
           import json,pandas as pd
           m=json.load(open('feature_expansion/weight_history_meta.json'))
           assert m['point_in_time_strict_before_fight'] is True
