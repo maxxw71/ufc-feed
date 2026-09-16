@@ -1,0 +1,17 @@
+name: UFC Prospective Market Inspect
+on:
+  push:
+    paths: ['.github/workflows/ufc-prospective-market-inspect.yml']
+jobs:
+  inspect:
+    runs-on: [self-hosted, appwiza]
+    steps:
+      - shell: bash
+        run: |
+          K=/home/appwiza-runner/.ssh/appwiza_vps
+          ssh -i "$K" -o StrictHostKeyChecking=no anestishkurti92@127.0.0.1 'cd /home/anestishkurti92/ufc-predictor-v1 && venv/bin/python - <<"PY"
+          import sqlite3,json
+          c=sqlite3.connect("auto_research/state/prospective_ufc.sqlite3")
+          for r in c.execute("select fighter_a,fighter_b,market_json from bout_quotes where p_a is not null limit 3"):
+              print(r[0],"vs",r[1]); print(json.dumps(json.loads(r[2]),indent=2)[:12000])
+          PY'
