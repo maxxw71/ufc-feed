@@ -16,42 +16,16 @@ jobs:
           ssh -i "$K" -o StrictHostKeyChecking=no anestishkurti92@127.0.0.1 'bash -s' <<'EOF'
           set -euo pipefail
           cd /home/anestishkurti92/ufc-predictor-v1
+          echo '=== LIVE METHOD CODE ==='
+          grep -nE 'def (compute_|.*signal|predict_bout)|pace_defense|striking_td_defense|striking_differential|wrestling_mismatch|AGE HYBRID|REACH HYBRID|STRUCTURAL EDGE|AGE \+ REACH' ufc_email_watcher.py | tail -220
+          echo '=== STRIKING INDEX ==='
+          cat striking_method_index.json 2>/dev/null | head -200 || true
+          echo '=== WRESTLING ROBUST CANDIDATES TOP ==='
           venv/bin/python - <<'PY'
-          import os, json, sqlite3, math
-          from pathlib import Path
-          import pandas as pd, numpy as np
-
-          ROOT=Path('.')
-          candidates={
-            'U1_age_hybrid':'hybrid_70_agegap_robustness/all_rule_bets.csv',
-            'U2_reach_hybrid':'skill_veto_official_samples/reach_415_with_skill_veto.csv',
-            'U3_structural_edge':'structural_edge_failure_analysis/structural_edge_83_fights.csv',
-            'U4_age_reach_premium':'ufc_age_reach_overlap/age_plus_reach4.csv',
-            'U5_wrestling_mismatch':'wrestling_stability_positive_roi/all_favorite_sides_with_prefight_wrestling.csv',
-            'U6_pace_defense':'striking_family_stability/pace_defense_all.csv',
-            'U7_striking_td_defense':'striking_family_stability/striking_td_defense_all.csv',
-            'U8_striking_differential':'striking_family_stability/striking_differential_all.csv',
-          }
-          print('=== FILE SCHEMAS ===')
-          for name,p in candidates.items():
-            q=ROOT/p
-            if not q.exists():
-              print(name,'MISSING',p); continue
-            d=pd.read_csv(q,low_memory=False)
-            print('\n',name,p,'rows',len(d),'cols',len(d.columns))
-            print('columns',list(d.columns))
-            print(d.head(2).to_dict('records'))
-
-          print('\n=== REPORT HEADS ===')
-          for p in ['hybrid_70_agegap_robustness/robustness_report.txt','wrestling_mismatch_analysis/report.txt','structural_edge_performance_analysis/report.txt','skill_veto_all_methods/report.txt']:
-            q=ROOT/p
-            if q.exists():
-              print('\n---',p,'---')
-              print('\n'.join(q.read_text(errors='ignore').splitlines()[:140]))
-
-          print('\n=== SHADOW DEFINITIONS ===')
-          db=sqlite3.connect('auto_research/state/research.sqlite3')
-          for r in db.execute("select name,rule_json,bets,wins,losses,roi,train_roi,holdout_roi,early_roi,recent_roi,yearly_positive_ratio,times_seen from candidates where official=0 order by holdout_roi desc,roi desc"):
-            print(r)
+          import pandas as pd
+          for p in ['wrestling_mismatch_analysis/robust_wrestling_candidates.csv','striking_family_stability/stable_striking_candidates.csv','striking_portfolio_100/strategy_summary.csv']:
+            try:
+              d=pd.read_csv(p,low_memory=False); print('\n',p,list(d.columns)); print(d.head(30).to_string(index=False))
+            except Exception as e: print(p,e)
           PY
           EOF
