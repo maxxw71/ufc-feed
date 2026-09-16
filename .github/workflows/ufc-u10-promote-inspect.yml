@@ -1,0 +1,23 @@
+name: UFC U10 Promote Inspect
+on:
+  push:
+    paths: ['.github/workflows/ufc-u10-promote-inspect.yml']
+  workflow_dispatch:
+jobs:
+  inspect:
+    runs-on: [self-hosted, appwiza]
+    steps:
+      - shell: bash
+        run: |
+          set -euo pipefail
+          K=/home/appwiza-runner/.ssh/appwiza_vps
+          ssh -i "$K" -o StrictHostKeyChecking=no anestishkurti92@127.0.0.1 'bash -s' <<'EOF'
+          set -euo pipefail
+          cd /home/anestishkurti92/ufc-predictor-v1
+          echo '=== CURRENT METHOD PATCH TAIL ==='
+          grep -nE 'experience|health|striking_differential|pace_defense|wrestling|methods|tracking|def predict_bout|def build|method' ufc_email_watcher.py | tail -260
+          echo '=== LAST 500 LINES ==='
+          tail -500 ufc_email_watcher.py
+          echo '=== U9 FILES / METHOD INDEXES ==='
+          find . -maxdepth 3 -type f | grep -Ei '(u9|experience|health|method_index|experience_mismatch)' | sort | head -120 || true
+          EOF
