@@ -13,7 +13,7 @@ jobs:
           set -euo pipefail
           KEY=/home/appwiza-runner/.ssh/appwiza_vps
           TMP=$(mktemp)
-          curl -fsSL https://raw.githubusercontent.com/maxxw71/ufc-feed/ad17d338f12d3e78e2c21445acfde5718f120730/scripts/ufc_autoresearch_runner.py -o "$TMP"
+          curl -fsSL https://raw.githubusercontent.com/maxxw71/ufc-feed/432fcc347744787840b95bdfa136412e810fd4be/scripts/ufc_autoresearch_runner.py -o "$TMP"
           scp -i "$KEY" -o StrictHostKeyChecking=no "$TMP" anestishkurti92@127.0.0.1:/home/anestishkurti92/ufc-predictor-v1/ufc_autoresearch_runner.py
           rm -f "$TMP"
           ssh -i "$KEY" -o StrictHostKeyChecking=no anestishkurti92@127.0.0.1 'bash -s' <<'EOF'
@@ -23,7 +23,7 @@ jobs:
           venv/bin/python -m py_compile ufc_autoresearch_runner.py
           venv/bin/python - <<'PY'
           import ufc_autoresearch_runner as r, ufc_autoresearch as a
-          assert a.PREFIGHT.name == 'prefight_favorite_features_v3.csv', a.PREFIGHT
+          assert a.PREFIGHT.name == 'prefight_favorite_features_v6.csv', a.PREFIGHT
           print('research_dataset',a.PREFIGHT)
           PY
           OLD=$(crontab -l 2>/dev/null || true)
