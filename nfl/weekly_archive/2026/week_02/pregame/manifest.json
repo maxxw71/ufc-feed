@@ -2,7 +2,7 @@
   "season": 2026,
   "week": 2,
   "mode": "pregame",
-  "generated_utc": "2026-09-15T05:40:45.063515+00:00",
+  "generated_utc": "2026-09-17T18:51:44.160507+00:00",
   "latest_fully_completed_week_at_run": 1,
   "next_unplayed_week_at_run": 2,
   "sources": {
@@ -28,7 +28,7 @@
     "injuries": {
       "status": "saved",
       "loader": "load_injuries",
-      "rows": 0,
+      "rows": 194,
       "columns": 16
     },
     "snap_counts": {
@@ -40,13 +40,13 @@
     "rosters_weekly": {
       "status": "saved",
       "loader": "load_rosters_weekly",
-      "rows": 0,
+      "rows": 2521,
       "columns": 36
     },
     "depth_charts": {
       "status": "saved",
       "loader": "load_depth_charts",
-      "rows": 518581,
+      "rows": 527382,
       "columns": 12
     },
     "participation": {
@@ -54,8 +54,10 @@
       "error": "load_participation:ValueError:Season must be between 2016 and 2025"
     },
     "ftn_charting": {
-      "status": "unavailable",
-      "error": "load_ftn_charting:ConnectionError:Failed to download https://github.com/nflverse/nflverse-data/releases/download/ftn_charting/ftn_charting_2026.parquet: 404 Client Error: Not Found for url: https://github.com/nflverse/nflverse-data/releases/download/ftn_charting/ftn_charting_2026.parquet"
+      "status": "saved",
+      "loader": "load_ftn_charting",
+      "rows": 0,
+      "columns": 29
     },
     "officials": {
       "status": "saved",
@@ -113,8 +115,8 @@
     },
     "market_snapshots": {
       "status": "saved",
-      "rows": 96,
-      "files_scanned": 2,
+      "rows": 320,
+      "files_scanned": 4,
       "parse_errors": 0
     },
     "pregame_context": {
@@ -176,24 +178,28 @@
       "sha256": "69263a129abe7731c3bfa3e2aa371d7afce216d2194fc07e093de86105cfc4b7"
     },
     "depth_charts.parquet": {
-      "bytes": 1363873,
-      "sha256": "cf5363a46dc0e6cf4fe0fee97a653a5fe9e41f5b4eca14f6770e12e7d570d0ac"
+      "bytes": 1357566,
+      "sha256": "e8a419f34805e310434b157f6cbd7a70f43ef4dc5af502f6816ca1159662317c"
     },
     "ff_opportunity_weekly.parquet": {
       "bytes": 84298,
       "sha256": "50976b4b25b3f83bdd2b1f35af1325adabf18aeac0694c51d5f510b51140164b"
     },
+    "ftn_charting.parquet": {
+      "bytes": 13366,
+      "sha256": "e806c4940bac236329521790fbb258821187fed9a0e4d281cd8f394416d74b92"
+    },
     "injuries.parquet": {
-      "bytes": 7862,
-      "sha256": "212ee29d1fd911f055c085a7aba3e5febf227c482b3e0418811cc6e6ceeede50"
+      "bytes": 16003,
+      "sha256": "37cb12f599fecb13d49b410adcc909f68074c77a7a19bfda79e7d1e133807a56"
     },
     "legacy_board_snapshot.csv": {
       "bytes": 18307,
       "sha256": "293736db30e7087316dfee0aea75624434074718024957d7fb106a7757be67a1"
     },
     "market_snapshots.jsonl.gz": {
-      "bytes": 3446,
-      "sha256": "484ac37a5035f71e196e161d230c5412fd2790ac7077b3f77fdf63b6c70ce905"
+      "bytes": 6728,
+      "sha256": "ec3928810b6681eb9832b26fdc516c933a966aae1895bf8f86f33de984708a42"
     },
     "nextgen_passing.parquet": {
       "bytes": 14962,
@@ -240,16 +246,16 @@
       "sha256": "956249d63c81900eb8df00a026f1dd0a495fccac80fec9226dec9cf27454836f"
     },
     "rosters_weekly.parquet": {
-      "bytes": 16173,
-      "sha256": "dd39b32aed584209a123aa3db6919c880e48a3d482d5c181e8df32cc1bd1f4c9"
+      "bytes": 329857,
+      "sha256": "50860051722518c06194c7a94a320d2571735273ca4a4d4cf128c3b8ff40900a"
     },
     "schedule.csv": {
-      "bytes": 4992,
-      "sha256": "378924d72407f5e448d8722f4790bfe656af3cc55e6ab5407be9b86a8d150ee0"
+      "bytes": 4990,
+      "sha256": "dc4b333a39d3aa1f963d98c9ca29dde29640d9a57f673f8734e3f9564248f955"
     },
     "schedule.parquet": {
-      "bytes": 28220,
-      "sha256": "f8130e4a24e248720ff19ca187ed77b9938158f80a7224d07751c5ae71197446"
+      "bytes": 28215,
+      "sha256": "a1239b6b0b4bba8ac6b16069a8d927e198e433b0c6884952d2b34bc619eefe53"
     },
     "snap_counts.parquet": {
       "bytes": 7472,
