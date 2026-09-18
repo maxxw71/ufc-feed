@@ -35,6 +35,8 @@ jobs:
           PY
           echo '=== PROSPECTIVE STATUS ==='
           venv/bin/python ufc_prospective_pipeline.py status || true
+          echo '=== LIVE METHOD MARKERS ==='
+          grep -E 'STRIKING_TD_RISK_GATE_V2|EXPERIENCE_HEALTH_RULE_V1|VETERAN_DECLINE_LIVE_V1|WRESTLING_MISMATCH_RULE_V1|STRIKING_METHODS_RULE_V1|KO_RECOVERY' ufc_email_watcher.py | head -40 || true
           echo '=== RECENT RESEARCH LOG ==='
           tail -80 auto_research/cron.log 2>/dev/null || true
           echo '=== RECENT PROSPECTIVE LOG ==='
