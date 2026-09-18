@@ -1,0 +1,77 @@
+name: NFL Autonomous Research Live
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/nfl_autoresearch.py'
+      - '.github/workflows/nfl-autoresearch-live.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    runs-on: [self-hosted, Linux, X64, appwiza]
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install autonomous NFL research
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          ROOT=/home/anestishkurti92/nfl-predictor-v1
+          AUTO=/home/appwiza-runner/nfl-autoresearch
+          PY="$ROOT/venv/bin/python"
+          test -x "$PY"
+          test -f /home/appwiza-runner/nfl-context-data/coaching_everything/coaching_enriched_team_sides_2006_2025.parquet
+          mkdir -p "$AUTO"
+          cp "$GITHUB_WORKSPACE/scripts/nfl_autoresearch.py" "$AUTO/nfl_autoresearch.py"
+          chmod 700 "$AUTO/nfl_autoresearch.py"
+          "$PY" -m py_compile "$AUTO/nfl_autoresearch.py"
+          echo '[20%] NFL autonomous research syntax verified'
+
+          OLD=$(crontab -l 2>/dev/null || true)
+          CLEAN=$(printf '%s\n' "$OLD" | sed '/# BEGIN APPWIZA NFL AUTORESEARCH/,/# END APPWIZA NFL AUTORESEARCH/d')
+          {
+            printf '%s\n' "$CLEAN"
+            echo '# BEGIN APPWIZA NFL AUTORESEARCH'
+            echo '# Server cron is UTC; schedules below are intentionally explicit UTC.'
+            echo '25 1,7,13,19 * * * OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 nice -n 12 timeout 12m /home/anestishkurti92/nfl-predictor-v1/venv/bin/python /home/appwiza-runner/nfl-autoresearch/nfl_autoresearch.py snapshot >> /home/appwiza-runner/nfl-context-data/nfl_auto_research/cron.log 2>&1'
+            echo '5 11 * * * OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 nice -n 12 timeout 45m /home/anestishkurti92/nfl-predictor-v1/venv/bin/python /home/appwiza-runner/nfl-autoresearch/nfl_autoresearch.py daily >> /home/appwiza-runner/nfl-context-data/nfl_auto_research/cron.log 2>&1'
+            echo '5 12 * * 1 OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 nice -n 15 timeout 90m /home/anestishkurti92/nfl-predictor-v1/venv/bin/python /home/appwiza-runner/nfl-autoresearch/nfl_autoresearch.py weekly >> /home/appwiza-runner/nfl-context-data/nfl_auto_research/cron.log 2>&1'
+            echo '# END APPWIZA NFL AUTORESEARCH'
+          } | crontab -
+          echo '[35%] NFL research cron installed'
+
+          echo '=== NFL AUTORESEARCH CRON ==='
+          crontab -l | sed -n '/# BEGIN APPWIZA NFL AUTORESEARCH/,/# END APPWIZA NFL AUTORESEARCH/p'
+
+          echo '[45%] Running immutable source snapshot'
+          "$PY" "$AUTO/nfl_autoresearch.py" snapshot
+
+          echo '[55%] Running initial daily research'
+          OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 nice -n 12 timeout 25m "$PY" "$AUTO/nfl_autoresearch.py" daily
+
+          echo '[85%] Verifying state'
+          "$PY" "$AUTO/nfl_autoresearch.py" status
+          "$PY" - <<'PY'
+          import sqlite3
+          p='/home/appwiza-runner/nfl-context-data/nfl_auto_research/state/research.sqlite3'
+          db=sqlite3.connect(p)
+          runs=db.execute('SELECT COUNT(*) FROM research_runs').fetchone()[0]
+          official=db.execute('SELECT COUNT(*) FROM candidates WHERE official != 0').fetchone()[0]
+          shadows=db.execute("SELECT COUNT(*) FROM candidates WHERE status='shadow_candidate' AND official=0").fetchone()[0]
+          last=db.execute('SELECT mode,status,dataset_rows,features,candidates_tested,survivors FROM research_runs ORDER BY id DESC LIMIT 1').fetchone()
+          print('runs',runs,'shadow_candidates',shadows,'official_autopromotions',official,'last',last)
+          assert runs>=1
+          assert official==0
+          assert last and last[1]=='completed'
+          PY
+
+          test -f /home/appwiza-runner/nfl-context-data/nfl_auto_research/reports/latest.txt
+          echo '=== LATEST NFL RESEARCH ==='
+          head -60 /home/appwiza-runner/nfl-context-data/nfl_auto_research/reports/latest.txt
+          echo '[100%] NFL AUTONOMOUS RESEARCH ACTIVE — SHADOW ONLY'
