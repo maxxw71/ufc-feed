@@ -267,12 +267,16 @@ def research(mode):
                         pm=pband_mask(d,pb)
                         for venue in VENUES:
                             m=cm&pm&venue_mask(d,venue);tested+=1
-                            # Pre-holdout qualification for weekly pair construction.
-                            tr=metrics(d[m&period_mask(d,track,'train')]);va=metrics(d[m&period_mask(d,track,'validation')])
+                            # Fail early before opening validation/holdout.
                             mn=TRACKS[track]['mins']
-                            if tr and va and tr['n']>=mn[0] and va['n']>=mn[1] and tr['roi']>=.05 and va['roi']>=.08:
-                                score=min(tr['roi'],va['roi'])*math.sqrt(min(tr['n'],va['n']))
-                                pre_pool.append((score,track,pb,venue,[(c,op,float(q))],m))
+                            tr=metrics(d[m&period_mask(d,track,'train')])
+                            if not tr or tr['n']<mn[0] or tr['roi']<.05:
+                                continue
+                            va=metrics(d[m&period_mask(d,track,'validation')])
+                            if not va or va['n']<mn[1] or va['roi']<.08:
+                                continue
+                            score=min(tr['roi'],va['roi'])*math.sqrt(min(tr['n'],va['n']))
+                            pre_pool.append((score,track,pb,venue,[(c,op,float(q))],m))
                             ev=evaluate(d,m,track)
                             if ev and passes(ev,track):
                                 survivors.append((track,pb,venue,[(c,op,float(q))],ev))
