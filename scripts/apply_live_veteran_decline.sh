@@ -416,9 +416,7 @@ assert w.VETERAN_DECLINE_HISTORY['U12']['bets']==32
 print('[90%] Live method engine verified',flush=True)
 PY
 
-sudo systemctl daemon-reload
-sudo systemctl restart ufc-model-watcher.timer
-sudo systemctl is-active ufc-model-watcher.timer
+systemctl is-active ufc-model-watcher.timer
 
 echo "[100%] U11/U12 LIVE CODE ACTIVE"
 echo "U11: 35 bets | 34-1 | +43.48% ROI"
