@@ -45,11 +45,13 @@ if old not in s:
 s=s.replace(old,new,1)
 
 old2=""" sports_publish.publish_nfl(records,now,nfl_email_design)
+ nfl_public_page.safe_enhance(now,ledger,sports_publish)
  atomic(ledgerpath,ledger);body,html_body=nfl_email_design.render(records,now)
  footer_text,footer_html=bet_tracker.footer();body+='\n\n'+footer_text;html_body=html_body.replace('</body>','<div style="max-width:640px;margin:0 auto;padding:0 10px;">'+footer_html+'</div></body>');(S/'preview.txt').write_text(body);(S/'preview.html').write_text(html_body)
  subject=f"NFL signals: {len(records)} qualifying games — {now.astimezone(NY).strftime('%b %d')}"
 """
 new2=""" sports_publish.publish_nfl(records,now,nfl_email_design)
+ nfl_public_page.safe_enhance(now,ledger,sports_publish)
  atomic(ledgerpath,ledger);body,html_body=nfl_email_design.render(records,now)
  old_header=f"NFL PICKS | {len(records)} qualifying games"
  new_header=f"NFL PICKS | {len(records)} upcoming qualifying games · {len(next7)} in next 7 days"
