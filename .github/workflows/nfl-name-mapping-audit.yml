@@ -26,6 +26,8 @@ jobs:
           grep -nE '^NAMES=|TB.|TEN.|def name|NAMES\[' "$R/nfl_home_opener_scanner.py" | head -80 || true
           echo '=== EMAIL DESIGN NAMES ==='
           grep -nE '^NAMES=|TB.|TEN.|def name|NAMES\[' "$R/nfl_email_design.py" | head -120 || true
+          echo '=== LIVE PUBLISH BOUNDARY ==='
+          grep -nA35 -B15 'sports_publish.publish_nfl' "$R/nfl_home_opener_scanner.py" || true
           echo '=== TRACKER NFL NAMES ==='
           grep -RniE "TB.*Titan|TEN.*Bucc|TB.*Bucc|TEN.*Titan" /home/anestishkurti92/betting-ledger /opt/sports-publisher 2>/dev/null | head -120 || true
           EOF
