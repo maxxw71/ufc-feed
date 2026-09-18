@@ -14,4 +14,4 @@ jobs:
       - name: Cancel obsolete run
         env:
           GH_TOKEN: ${{ github.token }}
-        run: gh api -X POST repos/${GITHUB_REPOSITORY}/actions/runs/35404161509/cancel
+        run: gh api -X POST repos/${GITHUB_REPOSITORY}/actions/runs/35404843512/cancel
