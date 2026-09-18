@@ -40,3 +40,5 @@ jobs:
           $SSH "/home/anestishkurti92/ufc-predictor-v1/venv/bin/python -m py_compile /home/anestishkurti92/ufc-predictor-v1/ufc_email_watcher.py"
           $SSH "systemctl is-active ufc-model-watcher.timer"
           echo 'U11/U12 production watcher marker, syntax, and active timer verified.'
+
+# verification trigger v2
