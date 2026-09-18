@@ -260,13 +260,13 @@ def research(mode):
     if not ok:
         log(f"research skipped by resource guard mem={mem:.0f}MB load={load:.2f}")
         return {'status':'skipped_resource_guard','tested':0,'survivors':0}
-    d=load_data();features=eligible_features(d);dh=sha_file(DATA)
+    d=load_data();all_features=eligible_features(d);features=(all_features[:80] if mode=='daily' else all_features);dh=sha_file(DATA)
     with conn() as db:
         cur=db.execute('INSERT INTO research_runs(started_at,mode,dataset_sha,dataset_rows,features,status) VALUES(?,?,?,?,?,?)',
                        (now(),mode,dh,len(d),len(features),'running'));run_id=cur.lastrowid;db.commit()
 
     tested=0; survivors=[]; pre_pool=[]
-    quantiles=[.25,.40,.60,.75] if mode=='daily' else [.15,.25,.35,.50,.65,.75,.85]
+    quantiles=[.33,.67] if mode=='daily' else [.15,.25,.35,.50,.65,.75,.85]
     for track in TRACKS:
         train=d[period_mask(d,track,'train')]
         for c in features:
