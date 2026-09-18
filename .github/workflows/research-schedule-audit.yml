@@ -1,0 +1,42 @@
+name: Research schedule audit
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/research-schedule-audit.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  audit:
+    runs-on: [self-hosted, Linux, X64, appwiza]
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Audit live research schedules
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          KEY=/home/appwiza-runner/.ssh/appwiza_vps
+          HOST=anestishkurti92@127.0.0.1
+          ssh -i "$KEY" -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=accept-new "$HOST" 'bash -s' <<'EOF'
+          set -e
+          cd /home/anestishkurti92/ufc-predictor-v1
+          echo '=== CRONTAB RESEARCH ==='
+          crontab -l 2>/dev/null | grep -E 'ufc_autoresearch|ufc_prospective_pipeline|CRON_TZ' || true
+          echo '=== AUTORESEARCH LAST RUNS ==='
+          venv/bin/python - <<'PY'
+          import sqlite3
+          p='auto_research/state/research.sqlite3'
+          db=sqlite3.connect(p)
+          for row in db.execute("SELECT id,mode,status,dataset_rows,candidates_tested,survivors,started_at,finished_at FROM research_runs ORDER BY id DESC LIMIT 12"):
+              print(row)
+          print('official_autopromotions',db.execute('SELECT COUNT(*) FROM candidates WHERE official != 0').fetchone()[0])
+          PY
+          echo '=== PROSPECTIVE STATUS ==='
+          venv/bin/python ufc_prospective_pipeline.py status || true
+          echo '=== RECENT RESEARCH LOG ==='
+          tail -80 auto_research/cron.log 2>/dev/null || true
+          echo '=== RECENT PROSPECTIVE LOG ==='
+          tail -60 auto_research/prospective.log 2>/dev/null || true
+          EOF
