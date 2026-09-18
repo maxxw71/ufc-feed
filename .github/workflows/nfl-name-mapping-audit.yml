@@ -1,0 +1,31 @@
+name: NFL Name Mapping Audit
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/nfl-name-mapping-audit.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  audit:
+    runs-on: [self-hosted, Linux, X64, appwiza]
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - name: Inspect live team naming
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          KEY=/home/appwiza-runner/.ssh/appwiza_vps
+          HOST=anestishkurti92@127.0.0.1
+          ssh -i "$KEY" -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=accept-new "$HOST" 'bash -s' <<'EOF'
+          set -e
+          R=/home/anestishkurti92/nfl-predictor-v1/research_v2
+          echo '=== SCANNER NAMES ==='
+          grep -nE '^NAMES=|TB.|TEN.|def name|NAMES\[' "$R/nfl_home_opener_scanner.py" | head -80 || true
+          echo '=== EMAIL DESIGN NAMES ==='
+          grep -nE '^NAMES=|TB.|TEN.|def name|NAMES\[' "$R/nfl_email_design.py" | head -120 || true
+          echo '=== TRACKER NFL NAMES ==='
+          grep -RniE "TB.*Titan|TEN.*Bucc|TB.*Bucc|TEN.*Titan" /home/anestishkurti92/betting-ledger /opt/sports-publisher 2>/dev/null | head -120 || true
+          EOF
