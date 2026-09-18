@@ -1,0 +1,43 @@
+name: NFL Canonical Surfaces Live
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/patch_nfl_canonical_surfaces.py'
+      - '.github/workflows/nfl-canonical-surfaces-live.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  deploy:
+    runs-on: [self-hosted, Linux, X64, appwiza]
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Patch scanner and refresh website/preview
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          KEY=/home/appwiza-runner/.ssh/appwiza_vps
+          HOST=anestishkurti92@127.0.0.1
+          scp -i "$KEY" -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=accept-new             scripts/patch_nfl_canonical_surfaces.py "$HOST":/tmp/patch_nfl_canonical_surfaces.py
+          ssh -i "$KEY" -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=accept-new "$HOST" 'bash -s' <<'EOF'
+          set -Eeuo pipefail
+          export HOME=/home/anestishkurti92
+          R=/home/anestishkurti92/nfl-predictor-v1/research_v2
+          PY=/home/anestishkurti92/nfl-predictor-v1/venv/bin/python
+          S="$R/nfl_home_opener_scanner.py"
+          cp "$S" "$S.pre-canonical-surfaces.$(date +%Y%m%d-%H%M%S).bak"
+          "$PY" /tmp/patch_nfl_canonical_surfaces.py "$S"
+          "$PY" -m py_compile "$S" "$R/nfl_email_design.py"
+          cd "$R"
+          "$PY" nfl_home_opener_scanner.py --manual
+          echo '=== CANONICAL ==='
+          cat home_opener_email_state/canonical_selections.json
+          echo '=== PUBLIC CURRENT ==='
+          cat /srv/appwiza-sports/public/nfl/current.json
+          echo '=== EMAIL HEADER ==='
+          head -8 home_opener_email_state/preview.txt
+          echo '=== PUBLIC PAGE COUNT ==='
+          grep -oE '[0-9]+ upcoming' /srv/appwiza-sports/public/nfl/index.html | head -1 || true
+          EOF
