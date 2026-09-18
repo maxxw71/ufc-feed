@@ -1,0 +1,43 @@
+name: NFL Tracker Identity Audit
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/nfl-tracker-identity-audit.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  audit:
+    runs-on: [self-hosted, Linux, X64, appwiza]
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - name: Inspect tracker code and pending NFL rows
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          KEY=/home/appwiza-runner/.ssh/appwiza_vps
+          HOST=anestishkurti92@127.0.0.1
+          ssh -i "$KEY" -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=accept-new "$HOST" 'bash -s' <<'EOF'
+          set -e
+          echo '=== NFL PICKS FUNCTION ==='
+          grep -RniA70 -B10 'def nfl_picks' /home/anestishkurti92/betting-ledger/code 2>/dev/null | head -160 || true
+          echo '=== PENDING NFL LEDGER ==='
+          /home/anestishkurti92/nfl-predictor-v1/venv/bin/python - <<'PY'
+          import sqlite3,os
+          p='/home/anestishkurti92/betting-ledger/assumed_bets.sqlite3'
+          if not os.path.exists(p):
+              print('missing',p);raise SystemExit
+          db=sqlite3.connect(p)
+          print('tables',db.execute("select name from sqlite_master where type='table'").fetchall())
+          for t, in db.execute("select name from sqlite_master where type='table'"):
+              cols=[r[1] for r in db.execute(f'pragma table_info({t})')]
+              if any(c in cols for c in ['sport','selection','event_id','game_id']):
+                  print('TABLE',t,'COLS',cols)
+                  try:
+                      rows=db.execute(f"select * from {t} where upper(coalesce(sport,''))='NFL' order by rowid desc limit 20").fetchall()
+                      for row in rows:print(row)
+                  except Exception as e:print('queryerr',e)
+          PY
+          EOF
