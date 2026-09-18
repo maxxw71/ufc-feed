@@ -1,0 +1,17 @@
+name: Cancel obsolete NFL autoresearch run
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/cancel-obsolete-nfl-autoresearch.yml'
+permissions:
+  actions: write
+  contents: read
+jobs:
+  cancel:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Cancel obsolete run
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh api -X POST repos/${GITHUB_REPOSITORY}/actions/runs/35404161509/cancel
