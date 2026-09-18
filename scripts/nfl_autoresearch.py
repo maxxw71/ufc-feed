@@ -68,8 +68,22 @@ def resources_ok(min_mem_mb=1100,max_load=1.8):
     except Exception:return True,99999,0
 def acquire_lock():
     if LOCK.exists():
+        stale=True
         try:
-            if time.time()-LOCK.stat().st_mtime<4*3600:return False
+            pid=int(LOCK.read_text().strip())
+            age=time.time()-LOCK.stat().st_mtime
+            stale=(not Path(f'/proc/{pid}').exists()) or age>=4*3600
+        except Exception:
+            stale=True
+        if not stale:
+            return False
+        try:LOCK.unlink()
+        except FileNotFoundError:pass
+        # A dead owner means any still-running DB row was interrupted, not completed.
+        try:
+            with conn() as db:
+                db.execute("UPDATE research_runs SET finished_at=?,status='aborted',note=COALESCE(note,'') || ' | recovered stale process lock' WHERE status='running'",(now(),))
+                db.commit()
         except Exception:pass
     LOCK.write_text(str(os.getpid()));return True
 def release_lock():
