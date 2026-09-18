@@ -1,0 +1,61 @@
+name: Fix NFL team names and refresh surfaces
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/fix_nfl_email_team_names.py'
+      - '.github/workflows/fix-nfl-team-names-live.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  deploy:
+    runs-on: [self-hosted, Linux, X64, appwiza]
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Patch live email design and refresh canonical surfaces
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          KEY=/home/appwiza-runner/.ssh/appwiza_vps
+          HOST=anestishkurti92@127.0.0.1
+          scp -i "$KEY" -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=accept-new             scripts/fix_nfl_email_team_names.py "$HOST":/tmp/fix_nfl_email_team_names.py
+          ssh -i "$KEY" -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=accept-new "$HOST" 'bash -s' <<'EOF'
+          set -Eeuo pipefail
+          export HOME=/home/anestishkurti92
+          R=/home/anestishkurti92/nfl-predictor-v1/research_v2
+          PY=/home/anestishkurti92/nfl-predictor-v1/venv/bin/python
+          D="$R/nfl_email_design.py"
+          cp "$D" "$D.pre-team-name-fix.$(date +%Y%m%d-%H%M%S).bak"
+          "$PY" /tmp/fix_nfl_email_team_names.py "$D"
+          "$PY" -m py_compile "$D" "$R/nfl_home_opener_scanner.py"
+          "$PY" - <<'PY'
+          import importlib.util
+          p='/home/anestishkurti92/nfl-predictor-v1/research_v2/nfl_email_design.py'
+          spec=importlib.util.spec_from_file_location('d',p)
+          d=importlib.util.module_from_spec(spec);spec.loader.exec_module(d)
+          assert len(d.TEAMS)==32
+          assert d.name('SEA')=='Seahawks'
+          assert d.name('SF')=='49ers'
+          assert d.name('TB')=='Buccaneers'
+          assert d.name('TEN')=='Titans'
+          assert d.name('WAS')=='Commanders'
+          print('32-team name map PASS')
+          PY
+          cd "$R"
+          "$PY" nfl_home_opener_scanner.py --manual
+          echo '=== REFRESHED EMAIL PREVIEW ==='
+          sed -n '1,180p' home_opener_email_state/preview.txt
+          echo '=== REFRESHED WEBSITE UPCOMING ==='
+          "$PY" - <<'PY'
+          import json
+          from pathlib import Path
+          p=Path('/srv/appwiza-sports/state/nfl.json')
+          d=json.loads(p.read_text())
+          print('updated_at',d.get('updated_at'))
+          for c in d.get('cards',[]):
+              if not c.get('withdrawn'):
+                  print(c.get('id'),c.get('selection'),'vs',c.get('opponent'),c.get('event'),c.get('start'))
+          PY
+          EOF
