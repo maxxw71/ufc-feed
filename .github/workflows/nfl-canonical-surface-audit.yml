@@ -1,0 +1,88 @@
+name: NFL Canonical Surface Audit
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/nfl-canonical-surface-audit.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  audit:
+    runs-on: [self-hosted, Linux, X64, appwiza]
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Compare scanner email and website state
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          KEY=/home/appwiza-runner/.ssh/appwiza_vps
+          HOST=anestishkurti92@127.0.0.1
+          ssh -i "$KEY" -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=accept-new "$HOST" 'bash -s' <<'EOF'
+          set -e
+          ROOT=/home/anestishkurti92/nfl-predictor-v1/research_v2
+          S="$ROOT/home_opener_email_state"
+          echo '=== TIME ==='
+          date -u
+          date
+          echo '=== TIMER ==='
+          systemctl list-timers --all --no-pager | grep -Ei 'nfl|home.opener' || true
+          systemctl cat nfl-home-opener.timer 2>/dev/null || true
+          systemctl cat nfl-home-opener.service 2>/dev/null || true
+          echo '=== STATUS ==='
+          cat "$S/status.json" 2>/dev/null || true
+          echo
+          echo '=== PRODUCTION REJECTIONS ==='
+          cat "$S/production_match_rejections.json" 2>/dev/null || true
+          echo
+          echo '=== EMAIL PREVIEW ==='
+          sed -n '1,240p' "$S/preview.txt" 2>/dev/null || true
+          echo
+          echo '=== SENT HISTORY LAST 10 ==='
+          /home/anestishkurti92/nfl-predictor-v1/venv/bin/python - <<'PY'
+          import json
+          from pathlib import Path
+          p=Path('/home/anestishkurti92/nfl-predictor-v1/research_v2/home_opener_email_state/sent.json')
+          if p.exists():
+              d=json.loads(p.read_text())
+              for k,v in list(d.items())[-10:]: print(k,v)
+          PY
+          echo '=== WEBSITE STATE NFL.JSON ==='
+          /home/anestishkurti92/nfl-predictor-v1/venv/bin/python - <<'PY'
+          import json
+          from pathlib import Path
+          p=Path('/srv/appwiza-sports/state/nfl.json')
+          if not p.exists():
+              print('MISSING');raise SystemExit
+          d=json.loads(p.read_text())
+          print('updated_at',d.get('updated_at'))
+          for c in d.get('cards',[]):
+              print(json.dumps({k:c.get(k) for k in ['id','start','selection','opponent','fixture','event','price','book','withdrawn','observed_at','first_seen']},sort_keys=True))
+              print('methods',[(m.get('id'),m.get('title')) for m in c.get('methods',[])])
+          PY
+          echo '=== PUBLIC PAGE EXTRACT ==='
+          python3 - <<'PY'
+          from pathlib import Path
+          import re
+          p=Path('/srv/appwiza-sports/public/nfl/index.html')
+          t=p.read_text() if p.exists() else ''
+          print('size',len(t))
+          for x in re.findall(r'<h2 class="pick">(.*?)</h2>|<span class="bar">(.*?)</span>',t):
+              print(x)
+          print(re.sub('<[^>]+>',' ',t[:18000]).replace('&middot;','·').replace('&rarr;','→')[:7000])
+          PY
+          echo '=== LATEST SCAN JSON ==='
+          /home/anestishkurti92/nfl-predictor-v1/venv/bin/python - <<'PY'
+          import json
+          from pathlib import Path
+          S=Path('/home/anestishkurti92/nfl-predictor-v1/research_v2/home_opener_email_state')
+          files=sorted([p for p in S.glob('*.json') if p.name[:8].isdigit() and 'T' in p.name])
+          if files:
+              p=files[-1];print('file',p.name)
+              d=json.loads(p.read_text())
+              for r in d.get('records',[]):
+                  print(json.dumps({k:r.get(k) for k in ['game_id','week','home','away','selected_team','selection_side','rules','kickoff']},sort_keys=True))
+                  print('odds', {k:(r.get('odds') or {}).get(k) for k in ['moneyline','bookmaker','retrieved_at','market_side','market_team']})
+          PY
+          EOF
