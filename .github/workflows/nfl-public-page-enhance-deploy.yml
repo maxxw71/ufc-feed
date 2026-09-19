@@ -1,4 +1,4 @@
-name: NFL public page enhance deploy
+name: NFL public page canonical deploy
 on:
   workflow_dispatch:
   push:
@@ -6,10 +6,15 @@ on:
     paths:
       - 'nfl/nfl_public_page.py'
       - 'nfl/live_2026_current_snapshot/current_board_fresh_context.csv'
-      - 'scripts/nfl_fix_public_audit_identity.py'
       - '.github/workflows/nfl-public-page-enhance-deploy.yml'
+
+concurrency:
+  group: appwiza-sports-public-pages
+  cancel-in-progress: false
+
 permissions:
-  contents: write
+  contents: read
+
 jobs:
   deploy:
     runs-on: [self-hosted, Linux, X64, appwiza]
@@ -17,87 +22,53 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with: {fetch-depth: 0}
-      - name: Fix selected-team audit identity matcher
+
+      - name: Reject stale NFL page source
+        id: freshness
         shell: bash
         run: |
           set -Eeuo pipefail
-          python3 scripts/nfl_fix_public_audit_identity.py nfl/nfl_public_page.py
+          git fetch origin main
+          THIS=$(sha256sum nfl/nfl_public_page.py | awk '{print $1}')
+          LATEST=$(git show origin/main:nfl/nfl_public_page.py | sha256sum | awk '{print $1}')
+          echo "this=$THIS latest=$LATEST"
+          if [ "$THIS" != "$LATEST" ]; then
+            echo "deploy=false" >> "$GITHUB_OUTPUT"
+            echo "STALE NFL PAGE RUN — skipping server write"
+          else
+            echo "deploy=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Validate canonical NFL source
+        if: steps.freshness.outputs.deploy == 'true'
+        shell: bash
+        run: |
+          set -Eeuo pipefail
           python3 -m py_compile nfl/nfl_public_page.py
-      - name: Install persistent NFL dashboard enhancer
-        shell: bash
-        run: |
-          set -Eeuo pipefail
-          LIVE=/home/anestishkurti92/nfl-predictor-v1/research_v2
-          SCANNER="$LIVE/nfl_home_opener_scanner.py"
-          mkdir -p "$LIVE/page_context"
-          cp nfl/nfl_public_page.py "$LIVE/nfl_public_page.py.new"
-          mv "$LIVE/nfl_public_page.py.new" "$LIVE/nfl_public_page.py"
-          cp nfl/live_2026_current_snapshot/current_board_fresh_context.csv "$LIVE/page_context/current_board_fresh_context.csv.new"
-          mv "$LIVE/page_context/current_board_fresh_context.csv.new" "$LIVE/page_context/current_board_fresh_context.csv"
-          python3 - "$SCANNER" <<'PY'
-          from pathlib import Path
-          import sys
-          p=Path(sys.argv[1]);s=p.read_text()
-          if 'import nfl_public_page' not in s:
-              anchor='import sports_publish\n'
-              if anchor not in s: raise SystemExit('sports_publish import anchor missing')
-              s=s.replace(anchor,anchor+'import nfl_public_page\n',1)
-          call='sports_publish.publish_nfl(records,now,nfl_email_design)'
-          enhanced=call+'\n nfl_public_page.safe_enhance(now,ledger,sports_publish)'
-          if 'nfl_public_page.safe_enhance' not in s:
-              if call not in s: raise SystemExit('publish call anchor missing')
-              s=s.replace(call,enhanced,1)
-          p.write_text(s)
-          PY
-          /home/anestishkurti92/nfl-predictor-v1/venv/bin/python -m py_compile "$LIVE/nfl_public_page.py" "$SCANNER"
-      - name: Regenerate NFL page as site owner without email
+          grep -q "PAGE_CONTRACT='NFL_PUBLIC_CANONICAL_V2_20260919'" nfl/nfl_public_page.py
+          grep -q 'Method Key · NFL' nfl/nfl_public_page.py
+          grep -q 'H-series research / shadow methods' nfl/nfl_public_page.py
+
+      - name: Install canonical enhancer and regenerate
+        if: steps.freshness.outputs.deploy == 'true'
         shell: bash
         run: |
           set -Eeuo pipefail
           KEY=/home/appwiza-runner/.ssh/appwiza_vps
-          SSH="ssh -i $KEY -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=accept-new anestishkurti92@127.0.0.1"
-          $SSH 'set -Eeuo pipefail; export HOME=/home/anestishkurti92; export PYTHONPATH=/home/anestishkurti92/nfl-predictor-v1/research_v2:/home/anestishkurti92/betting-ledger/code:/opt/sports-publisher; cd /home/anestishkurti92/nfl-predictor-v1/research_v2; /home/anestishkurti92/nfl-predictor-v1/venv/bin/python nfl_home_opener_scanner.py --manual'
-      - name: Verify restored NFL structure and actionable board
+          HOST=anestishkurti92@127.0.0.1
+          SSH="ssh -i $KEY -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=accept-new $HOST"
+          cat nfl/nfl_public_page.py | $SSH 'cat > /home/anestishkurti92/nfl-predictor-v1/research_v2/nfl_public_page.py'
+          cat nfl/live_2026_current_snapshot/current_board_fresh_context.csv | $SSH 'mkdir -p /home/anestishkurti92/nfl-predictor-v1/research_v2/page_context; cat > /home/anestishkurti92/nfl-predictor-v1/research_v2/page_context/current_board_fresh_context.csv'
+          $SSH 'set -Eeuo pipefail; export HOME=/home/anestishkurti92; export PYTHONPATH=/home/anestishkurti92/nfl-predictor-v1/research_v2:/home/anestishkurti92/betting-ledger/code:/opt/sports-publisher; cd /home/anestishkurti92/nfl-predictor-v1/research_v2; /home/anestishkurti92/nfl-predictor-v1/venv/bin/python -m py_compile nfl_public_page.py nfl_home_opener_scanner.py; /home/anestishkurti92/nfl-predictor-v1/venv/bin/python nfl_home_opener_scanner.py --manual'
+
+      - name: Verify canonical NFL live page
+        if: steps.freshness.outputs.deploy == 'true'
         shell: bash
         run: |
           set -Eeuo pipefail
-          PAGE=/srv/appwiza-sports/public/nfl/index.html
-          python3 - "$PAGE" <<'PY' > /tmp/nfl_restore_verify.txt
-          from pathlib import Path
-          import sys
-          s=Path(sys.argv[1]).read_text()
-          a=s.find('<h2>Available selections</h2>')
-          b=s.find('<div class="section-kicker">Tracked results</div>',a)
-          seg=s[a:b] if a>=0 and b>=0 else ''
-          print('actionable_label='+str('Actionable now' in s))
-          print('ravens='+str(seg.lower().count('ravens to win')))
-          print('saints='+str(seg.lower().count('saints to win')))
-          print('titans='+str(seg.lower().count('titans to win')))
-          print('research='+str('NFL Research Lab' in s))
-          print('deep_audit='+str('2026 deep audit' in s))
-          print('completed='+str('Completed selections' in s))
-          print('downloads_collapsed='+str('<details class="downloads-block"' in s))
-          PY
-          cat /tmp/nfl_restore_verify.txt
-          grep -q '^actionable_label=True$' /tmp/nfl_restore_verify.txt
-          grep -q '^ravens=1$' /tmp/nfl_restore_verify.txt
-          grep -q '^saints=0$' /tmp/nfl_restore_verify.txt
-          grep -q '^titans=0$' /tmp/nfl_restore_verify.txt
-          grep -q '^research=True$' /tmp/nfl_restore_verify.txt
-          grep -q '^deep_audit=True$' /tmp/nfl_restore_verify.txt
-          grep -q '^completed=True$' /tmp/nfl_restore_verify.txt
-          grep -q '^downloads_collapsed=True$' /tmp/nfl_restore_verify.txt
-          curl -fsSL https://appwiza.com/sports/nfl/ | grep -q 'Actionable now'
-      - name: Persist matcher fix
-        shell: bash
-        run: |
-          set -Eeuo pipefail
-          git config user.name github-actions
-          git config user.email github-actions@github.com
-          git add nfl/nfl_public_page.py
-          if ! git diff --cached --quiet; then
-            git commit -m 'Fix NFL deep-audit card identity matching'
-            git pull --rebase origin main
-            git push origin HEAD:main
-          fi
-          echo 'NFL persistent dashboard restored and live'
+          curl -fsSL https://appwiza.com/sports/nfl/ > /tmp/nfl-live.html
+          grep -q 'Actionable now' /tmp/nfl-live.html
+          grep -q '2026 deep audit' /tmp/nfl-live.html
+          grep -q 'Method Key · NFL' /tmp/nfl-live.html
+          grep -q 'H-series research / shadow methods' /tmp/nfl-live.html
+          echo 'NFL canonical page deploy verified'
