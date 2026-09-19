@@ -1,0 +1,60 @@
+MLS FAILURE-MODE SIEVE
+====================================================================================================
+Veto discovery uses only 2012-2018 train + 2019-2022 validation. 2023-2025 holdout is opened only after the veto is frozen.
+SHADOW ONLY. No promotion decisions are made here.
+
+C01 | HOME P40_50 | edge_last3_xgfpg >= 0.45538 AND elo_edge <= 0.91
+BASE full n=175 ROI=+18.7% | train n=74 ROI=+16.8% | val n=45 ROI=+11.5% | hold n=56 ROI=+27.1%
+preholdout veto candidates=13
+  veto1: sel_last5_ppg >= 1.49 | train safe 48 ROI=+27.2% vs risk 26 ROI=-2.4% | val safe 28 ROI=+47.1% vs risk 17 ROI=-47.3%
+  veto2: sel_season_gdpg >= 0 | train safe 47 ROI=+38.7% vs risk 27 ROI=-21.2% | val safe 29 ROI=+35.0% vs risk 16 ROI=-31.3%
+  veto3: edge_days_rest >= 1 | train safe 55 ROI=+26.4% vs risk 19 ROI=-10.8% | val safe 30 ROI=+37.5% vs risk 15 ROI=-40.6%
+  veto4: sel_last5_gdpg >= 0.2 | train safe 45 ROI=+31.3% vs risk 29 ROI=-5.6% | val safe 26 ROI=+33.5% vs risk 19 ROI=-18.6%
+  veto5: edge_season_gdpg >= -0.172803 | train safe 48 ROI=+27.9% vs risk 26 ROI=-3.7% | val safe 33 ROI=+27.5% vs risk 12 ROI=-32.8%
+  FROZEN single: sel_last5_ppg >= 1.49 | full 118 ROI=+30.3% | train=+27.2% val=+47.1% | HOLDOUT=+22.6% (n=42, delta=-4.5%, removed=14)
+  FROZEN pair: edge_days_rest >= 1 OR sel_last5_gdpg >= 0.2 | full 88 ROI=+45.0% | train=+43.9% val=+73.5% | HOLDOUT=+28.8% (n=33, delta=+1.7%, removed=23)
+
+C02 | HOME P40_50 | edge_last3_xgfpg >= 0.45538 AND edge_last3_xgapg >= 0.0536
+BASE full n=144 ROI=+25.8% | train n=54 ROI=+27.9% | val n=37 ROI=+35.5% | hold n=53 ROI=+16.9%
+preholdout veto candidates=13
+  veto1: edge_last5_xgdpg >= 0.133031 | train safe 35 ROI=+40.7% vs risk 19 ROI=+4.2% | val safe 22 ROI=+69.2% vs risk 15 ROI=-13.9%
+  veto2: opp_venue5_ppg >= 1.6 | train safe 41 ROI=+37.1% vs risk 13 ROI=-1.2% | val safe 26 ROI=+67.9% vs risk 11 ROI=-41.0%
+  veto3: edge_last10_xgfpg >= 0.300475 | train safe 35 ROI=+54.3% vs risk 19 ROI=-20.8% | val safe 29 ROI=+49.7% vs risk 8 ROI=-15.8%
+  veto4: opp_last5_xgfpg <= 1.05636 | train safe 35 ROI=+42.0% vs risk 19 ROI=+1.8% | val safe 23 ROI=+58.8% vs risk 14 ROI=-2.8%
+  veto5: edge_last5_xgfpg >= 0.466513 | train safe 35 ROI=+42.0% vs risk 19 ROI=+1.8% | val safe 22 ROI=+57.0% vs risk 15 ROI=+3.9%
+  FROZEN single: edge_last5_xgdpg >= 0.133031 | full 82 ROI=+37.5% | train=+40.7% val=+69.2% | HOLDOUT=+4.9% (n=25, delta=-12.0%, removed=28)
+  FROZEN pair: opp_last5_xgfpg <= 1.05636 OR opp_last10_gdpg >= 0.54 | full 74 ROI=+46.4% | train=+58.8% val=+102.4% | HOLDOUT=+5.2% (n=31, delta=-11.7%, removed=22)
+
+C03 | HOME P40_50 | edge_last3_xgfpg >= 0.45538 AND edge_season_gdpg <= -0.251028
+BASE full n=112 ROI=+24.3% | train n=45 ROI=+22.1% | val n=31 ROI=+41.0% | hold n=36 ROI=+12.7%
+preholdout veto candidates=15
+  veto1: opp_season_gdpg >= 0.381169 | train safe 29 ROI=+43.3% vs risk 16 ROI=-16.4% | val safe 17 ROI=+80.4% vs risk 14 ROI=-6.7%
+  veto2: opp_last10_gdpg >= 0.46 | train safe 29 ROI=+52.0% vs risk 16 ROI=-32.0% | val safe 18 ROI=+70.3% vs risk 13 ROI=+0.5%
+  veto3: sel_last5_gdpg >= 0 | train safe 25 ROI=+50.0% vs risk 20 ROI=-12.8% | val safe 20 ROI=+63.3% vs risk 11 ROI=+0.5%
+  veto4: sel_last5_ppg >= 1.4 | train safe 28 ROI=+42.5% vs risk 17 ROI=-11.5% | val safe 18 ROI=+68.4% vs risk 13 ROI=+3.1%
+  veto5: sel_season_gdpg >= -0.140952 | train safe 36 ROI=+40.3% vs risk 9 ROI=-50.6% | val safe 18 ROI=+68.3% vs risk 13 ROI=+3.3%
+  FROZEN single: opp_season_gdpg >= 0.381169 | full 63 ROI=+47.8% | train=+43.3% val=+80.4% | HOLDOUT=+22.8% (n=17, delta=+10.1%, removed=19)
+  FROZEN pair: sel_last5_gdpg >= 0 OR edge_days_rest >= 1 | full 59 ROI=+50.4% | train=+65.0% val=+92.1% | HOLDOUT=+4.9% (n=22, delta=-7.8%, removed=14)
+
+C04 | HOME P45_55 | sel_prior_road_miles5 >= 7092.68 AND sel_last10_ppg <= 1.5
+BASE full n=136 ROI=+22.7% | train n=72 ROI=+25.8% | val n=36 ROI=+24.7% | hold n=28 ROI=+12.3%
+preholdout veto candidates=8
+  veto1: opp_prior_road_miles5 >= 6158.81 | train safe 47 ROI=+33.8% vs risk 25 ROI=+10.8% | val safe 25 ROI=+47.0% vs risk 11 ROI=-25.9%
+  veto2: opp_last3_xgfpg <= 0.903887 | train safe 57 ROI=+35.6% vs risk 15 ROI=-11.7% | val safe 29 ROI=+41.1% vs risk 7 ROI=-43.1%
+  veto3: edge_last10_ppg <= -0.4 | train safe 46 ROI=+41.2% vs risk 26 ROI=-1.5% | val safe 27 ROI=+37.4% vs risk 9 ROI=-13.4%
+  veto4: edge_season_gdpg >= 0.000625 | train safe 47 ROI=+34.9% vs risk 25 ROI=+8.6% | val safe 21 ROI=+39.9% vs risk 15 ROI=+3.5%
+  veto5: opp_season_xgfpg >= 1.46781 | train safe 57 ROI=+31.3% vs risk 15 ROI=+4.7% | val safe 22 ROI=+41.5% vs risk 14 ROI=-1.7%
+  FROZEN single: opp_prior_road_miles5 >= 6158.81 | full 95 ROI=+27.5% | train=+33.8% val=+47.0% | HOLDOUT=-6.7% (n=23, delta=-18.9%, removed=5)
+  FROZEN pair: opp_prior_road_miles5 >= 6158.81 OR opp_last3_xgfpg <= 0.903887 | full 72 ROI=+38.6% | train=+47.1% val=+63.8% | HOLDOUT=-8.5% (n=17, delta=-20.7%, removed=11)
+
+S_ELO_AWAY | AWAY P25_35 | elo_edge <= -41.31
+BASE full n=187 ROI=+21.4% | train n=51 ROI=+32.9% | val n=61 ROI=+4.5% | hold n=75 ROI=+27.3%
+preholdout veto candidates=15
+  veto1: edge_last5_xgapg >= 0.01113 | train safe 33 ROI=+64.6% vs risk 18 ROI=-25.1% | val safe 39 ROI=+27.7% vs risk 22 ROI=-36.5%
+  veto2: opp_last10_gdpg >= 0.3 | train safe 28 ROI=+63.6% vs risk 23 ROI=-4.5% | val safe 42 ROI=+17.7% vs risk 19 ROI=-24.6%
+  veto3: opp_last5_xgapg <= 1.13962 | train safe 40 ROI=+52.8% vs risk 11 ROI=-39.3% | val safe 45 ROI=+18.9% vs risk 16 ROI=-35.8%
+  veto4: edge_last10_gdpg <= -0.7 | train safe 37 ROI=+43.6% vs risk 14 ROI=+4.6% | val safe 49 ROI=+23.9% vs risk 12 ROI=-74.6%
+  veto5: opp_last10_ppg >= 1.7 | train safe 30 ROI=+53.7% vs risk 21 ROI=+3.2% | val safe 43 ROI=+15.0% vs risk 18 ROI=-20.4%
+  FROZEN single: edge_last5_xgapg >= 0.01113 | full 109 ROI=+45.0% | train=+64.6% val=+27.7% | HOLDOUT=+45.9% (n=37, delta=+18.6%, removed=38)
+  FROZEN pair: edge_last5_xgapg >= 0.01113 OR sel_last5_xgfpg >= 1.73634 | full 81 ROI=+57.0% | train=+94.9% val=+30.3% | HOLDOUT=+53.9% (n=26, delta=+26.6%, removed=49)
+
