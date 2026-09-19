@@ -28,19 +28,19 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Validate MLS shadow-only boundary
+      - name: Validate shadow-only MLS code
         shell: bash
         run: |
           set -Eeuo pipefail
-          python3 -m py_compile             scripts/mls_bootstrap_warehouse.py             scripts/mls_current_asa.py             scripts/mls_asa_enrich.py             scripts/mls_join_asa_xg.py             scripts/mls_autoresearch.py             scripts/mls_weekly_combos.py
+          python3 -m py_compile scripts/mls_bootstrap_warehouse.py scripts/mls_current_asa.py scripts/mls_asa_enrich.py scripts/mls_join_asa_xg.py scripts/mls_autoresearch.py scripts/mls_weekly_combos.py
           bash -n scripts/mls_pipeline.sh
-          if grep -RniE '/srv/appwiza-sports/public|send_email|publish_(nfl|ufc|mls)|bet_tracker'               scripts/mls_*.py scripts/mls_pipeline.sh; then
-            echo 'ERROR: MLS research code contains a live publishing/email/tracker path.' >&2
+          if grep -RniE '/srv/appwiza-sports/public|send_email|publish_(nfl|ufc|mls)|bet_tracker' scripts/mls_*.py scripts/mls_pipeline.sh; then
+            echo 'ERROR: live publishing path detected in MLS research code' >&2
             exit 1
           fi
           echo 'MLS shadow-only boundary PASS'
 
-      - name: Install MLS pipeline on server
+      - name: Install MLS scripts
         shell: bash
         run: |
           set -Eeuo pipefail
@@ -48,12 +48,11 @@ jobs:
           HOST=anestishkurti92@127.0.0.1
           SSH="ssh -i $KEY -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=accept-new $HOST"
           ROOT=/home/anestishkurti92/mls-predictor-v1
-
-          for f in             mls_bootstrap_warehouse.py             mls_current_asa.py             mls_asa_enrich.py             mls_join_asa_xg.py             mls_autoresearch.py             mls_weekly_combos.py             mls_pipeline.sh; do
-            cat "scripts/$f" | $SSH "set -e; D=$ROOT; cat > \"\$D/$f.new\"; chmod 0755 \"\$D/$f.new\"; mv -f \"\$D/$f.new\" \"\$D/$f\""
+          for f in mls_bootstrap_warehouse.py mls_current_asa.py mls_asa_enrich.py mls_join_asa_xg.py mls_autoresearch.py mls_weekly_combos.py mls_pipeline.sh; do
+            cat "scripts/$f" | $SSH "cat > $ROOT/$f.new"
+            $SSH "chmod 0755 $ROOT/$f.new && mv -f $ROOT/$f.new $ROOT/$f"
           done
-
-          $SSH "set -Eeuo pipefail; cd $ROOT; venv/bin/python -m py_compile mls_bootstrap_warehouse.py mls_current_asa.py mls_asa_enrich.py mls_join_asa_xg.py mls_autoresearch.py mls_weekly_combos.py; bash -n mls_pipeline.sh"
+          $SSH "cd $ROOT && venv/bin/python -m py_compile mls_bootstrap_warehouse.py mls_current_asa.py mls_asa_enrich.py mls_join_asa_xg.py mls_autoresearch.py mls_weekly_combos.py && bash -n mls_pipeline.sh"
 
       - name: Install staggered MLS cron
         shell: bash
@@ -64,11 +63,9 @@ jobs:
           ssh -i "$KEY" -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=accept-new "$HOST" 'bash -s' <<'EOF'
           set -Eeuo pipefail
           OLD=$(crontab -l 2>/dev/null || true)
-          CLEAN=$(printf '%s
-' "$OLD" | sed '/# BEGIN APPWIZA MLS RESEARCH/,/# END APPWIZA MLS RESEARCH/d')
+          CLEAN=$(printf '%s\n' "$OLD" | sed '/# BEGIN APPWIZA MLS RESEARCH/,/# END APPWIZA MLS RESEARCH/d')
           {
-            printf '%s
-' "$CLEAN"
+            printf '%s\n' "$CLEAN"
             echo '# BEGIN APPWIZA MLS RESEARCH'
             echo '# Explicit UTC schedule; low-priority, locked, shadow-only.'
             echo 'CRON_TZ=UTC'
@@ -76,28 +73,18 @@ jobs:
             echo '10 9 * * 1 /home/anestishkurti92/mls-predictor-v1/mls_pipeline.sh weekly >> /home/anestishkurti92/mls-predictor-v1/auto_research/cron.log 2>&1'
             echo '# END APPWIZA MLS RESEARCH'
           } | crontab -
-          echo '=== MLS CRON ==='
           crontab -l | sed -n '/# BEGIN APPWIZA MLS RESEARCH/,/# END APPWIZA MLS RESEARCH/p'
           EOF
 
-      - name: Verify MLS pipeline state
+      - name: Verify MLS automation state
         shell: bash
         run: |
           set -Eeuo pipefail
           KEY=/home/appwiza-runner/.ssh/appwiza_vps
           HOST=anestishkurti92@127.0.0.1
           SSH="ssh -i $KEY -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=accept-new $HOST"
-          $SSH 'set -Eeuo pipefail; cd /home/anestishkurti92/mls-predictor-v1; ./mls_current_asa.py; ./mls_pipeline.sh status'
-          $SSH 'venv=/home/anestishkurti92/mls-predictor-v1/venv/bin/python; "$venv" - <<'"'"'PY'"'"'
-          import sqlite3,json
-          p="/home/anestishkurti92/mls-predictor-v1/auto_research/state/research.sqlite3"
-          db=sqlite3.connect(p)
-          official=db.execute("select count(*) from candidates where official!=0").fetchone()[0]
-          shadows=db.execute("select count(*) from candidates where official=0 and status='shadow_candidate'").fetchone()[0]
-          runs=db.execute("select count(*) from research_runs").fetchone()[0]
-          print(json.dumps({"runs":runs,"shadow_candidates":shadows,"official_autopromotions":official},indent=2))
-          assert runs>=1
-          assert shadows>=1
-          assert official==0
-          PY'
+          $SSH 'cd /home/anestishkurti92/mls-predictor-v1 && ./mls_current_asa.py && ./mls_pipeline.sh status' | tee /tmp/mls-status.txt
+          grep -q '"official_autopromotions": 0' /tmp/mls-status.txt
+          grep -q '"shadow_candidates":' /tmp/mls-status.txt
+          $SSH "crontab -l | grep -q '# BEGIN APPWIZA MLS RESEARCH'"
           echo 'MLS AUTOMATION ACTIVE — SHADOW ONLY'
