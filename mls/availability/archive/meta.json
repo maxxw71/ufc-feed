@@ -1,19 +1,20 @@
 {
-  "built_at": "2026-09-19T11:05:38.405233+00:00",
+  "built_at": "2026-09-19T19:44:26.556272+00:00",
   "discovered_media_urls": 0,
   "verified_2024_seed_urls": 21,
   "verified_2025_seed_urls": 39,
-  "reports": 56,
-  "rows": 5614,
-  "status_entries": 5584,
-  "clear_team_rows": 30,
+  "trusted_cached_reports": 59,
+  "reports": 74,
+  "rows": 7567,
+  "status_entries": 7531,
+  "clear_team_rows": 36,
   "by_year": {
-    "2024": 30,
-    "2025": 26
+    "2024": 35,
+    "2025": 39
   },
   "status_entries_by_year": {
-    "2024": 2989,
-    "2025": 2595
+    "2024": 3502,
+    "2025": 4029
   },
   "report_matchdays_by_year": {
     "2024": [
@@ -23,6 +24,7 @@
       6,
       7,
       8,
+      9,
       10,
       11,
       12,
@@ -35,11 +37,15 @@
       19,
       20,
       21,
+      22,
       23,
+      24,
       25,
       26,
       27,
       28,
+      29,
+      30,
       31,
       32,
       33,
@@ -50,29 +56,42 @@
     ],
     "2025": [
       1,
+      2,
       3,
       4,
+      5,
       6,
+      7,
       8,
       9,
       10,
+      11,
       12,
       13,
       14,
+      15,
+      16,
       17,
       18,
       19,
       20,
+      21,
       22,
+      23,
       24,
+      25,
+      26,
       27,
       28,
       29,
+      30,
       31,
       32,
       33,
       34,
+      35,
       36,
+      37,
       38,
       39
     ]
@@ -80,126 +99,9 @@
   "parse_rejections": [],
   "fetch_failures": [
     {
-      "year": 2025,
-      "expected_matchday": 1,
-      "url": "https://www.mlssoccer.com/news/mls-player-status-report-matchday-1-2025",
-      "error": [
-        "HTTPError",
-        "HTTP Error 429: Too Many Requests"
-      ]
-    },
-    {
-      "year": 2025,
-      "expected_matchday": 2,
-      "url": "https://www.mlssoccer.com/news/mls-player-status-report-matchday-2",
-      "error": [
-        "HTTPError",
-        "HTTP Error 429: Too Many Requests"
-      ]
-    },
-    {
-      "year": 2025,
-      "expected_matchday": 5,
-      "url": "https://www.mlssoccer.com/news/mls-player-status-report-matchday-5-saturday-march-22-sunday-march-23",
-      "error": [
-        "HTTPError",
-        "HTTP Error 429: Too Many Requests"
-      ]
-    },
-    {
-      "year": 2025,
-      "expected_matchday": 7,
-      "url": "https://www.mlssoccer.com/news/mls-player-status-report-matchday-7-saturday-april-5",
-      "error": [
-        "HTTPError",
-        "HTTP Error 429: Too Many Requests"
-      ]
-    },
-    {
-      "year": 2025,
-      "expected_matchday": 11,
-      "url": "https://www.mlssoccer.com/news/mls-player-status-report-matchday-11-saturday-may-3",
-      "error": [
-        "HTTPError",
-        "HTTP Error 429: Too Many Requests"
-      ]
-    },
-    {
-      "year": 2025,
-      "expected_matchday": 15,
-      "url": "https://www.mlssoccer.com/news/mls-player-status-report-matchday-15-saturday-may-24",
-      "error": [
-        "HTTPError",
-        "HTTP Error 429: Too Many Requests"
-      ]
-    },
-    {
-      "year": 2025,
-      "expected_matchday": 16,
-      "url": "https://www.mlssoccer.com/news/mls-player-status-report-matchday-16-wednesday-may-28",
-      "error": [
-        "HTTPError",
-        "HTTP Error 429: Too Many Requests"
-      ]
-    },
-    {
-      "year": 2025,
-      "expected_matchday": 21,
-      "url": "https://www.mlssoccer.com/news/mls-player-status-report-matchday-21-saturday-june-28",
-      "error": [
-        "HTTPError",
-        "HTTP Error 429: Too Many Requests"
-      ]
-    },
-    {
-      "year": 2025,
-      "expected_matchday": 23,
-      "url": "https://www.mlssoccer.com/news/mls-player-status-report-matchday-23-july-9",
-      "error": [
-        "HTTPError",
-        "HTTP Error 429: Too Many Requests"
-      ]
-    },
-    {
-      "year": 2025,
-      "expected_matchday": 25,
-      "url": "https://www.mlssoccer.com/news/mls-player-status-report-matchday-25-july-16",
-      "error": [
-        "HTTPError",
-        "HTTP Error 429: Too Many Requests"
-      ]
-    },
-    {
-      "year": 2025,
-      "expected_matchday": 26,
-      "url": "https://www.mlssoccer.com/news/mls-player-status-report-matchday-26-saturday-july-19",
-      "error": [
-        "HTTPError",
-        "HTTP Error 429: Too Many Requests"
-      ]
-    },
-    {
-      "year": 2025,
-      "expected_matchday": 30,
-      "url": "https://www.mlssoccer.com/news/mls-player-status-report-matchday-30-saturday-august-23-and-sunday-august-24",
-      "error": [
-        "HTTPError",
-        "HTTP Error 429: Too Many Requests"
-      ]
-    },
-    {
-      "year": 2025,
-      "expected_matchday": 35,
-      "url": "https://www.mlssoccer.com/news/mls-player-status-report-matchday-35-saturday-september-20-sunday-september-21",
-      "error": [
-        "HTTPError",
-        "HTTP Error 429: Too Many Requests"
-      ]
-    },
-    {
-      "year": 2025,
-      "expected_matchday": 37,
-      "url": "https://www.mlssoccer.com/news/mls-player-status-report-matchday-37-saturday-september-27-sunday-september-28",
+      "year": 2024,
+      "expected_matchday": null,
+      "url": "https://www.mlssoccer.com/news/mls-player-status-report-matchday-4",
       "error": [
         "HTTPError",
         "HTTP Error 429: Too Many Requests"
@@ -208,120 +110,12 @@
     {
       "year": 2024,
       "expected_matchday": null,
-      "url": "https://www.mlssoccer.com/news/mls-player-status-report-matchday-14",
-      "error": [
-        "HTTPError",
-        "HTTP Error 429: Too Many Requests"
-      ]
-    },
-    {
-      "year": 2024,
-      "expected_matchday": null,
-      "url": "https://www.mlssoccer.com/news/mls-player-status-report-matchday-15",
-      "error": [
-        "HTTPError",
-        "HTTP Error 429: Too Many Requests"
-      ]
-    },
-    {
-      "year": 2024,
-      "expected_matchday": null,
-      "url": "https://www.mlssoccer.com/news/mls-player-status-report-matchday-17",
-      "error": [
-        "HTTPError",
-        "HTTP Error 429: Too Many Requests"
-      ]
-    },
-    {
-      "year": 2024,
-      "expected_matchday": null,
-      "url": "https://www.mlssoccer.com/news/mls-player-status-report-matchday-22",
-      "error": [
-        "HTTPError",
-        "HTTP Error 429: Too Many Requests"
-      ]
-    },
-    {
-      "year": 2024,
-      "expected_matchday": null,
-      "url": "https://www.mlssoccer.com/news/mls-player-status-report-matchday-24",
-      "error": [
-        "HTTPError",
-        "HTTP Error 429: Too Many Requests"
-      ]
-    },
-    {
-      "year": 2024,
-      "expected_matchday": null,
-      "url": "https://www.mlssoccer.com/news/mls-player-status-report-matchday-28",
-      "error": [
-        "HTTPError",
-        "HTTP Error 429: Too Many Requests"
-      ]
-    },
-    {
-      "year": 2024,
-      "expected_matchday": null,
-      "url": "https://www.mlssoccer.com/news/mls-player-status-report-matchday-29",
-      "error": [
-        "HTTPError",
-        "HTTP Error 429: Too Many Requests"
-      ]
-    },
-    {
-      "year": 2024,
-      "expected_matchday": null,
-      "url": "https://www.mlssoccer.com/news/mls-player-status-report-matchday-30",
-      "error": [
-        "HTTPError",
-        "HTTP Error 429: Too Many Requests"
-      ]
-    },
-    {
-      "year": 2024,
-      "expected_matchday": null,
-      "url": "https://www.mlssoccer.com/news/mls-player-status-report-matchday-35",
-      "error": [
-        "HTTPError",
-        "HTTP Error 429: Too Many Requests"
-      ]
-    },
-    {
-      "year": 2024,
-      "expected_matchday": null,
-      "url": "https://www.mlssoccer.com/news/mls-player-status-report-matchday-36",
-      "error": [
-        "HTTPError",
-        "HTTP Error 429: Too Many Requests"
-      ]
-    },
-    {
-      "year": 2024,
-      "expected_matchday": null,
-      "url": "https://www.mlssoccer.com/news/mls-player-status-report-matchday-6",
-      "error": [
-        "HTTPError",
-        "HTTP Error 429: Too Many Requests"
-      ]
-    },
-    {
-      "year": 2024,
-      "expected_matchday": null,
-      "url": "https://www.mlssoccer.com/news/mls-player-status-report-matchday-9",
-      "error": [
-        "HTTPError",
-        "HTTP Error 429: Too Many Requests"
-      ]
-    },
-    {
-      "year": 2025,
-      "expected_matchday": null,
-      "url": "https://www.mlssoccer.com/news/mls-player-status-report-matchday-2",
+      "url": "https://www.mlssoccer.com/news/mls-player-status-report-matchday-5",
       "error": [
         "HTTPError",
         "HTTP Error 429: Too Many Requests"
       ]
     }
   ],
-  "discovery_note": "2024 and 2025 use exact first-party MLS URLs verified from Media Resources/search where seeded. Dynamic Media Resources discovery and publication-year-verified guessed slugs are fallbacks. Duplicate season/matchdays prefer broader recognized-team coverage."
+  "discovery_note": "2024 and 2025 use exact first-party MLS URLs verified from Media Resources/search where seeded. Trusted cached JSONs are reusable only when their stored URL exactly matches the verified seed map. Network refreshes are opportunistic; partial relay failures cannot erase trusted coverage."
 }
