@@ -174,7 +174,8 @@ def research(mode='daily'):
                     'MLS regular season only; 2012-18 train; 2019-22 validation; 2023-25 holdout; 2026 excluded; shadow only',rid));db.commit()
     lines=['MLS AUTONOMOUS SHADOW RESEARCH','='*100,
            f'mode={mode} selection_rows={len(s):,} tested={tested:,} survivors={len(chosen)}',
-           'Universe: MLS regular season only (ASA knockout_game=False)',\n           'Splits: 2012-2018 train | 2019-2022 validation | 2023-2025 holdout | 2026 prospective only',
+           'Universe: MLS regular season only (ASA knockout_game=False)',
+           'Splits: 2012-2018 train | 2019-2022 validation | 2023-2025 holdout | 2026 prospective only',
            'No automatic promotion to live/email/website.','',
            'TOP SURVIVORS']
     for outcome,pb,feat,op,t,ev in chosen[:30]:
