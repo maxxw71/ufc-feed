@@ -1,0 +1,29 @@
+MLS WEEKLY INTERACTION SEARCH
+====================================================================================================
+selection_rows=12,420 single_contexts_tested=17,730 pair_contexts_tested=1,872 survivors=22
+Rules were screened on 2012-18 train + 2019-22 validation before 2023-25 holdout evaluation.
+SHADOW ONLY — no live/email/website promotion.
+
+TOP COMBINATIONS
+HOME P40_50 | edge_last3_xgfpg >= 0.45538 AND elo_edge <= 0.91 | n=175 96-79 win=54.9% ROI=+18.7% | train=+16.8% val=+11.5% hold=+27.1% n=56 | +season=69%
+HOME P40_50 | edge_last3_xgfpg >= 0.45538 AND edge_last3_xgapg >= 0.0536 | n=144 84-60 win=58.3% ROI=+25.8% | train=+27.9% val=+35.5% hold=+16.9% n=53 | +season=83%
+HOME P40_50 | edge_last3_xgfpg >= 0.45538 AND edge_season_gdpg <= -0.251028 | n=112 64-48 win=57.1% ROI=+24.3% | train=+22.1% val=+41.0% hold=+12.7% n=36 | +season=82%
+HOME P45_55 | sel_prior_road_miles5 >= 7092.68 AND sel_last10_ppg <= 1.5 | n=136 85-51 win=62.5% ROI=+22.7% | train=+25.8% val=+24.7% hold=+12.3% n=28 | +season=91%
+HOME P45_55 | sel_prior_road_miles5 >= 7092.68 AND edge_season_xgdpg <= 0.380851 | n=181 107-74 win=59.1% ROI=+16.0% | train=+18.9% val=+14.9% hold=+9.3% n=34 | +season=92%
+HOME P25_35 | sel_altitude_change_ft <= 0 AND edge_last5_gdpg <= -1 | n=152 58-94 win=38.2% ROI=+20.7% | train=+17.7% val=+34.0% hold=+9.2% n=51 | +season=75%
+HOME P45_55 | sel_last3_xgfpg >= 1.30812 AND edge_last5_ppg <= -0.4 | n=226 127-99 win=56.2% ROI=+10.1% | train=+10.2% val=+11.2% hold=+8.9% n=70 | +season=69%
+HOME P40_50 | edge_last3_xgfpg >= 0.45538 AND sel_last3_xgapg >= 1.00789 | n=211 113-98 win=53.6% ROI=+15.2% | train=+20.4% val=+17.0% hold=+8.1% n=75 | +season=77%
+HOME P40_50 | sel_last10_gdpg <= -0.5 AND edge_last3_xgapg >= 0.0536 | n=233 121-112 win=51.9% ROI=+13.9% | train=+11.6% val=+24.3% hold=+7.7% n=81 | +season=69%
+HOME P45_55 | sel_prior_road_miles5 >= 7092.68 AND edge_season_xgfpg <= 0.23318 | n=171 103-68 win=60.2% ROI=+18.6% | train=+20.4% val=+22.3% hold=+7.5% n=31 | +season=83%
+HOME P45_55 | sel_last3_xgapg <= 1.51416 AND sel_prior_road_miles5 >= 7092.68 | n=143 85-58 win=59.4% ROI=+16.1% | train=+16.5% val=+22.8% hold=+7.3% n=29 | +season=75%
+HOME P40_50 | edge_last5_xgdpg <= -0.04209 AND sel_last10_xgapg >= 1.58519 | n=248 128-120 win=51.6% ROI=+12.6% | train=+13.0% val=+17.8% hold=+7.2% n=85 | +season=82%
+HOME P40_50 | edge_last3_xgfpg >= 0.45538 AND edge_consecutive_road_pre >= 1 | n=113 66-47 win=58.4% ROI=+25.8% | train=+42.6% val=+27.6% hold=+7.2% n=42 | +season=83%
+HOME P40_50 | opp_last5_gdpg <= -0.6 AND edge_last3_xgapg >= 0.0536 | n=120 65-55 win=54.2% ROI=+17.1% | train=+16.1% val=+32.0% hold=+7.1% n=39 | +season=85%
+HOME P45_55 | sel_prior_road_miles5 >= 7092.68 AND sel_last5_xgapg <= 1.48494 | n=138 82-56 win=59.4% ROI=+16.4% | train=+19.3% val=+17.6% hold=+7.1% n=29 | +season=82%
+HOME P45_55 | sel_prior_road_miles5 >= 7092.68 AND sel_altitude_change_ft >= -200 | n=166 100-66 win=60.2% ROI=+17.6% | train=+29.0% val=+5.5% hold=+6.4% n=33 | +season=75%
+HOME P40_50 | sel_last10_xgapg >= 1.58519 AND edge_last3_xgapg >= 0.0536 | n=244 127-117 win=52.0% ROI=+13.1% | train=+19.2% val=+14.4% hold=+6.4% n=89 | +season=73%
+HOME P45_55 | edge_last5_xgfpg <= -0.01494 AND edge_season_gdpg <= -0.251028 | n=197 113-84 win=57.4% ROI=+14.4% | train=+21.3% val=+13.7% hold=+6.0% n=57 | +season=67%
+HOME P25_35 | edge_prior_road_miles5 >= -75.1959 AND sel_altitude_change_ft <= 0 | n=139 56-83 win=40.3% ROI=+25.1% | train=+28.0% val=+42.4% hold=+6.0% n=47 | +season=69%
+HOME P40_50 | edge_last3_xgfpg >= 0.45538 AND opp_season_gdpg >= 0 | n=149 82-67 win=55.0% ROI=+18.5% | train=+25.8% val=+21.6% hold=+5.6% n=45 | +season=85%
+HOME P45_55 | opp_last10_xgapg <= 1.56701 AND sel_prior_road_miles5 >= 7092.68 | n=169 101-68 win=59.8% ROI=+16.9% | train=+18.0% val=+25.1% hold=+5.5% n=35 | +season=83%
+HOME P40_50 | edge_last3_xgfpg >= 0.45538 AND edge_days_rest >= -1 | n=224 122-102 win=54.5% ROI=+17.0% | train=+29.1% val=+14.2% hold=+5.2% n=77 | +season=77%
