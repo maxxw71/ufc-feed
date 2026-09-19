@@ -1,5 +1,5 @@
 {
-  "built_at": "2026-09-19T20:05:55.063191+00:00",
+  "built_at": "2026-09-19T21:19:05.204640+00:00",
   "base_file": "/home/anestishkurti92/mls-predictor-v1/data/processed/mls_match_features_context_enriched.parquet",
   "rows": 9440,
   "columns": 308,
@@ -38,8 +38,8 @@
     "edge_team_yellows5",
     "edge_team_reds5"
   ],
-  "complete_lineup_events": 193,
-  "team_side_rows_with_prior_confirmed_lineup": 3749,
+  "complete_lineup_events": 319,
+  "team_side_rows_with_prior_confirmed_lineup": 3788,
   "output": "/home/anestishkurti92/mls-predictor-v1/data/processed/mls_match_features_confirmed_lineup_enriched.parquet",
   "leakage_note": "Target-match starters/cards are never used as target-match pregame features. Each match reads only confirmed lineups/cards from already completed prior matches, then updates state after feature capture."
 }
