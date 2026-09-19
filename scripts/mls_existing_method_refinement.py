@@ -74,7 +74,7 @@ def main():
              'note':'Candidate refinements use independently discovered pre-holdout features. Selection requires positive train/validation/holdout and >=4pp pre-holdout ROI lift; existing method IDs are never silently rewritten.'}
     (OUT/'latest.json').write_text(json.dumps(payload,indent=2,default=str))
     print(json.dumps({
-      'summary':{k:{x:{m:res[x][m] for m in ['train','validation','holdout','full','ci']} for x in [k]+[z['_id'] for z in decisions[k]]} for k in ['R01','R02','R03']},
+      'summary':{k:{x:{m:res[x][m] for m in ['train','validation','holdout','full','ci']} for x in [k]+[z['id'] for z in decisions[k]]} for k in ['R01','R02','R03']},
       'decisions':decisions
     },indent=2,default=str))
 
