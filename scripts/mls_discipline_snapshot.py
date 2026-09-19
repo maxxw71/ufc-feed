@@ -59,7 +59,7 @@ def main():
         if low=='caution accumulation warnings':
             if pending:suspensions.append(pending);pending=None
             section='warning';continue
-        mdate=re.search(r'As of\s+(.+)
+        mdate=re.search(r'As of\\s+(.+)$',line,re.I)
         if mdate and not source_as_of:source_as_of=mdate.group(1).strip()
         if section=='suspension':
             m=re.match(r'^(.+?)\s*\(([A-Z]{2,5})\)\s*-\s*Suspended:\s*(.+)$',line,re.I)
