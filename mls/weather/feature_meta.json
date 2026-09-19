@@ -1,0 +1,293 @@
+{
+  "built_at": "2026-09-19T20:19:43.610834+00:00",
+  "source": "Open-Meteo Historical Weather API / ERA5",
+  "base_file": "/home/anestishkurti92/mls-predictor-v1/data/processed/mls_match_features_confirmed_lineup_enriched.parquet",
+  "rows": 9440,
+  "columns": 323,
+  "added_columns": 15,
+  "added": [
+    "weather_available",
+    "weather_observation_utc",
+    "weather_hour_offset",
+    "weather_temperature_f",
+    "weather_humidity_pct",
+    "weather_apparent_temperature_f",
+    "weather_precipitation_in",
+    "weather_wind_mph",
+    "weather_wind_direction_deg",
+    "weather_hot",
+    "weather_cold",
+    "weather_high_heat_index",
+    "weather_high_humidity",
+    "weather_wet",
+    "weather_windy"
+  ],
+  "weather_matches": 5150,
+  "weather_match_pct": 54.55508474576271,
+  "coverage_seasons": [
+    2013,
+    2014,
+    2015,
+    2016,
+    2017,
+    2018,
+    2019,
+    2020,
+    2021,
+    2022,
+    2023,
+    2024,
+    2025
+  ],
+  "fetch_failures": [
+    {
+      "team": "Chicago Fire FC",
+      "year": 2015,
+      "error": "HTTPError:HTTP Error 429: Too Many Requests"
+    },
+    {
+      "team": "Colorado Rapids",
+      "year": 2015,
+      "error": "HTTPError:HTTP Error 429: Too Many Requests"
+    },
+    {
+      "team": "Columbus Crew",
+      "year": 2015,
+      "error": "HTTPError:HTTP Error 429: Too Many Requests"
+    },
+    {
+      "team": "Colorado Rapids",
+      "year": 2017,
+      "error": "HTTPError:HTTP Error 429: Too Many Requests"
+    },
+    {
+      "team": "Columbus Crew",
+      "year": 2017,
+      "error": "HTTPError:HTTP Error 429: Too Many Requests"
+    },
+    {
+      "team": "D.C. United",
+      "year": 2017,
+      "error": "HTTPError:HTTP Error 429: Too Many Requests"
+    },
+    {
+      "team": "Atlanta United FC",
+      "year": 2019,
+      "error": "HTTPError:HTTP Error 429: Too Many Requests"
+    },
+    {
+      "team": "CF Montr\u00e9al",
+      "year": 2019,
+      "error": "HTTPError:HTTP Error 429: Too Many Requests"
+    },
+    {
+      "team": "Chicago Fire FC",
+      "year": 2019,
+      "error": "HTTPError:HTTP Error 429: Too Many Requests"
+    },
+    {
+      "team": "Colorado Rapids",
+      "year": 2019,
+      "error": "HTTPError:HTTP Error 429: Too Many Requests"
+    },
+    {
+      "team": "Portland Timbers",
+      "year": 2020,
+      "error": "HTTPError:HTTP Error 429: Too Many Requests"
+    },
+    {
+      "team": "Real Salt Lake",
+      "year": 2020,
+      "error": "HTTPError:HTTP Error 429: Too Many Requests"
+    },
+    {
+      "team": "San Jose Earthquakes",
+      "year": 2020,
+      "error": "HTTPError:HTTP Error 502: Bad Gateway"
+    },
+    {
+      "team": "Orlando City SC",
+      "year": 2023,
+      "error": "HTTPError:HTTP Error 429: Too Many Requests"
+    },
+    {
+      "team": "Philadelphia Union",
+      "year": 2023,
+      "error": "HTTPError:HTTP Error 429: Too Many Requests"
+    },
+    {
+      "team": "Portland Timbers",
+      "year": 2023,
+      "error": "HTTPError:HTTP Error 429: Too Many Requests"
+    },
+    {
+      "team": "Charlotte FC",
+      "year": 2025,
+      "error": "HTTPError:HTTP Error 429: Too Many Requests"
+    },
+    {
+      "team": "Chicago Fire FC",
+      "year": 2025,
+      "error": "HTTPError:HTTP Error 429: Too Many Requests"
+    },
+    {
+      "team": "Colorado Rapids",
+      "year": 2025,
+      "error": "HTTPError:HTTP Error 429: Too Many Requests"
+    },
+    {
+      "team": "Atlanta United FC",
+      "year": 2026,
+      "error": "HTTPError:HTTP Error 400: Bad Request"
+    },
+    {
+      "team": "Austin FC",
+      "year": 2026,
+      "error": "HTTPError:HTTP Error 400: Bad Request"
+    },
+    {
+      "team": "CF Montr\u00e9al",
+      "year": 2026,
+      "error": "HTTPError:HTTP Error 400: Bad Request"
+    },
+    {
+      "team": "Charlotte FC",
+      "year": 2026,
+      "error": "HTTPError:HTTP Error 400: Bad Request"
+    },
+    {
+      "team": "Chicago Fire FC",
+      "year": 2026,
+      "error": "HTTPError:HTTP Error 400: Bad Request"
+    },
+    {
+      "team": "Colorado Rapids",
+      "year": 2026,
+      "error": "HTTPError:HTTP Error 400: Bad Request"
+    },
+    {
+      "team": "Columbus Crew",
+      "year": 2026,
+      "error": "HTTPError:HTTP Error 400: Bad Request"
+    },
+    {
+      "team": "D.C. United",
+      "year": 2026,
+      "error": "HTTPError:HTTP Error 400: Bad Request"
+    },
+    {
+      "team": "FC Cincinnati",
+      "year": 2026,
+      "error": "HTTPError:HTTP Error 400: Bad Request"
+    },
+    {
+      "team": "FC Dallas",
+      "year": 2026,
+      "error": "HTTPError:HTTP Error 400: Bad Request"
+    },
+    {
+      "team": "Houston Dynamo FC",
+      "year": 2026,
+      "error": "HTTPError:HTTP Error 400: Bad Request"
+    },
+    {
+      "team": "Inter Miami CF",
+      "year": 2026,
+      "error": "HTTPError:HTTP Error 400: Bad Request"
+    },
+    {
+      "team": "LA Galaxy",
+      "year": 2026,
+      "error": "HTTPError:HTTP Error 400: Bad Request"
+    },
+    {
+      "team": "Los Angeles FC",
+      "year": 2026,
+      "error": "HTTPError:HTTP Error 400: Bad Request"
+    },
+    {
+      "team": "Minnesota United FC",
+      "year": 2026,
+      "error": "HTTPError:HTTP Error 400: Bad Request"
+    },
+    {
+      "team": "Nashville SC",
+      "year": 2026,
+      "error": "HTTPError:HTTP Error 400: Bad Request"
+    },
+    {
+      "team": "New England Revolution",
+      "year": 2026,
+      "error": "HTTPError:HTTP Error 400: Bad Request"
+    },
+    {
+      "team": "New York City FC",
+      "year": 2026,
+      "error": "HTTPError:HTTP Error 400: Bad Request"
+    },
+    {
+      "team": "New York Red Bulls",
+      "year": 2026,
+      "error": "HTTPError:HTTP Error 400: Bad Request"
+    },
+    {
+      "team": "Orlando City SC",
+      "year": 2026,
+      "error": "HTTPError:HTTP Error 400: Bad Request"
+    },
+    {
+      "team": "Philadelphia Union",
+      "year": 2026,
+      "error": "HTTPError:HTTP Error 400: Bad Request"
+    },
+    {
+      "team": "Portland Timbers",
+      "year": 2026,
+      "error": "HTTPError:HTTP Error 400: Bad Request"
+    },
+    {
+      "team": "Real Salt Lake",
+      "year": 2026,
+      "error": "HTTPError:HTTP Error 400: Bad Request"
+    },
+    {
+      "team": "San Diego FC",
+      "year": 2026,
+      "error": "HTTPError:HTTP Error 400: Bad Request"
+    },
+    {
+      "team": "San Jose Earthquakes",
+      "year": 2026,
+      "error": "HTTPError:HTTP Error 400: Bad Request"
+    },
+    {
+      "team": "Seattle Sounders FC",
+      "year": 2026,
+      "error": "HTTPError:HTTP Error 400: Bad Request"
+    },
+    {
+      "team": "Sporting Kansas City",
+      "year": 2026,
+      "error": "HTTPError:HTTP Error 400: Bad Request"
+    },
+    {
+      "team": "St. Louis City SC",
+      "year": 2026,
+      "error": "HTTPError:HTTP Error 400: Bad Request"
+    },
+    {
+      "team": "Toronto FC",
+      "year": 2026,
+      "error": "HTTPError:HTTP Error 400: Bad Request"
+    },
+    {
+      "team": "Vancouver Whitecaps FC",
+      "year": 2026,
+      "error": "HTTPError:HTTP Error 400: Bad Request"
+    }
+  ],
+  "output": "/home/anestishkurti92/mls-predictor-v1/data/processed/mls_match_features_weather_enriched.parquet",
+  "research_only": true,
+  "policy_note": "Weather is context for research only and is not an automatic veto/filter for official MLS selections.",
+  "leakage_note": "Historical weather is joined to known kickoff/venue context. Weather variables describe conditions and are not used as a proxy for information unavailable before kickoff."
+}
