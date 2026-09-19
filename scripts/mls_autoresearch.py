@@ -46,6 +46,9 @@ def metrics(x):
 def selection_rows(d):
     base=d[d.odds_matched.eq(True)&d.season.between(2012,2025)].copy()
     base=base[(base.home_prior_games>=5)&(base.away_prior_games>=5)].copy()
+    if not {'asa_game_available','asa_knockout_game'}.issubset(base.columns):
+        raise RuntimeError('MLS primary research requires ASA game/stage metadata; refusing untagged universe')
+    base=base[base.asa_game_available.eq(True)&base.asa_knockout_game.eq(False)].copy()
     rows=[]
     for outcome in ['HOME','DRAW','AWAY']:
         z=pd.DataFrame(index=base.index)
@@ -168,10 +171,10 @@ def research(mode='daily'):
     with conn() as db:
         db.execute('update research_runs set finished_at=?,features=?,tested=?,survivors=?,status=?,note=? where id=?',
                    (now(),len(set(x[2] for x in chosen)),tested,len(chosen),'completed',
-                    '2012-18 train; 2019-22 validation; 2023-25 holdout; 2026 excluded; shadow only',rid));db.commit()
+                    'MLS regular season only; 2012-18 train; 2019-22 validation; 2023-25 holdout; 2026 excluded; shadow only',rid));db.commit()
     lines=['MLS AUTONOMOUS SHADOW RESEARCH','='*100,
            f'mode={mode} selection_rows={len(s):,} tested={tested:,} survivors={len(chosen)}',
-           'Splits: 2012-2018 train | 2019-2022 validation | 2023-2025 holdout | 2026 prospective only',
+           'Universe: MLS regular season only (ASA knockout_game=False)',\n           'Splits: 2012-2018 train | 2019-2022 validation | 2023-2025 holdout | 2026 prospective only',
            'No automatic promotion to live/email/website.','',
            'TOP SURVIVORS']
     for outcome,pb,feat,op,t,ev in chosen[:30]:
