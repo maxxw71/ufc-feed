@@ -8,12 +8,12 @@ on:
   workflow_dispatch:
 
 jobs:
-  inspect-media-archive:
+  inspect-context-schemas:
     runs-on: [self-hosted, Linux, X64, appwiza]
-    timeout-minutes: 12
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
-      - name: Test first-party media archive link extraction
+      - name: Inspect MLS referee goalkeeper and player schemas
         shell: bash
         run: |
           set -Eeuo pipefail
@@ -21,20 +21,23 @@ jobs:
           HOST=anestishkurti92@127.0.0.1
           SSH="ssh -i $KEY -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=accept-new $HOST"
           $SSH 'set -Eeuo pipefail; cd /home/anestishkurti92/mls-predictor-v1; venv/bin/python - <<'"'"'PY'"'"'
-          import re, urllib.request
-          from urllib.parse import urljoin
-          UA="Mozilla/5.0 AppwizaMLSArchiveDiscovery/1.0"
-          for n in [7,8,9,10,11,12,13,14,15,20,21,22,23]:
-              url=f"https://www.mlssoccer.com/media-resources/press-releases/more/{n}"
-              print("\nPAGE",n,url)
-              try:
-                  req=urllib.request.Request(url,headers={"User-Agent":UA})
-                  raw=urllib.request.urlopen(req,timeout=30).read().decode("utf-8","replace")
-                  print("bytes",len(raw))
-                  hrefs=re.findall(r"href=[\\\"\\x27]([^\\\"\\x27]+)[\\\"\\x27]",raw,re.I)
-                  matches=sorted({urljoin(url,h) for h in hrefs if "player-status-report" in h.lower()})
-                  print("status_links",len(matches))
-                  for x in matches:print("LINK",x)
-              except Exception as e:
-                  print("ERR",type(e).__name__,str(e)[:180])
+          from pathlib import Path
+          import pandas as pd, json
+          root=Path("/home/anestishkurti92/mls-predictor-v1/data/processed")
+          for name in [
+            "asa_mls_games_2013_present.parquet",
+            "asa_player_gk_game_2013_present.parquet",
+            "asa_player_xg_game_2013_present.parquet",
+            "asa_players.parquet",
+            "asa_teams.parquet",
+          ]:
+              p=root/name
+              print("\n==",name,"==")
+              if not p.exists():
+                  print("MISSING")
+                  continue
+              d=pd.read_parquet(p)
+              print("shape",d.shape)
+              print("columns",list(d.columns))
+              print(d.head(3).to_json(orient="records",date_format="iso")[:12000])
           PY'
