@@ -1,0 +1,6446 @@
+{
+  "built_at": "2026-09-19T19:48:30.070294+00:00",
+  "dataset": "/home/anestishkurti92/mls-predictor-v1/data/processed/mls_match_features_context_enriched.parquet",
+  "selection_rows": 14775,
+  "features_tested": [
+    "balance_gk_current_keeper_prior_team_games",
+    "balance_gk_goals_conceded_p96_5",
+    "balance_roster_jaccard_recent5_prev5",
+    "edge_gk_current_keeper_prior_team_games",
+    "edge_gk_goals_conceded_p96_5",
+    "edge_gk_goals_minus_xg_p96_5",
+    "edge_gk_save_pct5",
+    "edge_gk_xg_faced_p96_5",
+    "edge_roster_churn_index",
+    "edge_roster_departed_minutes_share_prev5",
+    "edge_roster_jaccard_recent5_prev5",
+    "edge_roster_new_minutes_share3",
+    "edge_roster_new_players3",
+    "opp_gk_current_keeper_prior_team_games",
+    "opp_gk_goals_conceded_p96_5",
+    "opp_gk_goals_minus_xg_p96_5",
+    "opp_gk_save_pct5",
+    "opp_gk_xg_faced_p96_5",
+    "opp_roster_churn_index",
+    "opp_roster_departed_minutes_share_prev5",
+    "opp_roster_departed_players3",
+    "opp_roster_new_minutes_share3",
+    "opp_roster_new_players3",
+    "referee_prior_draw_rate",
+    "referee_prior_games",
+    "referee_prior_home_gd",
+    "referee_prior_home_win_rate",
+    "referee_prior_over25_rate",
+    "referee_prior_total_goals",
+    "sel_gk_current_keeper_prior_team_games",
+    "sel_gk_goals_conceded_p96_5",
+    "sel_gk_goals_minus_xg_p96_5",
+    "sel_gk_save_pct5",
+    "sel_gk_xg_faced_p96_5",
+    "sel_roster_churn_index",
+    "sel_roster_departed_minutes_share_prev5",
+    "sel_roster_departed_players3",
+    "sel_roster_jaccard_recent5_prev5",
+    "sel_roster_new_minutes_share3",
+    "sel_roster_new_players3"
+  ],
+  "tested_single_contexts": 13104,
+  "preholdout_single_survivors": 957,
+  "frozen_single_candidates": 100,
+  "single_holdout_survivors": 24,
+  "tested_pair_contexts": 663,
+  "preholdout_pair_survivors": 414,
+  "frozen_pair_candidates": 70,
+  "pair_holdout_survivors": 11,
+  "splits": {
+    "train": [
+      2013,
+      2018
+    ],
+    "validation": [
+      2019,
+      2022
+    ],
+    "holdout": [
+      2023,
+      2025
+    ]
+  },
+  "selection_rule": "Thresholds and rankings frozen on 2013-18 train + 2019-22 validation before opening 2023-25 holdout.",
+  "status": "SHADOW_RESEARCH_ONLY",
+  "top_singles_preholdout_order": [
+    {
+      "outcome": "HOME",
+      "price_band": "P25_35",
+      "feature": "opp_gk_goals_minus_xg_p96_5",
+      "op": "<=",
+      "threshold": 0.228400824742268,
+      "pre_score": 2.2487796060171457,
+      "holdout": {
+        "n": 121,
+        "wins": 33,
+        "losses": 88,
+        "win_rate": 0.2727272727272727,
+        "roi": -0.15264462809917353,
+        "units": -18.47,
+        "active_seasons": 3,
+        "positive_seasons": 1,
+        "positive_season_ratio": 0.3333333333333333
+      },
+      "full": {
+        "n": 364,
+        "wins": 127,
+        "losses": 237,
+        "win_rate": 0.3489010989010989,
+        "roi": 0.08744505494505495,
+        "units": 31.83,
+        "active_seasons": 13,
+        "positive_seasons": 10,
+        "positive_season_ratio": 0.7692307692307693
+      },
+      "holdout_survived": false,
+      "train": {
+        "n": 120,
+        "wins": 47,
+        "losses": 73,
+        "win_rate": 0.39166666666666666,
+        "roi": 0.20875000000000002,
+        "units": 25.05,
+        "active_seasons": 6,
+        "positive_seasons": 5,
+        "positive_season_ratio": 0.8333333333333334
+      },
+      "validation": {
+        "n": 123,
+        "wins": 47,
+        "losses": 76,
+        "win_rate": 0.3821138211382114,
+        "roi": 0.20528455284552846,
+        "units": 25.25,
+        "active_seasons": 4,
+        "positive_seasons": 4,
+        "positive_season_ratio": 1.0
+      },
+      "preholdout": {
+        "n": 243,
+        "wins": 94,
+        "losses": 149,
+        "win_rate": 0.3868312757201646,
+        "roi": 0.20699588477366254,
+        "units": 50.3,
+        "active_seasons": 10,
+        "positive_seasons": 9,
+        "positive_season_ratio": 0.9
+      }
+    },
+    {
+      "outcome": "HOME",
+      "price_band": "P25_35",
+      "feature": "referee_prior_home_gd",
+      "op": "<=",
+      "threshold": 0.5538461538461539,
+      "pre_score": 2.2023910451573934,
+      "holdout": {
+        "n": 95,
+        "wins": 22,
+        "losses": 73,
+        "win_rate": 0.23157894736842105,
+        "roi": -0.265578947368421,
+        "units": -25.229999999999997,
+        "active_seasons": 3,
+        "positive_seasons": 1,
+        "positive_season_ratio": 0.3333333333333333
+      },
+      "full": {
+        "n": 256,
+        "wins": 87,
+        "losses": 169,
+        "win_rate": 0.33984375,
+        "roi": 0.06425781250000001,
+        "units": 16.450000000000003,
+        "active_seasons": 13,
+        "positive_seasons": 10,
+        "positive_season_ratio": 0.7692307692307693
+      },
+      "holdout_survived": false,
+      "train": {
+        "n": 76,
+        "wins": 31,
+        "losses": 45,
+        "win_rate": 0.40789473684210525,
+        "roi": 0.25263157894736843,
+        "units": 19.2,
+        "active_seasons": 6,
+        "positive_seasons": 6,
+        "positive_season_ratio": 1.0
+      },
+      "validation": {
+        "n": 85,
+        "wins": 34,
+        "losses": 51,
+        "win_rate": 0.4,
+        "roi": 0.2644705882352941,
+        "units": 22.48,
+        "active_seasons": 4,
+        "positive_seasons": 3,
+        "positive_season_ratio": 0.75
+      },
+      "preholdout": {
+        "n": 161,
+        "wins": 65,
+        "losses": 96,
+        "win_rate": 0.40372670807453415,
+        "roi": 0.25888198757763975,
+        "units": 41.68,
+        "active_seasons": 10,
+        "positive_seasons": 9,
+        "positive_season_ratio": 0.9
+      }
+    },
+    {
+      "outcome": "HOME",
+      "price_band": "P50_60",
+      "feature": "edge_gk_save_pct5",
+      "op": "<=",
+      "threshold": -0.10148378191856453,
+      "pre_score": 2.0572122530132626,
+      "holdout": {
+        "n": 103,
+        "wins": 63,
+        "losses": 40,
+        "win_rate": 0.6116504854368932,
+        "roi": 0.08436893203883492,
+        "units": 8.689999999999996,
+        "active_seasons": 3,
+        "positive_seasons": 2,
+        "positive_season_ratio": 0.6666666666666666
+      },
+      "full": {
+        "n": 339,
+        "wins": 223,
+        "losses": 116,
+        "win_rate": 0.6578171091445427,
+        "roi": 0.16840707964601767,
+        "units": 57.08999999999999,
+        "active_seasons": 13,
+        "positive_seasons": 11,
+        "positive_season_ratio": 0.8461538461538461
+      },
+      "holdout_survived": true,
+      "train": {
+        "n": 131,
+        "wins": 88,
+        "losses": 43,
+        "win_rate": 0.6717557251908397,
+        "roi": 0.20076335877862594,
+        "units": 26.299999999999997,
+        "active_seasons": 6,
+        "positive_seasons": 5,
+        "positive_season_ratio": 0.8333333333333334
+      },
+      "validation": {
+        "n": 105,
+        "wins": 72,
+        "losses": 33,
+        "win_rate": 0.6857142857142857,
+        "roi": 0.21047619047619048,
+        "units": 22.1,
+        "active_seasons": 4,
+        "positive_seasons": 4,
+        "positive_season_ratio": 1.0
+      },
+      "preholdout": {
+        "n": 236,
+        "wins": 160,
+        "losses": 76,
+        "win_rate": 0.6779661016949152,
+        "roi": 0.20508474576271188,
+        "units": 48.400000000000006,
+        "active_seasons": 10,
+        "positive_seasons": 9,
+        "positive_season_ratio": 0.9
+      }
+    },
+    {
+      "outcome": "HOME",
+      "price_band": "P25_35",
+      "feature": "edge_roster_new_players3",
+      "op": "<=",
+      "threshold": 0.0,
+      "pre_score": 2.039346153829359,
+      "holdout": {
+        "n": 85,
+        "wins": 19,
+        "losses": 66,
+        "win_rate": 0.2235294117647059,
+        "roi": -0.30858823529411766,
+        "units": -26.23,
+        "active_seasons": 3,
+        "positive_seasons": 1,
+        "positive_season_ratio": 0.3333333333333333
+      },
+      "full": {
+        "n": 241,
+        "wins": 84,
+        "losses": 157,
+        "win_rate": 0.34854771784232363,
+        "roi": 0.0766804979253112,
+        "units": 18.48,
+        "active_seasons": 13,
+        "positive_seasons": 11,
+        "positive_season_ratio": 0.8461538461538461
+      },
+      "holdout_survived": false,
+      "train": {
+        "n": 77,
+        "wins": 34,
+        "losses": 43,
+        "win_rate": 0.44155844155844154,
+        "roi": 0.3422077922077922,
+        "units": 26.349999999999998,
+        "active_seasons": 6,
+        "positive_seasons": 6,
+        "positive_season_ratio": 1.0
+      },
+      "validation": {
+        "n": 79,
+        "wins": 31,
+        "losses": 48,
+        "win_rate": 0.3924050632911392,
+        "roi": 0.23240506329113925,
+        "units": 18.36,
+        "active_seasons": 4,
+        "positive_seasons": 4,
+        "positive_season_ratio": 1.0
+      },
+      "preholdout": {
+        "n": 156,
+        "wins": 65,
+        "losses": 91,
+        "win_rate": 0.4166666666666667,
+        "roi": 0.28660256410256413,
+        "units": 44.71,
+        "active_seasons": 10,
+        "positive_seasons": 10,
+        "positive_season_ratio": 1.0
+      }
+    },
+    {
+      "outcome": "HOME",
+      "price_band": "P25_35",
+      "feature": "edge_roster_new_minutes_share3",
+      "op": "<=",
+      "threshold": -0.01638758316447047,
+      "pre_score": 1.9708150598166232,
+      "holdout": {
+        "n": 30,
+        "wins": 6,
+        "losses": 24,
+        "win_rate": 0.2,
+        "roi": -0.383,
+        "units": -11.49,
+        "active_seasons": 2,
+        "positive_seasons": 0,
+        "positive_season_ratio": 0.0
+      },
+      "full": {
+        "n": 107,
+        "wins": 40,
+        "losses": 67,
+        "win_rate": 0.37383177570093457,
+        "roi": 0.1491588785046729,
+        "units": 15.96,
+        "active_seasons": 10,
+        "positive_seasons": 7,
+        "positive_season_ratio": 0.7
+      },
+      "holdout_survived": false,
+      "train": {
+        "n": 37,
+        "wins": 17,
+        "losses": 20,
+        "win_rate": 0.4594594594594595,
+        "roi": 0.3916216216216216,
+        "units": 14.49,
+        "active_seasons": 4,
+        "positive_seasons": 4,
+        "positive_season_ratio": 1.0
+      },
+      "validation": {
+        "n": 40,
+        "wins": 17,
+        "losses": 23,
+        "win_rate": 0.425,
+        "roi": 0.324,
+        "units": 12.96,
+        "active_seasons": 4,
+        "positive_seasons": 3,
+        "positive_season_ratio": 0.75
+      },
+      "preholdout": {
+        "n": 77,
+        "wins": 34,
+        "losses": 43,
+        "win_rate": 0.44155844155844154,
+        "roi": 0.3564935064935064,
+        "units": 27.449999999999996,
+        "active_seasons": 8,
+        "positive_seasons": 7,
+        "positive_season_ratio": 0.875
+      }
+    },
+    {
+      "outcome": "HOME",
+      "price_band": "P25_35",
+      "feature": "sel_gk_current_keeper_prior_team_games",
+      "op": "<=",
+      "threshold": 12.0,
+      "pre_score": 1.9479687500000002,
+      "holdout": {
+        "n": 27,
+        "wins": 9,
+        "losses": 18,
+        "win_rate": 0.3333333333333333,
+        "roi": 0.04370370370370371,
+        "units": 1.1800000000000002,
+        "active_seasons": 3,
+        "positive_seasons": 1,
+        "positive_season_ratio": 0.3333333333333333
+      },
+      "full": {
+        "n": 140,
+        "wins": 56,
+        "losses": 84,
+        "win_rate": 0.4,
+        "roi": 0.24821428571428572,
+        "units": 34.75,
+        "active_seasons": 10,
+        "positive_seasons": 7,
+        "positive_season_ratio": 0.7
+      },
+      "holdout_survived": true,
+      "train": {
+        "n": 49,
+        "wins": 21,
+        "losses": 28,
+        "win_rate": 0.42857142857142855,
+        "roi": 0.3216326530612245,
+        "units": 15.760000000000002,
+        "active_seasons": 3,
+        "positive_seasons": 3,
+        "positive_season_ratio": 1.0
+      },
+      "validation": {
+        "n": 64,
+        "wins": 26,
+        "losses": 38,
+        "win_rate": 0.40625,
+        "roi": 0.27828125000000004,
+        "units": 17.810000000000002,
+        "active_seasons": 4,
+        "positive_seasons": 3,
+        "positive_season_ratio": 0.75
+      },
+      "preholdout": {
+        "n": 113,
+        "wins": 47,
+        "losses": 66,
+        "win_rate": 0.415929203539823,
+        "roi": 0.2970796460176991,
+        "units": 33.57,
+        "active_seasons": 7,
+        "positive_seasons": 6,
+        "positive_season_ratio": 0.8571428571428571
+      }
+    },
+    {
+      "outcome": "HOME",
+      "price_band": "P25_35",
+      "feature": "referee_prior_home_win_rate",
+      "op": "<=",
+      "threshold": 0.5238095238095238,
+      "pre_score": 1.9418551135579813,
+      "holdout": {
+        "n": 119,
+        "wins": 29,
+        "losses": 90,
+        "win_rate": 0.24369747899159663,
+        "roi": -0.2505042016806723,
+        "units": -29.81,
+        "active_seasons": 3,
+        "positive_seasons": 1,
+        "positive_season_ratio": 0.3333333333333333
+      },
+      "full": {
+        "n": 281,
+        "wins": 93,
+        "losses": 188,
+        "win_rate": 0.3309608540925267,
+        "roi": 0.032313167259786474,
+        "units": 9.079999999999998,
+        "active_seasons": 13,
+        "positive_seasons": 9,
+        "positive_season_ratio": 0.6923076923076923
+      },
+      "holdout_survived": false,
+      "train": {
+        "n": 84,
+        "wins": 34,
+        "losses": 50,
+        "win_rate": 0.40476190476190477,
+        "roi": 0.25880952380952377,
+        "units": 21.74,
+        "active_seasons": 6,
+        "positive_seasons": 5,
+        "positive_season_ratio": 0.8333333333333334
+      },
+      "validation": {
+        "n": 78,
+        "wins": 30,
+        "losses": 48,
+        "win_rate": 0.38461538461538464,
+        "roi": 0.2198717948717948,
+        "units": 17.149999999999995,
+        "active_seasons": 4,
+        "positive_seasons": 3,
+        "positive_season_ratio": 0.75
+      },
+      "preholdout": {
+        "n": 162,
+        "wins": 64,
+        "losses": 98,
+        "win_rate": 0.3950617283950617,
+        "roi": 0.24006172839506174,
+        "units": 38.89,
+        "active_seasons": 10,
+        "positive_seasons": 8,
+        "positive_season_ratio": 0.8
+      }
+    },
+    {
+      "outcome": "HOME",
+      "price_band": "P20_30",
+      "feature": "sel_gk_xg_faced_p96_5",
+      "op": "<=",
+      "threshold": 1.845707242293418,
+      "pre_score": 1.8256511914183586,
+      "holdout": {
+        "n": 35,
+        "wins": 8,
+        "losses": 27,
+        "win_rate": 0.22857142857142856,
+        "roi": -0.21485714285714286,
+        "units": -7.52,
+        "active_seasons": 3,
+        "positive_seasons": 2,
+        "positive_season_ratio": 0.6666666666666666
+      },
+      "full": {
+        "n": 146,
+        "wins": 46,
+        "losses": 100,
+        "win_rate": 0.3150684931506849,
+        "roi": 0.18102739726027398,
+        "units": 26.43,
+        "active_seasons": 12,
+        "positive_seasons": 9,
+        "positive_season_ratio": 0.75
+      },
+      "holdout_survived": false,
+      "train": {
+        "n": 44,
+        "wins": 15,
+        "losses": 29,
+        "win_rate": 0.3409090909090909,
+        "roi": 0.2752272727272727,
+        "units": 12.11,
+        "active_seasons": 5,
+        "positive_seasons": 3,
+        "positive_season_ratio": 0.6
+      },
+      "validation": {
+        "n": 67,
+        "wins": 23,
+        "losses": 44,
+        "win_rate": 0.34328358208955223,
+        "roi": 0.3259701492537313,
+        "units": 21.839999999999996,
+        "active_seasons": 4,
+        "positive_seasons": 4,
+        "positive_season_ratio": 1.0
+      },
+      "preholdout": {
+        "n": 111,
+        "wins": 38,
+        "losses": 73,
+        "win_rate": 0.34234234234234234,
+        "roi": 0.3058558558558559,
+        "units": 33.95,
+        "active_seasons": 9,
+        "positive_seasons": 7,
+        "positive_season_ratio": 0.7777777777777778
+      }
+    },
+    {
+      "outcome": "HOME",
+      "price_band": "P25_35",
+      "feature": "edge_gk_xg_faced_p96_5",
+      "op": "<=",
+      "threshold": 0.45093205040091655,
+      "pre_score": 1.68552440941157,
+      "holdout": {
+        "n": 72,
+        "wins": 16,
+        "losses": 56,
+        "win_rate": 0.2222222222222222,
+        "roi": -0.32,
+        "units": -23.04,
+        "active_seasons": 3,
+        "positive_seasons": 0,
+        "positive_season_ratio": 0.0
+      },
+      "full": {
+        "n": 245,
+        "wins": 85,
+        "losses": 160,
+        "win_rate": 0.3469387755102041,
+        "roi": 0.060857142857142874,
+        "units": 14.910000000000004,
+        "active_seasons": 13,
+        "positive_seasons": 8,
+        "positive_season_ratio": 0.6153846153846154
+      },
+      "holdout_survived": false,
+      "train": {
+        "n": 77,
+        "wins": 32,
+        "losses": 45,
+        "win_rate": 0.4155844155844156,
+        "roi": 0.2533766233766234,
+        "units": 19.51,
+        "active_seasons": 6,
+        "positive_seasons": 5,
+        "positive_season_ratio": 0.8333333333333334
+      },
+      "validation": {
+        "n": 96,
+        "wins": 37,
+        "losses": 59,
+        "win_rate": 0.3854166666666667,
+        "roi": 0.1920833333333333,
+        "units": 18.439999999999998,
+        "active_seasons": 4,
+        "positive_seasons": 3,
+        "positive_season_ratio": 0.75
+      },
+      "preholdout": {
+        "n": 173,
+        "wins": 69,
+        "losses": 104,
+        "win_rate": 0.3988439306358382,
+        "roi": 0.219364161849711,
+        "units": 37.95,
+        "active_seasons": 10,
+        "positive_seasons": 8,
+        "positive_season_ratio": 0.8
+      }
+    },
+    {
+      "outcome": "DRAW",
+      "price_band": "P25_35",
+      "feature": "balance_gk_goals_conceded_p96_5",
+      "op": "<=",
+      "threshold": 0.2094130089899524,
+      "pre_score": 1.6563294719311212,
+      "holdout": {
+        "n": 197,
+        "wins": 59,
+        "losses": 138,
+        "win_rate": 0.29949238578680204,
+        "roi": 0.0803045685279188,
+        "units": 15.820000000000002,
+        "active_seasons": 3,
+        "positive_seasons": 2,
+        "positive_season_ratio": 0.6666666666666666
+      },
+      "full": {
+        "n": 750,
+        "wins": 231,
+        "losses": 519,
+        "win_rate": 0.308,
+        "roi": 0.10893333333333331,
+        "units": 81.69999999999999,
+        "active_seasons": 13,
+        "positive_seasons": 9,
+        "positive_season_ratio": 0.6923076923076923
+      },
+      "holdout_survived": true,
+      "train": {
+        "n": 359,
+        "wins": 112,
+        "losses": 247,
+        "win_rate": 0.31197771587743733,
+        "roi": 0.11924791086350976,
+        "units": 42.81,
+        "active_seasons": 6,
+        "positive_seasons": 3,
+        "positive_season_ratio": 0.5
+      },
+      "validation": {
+        "n": 194,
+        "wins": 60,
+        "losses": 134,
+        "win_rate": 0.30927835051546393,
+        "roi": 0.11891752577319584,
+        "units": 23.069999999999993,
+        "active_seasons": 4,
+        "positive_seasons": 4,
+        "positive_season_ratio": 1.0
+      },
+      "preholdout": {
+        "n": 553,
+        "wins": 172,
+        "losses": 381,
+        "win_rate": 0.31103074141048825,
+        "roi": 0.11913200723327305,
+        "units": 65.88,
+        "active_seasons": 10,
+        "positive_seasons": 7,
+        "positive_season_ratio": 0.7
+      }
+    },
+    {
+      "outcome": "HOME",
+      "price_band": "P35_45",
+      "feature": "referee_prior_draw_rate",
+      "op": ">=",
+      "threshold": 0.2826086956521739,
+      "pre_score": 1.6549053018168207,
+      "holdout": {
+        "n": 83,
+        "wins": 35,
+        "losses": 48,
+        "win_rate": 0.42168674698795183,
+        "roi": 0.002530120481927721,
+        "units": 0.21000000000000085,
+        "active_seasons": 3,
+        "positive_seasons": 1,
+        "positive_season_ratio": 0.3333333333333333
+      },
+      "full": {
+        "n": 344,
+        "wins": 164,
+        "losses": 180,
+        "win_rate": 0.47674418604651164,
+        "roi": 0.15011627906976743,
+        "units": 51.64,
+        "active_seasons": 13,
+        "positive_seasons": 9,
+        "positive_season_ratio": 0.6923076923076923
+      },
+      "holdout_survived": true,
+      "train": {
+        "n": 177,
+        "wins": 86,
+        "losses": 91,
+        "win_rate": 0.4858757062146893,
+        "roi": 0.18056497175141242,
+        "units": 31.959999999999997,
+        "active_seasons": 6,
+        "positive_seasons": 4,
+        "positive_season_ratio": 0.6666666666666666
+      },
+      "validation": {
+        "n": 84,
+        "wins": 43,
+        "losses": 41,
+        "win_rate": 0.5119047619047619,
+        "roi": 0.23178571428571426,
+        "units": 19.47,
+        "active_seasons": 4,
+        "positive_seasons": 4,
+        "positive_season_ratio": 1.0
+      },
+      "preholdout": {
+        "n": 261,
+        "wins": 129,
+        "losses": 132,
+        "win_rate": 0.4942528735632184,
+        "roi": 0.19704980842911876,
+        "units": 51.43,
+        "active_seasons": 10,
+        "positive_seasons": 8,
+        "positive_season_ratio": 0.8
+      }
+    },
+    {
+      "outcome": "HOME",
+      "price_band": "P20_30",
+      "feature": "edge_gk_goals_conceded_p96_5",
+      "op": "<=",
+      "threshold": 0.7963764745366829,
+      "pre_score": 1.646071450305908,
+      "holdout": {
+        "n": 29,
+        "wins": 4,
+        "losses": 25,
+        "win_rate": 0.13793103448275862,
+        "roi": -0.5227586206896552,
+        "units": -15.16,
+        "active_seasons": 2,
+        "positive_seasons": 0,
+        "positive_season_ratio": 0.0
+      },
+      "full": {
+        "n": 133,
+        "wins": 39,
+        "losses": 94,
+        "win_rate": 0.2932330827067669,
+        "roi": 0.09969924812030075,
+        "units": 13.26,
+        "active_seasons": 11,
+        "positive_seasons": 9,
+        "positive_season_ratio": 0.8181818181818182
+      },
+      "holdout_survived": false,
+      "train": {
+        "n": 41,
+        "wins": 14,
+        "losses": 27,
+        "win_rate": 0.34146341463414637,
+        "roi": 0.2570731707317073,
+        "units": 10.54,
+        "active_seasons": 5,
+        "positive_seasons": 5,
+        "positive_season_ratio": 1.0
+      },
+      "validation": {
+        "n": 63,
+        "wins": 21,
+        "losses": 42,
+        "win_rate": 0.3333333333333333,
+        "roi": 0.28380952380952384,
+        "units": 17.880000000000003,
+        "active_seasons": 4,
+        "positive_seasons": 4,
+        "positive_season_ratio": 1.0
+      },
+      "preholdout": {
+        "n": 104,
+        "wins": 35,
+        "losses": 69,
+        "win_rate": 0.33653846153846156,
+        "roi": 0.27326923076923076,
+        "units": 28.42,
+        "active_seasons": 9,
+        "positive_seasons": 9,
+        "positive_season_ratio": 1.0
+      }
+    },
+    {
+      "outcome": "HOME",
+      "price_band": "ALL",
+      "feature": "edge_gk_goals_minus_xg_p96_5",
+      "op": ">=",
+      "threshold": 0.3103867768595041,
+      "pre_score": 1.6331240778226566,
+      "holdout": {
+        "n": 368,
+        "wins": 181,
+        "losses": 187,
+        "win_rate": 0.49184782608695654,
+        "roi": -0.011603260869565231,
+        "units": -4.270000000000005,
+        "active_seasons": 3,
+        "positive_seasons": 2,
+        "positive_season_ratio": 0.6666666666666666
+      },
+      "full": {
+        "n": 1211,
+        "wins": 626,
+        "losses": 585,
+        "win_rate": 0.5169281585466556,
+        "roi": 0.0630635838150289,
+        "units": 76.36999999999999,
+        "active_seasons": 13,
+        "positive_seasons": 10,
+        "positive_season_ratio": 0.7692307692307693
+      },
+      "holdout_survived": false,
+      "train": {
+        "n": 503,
+        "wins": 270,
+        "losses": 233,
+        "win_rate": 0.536779324055666,
+        "roi": 0.08856858846918489,
+        "units": 44.55,
+        "active_seasons": 6,
+        "positive_seasons": 5,
+        "positive_season_ratio": 0.8333333333333334
+      },
+      "validation": {
+        "n": 340,
+        "wins": 175,
+        "losses": 165,
+        "win_rate": 0.5147058823529411,
+        "roi": 0.10614705882352943,
+        "units": 36.09,
+        "active_seasons": 4,
+        "positive_seasons": 3,
+        "positive_season_ratio": 0.75
+      },
+      "preholdout": {
+        "n": 843,
+        "wins": 445,
+        "losses": 398,
+        "win_rate": 0.527876631079478,
+        "roi": 0.09565836298932383,
+        "units": 80.63999999999999,
+        "active_seasons": 10,
+        "positive_seasons": 8,
+        "positive_season_ratio": 0.8
+      }
+    },
+    {
+      "outcome": "HOME",
+      "price_band": "ALL",
+      "feature": "sel_gk_goals_minus_xg_p96_5",
+      "op": ">=",
+      "threshold": 0.0029398478958931737,
+      "pre_score": 1.6194685847863262,
+      "holdout": {
+        "n": 751,
+        "wins": 349,
+        "losses": 402,
+        "win_rate": 0.4647137150466045,
+        "roi": -0.07881491344873502,
+        "units": -59.190000000000005,
+        "active_seasons": 3,
+        "positive_seasons": 1,
+        "positive_season_ratio": 0.3333333333333333
+      },
+      "full": {
+        "n": 2622,
+        "wins": 1329,
+        "losses": 1293,
+        "win_rate": 0.5068649885583524,
+        "roi": 0.0245995423340961,
+        "units": 64.49999999999997,
+        "active_seasons": 13,
+        "positive_seasons": 11,
+        "positive_season_ratio": 0.8461538461538461
+      },
+      "holdout_survived": false,
+      "train": {
+        "n": 1006,
+        "wins": 540,
+        "losses": 466,
+        "win_rate": 0.536779324055666,
+        "roi": 0.07560636182902584,
+        "units": 76.06,
+        "active_seasons": 6,
+        "positive_seasons": 6,
+        "positive_season_ratio": 1.0
+      },
+      "validation": {
+        "n": 865,
+        "wins": 440,
+        "losses": 425,
+        "win_rate": 0.5086705202312138,
+        "roi": 0.0550635838150289,
+        "units": 47.629999999999995,
+        "active_seasons": 4,
+        "positive_seasons": 4,
+        "positive_season_ratio": 1.0
+      },
+      "preholdout": {
+        "n": 1871,
+        "wins": 980,
+        "losses": 891,
+        "win_rate": 0.5237840726884019,
+        "roi": 0.06610903260288616,
+        "units": 123.69,
+        "active_seasons": 10,
+        "positive_seasons": 10,
+        "positive_season_ratio": 1.0
+      }
+    },
+    {
+      "outcome": "HOME",
+      "price_band": "P20_30",
+      "feature": "referee_prior_home_win_rate",
+      "op": "<=",
+      "threshold": 0.5487804878048781,
+      "pre_score": 1.616398435547073,
+      "holdout": {
+        "n": 46,
+        "wins": 11,
+        "losses": 35,
+        "win_rate": 0.2391304347826087,
+        "roi": -0.18195652173913046,
+        "units": -8.370000000000001,
+        "active_seasons": 3,
+        "positive_seasons": 1,
+        "positive_season_ratio": 0.3333333333333333
+      },
+      "full": {
+        "n": 150,
+        "wins": 47,
+        "losses": 103,
+        "win_rate": 0.31333333333333335,
+        "roi": 0.13373333333333334,
+        "units": 20.060000000000002,
+        "active_seasons": 12,
+        "positive_seasons": 8,
+        "positive_season_ratio": 0.6666666666666666
+      },
+      "holdout_survived": false,
+      "train": {
+        "n": 41,
+        "wins": 14,
+        "losses": 27,
+        "win_rate": 0.34146341463414637,
+        "roi": 0.25243902439024396,
+        "units": 10.350000000000001,
+        "active_seasons": 5,
+        "positive_seasons": 4,
+        "positive_season_ratio": 0.8
+      },
+      "validation": {
+        "n": 63,
+        "wins": 22,
+        "losses": 41,
+        "win_rate": 0.3492063492063492,
+        "roi": 0.28698412698412695,
+        "units": 18.08,
+        "active_seasons": 4,
+        "positive_seasons": 3,
+        "positive_season_ratio": 0.75
+      },
+      "preholdout": {
+        "n": 104,
+        "wins": 36,
+        "losses": 68,
+        "win_rate": 0.34615384615384615,
+        "roi": 0.2733653846153846,
+        "units": 28.43,
+        "active_seasons": 9,
+        "positive_seasons": 7,
+        "positive_season_ratio": 0.7777777777777778
+      }
+    },
+    {
+      "outcome": "HOME",
+      "price_band": "P30_40",
+      "feature": "opp_gk_xg_faced_p96_5",
+      "op": ">=",
+      "threshold": 1.31604,
+      "pre_score": 1.6070867627474668,
+      "holdout": {
+        "n": 102,
+        "wins": 31,
+        "losses": 71,
+        "win_rate": 0.30392156862745096,
+        "roi": -0.17882352941176471,
+        "units": -18.240000000000002,
+        "active_seasons": 3,
+        "positive_seasons": 1,
+        "positive_season_ratio": 0.3333333333333333
+      },
+      "full": {
+        "n": 304,
+        "wins": 118,
+        "losses": 186,
+        "win_rate": 0.3881578947368421,
+        "roi": 0.05470394736842104,
+        "units": 16.629999999999995,
+        "active_seasons": 13,
+        "positive_seasons": 10,
+        "positive_season_ratio": 0.7692307692307693
+      },
+      "holdout_survived": false,
+      "train": {
+        "n": 111,
+        "wins": 48,
+        "losses": 63,
+        "win_rate": 0.43243243243243246,
+        "roi": 0.16846846846846844,
+        "units": 18.699999999999996,
+        "active_seasons": 6,
+        "positive_seasons": 5,
+        "positive_season_ratio": 0.8333333333333334
+      },
+      "validation": {
+        "n": 91,
+        "wins": 39,
+        "losses": 52,
+        "win_rate": 0.42857142857142855,
+        "roi": 0.1776923076923077,
+        "units": 16.17,
+        "active_seasons": 4,
+        "positive_seasons": 4,
+        "positive_season_ratio": 1.0
+      },
+      "preholdout": {
+        "n": 202,
+        "wins": 87,
+        "losses": 115,
+        "win_rate": 0.4306930693069307,
+        "roi": 0.1726237623762376,
+        "units": 34.87,
+        "active_seasons": 10,
+        "positive_seasons": 9,
+        "positive_season_ratio": 0.9
+      }
+    },
+    {
+      "outcome": "HOME",
+      "price_band": "P20_30",
+      "feature": "sel_gk_goals_minus_xg_p96_5",
+      "op": "<=",
+      "threshold": 0.22895931875830416,
+      "pre_score": 1.582934559033259,
+      "holdout": {
+        "n": 26,
+        "wins": 5,
+        "losses": 21,
+        "win_rate": 0.19230769230769232,
+        "roi": -0.3238461538461538,
+        "units": -8.419999999999998,
+        "active_seasons": 3,
+        "positive_seasons": 2,
+        "positive_season_ratio": 0.6666666666666666
+      },
+      "full": {
+        "n": 127,
+        "wins": 39,
+        "losses": 88,
+        "win_rate": 0.30708661417322836,
+        "roi": 0.14653543307086614,
+        "units": 18.61,
+        "active_seasons": 12,
+        "positive_seasons": 7,
+        "positive_season_ratio": 0.5833333333333334
+      },
+      "holdout_survived": false,
+      "train": {
+        "n": 44,
+        "wins": 15,
+        "losses": 29,
+        "win_rate": 0.3409090909090909,
+        "roi": 0.23863636363636365,
+        "units": 10.5,
+        "active_seasons": 5,
+        "positive_seasons": 3,
+        "positive_season_ratio": 0.6
+      },
+      "validation": {
+        "n": 57,
+        "wins": 19,
+        "losses": 38,
+        "win_rate": 0.3333333333333333,
+        "roi": 0.29000000000000004,
+        "units": 16.53,
+        "active_seasons": 4,
+        "positive_seasons": 2,
+        "positive_season_ratio": 0.5
+      },
+      "preholdout": {
+        "n": 101,
+        "wins": 34,
+        "losses": 67,
+        "win_rate": 0.33663366336633666,
+        "roi": 0.26762376237623764,
+        "units": 27.03,
+        "active_seasons": 9,
+        "positive_seasons": 5,
+        "positive_season_ratio": 0.5555555555555556
+      }
+    },
+    {
+      "outcome": "HOME",
+      "price_band": "P30_40",
+      "feature": "opp_gk_goals_minus_xg_p96_5",
+      "op": "<=",
+      "threshold": 0.0049573770491803115,
+      "pre_score": 1.5758048384520495,
+      "holdout": {
+        "n": 142,
+        "wins": 44,
+        "losses": 98,
+        "win_rate": 0.30985915492957744,
+        "roi": -0.1504225352112676,
+        "units": -21.36,
+        "active_seasons": 3,
+        "positive_seasons": 1,
+        "positive_season_ratio": 0.3333333333333333
+      },
+      "full": {
+        "n": 429,
+        "wins": 164,
+        "losses": 265,
+        "win_rate": 0.3822843822843823,
+        "roi": 0.04734265734265733,
+        "units": 20.309999999999995,
+        "active_seasons": 13,
+        "positive_seasons": 9,
+        "positive_season_ratio": 0.6923076923076923
+      },
+      "holdout_survived": false,
+      "train": {
+        "n": 165,
+        "wins": 69,
+        "losses": 96,
+        "win_rate": 0.41818181818181815,
+        "roi": 0.1426666666666667,
+        "units": 23.540000000000003,
+        "active_seasons": 6,
+        "positive_seasons": 5,
+        "positive_season_ratio": 0.8333333333333334
+      },
+      "validation": {
+        "n": 122,
+        "wins": 51,
+        "losses": 71,
+        "win_rate": 0.4180327868852459,
+        "roi": 0.14860655737704917,
+        "units": 18.13,
+        "active_seasons": 4,
+        "positive_seasons": 3,
+        "positive_season_ratio": 0.75
+      },
+      "preholdout": {
+        "n": 287,
+        "wins": 120,
+        "losses": 167,
+        "win_rate": 0.4181184668989547,
+        "roi": 0.14519163763066203,
+        "units": 41.67,
+        "active_seasons": 10,
+        "positive_seasons": 8,
+        "positive_season_ratio": 0.8
+      }
+    },
+    {
+      "outcome": "HOME",
+      "price_band": "P20_30",
+      "feature": "edge_gk_goals_minus_xg_p96_5",
+      "op": "<=",
+      "threshold": 0.47742150219182766,
+      "pre_score": 1.5733125881400682,
+      "holdout": {
+        "n": 37,
+        "wins": 8,
+        "losses": 29,
+        "win_rate": 0.21621621621621623,
+        "roi": -0.2605405405405405,
+        "units": -9.639999999999999,
+        "active_seasons": 3,
+        "positive_seasons": 2,
+        "positive_season_ratio": 0.6666666666666666
+      },
+      "full": {
+        "n": 159,
+        "wins": 48,
+        "losses": 111,
+        "win_rate": 0.3018867924528302,
+        "roi": 0.1189937106918239,
+        "units": 18.92,
+        "active_seasons": 12,
+        "positive_seasons": 9,
+        "positive_season_ratio": 0.75
+      },
+      "holdout_survived": false,
+      "train": {
+        "n": 50,
+        "wins": 17,
+        "losses": 33,
+        "win_rate": 0.34,
+        "roi": 0.25079999999999997,
+        "units": 12.54,
+        "active_seasons": 5,
+        "positive_seasons": 4,
+        "positive_season_ratio": 0.8
+      },
+      "validation": {
+        "n": 72,
+        "wins": 23,
+        "losses": 49,
+        "win_rate": 0.3194444444444444,
+        "roi": 0.2225,
+        "units": 16.02,
+        "active_seasons": 4,
+        "positive_seasons": 3,
+        "positive_season_ratio": 0.75
+      },
+      "preholdout": {
+        "n": 122,
+        "wins": 40,
+        "losses": 82,
+        "win_rate": 0.32786885245901637,
+        "roi": 0.23409836065573772,
+        "units": 28.560000000000002,
+        "active_seasons": 9,
+        "positive_seasons": 7,
+        "positive_season_ratio": 0.7777777777777778
+      }
+    },
+    {
+      "outcome": "HOME",
+      "price_band": "P20_30",
+      "feature": "sel_gk_save_pct5",
+      "op": ">=",
+      "threshold": 0.5555555555555556,
+      "pre_score": 1.5681888800895012,
+      "holdout": {
+        "n": 35,
+        "wins": 8,
+        "losses": 27,
+        "win_rate": 0.22857142857142856,
+        "roi": -0.21171428571428572,
+        "units": -7.41,
+        "active_seasons": 3,
+        "positive_seasons": 1,
+        "positive_season_ratio": 0.3333333333333333
+      },
+      "full": {
+        "n": 167,
+        "wins": 51,
+        "losses": 116,
+        "win_rate": 0.30538922155688625,
+        "roi": 0.14131736526946106,
+        "units": 23.599999999999998,
+        "active_seasons": 12,
+        "positive_seasons": 6,
+        "positive_season_ratio": 0.5
+      },
+      "holdout_survived": false,
+      "train": {
+        "n": 55,
+        "wins": 18,
+        "losses": 37,
+        "win_rate": 0.32727272727272727,
+        "roi": 0.21145454545454548,
+        "units": 11.63,
+        "active_seasons": 5,
+        "positive_seasons": 3,
+        "positive_season_ratio": 0.6
+      },
+      "validation": {
+        "n": 77,
+        "wins": 25,
+        "losses": 52,
+        "win_rate": 0.3246753246753247,
+        "roi": 0.2516883116883117,
+        "units": 19.38,
+        "active_seasons": 4,
+        "positive_seasons": 2,
+        "positive_season_ratio": 0.5
+      },
+      "preholdout": {
+        "n": 132,
+        "wins": 43,
+        "losses": 89,
+        "win_rate": 0.32575757575757575,
+        "roi": 0.2349242424242424,
+        "units": 31.009999999999998,
+        "active_seasons": 9,
+        "positive_seasons": 5,
+        "positive_season_ratio": 0.5555555555555556
+      }
+    },
+    {
+      "outcome": "DRAW",
+      "price_band": "ALL",
+      "feature": "balance_gk_current_keeper_prior_team_games",
+      "op": "<=",
+      "threshold": 8.0,
+      "pre_score": 1.5677050396056695,
+      "holdout": {
+        "n": 193,
+        "wins": 46,
+        "losses": 147,
+        "win_rate": 0.23834196891191708,
+        "roi": -0.08290155440414508,
+        "units": -16.0,
+        "active_seasons": 3,
+        "positive_seasons": 1,
+        "positive_season_ratio": 0.3333333333333333
+      },
+      "full": {
+        "n": 966,
+        "wins": 274,
+        "losses": 692,
+        "win_rate": 0.2836438923395445,
+        "roi": 0.09301242236024845,
+        "units": 89.85000000000001,
+        "active_seasons": 13,
+        "positive_seasons": 7,
+        "positive_season_ratio": 0.5384615384615384
+      },
+      "holdout_survived": false,
+      "train": {
+        "n": 514,
+        "wins": 150,
+        "losses": 364,
+        "win_rate": 0.2918287937743191,
+        "roi": 0.09741245136186769,
+        "units": 50.06999999999999,
+        "active_seasons": 6,
+        "positive_seasons": 3,
+        "positive_season_ratio": 0.5
+      },
+      "validation": {
+        "n": 259,
+        "wins": 78,
+        "losses": 181,
+        "win_rate": 0.30115830115830117,
+        "roi": 0.21536679536679537,
+        "units": 55.78,
+        "active_seasons": 4,
+        "positive_seasons": 3,
+        "positive_season_ratio": 0.75
+      },
+      "preholdout": {
+        "n": 773,
+        "wins": 228,
+        "losses": 545,
+        "win_rate": 0.2949547218628719,
+        "roi": 0.1369340232858991,
+        "units": 105.85,
+        "active_seasons": 10,
+        "positive_seasons": 6,
+        "positive_season_ratio": 0.6
+      }
+    },
+    {
+      "outcome": "HOME",
+      "price_band": "P25_35",
+      "feature": "sel_gk_save_pct5",
+      "op": "<=",
+      "threshold": 0.7368421052631579,
+      "pre_score": 1.5671018250519977,
+      "holdout": {
+        "n": 126,
+        "wins": 37,
+        "losses": 89,
+        "win_rate": 0.29365079365079366,
+        "roi": -0.09015873015873016,
+        "units": -11.36,
+        "active_seasons": 3,
+        "positive_seasons": 1,
+        "positive_season_ratio": 0.3333333333333333
+      },
+      "full": {
+        "n": 376,
+        "wins": 130,
+        "losses": 246,
+        "win_rate": 0.34574468085106386,
+        "roi": 0.07553191489361703,
+        "units": 28.400000000000002,
+        "active_seasons": 13,
+        "positive_seasons": 8,
+        "positive_season_ratio": 0.6153846153846154
+      },
+      "holdout_survived": false,
+      "train": {
+        "n": 123,
+        "wins": 46,
+        "losses": 77,
+        "win_rate": 0.37398373983739835,
+        "roi": 0.1413008130081301,
+        "units": 17.380000000000003,
+        "active_seasons": 6,
+        "positive_seasons": 5,
+        "positive_season_ratio": 0.8333333333333334
+      },
+      "validation": {
+        "n": 127,
+        "wins": 47,
+        "losses": 80,
+        "win_rate": 0.3700787401574803,
+        "roi": 0.1762204724409449,
+        "units": 22.380000000000003,
+        "active_seasons": 4,
+        "positive_seasons": 2,
+        "positive_season_ratio": 0.5
+      },
+      "preholdout": {
+        "n": 250,
+        "wins": 93,
+        "losses": 157,
+        "win_rate": 0.372,
+        "roi": 0.15904000000000001,
+        "units": 39.760000000000005,
+        "active_seasons": 10,
+        "positive_seasons": 7,
+        "positive_season_ratio": 0.7
+      }
+    },
+    {
+      "outcome": "HOME",
+      "price_band": "P25_35",
+      "feature": "sel_roster_departed_players3",
+      "op": ">=",
+      "threshold": 7.0,
+      "pre_score": 1.5160474926597782,
+      "holdout": {
+        "n": 32,
+        "wins": 11,
+        "losses": 21,
+        "win_rate": 0.34375,
+        "roi": 0.08906249999999999,
+        "units": 2.8499999999999996,
+        "active_seasons": 3,
+        "positive_seasons": 2,
+        "positive_season_ratio": 0.6666666666666666
+      },
+      "full": {
+        "n": 108,
+        "wins": 41,
+        "losses": 67,
+        "win_rate": 0.37962962962962965,
+        "roi": 0.2099074074074074,
+        "units": 22.669999999999998,
+        "active_seasons": 11,
+        "positive_seasons": 8,
+        "positive_season_ratio": 0.7272727272727273
+      },
+      "holdout_survived": true,
+      "train": {
+        "n": 34,
+        "wins": 14,
+        "losses": 20,
+        "win_rate": 0.4117647058823529,
+        "roi": 0.26,
+        "units": 8.84,
+        "active_seasons": 4,
+        "positive_seasons": 4,
+        "positive_season_ratio": 1.0
+      },
+      "validation": {
+        "n": 42,
+        "wins": 16,
+        "losses": 26,
+        "win_rate": 0.38095238095238093,
+        "roi": 0.26142857142857145,
+        "units": 10.98,
+        "active_seasons": 4,
+        "positive_seasons": 2,
+        "positive_season_ratio": 0.5
+      },
+      "preholdout": {
+        "n": 76,
+        "wins": 30,
+        "losses": 46,
+        "win_rate": 0.39473684210526316,
+        "roi": 0.26078947368421057,
+        "units": 19.820000000000004,
+        "active_seasons": 8,
+        "positive_seasons": 6,
+        "positive_season_ratio": 0.75
+      }
+    },
+    {
+      "outcome": "HOME",
+      "price_band": "P25_35",
+      "feature": "opp_gk_save_pct5",
+      "op": ">=",
+      "threshold": 0.631578947368421,
+      "pre_score": 1.494612300222984,
+      "holdout": {
+        "n": 105,
+        "wins": 33,
+        "losses": 72,
+        "win_rate": 0.3142857142857143,
+        "roi": -0.02580952380952379,
+        "units": -2.7099999999999977,
+        "active_seasons": 3,
+        "positive_seasons": 1,
+        "positive_season_ratio": 0.3333333333333333
+      },
+      "full": {
+        "n": 328,
+        "wins": 117,
+        "losses": 211,
+        "win_rate": 0.3567073170731707,
+        "roi": 0.11164634146341465,
+        "units": 36.620000000000005,
+        "active_seasons": 13,
+        "positive_seasons": 10,
+        "positive_season_ratio": 0.7692307692307693
+      },
+      "holdout_survived": false,
+      "train": {
+        "n": 109,
+        "wins": 43,
+        "losses": 66,
+        "win_rate": 0.3944954128440367,
+        "roi": 0.21110091743119266,
+        "units": 23.01,
+        "active_seasons": 6,
+        "positive_seasons": 6,
+        "positive_season_ratio": 1.0
+      },
+      "validation": {
+        "n": 114,
+        "wins": 41,
+        "losses": 73,
+        "win_rate": 0.35964912280701755,
+        "roi": 0.1431578947368421,
+        "units": 16.32,
+        "active_seasons": 4,
+        "positive_seasons": 3,
+        "positive_season_ratio": 0.75
+      },
+      "preholdout": {
+        "n": 223,
+        "wins": 84,
+        "losses": 139,
+        "win_rate": 0.37668161434977576,
+        "roi": 0.1763677130044843,
+        "units": 39.33,
+        "active_seasons": 10,
+        "positive_seasons": 9,
+        "positive_season_ratio": 0.9
+      }
+    },
+    {
+      "outcome": "HOME",
+      "price_band": "P30_40",
+      "feature": "edge_gk_goals_minus_xg_p96_5",
+      "op": ">=",
+      "threshold": 0.3103867768595041,
+      "pre_score": 1.487773644221902,
+      "holdout": {
+        "n": 71,
+        "wins": 24,
+        "losses": 47,
+        "win_rate": 0.3380281690140845,
+        "roi": -0.06830985915492957,
+        "units": -4.85,
+        "active_seasons": 3,
+        "positive_seasons": 1,
+        "positive_season_ratio": 0.3333333333333333
+      },
+      "full": {
+        "n": 220,
+        "wins": 90,
+        "losses": 130,
+        "win_rate": 0.4090909090909091,
+        "roi": 0.12713636363636363,
+        "units": 27.97,
+        "active_seasons": 13,
+        "positive_seasons": 8,
+        "positive_season_ratio": 0.6153846153846154
+      },
+      "holdout_survived": false,
+      "train": {
+        "n": 86,
+        "wins": 37,
+        "losses": 49,
+        "win_rate": 0.43023255813953487,
+        "roi": 0.18744186046511624,
+        "units": 16.119999999999997,
+        "active_seasons": 6,
+        "positive_seasons": 5,
+        "positive_season_ratio": 0.8333333333333334
+      },
+      "validation": {
+        "n": 63,
+        "wins": 29,
+        "losses": 34,
+        "win_rate": 0.4603174603174603,
+        "roi": 0.2650793650793651,
+        "units": 16.7,
+        "active_seasons": 4,
+        "positive_seasons": 2,
+        "positive_season_ratio": 0.5
+      },
+      "preholdout": {
+        "n": 149,
+        "wins": 66,
+        "losses": 83,
+        "win_rate": 0.4429530201342282,
+        "roi": 0.2202684563758389,
+        "units": 32.81999999999999,
+        "active_seasons": 10,
+        "positive_seasons": 7,
+        "positive_season_ratio": 0.7
+      }
+    },
+    {
+      "outcome": "HOME",
+      "price_band": "P25_35",
+      "feature": "edge_gk_current_keeper_prior_team_games",
+      "op": "<=",
+      "threshold": -26.0,
+      "pre_score": 1.4800610513931463,
+      "holdout": {
+        "n": 65,
+        "wins": 12,
+        "losses": 53,
+        "win_rate": 0.18461538461538463,
+        "roi": -0.4066153846153846,
+        "units": -26.43,
+        "active_seasons": 3,
+        "positive_seasons": 1,
+        "positive_season_ratio": 0.3333333333333333
+      },
+      "full": {
+        "n": 181,
+        "wins": 58,
+        "losses": 123,
+        "win_rate": 0.32044198895027626,
+        "roi": 0.004585635359116042,
+        "units": 0.8300000000000036,
+        "active_seasons": 11,
+        "positive_seasons": 8,
+        "positive_season_ratio": 0.7272727272727273
+      },
+      "holdout_survived": false,
+      "train": {
+        "n": 42,
+        "wins": 17,
+        "losses": 25,
+        "win_rate": 0.40476190476190477,
+        "roi": 0.24666666666666665,
+        "units": 10.36,
+        "active_seasons": 4,
+        "positive_seasons": 3,
+        "positive_season_ratio": 0.75
+      },
+      "validation": {
+        "n": 74,
+        "wins": 29,
+        "losses": 45,
+        "win_rate": 0.3918918918918919,
+        "roi": 0.22837837837837835,
+        "units": 16.9,
+        "active_seasons": 4,
+        "positive_seasons": 4,
+        "positive_season_ratio": 1.0
+      },
+      "preholdout": {
+        "n": 116,
+        "wins": 46,
+        "losses": 70,
+        "win_rate": 0.39655172413793105,
+        "roi": 0.235,
+        "units": 27.259999999999998,
+        "active_seasons": 8,
+        "positive_seasons": 7,
+        "positive_season_ratio": 0.875
+      }
+    },
+    {
+      "outcome": "AWAY",
+      "price_band": "P30_40",
+      "feature": "edge_roster_departed_minutes_share_prev5",
+      "op": ">=",
+      "threshold": 0.12196382865257216,
+      "pre_score": 1.4648594328107856,
+      "holdout": {
+        "n": 37,
+        "wins": 16,
+        "losses": 21,
+        "win_rate": 0.43243243243243246,
+        "roi": 0.23054054054054052,
+        "units": 8.53,
+        "active_seasons": 3,
+        "positive_seasons": 2,
+        "positive_season_ratio": 0.6666666666666666
+      },
+      "full": {
+        "n": 119,
+        "wins": 53,
+        "losses": 66,
+        "win_rate": 0.44537815126050423,
+        "roi": 0.29000000000000004,
+        "units": 34.510000000000005,
+        "active_seasons": 11,
+        "positive_seasons": 8,
+        "positive_season_ratio": 0.7272727272727273
+      },
+      "holdout_survived": true,
+      "train": {
+        "n": 44,
+        "wins": 21,
+        "losses": 23,
+        "win_rate": 0.4772727272727273,
+        "roi": 0.3852272727272728,
+        "units": 16.950000000000003,
+        "active_seasons": 4,
+        "positive_seasons": 4,
+        "positive_season_ratio": 1.0
+      },
+      "validation": {
+        "n": 38,
+        "wins": 16,
+        "losses": 22,
+        "win_rate": 0.42105263157894735,
+        "roi": 0.23763157894736842,
+        "units": 9.03,
+        "active_seasons": 4,
+        "positive_seasons": 2,
+        "positive_season_ratio": 0.5
+      },
+      "preholdout": {
+        "n": 82,
+        "wins": 37,
+        "losses": 45,
+        "win_rate": 0.45121951219512196,
+        "roi": 0.31682926829268293,
+        "units": 25.98,
+        "active_seasons": 8,
+        "positive_seasons": 6,
+        "positive_season_ratio": 0.75
+      }
+    },
+    {
+      "outcome": "HOME",
+      "price_band": "P25_35",
+      "feature": "sel_roster_new_minutes_share3",
+      "op": "<=",
+      "threshold": 0.008518411615336638,
+      "pre_score": 1.460652673923835,
+      "holdout": {
+        "n": 54,
+        "wins": 11,
+        "losses": 43,
+        "win_rate": 0.2037037037037037,
+        "roi": -0.36703703703703705,
+        "units": -19.82,
+        "active_seasons": 3,
+        "positive_seasons": 1,
+        "positive_season_ratio": 0.3333333333333333
+      },
+      "full": {
+        "n": 151,
+        "wins": 51,
+        "losses": 100,
+        "win_rate": 0.33774834437086093,
+        "roi": 0.06410596026490069,
+        "units": 9.680000000000003,
+        "active_seasons": 12,
+        "positive_seasons": 9,
+        "positive_season_ratio": 0.75
+      },
+      "holdout_survived": false,
+      "train": {
+        "n": 38,
+        "wins": 17,
+        "losses": 21,
+        "win_rate": 0.4473684210526316,
+        "roi": 0.408421052631579,
+        "units": 15.520000000000003,
+        "active_seasons": 5,
+        "positive_seasons": 4,
+        "positive_season_ratio": 0.8
+      },
+      "validation": {
+        "n": 59,
+        "wins": 23,
+        "losses": 36,
+        "win_rate": 0.3898305084745763,
+        "roi": 0.23694915254237284,
+        "units": 13.979999999999997,
+        "active_seasons": 4,
+        "positive_seasons": 4,
+        "positive_season_ratio": 1.0
+      },
+      "preholdout": {
+        "n": 97,
+        "wins": 40,
+        "losses": 57,
+        "win_rate": 0.41237113402061853,
+        "roi": 0.30412371134020616,
+        "units": 29.5,
+        "active_seasons": 9,
+        "positive_seasons": 8,
+        "positive_season_ratio": 0.8888888888888888
+      }
+    },
+    {
+      "outcome": "HOME",
+      "price_band": "P20_30",
+      "feature": "edge_gk_xg_faced_p96_5",
+      "op": "<=",
+      "threshold": 0.6564993109705469,
+      "pre_score": 1.4372551965465286,
+      "holdout": {
+        "n": 29,
+        "wins": 7,
+        "losses": 22,
+        "win_rate": 0.2413793103448276,
+        "roi": -0.17931034482758618,
+        "units": -5.199999999999999,
+        "active_seasons": 2,
+        "positive_seasons": 1,
+        "positive_season_ratio": 0.5
+      },
+      "full": {
+        "n": 131,
+        "wins": 43,
+        "losses": 88,
+        "win_rate": 0.3282442748091603,
+        "roi": 0.23916030534351143,
+        "units": 31.33,
+        "active_seasons": 11,
+        "positive_seasons": 9,
+        "positive_season_ratio": 0.8181818181818182
+      },
+      "holdout_survived": false,
+      "train": {
+        "n": 40,
+        "wins": 13,
+        "losses": 27,
+        "win_rate": 0.325,
+        "roi": 0.22725,
+        "units": 9.09,
+        "active_seasons": 5,
+        "positive_seasons": 4,
+        "positive_season_ratio": 0.8
+      },
+      "validation": {
+        "n": 62,
+        "wins": 23,
+        "losses": 39,
+        "win_rate": 0.3709677419354839,
+        "roi": 0.4425806451612903,
+        "units": 27.439999999999998,
+        "active_seasons": 4,
+        "positive_seasons": 4,
+        "positive_season_ratio": 1.0
+      },
+      "preholdout": {
+        "n": 102,
+        "wins": 36,
+        "losses": 66,
+        "win_rate": 0.35294117647058826,
+        "roi": 0.3581372549019608,
+        "units": 36.53,
+        "active_seasons": 9,
+        "positive_seasons": 8,
+        "positive_season_ratio": 0.8888888888888888
+      }
+    },
+    {
+      "outcome": "HOME",
+      "price_band": "P35_45",
+      "feature": "edge_gk_current_keeper_prior_team_games",
+      "op": ">=",
+      "threshold": 25.0,
+      "pre_score": 1.4148572514567794,
+      "holdout": {
+        "n": 124,
+        "wins": 47,
+        "losses": 77,
+        "win_rate": 0.3790322580645161,
+        "roi": -0.09411290322580645,
+        "units": -11.67,
+        "active_seasons": 3,
+        "positive_seasons": 0,
+        "positive_season_ratio": 0.0
+      },
+      "full": {
+        "n": 335,
+        "wins": 153,
+        "losses": 182,
+        "win_rate": 0.45671641791044776,
+        "roi": 0.09426865671641792,
+        "units": 31.580000000000002,
+        "active_seasons": 12,
+        "positive_seasons": 9,
+        "positive_season_ratio": 0.75
+      },
+      "holdout_survived": false,
+      "train": {
+        "n": 109,
+        "wins": 52,
+        "losses": 57,
+        "win_rate": 0.47706422018348627,
+        "roi": 0.1400917431192661,
+        "units": 15.270000000000003,
+        "active_seasons": 5,
+        "positive_seasons": 5,
+        "positive_season_ratio": 1.0
+      },
+      "validation": {
+        "n": 102,
+        "wins": 54,
+        "losses": 48,
+        "win_rate": 0.5294117647058824,
+        "roi": 0.27431372549019606,
+        "units": 27.98,
+        "active_seasons": 4,
+        "positive_seasons": 4,
+        "positive_season_ratio": 1.0
+      },
+      "preholdout": {
+        "n": 211,
+        "wins": 106,
+        "losses": 105,
+        "win_rate": 0.5023696682464455,
+        "roi": 0.20497630331753555,
+        "units": 43.25,
+        "active_seasons": 9,
+        "positive_seasons": 9,
+        "positive_season_ratio": 1.0
+      }
+    }
+  ],
+  "top_pairs_preholdout_order": [
+    {
+      "outcome": "HOME",
+      "price_band": "P20_30",
+      "rule1": {
+        "feature": "edge_gk_goals_minus_xg_p96_5",
+        "op": "<=",
+        "threshold": 0.47742150219182766
+      },
+      "rule2": {
+        "feature": "sel_roster_departed_minutes_share_prev5",
+        "op": ">=",
+        "threshold": 0.12129177619226436
+      },
+      "pre_score": 3.204557711051057,
+      "holdout": {
+        "n": 17,
+        "wins": 6,
+        "losses": 11,
+        "win_rate": 0.35294117647058826,
+        "roi": 0.21882352941176475,
+        "units": 3.7200000000000006,
+        "active_seasons": 2,
+        "positive_seasons": 1,
+        "positive_season_ratio": 0.5
+      },
+      "full": {
+        "n": 84,
+        "wins": 34,
+        "losses": 50,
+        "win_rate": 0.40476190476190477,
+        "roi": 0.5041666666666667,
+        "units": 42.35,
+        "active_seasons": 11,
+        "positive_seasons": 9,
+        "positive_season_ratio": 0.8181818181818182
+      },
+      "holdout_survived": false,
+      "train": {
+        "n": 31,
+        "wins": 13,
+        "losses": 18,
+        "win_rate": 0.41935483870967744,
+        "roi": 0.577741935483871,
+        "units": 17.91,
+        "active_seasons": 5,
+        "positive_seasons": 4,
+        "positive_season_ratio": 0.8
+      },
+      "validation": {
+        "n": 36,
+        "wins": 15,
+        "losses": 21,
+        "win_rate": 0.4166666666666667,
+        "roi": 0.5755555555555556,
+        "units": 20.720000000000002,
+        "active_seasons": 4,
+        "positive_seasons": 4,
+        "positive_season_ratio": 1.0
+      },
+      "preholdout": {
+        "n": 67,
+        "wins": 28,
+        "losses": 39,
+        "win_rate": 0.417910447761194,
+        "roi": 0.5765671641791045,
+        "units": 38.63,
+        "active_seasons": 9,
+        "positive_seasons": 8,
+        "positive_season_ratio": 0.8888888888888888
+      }
+    },
+    {
+      "outcome": "HOME",
+      "price_band": "P25_35",
+      "rule1": {
+        "feature": "edge_roster_new_players3",
+        "op": "<=",
+        "threshold": 0.0
+      },
+      "rule2": {
+        "feature": "edge_gk_goals_minus_xg_p96_5",
+        "op": ">=",
+        "threshold": -0.17238000877593082
+      },
+      "pre_score": 3.0945773687062808,
+      "holdout": {
+        "n": 66,
+        "wins": 16,
+        "losses": 50,
+        "win_rate": 0.24242424242424243,
+        "roi": -0.2534848484848485,
+        "units": -16.73,
+        "active_seasons": 3,
+        "positive_seasons": 1,
+        "positive_season_ratio": 0.3333333333333333
+      },
+      "full": {
+        "n": 177,
+        "wins": 69,
+        "losses": 108,
+        "win_rate": 0.3898305084745763,
+        "roi": 0.2015254237288135,
+        "units": 35.66999999999999,
+        "active_seasons": 13,
+        "positive_seasons": 11,
+        "positive_season_ratio": 0.8461538461538461
+      },
+      "holdout_survived": false,
+      "train": {
+        "n": 55,
+        "wins": 26,
+        "losses": 29,
+        "win_rate": 0.4727272727272727,
+        "roi": 0.41727272727272724,
+        "units": 22.95,
+        "active_seasons": 6,
+        "positive_seasons": 6,
+        "positive_season_ratio": 1.0
+      },
+      "validation": {
+        "n": 56,
+        "wins": 27,
+        "losses": 29,
+        "win_rate": 0.48214285714285715,
+        "roi": 0.5258928571428572,
+        "units": 29.45,
+        "active_seasons": 4,
+        "positive_seasons": 4,
+        "positive_season_ratio": 1.0
+      },
+      "preholdout": {
+        "n": 111,
+        "wins": 53,
+        "losses": 58,
+        "win_rate": 0.4774774774774775,
+        "roi": 0.47207207207207214,
+        "units": 52.400000000000006,
+        "active_seasons": 10,
+        "positive_seasons": 10,
+        "positive_season_ratio": 1.0
+      }
+    },
+    {
+      "outcome": "HOME",
+      "price_band": "P25_35",
+      "rule1": {
+        "feature": "opp_gk_goals_minus_xg_p96_5",
+        "op": "<=",
+        "threshold": 0.228400824742268
+      },
+      "rule2": {
+        "feature": "edge_roster_new_players3",
+        "op": "<=",
+        "threshold": 0.0
+      },
+      "pre_score": 3.080997449369094,
+      "holdout": {
+        "n": 67,
+        "wins": 14,
+        "losses": 53,
+        "win_rate": 0.208955223880597,
+        "roi": -0.35835820895522386,
+        "units": -24.009999999999998,
+        "active_seasons": 3,
+        "positive_seasons": 0,
+        "positive_season_ratio": 0.0
+      },
+      "full": {
+        "n": 181,
+        "wins": 67,
+        "losses": 114,
+        "win_rate": 0.3701657458563536,
+        "roi": 0.145524861878453,
+        "units": 26.339999999999993,
+        "active_seasons": 13,
+        "positive_seasons": 10,
+        "positive_season_ratio": 0.7692307692307693
+      },
+      "holdout_survived": false,
+      "train": {
+        "n": 61,
+        "wins": 29,
+        "losses": 32,
+        "win_rate": 0.47540983606557374,
+        "roi": 0.45770491803278684,
+        "units": 27.919999999999998,
+        "active_seasons": 6,
+        "positive_seasons": 6,
+        "positive_season_ratio": 1.0
+      },
+      "validation": {
+        "n": 53,
+        "wins": 24,
+        "losses": 29,
+        "win_rate": 0.4528301886792453,
+        "roi": 0.42320754716981124,
+        "units": 22.429999999999996,
+        "active_seasons": 4,
+        "positive_seasons": 4,
+        "positive_season_ratio": 1.0
+      },
+      "preholdout": {
+        "n": 114,
+        "wins": 53,
+        "losses": 61,
+        "win_rate": 0.4649122807017544,
+        "roi": 0.4416666666666666,
+        "units": 50.349999999999994,
+        "active_seasons": 10,
+        "positive_seasons": 10,
+        "positive_season_ratio": 1.0
+      }
+    },
+    {
+      "outcome": "HOME",
+      "price_band": "P25_35",
+      "rule1": {
+        "feature": "edge_roster_new_players3",
+        "op": "<=",
+        "threshold": 0.0
+      },
+      "rule2": {
+        "feature": "referee_prior_home_win_rate",
+        "op": "<=",
+        "threshold": 0.5238095238095238
+      },
+      "pre_score": 2.928020690720824,
+      "holdout": {
+        "n": 67,
+        "wins": 13,
+        "losses": 54,
+        "win_rate": 0.19402985074626866,
+        "roi": -0.40208955223880594,
+        "units": -26.939999999999998,
+        "active_seasons": 3,
+        "positive_seasons": 0,
+        "positive_season_ratio": 0.0
+      },
+      "full": {
+        "n": 148,
+        "wins": 52,
+        "losses": 96,
+        "win_rate": 0.35135135135135137,
+        "roi": 0.08939189189189187,
+        "units": 13.229999999999997,
+        "active_seasons": 10,
+        "positive_seasons": 7,
+        "positive_season_ratio": 0.7
+      },
+      "holdout_survived": false,
+      "train": {
+        "n": 44,
+        "wins": 21,
+        "losses": 23,
+        "win_rate": 0.4772727272727273,
+        "roi": 0.48136363636363627,
+        "units": 21.179999999999996,
+        "active_seasons": 4,
+        "positive_seasons": 4,
+        "positive_season_ratio": 1.0
+      },
+      "validation": {
+        "n": 37,
+        "wins": 18,
+        "losses": 19,
+        "win_rate": 0.4864864864864865,
+        "roi": 0.5132432432432433,
+        "units": 18.990000000000002,
+        "active_seasons": 3,
+        "positive_seasons": 3,
+        "positive_season_ratio": 1.0
+      },
+      "preholdout": {
+        "n": 81,
+        "wins": 39,
+        "losses": 42,
+        "win_rate": 0.48148148148148145,
+        "roi": 0.49592592592592594,
+        "units": 40.17,
+        "active_seasons": 7,
+        "positive_seasons": 7,
+        "positive_season_ratio": 1.0
+      }
+    },
+    {
+      "outcome": "HOME",
+      "price_band": "P25_35",
+      "rule1": {
+        "feature": "edge_gk_goals_minus_xg_p96_5",
+        "op": ">=",
+        "threshold": -0.17238000877593082
+      },
+      "rule2": {
+        "feature": "sel_roster_new_players3",
+        "op": "<=",
+        "threshold": 1.0
+      },
+      "pre_score": 2.699740002006003,
+      "holdout": {
+        "n": 61,
+        "wins": 15,
+        "losses": 46,
+        "win_rate": 0.2459016393442623,
+        "roi": -0.2575409836065573,
+        "units": -15.709999999999997,
+        "active_seasons": 3,
+        "positive_seasons": 1,
+        "positive_season_ratio": 0.3333333333333333
+      },
+      "full": {
+        "n": 170,
+        "wins": 64,
+        "losses": 106,
+        "win_rate": 0.3764705882352941,
+        "roi": 0.1714117647058824,
+        "units": 29.140000000000008,
+        "active_seasons": 13,
+        "positive_seasons": 11,
+        "positive_season_ratio": 0.8461538461538461
+      },
+      "holdout_survived": false,
+      "train": {
+        "n": 51,
+        "wins": 23,
+        "losses": 28,
+        "win_rate": 0.45098039215686275,
+        "roi": 0.3780392156862745,
+        "units": 19.28,
+        "active_seasons": 6,
+        "positive_seasons": 6,
+        "positive_season_ratio": 1.0
+      },
+      "validation": {
+        "n": 58,
+        "wins": 26,
+        "losses": 32,
+        "win_rate": 0.4482758620689655,
+        "roi": 0.4408620689655173,
+        "units": 25.57,
+        "active_seasons": 4,
+        "positive_seasons": 4,
+        "positive_season_ratio": 1.0
+      },
+      "preholdout": {
+        "n": 109,
+        "wins": 49,
+        "losses": 60,
+        "win_rate": 0.44954128440366975,
+        "roi": 0.4114678899082569,
+        "units": 44.85,
+        "active_seasons": 10,
+        "positive_seasons": 10,
+        "positive_season_ratio": 1.0
+      }
+    },
+    {
+      "outcome": "HOME",
+      "price_band": "P25_35",
+      "rule1": {
+        "feature": "edge_roster_new_players3",
+        "op": "<=",
+        "threshold": 0.0
+      },
+      "rule2": {
+        "feature": "sel_gk_save_pct5",
+        "op": "<=",
+        "threshold": 0.7368421052631579
+      },
+      "pre_score": 2.5781025781038673,
+      "holdout": {
+        "n": 69,
+        "wins": 18,
+        "losses": 51,
+        "win_rate": 0.2608695652173913,
+        "roi": -0.19536231884057972,
+        "units": -13.48,
+        "active_seasons": 3,
+        "positive_seasons": 1,
+        "positive_season_ratio": 0.3333333333333333
+      },
+      "full": {
+        "n": 199,
+        "wins": 75,
+        "losses": 124,
+        "win_rate": 0.3768844221105528,
+        "roi": 0.1654773869346734,
+        "units": 32.93000000000001,
+        "active_seasons": 13,
+        "positive_seasons": 10,
+        "positive_season_ratio": 0.7692307692307693
+      },
+      "holdout_survived": false,
+      "train": {
+        "n": 68,
+        "wins": 31,
+        "losses": 37,
+        "win_rate": 0.45588235294117646,
+        "roi": 0.38397058823529406,
+        "units": 26.109999999999996,
+        "active_seasons": 6,
+        "positive_seasons": 6,
+        "positive_season_ratio": 1.0
+      },
+      "validation": {
+        "n": 62,
+        "wins": 26,
+        "losses": 36,
+        "win_rate": 0.41935483870967744,
+        "roi": 0.3274193548387097,
+        "units": 20.3,
+        "active_seasons": 4,
+        "positive_seasons": 3,
+        "positive_season_ratio": 0.75
+      },
+      "preholdout": {
+        "n": 130,
+        "wins": 57,
+        "losses": 73,
+        "win_rate": 0.43846153846153846,
+        "roi": 0.357,
+        "units": 46.41,
+        "active_seasons": 10,
+        "positive_seasons": 9,
+        "positive_season_ratio": 0.9
+      }
+    },
+    {
+      "outcome": "HOME",
+      "price_band": "P25_35",
+      "rule1": {
+        "feature": "opp_gk_goals_minus_xg_p96_5",
+        "op": "<=",
+        "threshold": 0.228400824742268
+      },
+      "rule2": {
+        "feature": "edge_gk_xg_faced_p96_5",
+        "op": "<=",
+        "threshold": 0.45093205040091655
+      },
+      "pre_score": 2.5536983844214047,
+      "holdout": {
+        "n": 61,
+        "wins": 14,
+        "losses": 47,
+        "win_rate": 0.22950819672131148,
+        "roi": -0.3021311475409836,
+        "units": -18.43,
+        "active_seasons": 3,
+        "positive_seasons": 1,
+        "positive_season_ratio": 0.3333333333333333
+      },
+      "full": {
+        "n": 187,
+        "wins": 70,
+        "losses": 117,
+        "win_rate": 0.37433155080213903,
+        "roi": 0.14545454545454548,
+        "units": 27.200000000000003,
+        "active_seasons": 13,
+        "positive_seasons": 10,
+        "positive_season_ratio": 0.7692307692307693
+      },
+      "holdout_survived": false,
+      "train": {
+        "n": 57,
+        "wins": 25,
+        "losses": 32,
+        "win_rate": 0.43859649122807015,
+        "roi": 0.33824561403508774,
+        "units": 19.28,
+        "active_seasons": 6,
+        "positive_seasons": 5,
+        "positive_season_ratio": 0.8333333333333334
+      },
+      "validation": {
+        "n": 69,
+        "wins": 31,
+        "losses": 38,
+        "win_rate": 0.4492753623188406,
+        "roi": 0.38188405797101443,
+        "units": 26.349999999999998,
+        "active_seasons": 4,
+        "positive_seasons": 4,
+        "positive_season_ratio": 1.0
+      },
+      "preholdout": {
+        "n": 126,
+        "wins": 56,
+        "losses": 70,
+        "win_rate": 0.4444444444444444,
+        "roi": 0.3621428571428571,
+        "units": 45.629999999999995,
+        "active_seasons": 10,
+        "positive_seasons": 9,
+        "positive_season_ratio": 0.9
+      }
+    },
+    {
+      "outcome": "HOME",
+      "price_band": "P20_30",
+      "rule1": {
+        "feature": "referee_prior_home_win_rate",
+        "op": "<=",
+        "threshold": 0.5487804878048781
+      },
+      "rule2": {
+        "feature": "sel_roster_new_players3",
+        "op": "<=",
+        "threshold": 2.0
+      },
+      "pre_score": 2.542634849710278,
+      "holdout": {
+        "n": 39,
+        "wins": 9,
+        "losses": 30,
+        "win_rate": 0.23076923076923078,
+        "roi": -0.21846153846153846,
+        "units": -8.52,
+        "active_seasons": 3,
+        "positive_seasons": 1,
+        "positive_season_ratio": 0.3333333333333333
+      },
+      "full": {
+        "n": 106,
+        "wins": 37,
+        "losses": 69,
+        "win_rate": 0.3490566037735849,
+        "roi": 0.23915094339622642,
+        "units": 25.35,
+        "active_seasons": 9,
+        "positive_seasons": 6,
+        "positive_season_ratio": 0.6666666666666666
+      },
+      "holdout_survived": false,
+      "train": {
+        "n": 28,
+        "wins": 12,
+        "losses": 16,
+        "win_rate": 0.42857142857142855,
+        "roi": 0.5403571428571429,
+        "units": 15.13,
+        "active_seasons": 2,
+        "positive_seasons": 2,
+        "positive_season_ratio": 1.0
+      },
+      "validation": {
+        "n": 39,
+        "wins": 16,
+        "losses": 23,
+        "win_rate": 0.41025641025641024,
+        "roi": 0.48051282051282046,
+        "units": 18.74,
+        "active_seasons": 4,
+        "positive_seasons": 3,
+        "positive_season_ratio": 0.75
+      },
+      "preholdout": {
+        "n": 67,
+        "wins": 28,
+        "losses": 39,
+        "win_rate": 0.417910447761194,
+        "roi": 0.5055223880597015,
+        "units": 33.870000000000005,
+        "active_seasons": 6,
+        "positive_seasons": 5,
+        "positive_season_ratio": 0.8333333333333334
+      }
+    },
+    {
+      "outcome": "DRAW",
+      "price_band": "ALL",
+      "rule1": {
+        "feature": "balance_gk_current_keeper_prior_team_games",
+        "op": "<=",
+        "threshold": 8.0
+      },
+      "rule2": {
+        "feature": "balance_roster_jaccard_recent5_prev5",
+        "op": "<=",
+        "threshold": 0.04047619047619044
+      },
+      "pre_score": 2.5392413623769654,
+      "holdout": {
+        "n": 54,
+        "wins": 13,
+        "losses": 41,
+        "win_rate": 0.24074074074074073,
+        "roi": -0.046666666666666676,
+        "units": -2.5200000000000005,
+        "active_seasons": 3,
+        "positive_seasons": 1,
+        "positive_season_ratio": 0.3333333333333333
+      },
+      "full": {
+        "n": 228,
+        "wins": 73,
+        "losses": 155,
+        "win_rate": 0.3201754385964912,
+        "roi": 0.2739035087719298,
+        "units": 62.45,
+        "active_seasons": 13,
+        "positive_seasons": 9,
+        "positive_season_ratio": 0.6923076923076923
+      },
+      "holdout_survived": false,
+      "train": {
+        "n": 109,
+        "wins": 38,
+        "losses": 71,
+        "win_rate": 0.3486238532110092,
+        "roi": 0.314954128440367,
+        "units": 34.330000000000005,
+        "active_seasons": 6,
+        "positive_seasons": 6,
+        "positive_season_ratio": 1.0
+      },
+      "validation": {
+        "n": 65,
+        "wins": 22,
+        "losses": 43,
+        "win_rate": 0.3384615384615385,
+        "roi": 0.4713846153846154,
+        "units": 30.64,
+        "active_seasons": 4,
+        "positive_seasons": 2,
+        "positive_season_ratio": 0.5
+      },
+      "preholdout": {
+        "n": 174,
+        "wins": 60,
+        "losses": 114,
+        "win_rate": 0.3448275862068966,
+        "roi": 0.37339080459770113,
+        "units": 64.97,
+        "active_seasons": 10,
+        "positive_seasons": 8,
+        "positive_season_ratio": 0.8
+      }
+    },
+    {
+      "outcome": "HOME",
+      "price_band": "P25_35",
+      "rule1": {
+        "feature": "sel_roster_new_minutes_share3",
+        "op": "<=",
+        "threshold": 0.008518411615336638
+      },
+      "rule2": {
+        "feature": "edge_gk_goals_minus_xg_p96_5",
+        "op": ">=",
+        "threshold": -0.17238000877593082
+      },
+      "pre_score": 2.5261389757889416,
+      "holdout": {
+        "n": 42,
+        "wins": 9,
+        "losses": 33,
+        "win_rate": 0.21428571428571427,
+        "roi": -0.3442857142857143,
+        "units": -14.46,
+        "active_seasons": 3,
+        "positive_seasons": 1,
+        "positive_season_ratio": 0.3333333333333333
+      },
+      "full": {
+        "n": 114,
+        "wins": 44,
+        "losses": 70,
+        "win_rate": 0.38596491228070173,
+        "roi": 0.2079824561403509,
+        "units": 23.710000000000004,
+        "active_seasons": 10,
+        "positive_seasons": 8,
+        "positive_season_ratio": 0.8
+      },
+      "holdout_survived": false,
+      "train": {
+        "n": 32,
+        "wins": 15,
+        "losses": 17,
+        "win_rate": 0.46875,
+        "roi": 0.4465625000000001,
+        "units": 14.290000000000003,
+        "active_seasons": 3,
+        "positive_seasons": 3,
+        "positive_season_ratio": 1.0
+      },
+      "validation": {
+        "n": 40,
+        "wins": 20,
+        "losses": 20,
+        "win_rate": 0.5,
+        "roi": 0.5970000000000001,
+        "units": 23.880000000000003,
+        "active_seasons": 4,
+        "positive_seasons": 4,
+        "positive_season_ratio": 1.0
+      },
+      "preholdout": {
+        "n": 72,
+        "wins": 35,
+        "losses": 37,
+        "win_rate": 0.4861111111111111,
+        "roi": 0.530138888888889,
+        "units": 38.17000000000001,
+        "active_seasons": 7,
+        "positive_seasons": 7,
+        "positive_season_ratio": 1.0
+      }
+    },
+    {
+      "outcome": "HOME",
+      "price_band": "P25_35",
+      "rule1": {
+        "feature": "sel_gk_current_keeper_prior_team_games",
+        "op": "<=",
+        "threshold": 12.0
+      },
+      "rule2": {
+        "feature": "sel_gk_xg_faced_p96_5",
+        "op": ">=",
+        "threshold": 1.35250793814433
+      },
+      "pre_score": 2.517300141024109,
+      "holdout": {
+        "n": 18,
+        "wins": 7,
+        "losses": 11,
+        "win_rate": 0.3888888888888889,
+        "roi": 0.23222222222222222,
+        "units": 4.18,
+        "active_seasons": 3,
+        "positive_seasons": 2,
+        "positive_season_ratio": 0.6666666666666666
+      },
+      "full": {
+        "n": 94,
+        "wins": 42,
+        "losses": 52,
+        "win_rate": 0.44680851063829785,
+        "roi": 0.4065957446808511,
+        "units": 38.22,
+        "active_seasons": 10,
+        "positive_seasons": 7,
+        "positive_season_ratio": 0.7
+      },
+      "holdout_survived": true,
+      "train": {
+        "n": 32,
+        "wins": 15,
+        "losses": 17,
+        "win_rate": 0.46875,
+        "roi": 0.45187499999999997,
+        "units": 14.459999999999999,
+        "active_seasons": 3,
+        "positive_seasons": 2,
+        "positive_season_ratio": 0.6666666666666666
+      },
+      "validation": {
+        "n": 44,
+        "wins": 20,
+        "losses": 24,
+        "win_rate": 0.45454545454545453,
+        "roi": 0.44499999999999995,
+        "units": 19.58,
+        "active_seasons": 4,
+        "positive_seasons": 3,
+        "positive_season_ratio": 0.75
+      },
+      "preholdout": {
+        "n": 76,
+        "wins": 35,
+        "losses": 41,
+        "win_rate": 0.4605263157894737,
+        "roi": 0.44789473684210523,
+        "units": 34.04,
+        "active_seasons": 7,
+        "positive_seasons": 5,
+        "positive_season_ratio": 0.7142857142857143
+      }
+    },
+    {
+      "outcome": "HOME",
+      "price_band": "P25_35",
+      "rule1": {
+        "feature": "opp_gk_goals_minus_xg_p96_5",
+        "op": "<=",
+        "threshold": 0.228400824742268
+      },
+      "rule2": {
+        "feature": "sel_roster_churn_index",
+        "op": ">=",
+        "threshold": 0.09654697692350571
+      },
+      "pre_score": 2.4965139331038824,
+      "holdout": {
+        "n": 95,
+        "wins": 29,
+        "losses": 66,
+        "win_rate": 0.30526315789473685,
+        "roi": -0.05515789473684211,
+        "units": -5.24,
+        "active_seasons": 3,
+        "positive_seasons": 2,
+        "positive_season_ratio": 0.6666666666666666
+      },
+      "full": {
+        "n": 298,
+        "wins": 112,
+        "losses": 186,
+        "win_rate": 0.37583892617449666,
+        "roi": 0.17466442953020134,
+        "units": 52.05,
+        "active_seasons": 13,
+        "positive_seasons": 9,
+        "positive_season_ratio": 0.6923076923076923
+      },
+      "holdout_survived": false,
+      "train": {
+        "n": 99,
+        "wins": 40,
+        "losses": 59,
+        "win_rate": 0.40404040404040403,
+        "roi": 0.25090909090909086,
+        "units": 24.839999999999996,
+        "active_seasons": 6,
+        "positive_seasons": 4,
+        "positive_season_ratio": 0.6666666666666666
+      },
+      "validation": {
+        "n": 104,
+        "wins": 43,
+        "losses": 61,
+        "win_rate": 0.41346153846153844,
+        "roi": 0.3120192307692307,
+        "units": 32.449999999999996,
+        "active_seasons": 4,
+        "positive_seasons": 3,
+        "positive_season_ratio": 0.75
+      },
+      "preholdout": {
+        "n": 203,
+        "wins": 83,
+        "losses": 120,
+        "win_rate": 0.4088669950738916,
+        "roi": 0.28221674876847286,
+        "units": 57.28999999999999,
+        "active_seasons": 10,
+        "positive_seasons": 7,
+        "positive_season_ratio": 0.7
+      }
+    },
+    {
+      "outcome": "HOME",
+      "price_band": "P20_30",
+      "rule1": {
+        "feature": "edge_gk_save_pct5",
+        "op": ">=",
+        "threshold": -0.10148378191856453
+      },
+      "rule2": {
+        "feature": "sel_roster_departed_minutes_share_prev5",
+        "op": ">=",
+        "threshold": 0.12129177619226436
+      },
+      "pre_score": 2.4828302708494094,
+      "holdout": {
+        "n": 16,
+        "wins": 6,
+        "losses": 10,
+        "win_rate": 0.375,
+        "roi": 0.29625,
+        "units": 4.74,
+        "active_seasons": 2,
+        "positive_seasons": 1,
+        "positive_season_ratio": 0.5
+      },
+      "full": {
+        "n": 78,
+        "wins": 32,
+        "losses": 46,
+        "win_rate": 0.41025641025641024,
+        "roi": 0.5428205128205128,
+        "units": 42.339999999999996,
+        "active_seasons": 10,
+        "positive_seasons": 8,
+        "positive_season_ratio": 0.8
+      },
+      "holdout_survived": false,
+      "train": {
+        "n": 26,
+        "wins": 10,
+        "losses": 16,
+        "win_rate": 0.38461538461538464,
+        "roi": 0.4869230769230769,
+        "units": 12.66,
+        "active_seasons": 4,
+        "positive_seasons": 3,
+        "positive_season_ratio": 0.75
+      },
+      "validation": {
+        "n": 36,
+        "wins": 16,
+        "losses": 20,
+        "win_rate": 0.4444444444444444,
+        "roi": 0.6927777777777778,
+        "units": 24.94,
+        "active_seasons": 4,
+        "positive_seasons": 4,
+        "positive_season_ratio": 1.0
+      },
+      "preholdout": {
+        "n": 62,
+        "wins": 26,
+        "losses": 36,
+        "win_rate": 0.41935483870967744,
+        "roi": 0.6064516129032257,
+        "units": 37.599999999999994,
+        "active_seasons": 8,
+        "positive_seasons": 7,
+        "positive_season_ratio": 0.875
+      }
+    },
+    {
+      "outcome": "HOME",
+      "price_band": "P25_35",
+      "rule1": {
+        "feature": "sel_gk_save_pct5",
+        "op": "<=",
+        "threshold": 0.7368421052631579
+      },
+      "rule2": {
+        "feature": "sel_roster_new_minutes_share3",
+        "op": "<=",
+        "threshold": 0.008518411615336638
+      },
+      "pre_score": 2.4684211614517952,
+      "holdout": {
+        "n": 41,
+        "wins": 10,
+        "losses": 31,
+        "win_rate": 0.24390243902439024,
+        "roi": -0.24560975609756097,
+        "units": -10.07,
+        "active_seasons": 2,
+        "positive_seasons": 0,
+        "positive_season_ratio": 0.0
+      },
+      "full": {
+        "n": 116,
+        "wins": 44,
+        "losses": 72,
+        "win_rate": 0.3793103448275862,
+        "roi": 0.19956896551724138,
+        "units": 23.15,
+        "active_seasons": 10,
+        "positive_seasons": 6,
+        "positive_season_ratio": 0.6
+      },
+      "holdout_survived": false,
+      "train": {
+        "n": 33,
+        "wins": 15,
+        "losses": 18,
+        "win_rate": 0.45454545454545453,
+        "roi": 0.4296969696969697,
+        "units": 14.18,
+        "active_seasons": 4,
+        "positive_seasons": 3,
+        "positive_season_ratio": 0.75
+      },
+      "validation": {
+        "n": 42,
+        "wins": 19,
+        "losses": 23,
+        "win_rate": 0.4523809523809524,
+        "roi": 0.4533333333333333,
+        "units": 19.04,
+        "active_seasons": 4,
+        "positive_seasons": 3,
+        "positive_season_ratio": 0.75
+      },
+      "preholdout": {
+        "n": 75,
+        "wins": 34,
+        "losses": 41,
+        "win_rate": 0.4533333333333333,
+        "roi": 0.4429333333333334,
+        "units": 33.220000000000006,
+        "active_seasons": 8,
+        "positive_seasons": 6,
+        "positive_season_ratio": 0.75
+      }
+    },
+    {
+      "outcome": "HOME",
+      "price_band": "P25_35",
+      "rule1": {
+        "feature": "referee_prior_home_gd",
+        "op": "<=",
+        "threshold": 0.5538461538461539
+      },
+      "rule2": {
+        "feature": "sel_roster_churn_index",
+        "op": ">=",
+        "threshold": 0.09654697692350571
+      },
+      "pre_score": 2.439673351210375,
+      "holdout": {
+        "n": 77,
+        "wins": 19,
+        "losses": 58,
+        "win_rate": 0.24675324675324675,
+        "roi": -0.2210389610389611,
+        "units": -17.020000000000003,
+        "active_seasons": 3,
+        "positive_seasons": 1,
+        "positive_season_ratio": 0.3333333333333333
+      },
+      "full": {
+        "n": 213,
+        "wins": 76,
+        "losses": 137,
+        "win_rate": 0.3568075117370892,
+        "roi": 0.1191549295774648,
+        "units": 25.380000000000003,
+        "active_seasons": 13,
+        "positive_seasons": 10,
+        "positive_season_ratio": 0.7692307692307693
+      },
+      "holdout_survived": false,
+      "train": {
+        "n": 66,
+        "wins": 28,
+        "losses": 38,
+        "win_rate": 0.42424242424242425,
+        "roi": 0.3003030303030303,
+        "units": 19.82,
+        "active_seasons": 6,
+        "positive_seasons": 6,
+        "positive_season_ratio": 1.0
+      },
+      "validation": {
+        "n": 70,
+        "wins": 29,
+        "losses": 41,
+        "win_rate": 0.4142857142857143,
+        "roi": 0.32257142857142856,
+        "units": 22.58,
+        "active_seasons": 4,
+        "positive_seasons": 3,
+        "positive_season_ratio": 0.75
+      },
+      "preholdout": {
+        "n": 136,
+        "wins": 57,
+        "losses": 79,
+        "win_rate": 0.41911764705882354,
+        "roi": 0.31176470588235294,
+        "units": 42.4,
+        "active_seasons": 10,
+        "positive_seasons": 9,
+        "positive_season_ratio": 0.9
+      }
+    },
+    {
+      "outcome": "HOME",
+      "price_band": "P25_35",
+      "rule1": {
+        "feature": "sel_roster_churn_index",
+        "op": ">=",
+        "threshold": 0.09654697692350571
+      },
+      "rule2": {
+        "feature": "sel_gk_xg_faced_p96_5",
+        "op": ">=",
+        "threshold": 1.35250793814433
+      },
+      "pre_score": 2.4379120879120877,
+      "holdout": {
+        "n": 82,
+        "wins": 24,
+        "losses": 58,
+        "win_rate": 0.2926829268292683,
+        "roi": -0.09292682926829267,
+        "units": -7.619999999999999,
+        "active_seasons": 3,
+        "positive_seasons": 1,
+        "positive_season_ratio": 0.3333333333333333
+      },
+      "full": {
+        "n": 254,
+        "wins": 94,
+        "losses": 160,
+        "win_rate": 0.3700787401574803,
+        "roi": 0.16220472440944886,
+        "units": 41.20000000000001,
+        "active_seasons": 12,
+        "positive_seasons": 7,
+        "positive_season_ratio": 0.5833333333333334
+      },
+      "holdout_survived": false,
+      "train": {
+        "n": 81,
+        "wins": 34,
+        "losses": 47,
+        "win_rate": 0.41975308641975306,
+        "roi": 0.29839506172839503,
+        "units": 24.169999999999998,
+        "active_seasons": 5,
+        "positive_seasons": 3,
+        "positive_season_ratio": 0.6
+      },
+      "validation": {
+        "n": 91,
+        "wins": 36,
+        "losses": 55,
+        "win_rate": 0.3956043956043956,
+        "roi": 0.27087912087912086,
+        "units": 24.65,
+        "active_seasons": 4,
+        "positive_seasons": 3,
+        "positive_season_ratio": 0.75
+      },
+      "preholdout": {
+        "n": 172,
+        "wins": 70,
+        "losses": 102,
+        "win_rate": 0.4069767441860465,
+        "roi": 0.28383720930232553,
+        "units": 48.81999999999999,
+        "active_seasons": 9,
+        "positive_seasons": 6,
+        "positive_season_ratio": 0.6666666666666666
+      }
+    },
+    {
+      "outcome": "HOME",
+      "price_band": "P25_35",
+      "rule1": {
+        "feature": "sel_gk_current_keeper_prior_team_games",
+        "op": "<=",
+        "threshold": 12.0
+      },
+      "rule2": {
+        "feature": "sel_roster_churn_index",
+        "op": ">=",
+        "threshold": 0.09654697692350571
+      },
+      "pre_score": 2.4365349371597365,
+      "holdout": {
+        "n": 27,
+        "wins": 9,
+        "losses": 18,
+        "win_rate": 0.3333333333333333,
+        "roi": 0.04370370370370371,
+        "units": 1.1800000000000002,
+        "active_seasons": 3,
+        "positive_seasons": 1,
+        "positive_season_ratio": 0.3333333333333333
+      },
+      "full": {
+        "n": 123,
+        "wins": 52,
+        "losses": 71,
+        "win_rate": 0.42276422764227645,
+        "roi": 0.32178861788617885,
+        "units": 39.58,
+        "active_seasons": 10,
+        "positive_seasons": 8,
+        "positive_season_ratio": 0.8
+      },
+      "holdout_survived": true,
+      "train": {
+        "n": 40,
+        "wins": 18,
+        "losses": 22,
+        "win_rate": 0.45,
+        "roi": 0.38525,
+        "units": 15.41,
+        "active_seasons": 3,
+        "positive_seasons": 3,
+        "positive_season_ratio": 1.0
+      },
+      "validation": {
+        "n": 56,
+        "wins": 25,
+        "losses": 31,
+        "win_rate": 0.44642857142857145,
+        "roi": 0.41053571428571434,
+        "units": 22.990000000000002,
+        "active_seasons": 4,
+        "positive_seasons": 4,
+        "positive_season_ratio": 1.0
+      },
+      "preholdout": {
+        "n": 96,
+        "wins": 43,
+        "losses": 53,
+        "win_rate": 0.4479166666666667,
+        "roi": 0.39999999999999997,
+        "units": 38.4,
+        "active_seasons": 7,
+        "positive_seasons": 7,
+        "positive_season_ratio": 1.0
+      }
+    },
+    {
+      "outcome": "HOME",
+      "price_band": "P20_30",
+      "rule1": {
+        "feature": "sel_gk_xg_faced_p96_5",
+        "op": "<=",
+        "threshold": 1.845707242293418
+      },
+      "rule2": {
+        "feature": "edge_gk_save_pct5",
+        "op": ">=",
+        "threshold": -0.10148378191856453
+      },
+      "pre_score": 2.417753303065215,
+      "holdout": {
+        "n": 24,
+        "wins": 6,
+        "losses": 18,
+        "win_rate": 0.25,
+        "roi": -0.12916666666666665,
+        "units": -3.0999999999999996,
+        "active_seasons": 2,
+        "positive_seasons": 1,
+        "positive_season_ratio": 0.5
+      },
+      "full": {
+        "n": 103,
+        "wins": 36,
+        "losses": 67,
+        "win_rate": 0.34951456310679613,
+        "roi": 0.3313592233009709,
+        "units": 34.13,
+        "active_seasons": 10,
+        "positive_seasons": 8,
+        "positive_season_ratio": 0.8
+      },
+      "holdout_survived": false,
+      "train": {
+        "n": 29,
+        "wins": 11,
+        "losses": 18,
+        "win_rate": 0.3793103448275862,
+        "roi": 0.4489655172413793,
+        "units": 13.02,
+        "active_seasons": 4,
+        "positive_seasons": 3,
+        "positive_season_ratio": 0.75
+      },
+      "validation": {
+        "n": 50,
+        "wins": 19,
+        "losses": 31,
+        "win_rate": 0.38,
+        "roi": 0.48419999999999996,
+        "units": 24.209999999999997,
+        "active_seasons": 4,
+        "positive_seasons": 4,
+        "positive_season_ratio": 1.0
+      },
+      "preholdout": {
+        "n": 79,
+        "wins": 30,
+        "losses": 49,
+        "win_rate": 0.379746835443038,
+        "roi": 0.4712658227848101,
+        "units": 37.23,
+        "active_seasons": 8,
+        "positive_seasons": 7,
+        "positive_season_ratio": 0.875
+      }
+    },
+    {
+      "outcome": "HOME",
+      "price_band": "P25_35",
+      "rule1": {
+        "feature": "edge_roster_new_players3",
+        "op": "<=",
+        "threshold": 0.0
+      },
+      "rule2": {
+        "feature": "edge_gk_xg_faced_p96_5",
+        "op": "<=",
+        "threshold": 0.45093205040091655
+      },
+      "pre_score": 2.397826086510413,
+      "holdout": {
+        "n": 41,
+        "wins": 8,
+        "losses": 33,
+        "win_rate": 0.1951219512195122,
+        "roi": -0.39975609756097563,
+        "units": -16.39,
+        "active_seasons": 3,
+        "positive_seasons": 0,
+        "positive_season_ratio": 0.0
+      },
+      "full": {
+        "n": 133,
+        "wins": 52,
+        "losses": 81,
+        "win_rate": 0.39097744360902253,
+        "roi": 0.20052631578947364,
+        "units": 26.669999999999995,
+        "active_seasons": 10,
+        "positive_seasons": 7,
+        "positive_season_ratio": 0.7
+      },
+      "holdout_survived": false,
+      "train": {
+        "n": 47,
+        "wins": 21,
+        "losses": 26,
+        "win_rate": 0.44680851063829785,
+        "roi": 0.3574468085106383,
+        "units": 16.8,
+        "active_seasons": 3,
+        "positive_seasons": 3,
+        "positive_season_ratio": 1.0
+      },
+      "validation": {
+        "n": 45,
+        "wins": 23,
+        "losses": 22,
+        "win_rate": 0.5111111111111111,
+        "roi": 0.5835555555555555,
+        "units": 26.259999999999998,
+        "active_seasons": 4,
+        "positive_seasons": 4,
+        "positive_season_ratio": 1.0
+      },
+      "preholdout": {
+        "n": 92,
+        "wins": 44,
+        "losses": 48,
+        "win_rate": 0.4782608695652174,
+        "roi": 0.4680434782608696,
+        "units": 43.06,
+        "active_seasons": 7,
+        "positive_seasons": 7,
+        "positive_season_ratio": 1.0
+      }
+    },
+    {
+      "outcome": "HOME",
+      "price_band": "P20_30",
+      "rule1": {
+        "feature": "sel_gk_save_pct5",
+        "op": ">=",
+        "threshold": 0.5555555555555556
+      },
+      "rule2": {
+        "feature": "sel_roster_new_players3",
+        "op": "<=",
+        "threshold": 2.0
+      },
+      "pre_score": 2.3756703196057356,
+      "holdout": {
+        "n": 27,
+        "wins": 6,
+        "losses": 21,
+        "win_rate": 0.2222222222222222,
+        "roi": -0.24296296296296294,
+        "units": -6.56,
+        "active_seasons": 3,
+        "positive_seasons": 1,
+        "positive_season_ratio": 0.3333333333333333
+      },
+      "full": {
+        "n": 117,
+        "wins": 40,
+        "losses": 77,
+        "win_rate": 0.3418803418803419,
+        "roi": 0.25470085470085474,
+        "units": 29.800000000000004,
+        "active_seasons": 11,
+        "positive_seasons": 8,
+        "positive_season_ratio": 0.7272727272727273
+      },
+      "holdout_survived": false,
+      "train": {
+        "n": 38,
+        "wins": 15,
+        "losses": 23,
+        "win_rate": 0.39473684210526316,
+        "roi": 0.42947368421052634,
+        "units": 16.32,
+        "active_seasons": 4,
+        "positive_seasons": 4,
+        "positive_season_ratio": 1.0
+      },
+      "validation": {
+        "n": 52,
+        "wins": 19,
+        "losses": 33,
+        "win_rate": 0.36538461538461536,
+        "roi": 0.3853846153846153,
+        "units": 20.039999999999996,
+        "active_seasons": 4,
+        "positive_seasons": 3,
+        "positive_season_ratio": 0.75
+      },
+      "preholdout": {
+        "n": 90,
+        "wins": 34,
+        "losses": 56,
+        "win_rate": 0.37777777777777777,
+        "roi": 0.40399999999999997,
+        "units": 36.36,
+        "active_seasons": 8,
+        "positive_seasons": 7,
+        "positive_season_ratio": 0.875
+      }
+    },
+    {
+      "outcome": "HOME",
+      "price_band": "P20_30",
+      "rule1": {
+        "feature": "sel_roster_new_players3",
+        "op": "<=",
+        "threshold": 2.0
+      },
+      "rule2": {
+        "feature": "sel_roster_departed_minutes_share_prev5",
+        "op": ">=",
+        "threshold": 0.12129177619226436
+      },
+      "pre_score": 2.363605774672357,
+      "holdout": {
+        "n": 19,
+        "wins": 8,
+        "losses": 11,
+        "win_rate": 0.42105263157894735,
+        "roi": 0.4257894736842105,
+        "units": 8.09,
+        "active_seasons": 2,
+        "positive_seasons": 1,
+        "positive_season_ratio": 0.5
+      },
+      "full": {
+        "n": 82,
+        "wins": 34,
+        "losses": 48,
+        "win_rate": 0.4146341463414634,
+        "roi": 0.4903658536585365,
+        "units": 40.209999999999994,
+        "active_seasons": 10,
+        "positive_seasons": 7,
+        "positive_season_ratio": 0.7
+      },
+      "holdout_survived": true,
+      "train": {
+        "n": 31,
+        "wins": 12,
+        "losses": 19,
+        "win_rate": 0.3870967741935484,
+        "roi": 0.424516129032258,
+        "units": 13.159999999999998,
+        "active_seasons": 4,
+        "positive_seasons": 3,
+        "positive_season_ratio": 0.75
+      },
+      "validation": {
+        "n": 32,
+        "wins": 14,
+        "losses": 18,
+        "win_rate": 0.4375,
+        "roi": 0.5924999999999999,
+        "units": 18.959999999999997,
+        "active_seasons": 4,
+        "positive_seasons": 3,
+        "positive_season_ratio": 0.75
+      },
+      "preholdout": {
+        "n": 63,
+        "wins": 26,
+        "losses": 37,
+        "win_rate": 0.4126984126984127,
+        "roi": 0.5098412698412698,
+        "units": 32.12,
+        "active_seasons": 8,
+        "positive_seasons": 6,
+        "positive_season_ratio": 0.75
+      }
+    },
+    {
+      "outcome": "HOME",
+      "price_band": "P25_35",
+      "rule1": {
+        "feature": "edge_roster_new_players3",
+        "op": "<=",
+        "threshold": 0.0
+      },
+      "rule2": {
+        "feature": "sel_roster_churn_index",
+        "op": ">=",
+        "threshold": 0.09654697692350571
+      },
+      "pre_score": 2.3543243411748254,
+      "holdout": {
+        "n": 66,
+        "wins": 16,
+        "losses": 50,
+        "win_rate": 0.24242424242424243,
+        "roi": -0.2543939393939394,
+        "units": -16.79,
+        "active_seasons": 3,
+        "positive_seasons": 2,
+        "positive_season_ratio": 0.6666666666666666
+      },
+      "full": {
+        "n": 182,
+        "wins": 67,
+        "losses": 115,
+        "win_rate": 0.36813186813186816,
+        "roi": 0.1396153846153846,
+        "units": 25.41,
+        "active_seasons": 10,
+        "positive_seasons": 8,
+        "positive_season_ratio": 0.8
+      },
+      "holdout_survived": false,
+      "train": {
+        "n": 58,
+        "wins": 27,
+        "losses": 31,
+        "win_rate": 0.46551724137931033,
+        "roi": 0.4184482758620689,
+        "units": 24.269999999999996,
+        "active_seasons": 3,
+        "positive_seasons": 3,
+        "positive_season_ratio": 1.0
+      },
+      "validation": {
+        "n": 58,
+        "wins": 24,
+        "losses": 34,
+        "win_rate": 0.41379310344827586,
+        "roi": 0.3091379310344827,
+        "units": 17.93,
+        "active_seasons": 4,
+        "positive_seasons": 3,
+        "positive_season_ratio": 0.75
+      },
+      "preholdout": {
+        "n": 116,
+        "wins": 51,
+        "losses": 65,
+        "win_rate": 0.4396551724137931,
+        "roi": 0.3637931034482758,
+        "units": 42.199999999999996,
+        "active_seasons": 7,
+        "positive_seasons": 6,
+        "positive_season_ratio": 0.8571428571428571
+      }
+    },
+    {
+      "outcome": "HOME",
+      "price_band": "P20_30",
+      "rule1": {
+        "feature": "sel_gk_save_pct5",
+        "op": ">=",
+        "threshold": 0.5555555555555556
+      },
+      "rule2": {
+        "feature": "sel_roster_departed_minutes_share_prev5",
+        "op": ">=",
+        "threshold": 0.12129177619226436
+      },
+      "pre_score": 2.3512191366547333,
+      "holdout": {
+        "n": 18,
+        "wins": 7,
+        "losses": 11,
+        "win_rate": 0.3888888888888889,
+        "roi": 0.3444444444444445,
+        "units": 6.200000000000001,
+        "active_seasons": 2,
+        "positive_seasons": 1,
+        "positive_season_ratio": 0.5
+      },
+      "full": {
+        "n": 93,
+        "wins": 37,
+        "losses": 56,
+        "win_rate": 0.3978494623655914,
+        "roi": 0.48591397849462364,
+        "units": 45.19,
+        "active_seasons": 11,
+        "positive_seasons": 9,
+        "positive_season_ratio": 0.8181818181818182
+      },
+      "holdout_survived": true,
+      "train": {
+        "n": 35,
+        "wins": 13,
+        "losses": 22,
+        "win_rate": 0.37142857142857144,
+        "roi": 0.39742857142857146,
+        "units": 13.910000000000002,
+        "active_seasons": 5,
+        "positive_seasons": 4,
+        "positive_season_ratio": 0.8
+      },
+      "validation": {
+        "n": 40,
+        "wins": 17,
+        "losses": 23,
+        "win_rate": 0.425,
+        "roi": 0.627,
+        "units": 25.08,
+        "active_seasons": 4,
+        "positive_seasons": 4,
+        "positive_season_ratio": 1.0
+      },
+      "preholdout": {
+        "n": 75,
+        "wins": 30,
+        "losses": 45,
+        "win_rate": 0.4,
+        "roi": 0.5198666666666666,
+        "units": 38.989999999999995,
+        "active_seasons": 9,
+        "positive_seasons": 8,
+        "positive_season_ratio": 0.8888888888888888
+      }
+    },
+    {
+      "outcome": "HOME",
+      "price_band": "P25_35",
+      "rule1": {
+        "feature": "opp_gk_goals_minus_xg_p96_5",
+        "op": "<=",
+        "threshold": 0.228400824742268
+      },
+      "rule2": {
+        "feature": "sel_roster_new_players3",
+        "op": "<=",
+        "threshold": 1.0
+      },
+      "pre_score": 2.345217397781524,
+      "holdout": {
+        "n": 61,
+        "wins": 12,
+        "losses": 49,
+        "win_rate": 0.19672131147540983,
+        "roi": -0.40868852459016386,
+        "units": -24.929999999999996,
+        "active_seasons": 3,
+        "positive_seasons": 0,
+        "positive_season_ratio": 0.0
+      },
+      "full": {
+        "n": 173,
+        "wins": 60,
+        "losses": 113,
+        "win_rate": 0.3468208092485549,
+        "roi": 0.09034682080924857,
+        "units": 15.630000000000003,
+        "active_seasons": 13,
+        "positive_seasons": 9,
+        "positive_season_ratio": 0.6923076923076923
+      },
+      "holdout_survived": false,
+      "train": {
+        "n": 56,
+        "wins": 25,
+        "losses": 31,
+        "win_rate": 0.44642857142857145,
+        "roi": 0.41089285714285717,
+        "units": 23.01,
+        "active_seasons": 6,
+        "positive_seasons": 6,
+        "positive_season_ratio": 1.0
+      },
+      "validation": {
+        "n": 56,
+        "wins": 23,
+        "losses": 33,
+        "win_rate": 0.4107142857142857,
+        "roi": 0.31339285714285714,
+        "units": 17.55,
+        "active_seasons": 4,
+        "positive_seasons": 3,
+        "positive_season_ratio": 0.75
+      },
+      "preholdout": {
+        "n": 112,
+        "wins": 48,
+        "losses": 64,
+        "win_rate": 0.42857142857142855,
+        "roi": 0.36214285714285716,
+        "units": 40.56,
+        "active_seasons": 10,
+        "positive_seasons": 9,
+        "positive_season_ratio": 0.9
+      }
+    },
+    {
+      "outcome": "HOME",
+      "price_band": "P25_35",
+      "rule1": {
+        "feature": "referee_prior_home_gd",
+        "op": "<=",
+        "threshold": 0.5538461538461539
+      },
+      "rule2": {
+        "feature": "edge_gk_xg_faced_p96_5",
+        "op": "<=",
+        "threshold": 0.45093205040091655
+      },
+      "pre_score": 2.314372207104499,
+      "holdout": {
+        "n": 45,
+        "wins": 7,
+        "losses": 38,
+        "win_rate": 0.15555555555555556,
+        "roi": -0.5108888888888888,
+        "units": -22.99,
+        "active_seasons": 3,
+        "positive_seasons": 0,
+        "positive_season_ratio": 0.0
+      },
+      "full": {
+        "n": 139,
+        "wins": 50,
+        "losses": 89,
+        "win_rate": 0.3597122302158273,
+        "roi": 0.1002158273381295,
+        "units": 13.930000000000001,
+        "active_seasons": 10,
+        "positive_seasons": 7,
+        "positive_season_ratio": 0.7
+      },
+      "holdout_survived": false,
+      "train": {
+        "n": 42,
+        "wins": 20,
+        "losses": 22,
+        "win_rate": 0.47619047619047616,
+        "roi": 0.43690476190476196,
+        "units": 18.35,
+        "active_seasons": 4,
+        "positive_seasons": 4,
+        "positive_season_ratio": 1.0
+      },
+      "validation": {
+        "n": 52,
+        "wins": 23,
+        "losses": 29,
+        "win_rate": 0.4423076923076923,
+        "roi": 0.35711538461538456,
+        "units": 18.569999999999997,
+        "active_seasons": 3,
+        "positive_seasons": 3,
+        "positive_season_ratio": 1.0
+      },
+      "preholdout": {
+        "n": 94,
+        "wins": 43,
+        "losses": 51,
+        "win_rate": 0.4574468085106383,
+        "roi": 0.39276595744680853,
+        "units": 36.92,
+        "active_seasons": 7,
+        "positive_seasons": 7,
+        "positive_season_ratio": 1.0
+      }
+    },
+    {
+      "outcome": "HOME",
+      "price_band": "P25_35",
+      "rule1": {
+        "feature": "opp_gk_goals_minus_xg_p96_5",
+        "op": "<=",
+        "threshold": 0.228400824742268
+      },
+      "rule2": {
+        "feature": "sel_gk_current_keeper_prior_team_games",
+        "op": "<=",
+        "threshold": 12.0
+      },
+      "pre_score": 2.308410822690751,
+      "holdout": {
+        "n": 22,
+        "wins": 7,
+        "losses": 15,
+        "win_rate": 0.3181818181818182,
+        "roi": 0.00045454545454546506,
+        "units": 0.010000000000000231,
+        "active_seasons": 3,
+        "positive_seasons": 1,
+        "positive_season_ratio": 0.3333333333333333
+      },
+      "full": {
+        "n": 108,
+        "wins": 46,
+        "losses": 62,
+        "win_rate": 0.42592592592592593,
+        "roi": 0.33305555555555555,
+        "units": 35.97,
+        "active_seasons": 10,
+        "positive_seasons": 7,
+        "positive_season_ratio": 0.7
+      },
+      "holdout_survived": true,
+      "train": {
+        "n": 38,
+        "wins": 17,
+        "losses": 21,
+        "win_rate": 0.4473684210526316,
+        "roi": 0.37447368421052635,
+        "units": 14.23,
+        "active_seasons": 3,
+        "positive_seasons": 3,
+        "positive_season_ratio": 1.0
+      },
+      "validation": {
+        "n": 48,
+        "wins": 22,
+        "losses": 26,
+        "win_rate": 0.4583333333333333,
+        "roi": 0.4527083333333333,
+        "units": 21.73,
+        "active_seasons": 4,
+        "positive_seasons": 3,
+        "positive_season_ratio": 0.75
+      },
+      "preholdout": {
+        "n": 86,
+        "wins": 39,
+        "losses": 47,
+        "win_rate": 0.45348837209302323,
+        "roi": 0.41813953488372096,
+        "units": 35.96,
+        "active_seasons": 7,
+        "positive_seasons": 6,
+        "positive_season_ratio": 0.8571428571428571
+      }
+    },
+    {
+      "outcome": "HOME",
+      "price_band": "P25_35",
+      "rule1": {
+        "feature": "sel_roster_churn_index",
+        "op": ">=",
+        "threshold": 0.09654697692350571
+      },
+      "rule2": {
+        "feature": "edge_roster_churn_index",
+        "op": "<=",
+        "threshold": 0.09040982278546034
+      },
+      "pre_score": 2.289536300342984,
+      "holdout": {
+        "n": 65,
+        "wins": 19,
+        "losses": 46,
+        "win_rate": 0.2923076923076923,
+        "roi": -0.12261538461538458,
+        "units": -7.969999999999998,
+        "active_seasons": 3,
+        "positive_seasons": 2,
+        "positive_season_ratio": 0.6666666666666666
+      },
+      "full": {
+        "n": 201,
+        "wins": 76,
+        "losses": 125,
+        "win_rate": 0.3781094527363184,
+        "roi": 0.17203980099502486,
+        "units": 34.58,
+        "active_seasons": 12,
+        "positive_seasons": 9,
+        "positive_season_ratio": 0.75
+      },
+      "holdout_survived": false,
+      "train": {
+        "n": 68,
+        "wins": 28,
+        "losses": 40,
+        "win_rate": 0.4117647058823529,
+        "roi": 0.27764705882352947,
+        "units": 18.880000000000003,
+        "active_seasons": 5,
+        "positive_seasons": 4,
+        "positive_season_ratio": 0.8
+      },
+      "validation": {
+        "n": 68,
+        "wins": 29,
+        "losses": 39,
+        "win_rate": 0.4264705882352941,
+        "roi": 0.3480882352941177,
+        "units": 23.67,
+        "active_seasons": 4,
+        "positive_seasons": 3,
+        "positive_season_ratio": 0.75
+      },
+      "preholdout": {
+        "n": 136,
+        "wins": 57,
+        "losses": 79,
+        "win_rate": 0.41911764705882354,
+        "roi": 0.3128676470588236,
+        "units": 42.550000000000004,
+        "active_seasons": 9,
+        "positive_seasons": 7,
+        "positive_season_ratio": 0.7777777777777778
+      }
+    },
+    {
+      "outcome": "HOME",
+      "price_band": "P25_35",
+      "rule1": {
+        "feature": "sel_roster_new_minutes_share3",
+        "op": "<=",
+        "threshold": 0.008518411615336638
+      },
+      "rule2": {
+        "feature": "opp_roster_departed_players3",
+        "op": ">=",
+        "threshold": 3.0
+      },
+      "pre_score": 2.288970781015776,
+      "holdout": {
+        "n": 41,
+        "wins": 9,
+        "losses": 32,
+        "win_rate": 0.21951219512195122,
+        "roi": -0.30658536585365853,
+        "units": -12.57,
+        "active_seasons": 3,
+        "positive_seasons": 1,
+        "positive_season_ratio": 0.3333333333333333
+      },
+      "full": {
+        "n": 114,
+        "wins": 42,
+        "losses": 72,
+        "win_rate": 0.3684210526315789,
+        "roi": 0.1749122807017544,
+        "units": 19.94,
+        "active_seasons": 9,
+        "positive_seasons": 7,
+        "positive_season_ratio": 0.7777777777777778
+      },
+      "holdout_survived": false,
+      "train": {
+        "n": 30,
+        "wins": 14,
+        "losses": 16,
+        "win_rate": 0.4666666666666667,
+        "roi": 0.48466666666666675,
+        "units": 14.540000000000003,
+        "active_seasons": 2,
+        "positive_seasons": 2,
+        "positive_season_ratio": 1.0
+      },
+      "validation": {
+        "n": 43,
+        "wins": 19,
+        "losses": 24,
+        "win_rate": 0.4418604651162791,
+        "roi": 0.4179069767441861,
+        "units": 17.970000000000002,
+        "active_seasons": 4,
+        "positive_seasons": 4,
+        "positive_season_ratio": 1.0
+      },
+      "preholdout": {
+        "n": 73,
+        "wins": 33,
+        "losses": 40,
+        "win_rate": 0.4520547945205479,
+        "roi": 0.44534246575342473,
+        "units": 32.510000000000005,
+        "active_seasons": 6,
+        "positive_seasons": 6,
+        "positive_season_ratio": 1.0
+      }
+    },
+    {
+      "outcome": "HOME",
+      "price_band": "P25_35",
+      "rule1": {
+        "feature": "referee_prior_home_win_rate",
+        "op": "<=",
+        "threshold": 0.5238095238095238
+      },
+      "rule2": {
+        "feature": "sel_roster_churn_index",
+        "op": ">=",
+        "threshold": 0.09654697692350571
+      },
+      "pre_score": 2.2823374251957094,
+      "holdout": {
+        "n": 96,
+        "wins": 26,
+        "losses": 70,
+        "win_rate": 0.2708333333333333,
+        "roi": -0.17072916666666668,
+        "units": -16.39,
+        "active_seasons": 3,
+        "positive_seasons": 2,
+        "positive_season_ratio": 0.6666666666666666
+      },
+      "full": {
+        "n": 228,
+        "wins": 80,
+        "losses": 148,
+        "win_rate": 0.3508771929824561,
+        "roi": 0.09714912280701754,
+        "units": 22.15,
+        "active_seasons": 13,
+        "positive_seasons": 10,
+        "positive_season_ratio": 0.7692307692307693
+      },
+      "holdout_survived": false,
+      "train": {
+        "n": 70,
+        "wins": 29,
+        "losses": 41,
+        "win_rate": 0.4142857142857143,
+        "roi": 0.28985714285714287,
+        "units": 20.29,
+        "active_seasons": 6,
+        "positive_seasons": 5,
+        "positive_season_ratio": 0.8333333333333334
+      },
+      "validation": {
+        "n": 62,
+        "wins": 25,
+        "losses": 37,
+        "win_rate": 0.4032258064516129,
+        "roi": 0.29435483870967744,
+        "units": 18.25,
+        "active_seasons": 4,
+        "positive_seasons": 3,
+        "positive_season_ratio": 0.75
+      },
+      "preholdout": {
+        "n": 132,
+        "wins": 54,
+        "losses": 78,
+        "win_rate": 0.4090909090909091,
+        "roi": 0.291969696969697,
+        "units": 38.54,
+        "active_seasons": 10,
+        "positive_seasons": 8,
+        "positive_season_ratio": 0.8
+      }
+    },
+    {
+      "outcome": "HOME",
+      "price_band": "P20_30",
+      "rule1": {
+        "feature": "sel_gk_xg_faced_p96_5",
+        "op": "<=",
+        "threshold": 1.845707242293418
+      },
+      "rule2": {
+        "feature": "edge_gk_goals_conceded_p96_5",
+        "op": "<=",
+        "threshold": 0.7963764745366829
+      },
+      "pre_score": 2.276530198839389,
+      "holdout": {
+        "n": 25,
+        "wins": 3,
+        "losses": 22,
+        "win_rate": 0.12,
+        "roi": -0.5828,
+        "units": -14.57,
+        "active_seasons": 2,
+        "positive_seasons": 0,
+        "positive_season_ratio": 0.0
+      },
+      "full": {
+        "n": 116,
+        "wins": 36,
+        "losses": 80,
+        "win_rate": 0.3103448275862069,
+        "roi": 0.17396551724137932,
+        "units": 20.18,
+        "active_seasons": 11,
+        "positive_seasons": 9,
+        "positive_season_ratio": 0.8181818181818182
+      },
+      "holdout_survived": false,
+      "train": {
+        "n": 37,
+        "wins": 14,
+        "losses": 23,
+        "win_rate": 0.3783783783783784,
+        "roi": 0.39297297297297296,
+        "units": 14.54,
+        "active_seasons": 5,
+        "positive_seasons": 5,
+        "positive_season_ratio": 1.0
+      },
+      "validation": {
+        "n": 54,
+        "wins": 19,
+        "losses": 35,
+        "win_rate": 0.35185185185185186,
+        "roi": 0.3742592592592593,
+        "units": 20.21,
+        "active_seasons": 4,
+        "positive_seasons": 4,
+        "positive_season_ratio": 1.0
+      },
+      "preholdout": {
+        "n": 91,
+        "wins": 33,
+        "losses": 58,
+        "win_rate": 0.3626373626373626,
+        "roi": 0.38186813186813184,
+        "units": 34.75,
+        "active_seasons": 9,
+        "positive_seasons": 9,
+        "positive_season_ratio": 1.0
+      }
+    }
+  ],
+  "all_holdout_surviving_singles_preholdout_order": [
+    {
+      "outcome": "HOME",
+      "price_band": "P50_60",
+      "feature": "edge_gk_save_pct5",
+      "op": "<=",
+      "threshold": -0.10148378191856453,
+      "pre_score": 2.0572122530132626,
+      "holdout": {
+        "n": 103,
+        "wins": 63,
+        "losses": 40,
+        "win_rate": 0.6116504854368932,
+        "roi": 0.08436893203883492,
+        "units": 8.689999999999996,
+        "active_seasons": 3,
+        "positive_seasons": 2,
+        "positive_season_ratio": 0.6666666666666666
+      },
+      "full": {
+        "n": 339,
+        "wins": 223,
+        "losses": 116,
+        "win_rate": 0.6578171091445427,
+        "roi": 0.16840707964601767,
+        "units": 57.08999999999999,
+        "active_seasons": 13,
+        "positive_seasons": 11,
+        "positive_season_ratio": 0.8461538461538461
+      },
+      "holdout_survived": true,
+      "train": {
+        "n": 131,
+        "wins": 88,
+        "losses": 43,
+        "win_rate": 0.6717557251908397,
+        "roi": 0.20076335877862594,
+        "units": 26.299999999999997,
+        "active_seasons": 6,
+        "positive_seasons": 5,
+        "positive_season_ratio": 0.8333333333333334
+      },
+      "validation": {
+        "n": 105,
+        "wins": 72,
+        "losses": 33,
+        "win_rate": 0.6857142857142857,
+        "roi": 0.21047619047619048,
+        "units": 22.1,
+        "active_seasons": 4,
+        "positive_seasons": 4,
+        "positive_season_ratio": 1.0
+      },
+      "preholdout": {
+        "n": 236,
+        "wins": 160,
+        "losses": 76,
+        "win_rate": 0.6779661016949152,
+        "roi": 0.20508474576271188,
+        "units": 48.400000000000006,
+        "active_seasons": 10,
+        "positive_seasons": 9,
+        "positive_season_ratio": 0.9
+      }
+    },
+    {
+      "outcome": "HOME",
+      "price_band": "P25_35",
+      "feature": "sel_gk_current_keeper_prior_team_games",
+      "op": "<=",
+      "threshold": 12.0,
+      "pre_score": 1.9479687500000002,
+      "holdout": {
+        "n": 27,
+        "wins": 9,
+        "losses": 18,
+        "win_rate": 0.3333333333333333,
+        "roi": 0.04370370370370371,
+        "units": 1.1800000000000002,
+        "active_seasons": 3,
+        "positive_seasons": 1,
+        "positive_season_ratio": 0.3333333333333333
+      },
+      "full": {
+        "n": 140,
+        "wins": 56,
+        "losses": 84,
+        "win_rate": 0.4,
+        "roi": 0.24821428571428572,
+        "units": 34.75,
+        "active_seasons": 10,
+        "positive_seasons": 7,
+        "positive_season_ratio": 0.7
+      },
+      "holdout_survived": true,
+      "train": {
+        "n": 49,
+        "wins": 21,
+        "losses": 28,
+        "win_rate": 0.42857142857142855,
+        "roi": 0.3216326530612245,
+        "units": 15.760000000000002,
+        "active_seasons": 3,
+        "positive_seasons": 3,
+        "positive_season_ratio": 1.0
+      },
+      "validation": {
+        "n": 64,
+        "wins": 26,
+        "losses": 38,
+        "win_rate": 0.40625,
+        "roi": 0.27828125000000004,
+        "units": 17.810000000000002,
+        "active_seasons": 4,
+        "positive_seasons": 3,
+        "positive_season_ratio": 0.75
+      },
+      "preholdout": {
+        "n": 113,
+        "wins": 47,
+        "losses": 66,
+        "win_rate": 0.415929203539823,
+        "roi": 0.2970796460176991,
+        "units": 33.57,
+        "active_seasons": 7,
+        "positive_seasons": 6,
+        "positive_season_ratio": 0.8571428571428571
+      }
+    },
+    {
+      "outcome": "DRAW",
+      "price_band": "P25_35",
+      "feature": "balance_gk_goals_conceded_p96_5",
+      "op": "<=",
+      "threshold": 0.2094130089899524,
+      "pre_score": 1.6563294719311212,
+      "holdout": {
+        "n": 197,
+        "wins": 59,
+        "losses": 138,
+        "win_rate": 0.29949238578680204,
+        "roi": 0.0803045685279188,
+        "units": 15.820000000000002,
+        "active_seasons": 3,
+        "positive_seasons": 2,
+        "positive_season_ratio": 0.6666666666666666
+      },
+      "full": {
+        "n": 750,
+        "wins": 231,
+        "losses": 519,
+        "win_rate": 0.308,
+        "roi": 0.10893333333333331,
+        "units": 81.69999999999999,
+        "active_seasons": 13,
+        "positive_seasons": 9,
+        "positive_season_ratio": 0.6923076923076923
+      },
+      "holdout_survived": true,
+      "train": {
+        "n": 359,
+        "wins": 112,
+        "losses": 247,
+        "win_rate": 0.31197771587743733,
+        "roi": 0.11924791086350976,
+        "units": 42.81,
+        "active_seasons": 6,
+        "positive_seasons": 3,
+        "positive_season_ratio": 0.5
+      },
+      "validation": {
+        "n": 194,
+        "wins": 60,
+        "losses": 134,
+        "win_rate": 0.30927835051546393,
+        "roi": 0.11891752577319584,
+        "units": 23.069999999999993,
+        "active_seasons": 4,
+        "positive_seasons": 4,
+        "positive_season_ratio": 1.0
+      },
+      "preholdout": {
+        "n": 553,
+        "wins": 172,
+        "losses": 381,
+        "win_rate": 0.31103074141048825,
+        "roi": 0.11913200723327305,
+        "units": 65.88,
+        "active_seasons": 10,
+        "positive_seasons": 7,
+        "positive_season_ratio": 0.7
+      }
+    },
+    {
+      "outcome": "HOME",
+      "price_band": "P35_45",
+      "feature": "referee_prior_draw_rate",
+      "op": ">=",
+      "threshold": 0.2826086956521739,
+      "pre_score": 1.6549053018168207,
+      "holdout": {
+        "n": 83,
+        "wins": 35,
+        "losses": 48,
+        "win_rate": 0.42168674698795183,
+        "roi": 0.002530120481927721,
+        "units": 0.21000000000000085,
+        "active_seasons": 3,
+        "positive_seasons": 1,
+        "positive_season_ratio": 0.3333333333333333
+      },
+      "full": {
+        "n": 344,
+        "wins": 164,
+        "losses": 180,
+        "win_rate": 0.47674418604651164,
+        "roi": 0.15011627906976743,
+        "units": 51.64,
+        "active_seasons": 13,
+        "positive_seasons": 9,
+        "positive_season_ratio": 0.6923076923076923
+      },
+      "holdout_survived": true,
+      "train": {
+        "n": 177,
+        "wins": 86,
+        "losses": 91,
+        "win_rate": 0.4858757062146893,
+        "roi": 0.18056497175141242,
+        "units": 31.959999999999997,
+        "active_seasons": 6,
+        "positive_seasons": 4,
+        "positive_season_ratio": 0.6666666666666666
+      },
+      "validation": {
+        "n": 84,
+        "wins": 43,
+        "losses": 41,
+        "win_rate": 0.5119047619047619,
+        "roi": 0.23178571428571426,
+        "units": 19.47,
+        "active_seasons": 4,
+        "positive_seasons": 4,
+        "positive_season_ratio": 1.0
+      },
+      "preholdout": {
+        "n": 261,
+        "wins": 129,
+        "losses": 132,
+        "win_rate": 0.4942528735632184,
+        "roi": 0.19704980842911876,
+        "units": 51.43,
+        "active_seasons": 10,
+        "positive_seasons": 8,
+        "positive_season_ratio": 0.8
+      }
+    },
+    {
+      "outcome": "HOME",
+      "price_band": "P25_35",
+      "feature": "sel_roster_departed_players3",
+      "op": ">=",
+      "threshold": 7.0,
+      "pre_score": 1.5160474926597782,
+      "holdout": {
+        "n": 32,
+        "wins": 11,
+        "losses": 21,
+        "win_rate": 0.34375,
+        "roi": 0.08906249999999999,
+        "units": 2.8499999999999996,
+        "active_seasons": 3,
+        "positive_seasons": 2,
+        "positive_season_ratio": 0.6666666666666666
+      },
+      "full": {
+        "n": 108,
+        "wins": 41,
+        "losses": 67,
+        "win_rate": 0.37962962962962965,
+        "roi": 0.2099074074074074,
+        "units": 22.669999999999998,
+        "active_seasons": 11,
+        "positive_seasons": 8,
+        "positive_season_ratio": 0.7272727272727273
+      },
+      "holdout_survived": true,
+      "train": {
+        "n": 34,
+        "wins": 14,
+        "losses": 20,
+        "win_rate": 0.4117647058823529,
+        "roi": 0.26,
+        "units": 8.84,
+        "active_seasons": 4,
+        "positive_seasons": 4,
+        "positive_season_ratio": 1.0
+      },
+      "validation": {
+        "n": 42,
+        "wins": 16,
+        "losses": 26,
+        "win_rate": 0.38095238095238093,
+        "roi": 0.26142857142857145,
+        "units": 10.98,
+        "active_seasons": 4,
+        "positive_seasons": 2,
+        "positive_season_ratio": 0.5
+      },
+      "preholdout": {
+        "n": 76,
+        "wins": 30,
+        "losses": 46,
+        "win_rate": 0.39473684210526316,
+        "roi": 0.26078947368421057,
+        "units": 19.820000000000004,
+        "active_seasons": 8,
+        "positive_seasons": 6,
+        "positive_season_ratio": 0.75
+      }
+    },
+    {
+      "outcome": "AWAY",
+      "price_band": "P30_40",
+      "feature": "edge_roster_departed_minutes_share_prev5",
+      "op": ">=",
+      "threshold": 0.12196382865257216,
+      "pre_score": 1.4648594328107856,
+      "holdout": {
+        "n": 37,
+        "wins": 16,
+        "losses": 21,
+        "win_rate": 0.43243243243243246,
+        "roi": 0.23054054054054052,
+        "units": 8.53,
+        "active_seasons": 3,
+        "positive_seasons": 2,
+        "positive_season_ratio": 0.6666666666666666
+      },
+      "full": {
+        "n": 119,
+        "wins": 53,
+        "losses": 66,
+        "win_rate": 0.44537815126050423,
+        "roi": 0.29000000000000004,
+        "units": 34.510000000000005,
+        "active_seasons": 11,
+        "positive_seasons": 8,
+        "positive_season_ratio": 0.7272727272727273
+      },
+      "holdout_survived": true,
+      "train": {
+        "n": 44,
+        "wins": 21,
+        "losses": 23,
+        "win_rate": 0.4772727272727273,
+        "roi": 0.3852272727272728,
+        "units": 16.950000000000003,
+        "active_seasons": 4,
+        "positive_seasons": 4,
+        "positive_season_ratio": 1.0
+      },
+      "validation": {
+        "n": 38,
+        "wins": 16,
+        "losses": 22,
+        "win_rate": 0.42105263157894735,
+        "roi": 0.23763157894736842,
+        "units": 9.03,
+        "active_seasons": 4,
+        "positive_seasons": 2,
+        "positive_season_ratio": 0.5
+      },
+      "preholdout": {
+        "n": 82,
+        "wins": 37,
+        "losses": 45,
+        "win_rate": 0.45121951219512196,
+        "roi": 0.31682926829268293,
+        "units": 25.98,
+        "active_seasons": 8,
+        "positive_seasons": 6,
+        "positive_season_ratio": 0.75
+      }
+    },
+    {
+      "outcome": "AWAY",
+      "price_band": "P30_40",
+      "feature": "edge_roster_churn_index",
+      "op": ">=",
+      "threshold": 0.09182494675600306,
+      "pre_score": 1.3958983057972885,
+      "holdout": {
+        "n": 63,
+        "wins": 25,
+        "losses": 38,
+        "win_rate": 0.3968253968253968,
+        "roi": 0.13174603174603172,
+        "units": 8.299999999999999,
+        "active_seasons": 3,
+        "positive_seasons": 2,
+        "positive_season_ratio": 0.6666666666666666
+      },
+      "full": {
+        "n": 217,
+        "wins": 87,
+        "losses": 130,
+        "win_rate": 0.4009216589861751,
+        "roi": 0.16327188940092163,
+        "units": 35.42999999999999,
+        "active_seasons": 13,
+        "positive_seasons": 10,
+        "positive_season_ratio": 0.7692307692307693
+      },
+      "holdout_survived": true,
+      "train": {
+        "n": 83,
+        "wins": 33,
+        "losses": 50,
+        "win_rate": 0.39759036144578314,
+        "roi": 0.16566265060240964,
+        "units": 13.75,
+        "active_seasons": 6,
+        "positive_seasons": 5,
+        "positive_season_ratio": 0.8333333333333334
+      },
+      "validation": {
+        "n": 71,
+        "wins": 29,
+        "losses": 42,
+        "win_rate": 0.4084507042253521,
+        "roi": 0.18845070422535212,
+        "units": 13.38,
+        "active_seasons": 4,
+        "positive_seasons": 3,
+        "positive_season_ratio": 0.75
+      },
+      "preholdout": {
+        "n": 154,
+        "wins": 62,
+        "losses": 92,
+        "win_rate": 0.4025974025974026,
+        "roi": 0.1761688311688312,
+        "units": 27.130000000000003,
+        "active_seasons": 10,
+        "positive_seasons": 8,
+        "positive_season_ratio": 0.8
+      }
+    },
+    {
+      "outcome": "AWAY",
+      "price_band": "P20_30",
+      "feature": "opp_roster_new_players3",
+      "op": "<=",
+      "threshold": 0.0,
+      "pre_score": 1.3564725738531753,
+      "holdout": {
+        "n": 174,
+        "wins": 53,
+        "losses": 121,
+        "win_rate": 0.3045977011494253,
+        "roi": 0.23143678160919537,
+        "units": 40.269999999999996,
+        "active_seasons": 3,
+        "positive_seasons": 3,
+        "positive_season_ratio": 1.0
+      },
+      "full": {
+        "n": 562,
+        "wins": 162,
+        "losses": 400,
+        "win_rate": 0.28825622775800713,
+        "roi": 0.1461387900355872,
+        "units": 82.13,
+        "active_seasons": 13,
+        "positive_seasons": 9,
+        "positive_season_ratio": 0.6923076923076923
+      },
+      "holdout_survived": true,
+      "train": {
+        "n": 218,
+        "wins": 61,
+        "losses": 157,
+        "win_rate": 0.2798165137614679,
+        "roi": 0.10403669724770644,
+        "units": 22.680000000000003,
+        "active_seasons": 6,
+        "positive_seasons": 3,
+        "positive_season_ratio": 0.5
+      },
+      "validation": {
+        "n": 170,
+        "wins": 48,
+        "losses": 122,
+        "win_rate": 0.2823529411764706,
+        "roi": 0.1128235294117647,
+        "units": 19.18,
+        "active_seasons": 4,
+        "positive_seasons": 3,
+        "positive_season_ratio": 0.75
+      },
+      "preholdout": {
+        "n": 388,
+        "wins": 109,
+        "losses": 279,
+        "win_rate": 0.2809278350515464,
+        "roi": 0.10788659793814433,
+        "units": 41.86,
+        "active_seasons": 10,
+        "positive_seasons": 6,
+        "positive_season_ratio": 0.6
+      }
+    },
+    {
+      "outcome": "AWAY",
+      "price_band": "P20_30",
+      "feature": "opp_roster_new_minutes_share3",
+      "op": "<=",
+      "threshold": 0.0,
+      "pre_score": 1.3564725738531753,
+      "holdout": {
+        "n": 174,
+        "wins": 53,
+        "losses": 121,
+        "win_rate": 0.3045977011494253,
+        "roi": 0.23143678160919537,
+        "units": 40.269999999999996,
+        "active_seasons": 3,
+        "positive_seasons": 3,
+        "positive_season_ratio": 1.0
+      },
+      "full": {
+        "n": 562,
+        "wins": 162,
+        "losses": 400,
+        "win_rate": 0.28825622775800713,
+        "roi": 0.1461387900355872,
+        "units": 82.13,
+        "active_seasons": 13,
+        "positive_seasons": 9,
+        "positive_season_ratio": 0.6923076923076923
+      },
+      "holdout_survived": true,
+      "train": {
+        "n": 218,
+        "wins": 61,
+        "losses": 157,
+        "win_rate": 0.2798165137614679,
+        "roi": 0.10403669724770644,
+        "units": 22.680000000000003,
+        "active_seasons": 6,
+        "positive_seasons": 3,
+        "positive_season_ratio": 0.5
+      },
+      "validation": {
+        "n": 170,
+        "wins": 48,
+        "losses": 122,
+        "win_rate": 0.2823529411764706,
+        "roi": 0.1128235294117647,
+        "units": 19.18,
+        "active_seasons": 4,
+        "positive_seasons": 3,
+        "positive_season_ratio": 0.75
+      },
+      "preholdout": {
+        "n": 388,
+        "wins": 109,
+        "losses": 279,
+        "win_rate": 0.2809278350515464,
+        "roi": 0.10788659793814433,
+        "units": 41.86,
+        "active_seasons": 10,
+        "positive_seasons": 6,
+        "positive_season_ratio": 0.6
+      }
+    },
+    {
+      "outcome": "AWAY",
+      "price_band": "P25_35",
+      "feature": "referee_prior_over25_rate",
+      "op": "<=",
+      "threshold": 0.5348837209302325,
+      "pre_score": 1.3012389380530973,
+      "holdout": {
+        "n": 105,
+        "wins": 40,
+        "losses": 65,
+        "win_rate": 0.38095238095238093,
+        "roi": 0.23952380952380947,
+        "units": 25.149999999999995,
+        "active_seasons": 3,
+        "positive_seasons": 3,
+        "positive_season_ratio": 1.0
+      },
+      "full": {
+        "n": 588,
+        "wins": 204,
+        "losses": 384,
+        "win_rate": 0.3469387755102041,
+        "roi": 0.14846938775510207,
+        "units": 87.30000000000001,
+        "active_seasons": 13,
+        "positive_seasons": 10,
+        "positive_season_ratio": 0.7692307692307693
+      },
+      "holdout_survived": true,
+      "train": {
+        "n": 339,
+        "wins": 112,
+        "losses": 227,
+        "win_rate": 0.3303834808259587,
+        "roi": 0.10843657817109144,
+        "units": 36.76,
+        "active_seasons": 6,
+        "positive_seasons": 4,
+        "positive_season_ratio": 0.6666666666666666
+      },
+      "validation": {
+        "n": 144,
+        "wins": 52,
+        "losses": 92,
+        "win_rate": 0.3611111111111111,
+        "roi": 0.1763194444444445,
+        "units": 25.390000000000008,
+        "active_seasons": 4,
+        "positive_seasons": 3,
+        "positive_season_ratio": 0.75
+      },
+      "preholdout": {
+        "n": 483,
+        "wins": 164,
+        "losses": 319,
+        "win_rate": 0.33954451345755693,
+        "roi": 0.12867494824016562,
+        "units": 62.15,
+        "active_seasons": 10,
+        "positive_seasons": 7,
+        "positive_season_ratio": 0.7
+      }
+    },
+    {
+      "outcome": "AWAY",
+      "price_band": "P30_40",
+      "feature": "sel_roster_departed_players3",
+      "op": ">=",
+      "threshold": 7.0,
+      "pre_score": 1.2872490924143325,
+      "holdout": {
+        "n": 60,
+        "wins": 23,
+        "losses": 37,
+        "win_rate": 0.38333333333333336,
+        "roi": 0.10799999999999997,
+        "units": 6.479999999999999,
+        "active_seasons": 3,
+        "positive_seasons": 2,
+        "positive_season_ratio": 0.6666666666666666
+      },
+      "full": {
+        "n": 172,
+        "wins": 69,
+        "losses": 103,
+        "win_rate": 0.4011627906976744,
+        "roi": 0.16953488372093023,
+        "units": 29.16,
+        "active_seasons": 12,
+        "positive_seasons": 9,
+        "positive_season_ratio": 0.75
+      },
+      "holdout_survived": true,
+      "train": {
+        "n": 54,
+        "wins": 23,
+        "losses": 31,
+        "win_rate": 0.42592592592592593,
+        "roi": 0.23185185185185184,
+        "units": 12.52,
+        "active_seasons": 5,
+        "positive_seasons": 4,
+        "positive_season_ratio": 0.8
+      },
+      "validation": {
+        "n": 58,
+        "wins": 23,
+        "losses": 35,
+        "win_rate": 0.39655172413793105,
+        "roi": 0.17517241379310347,
+        "units": 10.160000000000002,
+        "active_seasons": 4,
+        "positive_seasons": 3,
+        "positive_season_ratio": 0.75
+      },
+      "preholdout": {
+        "n": 112,
+        "wins": 46,
+        "losses": 66,
+        "win_rate": 0.4107142857142857,
+        "roi": 0.20249999999999999,
+        "units": 22.68,
+        "active_seasons": 9,
+        "positive_seasons": 7,
+        "positive_season_ratio": 0.7777777777777778
+      }
+    },
+    {
+      "outcome": "AWAY",
+      "price_band": "P25_35",
+      "feature": "opp_gk_goals_conceded_p96_5",
+      "op": "<=",
+      "threshold": 0.7950310559006211,
+      "pre_score": 1.1733799392897901,
+      "holdout": {
+        "n": 77,
+        "wins": 27,
+        "losses": 50,
+        "win_rate": 0.35064935064935066,
+        "roi": 0.14454545454545448,
+        "units": 11.129999999999995,
+        "active_seasons": 3,
+        "positive_seasons": 3,
+        "positive_season_ratio": 1.0
+      },
+      "full": {
+        "n": 264,
+        "wins": 90,
+        "losses": 174,
+        "win_rate": 0.3409090909090909,
+        "roi": 0.13583333333333333,
+        "units": 35.86,
+        "active_seasons": 13,
+        "positive_seasons": 11,
+        "positive_season_ratio": 0.8461538461538461
+      },
+      "holdout_survived": true,
+      "train": {
+        "n": 104,
+        "wins": 35,
+        "losses": 69,
+        "win_rate": 0.33653846153846156,
+        "roi": 0.135,
+        "units": 14.040000000000001,
+        "active_seasons": 6,
+        "positive_seasons": 4,
+        "positive_season_ratio": 0.6666666666666666
+      },
+      "validation": {
+        "n": 83,
+        "wins": 28,
+        "losses": 55,
+        "win_rate": 0.3373493975903614,
+        "roi": 0.1287951807228916,
+        "units": 10.690000000000001,
+        "active_seasons": 4,
+        "positive_seasons": 4,
+        "positive_season_ratio": 1.0
+      },
+      "preholdout": {
+        "n": 187,
+        "wins": 63,
+        "losses": 124,
+        "win_rate": 0.33689839572192515,
+        "roi": 0.13224598930481285,
+        "units": 24.730000000000004,
+        "active_seasons": 10,
+        "positive_seasons": 8,
+        "positive_season_ratio": 0.8
+      }
+    },
+    {
+      "outcome": "HOME",
+      "price_band": "P20_30",
+      "feature": "edge_roster_churn_index",
+      "op": ">=",
+      "threshold": 0.044680043839657325,
+      "pre_score": 1.1443388609024117,
+      "holdout": {
+        "n": 21,
+        "wins": 9,
+        "losses": 12,
+        "win_rate": 0.42857142857142855,
+        "roi": 0.4680952380952381,
+        "units": 9.83,
+        "active_seasons": 3,
+        "positive_seasons": 2,
+        "positive_season_ratio": 0.6666666666666666
+      },
+      "full": {
+        "n": 107,
+        "wins": 37,
+        "losses": 70,
+        "win_rate": 0.34579439252336447,
+        "roi": 0.2790654205607477,
+        "units": 29.86,
+        "active_seasons": 12,
+        "positive_seasons": 8,
+        "positive_season_ratio": 0.6666666666666666
+      },
+      "holdout_survived": true,
+      "train": {
+        "n": 35,
+        "wins": 11,
+        "losses": 24,
+        "win_rate": 0.3142857142857143,
+        "roi": 0.19342857142857145,
+        "units": 6.7700000000000005,
+        "active_seasons": 5,
+        "positive_seasons": 3,
+        "positive_season_ratio": 0.6
+      },
+      "validation": {
+        "n": 51,
+        "wins": 17,
+        "losses": 34,
+        "win_rate": 0.3333333333333333,
+        "roi": 0.26,
+        "units": 13.260000000000002,
+        "active_seasons": 4,
+        "positive_seasons": 3,
+        "positive_season_ratio": 0.75
+      },
+      "preholdout": {
+        "n": 86,
+        "wins": 28,
+        "losses": 58,
+        "win_rate": 0.32558139534883723,
+        "roi": 0.232906976744186,
+        "units": 20.029999999999998,
+        "active_seasons": 9,
+        "positive_seasons": 6,
+        "positive_season_ratio": 0.6666666666666666
+      }
+    },
+    {
+      "outcome": "HOME",
+      "price_band": "P50_60",
+      "feature": "sel_gk_save_pct5",
+      "op": "<=",
+      "threshold": 0.6312865497076021,
+      "pre_score": 1.1055891066428216,
+      "holdout": {
+        "n": 157,
+        "wins": 89,
+        "losses": 68,
+        "win_rate": 0.5668789808917197,
+        "roi": 0.0034394904458598446,
+        "units": 0.5399999999999956,
+        "active_seasons": 3,
+        "positive_seasons": 2,
+        "positive_season_ratio": 0.6666666666666666
+      },
+      "full": {
+        "n": 502,
+        "wins": 301,
+        "losses": 201,
+        "win_rate": 0.599601593625498,
+        "roi": 0.0642430278884462,
+        "units": 32.24999999999999,
+        "active_seasons": 13,
+        "positive_seasons": 9,
+        "positive_season_ratio": 0.6923076923076923
+      },
+      "holdout_survived": true,
+      "train": {
+        "n": 191,
+        "wins": 117,
+        "losses": 74,
+        "win_rate": 0.612565445026178,
+        "roi": 0.09418848167539268,
+        "units": 17.990000000000002,
+        "active_seasons": 6,
+        "positive_seasons": 5,
+        "positive_season_ratio": 0.8333333333333334
+      },
+      "validation": {
+        "n": 154,
+        "wins": 95,
+        "losses": 59,
+        "win_rate": 0.6168831168831169,
+        "roi": 0.08909090909090908,
+        "units": 13.719999999999999,
+        "active_seasons": 4,
+        "positive_seasons": 2,
+        "positive_season_ratio": 0.5
+      },
+      "preholdout": {
+        "n": 345,
+        "wins": 212,
+        "losses": 133,
+        "win_rate": 0.6144927536231884,
+        "roi": 0.09191304347826086,
+        "units": 31.709999999999997,
+        "active_seasons": 10,
+        "positive_seasons": 7,
+        "positive_season_ratio": 0.7
+      }
+    },
+    {
+      "outcome": "HOME",
+      "price_band": "P25_35",
+      "feature": "opp_roster_new_players3",
+      "op": "<=",
+      "threshold": 0.0,
+      "pre_score": 1.0814989597775861,
+      "holdout": {
+        "n": 48,
+        "wins": 16,
+        "losses": 32,
+        "win_rate": 0.3333333333333333,
+        "roi": 0.042083333333333334,
+        "units": 2.02,
+        "active_seasons": 3,
+        "positive_seasons": 1,
+        "positive_season_ratio": 0.3333333333333333
+      },
+      "full": {
+        "n": 136,
+        "wins": 50,
+        "losses": 86,
+        "win_rate": 0.36764705882352944,
+        "roi": 0.1536029411764706,
+        "units": 20.890000000000004,
+        "active_seasons": 12,
+        "positive_seasons": 6,
+        "positive_season_ratio": 0.5
+      },
+      "holdout_survived": true,
+      "train": {
+        "n": 40,
+        "wins": 15,
+        "losses": 25,
+        "win_rate": 0.375,
+        "roi": 0.17100000000000004,
+        "units": 6.840000000000002,
+        "active_seasons": 5,
+        "positive_seasons": 3,
+        "positive_season_ratio": 0.6
+      },
+      "validation": {
+        "n": 48,
+        "wins": 19,
+        "losses": 29,
+        "win_rate": 0.3958333333333333,
+        "roi": 0.250625,
+        "units": 12.03,
+        "active_seasons": 4,
+        "positive_seasons": 2,
+        "positive_season_ratio": 0.5
+      },
+      "preholdout": {
+        "n": 88,
+        "wins": 34,
+        "losses": 54,
+        "win_rate": 0.38636363636363635,
+        "roi": 0.2144318181818182,
+        "units": 18.87,
+        "active_seasons": 9,
+        "positive_seasons": 5,
+        "positive_season_ratio": 0.5555555555555556
+      }
+    },
+    {
+      "outcome": "HOME",
+      "price_band": "P25_35",
+      "feature": "opp_roster_new_minutes_share3",
+      "op": "<=",
+      "threshold": 0.0,
+      "pre_score": 1.0814989597775861,
+      "holdout": {
+        "n": 48,
+        "wins": 16,
+        "losses": 32,
+        "win_rate": 0.3333333333333333,
+        "roi": 0.042083333333333334,
+        "units": 2.02,
+        "active_seasons": 3,
+        "positive_seasons": 1,
+        "positive_season_ratio": 0.3333333333333333
+      },
+      "full": {
+        "n": 136,
+        "wins": 50,
+        "losses": 86,
+        "win_rate": 0.36764705882352944,
+        "roi": 0.1536029411764706,
+        "units": 20.890000000000004,
+        "active_seasons": 12,
+        "positive_seasons": 6,
+        "positive_season_ratio": 0.5
+      },
+      "holdout_survived": true,
+      "train": {
+        "n": 40,
+        "wins": 15,
+        "losses": 25,
+        "win_rate": 0.375,
+        "roi": 0.17100000000000004,
+        "units": 6.840000000000002,
+        "active_seasons": 5,
+        "positive_seasons": 3,
+        "positive_season_ratio": 0.6
+      },
+      "validation": {
+        "n": 48,
+        "wins": 19,
+        "losses": 29,
+        "win_rate": 0.3958333333333333,
+        "roi": 0.250625,
+        "units": 12.03,
+        "active_seasons": 4,
+        "positive_seasons": 2,
+        "positive_season_ratio": 0.5
+      },
+      "preholdout": {
+        "n": 88,
+        "wins": 34,
+        "losses": 54,
+        "win_rate": 0.38636363636363635,
+        "roi": 0.2144318181818182,
+        "units": 18.87,
+        "active_seasons": 9,
+        "positive_seasons": 5,
+        "positive_season_ratio": 0.5555555555555556
+      }
+    },
+    {
+      "outcome": "DRAW",
+      "price_band": "P25_35",
+      "feature": "referee_prior_over25_rate",
+      "op": ">=",
+      "threshold": 0.6133978119549707,
+      "pre_score": 1.0689434035532466,
+      "holdout": {
+        "n": 170,
+        "wins": 56,
+        "losses": 114,
+        "win_rate": 0.32941176470588235,
+        "roi": 0.1911176470588235,
+        "units": 32.489999999999995,
+        "active_seasons": 3,
+        "positive_seasons": 2,
+        "positive_season_ratio": 0.6666666666666666
+      },
+      "full": {
+        "n": 510,
+        "wins": 164,
+        "losses": 346,
+        "win_rate": 0.3215686274509804,
+        "roi": 0.1536078431372549,
+        "units": 78.34,
+        "active_seasons": 13,
+        "positive_seasons": 9,
+        "positive_season_ratio": 0.6923076923076923
+      },
+      "holdout_survived": true,
+      "train": {
+        "n": 205,
+        "wins": 67,
+        "losses": 138,
+        "win_rate": 0.32682926829268294,
+        "roi": 0.16307317073170735,
+        "units": 33.43000000000001,
+        "active_seasons": 6,
+        "positive_seasons": 4,
+        "positive_season_ratio": 0.6666666666666666
+      },
+      "validation": {
+        "n": 135,
+        "wins": 41,
+        "losses": 94,
+        "win_rate": 0.3037037037037037,
+        "roi": 0.09199999999999997,
+        "units": 12.419999999999996,
+        "active_seasons": 4,
+        "positive_seasons": 3,
+        "positive_season_ratio": 0.75
+      },
+      "preholdout": {
+        "n": 340,
+        "wins": 108,
+        "losses": 232,
+        "win_rate": 0.3176470588235294,
+        "roi": 0.1348529411764706,
+        "units": 45.85,
+        "active_seasons": 10,
+        "positive_seasons": 7,
+        "positive_season_ratio": 0.7
+      }
+    },
+    {
+      "outcome": "HOME",
+      "price_band": "P20_30",
+      "feature": "sel_roster_departed_minutes_share_prev5",
+      "op": ">=",
+      "threshold": 0.12129177619226436,
+      "pre_score": 1.0662361482380551,
+      "holdout": {
+        "n": 23,
+        "wins": 10,
+        "losses": 13,
+        "win_rate": 0.43478260869565216,
+        "roi": 0.488695652173913,
+        "units": 11.239999999999998,
+        "active_seasons": 3,
+        "positive_seasons": 2,
+        "positive_season_ratio": 0.6666666666666666
+      },
+      "full": {
+        "n": 117,
+        "wins": 43,
+        "losses": 74,
+        "win_rate": 0.36752136752136755,
+        "roi": 0.3542735042735043,
+        "units": 41.45,
+        "active_seasons": 12,
+        "positive_seasons": 10,
+        "positive_season_ratio": 0.8333333333333334
+      },
+      "holdout_survived": true,
+      "train": {
+        "n": 42,
+        "wins": 13,
+        "losses": 29,
+        "win_rate": 0.30952380952380953,
+        "roi": 0.16452380952380952,
+        "units": 6.91,
+        "active_seasons": 5,
+        "positive_seasons": 4,
+        "positive_season_ratio": 0.8
+      },
+      "validation": {
+        "n": 52,
+        "wins": 20,
+        "losses": 32,
+        "win_rate": 0.38461538461538464,
+        "roi": 0.4480769230769231,
+        "units": 23.3,
+        "active_seasons": 4,
+        "positive_seasons": 4,
+        "positive_season_ratio": 1.0
+      },
+      "preholdout": {
+        "n": 94,
+        "wins": 33,
+        "losses": 61,
+        "win_rate": 0.35106382978723405,
+        "roi": 0.32138297872340427,
+        "units": 30.21,
+        "active_seasons": 9,
+        "positive_seasons": 8,
+        "positive_season_ratio": 0.8888888888888888
+      }
+    },
+    {
+      "outcome": "HOME",
+      "price_band": "P50_60",
+      "feature": "sel_gk_goals_minus_xg_p96_5",
+      "op": ">=",
+      "threshold": 0.35041364870634445,
+      "pre_score": 1.052074869129823,
+      "holdout": {
+        "n": 72,
+        "wins": 43,
+        "losses": 29,
+        "win_rate": 0.5972222222222222,
+        "roi": 0.04208333333333332,
+        "units": 3.029999999999999,
+        "active_seasons": 3,
+        "positive_seasons": 2,
+        "positive_season_ratio": 0.6666666666666666
+      },
+      "full": {
+        "n": 218,
+        "wins": 136,
+        "losses": 82,
+        "win_rate": 0.6238532110091743,
+        "roi": 0.10197247706422016,
+        "units": 22.229999999999997,
+        "active_seasons": 13,
+        "positive_seasons": 8,
+        "positive_season_ratio": 0.6153846153846154
+      },
+      "holdout_survived": true,
+      "train": {
+        "n": 65,
+        "wins": 41,
+        "losses": 24,
+        "win_rate": 0.6307692307692307,
+        "roi": 0.13276923076923078,
+        "units": 8.63,
+        "active_seasons": 6,
+        "positive_seasons": 3,
+        "positive_season_ratio": 0.5
+      },
+      "validation": {
+        "n": 81,
+        "wins": 52,
+        "losses": 29,
+        "win_rate": 0.6419753086419753,
+        "roi": 0.13049382716049382,
+        "units": 10.569999999999999,
+        "active_seasons": 4,
+        "positive_seasons": 3,
+        "positive_season_ratio": 0.75
+      },
+      "preholdout": {
+        "n": 146,
+        "wins": 93,
+        "losses": 53,
+        "win_rate": 0.636986301369863,
+        "roi": 0.13150684931506848,
+        "units": 19.2,
+        "active_seasons": 10,
+        "positive_seasons": 6,
+        "positive_season_ratio": 0.6
+      }
+    },
+    {
+      "outcome": "AWAY",
+      "price_band": "P30_40",
+      "feature": "sel_roster_churn_index",
+      "op": ">=",
+      "threshold": 0.2552429554488521,
+      "pre_score": 1.0448141643941948,
+      "holdout": {
+        "n": 60,
+        "wins": 25,
+        "losses": 35,
+        "win_rate": 0.4166666666666667,
+        "roi": 0.19733333333333333,
+        "units": 11.84,
+        "active_seasons": 3,
+        "positive_seasons": 2,
+        "positive_season_ratio": 0.6666666666666666
+      },
+      "full": {
+        "n": 215,
+        "wins": 88,
+        "losses": 127,
+        "win_rate": 0.40930232558139534,
+        "roi": 0.18204651162790703,
+        "units": 39.14000000000001,
+        "active_seasons": 13,
+        "positive_seasons": 8,
+        "positive_season_ratio": 0.6153846153846154
+      },
+      "holdout_survived": true,
+      "train": {
+        "n": 83,
+        "wins": 32,
+        "losses": 51,
+        "win_rate": 0.3855421686746988,
+        "roi": 0.12313253012048192,
+        "units": 10.219999999999999,
+        "active_seasons": 6,
+        "positive_seasons": 3,
+        "positive_season_ratio": 0.5
+      },
+      "validation": {
+        "n": 72,
+        "wins": 31,
+        "losses": 41,
+        "win_rate": 0.4305555555555556,
+        "roi": 0.2372222222222222,
+        "units": 17.08,
+        "active_seasons": 4,
+        "positive_seasons": 3,
+        "positive_season_ratio": 0.75
+      },
+      "preholdout": {
+        "n": 155,
+        "wins": 63,
+        "losses": 92,
+        "win_rate": 0.4064516129032258,
+        "roi": 0.17612903225806453,
+        "units": 27.300000000000004,
+        "active_seasons": 10,
+        "positive_seasons": 6,
+        "positive_season_ratio": 0.6
+      }
+    },
+    {
+      "outcome": "HOME",
+      "price_band": "P25_35",
+      "feature": "edge_gk_save_pct5",
+      "op": "<=",
+      "threshold": -0.00253398941554861,
+      "pre_score": 1.0271053286307221,
+      "holdout": {
+        "n": 98,
+        "wins": 33,
+        "losses": 65,
+        "win_rate": 0.336734693877551,
+        "roi": 0.031428571428571424,
+        "units": 3.0799999999999996,
+        "active_seasons": 3,
+        "positive_seasons": 2,
+        "positive_season_ratio": 0.6666666666666666
+      },
+      "full": {
+        "n": 284,
+        "wins": 99,
+        "losses": 185,
+        "win_rate": 0.3485915492957746,
+        "roi": 0.08443661971830987,
+        "units": 23.980000000000004,
+        "active_seasons": 13,
+        "positive_seasons": 8,
+        "positive_season_ratio": 0.6153846153846154
+      },
+      "holdout_survived": true,
+      "train": {
+        "n": 88,
+        "wins": 32,
+        "losses": 56,
+        "win_rate": 0.36363636363636365,
+        "roi": 0.11556818181818183,
+        "units": 10.170000000000002,
+        "active_seasons": 6,
+        "positive_seasons": 4,
+        "positive_season_ratio": 0.6666666666666666
+      },
+      "validation": {
+        "n": 98,
+        "wins": 34,
+        "losses": 64,
+        "win_rate": 0.3469387755102041,
+        "roi": 0.10948979591836731,
+        "units": 10.729999999999997,
+        "active_seasons": 4,
+        "positive_seasons": 2,
+        "positive_season_ratio": 0.5
+      },
+      "preholdout": {
+        "n": 186,
+        "wins": 66,
+        "losses": 120,
+        "win_rate": 0.3548387096774194,
+        "roi": 0.11236559139784945,
+        "units": 20.9,
+        "active_seasons": 10,
+        "positive_seasons": 6,
+        "positive_season_ratio": 0.6
+      }
+    },
+    {
+      "outcome": "HOME",
+      "price_band": "P50_60",
+      "feature": "edge_gk_goals_minus_xg_p96_5",
+      "op": ">=",
+      "threshold": 0.47742150219182766,
+      "pre_score": 0.9981582963477791,
+      "holdout": {
+        "n": 81,
+        "wins": 49,
+        "losses": 32,
+        "win_rate": 0.6049382716049383,
+        "roi": 0.05962962962962963,
+        "units": 4.83,
+        "active_seasons": 3,
+        "positive_seasons": 3,
+        "positive_season_ratio": 1.0
+      },
+      "full": {
+        "n": 220,
+        "wins": 138,
+        "losses": 82,
+        "win_rate": 0.6272727272727273,
+        "roi": 0.11299999999999998,
+        "units": 24.859999999999996,
+        "active_seasons": 13,
+        "positive_seasons": 11,
+        "positive_season_ratio": 0.8461538461538461
+      },
+      "holdout_survived": true,
+      "train": {
+        "n": 72,
+        "wins": 45,
+        "losses": 27,
+        "win_rate": 0.625,
+        "roi": 0.12194444444444441,
+        "units": 8.779999999999998,
+        "active_seasons": 6,
+        "positive_seasons": 4,
+        "positive_season_ratio": 0.6666666666666666
+      },
+      "validation": {
+        "n": 67,
+        "wins": 44,
+        "losses": 23,
+        "win_rate": 0.6567164179104478,
+        "roi": 0.16791044776119401,
+        "units": 11.249999999999998,
+        "active_seasons": 4,
+        "positive_seasons": 4,
+        "positive_season_ratio": 1.0
+      },
+      "preholdout": {
+        "n": 139,
+        "wins": 89,
+        "losses": 50,
+        "win_rate": 0.6402877697841727,
+        "roi": 0.14410071942446043,
+        "units": 20.03,
+        "active_seasons": 10,
+        "positive_seasons": 8,
+        "positive_season_ratio": 0.8
+      }
+    },
+    {
+      "outcome": "AWAY",
+      "price_band": "P25_35",
+      "feature": "sel_roster_departed_minutes_share_prev5",
+      "op": ">=",
+      "threshold": 0.24540662650602407,
+      "pre_score": 0.9897971820218832,
+      "holdout": {
+        "n": 74,
+        "wins": 28,
+        "losses": 46,
+        "win_rate": 0.3783783783783784,
+        "roi": 0.2487837837837838,
+        "units": 18.41,
+        "active_seasons": 3,
+        "positive_seasons": 2,
+        "positive_season_ratio": 0.6666666666666666
+      },
+      "full": {
+        "n": 229,
+        "wins": 86,
+        "losses": 143,
+        "win_rate": 0.37554585152838427,
+        "roi": 0.2288646288209607,
+        "units": 52.410000000000004,
+        "active_seasons": 13,
+        "positive_seasons": 9,
+        "positive_season_ratio": 0.6923076923076923
+      },
+      "holdout_survived": true,
+      "train": {
+        "n": 90,
+        "wins": 35,
+        "losses": 55,
+        "win_rate": 0.3888888888888889,
+        "roi": 0.2891111111111111,
+        "units": 26.02,
+        "active_seasons": 6,
+        "positive_seasons": 5,
+        "positive_season_ratio": 0.8333333333333334
+      },
+      "validation": {
+        "n": 65,
+        "wins": 23,
+        "losses": 42,
+        "win_rate": 0.35384615384615387,
+        "roi": 0.12276923076923074,
+        "units": 7.979999999999999,
+        "active_seasons": 4,
+        "positive_seasons": 2,
+        "positive_season_ratio": 0.5
+      },
+      "preholdout": {
+        "n": 155,
+        "wins": 58,
+        "losses": 97,
+        "win_rate": 0.3741935483870968,
+        "roi": 0.21935483870967742,
+        "units": 34.0,
+        "active_seasons": 10,
+        "positive_seasons": 7,
+        "positive_season_ratio": 0.7
+      }
+    },
+    {
+      "outcome": "AWAY",
+      "price_band": "P20_30",
+      "feature": "opp_roster_departed_minutes_share_prev5",
+      "op": ">=",
+      "threshold": 0.24585583703354474,
+      "pre_score": 0.9840569371512785,
+      "holdout": {
+        "n": 77,
+        "wins": 22,
+        "losses": 55,
+        "win_rate": 0.2857142857142857,
+        "roi": 0.06194805194805195,
+        "units": 4.7700000000000005,
+        "active_seasons": 3,
+        "positive_seasons": 2,
+        "positive_season_ratio": 0.6666666666666666
+      },
+      "full": {
+        "n": 290,
+        "wins": 84,
+        "losses": 206,
+        "win_rate": 0.2896551724137931,
+        "roi": 0.12058620689655172,
+        "units": 34.97,
+        "active_seasons": 13,
+        "positive_seasons": 8,
+        "positive_season_ratio": 0.6153846153846154
+      },
+      "holdout_survived": true,
+      "train": {
+        "n": 141,
+        "wins": 42,
+        "losses": 99,
+        "win_rate": 0.2978723404255319,
+        "roi": 0.1549645390070922,
+        "units": 21.85,
+        "active_seasons": 6,
+        "positive_seasons": 4,
+        "positive_season_ratio": 0.6666666666666666
+      },
+      "validation": {
+        "n": 72,
+        "wins": 20,
+        "losses": 52,
+        "win_rate": 0.2777777777777778,
+        "roi": 0.11597222222222221,
+        "units": 8.35,
+        "active_seasons": 4,
+        "positive_seasons": 2,
+        "positive_season_ratio": 0.5
+      },
+      "preholdout": {
+        "n": 213,
+        "wins": 62,
+        "losses": 151,
+        "win_rate": 0.29107981220657275,
+        "roi": 0.14178403755868546,
+        "units": 30.200000000000003,
+        "active_seasons": 10,
+        "positive_seasons": 6,
+        "positive_season_ratio": 0.6
+      }
+    }
+  ],
+  "all_holdout_surviving_pairs_preholdout_order": [
+    {
+      "outcome": "HOME",
+      "price_band": "P25_35",
+      "rule1": {
+        "feature": "sel_gk_current_keeper_prior_team_games",
+        "op": "<=",
+        "threshold": 12.0
+      },
+      "rule2": {
+        "feature": "sel_gk_xg_faced_p96_5",
+        "op": ">=",
+        "threshold": 1.35250793814433
+      },
+      "pre_score": 2.517300141024109,
+      "holdout": {
+        "n": 18,
+        "wins": 7,
+        "losses": 11,
+        "win_rate": 0.3888888888888889,
+        "roi": 0.23222222222222222,
+        "units": 4.18,
+        "active_seasons": 3,
+        "positive_seasons": 2,
+        "positive_season_ratio": 0.6666666666666666
+      },
+      "full": {
+        "n": 94,
+        "wins": 42,
+        "losses": 52,
+        "win_rate": 0.44680851063829785,
+        "roi": 0.4065957446808511,
+        "units": 38.22,
+        "active_seasons": 10,
+        "positive_seasons": 7,
+        "positive_season_ratio": 0.7
+      },
+      "holdout_survived": true,
+      "train": {
+        "n": 32,
+        "wins": 15,
+        "losses": 17,
+        "win_rate": 0.46875,
+        "roi": 0.45187499999999997,
+        "units": 14.459999999999999,
+        "active_seasons": 3,
+        "positive_seasons": 2,
+        "positive_season_ratio": 0.6666666666666666
+      },
+      "validation": {
+        "n": 44,
+        "wins": 20,
+        "losses": 24,
+        "win_rate": 0.45454545454545453,
+        "roi": 0.44499999999999995,
+        "units": 19.58,
+        "active_seasons": 4,
+        "positive_seasons": 3,
+        "positive_season_ratio": 0.75
+      },
+      "preholdout": {
+        "n": 76,
+        "wins": 35,
+        "losses": 41,
+        "win_rate": 0.4605263157894737,
+        "roi": 0.44789473684210523,
+        "units": 34.04,
+        "active_seasons": 7,
+        "positive_seasons": 5,
+        "positive_season_ratio": 0.7142857142857143
+      }
+    },
+    {
+      "outcome": "HOME",
+      "price_band": "P25_35",
+      "rule1": {
+        "feature": "sel_gk_current_keeper_prior_team_games",
+        "op": "<=",
+        "threshold": 12.0
+      },
+      "rule2": {
+        "feature": "sel_roster_churn_index",
+        "op": ">=",
+        "threshold": 0.09654697692350571
+      },
+      "pre_score": 2.4365349371597365,
+      "holdout": {
+        "n": 27,
+        "wins": 9,
+        "losses": 18,
+        "win_rate": 0.3333333333333333,
+        "roi": 0.04370370370370371,
+        "units": 1.1800000000000002,
+        "active_seasons": 3,
+        "positive_seasons": 1,
+        "positive_season_ratio": 0.3333333333333333
+      },
+      "full": {
+        "n": 123,
+        "wins": 52,
+        "losses": 71,
+        "win_rate": 0.42276422764227645,
+        "roi": 0.32178861788617885,
+        "units": 39.58,
+        "active_seasons": 10,
+        "positive_seasons": 8,
+        "positive_season_ratio": 0.8
+      },
+      "holdout_survived": true,
+      "train": {
+        "n": 40,
+        "wins": 18,
+        "losses": 22,
+        "win_rate": 0.45,
+        "roi": 0.38525,
+        "units": 15.41,
+        "active_seasons": 3,
+        "positive_seasons": 3,
+        "positive_season_ratio": 1.0
+      },
+      "validation": {
+        "n": 56,
+        "wins": 25,
+        "losses": 31,
+        "win_rate": 0.44642857142857145,
+        "roi": 0.41053571428571434,
+        "units": 22.990000000000002,
+        "active_seasons": 4,
+        "positive_seasons": 4,
+        "positive_season_ratio": 1.0
+      },
+      "preholdout": {
+        "n": 96,
+        "wins": 43,
+        "losses": 53,
+        "win_rate": 0.4479166666666667,
+        "roi": 0.39999999999999997,
+        "units": 38.4,
+        "active_seasons": 7,
+        "positive_seasons": 7,
+        "positive_season_ratio": 1.0
+      }
+    },
+    {
+      "outcome": "HOME",
+      "price_band": "P20_30",
+      "rule1": {
+        "feature": "sel_roster_new_players3",
+        "op": "<=",
+        "threshold": 2.0
+      },
+      "rule2": {
+        "feature": "sel_roster_departed_minutes_share_prev5",
+        "op": ">=",
+        "threshold": 0.12129177619226436
+      },
+      "pre_score": 2.363605774672357,
+      "holdout": {
+        "n": 19,
+        "wins": 8,
+        "losses": 11,
+        "win_rate": 0.42105263157894735,
+        "roi": 0.4257894736842105,
+        "units": 8.09,
+        "active_seasons": 2,
+        "positive_seasons": 1,
+        "positive_season_ratio": 0.5
+      },
+      "full": {
+        "n": 82,
+        "wins": 34,
+        "losses": 48,
+        "win_rate": 0.4146341463414634,
+        "roi": 0.4903658536585365,
+        "units": 40.209999999999994,
+        "active_seasons": 10,
+        "positive_seasons": 7,
+        "positive_season_ratio": 0.7
+      },
+      "holdout_survived": true,
+      "train": {
+        "n": 31,
+        "wins": 12,
+        "losses": 19,
+        "win_rate": 0.3870967741935484,
+        "roi": 0.424516129032258,
+        "units": 13.159999999999998,
+        "active_seasons": 4,
+        "positive_seasons": 3,
+        "positive_season_ratio": 0.75
+      },
+      "validation": {
+        "n": 32,
+        "wins": 14,
+        "losses": 18,
+        "win_rate": 0.4375,
+        "roi": 0.5924999999999999,
+        "units": 18.959999999999997,
+        "active_seasons": 4,
+        "positive_seasons": 3,
+        "positive_season_ratio": 0.75
+      },
+      "preholdout": {
+        "n": 63,
+        "wins": 26,
+        "losses": 37,
+        "win_rate": 0.4126984126984127,
+        "roi": 0.5098412698412698,
+        "units": 32.12,
+        "active_seasons": 8,
+        "positive_seasons": 6,
+        "positive_season_ratio": 0.75
+      }
+    },
+    {
+      "outcome": "HOME",
+      "price_band": "P20_30",
+      "rule1": {
+        "feature": "sel_gk_save_pct5",
+        "op": ">=",
+        "threshold": 0.5555555555555556
+      },
+      "rule2": {
+        "feature": "sel_roster_departed_minutes_share_prev5",
+        "op": ">=",
+        "threshold": 0.12129177619226436
+      },
+      "pre_score": 2.3512191366547333,
+      "holdout": {
+        "n": 18,
+        "wins": 7,
+        "losses": 11,
+        "win_rate": 0.3888888888888889,
+        "roi": 0.3444444444444445,
+        "units": 6.200000000000001,
+        "active_seasons": 2,
+        "positive_seasons": 1,
+        "positive_season_ratio": 0.5
+      },
+      "full": {
+        "n": 93,
+        "wins": 37,
+        "losses": 56,
+        "win_rate": 0.3978494623655914,
+        "roi": 0.48591397849462364,
+        "units": 45.19,
+        "active_seasons": 11,
+        "positive_seasons": 9,
+        "positive_season_ratio": 0.8181818181818182
+      },
+      "holdout_survived": true,
+      "train": {
+        "n": 35,
+        "wins": 13,
+        "losses": 22,
+        "win_rate": 0.37142857142857144,
+        "roi": 0.39742857142857146,
+        "units": 13.910000000000002,
+        "active_seasons": 5,
+        "positive_seasons": 4,
+        "positive_season_ratio": 0.8
+      },
+      "validation": {
+        "n": 40,
+        "wins": 17,
+        "losses": 23,
+        "win_rate": 0.425,
+        "roi": 0.627,
+        "units": 25.08,
+        "active_seasons": 4,
+        "positive_seasons": 4,
+        "positive_season_ratio": 1.0
+      },
+      "preholdout": {
+        "n": 75,
+        "wins": 30,
+        "losses": 45,
+        "win_rate": 0.4,
+        "roi": 0.5198666666666666,
+        "units": 38.989999999999995,
+        "active_seasons": 9,
+        "positive_seasons": 8,
+        "positive_season_ratio": 0.8888888888888888
+      }
+    },
+    {
+      "outcome": "HOME",
+      "price_band": "P25_35",
+      "rule1": {
+        "feature": "opp_gk_goals_minus_xg_p96_5",
+        "op": "<=",
+        "threshold": 0.228400824742268
+      },
+      "rule2": {
+        "feature": "sel_gk_current_keeper_prior_team_games",
+        "op": "<=",
+        "threshold": 12.0
+      },
+      "pre_score": 2.308410822690751,
+      "holdout": {
+        "n": 22,
+        "wins": 7,
+        "losses": 15,
+        "win_rate": 0.3181818181818182,
+        "roi": 0.00045454545454546506,
+        "units": 0.010000000000000231,
+        "active_seasons": 3,
+        "positive_seasons": 1,
+        "positive_season_ratio": 0.3333333333333333
+      },
+      "full": {
+        "n": 108,
+        "wins": 46,
+        "losses": 62,
+        "win_rate": 0.42592592592592593,
+        "roi": 0.33305555555555555,
+        "units": 35.97,
+        "active_seasons": 10,
+        "positive_seasons": 7,
+        "positive_season_ratio": 0.7
+      },
+      "holdout_survived": true,
+      "train": {
+        "n": 38,
+        "wins": 17,
+        "losses": 21,
+        "win_rate": 0.4473684210526316,
+        "roi": 0.37447368421052635,
+        "units": 14.23,
+        "active_seasons": 3,
+        "positive_seasons": 3,
+        "positive_season_ratio": 1.0
+      },
+      "validation": {
+        "n": 48,
+        "wins": 22,
+        "losses": 26,
+        "win_rate": 0.4583333333333333,
+        "roi": 0.4527083333333333,
+        "units": 21.73,
+        "active_seasons": 4,
+        "positive_seasons": 3,
+        "positive_season_ratio": 0.75
+      },
+      "preholdout": {
+        "n": 86,
+        "wins": 39,
+        "losses": 47,
+        "win_rate": 0.45348837209302323,
+        "roi": 0.41813953488372096,
+        "units": 35.96,
+        "active_seasons": 7,
+        "positive_seasons": 6,
+        "positive_season_ratio": 0.8571428571428571
+      }
+    },
+    {
+      "outcome": "HOME",
+      "price_band": "P25_35",
+      "rule1": {
+        "feature": "sel_gk_current_keeper_prior_team_games",
+        "op": "<=",
+        "threshold": 12.0
+      },
+      "rule2": {
+        "feature": "edge_gk_goals_minus_xg_p96_5",
+        "op": ">=",
+        "threshold": -0.17238000877593082
+      },
+      "pre_score": 2.061923076923077,
+      "holdout": {
+        "n": 22,
+        "wins": 8,
+        "losses": 14,
+        "win_rate": 0.36363636363636365,
+        "roi": 0.14954545454545454,
+        "units": 3.29,
+        "active_seasons": 3,
+        "positive_seasons": 1,
+        "positive_season_ratio": 0.3333333333333333
+      },
+      "full": {
+        "n": 110,
+        "wins": 46,
+        "losses": 64,
+        "win_rate": 0.41818181818181815,
+        "roi": 0.3117272727272728,
+        "units": 34.290000000000006,
+        "active_seasons": 9,
+        "positive_seasons": 6,
+        "positive_season_ratio": 0.6666666666666666
+      },
+      "holdout_survived": true,
+      "train": {
+        "n": 36,
+        "wins": 16,
+        "losses": 20,
+        "win_rate": 0.4444444444444444,
+        "roi": 0.3647222222222223,
+        "units": 13.130000000000003,
+        "active_seasons": 2,
+        "positive_seasons": 2,
+        "positive_season_ratio": 1.0
+      },
+      "validation": {
+        "n": 52,
+        "wins": 22,
+        "losses": 30,
+        "win_rate": 0.4230769230769231,
+        "roi": 0.3436538461538462,
+        "units": 17.87,
+        "active_seasons": 4,
+        "positive_seasons": 3,
+        "positive_season_ratio": 0.75
+      },
+      "preholdout": {
+        "n": 88,
+        "wins": 38,
+        "losses": 50,
+        "win_rate": 0.4318181818181818,
+        "roi": 0.3522727272727273,
+        "units": 31.0,
+        "active_seasons": 6,
+        "positive_seasons": 5,
+        "positive_season_ratio": 0.8333333333333334
+      }
+    },
+    {
+      "outcome": "HOME",
+      "price_band": "P25_35",
+      "rule1": {
+        "feature": "sel_gk_current_keeper_prior_team_games",
+        "op": "<=",
+        "threshold": 12.0
+      },
+      "rule2": {
+        "feature": "edge_gk_goals_conceded_p96_5",
+        "op": ">=",
+        "threshold": 0.005724444046913746
+      },
+      "pre_score": 2.0564485113904505,
+      "holdout": {
+        "n": 22,
+        "wins": 9,
+        "losses": 13,
+        "win_rate": 0.4090909090909091,
+        "roi": 0.2809090909090909,
+        "units": 6.18,
+        "active_seasons": 3,
+        "positive_seasons": 2,
+        "positive_season_ratio": 0.6666666666666666
+      },
+      "full": {
+        "n": 110,
+        "wins": 47,
+        "losses": 63,
+        "win_rate": 0.42727272727272725,
+        "roi": 0.3391818181818182,
+        "units": 37.31,
+        "active_seasons": 10,
+        "positive_seasons": 8,
+        "positive_season_ratio": 0.8
+      },
+      "holdout_survived": true,
+      "train": {
+        "n": 38,
+        "wins": 17,
+        "losses": 21,
+        "win_rate": 0.4473684210526316,
+        "roi": 0.3802631578947368,
+        "units": 14.45,
+        "active_seasons": 3,
+        "positive_seasons": 3,
+        "positive_season_ratio": 1.0
+      },
+      "validation": {
+        "n": 50,
+        "wins": 21,
+        "losses": 29,
+        "win_rate": 0.42,
+        "roi": 0.3336,
+        "units": 16.68,
+        "active_seasons": 4,
+        "positive_seasons": 3,
+        "positive_season_ratio": 0.75
+      },
+      "preholdout": {
+        "n": 88,
+        "wins": 38,
+        "losses": 50,
+        "win_rate": 0.4318181818181818,
+        "roi": 0.35375,
+        "units": 31.13,
+        "active_seasons": 7,
+        "positive_seasons": 6,
+        "positive_season_ratio": 0.8571428571428571
+      }
+    },
+    {
+      "outcome": "HOME",
+      "price_band": "P25_35",
+      "rule1": {
+        "feature": "opp_gk_save_pct5",
+        "op": ">=",
+        "threshold": 0.631578947368421
+      },
+      "rule2": {
+        "feature": "sel_gk_xg_faced_p96_5",
+        "op": ">=",
+        "threshold": 1.35250793814433
+      },
+      "pre_score": 1.9745379206285203,
+      "holdout": {
+        "n": 64,
+        "wins": 21,
+        "losses": 43,
+        "win_rate": 0.328125,
+        "roi": 0.013125000000000026,
+        "units": 0.8400000000000016,
+        "active_seasons": 3,
+        "positive_seasons": 1,
+        "positive_season_ratio": 0.3333333333333333
+      },
+      "full": {
+        "n": 215,
+        "wins": 82,
+        "losses": 133,
+        "win_rate": 0.3813953488372093,
+        "roi": 0.19260465116279069,
+        "units": 41.41,
+        "active_seasons": 12,
+        "positive_seasons": 8,
+        "positive_season_ratio": 0.6666666666666666
+      },
+      "holdout_survived": true,
+      "train": {
+        "n": 75,
+        "wins": 30,
+        "losses": 45,
+        "win_rate": 0.4,
+        "roi": 0.228,
+        "units": 17.1,
+        "active_seasons": 5,
+        "positive_seasons": 3,
+        "positive_season_ratio": 0.6
+      },
+      "validation": {
+        "n": 76,
+        "wins": 31,
+        "losses": 45,
+        "win_rate": 0.40789473684210525,
+        "roi": 0.3088157894736842,
+        "units": 23.47,
+        "active_seasons": 4,
+        "positive_seasons": 4,
+        "positive_season_ratio": 1.0
+      },
+      "preholdout": {
+        "n": 151,
+        "wins": 61,
+        "losses": 90,
+        "win_rate": 0.40397350993377484,
+        "roi": 0.26867549668874174,
+        "units": 40.57,
+        "active_seasons": 9,
+        "positive_seasons": 7,
+        "positive_season_ratio": 0.7777777777777778
+      }
+    },
+    {
+      "outcome": "HOME",
+      "price_band": "P25_35",
+      "rule1": {
+        "feature": "sel_roster_departed_minutes_share_prev5",
+        "op": ">=",
+        "threshold": 0.08940707581675757
+      },
+      "rule2": {
+        "feature": "opp_roster_new_players3",
+        "op": "<=",
+        "threshold": 0.0
+      },
+      "pre_score": 1.969975465160248,
+      "holdout": {
+        "n": 37,
+        "wins": 14,
+        "losses": 23,
+        "win_rate": 0.3783783783783784,
+        "roi": 0.17459459459459467,
+        "units": 6.460000000000003,
+        "active_seasons": 3,
+        "positive_seasons": 2,
+        "positive_season_ratio": 0.6666666666666666
+      },
+      "full": {
+        "n": 100,
+        "wins": 41,
+        "losses": 59,
+        "win_rate": 0.41,
+        "roi": 0.29280000000000006,
+        "units": 29.280000000000005,
+        "active_seasons": 11,
+        "positive_seasons": 8,
+        "positive_season_ratio": 0.7272727272727273
+      },
+      "holdout_survived": true,
+      "train": {
+        "n": 30,
+        "wins": 13,
+        "losses": 17,
+        "win_rate": 0.43333333333333335,
+        "roi": 0.35966666666666675,
+        "units": 10.790000000000003,
+        "active_seasons": 5,
+        "positive_seasons": 3,
+        "positive_season_ratio": 0.6
+      },
+      "validation": {
+        "n": 33,
+        "wins": 14,
+        "losses": 19,
+        "win_rate": 0.42424242424242425,
+        "roi": 0.36454545454545456,
+        "units": 12.030000000000001,
+        "active_seasons": 3,
+        "positive_seasons": 3,
+        "positive_season_ratio": 1.0
+      },
+      "preholdout": {
+        "n": 63,
+        "wins": 27,
+        "losses": 36,
+        "win_rate": 0.42857142857142855,
+        "roi": 0.3622222222222222,
+        "units": 22.82,
+        "active_seasons": 8,
+        "positive_seasons": 6,
+        "positive_season_ratio": 0.75
+      }
+    },
+    {
+      "outcome": "HOME",
+      "price_band": "P25_35",
+      "rule1": {
+        "feature": "sel_roster_departed_minutes_share_prev5",
+        "op": ">=",
+        "threshold": 0.08940707581675757
+      },
+      "rule2": {
+        "feature": "opp_roster_new_minutes_share3",
+        "op": "<=",
+        "threshold": 0.0
+      },
+      "pre_score": 1.969975465160248,
+      "holdout": {
+        "n": 37,
+        "wins": 14,
+        "losses": 23,
+        "win_rate": 0.3783783783783784,
+        "roi": 0.17459459459459467,
+        "units": 6.460000000000003,
+        "active_seasons": 3,
+        "positive_seasons": 2,
+        "positive_season_ratio": 0.6666666666666666
+      },
+      "full": {
+        "n": 100,
+        "wins": 41,
+        "losses": 59,
+        "win_rate": 0.41,
+        "roi": 0.29280000000000006,
+        "units": 29.280000000000005,
+        "active_seasons": 11,
+        "positive_seasons": 8,
+        "positive_season_ratio": 0.7272727272727273
+      },
+      "holdout_survived": true,
+      "train": {
+        "n": 30,
+        "wins": 13,
+        "losses": 17,
+        "win_rate": 0.43333333333333335,
+        "roi": 0.35966666666666675,
+        "units": 10.790000000000003,
+        "active_seasons": 5,
+        "positive_seasons": 3,
+        "positive_season_ratio": 0.6
+      },
+      "validation": {
+        "n": 33,
+        "wins": 14,
+        "losses": 19,
+        "win_rate": 0.42424242424242425,
+        "roi": 0.36454545454545456,
+        "units": 12.030000000000001,
+        "active_seasons": 3,
+        "positive_seasons": 3,
+        "positive_season_ratio": 1.0
+      },
+      "preholdout": {
+        "n": 63,
+        "wins": 27,
+        "losses": 36,
+        "win_rate": 0.42857142857142855,
+        "roi": 0.3622222222222222,
+        "units": 22.82,
+        "active_seasons": 8,
+        "positive_seasons": 6,
+        "positive_season_ratio": 0.75
+      }
+    },
+    {
+      "outcome": "HOME",
+      "price_band": "ALL",
+      "rule1": {
+        "feature": "sel_roster_jaccard_recent5_prev5",
+        "op": ">=",
+        "threshold": 0.8571428571428571
+      },
+      "rule2": {
+        "feature": "opp_roster_new_minutes_share3",
+        "op": ">=",
+        "threshold": 0.030096183679801426
+      },
+      "pre_score": 1.9663636363636368,
+      "holdout": {
+        "n": 98,
+        "wins": 49,
+        "losses": 49,
+        "win_rate": 0.5,
+        "roi": 0.0029591836734693924,
+        "units": 0.2900000000000005,
+        "active_seasons": 3,
+        "positive_seasons": 1,
+        "positive_season_ratio": 0.3333333333333333
+      },
+      "full": {
+        "n": 358,
+        "wins": 207,
+        "losses": 151,
+        "win_rate": 0.5782122905027933,
+        "roi": 0.13307262569832404,
+        "units": 47.64,
+        "active_seasons": 13,
+        "positive_seasons": 10,
+        "positive_season_ratio": 0.7692307692307693
+      },
+      "holdout_survived": true,
+      "train": {
+        "n": 139,
+        "wins": 84,
+        "losses": 55,
+        "win_rate": 0.60431654676259,
+        "roi": 0.1850359712230216,
+        "units": 25.720000000000002,
+        "active_seasons": 6,
+        "positive_seasons": 5,
+        "positive_season_ratio": 0.8333333333333334
+      },
+      "validation": {
+        "n": 121,
+        "wins": 74,
+        "losses": 47,
+        "win_rate": 0.6115702479338843,
+        "roi": 0.17876033057851243,
+        "units": 21.630000000000003,
+        "active_seasons": 4,
+        "positive_seasons": 4,
+        "positive_season_ratio": 1.0
+      },
+      "preholdout": {
+        "n": 260,
+        "wins": 158,
+        "losses": 102,
+        "win_rate": 0.6076923076923076,
+        "roi": 0.18211538461538462,
+        "units": 47.35,
+        "active_seasons": 10,
+        "positive_seasons": 9,
+        "positive_season_ratio": 0.9
+      }
+    }
+  ]
+}
