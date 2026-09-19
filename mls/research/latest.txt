@@ -1,0 +1,16 @@
+MLS AUTONOMOUS SHADOW RESEARCH
+====================================================================================================
+mode=daily selection_rows=13,950 tested=3,960 survivors=9
+Splits: 2012-2018 train | 2019-2022 validation | 2023-2025 holdout | 2026 prospective only
+No automatic promotion to live/email/website.
+
+TOP SURVIVORS
+AWAY P35_45 | edge_travel_miles >= 844.2 | n=170 79-91 win=46.5% ROI=+16.0% | train=+15.4% val=+4.0% hold=+27.1% n=59 | +season=71%
+AWAY P25_35 | elo_edge <= -41.31 | n=203 71-132 win=35.0% ROI=+20.5% | train=+18.9% val=+18.0% hold=+24.0% n=77 | +season=64%
+AWAY P40_50 | sel_last5_gdpg <= 0.4 | n=131 66-65 win=50.4% ROI=+11.1% | train=+5.2% val=+7.2% hold=+23.1% n=38 | +season=64%
+HOME P55_70 | opp_season_gdpg >= 0.2222 | n=176 120-56 win=68.2% ROI=+11.9% | train=+5.7% val=+12.1% hold=+21.8% n=49 | +season=85%
+HOME P45_55 | edge_venue5_ppg >= 1.2 | n=467 262-205 win=56.1% ROI=+8.9% | train=+5.6% val=+9.3% hold=+17.3% n=101 | +season=71%
+HOME P45_55 | sel_venue5_ppg >= 2.2 | n=454 258-196 win=56.8% ROI=+11.0% | train=+12.8% val=+7.2% hold=+10.4% n=102 | +season=71%
+HOME P50_60 | edge_last5_gdpg <= -0.6 | n=321 204-117 win=63.6% ROI=+13.5% | train=+20.9% val=+8.6% hold=+7.2% n=88 | +season=79%
+HOME P50_60 | edge_last3_ppg <= -0.6667 | n=360 215-145 win=59.7% ROI=+6.5% | train=+7.4% val=+7.0% hold=+4.6% n=97 | +season=79%
+HOME P40_50 | opp_last3_ppg <= 1 | n=505 249-256 win=49.3% ROI=+6.2% | train=+5.5% val=+9.9% hold=+3.2% n=135 | +season=71%
