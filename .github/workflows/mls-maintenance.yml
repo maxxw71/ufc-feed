@@ -4,55 +4,41 @@ on:
   pull_request:
     paths:
       - ".github/workflows/mls-maintenance.yml"
-      - ".github/mls-probe.txt"
   workflow_dispatch:
 
 jobs:
-  audit-espn-summary:
+  inspect-transactions:
     runs-on: [self-hosted, Linux, X64, appwiza]
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
-      - name: Inspect ESPN historical match summary through relay
+      - name: Inspect 2021 MLS transaction relay format
         shell: bash
         run: |
           set -Eeuo pipefail
           KEY=/home/appwiza-runner/.ssh/appwiza_vps
           HOST=anestishkurti92@127.0.0.1
           SSH="ssh -i $KEY -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=accept-new $HOST"
-          $SSH 'set -Eeuo pipefail; python3 - <<'"'"'PY'"'"'
-          import json,re,urllib.request
-          url="https://r.jina.ai/https://site.api.espn.com/apis/site/v2/sports/soccer/usa.1/summary?event=659689"
-          req=urllib.request.Request(url,headers={"User-Agent":"Mozilla/5.0 AppwizaMLSSourceAudit/1.2","Accept":"text/plain"})
-          body=urllib.request.urlopen(req,timeout=60).read().decode("utf-8","replace")
-          print("bytes",len(body))
-          payload=body.split("Markdown Content:",1)[-1].strip()
-          try:
-              d=json.loads(payload)
-          except Exception as e:
-              print("JSON_ERR",type(e).__name__,str(e)[:200])
-              print(body[:30000])
-              raise
-          print("keys",list(d.keys()))
-          for key in ["rosters","boxscore","plays","commentary","header","gameInfo"]:
-              v=d.get(key)
-              print("\nKEY",key,"TYPE",type(v).__name__)
-              print(json.dumps(v,ensure_ascii=False,default=str)[:30000])
-          rosters=d.get("rosters") or []
-          print("\nROSTER_COUNT",len(rosters))
-          starter_rows=[]
-          for team in rosters:
-              team_name=((team.get("team") or {}).get("displayName") or (team.get("team") or {}).get("name"))
-              for a in team.get("roster") or []:
-                  athlete=a.get("athlete") or {}
-                  starter_rows.append({
-                    "team":team_name,
-                    "name":athlete.get("displayName") or athlete.get("fullName"),
-                    "starter":a.get("starter"),
-                    "subbedIn":a.get("subbedIn"),
-                    "active":a.get("active"),
-                    "position":(athlete.get("position") or {}).get("abbreviation") if isinstance(athlete.get("position"),dict) else athlete.get("position"),
-                  })
-          print("STARTER_ROWS",json.dumps(starter_rows,ensure_ascii=False)[:30000])
-          print("starter_true",sum(x.get("starter") is True for x in starter_rows),"starter_false",sum(x.get("starter") is False for x in starter_rows))
+          $SSH 'set -Eeuo pipefail; cd /home/anestishkurti92/mls-predictor-v1; venv/bin/python - <<'"'"'PY'"'"'
+          import re, urllib.request
+          from mls_bootstrap_warehouse import canon_team, TEAM_INFO
+          url="https://r.jina.ai/https://www.mlssoccer.com/news/2021-mls-transactions"
+          req=urllib.request.Request(url,headers={"User-Agent":"Mozilla/5.0 AppwizaTXDebug/1.0","Accept":"text/plain"})
+          text=urllib.request.urlopen(req,timeout=60).read().decode("utf-8","replace")
+          print("BYTES",len(text))
+          def clean(x):
+              x=re.sub(r"!\[[^\]]*\]\([^)]*\)"," ",str(x or ""))
+              x=re.sub(r"\[([^\]]+)\]\([^)]*\)",r"\1",x)
+              x=re.sub(r"^#{1,6}\s*","",x)
+              x=x.replace("**","").replace("__","")
+              return re.sub(r"\s+"," ",x).strip()
+          print("TEAM_INFO_KEYS_SAMPLE",list(TEAM_INFO)[:50])
+          for s in ["Atlanta United","Atlanta United FC","New England Revolution","Chicago Fire","Chicago Fire FC","CF Montreal","CF Montréal"]:
+              print("CANON",repr(s),"->",repr(canon_team(s)))
+          lines=text.splitlines()
+          for i,raw in enumerate(lines[:180]):
+              line=clean(raw)
+              if line:
+                  print(f"{i:03d} RAW={raw[:250]!r}")
+                  print(f"    CLEAN={line[:250]!r} CANON={canon_team(line)!r}")
           PY'
