@@ -1,0 +1,60 @@
+name: MLS Final Shadow Validation
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/mls_final_shadow_validation.py'
+      - '.github/workflows/mls-final-shadow-validation.yml'
+
+concurrency:
+  group: mls-research
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  validate:
+    runs-on: [self-hosted, Linux, X64, appwiza]
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+        with: {fetch-depth: 0}
+      - name: Run final MLS shadow validation
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          KEY=/home/appwiza-runner/.ssh/appwiza_vps
+          HOST=anestishkurti92@127.0.0.1
+          SSH="ssh -i $KEY -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=accept-new $HOST"
+          for f in mls_autoresearch.py mls_final_shadow_validation.py; do
+            cat "scripts/$f" | $SSH "set -e; D=/home/anestishkurti92/mls-predictor-v1; cat > \"\$D/$f.new\"; chmod 0644 \"\$D/$f.new\"; mv -f \"\$D/$f.new\" \"\$D/$f\""
+          done
+          $SSH 'set -Eeuo pipefail; cd /home/anestishkurti92/mls-predictor-v1; venv/bin/python -m py_compile mls_autoresearch.py mls_final_shadow_validation.py; OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 nice -n 15 timeout 12m venv/bin/python mls_final_shadow_validation.py'
+      - name: Pull validation reports
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          KEY=/home/appwiza-runner/.ssh/appwiza_vps
+          HOST=anestishkurti92@127.0.0.1
+          SSH="ssh -i $KEY -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=accept-new $HOST"
+          mkdir -p mls/research/final_validation
+          for f in report.txt registry.json MLS-R01_neighbors.csv MLS-R02_neighbors.csv MLS-R03_neighbors.csv MLS-W01_neighbors.csv; do
+            $SSH "cat /home/anestishkurti92/mls-predictor-v1/research/final_validation/$f" > "mls/research/final_validation/$f"
+          done
+          echo '=== MLS FINAL SHADOW VALIDATION ==='
+          cat mls/research/final_validation/report.txt
+      - name: Persist validation
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git add mls/research/final_validation
+          if ! git diff --cached --quiet; then
+            git commit -m 'Publish MLS final shadow validation'
+            git pull --rebase origin main
+            git push origin HEAD:main
+          fi
