@@ -1,0 +1,96 @@
+{
+  "built_at": "2026-09-19T06:46:41.202482+00:00",
+  "history_rows": 9440,
+  "history_start": "1996-04-06",
+  "history_end": "2026-09-10",
+  "history_seasons": [
+    1996,
+    2026
+  ],
+  "betting_rows": 5800,
+  "betting_seasons": [
+    2012,
+    2025
+  ],
+  "matched_betting_rows": 5486,
+  "feature_rows": 9440,
+  "feature_columns": 103,
+  "teams": [
+    "Atlanta United FC",
+    "Austin FC",
+    "CF Montr\u00e9al",
+    "Charlotte FC",
+    "Chicago Fire FC",
+    "Chivas USA",
+    "Colorado Rapids",
+    "Columbus Crew",
+    "D.C. United",
+    "FC Cincinnati",
+    "FC Dallas",
+    "Houston Dynamo FC",
+    "Inter Miami CF",
+    "LA Galaxy",
+    "Los Angeles FC",
+    "Miami Fusion FC",
+    "Minnesota United FC",
+    "Nashville SC",
+    "New England Revolution",
+    "New York City FC",
+    "New York Red Bulls",
+    "Orlando City SC",
+    "Philadelphia Union",
+    "Portland Timbers",
+    "Real Salt Lake",
+    "San Diego FC",
+    "San Jose Earthquakes",
+    "Seattle Sounders FC",
+    "Sporting Kansas City",
+    "St. Louis City SC",
+    "Tampa Bay Mutiny",
+    "Toronto FC",
+    "Vancouver Whitecaps FC"
+  ],
+  "leakage_checks": [
+    {
+      "check": "home_prior_games_nonnegative",
+      "pass": true
+    },
+    {
+      "check": "away_prior_games_nonnegative",
+      "pass": true
+    },
+    {
+      "check": "no_obvious_postgame_feature_columns",
+      "pass": true,
+      "detail": []
+    },
+    {
+      "check": "target_columns_separate",
+      "pass": true
+    },
+    {
+      "check": "first_team_match_prior_games_zero",
+      "pass": true,
+      "detail": []
+    }
+  ],
+  "sources": [
+    {
+      "source": "mls_elo_results",
+      "url": "https://raw.githubusercontent.com/philo92/mls-elo/main/results.csv",
+      "path": "/home/anestishkurti92/mls-predictor-v1/data/raw/mls_elo_results.csv",
+      "bytes": 829734,
+      "sha256": "f1411972bbeee3bef2d584fc2525a60b127871aa440392df7ae3a59ff3477021",
+      "status": "downloaded"
+    },
+    {
+      "source": "mls_betting_xlsx",
+      "url": "https://raw.githubusercontent.com/stephen1-hub/-MLS-Betting-Market-Efficiency-Analysis-2012-2026-/main/USA.xlsx",
+      "path": "/home/anestishkurti92/mls-predictor-v1/data/raw/mls_betting_xlsx.xlsx",
+      "bytes": 505989,
+      "sha256": "6caa917bdc120805ea698ab660fd6e0bd169ea67c2ad13bdfef8c49ce6757e85",
+      "status": "downloaded"
+    }
+  ],
+  "research_status": "READY_FOR_SHADOW_RESEARCH"
+}
