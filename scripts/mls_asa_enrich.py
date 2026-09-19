@@ -21,7 +21,7 @@ def safe_df(fn,*args,**kwargs):
 def main():
     asa=AmericanSoccerAnalysis()
     season_reports=[];game_frames=[];xg_frames=[]
-    for year in range(2013,2027):
+    for year in range(2012,2027):
         gerr=xerr=None
         try:
             g=asa.get_games(leagues='mls',season_name=str(year))
@@ -44,7 +44,7 @@ def main():
         time.sleep(.15)
     games=pd.concat(game_frames,ignore_index=True,sort=False) if game_frames else pd.DataFrame()
     xg=pd.concat(xg_frames,ignore_index=True,sort=False) if xg_frames else pd.DataFrame()
-    if len(games):games.to_parquet(PROC/'asa_mls_games_2013_present.parquet',index=False)
+    if len(games):games.to_parquet(PROC/'asa_mls_games_2012_present.parquet',index=False)
     if len(xg):xg.to_parquet(PROC/'asa_mls_game_xgoals_2013_present.parquet',index=False)
     meta={'built_at':now(),'games_rows':len(games),'xg_rows':len(xg),'seasons':season_reports}
     (REPORTS/'asa_coverage.json').write_text(json.dumps(meta,indent=2,default=str))
