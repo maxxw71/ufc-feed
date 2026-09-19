@@ -65,7 +65,7 @@ def main():
 
     def already_published(r):
         # Published source uses local calendar dates; allow ±1 UTC-day shift and require exact teams/scores.
-        d=r.dt.date()
+        d=pd.Timestamp(r['dt']).date()
         for q in pub:
             if q['home']==r.home_team and q['away']==r.away_team and q['hs']==float(r.home_score) and q['as']==float(r.away_score):
                 if abs((q['date']-d).days)<=1:return True
@@ -80,7 +80,7 @@ def main():
         h1,a1,delta=update(h0,a0,float(r.home_score),float(r.away_score),ha,False)
         ratings[home],ratings[away]=h1,a1
         bridge.append({
-          'game_id':str(r.game_id),'date_time_utc':r.dt.isoformat(),'home_team':home,'away_team':away,
+          'game_id':str(r.game_id),'date_time_utc':pd.Timestamp(r['dt']).isoformat(),'home_team':home,'away_team':away,
           'home_score':float(r.home_score),'away_score':float(r.away_score),
           'home_elo_pre':h0,'away_elo_pre':a0,'home_elo_post':h1,'away_elo_post':a1,'home_delta':delta
         })
