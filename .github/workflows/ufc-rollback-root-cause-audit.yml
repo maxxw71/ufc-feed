@@ -1,0 +1,48 @@
+name: UFC Rollback Root Cause Audit
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/ufc-rollback-root-cause-audit.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  audit:
+    runs-on: [self-hosted, Linux, X64, appwiza]
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - name: Audit live UFC persistence and writers
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          KEY=/home/appwiza-runner/.ssh/appwiza_vps
+          HOST=anestishkurti92@127.0.0.1
+          echo '=== REPO UFC PAGE ==='
+          sha256sum ufc/ufc_public_page.py
+          grep -nE 'def method_key|Method Key · U1–U12|UFC_PUBLIC_CANONICAL' ufc/ufc_public_page.py || true
+          echo '=== REPO WRITERS ==='
+          grep -RniE "public/ufc/index\.html|ufc_public_page\.py|publish_ufc\(" .github/workflows scripts ufc --exclude='*.csv' --exclude='*.json' | head -500 || true
+          echo '=== SERVER ==='
+          ssh -i "$KEY" -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=accept-new "$HOST" 'bash -s' <<'EOF'
+          set -Eeuo pipefail
+          R=/home/anestishkurti92/ufc-predictor-v1
+          P=/srv/appwiza-sports/public/ufc/index.html
+          echo 'server page module hash:'
+          sha256sum "$R/ufc_public_page.py" || true
+          echo 'server module markers:'
+          grep -nE 'def method_key|Method Key · U1–U12|UFC_PUBLIC_CANONICAL' "$R/ufc_public_page.py" || true
+          echo 'watcher publish/hook:'
+          grep -nA10 -B6 -E 'publish_ufc|ufc_public_page\.safe_enhance|import ufc_public_page|UFC_CANONICAL_SURFACE_V1' "$R/ufc_email_watcher.py" | head -220 || true
+          echo 'live page markers:'
+          stat -c '%y %U:%G %a %s %n' "$P"
+          for m in 'Method Key · U1–U12' 'Overall record' 'Available selections' 'Current UFC audit' 'Completed selections'; do printf '%s=' "$m"; grep -c "$m" "$P" || true; done
+          echo 'public current json:'
+          test -f /srv/appwiza-sports/public/ufc/current.json && head -80 /srv/appwiza-sports/public/ufc/current.json || true
+          echo 'timer/service:'
+          systemctl list-timers --all --no-pager | grep -Ei 'ufc|model-watcher' || true
+          systemctl cat ufc-model-watcher.service 2>/dev/null || true
+          echo 'server-side likely writers:'
+          grep -RniE "/srv/appwiza-sports/public/ufc/index\.html|publish_ufc\(" "$R" /opt/sports-publisher 2>/dev/null | head -300 || true
+          EOF
