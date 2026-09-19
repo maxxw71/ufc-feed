@@ -1,41 +1,15 @@
-name: NFL current date order fix
+name: NFL current date order fix (deprecated)
 on:
   workflow_dispatch:
-  push:
-    branches: [main]
-    paths: ['.github/workflows/nfl-current-date-order-fix.yml']
+
 permissions:
   contents: read
+
 jobs:
-  fix:
-    runs-on: [self-hosted, Linux, X64, appwiza]
-    timeout-minutes: 5
+  deprecated:
+    runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - name: Put upcoming date groups nearest first
-        shell: bash
+      - name: Canonical page owns this behavior
         run: |
-          set -Eeuo pipefail
-          python3 - <<'PY'
-          from pathlib import Path
-          from datetime import datetime
-          import re
-          p=Path('/srv/appwiza-sports/public/nfl/index.html');s=p.read_text()
-          a='<div class="section-kicker">Current board</div><h2>Available selections</h2>'
-          b='<div class="section-kicker">Tracked results</div>'
-          i=s.index(a)+len(a);j=s.index(b,i);mid=s[i:j]
-          parts=mid.split('<section class="date-block">')
-          blocks=[]
-          for part in parts[1:]:
-              block='<section class="date-block">'+part
-              m=re.search(r'<div class="date-heading"><h2>(.*?)</h2>',block)
-              label=m.group(1) if m else ''
-              try:key=datetime.strptime(label,'%A, %B %d').strftime('%m-%d')
-              except:key='99-99'
-              blocks.append((key,block))
-          if blocks:
-              ordered=''.join(x[1] for x in sorted(blocks,key=lambda x:x[0]))
-              s=s[:i]+ordered+s[j:]
-              tmp=p.with_name('index.html.tmp');tmp.write_text(s);tmp.chmod(0o644);tmp.replace(p)
-          print('date_groups', [x[0] for x in sorted(blocks,key=lambda x:x[0])])
-          PY
+          echo "DEPRECATED: this workflow no longer writes /sports/nfl/ directly."
+          echo "NFL page ordering and structure are generated only by nfl/nfl_public_page.py through the canonical deploy/scanner hook."
