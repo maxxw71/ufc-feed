@@ -1,0 +1,1063 @@
+{
+  "built_at": "2026-09-19T21:37:45.913789+00:00",
+  "status": "SHADOW_ONLY",
+  "methods": [
+    {
+      "id": "MLS-A01",
+      "name": "Balanced continuity draw",
+      "outcome": "DRAW",
+      "pb": "ALL",
+      "rules": [
+        [
+          "pm__balance_player_starter_proxy_continuity",
+          "<=",
+          0.049450549450549386
+        ],
+        [
+          "base__combined_season_gdpg",
+          ">",
+          -0.5361654135338345
+        ]
+      ],
+      "full": {
+        "n": 144,
+        "wins": 29,
+        "losses": 115,
+        "win_rate": 0.2013888888888889,
+        "roi": -0.21180555555555552,
+        "units": -30.499999999999996,
+        "active_seasons": 12,
+        "positive_seasons": 4,
+        "positive_season_ratio": 0.3333333333333333
+      },
+      "train": {
+        "n": 49,
+        "wins": 12,
+        "losses": 37,
+        "win_rate": 0.24489795918367346,
+        "roi": -0.0238775510204082,
+        "units": -1.1700000000000017,
+        "active_seasons": 5,
+        "positive_seasons": 2,
+        "positive_season_ratio": 0.4
+      },
+      "validation": {
+        "n": 49,
+        "wins": 8,
+        "losses": 41,
+        "win_rate": 0.16326530612244897,
+        "roi": -0.383265306122449,
+        "units": -18.78,
+        "active_seasons": 4,
+        "positive_seasons": 1,
+        "positive_season_ratio": 0.25
+      },
+      "holdout": {
+        "n": 46,
+        "wins": 9,
+        "losses": 37,
+        "win_rate": 0.1956521739130435,
+        "roi": -0.22934782608695653,
+        "units": -10.55,
+        "active_seasons": 3,
+        "positive_seasons": 1,
+        "positive_season_ratio": 0.3333333333333333
+      },
+      "yearly": [
+        {
+          "season": 2013,
+          "n": 9,
+          "wins": 2,
+          "losses": 7,
+          "win_rate": 0.2222222222222222,
+          "roi": -0.09666666666666668,
+          "units": -0.8700000000000001,
+          "active_seasons": 1,
+          "positive_seasons": 0,
+          "positive_season_ratio": 0.0
+        },
+        {
+          "season": 2014,
+          "n": 12,
+          "wins": 4,
+          "losses": 8,
+          "win_rate": 0.3333333333333333,
+          "roi": 0.20999999999999996,
+          "units": 2.5199999999999996,
+          "active_seasons": 1,
+          "positive_seasons": 1,
+          "positive_season_ratio": 1.0
+        },
+        {
+          "season": 2015,
+          "n": 2,
+          "wins": 1,
+          "losses": 1,
+          "win_rate": 0.5,
+          "roi": 0.875,
+          "units": 1.75,
+          "active_seasons": 0,
+          "positive_seasons": 0,
+          "positive_season_ratio": 0.0
+        },
+        {
+          "season": 2016,
+          "n": 5,
+          "wins": 0,
+          "losses": 5,
+          "win_rate": 0.0,
+          "roi": -1.0,
+          "units": -5.0,
+          "active_seasons": 1,
+          "positive_seasons": 0,
+          "positive_season_ratio": 0.0
+        },
+        {
+          "season": 2017,
+          "n": 10,
+          "wins": 2,
+          "losses": 8,
+          "win_rate": 0.2,
+          "roi": -0.040999999999999925,
+          "units": -0.40999999999999925,
+          "active_seasons": 1,
+          "positive_seasons": 0,
+          "positive_season_ratio": 0.0
+        },
+        {
+          "season": 2018,
+          "n": 11,
+          "wins": 3,
+          "losses": 8,
+          "win_rate": 0.2727272727272727,
+          "roi": 0.0763636363636364,
+          "units": 0.8400000000000003,
+          "active_seasons": 1,
+          "positive_seasons": 1,
+          "positive_season_ratio": 1.0
+        },
+        {
+          "season": 2019,
+          "n": 11,
+          "wins": 1,
+          "losses": 10,
+          "win_rate": 0.09090909090909091,
+          "roi": -0.6645454545454546,
+          "units": -7.3100000000000005,
+          "active_seasons": 1,
+          "positive_seasons": 0,
+          "positive_season_ratio": 0.0
+        },
+        {
+          "season": 2020,
+          "n": 9,
+          "wins": 0,
+          "losses": 9,
+          "win_rate": 0.0,
+          "roi": -1.0,
+          "units": -9.0,
+          "active_seasons": 1,
+          "positive_seasons": 0,
+          "positive_season_ratio": 0.0
+        },
+        {
+          "season": 2021,
+          "n": 13,
+          "wins": 3,
+          "losses": 10,
+          "win_rate": 0.23076923076923078,
+          "roi": -0.20307692307692313,
+          "units": -2.6400000000000006,
+          "active_seasons": 1,
+          "positive_seasons": 0,
+          "positive_season_ratio": 0.0
+        },
+        {
+          "season": 2022,
+          "n": 16,
+          "wins": 4,
+          "losses": 12,
+          "win_rate": 0.25,
+          "roi": 0.010625000000000107,
+          "units": 0.1700000000000017,
+          "active_seasons": 1,
+          "positive_seasons": 1,
+          "positive_season_ratio": 1.0
+        },
+        {
+          "season": 2023,
+          "n": 12,
+          "wins": 5,
+          "losses": 7,
+          "win_rate": 0.4166666666666667,
+          "roi": 0.6758333333333333,
+          "units": 8.11,
+          "active_seasons": 1,
+          "positive_seasons": 1,
+          "positive_season_ratio": 1.0
+        },
+        {
+          "season": 2024,
+          "n": 17,
+          "wins": 1,
+          "losses": 16,
+          "win_rate": 0.058823529411764705,
+          "roi": -0.7441176470588236,
+          "units": -12.65,
+          "active_seasons": 1,
+          "positive_seasons": 0,
+          "positive_season_ratio": 0.0
+        },
+        {
+          "season": 2025,
+          "n": 17,
+          "wins": 3,
+          "losses": 14,
+          "win_rate": 0.17647058823529413,
+          "roi": -0.35352941176470587,
+          "units": -6.01,
+          "active_seasons": 1,
+          "positive_seasons": 0,
+          "positive_season_ratio": 0.0
+        }
+      ]
+    },
+    {
+      "id": "MLS-A02",
+      "name": "GK rebound home favorite",
+      "outcome": "HOME",
+      "pb": "P50_60",
+      "rules": [
+        [
+          "ctx__edge_gk_save_pct5",
+          "<=",
+          -0.10148378191856453
+        ],
+        [
+          "base__sel_last10_ppg",
+          ">",
+          1.1
+        ]
+      ],
+      "full": {
+        "n": 80,
+        "wins": 47,
+        "losses": 33,
+        "win_rate": 0.5875,
+        "roi": 0.04299999999999998,
+        "units": 3.4399999999999986,
+        "active_seasons": 7,
+        "positive_seasons": 3,
+        "positive_season_ratio": 0.42857142857142855
+      },
+      "train": {
+        "n": 30,
+        "wins": 17,
+        "losses": 13,
+        "win_rate": 0.5666666666666667,
+        "roi": 0.005333333333333324,
+        "units": 0.1599999999999997,
+        "active_seasons": 2,
+        "positive_seasons": 1,
+        "positive_season_ratio": 0.5
+      },
+      "validation": {
+        "n": 28,
+        "wins": 18,
+        "losses": 10,
+        "win_rate": 0.6428571428571429,
+        "roi": 0.13035714285714284,
+        "units": 3.6499999999999995,
+        "active_seasons": 3,
+        "positive_seasons": 2,
+        "positive_season_ratio": 0.6666666666666666
+      },
+      "holdout": {
+        "n": 22,
+        "wins": 12,
+        "losses": 10,
+        "win_rate": 0.5454545454545454,
+        "roi": -0.016818181818181864,
+        "units": -0.370000000000001,
+        "active_seasons": 2,
+        "positive_seasons": 0,
+        "positive_season_ratio": 0.0
+      },
+      "yearly": [
+        {
+          "season": 2013,
+          "n": 2,
+          "wins": 0,
+          "losses": 2,
+          "win_rate": 0.0,
+          "roi": -1.0,
+          "units": -2.0,
+          "active_seasons": 0,
+          "positive_seasons": 0,
+          "positive_season_ratio": 0.0
+        },
+        {
+          "season": 2014,
+          "n": 4,
+          "wins": 0,
+          "losses": 4,
+          "win_rate": 0.0,
+          "roi": -1.0,
+          "units": -4.0,
+          "active_seasons": 0,
+          "positive_seasons": 0,
+          "positive_season_ratio": 0.0
+        },
+        {
+          "season": 2015,
+          "n": 3,
+          "wins": 2,
+          "losses": 1,
+          "win_rate": 0.6666666666666666,
+          "roi": 0.2133333333333333,
+          "units": 0.6399999999999999,
+          "active_seasons": 0,
+          "positive_seasons": 0,
+          "positive_season_ratio": 0.0
+        },
+        {
+          "season": 2016,
+          "n": 11,
+          "wins": 8,
+          "losses": 3,
+          "win_rate": 0.7272727272727273,
+          "roi": 0.29454545454545455,
+          "units": 3.24,
+          "active_seasons": 1,
+          "positive_seasons": 1,
+          "positive_season_ratio": 1.0
+        },
+        {
+          "season": 2017,
+          "n": 4,
+          "wins": 4,
+          "losses": 0,
+          "win_rate": 1.0,
+          "roi": 0.7250000000000001,
+          "units": 2.9000000000000004,
+          "active_seasons": 0,
+          "positive_seasons": 0,
+          "positive_season_ratio": 0.0
+        },
+        {
+          "season": 2018,
+          "n": 6,
+          "wins": 3,
+          "losses": 3,
+          "win_rate": 0.5,
+          "roi": -0.10333333333333332,
+          "units": -0.6199999999999999,
+          "active_seasons": 1,
+          "positive_seasons": 0,
+          "positive_season_ratio": 0.0
+        },
+        {
+          "season": 2019,
+          "n": 4,
+          "wins": 3,
+          "losses": 1,
+          "win_rate": 0.75,
+          "roi": 0.30000000000000004,
+          "units": 1.2000000000000002,
+          "active_seasons": 0,
+          "positive_seasons": 0,
+          "positive_season_ratio": 0.0
+        },
+        {
+          "season": 2020,
+          "n": 5,
+          "wins": 4,
+          "losses": 1,
+          "win_rate": 0.8,
+          "roi": 0.344,
+          "units": 1.7199999999999998,
+          "active_seasons": 1,
+          "positive_seasons": 1,
+          "positive_season_ratio": 1.0
+        },
+        {
+          "season": 2021,
+          "n": 6,
+          "wins": 2,
+          "losses": 4,
+          "win_rate": 0.3333333333333333,
+          "roi": -0.365,
+          "units": -2.19,
+          "active_seasons": 1,
+          "positive_seasons": 0,
+          "positive_season_ratio": 0.0
+        },
+        {
+          "season": 2022,
+          "n": 13,
+          "wins": 9,
+          "losses": 4,
+          "win_rate": 0.6923076923076923,
+          "roi": 0.2246153846153846,
+          "units": 2.92,
+          "active_seasons": 1,
+          "positive_seasons": 1,
+          "positive_season_ratio": 1.0
+        },
+        {
+          "season": 2023,
+          "n": 11,
+          "wins": 6,
+          "losses": 5,
+          "win_rate": 0.5454545454545454,
+          "roi": -0.008181818181818208,
+          "units": -0.0900000000000003,
+          "active_seasons": 1,
+          "positive_seasons": 0,
+          "positive_season_ratio": 0.0
+        },
+        {
+          "season": 2024,
+          "n": 8,
+          "wins": 4,
+          "losses": 4,
+          "win_rate": 0.5,
+          "roi": -0.09875000000000003,
+          "units": -0.7900000000000003,
+          "active_seasons": 1,
+          "positive_seasons": 0,
+          "positive_season_ratio": 0.0
+        },
+        {
+          "season": 2025,
+          "n": 3,
+          "wins": 2,
+          "losses": 1,
+          "win_rate": 0.6666666666666666,
+          "roi": 0.17,
+          "units": 0.51,
+          "active_seasons": 0,
+          "positive_seasons": 0,
+          "positive_season_ratio": 0.0
+        }
+      ]
+    },
+    {
+      "id": "MLS-A03",
+      "name": "Contrarian away xG underdog",
+      "outcome": "AWAY",
+      "pb": "P25_35",
+      "rules": [
+        [
+          "base__edge_last10_ppg",
+          "<=",
+          -0.3999999999999999
+        ],
+        [
+          "base__edge_last10_xgdpg",
+          "<",
+          -0.13458100000000023
+        ]
+      ],
+      "full": {
+        "n": 89,
+        "wins": 43,
+        "losses": 46,
+        "win_rate": 0.48314606741573035,
+        "roi": 0.6625842696629214,
+        "units": 58.97,
+        "active_seasons": 9,
+        "positive_seasons": 9,
+        "positive_season_ratio": 1.0
+      },
+      "train": {
+        "n": 25,
+        "wins": 12,
+        "losses": 13,
+        "win_rate": 0.48,
+        "roi": 0.6616,
+        "units": 16.54,
+        "active_seasons": 2,
+        "positive_seasons": 2,
+        "positive_season_ratio": 1.0
+      },
+      "validation": {
+        "n": 29,
+        "wins": 14,
+        "losses": 15,
+        "win_rate": 0.4827586206896552,
+        "roi": 0.6682758620689655,
+        "units": 19.38,
+        "active_seasons": 4,
+        "positive_seasons": 4,
+        "positive_season_ratio": 1.0
+      },
+      "holdout": {
+        "n": 35,
+        "wins": 17,
+        "losses": 18,
+        "win_rate": 0.4857142857142857,
+        "roi": 0.6585714285714286,
+        "units": 23.05,
+        "active_seasons": 3,
+        "positive_seasons": 3,
+        "positive_season_ratio": 1.0
+      },
+      "yearly": [
+        {
+          "season": 2013,
+          "n": 3,
+          "wins": 1,
+          "losses": 2,
+          "win_rate": 0.3333333333333333,
+          "roi": 0.24666666666666673,
+          "units": 0.7400000000000002,
+          "active_seasons": 0,
+          "positive_seasons": 0,
+          "positive_season_ratio": 0.0
+        },
+        {
+          "season": 2014,
+          "n": 6,
+          "wins": 4,
+          "losses": 2,
+          "win_rate": 0.6666666666666666,
+          "roi": 1.1316666666666666,
+          "units": 6.789999999999999,
+          "active_seasons": 1,
+          "positive_seasons": 1,
+          "positive_season_ratio": 1.0
+        },
+        {
+          "season": 2015,
+          "n": 7,
+          "wins": 3,
+          "losses": 4,
+          "win_rate": 0.42857142857142855,
+          "roi": 0.5499999999999999,
+          "units": 3.8499999999999996,
+          "active_seasons": 1,
+          "positive_seasons": 1,
+          "positive_season_ratio": 1.0
+        },
+        {
+          "season": 2016,
+          "n": 1,
+          "wins": 0,
+          "losses": 1,
+          "win_rate": 0.0,
+          "roi": -1.0,
+          "units": -1.0,
+          "active_seasons": 0,
+          "positive_seasons": 0,
+          "positive_season_ratio": 0.0
+        },
+        {
+          "season": 2017,
+          "n": 4,
+          "wins": 2,
+          "losses": 2,
+          "win_rate": 0.5,
+          "roi": 0.76,
+          "units": 3.04,
+          "active_seasons": 0,
+          "positive_seasons": 0,
+          "positive_season_ratio": 0.0
+        },
+        {
+          "season": 2018,
+          "n": 4,
+          "wins": 2,
+          "losses": 2,
+          "win_rate": 0.5,
+          "roi": 0.78,
+          "units": 3.12,
+          "active_seasons": 0,
+          "positive_seasons": 0,
+          "positive_season_ratio": 0.0
+        },
+        {
+          "season": 2019,
+          "n": 6,
+          "wins": 3,
+          "losses": 3,
+          "win_rate": 0.5,
+          "roi": 0.6566666666666666,
+          "units": 3.9399999999999995,
+          "active_seasons": 1,
+          "positive_seasons": 1,
+          "positive_season_ratio": 1.0
+        },
+        {
+          "season": 2020,
+          "n": 5,
+          "wins": 2,
+          "losses": 3,
+          "win_rate": 0.4,
+          "roi": 0.42800000000000005,
+          "units": 2.14,
+          "active_seasons": 1,
+          "positive_seasons": 1,
+          "positive_season_ratio": 1.0
+        },
+        {
+          "season": 2021,
+          "n": 10,
+          "wins": 4,
+          "losses": 6,
+          "win_rate": 0.4,
+          "roi": 0.346,
+          "units": 3.46,
+          "active_seasons": 1,
+          "positive_seasons": 1,
+          "positive_season_ratio": 1.0
+        },
+        {
+          "season": 2022,
+          "n": 8,
+          "wins": 5,
+          "losses": 3,
+          "win_rate": 0.625,
+          "roi": 1.2300000000000002,
+          "units": 9.840000000000002,
+          "active_seasons": 1,
+          "positive_seasons": 1,
+          "positive_season_ratio": 1.0
+        },
+        {
+          "season": 2023,
+          "n": 12,
+          "wins": 7,
+          "losses": 5,
+          "win_rate": 0.5833333333333334,
+          "roi": 0.9233333333333333,
+          "units": 11.08,
+          "active_seasons": 1,
+          "positive_seasons": 1,
+          "positive_season_ratio": 1.0
+        },
+        {
+          "season": 2024,
+          "n": 10,
+          "wins": 6,
+          "losses": 4,
+          "win_rate": 0.6,
+          "roi": 1.071,
+          "units": 10.709999999999999,
+          "active_seasons": 1,
+          "positive_seasons": 1,
+          "positive_season_ratio": 1.0
+        },
+        {
+          "season": 2025,
+          "n": 13,
+          "wins": 4,
+          "losses": 9,
+          "win_rate": 0.3076923076923077,
+          "roi": 0.09692307692307688,
+          "units": 1.2599999999999993,
+          "active_seasons": 1,
+          "positive_seasons": 1,
+          "positive_season_ratio": 1.0
+        }
+      ]
+    },
+    {
+      "id": "MLS-A04",
+      "name": "Stable-roster home xGD",
+      "outcome": "HOME",
+      "pb": "P40_50",
+      "rules": [
+        [
+          "base__edge_last5_xgdpg",
+          "<=",
+          -0.04208999999999996
+        ],
+        [
+          "ctx__sel_roster_new_players3",
+          "<=",
+          0.0
+        ],
+        [
+          "pm__opp_player_weighted_age5",
+          ">",
+          28.068592458747545
+        ]
+      ],
+      "full": {
+        "n": 146,
+        "wins": 73,
+        "losses": 73,
+        "win_rate": 0.5,
+        "roi": 0.0945890410958904,
+        "units": 13.809999999999999,
+        "active_seasons": 12,
+        "positive_seasons": 7,
+        "positive_season_ratio": 0.5833333333333334
+      },
+      "train": {
+        "n": 61,
+        "wins": 30,
+        "losses": 31,
+        "win_rate": 0.4918032786885246,
+        "roi": 0.07475409836065575,
+        "units": 4.5600000000000005,
+        "active_seasons": 6,
+        "positive_seasons": 3,
+        "positive_season_ratio": 0.5
+      },
+      "validation": {
+        "n": 47,
+        "wins": 26,
+        "losses": 21,
+        "win_rate": 0.5531914893617021,
+        "roi": 0.21808510638297873,
+        "units": 10.25,
+        "active_seasons": 3,
+        "positive_seasons": 3,
+        "positive_season_ratio": 1.0
+      },
+      "holdout": {
+        "n": 38,
+        "wins": 17,
+        "losses": 21,
+        "win_rate": 0.4473684210526316,
+        "roi": -0.0263157894736842,
+        "units": -0.9999999999999996,
+        "active_seasons": 3,
+        "positive_seasons": 1,
+        "positive_season_ratio": 0.3333333333333333
+      },
+      "yearly": [
+        {
+          "season": 2013,
+          "n": 7,
+          "wins": 5,
+          "losses": 2,
+          "win_rate": 0.7142857142857143,
+          "roi": 0.5528571428571428,
+          "units": 3.87,
+          "active_seasons": 1,
+          "positive_seasons": 1,
+          "positive_season_ratio": 1.0
+        },
+        {
+          "season": 2014,
+          "n": 9,
+          "wins": 6,
+          "losses": 3,
+          "win_rate": 0.6666666666666666,
+          "roi": 0.4088888888888889,
+          "units": 3.68,
+          "active_seasons": 1,
+          "positive_seasons": 1,
+          "positive_season_ratio": 1.0
+        },
+        {
+          "season": 2015,
+          "n": 14,
+          "wins": 8,
+          "losses": 6,
+          "win_rate": 0.5714285714285714,
+          "roi": 0.24785714285714286,
+          "units": 3.47,
+          "active_seasons": 1,
+          "positive_seasons": 1,
+          "positive_season_ratio": 1.0
+        },
+        {
+          "season": 2016,
+          "n": 10,
+          "wins": 3,
+          "losses": 7,
+          "win_rate": 0.3,
+          "roi": -0.34500000000000003,
+          "units": -3.45,
+          "active_seasons": 1,
+          "positive_seasons": 0,
+          "positive_season_ratio": 0.0
+        },
+        {
+          "season": 2017,
+          "n": 7,
+          "wins": 2,
+          "losses": 5,
+          "win_rate": 0.2857142857142857,
+          "roi": -0.3642857142857143,
+          "units": -2.5500000000000003,
+          "active_seasons": 1,
+          "positive_seasons": 0,
+          "positive_season_ratio": 0.0
+        },
+        {
+          "season": 2018,
+          "n": 14,
+          "wins": 6,
+          "losses": 8,
+          "win_rate": 0.42857142857142855,
+          "roi": -0.032857142857142856,
+          "units": -0.45999999999999996,
+          "active_seasons": 1,
+          "positive_seasons": 0,
+          "positive_season_ratio": 0.0
+        },
+        {
+          "season": 2019,
+          "n": 10,
+          "wins": 7,
+          "losses": 3,
+          "win_rate": 0.7,
+          "roi": 0.535,
+          "units": 5.3500000000000005,
+          "active_seasons": 1,
+          "positive_seasons": 1,
+          "positive_season_ratio": 1.0
+        },
+        {
+          "season": 2020,
+          "n": 3,
+          "wins": 1,
+          "losses": 2,
+          "win_rate": 0.3333333333333333,
+          "roi": -0.2933333333333333,
+          "units": -0.8799999999999999,
+          "active_seasons": 0,
+          "positive_seasons": 0,
+          "positive_season_ratio": 0.0
+        },
+        {
+          "season": 2021,
+          "n": 19,
+          "wins": 10,
+          "losses": 9,
+          "win_rate": 0.5263157894736842,
+          "roi": 0.1326315789473684,
+          "units": 2.5199999999999996,
+          "active_seasons": 1,
+          "positive_seasons": 1,
+          "positive_season_ratio": 1.0
+        },
+        {
+          "season": 2022,
+          "n": 15,
+          "wins": 8,
+          "losses": 7,
+          "win_rate": 0.5333333333333333,
+          "roi": 0.21733333333333338,
+          "units": 3.2600000000000007,
+          "active_seasons": 1,
+          "positive_seasons": 1,
+          "positive_season_ratio": 1.0
+        },
+        {
+          "season": 2023,
+          "n": 11,
+          "wins": 5,
+          "losses": 6,
+          "win_rate": 0.45454545454545453,
+          "roi": -0.028181818181818186,
+          "units": -0.31000000000000005,
+          "active_seasons": 1,
+          "positive_seasons": 0,
+          "positive_season_ratio": 0.0
+        },
+        {
+          "season": 2024,
+          "n": 11,
+          "wins": 6,
+          "losses": 5,
+          "win_rate": 0.5454545454545454,
+          "roi": 0.22727272727272727,
+          "units": 2.5,
+          "active_seasons": 1,
+          "positive_seasons": 1,
+          "positive_season_ratio": 1.0
+        },
+        {
+          "season": 2025,
+          "n": 16,
+          "wins": 6,
+          "losses": 10,
+          "win_rate": 0.375,
+          "roi": -0.19937500000000002,
+          "units": -3.1900000000000004,
+          "active_seasons": 1,
+          "positive_seasons": 0,
+          "positive_season_ratio": 0.0
+        }
+      ]
+    }
+  ],
+  "overlaps": [
+    {
+      "a": "MLS-A01",
+      "b": "MLS-A02",
+      "a_n": 144,
+      "b_n": 80,
+      "shared_matches": 2,
+      "shared_pct_smaller": 0.025,
+      "exact_selection_overlap": 0
+    },
+    {
+      "a": "MLS-A01",
+      "b": "MLS-A03",
+      "a_n": 144,
+      "b_n": 89,
+      "shared_matches": 3,
+      "shared_pct_smaller": 0.033707865168539325,
+      "exact_selection_overlap": 0
+    },
+    {
+      "a": "MLS-A01",
+      "b": "MLS-A04",
+      "a_n": 144,
+      "b_n": 146,
+      "shared_matches": 5,
+      "shared_pct_smaller": 0.034722222222222224,
+      "exact_selection_overlap": 0
+    },
+    {
+      "a": "MLS-A02",
+      "b": "MLS-A03",
+      "a_n": 80,
+      "b_n": 89,
+      "shared_matches": 0,
+      "shared_pct_smaller": 0.0,
+      "exact_selection_overlap": 0
+    },
+    {
+      "a": "MLS-A02",
+      "b": "MLS-A04",
+      "a_n": 80,
+      "b_n": 146,
+      "shared_matches": 0,
+      "shared_pct_smaller": 0.0,
+      "exact_selection_overlap": 0
+    },
+    {
+      "a": "MLS-A03",
+      "b": "MLS-A04",
+      "a_n": 89,
+      "b_n": 146,
+      "shared_matches": 4,
+      "shared_pct_smaller": 0.0449438202247191,
+      "exact_selection_overlap": 0
+    }
+  ],
+  "portfolio": {
+    "selections": 459,
+    "unique_matches": 445,
+    "duplicate_method_selections": 14,
+    "units": 45.720000000000006,
+    "roi": 0.09960784313725492,
+    "positive_seasons": 9,
+    "seasons": 13,
+    "yearly": [
+      {
+        "season": 2013,
+        "n": 21,
+        "units": 1.7400000000000002,
+        "roi": 0.08285714285714287
+      },
+      {
+        "season": 2014,
+        "n": 31,
+        "units": 8.99,
+        "roi": 0.29
+      },
+      {
+        "season": 2015,
+        "n": 26,
+        "units": 9.71,
+        "roi": 0.3734615384615385
+      },
+      {
+        "season": 2016,
+        "n": 27,
+        "units": -6.21,
+        "roi": -0.23
+      },
+      {
+        "season": 2017,
+        "n": 25,
+        "units": 2.9800000000000004,
+        "roi": 0.11920000000000001
+      },
+      {
+        "season": 2018,
+        "n": 35,
+        "units": 2.880000000000001,
+        "roi": 0.08228571428571431
+      },
+      {
+        "season": 2019,
+        "n": 31,
+        "units": 3.18,
+        "roi": 0.10258064516129033
+      },
+      {
+        "season": 2020,
+        "n": 22,
+        "units": -6.02,
+        "roi": -0.2736363636363636
+      },
+      {
+        "season": 2021,
+        "n": 48,
+        "units": 1.1499999999999995,
+        "roi": 0.02395833333333332
+      },
+      {
+        "season": 2022,
+        "n": 52,
+        "units": 16.189999999999998,
+        "roi": 0.31134615384615383
+      },
+      {
+        "season": 2023,
+        "n": 46,
+        "units": 18.79,
+        "roi": 0.4084782608695652
+      },
+      {
+        "season": 2024,
+        "n": 46,
+        "units": -0.23000000000000043,
+        "roi": -0.00500000000000001
+      },
+      {
+        "season": 2025,
+        "n": 49,
+        "units": -7.43,
+        "roi": -0.15163265306122448
+      }
+    ],
+    "holdout": {
+      "selections": 141,
+      "unique_matches": 136,
+      "units": 11.130000000000003,
+      "roi": 0.07893617021276597,
+      "yearly": [
+        {
+          "season": 2023,
+          "n": 46,
+          "units": 18.79,
+          "roi": 0.4084782608695652
+        },
+        {
+          "season": 2024,
+          "n": 46,
+          "units": -0.23000000000000043,
+          "roi": -0.00500000000000001
+        },
+        {
+          "season": 2025,
+          "n": 49,
+          "units": -7.43,
+          "roi": -0.15163265306122448
+        }
+      ]
+    }
+  },
+  "note": "Each refinement is exactly one simple preholdout-discovered loss filter except A04, where opponent age is the single added filter on the original two-rule pair. Weather vetoes remain diagnostic-only."
+}
