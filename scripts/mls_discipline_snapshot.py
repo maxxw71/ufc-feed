@@ -77,7 +77,7 @@ def main():
             m=re.match(r'^(.+?),\s*([A-Z]{2,5})$',line)
             if m:
                 info=team(m.group(2))
-                warnings.append({'player_name':m.group(1).strip(),'team_abbreviation':m.group(2),
+                warnings.append({'player_name':m.group(1).strip().lstrip('*').strip(),'team_abbreviation':m.group(2),
                                  'team_id':info['team_id'],'team_name':info['team_name']})
     if pending:suspensions.append(pending)
     if not suspensions and not warnings:
