@@ -210,7 +210,8 @@ def build_features():
           'high_load_players3':sum(v>=240 for v in load.values()),'minutes_entropy5':ent}
 
     for _,g in games.iterrows():
-        row={'asa_game_id':str(g.game_id),'date_time_utc':g.dt,'season':int(g._season_requested) if '_season_requested' in g and pd.notna(g._season_requested) else g.dt.year,
+        gdt=pd.Timestamp(g['dt'])
+        row={'asa_game_id':str(g.game_id),'date_time_utc':gdt,'season':int(g._season_requested) if '_season_requested' in g and pd.notna(g._season_requested) else gdt.year,
              'home_team':g.home_team,'away_team':g.away_team}
         for side,team,mid in [('home',g.home_team,g.get('home_manager_id')),('away',g.away_team,g.get('away_manager_id'))]:
             sm=summarize(team)
@@ -232,7 +233,7 @@ def build_features():
         if pd.notna(hs) and pd.notna(as_):
             for team,mid,gf,ga in [(g.home_team,g.get('home_manager_id'),hs,as_),(g.away_team,g.get('away_manager_id'),as_,hs)]:
                 ms=manager_state[str(mid)]
-                if ms['first'] is None:ms['first']=g.dt
+                if ms['first'] is None:ms['first']=gdt
                 ms['games']+=1;ms['gf']+=gf;ms['ga']+=ga;ms['pts']+=3 if gf>ga else 1 if gf==ga else 0
         # update player history after feature capture
         for team in [g.home_team,g.away_team]:
@@ -241,7 +242,7 @@ def build_features():
             for _,p in z.iterrows():
                 plist.append({'player_id':p.player_id,'minutes':float(p.minutes_played or 0),'xgi':float(p.get('xgoals_plus_xassists') or 0),
                               'gplus':float(p.get('gplus_raw') or 0),'age':p.get('age_years'),'pos':p.get('general_position')})
-            recent_team_games[team].append({'game_id':g.game_id,'date':g.dt,'players':plist})
+            recent_team_games[team].append({'game_id':g.game_id,'date':gdt,'players':plist})
 
     out=pd.DataFrame(rows)
     out.to_parquet(PROC/'mls_player_manager_pregame_features.parquet',index=False)
