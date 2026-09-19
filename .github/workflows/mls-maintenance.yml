@@ -7,16 +7,35 @@ on:
   workflow_dispatch:
 
 jobs:
-  inspect-shadow:
+  inspect-arsenal-watches:
     runs-on: [self-hosted, Linux, X64, appwiza]
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
-      - name: Inspect current MLS prospective shadow scripts
+      - name: Inspect MLS arsenal watch candidates
         shell: bash
         run: |
           set -Eeuo pipefail
           KEY=/home/appwiza-runner/.ssh/appwiza_vps
           HOST=anestishkurti92@127.0.0.1
           SSH="ssh -i $KEY -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=accept-new $HOST"
-          $SSH 'set -Eeuo pipefail; cd /home/anestishkurti92/mls-predictor-v1; for f in mls_prospective_shadow.py mls_shadow_ledger.py; do echo "===== $f ====="; sed -n "1,320p" "$f"; done'
+          $SSH 'set -Eeuo pipefail; cd /home/anestishkurti92/mls-predictor-v1; venv/bin/python - <<'"'"'PY'"'"'
+          import json
+          from pathlib import Path
+          p=Path("research/arsenal/latest.json")
+          d=json.loads(p.read_text())
+          print("BUILT",d.get("built_at"),"PRIORITY",d.get("prospective_priority_count"),"WATCH",d.get("shadow_watch_count"))
+          for i,x in enumerate(d.get("shadow_watch_preholdout_order") or [],1):
+              out={
+                "i":i,"type":"single" if x.get("feature") else "pair",
+                "outcome":x.get("outcome"),"price_band":x.get("price_band"),
+                "feature":x.get("feature"),"op":x.get("op"),"threshold":x.get("threshold"),"family":x.get("family"),
+                "rule1":x.get("rule1"),"rule2":x.get("rule2"),"families":x.get("families"),
+                "train":x.get("train"),"validation":x.get("validation"),"preholdout":x.get("preholdout"),
+                "holdout":x.get("holdout"),"holdout_baseline":x.get("holdout_baseline"),"holdout_lift":x.get("holdout_lift"),
+                "full":x.get("full"),"bootstrap95_roi":x.get("bootstrap95_roi"),
+                "neighbors":x.get("threshold_neighbors_positive_all_eras"),
+                "team_concentration":x.get("team_concentration")
+              }
+              print("WATCH",json.dumps(out,separators=(",",":")))
+          PY'
