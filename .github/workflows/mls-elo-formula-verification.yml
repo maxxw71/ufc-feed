@@ -1,0 +1,48 @@
+name: MLS Elo Formula Verification
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/mls-elo-formula-verification.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: [self-hosted, Linux, X64, appwiza]
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify published MLS Elo update formula
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          python3 - <<'PY'
+          import csv,io,math,urllib.request,statistics
+          U='https://raw.githubusercontent.com/philo92/mls-elo/main/results.csv'
+          H='https://raw.githubusercontent.com/philo92/mls-elo/main/home_advantage.csv'
+          ua={'User-Agent':'Appwiza-MLS-Elo-Verify/1.0'}
+          rows=list(csv.DictReader(io.StringIO(urllib.request.urlopen(urllib.request.Request(U,headers=ua),timeout=30).read().decode())))
+          ha=float(list(csv.DictReader(io.StringIO(urllib.request.urlopen(urllib.request.Request(H,headers=ua),timeout=30).read().decode())))[0]['home_advantage'])
+          errs=[]
+          sample=[r for r in rows if r['date']>='2026-08-01'][-100:]
+          for r in sample:
+              h=float(r['home_elo_current']);a=float(r['away_elo_current'])
+              hs=float(r['home_score']);as_=float(r['away_score'])
+              neutral=str(r['neutral']).upper()=='TRUE'
+              exp=1/(1+10**(-((h-a)+(0 if neutral else ha))/400))
+              act=1.0 if hs>as_ else 0.5 if hs==as_ else 0.0
+              gd=abs(hs-as_)
+              mult=1.0 if gd<=1 else math.sqrt(gd)
+              pred=h+20*mult*(act-exp)
+              obs=float(r['home_elo_update'])
+              err=pred-obs;errs.append(abs(err))
+              if abs(err)>.06:
+                  print('OUTLIER',r['date'],r['home_team'],r['away_team'],'pred',round(pred,4),'obs',obs,'err',round(err,4))
+          print('home_advantage',ha)
+          print('rows_checked',len(sample))
+          print('mean_abs_error',sum(errs)/len(errs))
+          print('max_abs_error',max(errs))
+          assert max(errs)<0.08, max(errs)
+          print('ELO FORMULA VERIFIED')
+          PY
