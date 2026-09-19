@@ -1,0 +1,86 @@
+name: MLS Prospective Shadow Board
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '35 1,7,13,19 * * *'
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/mls_market_snapshot.py'
+      - 'scripts/mls_prospective_shadow.py'
+      - '.github/workflows/mls-prospective-shadow.yml'
+
+concurrency:
+  group: mls-prospective-shadow
+  cancel-in-progress: true
+
+permissions:
+  contents: write
+
+jobs:
+  shadow:
+    if: github.repository == 'maxxw71/ufc-feed'
+    runs-on: [self-hosted, Linux, X64, appwiza]
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with: {fetch-depth: 0}
+
+      - name: Install and run prospective MLS shadow board
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          KEY=/home/appwiza-runner/.ssh/appwiza_vps
+          HOST=anestishkurti92@127.0.0.1
+          SSH="ssh -i $KEY -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=accept-new $HOST"
+          ROOT=/home/anestishkurti92/mls-predictor-v1
+
+          for f in mls_market_snapshot.py mls_prospective_shadow.py; do
+            cat "scripts/$f" | $SSH "set -e; D=$ROOT; cat > \"\$D/$f.new\"; chmod 0644 \"\$D/$f.new\"; mv -f \"\$D/$f.new\" \"\$D/$f\""
+          done
+          $SSH "set -Eeuo pipefail; cd $ROOT; venv/bin/python -m py_compile mls_market_snapshot.py mls_prospective_shadow.py; timeout 120s venv/bin/python mls_market_snapshot.py; OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 nice -n 12 timeout 5m venv/bin/python mls_prospective_shadow.py"
+
+      - name: Pull non-secret MLS shadow status
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          KEY=/home/appwiza-runner/.ssh/appwiza_vps
+          HOST=anestishkurti92@127.0.0.1
+          SSH="ssh -i $KEY -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=accept-new $HOST"
+          mkdir -p mls/prospective
+          $SSH 'cat /home/anestishkurti92/mls-predictor-v1/live/market_snapshots/latest_summary.json' > mls/prospective/latest_summary.json
+          $SSH 'cat /home/anestishkurti92/mls-predictor-v1/live/shadow/current_shadow_board.json' > /tmp/mls_shadow_board.json
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          d=json.loads(Path('/tmp/mls_shadow_board.json').read_text())
+          out={
+            'built_at':d.get('built_at'),
+            'market_captured_at':d.get('market_captured_at'),
+            'elo_updated_at':d.get('elo_updated_at'),
+            'elo_age_days':d.get('elo_age_days'),
+            'qualifier_count':len(d.get('qualifiers') or []),
+            'qualifiers':[
+              {k:r.get(k) for k in ['method_id','selection','opponent','commence_time','american_price','book','market_prob']}
+              for r in d.get('qualifiers') or []
+            ],
+            'shadow_only':True,
+            'official_autopromotions':0
+          }
+          Path('mls/prospective/shadow_status.json').write_text(json.dumps(out,indent=2))
+          print(json.dumps(out,indent=2))
+          PY
+
+      - name: Persist prospective status
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git add mls/prospective/latest_summary.json mls/prospective/shadow_status.json
+          if ! git diff --cached --quiet; then
+            git commit -m 'Update MLS prospective shadow status'
+            git pull --rebase origin main
+            git push origin HEAD:main
+          fi
