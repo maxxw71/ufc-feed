@@ -1,4 +1,4 @@
-name: UFC public dashboard deploy
+name: UFC public page canonical deploy
 
 on:
   workflow_dispatch:
@@ -6,9 +6,8 @@ on:
     branches: [main]
     paths:
       - 'ufc/ufc_public_page.py'
-      - 'scripts/sync_ufc_nfl_presentation.py'
-      - 'scripts/fix_ufc_external_dashboard_css.py'
-      - 'scripts/install_ufc_dashboard_hook.py'
+      - 'scripts/patch_ufc_page_contract_guard.py'
+      - 'scripts/patch_sport_render_isolation.py'
       - '.github/workflows/ufc-public-dashboard-deploy.yml'
 
 concurrency:
@@ -21,10 +20,11 @@ permissions:
 jobs:
   deploy:
     runs-on: [self-hosted, Linux, X64, appwiza]
-    timeout-minutes: 10
+    timeout-minutes: 12
     steps:
       - uses: actions/checkout@v4
         with: {fetch-depth: 0}
+
       - name: Reject stale UFC page source
         id: freshness
         shell: bash
@@ -40,16 +40,19 @@ jobs:
           else
             echo "deploy=true" >> "$GITHUB_OUTPUT"
           fi
-      - name: Sync UFC presentation to NFL
+
+      - name: Validate canonical UFC source
         if: steps.freshness.outputs.deploy == 'true'
         shell: bash
         run: |
           set -Eeuo pipefail
-          python3 scripts/sync_ufc_nfl_presentation.py
-          python3 scripts/fix_ufc_external_dashboard_css.py
           python3 -m py_compile ufc/ufc_public_page.py
-          python3 -m py_compile scripts/install_ufc_dashboard_hook.py
-      - name: Deploy UFC dashboard and persistent post-publish hook
+          grep -q "PAGE_CONTRACT='UFC_PUBLIC_CANONICAL_V2_20260919'" ufc/ufc_public_page.py
+          grep -q 'Method Key · U1–U12' ufc/ufc_public_page.py
+          grep -q '/sports/ufc/dashboard.css?v=' ufc/ufc_public_page.py
+          grep -q "atomic(PUBLIC/'dashboard.css',DASH_CSS)" ufc/ufc_public_page.py
+
+      - name: Install canonical UFC enhancer and guards
         if: steps.freshness.outputs.deploy == 'true'
         shell: bash
         run: |
@@ -57,30 +60,23 @@ jobs:
           KEY=/home/appwiza-runner/.ssh/appwiza_vps
           HOST=anestishkurti92@127.0.0.1
           SSH="ssh -i $KEY -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=accept-new $HOST"
-          cat ufc/ufc_public_page.py | $SSH 'cat > /home/anestishkurti92/ufc-predictor-v1/ufc_public_page.py'
-          cat scripts/install_ufc_dashboard_hook.py | $SSH 'cat > /home/anestishkurti92/ufc-predictor-v1/install_ufc_dashboard_hook.py'
-          $SSH 'export HOME=/home/anestishkurti92; /home/anestishkurti92/ufc-predictor-v1/venv/bin/python /home/anestishkurti92/ufc-predictor-v1/install_ufc_dashboard_hook.py'
-          $SSH 'export HOME=/home/anestishkurti92; export PYTHONPATH=/home/anestishkurti92/ufc-predictor-v1:/home/anestishkurti92/betting-ledger/code:/opt/sports-publisher; /home/anestishkurti92/ufc-predictor-v1/venv/bin/python -c "import sports_publish,ufc_public_page; ufc_public_page.safe_enhance(sports_publish)"'
-          $SSH 'grep -q "UFC_PUBLIC_DASHBOARD_HOOK" /home/anestishkurti92/ufc-predictor-v1/ufc_email_watcher.py'
-          $SSH '/home/anestishkurti92/ufc-predictor-v1/venv/bin/python -m py_compile /home/anestishkurti92/ufc-predictor-v1/ufc_email_watcher.py'
-      - name: Verify public page and external dashboard CSS
+
+          cat ufc/ufc_public_page.py | $SSH 'set -e; D=/home/anestishkurti92/ufc-predictor-v1; cat > "$D/ufc_public_page.py.new"; chmod 0644 "$D/ufc_public_page.py.new"; mv -f "$D/ufc_public_page.py.new" "$D/ufc_public_page.py"'
+          cat scripts/patch_ufc_page_contract_guard.py | $SSH 'cat > /tmp/patch_ufc_page_contract_guard.py'
+          cat scripts/patch_sport_render_isolation.py | $SSH 'cat > /tmp/patch_sport_render_isolation.py'
+
+          $SSH 'set -Eeuo pipefail; export HOME=/home/anestishkurti92; export PYTHONPATH=/home/anestishkurti92/ufc-predictor-v1:/home/anestishkurti92/betting-ledger/code:/opt/sports-publisher; cd /home/anestishkurti92/ufc-predictor-v1; /home/anestishkurti92/ufc-predictor-v1/venv/bin/python /tmp/patch_ufc_page_contract_guard.py ufc_email_watcher.py; /home/anestishkurti92/ufc-predictor-v1/venv/bin/python /tmp/patch_sport_render_isolation.py ufc ufc_email_watcher.py; /home/anestishkurti92/ufc-predictor-v1/venv/bin/python -m py_compile ufc_public_page.py ufc_email_watcher.py; grep -q UFC_PUBLIC_PAGE_CONTRACT_GUARD_V1 ufc_email_watcher.py; grep -q UFC_RENDER_ISOLATION_V1 ufc_email_watcher.py; /home/anestishkurti92/ufc-predictor-v1/venv/bin/python -c "import sports_publish,ufc_public_page; assert ufc_public_page.PAGE_CONTRACT==\"UFC_PUBLIC_CANONICAL_V2_20260919\"; ufc_public_page.safe_enhance(sports_publish)"'
+
+      - name: Verify canonical UFC live page
         if: steps.freshness.outputs.deploy == 'true'
         shell: bash
         run: |
           set -Eeuo pipefail
           curl -fsSL https://appwiza.com/sports/ufc/ > /tmp/ufc-live.html
-          curl -fsSL https://appwiza.com/sports/ufc/dashboard.css > /tmp/ufc-dashboard.css
-          grep -q '/sports/ufc/dashboard.css?v=' /tmp/ufc-live.html
           grep -q 'Overall record' /tmp/ufc-live.html
+          grep -q 'Current UFC audit' /tmp/ufc-live.html
           grep -q 'Available selections' /tmp/ufc-live.html
           grep -q 'Completed selections' /tmp/ufc-live.html
-          grep -q 'class="audit-table"' /tmp/ufc-live.html
-          grep -q 'class="history-table"' /tmp/ufc-live.html
-          grep -q 'class="grid upcoming-grid"' /tmp/ufc-live.html
-          grep -q 'record-strip' /tmp/ufc-dashboard.css
-          grep -q 'research-cta' /tmp/ufc-dashboard.css
-          grep -q 'audit-table' /tmp/ufc-dashboard.css
-          grep -q 'history-table' /tmp/ufc-dashboard.css
-          grep -q '2-1' /tmp/ufc-live.html
-          grep -q 'Manon Fiorot' /tmp/ufc-live.html
-          echo 'UFC dashboard and post-publish hook are verified'
+          grep -q 'Method Key · U1–U12' /tmp/ufc-live.html
+          for x in U1 U2 U3 U4 U5 U6 U7 U8 U9 U10 U11 U12; do grep -q ">$x</span>" /tmp/ufc-live.html; done
+          echo 'UFC canonical page deploy and contract guards verified'
