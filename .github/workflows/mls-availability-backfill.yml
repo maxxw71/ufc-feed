@@ -1,0 +1,54 @@
+name: MLS Availability Archive Backfill
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/mls_availability_backfill.py'
+      - '.github/workflows/mls-availability-backfill.yml'
+
+concurrency:
+  group: mls-availability-backfill
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  backfill:
+    runs-on: [self-hosted, Linux, X64, appwiza]
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+        with: {fetch-depth: 0}
+      - name: Build official MLS 2024-2025 availability archive
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          KEY=/home/appwiza-runner/.ssh/appwiza_vps
+          HOST=anestishkurti92@127.0.0.1
+          SSH="ssh -i $KEY -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=accept-new $HOST"
+          cat scripts/mls_availability_backfill.py | $SSH 'set -e; D=/home/anestishkurti92/mls-predictor-v1; cat > "$D/mls_availability_backfill.py.new"; chmod 0644 "$D/mls_availability_backfill.py.new"; mv -f "$D/mls_availability_backfill.py.new" "$D/mls_availability_backfill.py"'
+          $SSH 'set -Eeuo pipefail; cd /home/anestishkurti92/mls-predictor-v1; venv/bin/python -m py_compile mls_availability_backfill.py; OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 nice -n 15 timeout 18m venv/bin/python mls_availability_backfill.py'
+      - name: Pull archive audit
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          KEY=/home/appwiza-runner/.ssh/appwiza_vps
+          HOST=anestishkurti92@127.0.0.1
+          mkdir -p mls/availability/archive
+          ssh -i "$KEY" -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=accept-new "$HOST" 'cat /home/anestishkurti92/mls-predictor-v1/data/raw/availability_archive/meta.json' > mls/availability/archive/meta.json
+          cat mls/availability/archive/meta.json
+      - name: Persist archive audit
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git add mls/availability/archive/meta.json
+          if ! git diff --cached --quiet; then
+            git commit -m 'Publish MLS availability archive audit'
+            git pull --rebase origin main
+            git push origin HEAD:main
+          fi
