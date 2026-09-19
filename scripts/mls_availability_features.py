@@ -190,16 +190,27 @@ def main():
                                        'availability_report_quality':quality}
             match_count+=1
             for side in ['home','away']:
-                team=canon_team(g[f'{side}_team']);entries=by_team.get(team)
+                team=canon_team(g[f'{side}_team'])
+                report_rows=by_team.get(team)
+                covered=report_rows is not None and len(report_rows)>0
+                entries=(
+                    report_rows[report_rows.status.astype(str).str.upper().isin(['OUT','QUESTIONABLE'])].copy()
+                    if covered else None
+                )
                 vals,tot=get_values(team,gid)
                 prefix=f'{side}_availability_'
                 known=entries is not None and len(entries)>0
+                explicit_clear_side=bool(covered and not known)
                 if known:explicit_status+=1
+                elif explicit_clear_side:pass
                 else:inferred_clear+=1
                 side_count+=1
                 feats={
-                    'report_available':1.0,'explicit_status_rows':float(len(entries) if known else 0),
-                    'inferred_clear':0.0 if known else 1.0,'out_count':0.0,'questionable_count':0.0,
+                    'report_available':1.0,
+                    'explicit_status_rows':float(len(entries) if known else 0),
+                    'explicit_clear':1.0 if explicit_clear_side else 0.0,
+                    'inferred_clear':1.0 if not covered else 0.0,
+                    'out_count':0.0,'questionable_count':0.0,
                     'injury_out_count':0.0,'non_injury_out_count':0.0,'suspension_out_count':0.0,
                     'international_duty_out_count':0.0,'illness_out_count':0.0,'concussion_out_count':0.0,
                     'weighted_missing_minutes_share5':0.0,'weighted_missing_xgi_share5':0.0,
@@ -250,11 +261,12 @@ def main():
       'built_at':now(),'base_file':str(base_path),'rows':len(enriched),'columns':len(enriched.columns),
       'availability_feature_rows':len(feat),'valid_reports':len(valid_reports),'rejected_reports':rejected_reports,
       'valid_report_details':valid_reports,'team_sides':side_count,'explicit_status_sides':explicit_status,
+      'explicit_clear_sides':int(feat[[c for c in feat.columns if c.endswith('_availability_explicit_clear')]].sum().sum()) if len(feat) else 0,
       'inferred_clear_sides':inferred_clear,'resolved_status_players_with_prior5':resolved,
       'unresolved_or_no_prior5_status_players':unresolved,
       'coverage_seasons':sorted(int(x) for x in feat.season.dropna().unique()),
       'output':str(OUT_WAREHOUSE),
-      'leakage_note':'Availability is joined only to its official season/matchday report. Missing-player impact uses only each team player rows from its five matches strictly before the target match. Reports failing schedule-team coverage >=75% are rejected. Teams without parsed status rows inside a validated full matchday report are marked inferred_clear separately.'
+      'leakage_note':'Availability is joined only to its official season/matchday report. Missing-player impact uses only each team player rows from its five matches strictly before the target match. Reports failing schedule-team coverage >=75% are rejected. Explicit CLEAR rows are confirmed zero absences; only match teams absent from a validated report are marked inferred_clear.'
     }
     REPORT.write_text(json.dumps(meta,indent=2,default=str))
     print(json.dumps(meta,indent=2,default=str))
