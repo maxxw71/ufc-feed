@@ -1,0 +1,33 @@
+name: MLS Current USA Feed Audit
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/mls-current-usa-feed-audit.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  audit:
+    runs-on: [self-hosted, Linux, X64, appwiza]
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Inspect current USA CSV
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          python3 - <<'PY'
+          import csv,io,urllib.request,json
+          url='https://football-data.co.uk/new/USA.csv'
+          req=urllib.request.Request(url,headers={'User-Agent':'Appwiza-MLS/1.0'})
+          raw=urllib.request.urlopen(req,timeout=30).read()
+          text=raw.decode('utf-8-sig','replace')
+          rows=list(csv.DictReader(io.StringIO(text)))
+          print('bytes',len(raw),'rows',len(rows))
+          print('columns',json.dumps(list(rows[0]) if rows else []))
+          print('last_rows')
+          for r in rows[-12:]:
+              keep={k:r.get(k) for k in ['Season','Date','Time','Home','Away','HG','AG','Res','PSH','PSD','PSA','PSCH','PSCD','PSCA','MaxH','MaxD','MaxA','AvgH','AvgD','AvgA'] if k in r}
+              print(json.dumps(keep,sort_keys=True))
+          PY
