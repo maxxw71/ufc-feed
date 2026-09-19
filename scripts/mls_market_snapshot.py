@@ -36,7 +36,7 @@ def main():
             if st.get('state') not in {'pre','in'} and st.get('completed'):continue
             teams={x.get('homeAway'):x.get('team',{}).get('displayName') for x in comp.get('competitors') or []}
             home,away=teams.get('home'),teams.get('away')
-            odds=(comp.get('odds') or [])
+            odds=[x for x in (comp.get('odds') or []) if isinstance(x,dict)]
             if not home or not away or not odds:continue
             o=odds[0];ml=(o.get('moneyline') or {})
             def get(side):
