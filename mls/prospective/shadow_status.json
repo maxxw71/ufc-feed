@@ -1,8 +1,8 @@
 {
-  "built_at": "2026-09-19T21:43:30.786456+00:00",
-  "market_captured_at": "2026-09-19T21:43:06.014257+00:00",
+  "built_at": "2026-09-19T22:48:54.911034+00:00",
+  "market_captured_at": "2026-09-19T22:46:39.153113+00:00",
   "elo_updated_at": "2026-09-18T23:30:00+00:00",
-  "elo_age_days": 0.9259625351388888,
+  "elo_age_days": 0.9711906590740741,
   "qualifier_count": 6,
   "qualifiers": [
     {
@@ -10,21 +10,35 @@
       "selection": "FC Dallas",
       "opponent": "Austin FC",
       "commence_time": "2026-09-20T00:30Z",
-      "american_price": "-155",
+      "american_price": "-160",
       "book": "DraftKings",
-      "market_prob": 0.5633297741604045,
+      "market_prob": 0.5690053970701618,
       "research_status": "PROSPECTIVE_PRIORITY_SHADOW",
-      "portfolio_conflict": null
+      "confidence_tier": "BASE",
+      "portfolio_conflict": true
+    },
+    {
+      "method_id": "MLS-A06",
+      "selection": "Austin FC",
+      "opponent": "FC Dallas",
+      "commence_time": "2026-09-20T00:30Z",
+      "american_price": "+350",
+      "book": "DraftKings",
+      "market_prob": 0.2054741711642251,
+      "research_status": "PROSPECTIVE_PRIORITY_SHADOW",
+      "confidence_tier": "BASE",
+      "portfolio_conflict": true
     },
     {
       "method_id": "MLS-A03",
       "selection": "FC Cincinnati",
       "opponent": "Houston Dynamo FC",
       "commence_time": "2026-09-20T00:30Z",
-      "american_price": "+225",
+      "american_price": "+235",
       "book": "DraftKings",
-      "market_prob": 0.28318176585702776,
+      "market_prob": 0.27797602055381104,
       "research_status": "PROSPECTIVE_PRIORITY_SHADOW",
+      "confidence_tier": "BASE",
       "portfolio_conflict": null
     },
     {
@@ -36,6 +50,7 @@
       "book": "DraftKings",
       "market_prob": 0.5778994524639124,
       "research_status": "PROSPECTIVE_PRIORITY_SHADOW",
+      "confidence_tier": "BASE",
       "portfolio_conflict": null
     },
     {
@@ -43,22 +58,12 @@
       "selection": "Colorado Rapids",
       "opponent": "Seattle Sounders FC",
       "commence_time": "2026-09-20T01:30Z",
-      "american_price": "-120",
+      "american_price": "-125",
       "book": "DraftKings",
-      "market_prob": 0.5036642238507661,
+      "market_prob": 0.5133404482390608,
       "research_status": "PROSPECTIVE_PRIORITY_SHADOW",
-      "portfolio_conflict": true
-    },
-    {
-      "method_id": "MLS-A03",
-      "selection": "Seattle Sounders FC",
-      "opponent": "Colorado Rapids",
-      "commence_time": "2026-09-20T01:30Z",
-      "american_price": "+260",
-      "book": "DraftKings",
-      "market_prob": 0.25649566955363096,
-      "research_status": "PROSPECTIVE_PRIORITY_SHADOW",
-      "portfolio_conflict": true
+      "confidence_tier": "BASE",
+      "portfolio_conflict": null
     },
     {
       "method_id": "MLS-R03",
@@ -69,21 +74,22 @@
       "book": "DraftKings",
       "market_prob": 0.2797417768213956,
       "research_status": "SHADOW_READY",
+      "confidence_tier": "BASE",
       "portfolio_conflict": null
     }
   ],
   "conflicts": [
     {
-      "event_id": "761826",
-      "home_team": "Colorado Rapids",
-      "away_team": "Seattle Sounders FC",
+      "event_id": "761822",
+      "home_team": "FC Dallas",
+      "away_team": "Austin FC",
       "methods": [
         "MLS-A02",
-        "MLS-A03"
+        "MLS-A06"
       ],
       "selections": [
-        "Colorado Rapids",
-        "Seattle Sounders FC"
+        "FC Dallas",
+        "Austin FC"
       ],
       "policy": "TRACK_BOTH_SHADOW_ONLY_NO_COMBINED_ACTION"
     }
@@ -92,6 +98,18 @@
     "MLS-P01": {
       "status": "RESEARCH_ONLY_REJECT_RECENT",
       "reason": "2025 historical collapse; no preholdout-derived veto rescued recent stability."
+    },
+    "MLS-R01": {
+      "status": "LEGACY_REPLACED_BY_R01V2",
+      "reason": "Refined rule improved pre-holdout and untouched holdout; old ledger entries preserved."
+    },
+    "MLS-R02": {
+      "status": "LEGACY_REPLACED_BY_R02V2",
+      "reason": "Stricter xG rule improved consistency; old ledger entries preserved."
+    },
+    "MLS-A07": {
+      "status": "RESEARCH_ONLY_REDUNDANT",
+      "reason": "60-74% exact overlap with R01/R02 family; useful signal absorbed into refinements instead of added separately."
     }
   },
   "shadow_only": true,
