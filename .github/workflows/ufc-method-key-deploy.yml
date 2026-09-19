@@ -1,0 +1,38 @@
+name: UFC Method Key Deploy
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/ufc-method-key-deploy.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  deploy:
+    runs-on: [self-hosted, Linux, X64, appwiza]
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Prepare UFC page
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          python3 scripts/sync_ufc_nfl_presentation.py
+          python3 scripts/fix_ufc_external_dashboard_css.py
+          python3 -m py_compile ufc/ufc_public_page.py
+          grep -q 'def method_key' ufc/ufc_public_page.py
+          grep -q 'Method Key · U1–U12' ufc/ufc_public_page.py
+      - name: Deploy UFC method key
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          KEY=/home/appwiza-runner/.ssh/appwiza_vps
+          HOST=anestishkurti92@127.0.0.1
+          SSH="ssh -i $KEY -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=accept-new $HOST"
+          cat ufc/ufc_public_page.py | $SSH 'cat > /home/anestishkurti92/ufc-predictor-v1/ufc_public_page.py'
+          $SSH 'export HOME=/home/anestishkurti92; export PYTHONPATH=/home/anestishkurti92/ufc-predictor-v1:/home/anestishkurti92/betting-ledger/code:/opt/sports-publisher; /home/anestishkurti92/ufc-predictor-v1/venv/bin/python -c "import sports_publish,ufc_public_page; ufc_public_page.safe_enhance(sports_publish)"'
+          $SSH 'grep -q "Method Key · U1–U12" /home/anestishkurti92/ufc-predictor-v1/ufc_public_page.py'
+          curl -fsSL https://appwiza.com/sports/ufc/ > /tmp/ufc.html
+          grep -q 'Method Key · U1–U12' /tmp/ufc.html
+          for x in U1 U2 U3 U4 U5 U6 U7 U8 U9 U10 U11 U12; do grep -q ">$x</span>" /tmp/ufc.html; done
+          echo 'UFC METHOD KEY LIVE'
