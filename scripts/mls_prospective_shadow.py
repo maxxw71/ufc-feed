@@ -278,6 +278,19 @@ def main():
               'book':ev['provider'],'checks':checks,'blocking_reasons':reasons,'features':fx,'history':HISTORY[m['id']],
               'elo_source_updated_at':elo_updated,'elo_age_days':elo_age,'market_source':ev['source']
             })
+    qualifiers=[r for r in rows if r['status']=='QUALIFIES_SHADOW']
+    event_groups=defaultdict(list)
+    for q in qualifiers:event_groups[str(q['event_id'])].append(q)
+    conflicts=[]
+    for eid,grp in event_groups.items():
+        sels={str(x['selection']) for x in grp}
+        if len(sels)>1:
+            conflicts.append({
+              'event_id':eid,'home_team':grp[0]['home_team'],'away_team':grp[0]['away_team'],
+              'methods':[x['method_id'] for x in grp],'selections':[x['selection'] for x in grp],
+              'policy':'TRACK_BOTH_SHADOW_ONLY_NO_COMBINED_ACTION'
+            })
+            for x in grp:x['portfolio_conflict']=True
     payload={
       'built_at':now().isoformat(),'market_captured_at':market['summary']['captured_at'],
       'elo_updated_at':elo_updated,'elo_age_days':elo_age,'shadow_only':True,'official_autopromotions':0,
@@ -285,7 +298,7 @@ def main():
         'MLS-P01':{'status':'RESEARCH_ONLY_REJECT_RECENT','reason':'2025 historical collapse; no preholdout-derived veto rescued recent stability.'}
       },
       'methods':{m['id']:{'name':m['name'],'status':m['research_status']} for m in METHODS},
-      'rows':rows,'qualifiers':[r for r in rows if r['status']=='QUALIFIES_SHADOW'],
+      'rows':rows,'qualifiers':qualifiers,'conflicts':conflicts,
       'status_counts':{m['id']:{st:sum(1 for r in rows if r['method_id']==m['id'] and r['status']==st)
                        for st in ['QUALIFIES_SHADOW','NO_MATCH','BLOCKED_STALE_INPUT']} for m in METHODS}
     }
@@ -296,7 +309,7 @@ def main():
       'built_at':payload['built_at'],'market_captured_at':payload['market_captured_at'],
       'elo_updated_at':elo_updated,'elo_age_days':elo_age,'events':len(events),
       'method_checks':len(rows),'qualifiers':len(payload['qualifiers']),
-      'status_counts':payload['status_counts'],
+      'status_counts':payload['status_counts'],'conflicts':payload['conflicts'],
       'qualifying':[(r['method_id'],r['selection'],r['opponent'],r['american_price']) for r in payload['qualifiers']],
       'retired_methods':payload['retired_methods'],'official_autopromotions':0
     },indent=2))
