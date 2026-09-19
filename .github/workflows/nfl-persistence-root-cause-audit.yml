@@ -1,0 +1,52 @@
+name: NFL Persistence Root Cause Audit
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/nfl-persistence-root-cause-audit.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  audit:
+    runs-on: [self-hosted, Linux, X64, appwiza]
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - name: Audit live NFL persistence and writers
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          KEY=/home/appwiza-runner/.ssh/appwiza_vps
+          HOST=anestishkurti92@127.0.0.1
+          echo '=== REPO HASH ==='
+          sha256sum nfl/nfl_public_page.py
+          grep -n 'def _method_key' nfl/nfl_public_page.py || true
+          grep -n 'Method Key · NFL' nfl/nfl_public_page.py || true
+          echo '=== REPO WRITERS ==='
+          grep -RniE "public/nfl/index\.html|nfl_public_page\.py|publish_nfl\(" .github/workflows scripts nfl --exclude='*.csv' --exclude='*.json' | head -500 || true
+          echo '=== SERVER ==='
+          ssh -i "$KEY" -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=accept-new "$HOST" 'bash -s' <<'EOF'
+          set -Eeuo pipefail
+          R=/home/anestishkurti92/nfl-predictor-v1/research_v2
+          P=/srv/appwiza-sports/public/nfl/index.html
+          echo 'server enhancer hash:'
+          sha256sum "$R/nfl_public_page.py" || true
+          echo 'server enhancer markers:'
+          grep -nE 'def _method_key|Method Key · NFL|H-series research' "$R/nfl_public_page.py" || true
+          echo 'scanner publish/hook:'
+          grep -nA8 -B5 -E 'publish_nfl|nfl_public_page\.safe_enhance|import nfl_public_page' "$R/nfl_home_opener_scanner.py" || true
+          echo 'live page markers:'
+          stat -c '%y %U:%G %a %s %n' "$P"
+          grep -o 'Method Key · NFL' "$P" | head || true
+          grep -o 'H-series research / shadow methods' "$P" | head || true
+          grep -o 'Actionable now' "$P" | head || true
+          grep -o '2026 deep audit' "$P" | head || true
+          grep -o 'Buccaneers to win' "$P" | head || true
+          grep -o 'Ravens to win' "$P" | head || true
+          echo 'timer/service:'
+          systemctl list-timers --all --no-pager | grep -Ei 'nfl|home.opener' || true
+          systemctl cat nfl-home-opener.service 2>/dev/null || true
+          echo 'server-side likely writers:'
+          grep -RniE "/srv/appwiza-sports/public/nfl/index\.html|publish_nfl\(" "$R" /opt/sports-publisher 2>/dev/null | head -300 || true
+          EOF
