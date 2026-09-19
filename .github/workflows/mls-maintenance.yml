@@ -26,6 +26,7 @@ jobs:
           urls=[
             "https://r.jina.ai/http://site.api.espn.com/apis/site/v2/sports/soccer/usa.1/scoreboard?dates=20230422%26limit=100",
             "https://r.jina.ai/https://site.api.espn.com/apis/site/v2/sports/soccer/usa.1/scoreboard?dates=20230422%26limit=100",
+            "https://r.jina.ai/http://web.archive.org/cdx/search/cdx?url=https%3A%2F%2Fwww.mlssoccer.com%2Fnews%2Fmlssoccer-com-injury-report%26from=2022%26to=2023%26output=json%26filter=statuscode%3A200%26collapse=digest%26fl=timestamp%2Coriginal%2Cstatuscode%2Cdigest"
           ]
           for url in urls:
               print("\nTRY",url)
