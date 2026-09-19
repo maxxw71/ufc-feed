@@ -1,0 +1,63 @@
+name: MLS Confirmed Lineup Features
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/mls_confirmed_lineup_features.py'
+      - 'mls/lineups/espn_meta.json'
+      - '.github/workflows/mls-confirmed-lineup-features.yml'
+
+concurrency:
+  group: mls-confirmed-lineup-features
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    if: github.repository == 'maxxw71/ufc-feed'
+    runs-on: [self-hosted, Linux, X64, appwiza]
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with: {fetch-depth: 0}
+
+      - name: Deploy and build confirmed-lineup features
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          KEY=/home/appwiza-runner/.ssh/appwiza_vps
+          HOST=anestishkurti92@127.0.0.1
+          SSH="ssh -i $KEY -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=accept-new $HOST"
+          D=/home/anestishkurti92/mls-predictor-v1
+          cat scripts/mls_confirmed_lineup_features.py | $SSH 'set -e; D=/home/anestishkurti92/mls-predictor-v1; cat > "$D/mls_confirmed_lineup_features.py.new"; chmod 0644 "$D/mls_confirmed_lineup_features.py.new"; mv -f "$D/mls_confirmed_lineup_features.py.new" "$D/mls_confirmed_lineup_features.py"'
+          $SSH 'set -Eeuo pipefail; cd /home/anestishkurti92/mls-predictor-v1; venv/bin/python -m py_compile mls_confirmed_lineup_features.py; OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 nice -n 12 timeout 8m venv/bin/python mls_confirmed_lineup_features.py'
+
+      - name: Pull confirmed-lineup feature audit
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          KEY=/home/appwiza-runner/.ssh/appwiza_vps
+          HOST=anestishkurti92@127.0.0.1
+          mkdir -p mls/lineups
+          ssh -i "$KEY" -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=accept-new "$HOST" 'cat /home/anestishkurti92/mls-predictor-v1/reports/confirmed_lineup_feature_meta.json' > mls/lineups/feature_meta.json
+
+      - name: Persist confirmed-lineup feature audit
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          cp mls/lineups/feature_meta.json "$RUNNER_TEMP/feature_meta.json"
+          git fetch origin main
+          git reset --hard origin/main
+          mkdir -p mls/lineups
+          cp "$RUNNER_TEMP/feature_meta.json" mls/lineups/feature_meta.json
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git add mls/lineups/feature_meta.json
+          if ! git diff --cached --quiet; then
+            git commit -m 'Publish MLS confirmed lineup feature audit'
+            git push origin HEAD:main
+          fi
