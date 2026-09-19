@@ -60,11 +60,17 @@ jobs:
         shell: bash
         run: |
           set -Eeuo pipefail
+          cp mls/players/player_merge_meta.json "$RUNNER_TEMP/player_merge_meta.json"
+          cp mls/availability/feature_meta.json "$RUNNER_TEMP/availability_feature_meta.json"
+          git fetch origin main
+          git reset --hard origin/main
+          mkdir -p mls/players mls/availability
+          cp "$RUNNER_TEMP/player_merge_meta.json" mls/players/player_merge_meta.json
+          cp "$RUNNER_TEMP/availability_feature_meta.json" mls/availability/feature_meta.json
           git config user.name github-actions
           git config user.email github-actions@github.com
           git add mls/players/player_merge_meta.json mls/availability/feature_meta.json
           if ! git diff --cached --quiet; then
             git commit -m 'Publish MLS player availability feature audit'
-            git pull --rebase origin main
             git push origin HEAD:main
           fi
