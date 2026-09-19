@@ -1,0 +1,21 @@
+MLS WEEKLY INTERACTION SEARCH
+====================================================================================================
+selection_rows=13,950 single_contexts_tested=17,712 pair_contexts_tested=1,842 survivors=14
+Rules were screened on 2012-18 train + 2019-22 validation before 2023-25 holdout evaluation.
+SHADOW ONLY — no live/email/website promotion.
+
+TOP COMBINATIONS
+HOME P40_50 | edge_last10_xgapg >= 0.00964 AND opp_last5_ppg <= 0.8 | n=122 68-54 win=55.7% ROI=+19.8% | train=+21.8% val=+21.2% hold=+15.6% n=36 | +season=80%
+HOME P25_35 | opp_last10_gdpg <= 0.2 AND sel_altitude_change_ft <= 130 | n=138 59-79 win=42.8% ROI=+31.8% | train=+32.1% val=+40.9% hold=+15.5% n=35 | +season=73%
+HOME P40_50 | sel_prior_road_miles5 >= 4815.7 AND opp_last5_ppg <= 0.8 | n=158 84-74 win=53.2% ROI=+13.6% | train=+10.6% val=+20.6% hold=+13.1% n=46 | +season=77%
+HOME P40_50 | opp_days_rest <= 8 AND opp_last5_ppg <= 0.8 | n=236 133-103 win=56.4% ROI=+20.7% | train=+23.7% val=+25.2% hold=+11.1% n=64 | +season=79%
+HOME P25_35 | sel_last5_gdpg >= 0 AND sel_altitude_change_ft <= 130 | n=110 44-66 win=40.0% ROI=+25.2% | train=+32.9% val=+26.2% hold=+9.7% n=26 | +season=67%
+HOME P40_50 | sel_season_xgfpg <= 1.31837 AND sel_last10_xgapg >= 1.568 | n=173 95-78 win=54.9% ROI=+19.7% | train=+33.5% val=+17.3% hold=+8.3% n=55 | +season=89%
+HOME P25_35 | sel_season_ppg >= 1.23077 AND edge_travel_miles >= -1233.08 | n=125 49-76 win=39.2% ROI=+21.5% | train=+21.6% val=+31.0% hold=+8.1% n=29 | +season=79%
+HOME P40_50 | edge_season_gdpg <= 0.2 AND opp_last5_ppg <= 0.8 | n=179 98-81 win=54.7% ROI=+17.8% | train=+19.0% val=+25.1% hold=+7.1% n=45 | +season=85%
+HOME P40_50 | elo_edge <= 1.01 AND opp_last5_ppg <= 0.8 | n=149 89-60 win=59.7% ROI=+29.5% | train=+27.3% val=+57.0% hold=+7.0% n=41 | +season=79%
+HOME ALL | sel_prior_road_miles5 >= 6164.64 AND sel_last5_gdpg <= -0.4 | n=472 261-211 win=55.3% ROI=+22.6% | train=+22.4% val=+36.6% hold=+6.7% n=94 | +season=93%
+HOME P40_50 | sel_last10_xgapg >= 1.568 AND sel_season_xgdpg <= -0.00762609 | n=295 159-136 win=53.9% ROI=+17.3% | train=+21.7% val=+24.4% hold=+6.7% n=103 | +season=91%
+HOME P40_50 | sel_season_xgfpg <= 1.31837 AND sel_season_gdpg <= -0.375 | n=243 131-112 win=53.9% ROI=+18.0% | train=+13.6% val=+32.7% hold=+6.5% n=75 | +season=75%
+HOME P40_50 | opp_last5_gdpg <= -0.6 AND edge_last10_xgapg >= 0.00964 | n=123 69-54 win=56.1% ROI=+20.9% | train=+23.6% val=+31.6% hold=+6.5% n=35 | +season=75%
+HOME P25_35 | edge_prior_road_miles5 >= -1032.87 AND sel_altitude_change_ft <= 130 | n=241 95-146 win=39.4% ROI=+22.3% | train=+28.3% val=+31.8% hold=+5.5% n=76 | +season=86%
