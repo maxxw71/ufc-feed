@@ -1,0 +1,59 @@
+name: MLS Player Manager Research
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/mls_player_manager_research.py'
+      - '.github/workflows/mls-player-manager-research.yml'
+
+concurrency:
+  group: mls-player-manager-research
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  research:
+    if: github.repository == 'maxxw71/ufc-feed'
+    runs-on: [self-hosted, Linux, X64, appwiza]
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+        with: {fetch-depth: 0}
+
+      - name: Deploy and run holdout-safe player manager research
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          KEY=/home/appwiza-runner/.ssh/appwiza_vps
+          HOST=anestishkurti92@127.0.0.1
+          SSH="ssh -i $KEY -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=accept-new $HOST"
+          D=/home/anestishkurti92/mls-predictor-v1
+          cat scripts/mls_player_manager_research.py | $SSH 'set -e; D=/home/anestishkurti92/mls-predictor-v1; cat > "$D/mls_player_manager_research.py.new"; chmod 0644 "$D/mls_player_manager_research.py.new"; mv -f "$D/mls_player_manager_research.py.new" "$D/mls_player_manager_research.py"'
+          $SSH 'set -Eeuo pipefail; cd /home/anestishkurti92/mls-predictor-v1; venv/bin/python -m py_compile mls_player_manager_research.py; OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 nice -n 12 timeout 16m venv/bin/python mls_player_manager_research.py'
+
+      - name: Pull non-secret research summary
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          KEY=/home/appwiza-runner/.ssh/appwiza_vps
+          HOST=anestishkurti92@127.0.0.1
+          mkdir -p mls/research
+          ssh -i "$KEY" -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=accept-new "$HOST" 'cat /home/anestishkurti92/mls-predictor-v1/research/player_manager/latest.json' > mls/research/player_manager_latest.json
+          cat mls/research/player_manager_latest.json
+
+      - name: Persist research audit
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git add mls/research/player_manager_latest.json
+          if ! git diff --cached --quiet; then
+            git commit -m 'Publish MLS player manager research audit'
+            git pull --rebase origin main
+            git push origin HEAD:main
+          fi
