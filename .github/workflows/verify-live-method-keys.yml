@@ -19,12 +19,17 @@ jobs:
           set -Eeuo pipefail
           curl -fsSL https://appwiza.com/sports/ufc/ > /tmp/ufc.html
           curl -fsSL https://appwiza.com/sports/nfl/ > /tmp/nfl.html
+          echo "ufc_method_key=$(grep -c 'Method Key · U1–U12' /tmp/ufc.html || true)"
+          echo "nfl_method_key=$(grep -c 'Method Key · NFL' /tmp/nfl.html || true)"
+          echo "nfl_shadow_heading=$(grep -c 'H-series research / shadow methods' /tmp/nfl.html || true)"
+          for x in U1 U2 U3 U4 U5 U6 U7 U8 U9 U10 U11 U12; do printf "UFC_%s=" "$x"; grep -c ">$x</span>" /tmp/ufc.html || true; done
+          for x in M1 M2 M3 M4 H002 H003 H008 H017 H027 H029 H033 H036 H005 H010 H028 H035; do printf "NFL_%s=" "$x"; grep -c ">$x</span>" /tmp/nfl.html || true; done
           grep -q 'Method Key · U1–U12' /tmp/ufc.html
-          for x in U1 U2 U3 U4 U5 U6 U7 U8 U9 U10 U11 U12; do grep -q ">$x<" /tmp/ufc.html; done
+          for x in U1 U2 U3 U4 U5 U6 U7 U8 U9 U10 U11 U12; do grep -q ">$x</span>" /tmp/ufc.html; done
           grep -q 'Method Key · NFL' /tmp/nfl.html
           grep -q 'Live methods' /tmp/nfl.html
           grep -q 'H-series research / shadow methods' /tmp/nfl.html
-          for x in M1 M2 M3 M4 H002 H003 H008 H017 H027 H029 H033 H036 H005 H010 H028 H035; do grep -q ">$x<" /tmp/nfl.html; done
+          for x in M1 M2 M3 M4 H002 H003 H008 H017 H027 H029 H033 H036 H005 H010 H028 H035; do grep -q ">$x</span>" /tmp/nfl.html; done
           python3 - <<'PY'
           import json
           from pathlib import Path
