@@ -94,8 +94,9 @@ def loss_rows(x):
     cols=[c for c in cols if c in x.columns]
     return x[x.win.eq(0)][cols].sort_values(['season','date'])
 def thirds(x):
-    x=x.sort_values('date').reset_index(drop=True);parts=np.array_split(x,3);rows=[]
-    for i,p in enumerate(parts,1):
+    x=x.sort_values('date').reset_index(drop=True);rows=[]
+    for i,idx in enumerate(np.array_split(np.arange(len(x)),3),1):
+        p=x.iloc[idx].copy()
         m=met(p);rows.append({'third':i,**m})
     return rows
 def leave_one_season_out(x):
