@@ -1,0 +1,39 @@
+name: UFC Watcher Logic Audit
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/ufc-watcher-logic-audit.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  audit:
+    runs-on: [self-hosted, Linux, X64, appwiza]
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - name: Inspect UFC watcher production logic
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          KEY=/home/appwiza-runner/.ssh/appwiza_vps
+          HOST=anestishkurti92@127.0.0.1
+          ssh -i "$KEY" -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=accept-new "$HOST" 'bash -s' <<'EOF'
+          set -Eeuo pipefail
+          ROOT=/home/anestishkurti92/ufc-predictor-v1
+          echo '=== WATCHER STATE ==='
+          cat "$ROOT/watcher_state.json" 2>/dev/null || true
+          echo
+          echo '=== WATCHER MAIN/CLI ==='
+          grep -nE '^def (main|run|scan|event_block|predict_bout)|__main__|argparse|--run|send_email|publish_ufc|bet_tracker\.ufc_picks|method_cards' "$ROOT/ufc_email_watcher.py" | tail -160
+          echo
+          echo '=== WATCHER BOTTOM ==='
+          tail -320 "$ROOT/ufc_email_watcher.py"
+          echo
+          echo '=== BET TRACKER UFC PICKS ==='
+          sed -n '52,110p' /home/anestishkurti92/betting-ledger/code/bet_tracker.py
+          echo
+          echo '=== PUBLISH UFC FUNCTION ==='
+          grep -nA180 -B20 'def publish_ufc' /opt/sports-publisher/sports_publish.py | head -240
+          EOF
