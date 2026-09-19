@@ -1,27 +1,15 @@
-name: Appwiza deploy UFC U7 gate
-
+name: Appwiza UFC U7 deploy (deprecated)
 on:
   workflow_dispatch:
-  push:
-    branches: [main]
-    paths:
-      - '.github/workflows/appwiza-u7-deploy.yml'
-      - 'scripts/deploy_appwiza_u7_from_repo.py'
-      - 'scripts/apply_live_striking_td_risk_gate.sh'
 
 permissions:
   contents: read
 
 jobs:
-  deploy:
-    if: github.repository == 'maxxw71/ufc-feed' && github.ref == 'refs/heads/main'
-    runs-on: [self-hosted, Linux, X64, appwiza]
-    timeout-minutes: 10
+  deprecated:
+    runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - name: Deploy reviewed U7 gate and republish UFC page
-        shell: bash
+      - name: Canonical UFC pipeline owns live page
         run: |
-          set -Eeuo pipefail
-          # Existing production UFC republish path.
-          python3 scripts/deploy_appwiza_u7_from_repo.py --publish
+          echo "DEPRECATED: this workflow no longer writes the UFC watcher or public page."
+          echo "Use the canonical UFC deployment and live watcher; U7 and the method key are already incorporated there."
