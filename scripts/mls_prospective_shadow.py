@@ -81,10 +81,11 @@ def rolling_xg_before(xg,kickoff,home,away):
             out[f'home_last{n}_xgfpg']=hv['xgf'];out[f'away_last{n}_xgfpg']=av['xgf']
             out[f'home_last{n}_xgapg']=hv['xga'];out[f'away_last{n}_xgapg']=av['xga']
     return out
-def player_continuity_features(games,kickoff,home,away):
+def load_player_game_window(games):
     asa=AmericanSoccerAnalysis()
-    end=(kickoff-pd.Timedelta(seconds=1)).date()
-    start=end-pd.Timedelta(days=100)
+    today=pd.Timestamp(now())
+    end=today.date()
+    start=(today-pd.Timedelta(days=120)).date()
     px=asa.get_player_xgoals(
         leagues='mls',
         start_date=start.isoformat(),
@@ -94,10 +95,10 @@ def player_continuity_features(games,kickoff,home,away):
     teams=asa.get_teams(leagues='mls')
     if not isinstance(px,pd.DataFrame):px=pd.DataFrame(px)
     if not isinstance(teams,pd.DataFrame):teams=pd.DataFrame(teams)
-    if px.empty:return {}
+    if px.empty:return px
     tid=next((x for x in ['team_id','id'] if x in teams.columns),None)
     tname=next((x for x in ['team_name','name'] if x in teams.columns),None)
-    if not tid or not tname:return {}
+    if not tid or not tname:return pd.DataFrame()
     mp={str(r[tid]):canon_team(r[tname]) for _,r in teams.iterrows()}
     gm=games[['game_id','date_time_utc']].copy()
     gm['game_id']=gm.game_id.astype(str)
@@ -107,13 +108,16 @@ def player_continuity_features(games,kickoff,home,away):
     px['team']=px.team_id.astype(str).map(mp)
     px['dt']=px.game_id.map(dtmap)
     px['minutes_played']=pd.to_numeric(px.minutes_played,errors='coerce').fillna(0)
-    px=px[px.dt.notna()&px.dt.lt(kickoff)&px.team.isin([home,away])].copy()
-    out={}
-    vals={}
+    return px[px.dt.notna()&px.team.notna()].copy()
+
+def player_continuity_features(px,kickoff,home,away):
+    if px is None or px.empty:return {}
+    z=px[px.dt.lt(kickoff)&px.team.isin([home,away])].copy()
+    out={};vals={}
     for team in [home,away]:
-        z=px[px.team.eq(team)]
+        team_rows=z[z.team.eq(team)]
         game_rows=[]
-        for (dt,gid),g in z.groupby(['dt','game_id']):
+        for (dt,gid),g in team_rows.groupby(['dt','game_id']):
             starters=set(g.loc[g.minutes_played.ge(45),'player_id'].astype(str))
             game_rows.append((dt,gid,starters))
         game_rows=sorted(game_rows,key=lambda x:x[0])
@@ -140,6 +144,7 @@ def main():
     market=json.loads(MARKET.read_text())
     events=market.get('events') or []
     games,xg=asa_data()
+    player_window=load_player_game_window(games)
     elo,elo_updated,elo_age=fetch_elo()
     captured=pd.Timestamp((market.get('summary') or {}).get('captured_at'),tz='UTC')
     if pd.isna(captured):raise RuntimeError('Market capture timestamp missing')
@@ -154,7 +159,7 @@ def main():
         continuity_loaded=False
         for m in METHODS:
             if m.get('requires_player_continuity') and not continuity_loaded:
-                fx.update(player_continuity_features(games,kickoff,home,away))
+                fx.update(player_continuity_features(player_window,kickoff,home,away))
                 continuity_loaded=True
             if m['side']=='HOME':
                 prob=ev['home_novig_prob'];selection=home;opponent=away
