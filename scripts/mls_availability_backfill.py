@@ -4,6 +4,7 @@ from __future__ import annotations
 import hashlib
 import json
 import re
+import time
 import urllib.request
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import datetime, timezone
@@ -303,9 +304,11 @@ def main():
     print('DISCOVERED',len(discovered),'media-resource status URLs',flush=True)
 
     candidates={}
-    # Exact verified 2025 URLs take precedence over discovery/fallback guesses.
+    # Keep season as part of candidate identity. Exact verified seeds take
+    # precedence inside each season; fallback URLs cannot overwrite them.
     for rec in list(verified_2024_candidates())+list(verified_2025_candidates())+list(discovered)+list(legacy_candidates()):
-        candidates.setdefault(rec['url'],rec)
+        key=(rec.get('published_year'),rec['url'])
+        candidates.setdefault(key,rec)
 
     # Verify the publication year of every fallback URL before fetching/parsing
     # its report body. This prevents season contamination from reused slugs.
@@ -322,17 +325,40 @@ def main():
     print('VERIFIED_CANDIDATES',len(verified),flush=True)
 
     fetched=[]
+    fetch_failures=[]
     def work(rec):
-        try:
-            return rec,fetch_text(rec['url']),None
-        except Exception as e:
-            return rec,None,(type(e).__name__,str(e)[:140])
+        last=None
+        # First-party pages through Jina can intermittently rate-limit. Retry
+        # deterministically and keep concurrency intentionally low.
+        for attempt in range(1,5):
+            try:
+                return rec,fetch_text(rec['url']),None
+            except Exception as e:
+                last=(type(e).__name__,str(e)[:180])
+                time.sleep(0.8*attempt)
+        return rec,None,last
 
-    with ThreadPoolExecutor(max_workers=6) as ex:
+    # Verified seeds first; fallbacks are secondary. Low parallelism materially
+    # reduces relay failures versus the earlier broad fan-out.
+    verified=sorted(
+        verified,
+        key=lambda r:(0 if r.get('media_pages')==['verified_first_party_seed'] else 1,
+                      int(r.get('published_year') or 9999),
+                      int(r.get('expected_matchday') or 999),
+                      r['url'])
+    )
+    with ThreadPoolExecutor(max_workers=3) as ex:
         futs=[ex.submit(work,rec) for rec in verified]
         for fut in as_completed(futs):
             rec,text,err=fut.result()
             if err:
+                fetch_failures.append({
+                    'year':rec.get('published_year'),
+                    'expected_matchday':rec.get('expected_matchday'),
+                    'url':rec['url'],
+                    'error':err,
+                })
+                print('FETCH_MISS',rec.get('published_year'),rec.get('expected_matchday'),*err,rec['url'],flush=True)
                 continue
             fetched.append((rec,text))
 
@@ -381,6 +407,18 @@ def main():
             by_key[key]=(score,candidate)
 
     reports=[x[1] for _,x in sorted(by_key.items())]
+    report_counts={y:sum(r['year']==y for r in reports) for y in sorted(TARGET_YEARS)}
+    # Fail closed before replacing the canonical parquet/csv. The minimums
+    # guarantee enough matchdays for the downstream two-season research gate.
+    minimum_reports={2024:12,2025:20}
+    short={y:{'found':report_counts.get(y,0),'required':minimum_reports[y]}
+           for y in minimum_reports if report_counts.get(y,0)<minimum_reports[y]}
+    if short:
+        raise RuntimeError(
+            'Refusing partial MLS availability archive overwrite: '
+            +json.dumps({'short':short,'fetch_failures':fetch_failures[:30]},default=str)
+        )
+
     flat=[]
     for r in reports:
         status_by_team={}
@@ -432,6 +470,7 @@ def main():
             str(y):sorted(int(r['matchday']) for r in reports if r['year']==y) for y in sorted(TARGET_YEARS)
         },
         'parse_rejections':rejected,
+        'fetch_failures':fetch_failures,
         'discovery_note':'2024 and 2025 use exact first-party MLS URLs verified from Media Resources/search where seeded. Dynamic Media Resources discovery and publication-year-verified guessed slugs are fallbacks. Duplicate season/matchdays prefer broader recognized-team coverage.',
     }
     (OUT/'meta.json').write_text(json.dumps(meta,indent=2))
