@@ -27,11 +27,11 @@ TEAM_CANON={canon_team(x) for x in TEAM_INFO}
 
 def fetch_text(url):
     req=urllib.request.Request(JINA+url,headers={'User-Agent':UA,'Accept':'text/plain'})
-    return urllib.request.urlopen(req,timeout=60).read().decode('utf-8','replace')
+    return urllib.request.urlopen(req,timeout=30).read().decode('utf-8','replace')
 
 def fetch_html(url):
     req=urllib.request.Request(url,headers={'User-Agent':UA,'Accept':'text/html'})
-    return urllib.request.urlopen(req,timeout=45).read().decode('utf-8','replace')
+    return urllib.request.urlopen(req,timeout=15).read().decode('utf-8','replace')
 
 def clean_md(line):
     line=re.sub(r'!\[[^\]]*\]\([^)]*\)',' ',str(line or ''))
@@ -141,30 +141,46 @@ def extract_published_year(url):
 
 def discover_status_urls():
     discovered={}
-    # MLS Media Resources is paginated newest -> oldest. Thirty pages safely
-    # span the 2024-25 window without relying on guessed article slugs.
-    for page in range(1,31):
+
+    def get_media(page):
         url=MEDIA+str(page)
         try:
-            text=fetch_text(url)
+            return page,fetch_text(url),None
         except Exception as e:
-            print('MEDIA_MISS',page,type(e).__name__,str(e)[:100],flush=True)
-            continue
+            return page,None,(type(e).__name__,str(e)[:100])
 
-        # Jina markdown preserves article links.
-        for label,href in re.findall(r'\[([^\]]*Player Status Report[^\]]*)\]\((https?://[^)]+)\)',text,re.I):
-            full=urljoin(MLS,href)
-            md=extract_matchday(label)
-            if md is None:
+    # Fetch Media Resources pages concurrently; this is discovery only and
+    # preserves the same first-party source and publication-year verification.
+    with ThreadPoolExecutor(max_workers=8) as ex:
+        futs=[ex.submit(get_media,page) for page in range(1,31)]
+        for fut in as_completed(futs):
+            page,text,err=fut.result()
+            if err:
+                print('MEDIA_MISS',page,*err,flush=True)
                 continue
-            discovered.setdefault(full,{'url':full,'label':clean_md(label),'media_pages':set()})['media_pages'].add(page)
+            for label,href in re.findall(r'\[([^\]]*Player Status Report[^\]]*)\]\((https?://[^)]+)\)',text,re.I):
+                full=urljoin(MLS,href)
+                md=extract_matchday(label)
+                if md is None:
+                    continue
+                discovered.setdefault(full,{'url':full,'label':clean_md(label),'media_pages':set()})['media_pages'].add(page)
+
+    records=list(discovered.values())
+    for rec in records:
+        rec['media_pages']=sorted(rec['media_pages'])
+
+    def add_year(rec):
+        return rec,extract_published_year(rec['url'])
 
     out=[]
-    for rec in discovered.values():
-        rec['media_pages']=sorted(rec['media_pages'])
-        rec['published_year']=extract_published_year(rec['url'])
-        if rec['published_year'] in TARGET_YEARS:
-            out.append(rec)
+    with ThreadPoolExecutor(max_workers=8) as ex:
+        futs=[ex.submit(add_year,rec) for rec in records]
+        for fut in as_completed(futs):
+            rec,year=fut.result()
+            rec['published_year']=year
+            if year in TARGET_YEARS:
+                out.append(rec)
+
     return sorted(out,key=lambda x:(x['published_year'],extract_matchday(x['label']) or 999,x['url']))
 
 def legacy_candidates():
