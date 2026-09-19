@@ -1,0 +1,29 @@
+name: Shared Publisher Cross Sport Audit
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/shared-publisher-cross-sport-audit.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  audit:
+    runs-on: [self-hosted, Linux, X64, appwiza]
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - name: Inspect shared sports publisher
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          KEY=/home/appwiza-runner/.ssh/appwiza_vps
+          HOST=anestishkurti92@127.0.0.1
+          ssh -i "$KEY" -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=accept-new "$HOST" 'bash -s' <<'EOF'
+          set -Eeuo pipefail
+          sed -n '1,320p' /opt/sports-publisher/sports_publish.py
+          echo '=== INITIAL UFC ==='
+          sed -n '1,160p' /opt/sports-publisher/initial_ufc.py 2>/dev/null || true
+          echo '=== IMPORTS / CALLERS ==='
+          grep -RniE 'render_all\(|publish_nfl\(|publish_ufc\(' /opt/sports-publisher /home/anestishkurti92/nfl-predictor-v1/research_v2 /home/anestishkurti92/ufc-predictor-v1 2>/dev/null | head -240
+          EOF
