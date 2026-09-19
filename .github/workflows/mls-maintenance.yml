@@ -21,10 +21,18 @@ jobs:
           set -euo pipefail
           echo "HOST=$(hostname)"
           echo "USER=$(whoami)"
-          echo "PWD=$(pwd)"
+          if sudo -n true 2>/dev/null; then
+            echo "SUDO_NONINTERACTIVE=yes"
+          else
+            echo "SUDO_NONINTERACTIVE=no"
+          fi
           echo "== MLS directories =="
-          find /home/anestishkurti92 -maxdepth 5 -type d \( -iname '*mls*' -o -iname '*soccer*' \) 2>/dev/null | sort | head -200
-          echo "== Candidate MLS files =="
-          find /home/anestishkurti92 -maxdepth 6 -type f \( -iname '*mls*' -o -path '*/mls/*' \) 2>/dev/null | sort | head -300
-          echo "== appwiza public sports dirs =="
-          find /srv/appwiza-sports/public -maxdepth 2 -type d 2>/dev/null | sort | head -100 || true
+          sudo -n find /home /srv /opt -maxdepth 6 -type d \( -iname '*mls*' -o -iname '*soccer*' \) 2>/dev/null | sort | head -300 || true
+          echo "== MLS-named files =="
+          sudo -n find /home /srv /opt -maxdepth 7 -type f \( -iname '*mls*' -o -path '*/mls/*' \) 2>/dev/null | sort | head -500 || true
+          echo "== Home project roots =="
+          sudo -n find /home/anestishkurti92 -maxdepth 3 -type d 2>/dev/null | sort | head -300 || true
+          echo "== Services mentioning MLS =="
+          sudo -n systemctl list-unit-files --type=service 2>/dev/null | grep -i mls || true
+          echo "== Cron mentioning MLS =="
+          sudo -n grep -Ril --exclude-dir=.git 'mls' /etc/cron.d /etc/systemd/system 2>/dev/null | head -100 || true
