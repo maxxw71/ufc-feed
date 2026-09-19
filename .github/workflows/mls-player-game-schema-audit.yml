@@ -1,0 +1,40 @@
+name: MLS Player Game Schema Audit
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/mls-player-game-schema-audit.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  audit:
+    runs-on: [self-hosted, Linux, X64, appwiza]
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Inspect per-game player schemas
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          KEY=/home/appwiza-runner/.ssh/appwiza_vps
+          HOST=anestishkurti92@127.0.0.1
+          ssh -i "$KEY" -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=accept-new "$HOST" 'bash -s' <<'EOF'
+          set -Eeuo pipefail
+          PY=/home/anestishkurti92/mls-predictor-v1/venv/bin/python
+          "$PY" - <<'PY'
+          from itscalledsoccer import AmericanSoccerAnalysis
+          import pandas as pd
+          asa=AmericanSoccerAnalysis()
+          for name,m in [('xg','get_player_xgoals'),('xpass','get_player_xpass'),('gplus','get_player_goals_added'),('gkxg','get_goalkeeper_xgoals')]:
+              print('\n===',name,'===')
+              try:
+                  z=getattr(asa,m)(leagues='mls',start_date='2025-09-01',end_date='2025-09-15',split_by_games=True)
+                  if not isinstance(z,pd.DataFrame):z=pd.DataFrame(z)
+                  print('rows',len(z))
+                  print('cols',list(z.columns))
+                  print(z.head(8).to_dict('records'))
+              except Exception as e:
+                  print('ERROR',type(e).__name__,str(e)[:1000])
+          PY
+          EOF
