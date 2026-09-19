@@ -31,7 +31,7 @@ jobs:
                   req=urllib.request.Request(url,headers={"User-Agent":UA})
                   raw=urllib.request.urlopen(req,timeout=30).read().decode("utf-8","replace")
                   print("bytes",len(raw))
-                  hrefs=re.findall(r'href=["\x27]([^"\x27]+)["\x27]',raw,re.I)
+                  hrefs=re.findall(r"href=[\\\"\\x27]([^\\\"\\x27]+)[\\\"\\x27]",raw,re.I)
                   matches=sorted({urljoin(url,h) for h in hrefs if "player-status-report" in h.lower()})
                   print("status_links",len(matches))
                   for x in matches:print("LINK",x)
