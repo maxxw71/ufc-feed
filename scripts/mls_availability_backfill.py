@@ -26,6 +26,32 @@ UA='Mozilla/5.0 AppwizaMLSAvailabilityArchive/2.0'
 TARGET_YEARS={2024,2025}
 TEAM_CANON={canon_team(x) for x in TEAM_INFO}
 
+# Verified first-party 2024 MLS Player Status Report URLs.
+# Seeded explicitly so reused simple slugs are never assigned to a season by guess.
+KNOWN_2024={
+  3:'/news/mls-player-status-report-matchday-3',
+  4:'/news/mls-player-status-report-matchday-4',
+  5:'/news/mls-player-status-report-matchday-5',
+  6:'/news/mls-player-status-report-matchday-6',
+  7:'/news/player-status-report-matchday-7-march-30-31',
+  8:'/news/mls-player-status-report-matchday-8',
+  12:'/news/mls-player-status-report-matchday-12',
+  13:'/news/mls-player-status-report-matchday-13',
+  14:'/news/mls-player-status-report-matchday-14',
+  15:'/news/mls-player-status-report-matchday-15',
+  16:'/news/mls-player-status-report-matchday-16',
+  17:'/news/mls-player-status-report-matchday-17',
+  26:'/news/mls-player-status-report-matchday-26',
+  27:'/news/mls-player-status-report-matchday-27',
+  28:'/news/mls-player-status-report-matchday-28',
+  32:'/news/mls-player-status-reports-matchday-32',
+  33:'/news/mls-player-status-report-matchday-33',
+  34:'/news/mls-player-status-report-matchday-34',
+  35:'/news/mls-player-status-report-matchday-35',
+  36:'/news/mls-player-status-report-matchday-36',
+  37:'/news/mls-player-status-report-matchday-37',
+}
+
 # Verified from MLS Media Resources / first-party MLS article links.
 # These exact 2025 URLs avoid the season ambiguity of reused /matchday-N slugs.
 KNOWN_2025={
@@ -237,6 +263,16 @@ def discover_status_urls():
 
     return sorted(out,key=lambda x:(x['published_year'],extract_matchday(x['label']) or 999,x['url']))
 
+def verified_2024_candidates():
+    for md,path in sorted(KNOWN_2024.items()):
+        yield {
+            'published_year':2024,
+            'url':urljoin(MLS,path),
+            'label':f'Matchday {md}',
+            'media_pages':['verified_first_party_seed'],
+            'expected_matchday':md,
+        }
+
 def verified_2025_candidates():
     for md,path in sorted(KNOWN_2025.items()):
         yield {
@@ -268,7 +304,7 @@ def main():
 
     candidates={}
     # Exact verified 2025 URLs take precedence over discovery/fallback guesses.
-    for rec in list(verified_2025_candidates())+list(discovered)+list(legacy_candidates()):
+    for rec in list(verified_2024_candidates())+list(verified_2025_candidates())+list(discovered)+list(legacy_candidates()):
         candidates.setdefault(rec['url'],rec)
 
     # Verify the publication year of every fallback URL before fetching/parsing
@@ -382,6 +418,7 @@ def main():
     meta={
         'built_at':datetime.now(timezone.utc).isoformat(),
         'discovered_media_urls':len(discovered),
+        'verified_2024_seed_urls':len(KNOWN_2024),
         'verified_2025_seed_urls':len(KNOWN_2025),
         'reports':len(reports),
         'rows':len(flat),
@@ -395,7 +432,7 @@ def main():
             str(y):sorted(int(r['matchday']) for r in reports if r['year']==y) for y in sorted(TARGET_YEARS)
         },
         'parse_rejections':rejected,
-        'discovery_note':'2025 uses exact first-party MLS URLs verified from Media Resources/search. Dynamic Media Resources discovery and publication-year-verified guessed slugs are fallbacks. Duplicate season/matchdays prefer broader recognized-team coverage.',
+        'discovery_note':'2024 and 2025 use exact first-party MLS URLs verified from Media Resources/search where seeded. Dynamic Media Resources discovery and publication-year-verified guessed slugs are fallbacks. Duplicate season/matchdays prefer broader recognized-team coverage.',
     }
     (OUT/'meta.json').write_text(json.dumps(meta,indent=2))
     print(json.dumps(meta,indent=2),flush=True)
