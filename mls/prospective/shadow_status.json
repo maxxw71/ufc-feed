@@ -1,8 +1,8 @@
 {
-  "built_at": "2026-09-19T21:41:44.995942+00:00",
-  "market_captured_at": "2026-09-19T21:41:20.039714+00:00",
+  "built_at": "2026-09-19T21:43:30.786456+00:00",
+  "market_captured_at": "2026-09-19T21:43:06.014257+00:00",
   "elo_updated_at": "2026-09-18T23:30:00+00:00",
-  "elo_age_days": 0.924727629837963,
+  "elo_age_days": 0.9259625351388888,
   "qualifier_count": 6,
   "qualifiers": [
     {
@@ -12,7 +12,9 @@
       "commence_time": "2026-09-20T00:30Z",
       "american_price": "-155",
       "book": "DraftKings",
-      "market_prob": 0.5633297741604045
+      "market_prob": 0.5633297741604045,
+      "research_status": "PROSPECTIVE_PRIORITY_SHADOW",
+      "portfolio_conflict": null
     },
     {
       "method_id": "MLS-A03",
@@ -21,7 +23,9 @@
       "commence_time": "2026-09-20T00:30Z",
       "american_price": "+225",
       "book": "DraftKings",
-      "market_prob": 0.28318176585702776
+      "market_prob": 0.28318176585702776,
+      "research_status": "PROSPECTIVE_PRIORITY_SHADOW",
+      "portfolio_conflict": null
     },
     {
       "method_id": "MLS-A02",
@@ -30,7 +34,9 @@
       "commence_time": "2026-09-20T00:30Z",
       "american_price": "-165",
       "book": "DraftKings",
-      "market_prob": 0.5778994524639124
+      "market_prob": 0.5778994524639124,
+      "research_status": "PROSPECTIVE_PRIORITY_SHADOW",
+      "portfolio_conflict": null
     },
     {
       "method_id": "MLS-A02",
@@ -39,7 +45,9 @@
       "commence_time": "2026-09-20T01:30Z",
       "american_price": "-120",
       "book": "DraftKings",
-      "market_prob": 0.5036642238507661
+      "market_prob": 0.5036642238507661,
+      "research_status": "PROSPECTIVE_PRIORITY_SHADOW",
+      "portfolio_conflict": true
     },
     {
       "method_id": "MLS-A03",
@@ -48,7 +56,9 @@
       "commence_time": "2026-09-20T01:30Z",
       "american_price": "+260",
       "book": "DraftKings",
-      "market_prob": 0.25649566955363096
+      "market_prob": 0.25649566955363096,
+      "research_status": "PROSPECTIVE_PRIORITY_SHADOW",
+      "portfolio_conflict": true
     },
     {
       "method_id": "MLS-R03",
@@ -57,9 +67,33 @@
       "commence_time": "2026-09-20T02:30Z",
       "american_price": "+230",
       "book": "DraftKings",
-      "market_prob": 0.2797417768213956
+      "market_prob": 0.2797417768213956,
+      "research_status": "SHADOW_READY",
+      "portfolio_conflict": null
     }
   ],
+  "conflicts": [
+    {
+      "event_id": "761826",
+      "home_team": "Colorado Rapids",
+      "away_team": "Seattle Sounders FC",
+      "methods": [
+        "MLS-A02",
+        "MLS-A03"
+      ],
+      "selections": [
+        "Colorado Rapids",
+        "Seattle Sounders FC"
+      ],
+      "policy": "TRACK_BOTH_SHADOW_ONLY_NO_COMBINED_ACTION"
+    }
+  ],
+  "retired_methods": {
+    "MLS-P01": {
+      "status": "RESEARCH_ONLY_REJECT_RECENT",
+      "reason": "2025 historical collapse; no preholdout-derived veto rescued recent stability."
+    }
+  },
   "shadow_only": true,
   "official_autopromotions": 0
 }
