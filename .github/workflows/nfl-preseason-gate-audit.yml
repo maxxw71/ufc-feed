@@ -1,0 +1,55 @@
+name: NFL Preseason Gate Audit
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/nfl-preseason-gate-audit.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  audit:
+    runs-on: [self-hosted, Linux, X64, appwiza]
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify current preseason gate inputs
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          KEY=/home/appwiza-runner/.ssh/appwiza_vps
+          HOST=anestishkurti92@127.0.0.1
+          ssh -i "$KEY" -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=accept-new "$HOST" 'bash -s' <<'EOF'
+          set -e
+          R=/home/anestishkurti92/nfl-predictor-v1/research_v2
+          PY=/home/anestishkurti92/nfl-predictor-v1/venv/bin/python
+          echo '=== PAGE CONTEXT ==='
+          if [ -f "$R/page_context/current_board_fresh_context.csv" ]; then
+            "$PY" - <<'PY'
+          import pandas as pd
+          p='/home/anestishkurti92/nfl-predictor-v1/research_v2/page_context/current_board_fresh_context.csv'
+          d=pd.read_csv(p)
+          cols=[c for c in ['team','selection','opponent','game_id','schedule_week','target_status','preseason_record','preseason_policy_pass','method'] if c in d.columns]
+          print(d[cols].to_string(index=False))
+          PY
+          else
+            echo 'MISSING page context'
+          fi
+          echo '=== AUTHORITATIVE 2026 PRESEASON FROM NFLVERSE SCHEDULE ==='
+          "$PY" - <<'PY'
+          import io,pandas as pd
+          from urllib.request import Request,urlopen
+          raw=urlopen(Request('https://raw.githubusercontent.com/nflverse/nfldata/master/data/games.csv',headers={'User-Agent':'audit'}),timeout=30).read()
+          g=pd.read_csv(io.BytesIO(raw))
+          for c in ['home_team','away_team']:g[c]=g[c].replace({'SD':'LAC','OAK':'LV','STL':'LA','LAR':'LA'})
+          p=g[(g.season==2026)&g.game_type.astype(str).str.upper().eq('PRE')].copy()
+          print('preseason_games',len(p),'completed',int((p.home_score.notna()&p.away_score.notna()).sum()))
+          sides=[]
+          for _,x in p.dropna(subset=['home_score','away_score']).iterrows():
+              sides.append((x.home_team,x.home_score>x.away_score,x.home_score==x.away_score))
+              sides.append((x.away_team,x.away_score>x.home_score,x.home_score==x.away_score))
+          z=pd.DataFrame(sides,columns=['team','win','tie'])
+          s=z.groupby('team').agg(games=('team','size'),wins=('win','sum'),ties=('tie','sum')).reset_index()
+          print(s[s.team.isin(['TB','BAL','NO'])].to_string(index=False))
+          PY
+          EOF
