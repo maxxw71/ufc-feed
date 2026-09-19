@@ -10,7 +10,13 @@ SRC=ROOT/'research/arsenal/latest.json'
 OUT=ROOT/'research/arsenal_portfolio';OUT.mkdir(parents=True,exist_ok=True)
 
 def metric(x):return arx.metrics(x)
-def c(df,f,op,t):return arx.cond(df,f,op,t)
+def c(df,f,op,t):
+    v=pd.to_numeric(df[f],errors='coerce')
+    if op=='>=':return v.ge(t)
+    if op=='<=':return v.le(t)
+    if op=='>':return v.gt(t)
+    if op=='<':return v.lt(t)
+    raise ValueError(op)
 def pm(df,p):return arx.pmask(df,p)
 
 def main():
