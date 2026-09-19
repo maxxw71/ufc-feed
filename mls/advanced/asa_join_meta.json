@@ -1,8 +1,15 @@
 {
   "feature_rows": 9440,
-  "feature_columns": 134,
+  "feature_columns": 141,
+  "asa_games_rows": 5851,
   "asa_xg_rows": 5851,
-  "matched_matches": 4935,
-  "coverage_2013_2026_pct": 84.5758354755784,
-  "leakage_note": "Current-match ASA xG is used only after pregame rolling features are captured; current-match xG columns are not exposed as research predictors."
+  "game_matched_matches": 5835,
+  "game_unmatched_matches": 338,
+  "game_ambiguous_matches": 0,
+  "xg_matched_matches": 5835,
+  "game_coverage_2012_present_pct": 94.5245423618986,
+  "xg_coverage_2012_present_pct": 94.5245423618986,
+  "regular_season_tagged_rows": 5579,
+  "knockout_tagged_rows": 256,
+  "leakage_note": "ASA current-match xG is used only after pregame rolling features are captured. knockout_game is metadata used to define the research universe, not an outcome-derived predictor."
 }
