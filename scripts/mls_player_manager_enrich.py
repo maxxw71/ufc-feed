@@ -26,6 +26,33 @@ def flatten_gplus(z):
     for typ in ['dribbling','fouling','interrupting','passing','receiving','shooting']:
         out['gplus_'+typ]=[x.get(typ,0.0) for x in bytype]
     return out
+def _dedup_player_game(z):
+    if z.empty:return z
+    keys=[c for c in ['player_id','game_id','team_id'] if c in z.columns]
+    return z.drop_duplicates(keys,keep='last').reset_index(drop=True) if keys else z.drop_duplicates().reset_index(drop=True)
+
+def _fetch_complete(asa,name,method,year):
+    cache=RAW/f'{name}_{year}.parquet'
+    cached=pd.read_parquet(cache) if cache.exists() else pd.DataFrame()
+    # Anything below the API's exact 10,000-row ceiling is treated as complete.
+    if len(cached) and len(cached)!=10000:
+        return cached,'cached_complete'
+    # Split capped/missing seasons into three date ranges so no request approaches the 10k cap.
+    windows=[(f'{year}-01-01',f'{year}-05-31'),(f'{year}-06-01',f'{year}-08-31'),(f'{year}-09-01',f'{year}-12-31')]
+    parts=[]
+    for start,end in windows:
+        z=getattr(asa,method)(leagues='mls',start_date=start,end_date=end,split_by_games=True)
+        if not isinstance(z,pd.DataFrame):z=pd.DataFrame(z)
+        if len(z)>=10000:
+            raise RuntimeError(f'{name} {year} chunk {start}..{end} still hit API cap: {len(z)}')
+        parts.append(z)
+    z=pd.concat(parts,ignore_index=True,sort=False) if parts else pd.DataFrame()
+    z=_dedup_player_game(z)
+    if name=='gplus':z=flatten_gplus(z)
+    z['_season']=year
+    z.to_parquet(cache,index=False)
+    return z,'chunked_refresh'
+
 def collect():
     asa=AmericanSoccerAnalysis()
     frames={k:[] for k in ['xg','xpass','gplus','gk']}
@@ -34,34 +61,52 @@ def collect():
         rec={'season':y}
         for name,m in [('xg','get_player_xgoals'),('xpass','get_player_xpass'),('gplus','get_player_goals_added'),('gk','get_goalkeeper_xgoals')]:
             try:
-                z=getattr(asa,m)(leagues='mls',season_name=str(y),split_by_games=True)
-                if not isinstance(z,pd.DataFrame):z=pd.DataFrame(z)
-                if name=='gplus': z=flatten_gplus(z)
-                z['_season']=y
-                z.to_parquet(RAW/f'{name}_{y}.parquet',index=False)
+                z,mode=_fetch_complete(asa,name,m,y)
+                # Old uncapped gplus cache may already be flattened; normalize when needed.
+                if name=='gplus' and 'gplus_raw' not in z.columns and 'data' in z.columns:
+                    z=flatten_gplus(z);z['_season']=y;z.to_parquet(RAW/f'{name}_{y}.parquet',index=False)
                 frames[name].append(z)
-                rec[name+'_rows']=len(z)
+                rec[name+'_rows']=len(z);rec[name+'_mode']=mode
             except Exception as e:
-                rec[name+'_rows']=0;rec[name+'_error']=type(e).__name__+':'+str(e)[:200]
+                rec[name+'_rows']=0;rec[name+'_error']=type(e).__name__+':'+str(e)[:240]
         coverage.append(rec)
         print(y,rec,flush=True)
     for k,v in frames.items():
         d=pd.concat(v,ignore_index=True,sort=False) if v else pd.DataFrame()
+        d=_dedup_player_game(d)
         d.to_parquet(PROC/f'asa_player_{k}_game_2013_present.parquet',index=False)
-    # static/reference tables
+
+    # Static/reference tables: retain only scalar columns needed downstream.
     refs={}
-    for name,m in [('players','get_players'),('teams','get_teams'),('managers','get_managers')]:
-        z=getattr(asa,m)(leagues='mls')
-        if not isinstance(z,pd.DataFrame):z=pd.DataFrame(z)
-        z.to_parquet(PROC/f'asa_{name}.parquet',index=False);refs[name]=len(z)
-    # salaries have release dates; preserve all releases
+    players=asa.get_players(leagues='mls')
+    if not isinstance(players,pd.DataFrame):players=pd.DataFrame(players)
+    pcols=[c for c in ['player_id','player_name','birth_date','nationality','primary_broad_position','primary_general_position','secondary_broad_position','secondary_general_position','height_ft','height_in','weight_lb'] if c in players.columns]
+    players=players[pcols].drop_duplicates('player_id',keep='last')
+    players.to_parquet(PROC/'asa_players.parquet',index=False);refs['players']=len(players)
+
+    teams=asa.get_teams(leagues='mls')
+    if not isinstance(teams,pd.DataFrame):teams=pd.DataFrame(teams)
+    tcols=[c for c in ['team_id','team_name','team_abbreviation'] if c in teams.columns]
+    teams=teams[tcols].drop_duplicates('team_id',keep='last')
+    teams.to_parquet(PROC/'asa_teams.parquet',index=False);refs['teams']=len(teams)
+
+    managers=asa.get_managers(leagues='mls')
+    if not isinstance(managers,pd.DataFrame):managers=pd.DataFrame(managers)
+    mcols=[c for c in ['manager_id','manager_name','nationality','competition'] if c in managers.columns]
+    managers=managers[mcols].copy()
+    for col in managers.columns:
+        if managers[col].dtype=='object':managers[col]=managers[col].map(lambda x: json.dumps(x,ensure_ascii=False) if isinstance(x,(list,dict)) else x)
+    managers.to_parquet(PROC/'asa_managers.parquet',index=False);refs['managers']=len(managers)
+
+    # Salary releases are timestamped; preserve all releases for leakage-safe joins later.
     sal=asa.get_player_salaries(leagues='mls')
     if not isinstance(sal,pd.DataFrame):sal=pd.DataFrame(sal)
     sal.to_parquet(PROC/'asa_player_salaries.parquet',index=False)
     team_sal=asa.get_team_salaries(leagues='mls')
     if not isinstance(team_sal,pd.DataFrame):team_sal=pd.DataFrame(team_sal)
     team_sal.to_parquet(PROC/'asa_team_salaries.parquet',index=False)
-    meta={'built_at':now(),'coverage':coverage,'refs':refs,'salary_rows':len(sal),'team_salary_rows':len(team_sal)}
+    meta={'built_at':now(),'coverage':coverage,'refs':refs,'salary_rows':len(sal),'team_salary_rows':len(team_sal),
+          'api_cap_guard':'Any exact 10000-row player-game response is re-fetched in date chunks and each chunk must be <10000.'}
     (REP/'player_game_coverage.json').write_text(json.dumps(meta,indent=2,default=str))
     return meta
 def build_features():
