@@ -110,6 +110,7 @@ def settle():
             r=z.iloc[0];hs=float(r.home_score);as_=float(r.away_score)
             if s['side']=='HOME':won=hs>as_
             elif s['side']=='AWAY':won=as_>hs
+            elif s['side']=='DRAW':won=hs==as_
             else:continue
             status='win' if won else 'loss'
             dec=float(s['first_price_decimal']) if s['first_price_decimal'] is not None else None
