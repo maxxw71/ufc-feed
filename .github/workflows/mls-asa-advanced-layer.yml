@@ -1,0 +1,60 @@
+name: MLS ASA Advanced Layer
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/mls_asa_enrich.py'
+      - '.github/workflows/mls-asa-advanced-layer.yml'
+
+concurrency:
+  group: mls-research
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  enrich:
+    runs-on: [self-hosted, Linux, X64, appwiza]
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with: {fetch-depth: 0}
+
+      - name: Install ASA client and pull MLS advanced data
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          KEY=/home/appwiza-runner/.ssh/appwiza_vps
+          HOST=anestishkurti92@127.0.0.1
+          SSH="ssh -i $KEY -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=accept-new $HOST"
+          $SSH 'set -Eeuo pipefail; ROOT=/home/anestishkurti92/mls-predictor-v1; "$ROOT/venv/bin/pip" install --quiet itscalledsoccer'
+          cat scripts/mls_asa_enrich.py | $SSH 'set -e; D=/home/anestishkurti92/mls-predictor-v1; cat > "$D/mls_asa_enrich.py.new"; chmod 0644 "$D/mls_asa_enrich.py.new"; mv -f "$D/mls_asa_enrich.py.new" "$D/mls_asa_enrich.py"'
+          $SSH 'set -Eeuo pipefail; cd /home/anestishkurti92/mls-predictor-v1; venv/bin/python -m py_compile mls_asa_enrich.py; OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 nice -n 14 timeout 20m venv/bin/python mls_asa_enrich.py'
+
+      - name: Pull ASA coverage report
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          KEY=/home/appwiza-runner/.ssh/appwiza_vps
+          HOST=anestishkurti92@127.0.0.1
+          SSH="ssh -i $KEY -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=accept-new $HOST"
+          mkdir -p mls/advanced
+          $SSH 'cat /home/anestishkurti92/mls-predictor-v1/reports/asa_coverage.txt' > mls/advanced/asa_coverage.txt
+          $SSH 'cat /home/anestishkurti92/mls-predictor-v1/reports/asa_coverage.json' > mls/advanced/asa_coverage.json
+          cat mls/advanced/asa_coverage.txt
+
+      - name: Persist ASA coverage
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git add mls/advanced
+          if ! git diff --cached --quiet; then
+            git commit -m 'Publish MLS ASA advanced-data coverage'
+            git pull --rebase origin main
+            git push origin HEAD:main
+          fi
