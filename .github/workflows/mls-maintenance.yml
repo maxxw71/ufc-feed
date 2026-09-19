@@ -8,12 +8,12 @@ on:
   workflow_dispatch:
 
 jobs:
-  audit-relay-sources:
+  audit-espn-summary:
     runs-on: [self-hosted, Linux, X64, appwiza]
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
-      - name: Test Jina relay for ESPN historical lineup data
+      - name: Inspect ESPN historical match summary through relay
         shell: bash
         run: |
           set -Eeuo pipefail
@@ -21,19 +21,38 @@ jobs:
           HOST=anestishkurti92@127.0.0.1
           SSH="ssh -i $KEY -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=accept-new $HOST"
           $SSH 'set -Eeuo pipefail; python3 - <<'"'"'PY'"'"'
-          import urllib.request
-          UA={"User-Agent":"Mozilla/5.0 AppwizaMLSSourceAudit/1.1","Accept":"text/plain"}
-          urls=[
-            "https://r.jina.ai/http://site.api.espn.com/apis/site/v2/sports/soccer/usa.1/scoreboard?dates=20230422%26limit=100",
-            "https://r.jina.ai/https://site.api.espn.com/apis/site/v2/sports/soccer/usa.1/scoreboard?dates=20230422%26limit=100",
-            "https://r.jina.ai/http://web.archive.org/cdx/search/cdx?url=https%3A%2F%2Fwww.mlssoccer.com%2Fnews%2Fmlssoccer-com-injury-report%26from=2022%26to=2023%26output=json%26filter=statuscode%3A200%26collapse=digest%26fl=timestamp%2Coriginal%2Cstatuscode%2Cdigest"
-          ]
-          for url in urls:
-              print("\nTRY",url)
-              try:
-                  req=urllib.request.Request(url,headers=UA)
-                  body=urllib.request.urlopen(req,timeout=60).read().decode("utf-8","replace")
-                  print("bytes",len(body),"prefix",body[:10000])
-              except Exception as e:
-                  print("ERR",type(e).__name__,str(e)[:500])
+          import json,re,urllib.request
+          url="https://r.jina.ai/https://site.api.espn.com/apis/site/v2/sports/soccer/usa.1/summary?event=659689"
+          req=urllib.request.Request(url,headers={"User-Agent":"Mozilla/5.0 AppwizaMLSSourceAudit/1.2","Accept":"text/plain"})
+          body=urllib.request.urlopen(req,timeout=60).read().decode("utf-8","replace")
+          print("bytes",len(body))
+          payload=body.split("Markdown Content:",1)[-1].strip()
+          try:
+              d=json.loads(payload)
+          except Exception as e:
+              print("JSON_ERR",type(e).__name__,str(e)[:200])
+              print(body[:30000])
+              raise
+          print("keys",list(d.keys()))
+          for key in ["rosters","boxscore","plays","commentary","header","gameInfo"]:
+              v=d.get(key)
+              print("\nKEY",key,"TYPE",type(v).__name__)
+              print(json.dumps(v,ensure_ascii=False,default=str)[:30000])
+          rosters=d.get("rosters") or []
+          print("\nROSTER_COUNT",len(rosters))
+          starter_rows=[]
+          for team in rosters:
+              team_name=((team.get("team") or {}).get("displayName") or (team.get("team") or {}).get("name"))
+              for a in team.get("roster") or []:
+                  athlete=a.get("athlete") or {}
+                  starter_rows.append({
+                    "team":team_name,
+                    "name":athlete.get("displayName") or athlete.get("fullName"),
+                    "starter":a.get("starter"),
+                    "subbedIn":a.get("subbedIn"),
+                    "active":a.get("active"),
+                    "position":(athlete.get("position") or {}).get("abbreviation") if isinstance(athlete.get("position"),dict) else athlete.get("position"),
+                  })
+          print("STARTER_ROWS",json.dumps(starter_rows,ensure_ascii=False)[:30000])
+          print("starter_true",sum(x.get("starter") is True for x in starter_rows),"starter_false",sum(x.get("starter") is False for x in starter_rows))
           PY'
