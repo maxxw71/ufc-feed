@@ -1,0 +1,62 @@
+name: MLS Dataset Depth Audit
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/mls-dataset-depth-audit.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  audit:
+    runs-on: [self-hosted, Linux, X64, appwiza]
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Inspect MLS warehouse and ASA capabilities
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          KEY=/home/appwiza-runner/.ssh/appwiza_vps
+          HOST=anestishkurti92@127.0.0.1
+          ssh -i "$KEY" -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=accept-new "$HOST" 'bash -s' <<'EOF'
+          set -Eeuo pipefail
+          ROOT=/home/anestishkurti92/mls-predictor-v1
+          PY="$ROOT/venv/bin/python"
+          "$PY" - <<'PY'
+          import pandas as pd, json, inspect
+          from pathlib import Path
+          from itscalledsoccer import AmericanSoccerAnalysis
+          p=Path('/home/anestishkurti92/mls-predictor-v1/data/processed/mls_match_features_advanced.parquet')
+          d=pd.read_parquet(p)
+          print('ROWS',len(d),'COLS',len(d.columns))
+          print('COLUMNS')
+          for c in d.columns: print(c)
+          print('NONNULL_SUMMARY')
+          for c in d.columns:
+              if any(k in c.lower() for k in ['manager','coach','xg','travel','rest','elo','market','odds']):
+                  print(c,int(d[c].notna().sum()),'/',len(d))
+          asa=AmericanSoccerAnalysis()
+          methods=[m for m in dir(asa) if m.startswith('get_')]
+          print('ASA_METHODS')
+          for m in methods: print(m)
+          # Try lightweight schema probes where possible.
+          probes=[
+            ('players','get_players',{}),
+            ('managers','get_managers',{}),
+            ('player_xgoals','get_player_xgoals',{'leagues':'mls','season_name':'2025'}),
+            ('player_goals_added','get_player_goals_added',{'leagues':'mls','season_name':'2025'}),
+            ('player_stats','get_player_stats',{'leagues':'mls','season_name':'2025'}),
+            ('team_xgoals','get_team_xgoals',{'leagues':'mls','season_name':'2025'}),
+          ]
+          for name,m,args in probes:
+              if not hasattr(asa,m):
+                  print('PROBE',name,'MISSING_METHOD'); continue
+              try:
+                  z=getattr(asa,m)(**args)
+                  if not isinstance(z,pd.DataFrame): z=pd.DataFrame(z)
+                  print('PROBE',name,'rows',len(z),'cols',list(z.columns)[:120])
+              except Exception as e:
+                  print('PROBE',name,'ERROR',type(e).__name__,str(e)[:300])
+          PY
+          EOF
