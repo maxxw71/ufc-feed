@@ -48,7 +48,7 @@ def thresholds(v):
     return sorted(set(float(x) for x in v.quantile([.15,.25,.35,.50,.65,.75,.85]).dropna()))
 
 def selection_rows(d):
-    req={'odds_matched','asa_game_available','asa_knockout_game','referee_prior_games'}
+    req={'odds_matched','asa_game_available','asa_knockout_game','referee_prior_games','home_roster_prior_games','away_roster_prior_games','home_gk_prior_team_games','away_gk_prior_team_games'}
     miss=req-set(d.columns)
     if miss:raise RuntimeError('Context warehouse missing: '+','.join(sorted(miss)))
     base=d[d.odds_matched.eq(True)&d.season.between(2013,2025)&
