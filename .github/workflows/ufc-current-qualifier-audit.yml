@@ -1,0 +1,73 @@
+name: UFC Current Qualifier Audit
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/ufc-current-qualifier-audit.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  audit:
+    runs-on: [self-hosted, Linux, X64, appwiza]
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - name: Recompute current UFC qualifiers without sending
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          KEY=/home/appwiza-runner/.ssh/appwiza_vps
+          HOST=anestishkurti92@127.0.0.1
+          ssh -i "$KEY" -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=accept-new "$HOST" 'bash -s' <<'EOF'
+          set -Eeuo pipefail
+          export HOME=/home/anestishkurti92
+          ROOT=/home/anestishkurti92/ufc-predictor-v1
+          PY="$ROOT/venv/bin/python"
+          cd "$ROOT"
+          "$PY" - <<'PY'
+          import importlib.util,inspect,json
+          from pathlib import Path
+          spec=importlib.util.spec_from_file_location('w','ufc_email_watcher.py')
+          w=importlib.util.module_from_spec(spec);spec.loader.exec_module(w)
+          print('predict_sig',inspect.signature(w.predict_bout))
+          print('method_cards_sig',inspect.signature(w.ufc_email_design.method_cards))
+          print('publish_sig',inspect.signature(w.sports_publish.publish_ufc))
+          print('load funcs',[(n,hasattr(w,n)) for n in ['fetch_feed','load_reach_index','load_skill_index']])
+          feed=w.fetch_feed()
+          bundle=w.joblib.load(w.BUNDLE_PATH)
+          reach=w.load_reach_index()
+          skills=w.load_skill_index()
+          current=[]
+          for e in feed.get('events') or []:
+              ek=w.event_key(e)
+              preds=[]
+              for b in e.get('bouts') or []:
+                  try: p=w.predict_bout(b,e.get('date'),bundle,reach,skills)
+                  except TypeError:
+                      try:p=w.predict_bout(b,e.get('date'),bundle,reach)
+                      except TypeError:p=w.predict_bout(b,e.get('date'),bundle)
+                  preds.append(p)
+                  cards=w.ufc_email_design.method_cards(p,w)
+                  if cards:
+                      favs=sorted(set(str(c.get('favorite') or '') for c in cards if c.get('favorite')))
+                      current.append({
+                        'event_key':ek,'event':e.get('name'),'date':e.get('date'),
+                        'fighter_a':b.get('fighter_a'),'fighter_b':b.get('fighter_b'),
+                        'favorites':favs,
+                        'methods':[(c.get('id'),c.get('title'),c.get('favorite')) for c in cards],
+                        'tracker':w.bet_tracker.ufc_picks(e,[p]),
+                      })
+          print('=== RECOMPUTED QUALIFIERS ===')
+          for x in current:print(json.dumps(x,default=str,sort_keys=True))
+          print('qualifying_fights',len(current))
+          print('qualifying_selections',len({(x['event_key'],tuple(x['favorites'])) for x in current}))
+          print('=== PUBLIC ACTIVE ===')
+          d=json.loads(Path('/srv/appwiza-sports/state/ufc.json').read_text())
+          for c in d.get('cards',[]):
+              from datetime import datetime,timezone
+              st=datetime.fromisoformat(str(c.get('start')).replace('Z','+00:00'))
+              if st>datetime.now(timezone.utc) and not c.get('withdrawn'):
+                  print(json.dumps({'id':c.get('id'),'selection':c.get('selection'),'opponent':c.get('opponent'),'methods':[(m.get('id'),m.get('title')) for m in c.get('methods',[])]},sort_keys=True))
+          PY
+          EOF
