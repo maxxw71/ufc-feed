@@ -1,0 +1,57 @@
+name: MLS ASA XG Join
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/mls_join_asa_xg.py'
+      - '.github/workflows/mls-asa-xg-join.yml'
+
+concurrency:
+  group: mls-research
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  join:
+    runs-on: [self-hosted, Linux, X64, appwiza]
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with: {fetch-depth: 0}
+      - name: Build leakage-safe rolling xG layer
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          KEY=/home/appwiza-runner/.ssh/appwiza_vps
+          HOST=anestishkurti92@127.0.0.1
+          SSH="ssh -i $KEY -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=accept-new $HOST"
+          cat scripts/mls_join_asa_xg.py | $SSH 'set -e; D=/home/anestishkurti92/mls-predictor-v1; cat > "$D/mls_join_asa_xg.py.new"; chmod 0644 "$D/mls_join_asa_xg.py.new"; mv -f "$D/mls_join_asa_xg.py.new" "$D/mls_join_asa_xg.py"'
+          $SSH 'set -Eeuo pipefail; cd /home/anestishkurti92/mls-predictor-v1; venv/bin/python -m py_compile mls_join_asa_xg.py; OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 nice -n 14 timeout 10m venv/bin/python mls_join_asa_xg.py'
+      - name: Pull xG join coverage
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          KEY=/home/appwiza-runner/.ssh/appwiza_vps
+          HOST=anestishkurti92@127.0.0.1
+          SSH="ssh -i $KEY -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=accept-new $HOST"
+          mkdir -p mls/advanced
+          $SSH 'cat /home/anestishkurti92/mls-predictor-v1/reports/asa_join_meta.json' > mls/advanced/asa_join_meta.json
+          $SSH 'cat /home/anestishkurti92/mls-predictor-v1/reports/asa_join_coverage.csv' > mls/advanced/asa_join_coverage.csv
+          cat mls/advanced/asa_join_meta.json
+          cat mls/advanced/asa_join_coverage.csv
+      - name: Persist xG join coverage
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git add mls/advanced/asa_join_meta.json mls/advanced/asa_join_coverage.csv
+          if ! git diff --cached --quiet; then
+            git commit -m 'Publish MLS ASA xG join coverage'
+            git pull --rebase origin main
+            git push origin HEAD:main
+          fi
