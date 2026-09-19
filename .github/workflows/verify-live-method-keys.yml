@@ -1,0 +1,40 @@
+name: Verify live method keys
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/verify-live-method-keys.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: [self-hosted, Linux, X64, appwiza]
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify UFC and NFL method keys
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          curl -fsSL https://appwiza.com/sports/ufc/ > /tmp/ufc.html
+          curl -fsSL https://appwiza.com/sports/nfl/ > /tmp/nfl.html
+          grep -q 'Method Key · U1–U12' /tmp/ufc.html
+          for x in U1 U2 U3 U4 U5 U6 U7 U8 U9 U10 U11 U12; do grep -q ">$x<" /tmp/ufc.html; done
+          grep -q 'Method Key · NFL' /tmp/nfl.html
+          grep -q 'Live methods' /tmp/nfl.html
+          grep -q 'H-series research / shadow methods' /tmp/nfl.html
+          for x in M1 M2 M3 M4 H002 H003 H008 H017 H027 H029 H033 H036 H005 H010 H028 H035; do grep -q ">$x<" /tmp/nfl.html; done
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          u=json.loads(Path('/srv/appwiza-sports/state/ufc.json').read_text())
+          n=json.loads(Path('/srv/appwiza-sports/state/nfl.json').read_text())
+          from datetime import datetime,timezone
+          now=datetime.now(timezone.utc)
+          ua=[c for c in u.get('cards',[]) if datetime.fromisoformat(str(c['start']).replace('Z','+00:00'))>now and not c.get('withdrawn')]
+          na=[c for c in n.get('cards',[]) if datetime.fromisoformat(str(c['start']).replace('Z','+00:00'))>now and not c.get('withdrawn')]
+          print('UFC upcoming state',len(ua),[(c.get('selection'),[m.get('id') for m in c.get('methods',[])]) for c in ua])
+          print('NFL upcoming raw state',len(na),[(c.get('selection'),[m.get('id') for m in c.get('methods',[])]) for c in na])
+          PY
+          echo 'LIVE METHOD KEYS PASS'
