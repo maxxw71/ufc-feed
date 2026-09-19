@@ -5,6 +5,7 @@ on:
     branches: [main]
     paths:
       - 'nfl/nfl_public_page.py'
+      - 'scripts/patch_nfl_page_contract_guard.py'
       - 'nfl/live_2026_current_snapshot/current_board_fresh_context.csv'
       - '.github/workflows/nfl-public-page-enhance-deploy.yml'
 
@@ -59,7 +60,8 @@ jobs:
           SSH="ssh -i $KEY -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=accept-new $HOST"
           cat nfl/nfl_public_page.py | $SSH 'cat > /home/anestishkurti92/nfl-predictor-v1/research_v2/nfl_public_page.py'
           cat nfl/live_2026_current_snapshot/current_board_fresh_context.csv | $SSH 'mkdir -p /home/anestishkurti92/nfl-predictor-v1/research_v2/page_context; cat > /home/anestishkurti92/nfl-predictor-v1/research_v2/page_context/current_board_fresh_context.csv'
-          $SSH 'set -Eeuo pipefail; export HOME=/home/anestishkurti92; export PYTHONPATH=/home/anestishkurti92/nfl-predictor-v1/research_v2:/home/anestishkurti92/betting-ledger/code:/opt/sports-publisher; cd /home/anestishkurti92/nfl-predictor-v1/research_v2; /home/anestishkurti92/nfl-predictor-v1/venv/bin/python -m py_compile nfl_public_page.py nfl_home_opener_scanner.py; /home/anestishkurti92/nfl-predictor-v1/venv/bin/python nfl_home_opener_scanner.py --manual'
+          cat scripts/patch_nfl_page_contract_guard.py | $SSH 'cat > /tmp/patch_nfl_page_contract_guard.py'
+          $SSH 'set -Eeuo pipefail; export HOME=/home/anestishkurti92; export PYTHONPATH=/home/anestishkurti92/nfl-predictor-v1/research_v2:/home/anestishkurti92/betting-ledger/code:/opt/sports-publisher; cd /home/anestishkurti92/nfl-predictor-v1/research_v2; /home/anestishkurti92/nfl-predictor-v1/venv/bin/python /tmp/patch_nfl_page_contract_guard.py nfl_home_opener_scanner.py; /home/anestishkurti92/nfl-predictor-v1/venv/bin/python -m py_compile nfl_public_page.py nfl_home_opener_scanner.py; grep -q NFL_PUBLIC_PAGE_CONTRACT_GUARD_V1 nfl_home_opener_scanner.py; /home/anestishkurti92/nfl-predictor-v1/venv/bin/python nfl_home_opener_scanner.py --manual'
 
       - name: Verify canonical NFL live page
         if: steps.freshness.outputs.deploy == 'true'
@@ -71,4 +73,7 @@ jobs:
           grep -q '2026 deep audit' /tmp/nfl-live.html
           grep -q 'Method Key · NFL' /tmp/nfl-live.html
           grep -q 'H-series research / shadow methods' /tmp/nfl-live.html
-          echo 'NFL canonical page deploy verified'
+          KEY=/home/appwiza-runner/.ssh/appwiza_vps
+          HOST=anestishkurti92@127.0.0.1
+          ssh -i "$KEY" -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=accept-new "$HOST" "grep -q NFL_PUBLIC_PAGE_CONTRACT_GUARD_V1 /home/anestishkurti92/nfl-predictor-v1/research_v2/nfl_home_opener_scanner.py"
+          echo 'NFL canonical page deploy and contract guard verified'
