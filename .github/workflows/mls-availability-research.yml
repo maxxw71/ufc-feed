@@ -6,6 +6,7 @@ on:
     branches: [main]
     paths:
       - 'scripts/mls_availability_research.py'
+      - 'mls/availability/feature_meta.json'
       - '.github/workflows/mls-availability-research.yml'
 
 concurrency:
