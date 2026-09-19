@@ -1,0 +1,40 @@
+name: MLS ESPN Market Audit
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/mls-espn-market-audit.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  audit:
+    runs-on: [self-hosted, Linux, X64, appwiza]
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Inspect ESPN MLS scoreboard odds fields
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          python3 - <<'PY'
+          import json,urllib.request
+          url='https://site.api.espn.com/apis/site/v2/sports/soccer/usa.1/scoreboard?dates=20260919'
+          req=urllib.request.Request(url,headers={'User-Agent':'Mozilla/5.0 AppwizaMLS/1.0'})
+          raw=urllib.request.urlopen(req,timeout=30).read()
+          d=json.loads(raw)
+          print('events',len(d.get('events') or []),'bytes',len(raw))
+          for e in d.get('events') or []:
+              c=(e.get('competitions') or [{}])[0]
+              comps=c.get('competitors') or []
+              teams=[x.get('team',{}).get('displayName') for x in comps]
+              odds=c.get('odds')
+              print(json.dumps({
+                'id':e.get('id'),
+                'date':e.get('date'),
+                'teams':teams,
+                'odds_type':type(odds).__name__,
+                'odds_count':len(odds) if isinstance(odds,list) else None,
+                'odds_sample':odds[:2] if isinstance(odds,list) else odds
+              },default=str))
+          PY
