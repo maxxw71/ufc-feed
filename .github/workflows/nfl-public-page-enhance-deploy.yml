@@ -58,8 +58,8 @@ jobs:
           KEY=/home/appwiza-runner/.ssh/appwiza_vps
           HOST=anestishkurti92@127.0.0.1
           SSH="ssh -i $KEY -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=accept-new $HOST"
-          cat nfl/nfl_public_page.py | $SSH 'cat > /home/anestishkurti92/nfl-predictor-v1/research_v2/nfl_public_page.py'
-          cat nfl/live_2026_current_snapshot/current_board_fresh_context.csv | $SSH 'mkdir -p /home/anestishkurti92/nfl-predictor-v1/research_v2/page_context; cat > /home/anestishkurti92/nfl-predictor-v1/research_v2/page_context/current_board_fresh_context.csv'
+          cat nfl/nfl_public_page.py | $SSH 'set -e; D=/home/anestishkurti92/nfl-predictor-v1/research_v2; cat > "$D/nfl_public_page.py.new"; chmod 0644 "$D/nfl_public_page.py.new"; mv -f "$D/nfl_public_page.py.new" "$D/nfl_public_page.py"'
+          cat nfl/live_2026_current_snapshot/current_board_fresh_context.csv | $SSH 'set -e; D=/home/anestishkurti92/nfl-predictor-v1/research_v2/page_context; mkdir -p "$D"; cat > "$D/current_board_fresh_context.csv.new"; chmod 0644 "$D/current_board_fresh_context.csv.new"; mv -f "$D/current_board_fresh_context.csv.new" "$D/current_board_fresh_context.csv"'
           cat scripts/patch_nfl_page_contract_guard.py | $SSH 'cat > /tmp/patch_nfl_page_contract_guard.py'
           $SSH 'set -Eeuo pipefail; export HOME=/home/anestishkurti92; export PYTHONPATH=/home/anestishkurti92/nfl-predictor-v1/research_v2:/home/anestishkurti92/betting-ledger/code:/opt/sports-publisher; cd /home/anestishkurti92/nfl-predictor-v1/research_v2; /home/anestishkurti92/nfl-predictor-v1/venv/bin/python /tmp/patch_nfl_page_contract_guard.py nfl_home_opener_scanner.py; /home/anestishkurti92/nfl-predictor-v1/venv/bin/python -m py_compile nfl_public_page.py nfl_home_opener_scanner.py; grep -q NFL_PUBLIC_PAGE_CONTRACT_GUARD_V1 nfl_home_opener_scanner.py; /home/anestishkurti92/nfl-predictor-v1/venv/bin/python nfl_home_opener_scanner.py --manual'
 
