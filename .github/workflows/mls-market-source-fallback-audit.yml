@@ -1,0 +1,36 @@
+name: MLS Market Source Fallback Audit
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/mls-market-source-fallback-audit.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  audit:
+    runs-on: [self-hosted, Linux, X64, appwiza]
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - name: Test no-key MLS odds fallbacks
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          python3 - <<'PY'
+          import urllib.request,json,re
+          urls=[
+            ('espn_jina','https://r.jina.ai/https://site.api.espn.com/apis/site/v2/sports/soccer/usa.1/scoreboard?dates=20260919'),
+            ('espn_html_jina','https://r.jina.ai/https://www.espn.com/soccer/scoreboard/_/league/usa.1/date/20260919'),
+          ]
+          for name,url in urls:
+              print('===',name,'===')
+              try:
+                  req=urllib.request.Request(url,headers={'User-Agent':'Mozilla/5.0 AppwizaMLS/1.0'})
+                  raw=urllib.request.urlopen(req,timeout=45).read()
+                  text=raw.decode('utf-8','replace')
+                  print('bytes',len(raw),'has_odds',bool(re.search(r'odds|draftkings|moneyline|draw',text,re.I)))
+                  print(text[:5000])
+              except Exception as e:
+                  print(type(e).__name__,str(e))
+          PY
