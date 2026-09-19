@@ -8,7 +8,9 @@ import numpy as np
 import pandas as pd
 
 ROOT=Path('/home/anestishkurti92/mls-predictor-v1')
-DATA=ROOT/'data/processed/mls_match_features_1996_present.parquet'
+BASE_DATA=ROOT/'data/processed/mls_match_features_1996_present.parquet'
+ADV_DATA=ROOT/'data/processed/mls_match_features_advanced.parquet'
+DATA=ADV_DATA if ADV_DATA.exists() else BASE_DATA
 AR=ROOT/'auto_research';STATE=AR/'state';REPORTS=AR/'reports';DB=STATE/'research.sqlite3'
 for p in [STATE,REPORTS]:p.mkdir(parents=True,exist_ok=True)
 
@@ -53,7 +55,7 @@ def selection_rows(d):
             sign=1
             z['sel_prior_games']=base.home_prior_games;z['opp_prior_games']=base.away_prior_games
             for col in ['season_ppg','season_gdpg','days_rest','last3_ppg','last5_ppg','last10_ppg','last5_gdpg','last10_gdpg',
-                        'venue5_ppg','travel_miles','altitude_change_ft','tz_shift_hours','prior_road_miles5','consecutive_road_pre']:
+                        'venue5_ppg','travel_miles','altitude_change_ft','tz_shift_hours','prior_road_miles5','consecutive_road_pre','last3_xgfpg','last3_xgapg','last3_xgdpg','last5_xgfpg','last5_xgapg','last5_xgdpg','last10_xgfpg','last10_xgapg','last10_xgdpg','season_xgfpg','season_xgapg','season_xgdpg']:
                 z['sel_'+col]=base['home_'+col];z['opp_'+col]=base['away_'+col]
             z['elo_edge']=base.elo_edge_home
         elif outcome=='AWAY':
@@ -61,7 +63,7 @@ def selection_rows(d):
             sign=-1
             z['sel_prior_games']=base.away_prior_games;z['opp_prior_games']=base.home_prior_games
             for col in ['season_ppg','season_gdpg','days_rest','last3_ppg','last5_ppg','last10_ppg','last5_gdpg','last10_gdpg',
-                        'venue5_ppg','travel_miles','altitude_change_ft','tz_shift_hours','prior_road_miles5','consecutive_road_pre']:
+                        'venue5_ppg','travel_miles','altitude_change_ft','tz_shift_hours','prior_road_miles5','consecutive_road_pre','last3_xgfpg','last3_xgapg','last3_xgdpg','last5_xgfpg','last5_xgapg','last5_xgdpg','last10_xgfpg','last10_xgapg','last10_xgdpg','season_xgfpg','season_xgapg','season_xgdpg']:
                 z['sel_'+col]=base['away_'+col];z['opp_'+col]=base['home_'+col]
             z['elo_edge']=-base.elo_edge_home
         else:
@@ -70,7 +72,7 @@ def selection_rows(d):
             z['opp_prior_games']=np.maximum(base.home_prior_games,base.away_prior_games)
             z['elo_edge']=base.abs_elo_edge
             # Draw features emphasize matchup balance and combined fatigue/form.
-            for col in ['season_ppg','season_gdpg','days_rest','last3_ppg','last5_ppg','last10_ppg','last5_gdpg','last10_gdpg','venue5_ppg']:
+            for col in ['season_ppg','season_gdpg','days_rest','last3_ppg','last5_ppg','last10_ppg','last5_gdpg','last10_gdpg','venue5_ppg','last3_xgfpg','last3_xgapg','last3_xgdpg','last5_xgfpg','last5_xgapg','last5_xgdpg','last10_xgdpg','season_xgfpg','season_xgapg','season_xgdpg']:
                 z['balance_'+col]=(base['home_'+col]-base['away_'+col]).abs()
                 z['combined_'+col]=(base['home_'+col]+base['away_'+col])
             for col in ['travel_miles','prior_road_miles5','consecutive_road_pre']:
@@ -80,7 +82,7 @@ def selection_rows(d):
         # selection-relative edges
         if outcome in ['HOME','AWAY']:
             for col in ['season_ppg','season_gdpg','days_rest','last3_ppg','last5_ppg','last10_ppg','last5_gdpg','last10_gdpg',
-                        'venue5_ppg','travel_miles','altitude_change_ft','tz_shift_hours','prior_road_miles5','consecutive_road_pre']:
+                        'venue5_ppg','travel_miles','altitude_change_ft','tz_shift_hours','prior_road_miles5','consecutive_road_pre','last3_xgfpg','last3_xgapg','last3_xgdpg','last5_xgfpg','last5_xgapg','last5_xgdpg','last10_xgfpg','last10_xgapg','last10_xgdpg','season_xgfpg','season_xgapg','season_xgdpg']:
                 z['edge_'+col]=z['sel_'+col]-z['opp_'+col]
         z['profit']=np.where(z.win.eq(1),z.odds-1.0,-1.0)
         rows.append(z)
