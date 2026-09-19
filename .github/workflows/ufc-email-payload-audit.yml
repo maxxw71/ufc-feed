@@ -1,0 +1,59 @@
+name: UFC Email Payload Audit
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/ufc-email-payload-audit.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  audit:
+    runs-on: [self-hosted, Linux, X64, appwiza]
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - name: Inspect UFC sent email payloads and watcher flow
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          KEY=/home/appwiza-runner/.ssh/appwiza_vps
+          HOST=anestishkurti92@127.0.0.1
+          ssh -i "$KEY" -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=accept-new "$HOST" 'bash -s' <<'EOF'
+          set -Eeuo pipefail
+          ROOT=/home/anestishkurti92/ufc-predictor-v1
+          PY="$ROOT/venv/bin/python"
+
+          echo '=== WATCHER SEND FLOW ==='
+          grep -nE -A45 -B25 'send_email\(|changed|day_before|event_block\(|publish_ufc|bet_tracker\.stage|bet_tracker\.confirm|ufc_picks' "$ROOT/ufc_email_watcher.py" | tail -520
+
+          echo '=== RECENT UFC JOURNAL EMAIL LINES ==='
+          journalctl -u ufc-model-watcher.service --since '2026-09-12 00:00:00' --no-pager 2>/dev/null | grep -Ei 'email|sent|qualif|publish|pick|alert|delivery|event' | tail -240 || true
+
+          echo '=== LEDGER SCHEMA ==='
+          "$PY" - <<'PY'
+          import sqlite3,os
+          p='/home/anestishkurti92/betting-ledger/assumed_bets.sqlite3'
+          db=sqlite3.connect(p)
+          for t, in db.execute("select name from sqlite_master where type='table' order by name"):
+              print('\nTABLE',t)
+              print(db.execute(f'pragma table_info({t})').fetchall())
+          PY
+
+          echo '=== UFC DELIVERIES ==='
+          "$PY" - <<'PY'
+          import sqlite3,json,os
+          p='/home/anestishkurti92/betting-ledger/assumed_bets.sqlite3'
+          db=sqlite3.connect(p);db.row_factory=sqlite3.Row
+          for t in ['deliveries','staged_picks','delivery_picks','staging','audit']:
+              try:
+                  rows=db.execute(f'select * from {t} order by rowid desc limit 80').fetchall()
+              except Exception: continue
+              print('\nTABLE',t)
+              for r in rows:
+                  d=dict(r)
+                  if 'sport' in d and str(d.get('sport')).upper()!='UFC':continue
+                  if 'id' in d and not str(d.get('id','')).startswith('UFC') and 'sport' not in d: continue
+                  print(d)
+          PY
+          EOF
