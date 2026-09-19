@@ -1,0 +1,62 @@
+name: MLS ASA Join Quality Audit
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/mls-asa-join-quality-audit.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  audit:
+    runs-on: [self-hosted, Linux, X64, appwiza]
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - name: Diagnose ASA join misses
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          KEY=/home/appwiza-runner/.ssh/appwiza_vps
+          HOST=anestishkurti92@127.0.0.1
+          ssh -i "$KEY" -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=accept-new "$HOST" 'bash -s' <<'EOF'
+          set -Eeuo pipefail
+          cd /home/anestishkurti92/mls-predictor-v1
+          venv/bin/python - <<'PY'
+          import pandas as pd
+          from collections import Counter,defaultdict
+          from itscalledsoccer import AmericanSoccerAnalysis
+          from mls_bootstrap_warehouse import canon_team
+          b=pd.read_parquet('data/processed/mls_results_1996_present.parquet')
+          b=b[b.season>=2013].copy()
+          x=pd.read_parquet('data/processed/asa_mls_game_xgoals_2013_present.parquet')
+          a=AmericanSoccerAnalysis();t=a.get_teams(leagues='mls')
+          print('TEAM COLUMNS',list(t.columns))
+          print(t.to_string(index=False,max_rows=100))
+          tid='team_id'; tn='team_name'
+          mp={str(r[tid]):canon_team(r[tn]) for _,r in t.iterrows()}
+          x['home_team']=x.home_team_id.astype(str).map(mp);x['away_team']=x.away_team_id.astype(str).map(mp)
+          x['date']=pd.to_datetime(x.date_time_utc,errors='coerce',utc=True).dt.tz_convert(None).dt.normalize()
+          x['hg']=pd.to_numeric(x.home_goals,errors='coerce');x['ag']=pd.to_numeric(x.away_goals,errors='coerce')
+          lookup=defaultdict(list)
+          for _,r in x.iterrows():lookup[(r.home_team,r.away_team)].append(r)
+          miss=[];multi=[];matched=0;pairmissing=0
+          for _,r in b.iterrows():
+              cand=lookup.get((r.home_team,r.away_team),[])
+              if not cand:
+                  pairmissing+=1;miss.append((r.season,r.home_team,r.away_team,'PAIR'));continue
+              z=[q for q in cand if abs((pd.Timestamp(q.date)-pd.Timestamp(r.date).normalize()).days)<=1]
+              if not z:
+                  miss.append((r.season,r.home_team,r.away_team,'DATE'));continue
+              zs=[q for q in z if (pd.isna(q.hg) or float(q.hg)==float(r.home_score)) and (pd.isna(q.ag) or float(q.ag)==float(r.away_score))]
+              if len(zs)==1:matched+=1
+              elif len(zs)>1:multi.append((r.season,r.home_team,r.away_team,len(zs)))
+              else:miss.append((r.season,r.home_team,r.away_team,'SCORE'))
+          print('BASE',len(b),'XG',len(x),'MATCHED',matched,'MISS',len(miss),'MULTI',len(multi),'PAIRMISSING',pairmissing)
+          print('MISS HOME',Counter(x[1] for x in miss).most_common(20))
+          print('MISS AWAY',Counter(x[2] for x in miss).most_common(20))
+          print('MISS REASON',Counter(x[3] for x in miss))
+          print('MISS EXAMPLES',miss[:80])
+          print('MULTI',multi[:30])
+          PY
+          EOF
