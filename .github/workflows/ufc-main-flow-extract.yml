@@ -22,7 +22,14 @@ jobs:
           ssh -i "$KEY" -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=accept-new "$HOST" 'bash -s' <<'EOF'
           set -Eeuo pipefail
           P=/home/anestishkurti92/ufc-predictor-v1/ufc_email_watcher.py
-          N=$(grep -n '^def main' "$P" | tail -1 | cut -d: -f1 || true)
-          echo MAIN_LINE=$N
-          if [ -n "$N" ]; then A=$((N-80)); [ "$A" -lt 1 ] && A=1; B=$((N+260)); sed -n "${A},${B}p" "$P"; fi
+          echo '=== SEND_EMAIL ==='
+          N=$(grep -n '^def send_email' "$P" | head -1 | cut -d: -f1 || true)
+          echo SEND_LINE=$N
+          if [ -n "$N" ]; then A=$((N-20)); [ "$A" -lt 1 ] && A=1; B=$((N+90)); sed -n "${A},${B}p" "$P"; fi
+          echo '=== RUN FLOW ==='
+          N=$(grep -n '^def run' "$P" | head -1 | cut -d: -f1 || true)
+          echo RUN_LINE=$N
+          if [ -n "$N" ]; then A=$((N)); B=$((N+230)); sed -n "${A},${B}p" "$P"; fi
+          echo '=== FILE TAIL ==='
+          tail -100 "$P"
           EOF
