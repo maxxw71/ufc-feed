@@ -4,6 +4,10 @@ on:
   push:
     paths:
       - ".github/workflows/mls-maintenance.yml"
+  pull_request:
+    paths:
+      - ".github/workflows/mls-maintenance.yml"
+      - ".github/mls-probe.txt"
   workflow_dispatch:
 
 jobs:
