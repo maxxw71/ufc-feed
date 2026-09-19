@@ -1,0 +1,28 @@
+name: UFC Main Flow Extract
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/ufc-main-flow-extract.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  audit:
+    runs-on: [self-hosted, Linux, X64, appwiza]
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - name: Extract production main flow
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          KEY=/home/appwiza-runner/.ssh/appwiza_vps
+          HOST=anestishkurti92@127.0.0.1
+          ssh -i "$KEY" -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=accept-new "$HOST" 'bash -s' <<'EOF'
+          set -Eeuo pipefail
+          P=/home/anestishkurti92/ufc-predictor-v1/ufc_email_watcher.py
+          N=$(grep -n '^def main' "$P" | tail -1 | cut -d: -f1 || true)
+          echo MAIN_LINE=$N
+          if [ -n "$N" ]; then A=$((N-80)); [ "$A" -lt 1 ] && A=1; B=$((N+260)); sed -n "${A},${B}p" "$P"; fi
+          EOF
