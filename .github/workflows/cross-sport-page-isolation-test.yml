@@ -1,0 +1,87 @@
+name: Cross Sport Page Isolation Test
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/cross-sport-page-isolation-test.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  test:
+    runs-on: [self-hosted, Linux, X64, appwiza]
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - name: Prove NFL and UFC cannot overwrite each other
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          KEY=/home/appwiza-runner/.ssh/appwiza_vps
+          HOST=anestishkurti92@127.0.0.1
+          ssh -i "$KEY" -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=accept-new "$HOST" 'bash -s' <<'EOF'
+          set -Eeuo pipefail
+          NFL=/srv/appwiza-sports/public/nfl/index.html
+          UFC=/srv/appwiza-sports/public/ufc/index.html
+          NROOT=/home/anestishkurti92/nfl-predictor-v1/research_v2
+          UROOT=/home/anestishkurti92/ufc-predictor-v1
+          NPY=/home/anestishkurti92/nfl-predictor-v1/venv/bin/python
+          UPY=/home/anestishkurti92/ufc-predictor-v1/venv/bin/python
+
+          echo '=== BASELINE ==='
+          N0=$(sha256sum "$NFL"|awk '{print $1}')
+          U0=$(sha256sum "$UFC"|awk '{print $1}')
+          echo NFL=$N0 UFC=$U0
+          grep -q 'Method Key · NFL' "$NFL"
+          grep -q 'Method Key · U1–U12' "$UFC"
+          grep -q 'NFL_RENDER_ISOLATION_V1' "$NROOT/nfl_home_opener_scanner.py"
+          grep -q 'UFC_RENDER_ISOLATION_V1' "$UROOT/ufc_email_watcher.py"
+
+          echo '=== RUN NFL REFRESH ==='
+          export HOME=/home/anestishkurti92
+          export PYTHONPATH="$NROOT:/home/anestishkurti92/betting-ledger/code:/opt/sports-publisher"
+          cd "$NROOT"
+          "$NPY" nfl_home_opener_scanner.py --manual
+          U1=$(sha256sum "$UFC"|awk '{print $1}')
+          N1=$(sha256sum "$NFL"|awk '{print $1}')
+          echo NFL=$N1 UFC=$U1
+          test "$U1" = "$U0"
+          grep -q 'Method Key · U1–U12' "$UFC"
+          grep -q 'Overall record' "$UFC"
+          echo 'NFL -> UFC isolation PASS'
+
+          echo '=== RUN UFC REFRESH WITHOUT EMAIL ==='
+          export PYTHONPATH="$UROOT:/home/anestishkurti92/betting-ledger/code:/opt/sports-publisher"
+          cd "$UROOT"
+          "$UPY" - <<'PY'
+          import importlib.util
+          spec=importlib.util.spec_from_file_location('w','ufc_email_watcher.py')
+          w=importlib.util.module_from_spec(spec);spec.loader.exec_module(w)
+          feed=w.fetch_feed()
+          events=w.ufc_lifecycle.future_events(feed.get('events') or [])
+          bundle=w.joblib.load(w.BUNDLE_PATH);reach=w.load_reach_index();skills=w.load_skill_index()
+          preds={}
+          for e in events:
+              try: ed=w.pd.Timestamp(e['date']).date()
+              except Exception: continue
+              preds[w.event_key(e)]=[w.predict_bout(b,ed,bundle,reach,skills) for b in e.get('bouts') or []]
+          canonical=w.canonical_ufc_all_picks(events,preds)
+          w.sports_publish.render_all=lambda: None
+          w.sports_publish.publish_ufc(events,preds,w.__dict__)
+          import ufc_public_page
+          assert ufc_public_page.PAGE_CONTRACT=='UFC_PUBLIC_CANONICAL_V2_20260919'
+          ufc_public_page.safe_enhance(w.sports_publish)
+          w.validate_ufc_public_canonical(canonical)
+          print('ufc canonical',len(canonical))
+          PY
+          N2=$(sha256sum "$NFL"|awk '{print $1}')
+          U2=$(sha256sum "$UFC"|awk '{print $1}')
+          echo NFL=$N2 UFC=$U2
+          test "$N2" = "$N1"
+          grep -q 'Method Key · NFL' "$NFL"
+          grep -q 'Actionable now' "$NFL"
+          grep -q 'Method Key · U1–U12' "$UFC"
+          grep -q 'Current UFC audit' "$UFC"
+          echo 'UFC -> NFL isolation PASS'
+          echo 'CROSS SPORT PAGE ISOLATION PASS'
+          EOF
