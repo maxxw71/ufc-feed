@@ -188,6 +188,109 @@ def holdout_eval(df,mask):
 def full_eval(df,mask):
     return metrics(df[mask])
 
+ROBUSTNESS_CANDIDATES=[
+    {'id':'MLS-P01','outcome':'DRAW','price_band':'ALL','feature':'balance_player_starter_proxy_continuity','op':'<=','threshold':0.049450549450549386},
+    {'id':'MLS-P02','outcome':'HOME','price_band':'P25_35','feature':'opp_player_top11_minutes_share5','op':'>=','threshold':0.8378727511411662},
+    {'id':'MLS-P03','outcome':'HOME','price_band':'P20_30','feature':'edge_player_high_load_players3','op':'<=','threshold':-1.0},
+    {'id':'MLS-P04','outcome':'HOME','price_band':'P25_35','feature':'opp_player_minutes_entropy5','op':'<=','threshold':2.7330179254029505},
+    {'id':'MLS-P05','outcome':'HOME','price_band':'P20_30','feature':'edge_manager_prior_games','op':'<=','threshold':-7.100000000000023},
+]
+
+def robustness_checks(s,d):
+    rng=np.random.default_rng(719)
+    match_meta=d[['match_id','home_team','away_team']].drop_duplicates('match_id')
+    out=[]
+    for spec in ROBUSTNESS_CANDIDATES:
+        so=s[s.outcome.eq(spec['outcome'])].copy()
+        def select(threshold=None,price_band=None):
+            t=spec['threshold'] if threshold is None else threshold
+            pb=spec['price_band'] if price_band is None else price_band
+            return so[cond(so,spec['feature'],spec['op'],t)&price_mask(so,pb)].copy()
+        x=select()
+        full=metrics(x); hold=metrics(x[period(x,'holdout')])
+        v=x.profit.to_numpy(float)
+        if len(v)>1:
+            boots=np.empty(4000)
+            for i in range(len(boots)):
+                boots[i]=rng.choice(v,size=len(v),replace=True).mean()
+            ci=[float(q) for q in np.quantile(boots,[.025,.975])]
+        else:
+            ci=[None,None]
+        yearly=[]
+        for yr,z in x.groupby('season'):
+            m=metrics(z)
+            yearly.append({'season':int(yr),**m})
+        thirds=[]
+        zx=x.sort_values('date').reset_index(drop=True)
+        for i,idx in enumerate(np.array_split(np.arange(len(zx)),3),1):
+            z=zx.iloc[idx]
+            m=metrics(z)
+            thirds.append({'third':i,**m} if m else {'third':i,'n':0})
+        loo=[]
+        for yr in sorted(x.season.unique()):
+            m=metrics(x[~x.season.eq(yr)])
+            loo.append({'left_out':int(yr),**m} if m else {'left_out':int(yr),'n':0})
+        vals=pd.to_numeric(so[period(so,'train')][spec['feature']],errors='coerce').dropna()
+        sd=float(vals.std()) if len(vals)>1 else 0.0
+        step=max(abs(float(spec['threshold']))*.05,sd*.06,0.01)
+        threshold_neighbors=[]
+        for t in [spec['threshold']-2*step,spec['threshold']-step,spec['threshold'],spec['threshold']+step,spec['threshold']+2*step]:
+            z=select(threshold=t)
+            threshold_neighbors.append({
+                'threshold':float(t),
+                'train':metrics(z[period(z,'train')]),
+                'validation':metrics(z[period(z,'validation')]),
+                'holdout':metrics(z[period(z,'holdout')]),
+                'full':metrics(z),
+            })
+        price_neighbors=[]
+        for pb,_,__ in PRICE_BANDS:
+            z=select(price_band=pb)
+            if len(z):
+                price_neighbors.append({
+                    'price_band':pb,
+                    'train':metrics(z[period(z,'train')]),
+                    'validation':metrics(z[period(z,'validation')]),
+                    'holdout':metrics(z[period(z,'holdout')]),
+                    'full':metrics(z),
+                })
+        ids=set(x.match_id)
+        zmeta=match_meta[match_meta.match_id.isin(ids)]
+        if spec['outcome']=='DRAW':
+            counts=pd.concat([zmeta.home_team,zmeta.away_team]).value_counts()
+        else:
+            zm=x[['match_id','outcome']].merge(match_meta,on='match_id',how='left')
+            selected=np.where(zm.outcome.eq('HOME'),zm.home_team,zm.away_team)
+            counts=pd.Series(selected).value_counts()
+        total=max(1,int(counts.sum()))
+        conc={
+            'unique_teams':int(len(counts)),
+            'top1_share':float(counts.iloc[0]/total) if len(counts) else 0.0,
+            'top3_share':float(counts.iloc[:3].sum()/total) if len(counts) else 0.0,
+            'top5':{str(k):int(v) for k,v in counts.head(5).items()},
+        }
+        positive_neighbor_eras=sum(
+            1 for r in threshold_neighbors
+            if r['train'] and r['validation'] and r['holdout']
+            and r['train']['roi']>0 and r['validation']['roi']>0 and r['holdout']['roi']>0
+        )
+        if full and hold and hold['n']>=50 and hold['roi']>0 and ci[0] is not None and ci[0]>0 and conc['top3_share']<.35:
+            status='PROSPECTIVE_PRIORITY'
+        elif full and hold and hold['n']>=25 and hold['roi']>0 and full['positive_season_ratio']>=.65 and positive_neighbor_eras>=3:
+            status='SHADOW_WATCH'
+        else:
+            status='REJECT_OR_WEAK'
+        out.append({
+            **spec,'status':status,'full':full,
+            'train':metrics(x[period(x,'train')]),
+            'validation':metrics(x[period(x,'validation')]),
+            'holdout':hold,'bootstrap95_roi':ci,'yearly':yearly,'thirds':thirds,
+            'leave_one_season_out':loo,'team_concentration':conc,
+            'threshold_neighbors':threshold_neighbors,'price_neighbors':price_neighbors,
+            'threshold_neighbors_positive_all_eras':positive_neighbor_eras,
+        })
+    return out
+
 def main():
     if not DATA.exists():
         raise RuntimeError('Player-enriched MLS warehouse missing')
@@ -318,6 +421,8 @@ def main():
         'top_pairs_preholdout_order':pairs_json[:30],
         'all_holdout_surviving_singles_preholdout_order':[x for x in singles_json if x['holdout_survived']],
         'all_holdout_surviving_pairs_preholdout_order':[x for x in pairs_json if x['holdout_survived']],
+        'robustness_checks':robustness_checks(s,d),
+        'robustness_note':'Frozen candidate centers only. Bootstrap, chronological thirds, leave-one-season-out, team concentration, threshold neighbors and price neighbors characterize stability; they do not retune the rules.',
     }
     (OUT/'latest.json').write_text(json.dumps(payload,indent=2,default=str))
 
