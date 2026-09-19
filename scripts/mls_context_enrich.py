@@ -187,7 +187,7 @@ def main():
 
     for _,g in games.iterrows():
         gid=str(g.game_id);ref=str(g.referee_id) if pd.notna(g.referee_id) else None
-        row={'asa_game_id':gid,'date_time_utc':g.dt,'referee_id':ref}
+        row={'asa_game_id':gid,'date_time_utc':pd.Timestamp(g['dt']),'referee_id':ref}
         rs=ref_state[ref] if ref else None
         if rs:
             nref=rs['games']
