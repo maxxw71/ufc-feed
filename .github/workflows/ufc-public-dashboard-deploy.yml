@@ -6,11 +6,14 @@ on:
     branches: [main]
     paths:
       - 'ufc/ufc_public_page.py'
-      - 'nfl/nfl_public_page.py'
       - 'scripts/sync_ufc_nfl_presentation.py'
       - 'scripts/fix_ufc_external_dashboard_css.py'
       - 'scripts/install_ufc_dashboard_hook.py'
       - '.github/workflows/ufc-public-dashboard-deploy.yml'
+
+concurrency:
+  group: appwiza-sports-public-pages
+  cancel-in-progress: false
 
 permissions:
   contents: read
@@ -21,7 +24,24 @@ jobs:
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
+        with: {fetch-depth: 0}
+      - name: Reject stale UFC page source
+        id: freshness
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          git fetch origin main
+          THIS=$(sha256sum ufc/ufc_public_page.py | awk '{print $1}')
+          LATEST=$(git show origin/main:ufc/ufc_public_page.py | sha256sum | awk '{print $1}')
+          echo "this=$THIS latest=$LATEST"
+          if [ "$THIS" != "$LATEST" ]; then
+            echo "deploy=false" >> "$GITHUB_OUTPUT"
+            echo "STALE UFC PAGE RUN — skipping server write"
+          else
+            echo "deploy=true" >> "$GITHUB_OUTPUT"
+          fi
       - name: Sync UFC presentation to NFL
+        if: steps.freshness.outputs.deploy == 'true'
         shell: bash
         run: |
           set -Eeuo pipefail
@@ -30,6 +50,7 @@ jobs:
           python3 -m py_compile ufc/ufc_public_page.py
           python3 -m py_compile scripts/install_ufc_dashboard_hook.py
       - name: Deploy UFC dashboard and persistent post-publish hook
+        if: steps.freshness.outputs.deploy == 'true'
         shell: bash
         run: |
           set -Eeuo pipefail
@@ -43,6 +64,7 @@ jobs:
           $SSH 'grep -q "UFC_PUBLIC_DASHBOARD_HOOK" /home/anestishkurti92/ufc-predictor-v1/ufc_email_watcher.py'
           $SSH '/home/anestishkurti92/ufc-predictor-v1/venv/bin/python -m py_compile /home/anestishkurti92/ufc-predictor-v1/ufc_email_watcher.py'
       - name: Verify public page and external dashboard CSS
+        if: steps.freshness.outputs.deploy == 'true'
         shell: bash
         run: |
           set -Eeuo pipefail
