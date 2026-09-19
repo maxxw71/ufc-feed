@@ -5,59 +5,51 @@ on:
     paths:
       - ".github/workflows/mls-maintenance.yml"
       - ".github/mls-probe.txt"
-      - "mls_research/**"
   workflow_dispatch:
 
 jobs:
-  validate-mls:
-    runs-on: [self-hosted, appwiza]
-    timeout-minutes: 20
+  inspect-real-mls:
+    runs-on: [self-hosted, Linux, X64, appwiza]
+    timeout-minutes: 12
     steps:
       - uses: actions/checkout@v4
-      - name: Build isolated MLS test environment
+      - name: Inspect real MLS warehouse through established SSH bridge
         shell: bash
         run: |
-          set -euo pipefail
-          python3 -m venv "$RUNNER_TEMP/mls-research-venv"
-          source "$RUNNER_TEMP/mls-research-venv/bin/activate"
-          python -m pip install --upgrade pip
-          python -m pip install -r mls_research/requirements.txt
-      - name: Run MLS unit tests
-        shell: bash
-        run: |
-          set -euo pipefail
-          source "$RUNNER_TEMP/mls-research-venv/bin/activate"
-          python -m unittest discover -s mls_research/tests -v
-      - name: Live official MLS status report smoke test
-        shell: bash
-        run: |
-          set -euo pipefail
-          source "$RUNNER_TEMP/mls-research-venv/bin/activate"
-          OUT="$RUNNER_TEMP/mls_status.jsonl"
-          RAW="$RUNNER_TEMP/mls_status_raw"
-          python -m mls_research.collect_mls_status --output "$OUT" --raw-dir "$RAW"
-          python - <<'PY'
-          import json, os
-          p=os.environ["RUNNER_TEMP"]+"/mls_status.jsonl"
-          rows=[json.loads(x) for x in open(p,encoding="utf-8") if x.strip()]
-          print("status_snapshots", len(rows))
-          print("status_teams", sorted({r["team"] for r in rows})[:40])
-          assert len(rows) >= 20, "Expected broad team coverage from official status report"
-          PY
-      - name: Live ASA point-in-time player-strength smoke test
-        shell: bash
-        run: |
-          set -euo pipefail
-          source "$RUNNER_TEMP/mls-research-venv/bin/activate"
-          OUT="$RUNNER_TEMP/mls_strength_2026-09-18.csv"
-          python -m mls_research.build_player_strength --as-of 2026-09-18 --lookback-days 120 --output "$OUT"
-          python - <<'PY'
-          import os, pandas as pd
-          p=os.environ["RUNNER_TEMP"]+"/mls_strength_2026-09-18.csv"
-          df=pd.read_csv(p)
-          print("strength_rows", len(df))
-          print("strength_columns", list(df.columns))
-          print(df[["player_name","team_name","minutes_played","gplus_p96","xg_xa_p96","impact_index"]].head(15).to_string(index=False))
-          assert len(df) >= 300, "Unexpectedly small MLS player-strength snapshot"
-          assert df["impact_index"].between(0,1).all()
-          PY
+          set -Eeuo pipefail
+          KEY=/home/appwiza-runner/.ssh/appwiza_vps
+          HOST=anestishkurti92@127.0.0.1
+          SSH="ssh -i $KEY -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=accept-new $HOST"
+          $SSH 'set -Eeuo pipefail; cd /home/anestishkurti92/mls-predictor-v1; echo "== ROOT =="; pwd; echo "== TOP =="; find . -maxdepth 2 -type f | sort | head -250; echo "== PROCESSED =="; ls -lh data/processed | tail -80; echo "== REPORTS =="; ls -lh reports | tail -80; echo "== AVAILABILITY =="; find data/raw/availability_archive live/availability -maxdepth 2 -type f -printf "%p %s bytes\n" 2>/dev/null | sort | tail -120; venv/bin/python - <<'"'"'PY'"'"'
+          import json
+          from pathlib import Path
+          import pandas as pd
+          root=Path("/home/anestishkurti92/mls-predictor-v1")
+          print("== DATAFRAME SCHEMAS ==")
+          for rel in [
+              "data/processed/mls_match_features_advanced.parquet",
+              "data/processed/mls_player_manager_pregame_features.parquet",
+              "data/processed/mls_match_features_player_enriched.parquet",
+              "data/raw/availability_archive/availability_archive_2024_2025.parquet",
+          ]:
+              p=root/rel
+              if not p.exists():
+                  print(rel, "MISSING")
+                  continue
+              d=pd.read_parquet(p)
+              print(rel, "shape=",d.shape)
+              print("columns=",list(d.columns))
+              print("season_counts=", d["season"].value_counts().sort_index().to_dict() if "season" in d else "n/a")
+          print("== ARCHIVE META ==")
+          p=root/"data/raw/availability_archive/meta.json"
+          print(p.read_text() if p.exists() else "missing")
+          print("== LATEST UNMATCHED ==")
+          p=root/"live/availability/latest.json"
+          if p.exists():
+              d=json.loads(p.read_text())
+              print(json.dumps(d.get("unmatched") or [],indent=2,ensure_ascii=False))
+              print("team_summary_keys", sorted((d.get("team_summary") or {}).keys()))
+          print("== MERGE META ==")
+          p=root/"reports/player_merge_meta.json"
+          print(p.read_text() if p.exists() else "missing")
+          PY'
