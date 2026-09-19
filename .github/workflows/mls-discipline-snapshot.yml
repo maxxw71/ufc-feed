@@ -1,0 +1,74 @@
+name: MLS Discipline Snapshot
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '35 1,7,13,19 * * *'
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/mls_discipline_snapshot.py'
+      - '.github/workflows/mls-discipline-snapshot.yml'
+
+concurrency:
+  group: mls-discipline
+  cancel-in-progress: true
+
+permissions:
+  contents: write
+
+jobs:
+  snapshot:
+    if: github.repository == 'maxxw71/ufc-feed'
+    runs-on: [self-hosted, Linux, X64, appwiza]
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+        with: {fetch-depth: 0}
+
+      - name: Deploy and capture MLS disciplinary summary
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          KEY=/home/appwiza-runner/.ssh/appwiza_vps
+          HOST=anestishkurti92@127.0.0.1
+          SSH="ssh -i $KEY -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=accept-new $HOST"
+          D=/home/anestishkurti92/mls-predictor-v1
+          cat scripts/mls_discipline_snapshot.py | $SSH 'set -e; D=/home/anestishkurti92/mls-predictor-v1; cat > "$D/mls_discipline_snapshot.py.new"; chmod 0644 "$D/mls_discipline_snapshot.py.new"; mv -f "$D/mls_discipline_snapshot.py.new" "$D/mls_discipline_snapshot.py"'
+          $SSH 'set -Eeuo pipefail; cd /home/anestishkurti92/mls-predictor-v1; venv/bin/python -m py_compile mls_discipline_snapshot.py; timeout 5m venv/bin/python mls_discipline_snapshot.py'
+
+      - name: Pull non-secret discipline summary
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          KEY=/home/appwiza-runner/.ssh/appwiza_vps
+          HOST=anestishkurti92@127.0.0.1
+          mkdir -p mls/discipline
+          ssh -i "$KEY" -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=accept-new "$HOST" 'python3 - <<'"'"'PY'"'"'
+          import json
+          from pathlib import Path
+          d=json.loads(Path("/home/anestishkurti92/mls-predictor-v1/live/discipline/latest.json").read_text())
+          print(json.dumps({
+            "captured_at":d.get("captured_at"),"source_as_of":d.get("source_as_of"),
+            "suspensions":len(d.get("suspensions") or []),
+            "caution_warnings":len(d.get("caution_warnings") or []),
+            "suspension_rows":d.get("suspensions") or []
+          },indent=2,ensure_ascii=False))
+          PY' > mls/discipline/latest_summary.json
+
+      - name: Persist discipline status
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          cp mls/discipline/latest_summary.json "$RUNNER_TEMP/discipline_summary.json"
+          git fetch origin main
+          git reset --hard origin/main
+          mkdir -p mls/discipline
+          cp "$RUNNER_TEMP/discipline_summary.json" mls/discipline/latest_summary.json
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git add mls/discipline/latest_summary.json
+          if ! git diff --cached --quiet; then
+            git commit -m 'Update MLS discipline snapshot status'
+            git push origin HEAD:main
+          fi
