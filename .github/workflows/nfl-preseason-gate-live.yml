@@ -1,0 +1,101 @@
+name: NFL Preseason Gate Live
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/patch_nfl_preseason_gate_live.py'
+      - 'nfl/legacy_preseason_veto_policy.py'
+      - '.github/workflows/nfl-preseason-gate-live.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  deploy:
+    runs-on: [self-hosted, Linux, X64, appwiza]
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Verify audited preseason source
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          PRE=/home/appwiza-runner/nfl-context-data/raw/preseason_team_2006_2026.csv
+          test -r "$PRE"
+          /home/anestishkurti92/nfl-predictor-v1/venv/bin/python - <<'PY'
+          import pandas as pd
+          p='/home/appwiza-runner/nfl-context-data/raw/preseason_team_2006_2026.csv'
+          d=pd.read_csv(p)
+          z=d[d.season.eq(2026)]
+          assert len(z)==32 and z.team.nunique()==32, (len(z),z.team.nunique())
+          q=z[z.team.isin(['TB','BAL','NO'])][['team','preseason_wins','preseason_games','preseason_record_equiv']]
+          print(q.to_string(index=False))
+          vals={r.team:float(r.preseason_wins) for _,r in q.iterrows()}
+          assert vals=={'BAL':3.0,'NO':1.0,'TB':2.0}, vals
+          print('2026 preseason source PASS')
+          PY
+
+      - name: Deploy source policy and scanner patch
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          KEY=/home/appwiza-runner/.ssh/appwiza_vps
+          HOST=anestishkurti92@127.0.0.1
+          PRE=/home/appwiza-runner/nfl-context-data/raw/preseason_team_2006_2026.csv
+          SSH="ssh -i $KEY -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=accept-new $HOST"
+
+          $SSH 'mkdir -p /home/anestishkurti92/nfl-predictor-v1/research_v2/data'
+          scp -i "$KEY" -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=accept-new             "$PRE" "$HOST":/home/anestishkurti92/nfl-predictor-v1/research_v2/data/preseason_team_2006_2026.csv
+          scp -i "$KEY" -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=accept-new             nfl/legacy_preseason_veto_policy.py "$HOST":/home/anestishkurti92/nfl-predictor-v1/research_v2/legacy_preseason_veto_policy.py
+          scp -i "$KEY" -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=accept-new             scripts/patch_nfl_preseason_gate_live.py "$HOST":/tmp/patch_nfl_preseason_gate_live.py
+
+          $SSH 'bash -s' <<'EOF'
+          set -Eeuo pipefail
+          export HOME=/home/anestishkurti92
+          R=/home/anestishkurti92/nfl-predictor-v1/research_v2
+          PY=/home/anestishkurti92/nfl-predictor-v1/venv/bin/python
+          cp "$R/nfl_home_opener_scanner.py" "$R/nfl_home_opener_scanner.py.pre-preseason-gate.$(date +%Y%m%d-%H%M%S).bak"
+          cp "$R/nfl_email_design.py" "$R/nfl_email_design.py.pre-preseason-gate.$(date +%Y%m%d-%H%M%S).bak"
+          "$PY" /tmp/patch_nfl_preseason_gate_live.py "$R/nfl_home_opener_scanner.py" "$R/nfl_email_design.py"
+          "$PY" -m py_compile "$R/nfl_home_opener_scanner.py" "$R/nfl_email_design.py" "$R/legacy_preseason_veto_policy.py"
+
+          cd "$R"
+          "$PY" nfl_home_opener_scanner.py --manual
+
+          echo '=== CANONICAL AFTER PRESEASON GATE ==='
+          cat home_opener_email_state/canonical_selections.json
+          echo
+          echo '=== REJECTIONS ==='
+          cat home_opener_email_state/production_match_rejections.json
+          echo
+          echo '=== EMAIL PREVIEW ==='
+          sed -n '1,180p' home_opener_email_state/preview.txt
+          echo
+          echo '=== WEBSITE STATE ACTIVE ==='
+          "$PY" - <<'PY'
+          import json
+          from pathlib import Path
+          canon=json.loads(Path('home_opener_email_state/canonical_selections.json').read_text())
+          assert canon['upcoming_total']==2, canon
+          assert canon['next_7_days']==2, canon
+          codes=[x['selection_code'] for x in canon['selections']]
+          assert codes==['TB','BAL'], codes
+          assert all(x['selection_code']!='NO' for x in canon['selections'])
+          print('canonical_codes',codes)
+
+          state=json.loads(Path('/srv/appwiza-sports/state/nfl.json').read_text())
+          active=[c for c in state.get('cards',[]) if not c.get('withdrawn') and c.get('start','')>'2026-09-18T00:00:00+00:00']
+          print('active_state',[(c.get('id'),c.get('selection'),c.get('opponent')) for c in active])
+          assert {c.get('id') for c in active}=={'NFL:2026_02_CLE_TB','NFL:2026_02_NO_BAL'}
+
+          text=Path('home_opener_email_state/preview.txt').read_text()
+          assert '2 upcoming qualifying games' in text
+          assert 'BUCCANEERS TO WIN' in text and 'RAVENS TO WIN' in text
+          assert 'SAINTS TO WIN' not in text
+          print('email_preview PASS')
+          PY
+
+          echo '=== WEBSITE DEEP AUDIT SUMMARY COMPLETE ==='
+          grep -o 'Available selections' /srv/appwiza-sports/public/nfl/index.html | head -1 || true
+          echo 'NFL PRESEASON GATE LIVE — EMAIL/WEBSITE/CANONICAL NOW SHARE THE SAME RECORDS'
+          EOF
