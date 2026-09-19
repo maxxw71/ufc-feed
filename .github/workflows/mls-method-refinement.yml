@@ -1,0 +1,64 @@
+name: MLS Method Refinement
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/mls_method_refinement.py'
+      - '.github/workflows/mls-method-refinement.yml'
+
+concurrency:
+  group: mls-method-refinement
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  refine:
+    if: github.repository == 'maxxw71/ufc-feed'
+    runs-on: [self-hosted, Linux, X64, appwiza]
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+        with: {fetch-depth: 0}
+
+      - name: Deploy and run MLS method refinement
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          KEY=/home/appwiza-runner/.ssh/appwiza_vps
+          HOST=anestishkurti92@127.0.0.1
+          SSH="ssh -i $KEY -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=accept-new $HOST"
+          D=/home/anestishkurti92/mls-predictor-v1
+          for f in mls_arsenal_research.py mls_method_refinement.py; do
+            cat "scripts/$f" | $SSH "set -e; D=$D; cat > \"\$D/$f.new\"; chmod 0644 \"\$D/$f.new\"; mv -f \"\$D/$f.new\" \"\$D/$f\""
+          done
+          $SSH 'set -Eeuo pipefail; cd /home/anestishkurti92/mls-predictor-v1; venv/bin/python -m py_compile mls_arsenal_research.py mls_method_refinement.py; OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 nice -n 12 timeout 18m venv/bin/python mls_method_refinement.py'
+
+      - name: Pull refinement audit
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          KEY=/home/appwiza-runner/.ssh/appwiza_vps
+          HOST=anestishkurti92@127.0.0.1
+          mkdir -p mls/research
+          ssh -i "$KEY" -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=accept-new "$HOST" 'cat /home/anestishkurti92/mls-predictor-v1/research/method_refinement/latest.json' > mls/research/method_refinement_latest.json
+
+      - name: Persist refinement audit
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          cp mls/research/method_refinement_latest.json "$RUNNER_TEMP/method_refinement.json"
+          git fetch origin main
+          git reset --hard origin/main
+          mkdir -p mls/research
+          cp "$RUNNER_TEMP/method_refinement.json" mls/research/method_refinement_latest.json
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git add mls/research/method_refinement_latest.json
+          if ! git diff --cached --quiet; then
+            git commit -m 'Publish MLS method refinement audit'
+            git push origin HEAD:main
+          fi
