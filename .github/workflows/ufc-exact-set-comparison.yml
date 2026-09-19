@@ -1,0 +1,109 @@
+name: UFC Exact Set Comparison
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/ufc-exact-set-comparison.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  audit:
+    runs-on: [self-hosted, Linux, X64, appwiza]
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - name: Compare current canonical public and latest email sets
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          KEY=/home/appwiza-runner/.ssh/appwiza_vps
+          HOST=anestishkurti92@127.0.0.1
+          ssh -i "$KEY" -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=accept-new "$HOST" 'bash -s' <<'EOF'
+          set -Eeuo pipefail
+          export HOME=/home/anestishkurti92
+          ROOT=/home/anestishkurti92/ufc-predictor-v1
+          PY="$ROOT/venv/bin/python"
+          cd "$ROOT"
+          "$PY" - <<'PY'
+          import importlib.util,json,sqlite3
+          from pathlib import Path
+          from datetime import datetime,timezone
+          spec=importlib.util.spec_from_file_location('w','ufc_email_watcher.py')
+          w=importlib.util.module_from_spec(spec);spec.loader.exec_module(w)
+          feed=w.fetch_feed()
+          bundle=w.joblib.load(w.BUNDLE_PATH)
+          reach=w.load_reach_index(); skills=w.load_skill_index()
+          canonical={}
+          for e in feed.get('events') or []:
+              preds=[]
+              for b in e.get('bouts') or []:
+                  try:p=w.predict_bout(b,e.get('date'),bundle,reach,skills)
+                  except TypeError:
+                      try:p=w.predict_bout(b,e.get('date'),bundle,reach)
+                      except TypeError:p=w.predict_bout(b,e.get('date'),bundle)
+                  preds.append(p)
+                  cards=list(w.ufc_email_design.method_cards(p,w.__dict__))
+                  byfav={}
+                  for c in cards:
+                      fav=str(c.get('favorite') or '').strip()
+                      if fav: byfav.setdefault(fav,[]).append(c)
+                  picks=list(w.bet_tracker.ufc_picks(e,[p]))
+                  for fav,mcards in byfav.items():
+                      pick=next((x for x in picks if x.get('selection')==fav),None)
+                      if pick is None:
+                          canonical[(w.event_key(e),fav)]=dict(event=e.get('name'),selection=fav,opponent='?',methods=sorted(c.get('id') for c in mcards if c.get('id')),price=None,book=None,tracker_missing=True)
+                      else:
+                          canonical[(w.event_key(e),fav)]=dict(event=e.get('name'),selection=fav,opponent=pick.get('opponent'),methods=sorted(c.get('id') for c in mcards if c.get('id')),price=pick.get('price'),book=pick.get('book'),key=pick.get('key'),tracker_methods=pick.get('methods'),tracker_missing=False)
+          public={}
+          d=json.loads(Path('/srv/appwiza-sports/state/ufc.json').read_text())
+          now=datetime.now(timezone.utc)
+          for c in d.get('cards',[]):
+              st=datetime.fromisoformat(str(c.get('start')).replace('Z','+00:00'))
+              if st<=now or c.get('withdrawn'):continue
+              key=(str(c.get('id')).split(':')[1] if str(c.get('id')).startswith('UFC:') else '',str(c.get('selection')))
+              public[key]=dict(selection=c.get('selection'),opponent=c.get('opponent'),methods=sorted(m.get('id') for m in c.get('methods',[]) if m.get('id')),price=c.get('price'),book=c.get('book'),id=c.get('id'))
+          db=sqlite3.connect('/home/anestishkurti92/betting-ledger/assumed_bets.sqlite3');db.row_factory=sqlite3.Row
+          rows=db.execute("select * from deliveries where sport='UFC' and status='sent' order by created desc").fetchall()
+          latest=None
+          for r in rows:
+              picks=json.loads(r['picks'] or '[]')
+              if picks:
+                  latest=(dict(r),picks);break
+          emailed={}
+          if latest:
+              for p in latest[1]:
+                  k=str(p.get('key') or '')
+                  parts=k.split(':')
+                  ek=parts[1] if len(parts)>2 else ''
+                  emailed[(ek,str(p.get('selection')))] = dict(selection=p.get('selection'),opponent=p.get('opponent'),methods=p.get('methods'),price=p.get('price'),book=p.get('book'),key=k)
+          def names(s):return sorted(f"{k[0]} | {k[1]}" for k in s)
+          print('=== CANONICAL CURRENT ===')
+          for k,v in sorted(canonical.items()):print(k,json.dumps(v,sort_keys=True))
+          print('COUNT',len(canonical))
+          print('=== PUBLIC CURRENT ===')
+          for k,v in sorted(public.items()):print(k,json.dumps(v,sort_keys=True))
+          print('COUNT',len(public))
+          print('=== LATEST NONEMPTY LIVE EMAIL ===')
+          if latest: print('DELIVERY',latest[0]['id'],latest[0]['created'],latest[0]['provider_id'])
+          for k,v in sorted(emailed.items()):print(k,json.dumps(v,sort_keys=True))
+          print('COUNT',len(emailed))
+          C,P,E=set(canonical),set(public),set(emailed)
+          print('CANONICAL_MINUS_PUBLIC',names(C-P))
+          print('PUBLIC_MINUS_CANONICAL',names(P-C))
+          print('CANONICAL_MINUS_EMAIL',names(C-E))
+          print('EMAIL_MINUS_CANONICAL',names(E-C))
+          print('METHOD_MISMATCHES_PUBLIC')
+          for k in sorted(C&P):
+              if canonical[k]['methods']!=public[k]['methods']: print(k,canonical[k]['methods'],public[k]['methods'])
+          print('METHOD_MISMATCHES_EMAIL_TRACKER')
+          for k in sorted(C&E):
+              cm=canonical[k]['methods']; em=emailed[k].get('methods') or []
+              # Email ledger currently stores internal tracker method labels; print all mismatches.
+              if sorted(cm)!=sorted(em): print(k,cm,em)
+          print('CURRENT_TRACKER_LABEL_MISMATCHES')
+          for k,v in sorted(canonical.items()):
+              if sorted(v.get('methods') or [])!=sorted(v.get('tracker_methods') or []):
+                  print(k,v.get('methods'),v.get('tracker_methods'))
+          PY
+          EOF
