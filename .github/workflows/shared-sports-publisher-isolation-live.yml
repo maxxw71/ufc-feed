@@ -1,0 +1,29 @@
+name: Shared Sports Publisher Isolation Live
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/patch_shared_sports_publisher_isolation.py'
+      - '.github/workflows/shared-sports-publisher-isolation-live.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  deploy:
+    runs-on: [self-hosted, Linux, X64, appwiza]
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install cross-sport render isolation
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          P=/opt/sports-publisher/sports_publish.py
+          stat -c '%U:%G %a %n' "$P"
+          test -w "$P"
+          cp "$P" "$P.pre-cross-sport-isolation.$(date +%Y%m%d-%H%M%S).bak"
+          python3 scripts/patch_shared_sports_publisher_isolation.py "$P"
+          python3 -m py_compile "$P"
+          grep -q 'CROSS_SPORT_RENDER_ISOLATION_V1' "$P"
+          grep -q 'render_sport(sport)' "$P"
+          echo 'SHARED SPORTS PUBLISHER ISOLATED'
