@@ -25,6 +25,37 @@ JINA='https://r.jina.ai/'
 UA='Mozilla/5.0 AppwizaMLSTransactions/1.0'
 URLS={y:f'https://www.mlssoccer.com/news/{y}-mls-transactions' for y in range(2021,2025)}
 TEAM_SET={canon_team(x) for x in TEAM_INFO}
+TEAM_HEADING_ALIASES={
+    'Atlanta United':'Atlanta United FC',
+    'Chicago Fire':'Chicago Fire FC',
+    'D.C. United':'D.C. United',
+    'DC United':'D.C. United',
+    'Houston Dynamo':'Houston Dynamo FC',
+    'Inter Miami':'Inter Miami CF',
+    'LAFC':'Los Angeles FC',
+    'Los Angeles Football Club':'Los Angeles FC',
+    'Minnesota United':'Minnesota United FC',
+    'Montreal Impact':'CF Montréal',
+    'CF Montreal':'CF Montréal',
+    'New England Revolution':'New England Revolution',
+    'New York City FC':'New York City FC',
+    'NYCFC':'New York City FC',
+    'New York Red Bulls':'New York Red Bulls',
+    'Orlando City':'Orlando City SC',
+    'Philadelphia Union':'Philadelphia Union',
+    'Portland Timbers':'Portland Timbers',
+    'Seattle Sounders':'Seattle Sounders FC',
+    'Seattle Sounders FC':'Seattle Sounders FC',
+    'Sporting Kansas City':'Sporting Kansas City',
+    'St. Louis CITY SC':'St. Louis City SC',
+    'St. Louis City SC':'St. Louis City SC',
+    'Vancouver Whitecaps':'Vancouver Whitecaps FC',
+    'Vancouver Whitecaps FC':'Vancouver Whitecaps FC',
+}
+def canon_tx_team(x):
+    raw=clean(x).strip(' :')
+    raw=TEAM_HEADING_ALIASES.get(raw,raw)
+    return canon_team(raw)
 
 def now():return datetime.now(timezone.utc).isoformat()
 
@@ -77,9 +108,10 @@ def parse_page(year,text,url):
     for raw in text.splitlines():
         line=clean(raw)
         if not line:continue
-        cand=canon_team(line)
+        cand=canon_tx_team(line)
         if cand in TEAM_SET and ('|' not in line):
-            team=cand;continue
+            team=cand
+            continue
         if not team or '|' not in line:continue
         if 'PLAYERS IN' in line.upper() or re.fullmatch(r'[-: |]+',line):continue
         table_line=line.strip()
