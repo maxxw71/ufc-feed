@@ -7,38 +7,16 @@ on:
   workflow_dispatch:
 
 jobs:
-  inspect-transactions:
+  inspect-shadow:
     runs-on: [self-hosted, Linux, X64, appwiza]
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
-      - name: Inspect 2021 MLS transaction relay format
+      - name: Inspect current MLS prospective shadow scripts
         shell: bash
         run: |
           set -Eeuo pipefail
           KEY=/home/appwiza-runner/.ssh/appwiza_vps
           HOST=anestishkurti92@127.0.0.1
           SSH="ssh -i $KEY -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=accept-new $HOST"
-          $SSH 'set -Eeuo pipefail; cd /home/anestishkurti92/mls-predictor-v1; venv/bin/python - <<'"'"'PY'"'"'
-          import re, urllib.request
-          from mls_bootstrap_warehouse import canon_team, TEAM_INFO
-          url="https://r.jina.ai/https://www.mlssoccer.com/news/2021-mls-transactions"
-          req=urllib.request.Request(url,headers={"User-Agent":"Mozilla/5.0 AppwizaTXDebug/1.0","Accept":"text/plain"})
-          text=urllib.request.urlopen(req,timeout=60).read().decode("utf-8","replace")
-          print("BYTES",len(text))
-          def clean(x):
-              x=re.sub(r"!\[[^\]]*\]\([^)]*\)"," ",str(x or ""))
-              x=re.sub(r"\[([^\]]+)\]\([^)]*\)",r"\1",x)
-              x=re.sub(r"^#{1,6}\s*","",x)
-              x=x.replace("**","").replace("__","")
-              return re.sub(r"\s+"," ",x).strip()
-          print("TEAM_INFO_KEYS_SAMPLE",list(TEAM_INFO)[:50])
-          for s in ["Atlanta United","Atlanta United FC","New England Revolution","Chicago Fire","Chicago Fire FC","CF Montreal","CF Montréal"]:
-              print("CANON",repr(s),"->",repr(canon_team(s)))
-          lines=text.splitlines()
-          for i,raw in enumerate(lines[:180]):
-              line=clean(raw)
-              if line:
-                  print(f"{i:03d} RAW={raw[:250]!r}")
-                  print(f"    CLEAN={line[:250]!r} CANON={canon_team(line)!r}")
-          PY'
+          $SSH 'set -Eeuo pipefail; cd /home/anestishkurti92/mls-predictor-v1; for f in mls_prospective_shadow.py mls_shadow_ledger.py; do echo "===== $f ====="; sed -n "1,320p" "$f"; done'
