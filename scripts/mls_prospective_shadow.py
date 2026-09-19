@@ -11,7 +11,7 @@ from mls_bootstrap_warehouse import canon_team
 ROOT=Path('/home/anestishkurti92/mls-predictor-v1')
 MARKET=ROOT/'live/market_snapshots/latest.json'
 OUT=ROOT/'live/shadow';OUT.mkdir(parents=True,exist_ok=True)
-ELO_TEAMS='https://raw.githubusercontent.com/philo92/mls-elo/main/teams.csv'
+ELO_CURRENT=ROOT/'live/current/elo_current.json'
 UA='Appwiza-MLS-Shadow/1.0'
 
 METHODS=[
@@ -29,15 +29,12 @@ HISTORY={
 }
 def now():return datetime.now(timezone.utc)
 def fetch_elo():
-    req=urllib.request.Request(ELO_TEAMS,headers={'User-Agent':UA})
-    raw=urllib.request.urlopen(req,timeout=30).read()
-    p=OUT/'elo_teams_latest.csv';p.write_bytes(raw)
-    d=pd.read_csv(p)
-    d['team']=d['team'].map(canon_team);d['elo']=pd.to_numeric(d.elo,errors='coerce')
-    d['last_updated_date']=pd.to_datetime(d.last_updated_date,errors='coerce',utc=True)
-    last=d.last_updated_date.max()
+    if not ELO_CURRENT.exists():
+        raise RuntimeError('Fresh MLS Elo bridge missing')
+    d=json.loads(ELO_CURRENT.read_text())
+    mp={canon_team(k):float(v) for k,v in (d.get('ratings') or {}).items()}
+    last=pd.to_datetime(d.get('bridged_through'),errors='coerce',utc=True)
     age_days=(pd.Timestamp(now())-last).total_seconds()/86400 if pd.notna(last) else 999
-    mp={r.team:float(r.elo) for _,r in d[d.elo.notna()].iterrows()}
     return mp,None if pd.isna(last) else last.isoformat(),age_days
 def asa_data():
     asa=AmericanSoccerAnalysis()
