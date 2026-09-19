@@ -284,6 +284,29 @@ def verified_2025_candidates():
             'expected_matchday':md,
         }
 
+def trusted_cached_reports():
+    out=[]
+    for year,known in [(2024,KNOWN_2024),(2025,KNOWN_2025)]:
+        for md,path in sorted(known.items()):
+            p=OUT/f'{year}_matchday_{md:02d}.json'
+            if not p.exists():
+                continue
+            try:
+                r=json.loads(p.read_text())
+            except Exception:
+                continue
+            expected=urljoin(MLS,path)
+            if int(r.get('year') or -1)!=year or int(r.get('matchday') or -1)!=md:
+                continue
+            if str(r.get('url'))!=expected:
+                continue
+            teams=r.get('teams_seen') or []
+            entries=r.get('entries') or []
+            if len(teams)<2:
+                continue
+            out.append(r)
+    return out
+
 def legacy_candidates():
     # Guessed slugs are fallback discovery only. Never assign their season from
     # the guess: MLS has reused simple Matchday URLs across years.
@@ -362,9 +385,16 @@ def main():
                 continue
             fetched.append((rec,text))
 
-    # Deduplicate by (year, matchday) after scoring parse quality. This avoids
-    # old 2024 and newer 2025 articles that share the same simple slug.
+    # Deduplicate by (year, matchday) after scoring parse quality. Seed with
+    # trusted cached JSONs whose URL exactly matches the verified first-party map.
+    # This lets transient relay failures refresh opportunistically without
+    # destroying already validated season coverage.
+    cached=trusted_cached_reports()
     by_key={}
+    for candidate in cached:
+        score=(len(candidate.get('teams_seen') or []),len(candidate.get('entries') or []),2)
+        by_key[(int(candidate['year']),int(candidate['matchday']))]=(score,candidate)
+
     rejected=[]
     for rec,text in fetched:
         if 'Player Status Report' not in text or not re.search(r'\b(?:Out|Questionable|None)\b',text,re.I):
@@ -458,6 +488,7 @@ def main():
         'discovered_media_urls':len(discovered),
         'verified_2024_seed_urls':len(KNOWN_2024),
         'verified_2025_seed_urls':len(KNOWN_2025),
+        'trusted_cached_reports':len(cached),
         'reports':len(reports),
         'rows':len(flat),
         'status_entries':int((df.status!='CLEAR').sum()),
@@ -471,7 +502,7 @@ def main():
         },
         'parse_rejections':rejected,
         'fetch_failures':fetch_failures,
-        'discovery_note':'2024 and 2025 use exact first-party MLS URLs verified from Media Resources/search where seeded. Dynamic Media Resources discovery and publication-year-verified guessed slugs are fallbacks. Duplicate season/matchdays prefer broader recognized-team coverage.',
+        'discovery_note':'2024 and 2025 use exact first-party MLS URLs verified from Media Resources/search where seeded. Trusted cached JSONs are reusable only when their stored URL exactly matches the verified seed map. Network refreshes are opportunistic; partial relay failures cannot erase trusted coverage.',
     }
     (OUT/'meta.json').write_text(json.dumps(meta,indent=2))
     print(json.dumps(meta,indent=2),flush=True)
