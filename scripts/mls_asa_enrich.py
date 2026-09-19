@@ -24,7 +24,7 @@ def main():
     for year in range(2013,2027):
         gerr=xerr=None
         try:
-            g=asa.get_games(leagues='mls',seasons=str(year))
+            g=asa.get_games(leagues='mls',season_name=str(year))
             if not isinstance(g,pd.DataFrame):g=pd.DataFrame(g)
         except Exception as e:
             g=pd.DataFrame();gerr={'error':type(e).__name__,'message':str(e)[:500]}
