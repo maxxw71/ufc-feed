@@ -96,7 +96,7 @@ def parse_summary(event_id):
         home_away=tr.get('homeAway')
         for r in tr.get('roster') or []:
             a=r.get('athlete') or {}
-            pos=a.get('position') or {}
+            pos=r.get('position') or a.get('position') or {}
             stats={str(x.get('name')):x.get('value') for x in (r.get('stats') or []) if x.get('name')}
             roster_rows.append({
                 'espn_event_id':str(event_id),
@@ -115,22 +115,39 @@ def parse_summary(event_id):
             })
 
     card_rows=[]
-    header_comp=((d.get('header') or {}).get('competitions') or [{}])[0]
-    for detail in header_comp.get('details') or []:
+    seen_cards=set()
+    def add_card(detail):
         typ=(detail.get('type') or {}).get('text') or ''
         low=typ.lower()
         if 'yellow card' not in low and 'red card' not in low:
-            continue
-        athlete=(detail.get('athletesInvolved') or [{}])[0]
+            return
+        athlete=(detail.get('athletesInvolved') or detail.get('participants') or [{}])[0]
+        if isinstance(athlete,dict) and 'athlete' in athlete:
+            athlete=athlete.get('athlete') or {}
         team_id=str((detail.get('team') or {}).get('id')) if (detail.get('team') or {}).get('id') is not None else None
+        minute=((detail.get('clock') or {}).get('displayValue')) or ((detail.get('time') or {}).get('displayValue'))
+        pid=str(athlete.get('id')) if athlete.get('id') is not None else None
+        pname=athlete.get('displayName') or athlete.get('fullName')
+        key=('RED' if 'red' in low else 'YELLOW',minute,pid,pname,team_id)
+        if key in seen_cards:return
+        seen_cards.add(key)
         card_rows.append({
-            'espn_event_id':str(event_id),
-            'card_type':'RED' if 'red' in low else 'YELLOW',
-            'minute':((detail.get('clock') or {}).get('displayValue')),
-            'espn_player_id':str(athlete.get('id')) if athlete.get('id') is not None else None,
-            'player_name':athlete.get('displayName') or athlete.get('fullName'),
-            'espn_team_id':team_id,
+            'espn_event_id':str(event_id),'card_type':key[0],'minute':minute,
+            'espn_player_id':pid,'player_name':pname,'espn_team_id':team_id,
         })
+
+    header_comp=((d.get('header') or {}).get('competitions') or [{}])[0]
+    for detail in header_comp.get('details') or []:add_card(detail)
+    for detail in d.get('keyEvents') or []:add_card(detail)
+    if not card_rows:
+        for item in d.get('commentary') or []:
+            play=item.get('play') or {}
+            typ=(play.get('type') or {}).get('text') or ''
+            if 'card' not in typ.lower():continue
+            athlete=((play.get('participants') or [{}])[0].get('athlete') or {})
+            pseudo={'type':{'text':typ},'clock':play.get('clock') or item.get('time') or {},
+                    'team':play.get('team') or {},'athletesInvolved':[athlete]}
+            add_card(pseudo)
 
     parsed={
         'espn_event_id':str(event_id),
