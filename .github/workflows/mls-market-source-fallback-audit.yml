@@ -30,7 +30,19 @@ jobs:
                   raw=urllib.request.urlopen(req,timeout=45).read()
                   text=raw.decode('utf-8','replace')
                   print('bytes',len(raw),'has_odds',bool(re.search(r'odds|draftkings|moneyline|draw',text,re.I)))
-                  print(text[:5000])
+                  if name=='espn_jina':
+                      mark='Markdown Content:\n'
+                      payload=text.split(mark,1)[1] if mark in text else text
+                      payload=payload.strip()
+                      d=json.loads(payload)
+                      print('events',len(d.get('events') or []))
+                      for e in d.get('events') or []:
+                          comp=(e.get('competitions') or [{}])[0]
+                          teams=[x.get('team',{}).get('displayName') for x in comp.get('competitors') or []]
+                          odds=comp.get('odds') or []
+                          print(json.dumps({'id':e.get('id'),'date':e.get('date'),'teams':teams,'odds_count':len(odds),'odds':odds[:3]},default=str))
+                  else:
+                      print(text[:2500])
               except Exception as e:
                   print(type(e).__name__,str(e))
           PY
