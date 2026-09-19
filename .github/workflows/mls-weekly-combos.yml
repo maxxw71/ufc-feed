@@ -1,0 +1,54 @@
+name: MLS Weekly Interaction Research
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/mls_weekly_combos.py'
+      - '.github/workflows/mls-weekly-combos.yml'
+
+concurrency:
+  group: mls-research
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  research:
+    runs-on: [self-hosted, Linux, X64, appwiza]
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+        with: {fetch-depth: 0}
+      - name: Run MLS weekly interaction search
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          KEY=/home/appwiza-runner/.ssh/appwiza_vps
+          HOST=anestishkurti92@127.0.0.1
+          SSH="ssh -i $KEY -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=accept-new $HOST"
+          cat scripts/mls_weekly_combos.py | $SSH 'set -e; D=/home/anestishkurti92/mls-predictor-v1; cat > "$D/mls_weekly_combos.py.new"; chmod 0644 "$D/mls_weekly_combos.py.new"; mv -f "$D/mls_weekly_combos.py.new" "$D/mls_weekly_combos.py"'
+          $SSH 'set -Eeuo pipefail; cd /home/anestishkurti92/mls-predictor-v1; venv/bin/python -m py_compile mls_weekly_combos.py; OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 nice -n 15 timeout 25m venv/bin/python mls_weekly_combos.py'
+      - name: Pull weekly MLS report
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          KEY=/home/appwiza-runner/.ssh/appwiza_vps
+          HOST=anestishkurti92@127.0.0.1
+          mkdir -p mls/research
+          ssh -i "$KEY" -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=accept-new "$HOST" 'cat /home/anestishkurti92/mls-predictor-v1/auto_research/reports/weekly_latest.txt' > mls/research/weekly_latest.txt
+          cat mls/research/weekly_latest.txt
+      - name: Persist weekly report
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git add mls/research/weekly_latest.txt
+          if ! git diff --cached --quiet; then
+            git commit -m 'Publish MLS weekly interaction research'
+            git pull --rebase origin main
+            git push origin HEAD:main
+          fi
