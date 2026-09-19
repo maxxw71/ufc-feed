@@ -1,0 +1,48 @@
+name: MLS Player Endpoint Signature Audit
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/mls-player-endpoint-signature-audit.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  audit:
+    runs-on: [self-hosted, Linux, X64, appwiza]
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Inspect ASA player endpoint signatures and schemas
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          KEY=/home/appwiza-runner/.ssh/appwiza_vps
+          HOST=anestishkurti92@127.0.0.1
+          ssh -i "$KEY" -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=accept-new "$HOST" 'bash -s' <<'EOF'
+          set -Eeuo pipefail
+          PY=/home/anestishkurti92/mls-predictor-v1/venv/bin/python
+          "$PY" - <<'PY'
+          from itscalledsoccer import AmericanSoccerAnalysis
+          import inspect,pandas as pd
+          asa=AmericanSoccerAnalysis()
+          for m in ['get_player_xgoals','get_player_xpass','get_player_goals_added','get_player_salaries','get_goalkeeper_xgoals','get_goalkeeper_goals_added','get_team_salaries','get_managers']:
+              fn=getattr(asa,m)
+              print('\n',m,inspect.signature(fn))
+              print((inspect.getdoc(fn) or '')[:2200])
+          probes=[
+            ('player_xpass','get_player_xpass',{'leagues':'mls','season_name':'2025'}),
+            ('player_salaries','get_player_salaries',{'leagues':'mls','season_name':'2025'}),
+            ('gk_xgoals','get_goalkeeper_xgoals',{'leagues':'mls','season_name':'2025'}),
+            ('gk_goals_added','get_goalkeeper_goals_added',{'leagues':'mls','season_name':'2025'}),
+            ('team_salaries','get_team_salaries',{'leagues':'mls','season_name':'2025'}),
+          ]
+          for name,m,args in probes:
+              try:
+                  z=getattr(asa,m)(**args)
+                  if not isinstance(z,pd.DataFrame):z=pd.DataFrame(z)
+                  print('PROBE',name,'rows',len(z),'cols',list(z.columns))
+                  if len(z): print(z.head(2).to_dict('records'))
+              except Exception as e:print('PROBE',name,'ERROR',type(e).__name__,str(e)[:500])
+          PY
+          EOF
