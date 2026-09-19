@@ -1,0 +1,63 @@
+name: MLS Context Enrichment
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/mls_context_enrich.py'
+      - '.github/workflows/mls-context-enrich.yml'
+
+concurrency:
+  group: mls-context-enrich
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    if: github.repository == 'maxxw71/ufc-feed'
+    runs-on: [self-hosted, Linux, X64, appwiza]
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with: {fetch-depth: 0}
+
+      - name: Deploy and build MLS context features
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          KEY=/home/appwiza-runner/.ssh/appwiza_vps
+          HOST=anestishkurti92@127.0.0.1
+          SSH="ssh -i $KEY -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=accept-new $HOST"
+          D=/home/anestishkurti92/mls-predictor-v1
+          cat scripts/mls_context_enrich.py | $SSH 'set -e; D=/home/anestishkurti92/mls-predictor-v1; cat > "$D/mls_context_enrich.py.new"; chmod 0644 "$D/mls_context_enrich.py.new"; mv -f "$D/mls_context_enrich.py.new" "$D/mls_context_enrich.py"'
+          $SSH 'set -Eeuo pipefail; cd /home/anestishkurti92/mls-predictor-v1; venv/bin/python -m py_compile mls_context_enrich.py; OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 nice -n 12 timeout 10m venv/bin/python mls_context_enrich.py'
+
+      - name: Pull context audit
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          KEY=/home/appwiza-runner/.ssh/appwiza_vps
+          HOST=anestishkurti92@127.0.0.1
+          mkdir -p mls/context
+          ssh -i "$KEY" -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=accept-new "$HOST" 'cat /home/anestishkurti92/mls-predictor-v1/reports/context_feature_meta.json' > mls/context/feature_meta.json
+          cat mls/context/feature_meta.json
+
+      - name: Persist context audit
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          cp mls/context/feature_meta.json "$RUNNER_TEMP/context_feature_meta.json"
+          git fetch origin main
+          git reset --hard origin/main
+          mkdir -p mls/context
+          cp "$RUNNER_TEMP/context_feature_meta.json" mls/context/feature_meta.json
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git add mls/context/feature_meta.json
+          if ! git diff --cached --quiet; then
+            git commit -m 'Publish MLS context enrichment audit'
+            git push origin HEAD:main
+          fi
