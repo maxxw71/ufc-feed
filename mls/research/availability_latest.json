@@ -1,0 +1,2451 @@
+{
+  "built_at": "2026-09-19T19:39:49.005501+00:00",
+  "dataset": "/home/anestishkurti92/mls-predictor-v1/data/processed/mls_match_features_availability_enriched.parquet",
+  "coverage_matches": {
+    "2024": 320,
+    "2025": 345
+  },
+  "tested_direct_contexts": 6534,
+  "pre2025_direct_survivors": 1284,
+  "frozen_direct_candidates": 60,
+  "direct_2025_validated": 55,
+  "frozen_veto_candidates": 30,
+  "veto_2025_validated": 13,
+  "design": "2024 discovery only; rules frozen before 2025 validation. No 2025 thresholds are used to tune a rule.",
+  "status": "EXPLORATORY_SHADOW_ONLY",
+  "promotion_note": "Two-season availability history is insufficient for promotion regardless of validation result.",
+  "top_direct_discovery_order": [
+    {
+      "outcome": "AWAY",
+      "price_band": "P20_30",
+      "feature": "opp_availability_weighted_missing_xgi_share5",
+      "op": "<=",
+      "threshold": 0.0,
+      "discovery": {
+        "n": 35,
+        "wins": 19,
+        "losses": 16,
+        "win_rate": 0.5428571428571428,
+        "roi": 1.0788571428571427,
+        "units": 37.76
+      },
+      "score": 6.382604931709756,
+      "validation": {
+        "n": 30,
+        "wins": 11,
+        "losses": 19,
+        "win_rate": 0.36666666666666664,
+        "roi": 0.4423333333333333,
+        "units": 13.27
+      },
+      "validated": true
+    },
+    {
+      "outcome": "AWAY",
+      "price_band": "P20_30",
+      "feature": "opp_availability_weighted_missing_minutes_share5",
+      "op": "<=",
+      "threshold": 0.0,
+      "discovery": {
+        "n": 28,
+        "wins": 16,
+        "losses": 12,
+        "win_rate": 0.5714285714285714,
+        "roi": 1.1657142857142857,
+        "units": 32.64
+      },
+      "score": 6.1683801995105885,
+      "validation": {
+        "n": 23,
+        "wins": 7,
+        "losses": 16,
+        "win_rate": 0.30434782608695654,
+        "roi": 0.18391304347826082,
+        "units": 4.229999999999999
+      },
+      "validated": true
+    },
+    {
+      "outcome": "AWAY",
+      "price_band": "P20_30",
+      "feature": "opp_availability_weighted_missing_gplus_share5",
+      "op": "<=",
+      "threshold": 0.0,
+      "discovery": {
+        "n": 30,
+        "wins": 16,
+        "losses": 14,
+        "win_rate": 0.5333333333333333,
+        "roi": 1.0213333333333334,
+        "units": 30.64
+      },
+      "score": 5.594073053986097,
+      "validation": {
+        "n": 29,
+        "wins": 10,
+        "losses": 19,
+        "win_rate": 0.3448275862068966,
+        "roi": 0.3496551724137931,
+        "units": 10.14
+      },
+      "validated": true
+    },
+    {
+      "outcome": "AWAY",
+      "price_band": "P25_35",
+      "feature": "edge_availability_questionable_count",
+      "op": "<=",
+      "threshold": 0.0,
+      "discovery": {
+        "n": 78,
+        "wins": 38,
+        "losses": 40,
+        "win_rate": 0.48717948717948717,
+        "roi": 0.5901282051282052,
+        "units": 46.03
+      },
+      "score": 5.211871188167575,
+      "validation": {
+        "n": 90,
+        "wins": 30,
+        "losses": 60,
+        "win_rate": 0.3333333333333333,
+        "roi": 0.08844444444444444,
+        "units": 7.959999999999999
+      },
+      "validated": true
+    },
+    {
+      "outcome": "AWAY",
+      "price_band": "P25_35",
+      "feature": "opp_availability_weighted_missing_minutes_share5",
+      "op": "<=",
+      "threshold": 0.0,
+      "discovery": {
+        "n": 25,
+        "wins": 15,
+        "losses": 10,
+        "win_rate": 0.6,
+        "roi": 0.9932,
+        "units": 24.83
+      },
+      "score": 4.966,
+      "validation": {
+        "n": 23,
+        "wins": 10,
+        "losses": 13,
+        "win_rate": 0.43478260869565216,
+        "roi": 0.42999999999999994,
+        "units": 9.889999999999999
+      },
+      "validated": true
+    },
+    {
+      "outcome": "AWAY",
+      "price_band": "P25_35",
+      "feature": "opp_availability_weighted_missing_gplus_share5",
+      "op": "<=",
+      "threshold": 0.0,
+      "discovery": {
+        "n": 25,
+        "wins": 15,
+        "losses": 10,
+        "win_rate": 0.6,
+        "roi": 0.9932,
+        "units": 24.83
+      },
+      "score": 4.966,
+      "validation": {
+        "n": 27,
+        "wins": 14,
+        "losses": 13,
+        "win_rate": 0.5185185185185185,
+        "roi": 0.6737037037037036,
+        "units": 18.189999999999998
+      },
+      "validated": true
+    },
+    {
+      "outcome": "AWAY",
+      "price_band": "P25_35",
+      "feature": "opp_availability_weighted_missing_xgi_share5",
+      "op": "<=",
+      "threshold": 0.0,
+      "discovery": {
+        "n": 28,
+        "wins": 16,
+        "losses": 12,
+        "win_rate": 0.5714285714285714,
+        "roi": 0.8999999999999998,
+        "units": 25.199999999999996
+      },
+      "score": 4.762352359916262,
+      "validation": {
+        "n": 29,
+        "wins": 15,
+        "losses": 14,
+        "win_rate": 0.5172413793103449,
+        "roi": 0.663103448275862,
+        "units": 19.229999999999997
+      },
+      "validated": true
+    },
+    {
+      "outcome": "AWAY",
+      "price_band": "ALL",
+      "feature": "opp_availability_weighted_missing_minutes_share5",
+      "op": "<=",
+      "threshold": 0.0,
+      "discovery": {
+        "n": 73,
+        "wins": 30,
+        "losses": 43,
+        "win_rate": 0.410958904109589,
+        "roi": 0.546986301369863,
+        "units": 39.93
+      },
+      "score": 4.673453007541493,
+      "validation": {
+        "n": 57,
+        "wins": 17,
+        "losses": 40,
+        "win_rate": 0.2982456140350877,
+        "roi": 0.09842105263157892,
+        "units": 5.6099999999999985
+      },
+      "validated": true
+    },
+    {
+      "outcome": "AWAY",
+      "price_band": "P25_35",
+      "feature": "sel_availability_out_count",
+      "op": ">=",
+      "threshold": 1.0,
+      "discovery": {
+        "n": 101,
+        "wins": 45,
+        "losses": 56,
+        "win_rate": 0.44554455445544555,
+        "roi": 0.4625742574257425,
+        "units": 46.71999999999999
+      },
+      "score": 4.648813752661068,
+      "validation": {
+        "n": 112,
+        "wins": 37,
+        "losses": 75,
+        "win_rate": 0.33035714285714285,
+        "roi": 0.07919642857142858,
+        "units": 8.870000000000001
+      },
+      "validated": true
+    },
+    {
+      "outcome": "AWAY",
+      "price_band": "P25_35",
+      "feature": "sel_availability_injury_out_count",
+      "op": ">=",
+      "threshold": 1.0,
+      "discovery": {
+        "n": 99,
+        "wins": 44,
+        "losses": 55,
+        "win_rate": 0.4444444444444444,
+        "roi": 0.4585858585858586,
+        "units": 45.4
+      },
+      "score": 4.562871681276823,
+      "validation": {
+        "n": 112,
+        "wins": 37,
+        "losses": 75,
+        "win_rate": 0.33035714285714285,
+        "roi": 0.07919642857142858,
+        "units": 8.870000000000001
+      },
+      "validated": true
+    },
+    {
+      "outcome": "AWAY",
+      "price_band": "ALL",
+      "feature": "opp_availability_weighted_missing_xgi_share5",
+      "op": "<=",
+      "threshold": 0.0,
+      "discovery": {
+        "n": 90,
+        "wins": 36,
+        "losses": 54,
+        "win_rate": 0.4,
+        "roi": 0.47800000000000004,
+        "units": 43.02
+      },
+      "score": 4.534706164681456,
+      "validation": {
+        "n": 89,
+        "wins": 31,
+        "losses": 58,
+        "win_rate": 0.34831460674157305,
+        "roi": 0.24370786516853926,
+        "units": 21.689999999999994
+      },
+      "validated": true
+    },
+    {
+      "outcome": "AWAY",
+      "price_band": "P25_35",
+      "feature": "edge_availability_weighted_missing_xgi_share5",
+      "op": "<=",
+      "threshold": 0.06059712932601118,
+      "discovery": {
+        "n": 92,
+        "wins": 41,
+        "losses": 51,
+        "win_rate": 0.44565217391304346,
+        "roi": 0.4656521739130434,
+        "units": 42.839999999999996
+      },
+      "score": 4.466378749102541,
+      "validation": {
+        "n": 92,
+        "wins": 34,
+        "losses": 58,
+        "win_rate": 0.3695652173913043,
+        "roi": 0.22445652173913042,
+        "units": 20.65
+      },
+      "validated": true
+    },
+    {
+      "outcome": "AWAY",
+      "price_band": "P25_35",
+      "feature": "opp_availability_missing_top3_xgi_count5",
+      "op": "<=",
+      "threshold": 0.0,
+      "discovery": {
+        "n": 108,
+        "wins": 47,
+        "losses": 61,
+        "win_rate": 0.4351851851851852,
+        "roi": 0.42916666666666664,
+        "units": 46.349999999999994
+      },
+      "score": 4.460030829489859,
+      "validation": {
+        "n": 100,
+        "wins": 37,
+        "losses": 63,
+        "win_rate": 0.37,
+        "roi": 0.21799999999999997,
+        "units": 21.799999999999997
+      },
+      "validated": true
+    },
+    {
+      "outcome": "AWAY",
+      "price_band": "P20_30",
+      "feature": "sel_availability_weighted_missing_xgi_share5",
+      "op": "<=",
+      "threshold": 0.01543445419750357,
+      "discovery": {
+        "n": 58,
+        "wins": 24,
+        "losses": 34,
+        "win_rate": 0.41379310344827586,
+        "roi": 0.5822413793103448,
+        "units": 33.769999999999996
+      },
+      "score": 4.434218237672831,
+      "validation": {
+        "n": 50,
+        "wins": 12,
+        "losses": 38,
+        "win_rate": 0.24,
+        "roi": -0.0812,
+        "units": -4.06
+      },
+      "validated": false
+    },
+    {
+      "outcome": "AWAY",
+      "price_band": "P30_40",
+      "feature": "sel_availability_questionable_count",
+      "op": "<=",
+      "threshold": 0.0,
+      "discovery": {
+        "n": 44,
+        "wins": 26,
+        "losses": 18,
+        "win_rate": 0.5909090909090909,
+        "roi": 0.6654545454545455,
+        "units": 29.280000000000005
+      },
+      "score": 4.41412608461846,
+      "validation": {
+        "n": 63,
+        "wins": 30,
+        "losses": 33,
+        "win_rate": 0.47619047619047616,
+        "roi": 0.3263492063492064,
+        "units": 20.560000000000002
+      },
+      "validated": true
+    },
+    {
+      "outcome": "AWAY",
+      "price_band": "P25_35",
+      "feature": "edge_availability_missing_top3_xgi_count5",
+      "op": "<=",
+      "threshold": 0.0,
+      "discovery": {
+        "n": 109,
+        "wins": 47,
+        "losses": 62,
+        "win_rate": 0.43119266055045874,
+        "roi": 0.41605504587155956,
+        "units": 45.349999999999994
+      },
+      "score": 4.343742203477921,
+      "validation": {
+        "n": 103,
+        "wins": 38,
+        "losses": 65,
+        "win_rate": 0.36893203883495146,
+        "roi": 0.21339805825242716,
+        "units": 21.979999999999997
+      },
+      "validated": true
+    },
+    {
+      "outcome": "AWAY",
+      "price_band": "P25_35",
+      "feature": "opp_availability_questionable_count",
+      "op": "<=",
+      "threshold": 2.0,
+      "discovery": {
+        "n": 100,
+        "wins": 44,
+        "losses": 56,
+        "win_rate": 0.44,
+        "roi": 0.43229999999999996,
+        "units": 43.23
+      },
+      "score": 4.3229999999999995,
+      "validation": {
+        "n": 111,
+        "wins": 35,
+        "losses": 76,
+        "win_rate": 0.3153153153153153,
+        "roi": 0.03162162162162162,
+        "units": 3.51
+      },
+      "validated": true
+    },
+    {
+      "outcome": "AWAY",
+      "price_band": "P25_35",
+      "feature": "edge_availability_weighted_missing_gplus_share5",
+      "op": "<=",
+      "threshold": 0.0564884498785012,
+      "discovery": {
+        "n": 89,
+        "wins": 39,
+        "losses": 50,
+        "win_rate": 0.43820224719101125,
+        "roi": 0.4579775280898876,
+        "units": 40.76
+      },
+      "score": 4.320551358905923,
+      "validation": {
+        "n": 92,
+        "wins": 37,
+        "losses": 55,
+        "win_rate": 0.40217391304347827,
+        "roi": 0.32695652173913037,
+        "units": 30.079999999999995
+      },
+      "validated": true
+    },
+    {
+      "outcome": "AWAY",
+      "price_band": "P30_40",
+      "feature": "sel_availability_weighted_missing_minutes_share5",
+      "op": "<=",
+      "threshold": 0.015057268211249223,
+      "discovery": {
+        "n": 32,
+        "wins": 20,
+        "losses": 12,
+        "win_rate": 0.625,
+        "roi": 0.7628125,
+        "units": 24.41
+      },
+      "score": 4.315119132190906,
+      "validation": {
+        "n": 26,
+        "wins": 12,
+        "losses": 14,
+        "win_rate": 0.46153846153846156,
+        "roi": 0.3096153846153846,
+        "units": 8.05
+      },
+      "validated": true
+    },
+    {
+      "outcome": "AWAY",
+      "price_band": "P25_35",
+      "feature": "opp_availability_out_count",
+      "op": ">=",
+      "threshold": 1.0,
+      "discovery": {
+        "n": 101,
+        "wins": 44,
+        "losses": 57,
+        "win_rate": 0.43564356435643564,
+        "roi": 0.42544554455445543,
+        "units": 42.97
+      },
+      "score": 4.275674806332323,
+      "validation": {
+        "n": 116,
+        "wins": 37,
+        "losses": 79,
+        "win_rate": 0.31896551724137934,
+        "roi": 0.046637931034482744,
+        "units": 5.409999999999998
+      },
+      "validated": true
+    },
+    {
+      "outcome": "AWAY",
+      "price_band": "P25_35",
+      "feature": "opp_availability_missing_top11_minutes_count5",
+      "op": "<=",
+      "threshold": 1.0,
+      "discovery": {
+        "n": 112,
+        "wins": 48,
+        "losses": 64,
+        "win_rate": 0.42857142857142855,
+        "roi": 0.4035714285714286,
+        "units": 45.2
+      },
+      "score": 4.270998545004268,
+      "validation": {
+        "n": 100,
+        "wins": 33,
+        "losses": 67,
+        "win_rate": 0.33,
+        "roi": 0.08010000000000002,
+        "units": 8.010000000000002
+      },
+      "validated": true
+    },
+    {
+      "outcome": "AWAY",
+      "price_band": "P25_35",
+      "feature": "edge_availability_missing_top11_minutes_count5",
+      "op": "<=",
+      "threshold": 1.0,
+      "discovery": {
+        "n": 112,
+        "wins": 48,
+        "losses": 64,
+        "win_rate": 0.42857142857142855,
+        "roi": 0.4035714285714286,
+        "units": 45.2
+      },
+      "score": 4.270998545004268,
+      "validation": {
+        "n": 109,
+        "wins": 38,
+        "losses": 71,
+        "win_rate": 0.3486238532110092,
+        "roi": 0.14688073394495407,
+        "units": 16.009999999999994
+      },
+      "validated": true
+    },
+    {
+      "outcome": "AWAY",
+      "price_band": "P25_35",
+      "feature": "opp_availability_non_injury_out_count",
+      "op": "<=",
+      "threshold": 1.0,
+      "discovery": {
+        "n": 104,
+        "wins": 45,
+        "losses": 59,
+        "win_rate": 0.4326923076923077,
+        "roi": 0.41711538461538455,
+        "units": 43.379999999999995
+      },
+      "score": 4.253758971147211,
+      "validation": {
+        "n": 118,
+        "wins": 40,
+        "losses": 78,
+        "win_rate": 0.3389830508474576,
+        "roi": 0.11127118644067796,
+        "units": 13.129999999999999
+      },
+      "validated": true
+    },
+    {
+      "outcome": "AWAY",
+      "price_band": "P20_30",
+      "feature": "sel_availability_weighted_missing_gplus_share5",
+      "op": "<=",
+      "threshold": 0.00981154679428136,
+      "discovery": {
+        "n": 42,
+        "wins": 18,
+        "losses": 24,
+        "win_rate": 0.42857142857142855,
+        "roi": 0.6552380952380952,
+        "units": 27.52
+      },
+      "score": 4.246428190956769,
+      "validation": {
+        "n": 37,
+        "wins": 8,
+        "losses": 29,
+        "win_rate": 0.21621621621621623,
+        "roi": -0.14081081081081082,
+        "units": -5.21
+      },
+      "validated": false
+    },
+    {
+      "outcome": "AWAY",
+      "price_band": "P30_40",
+      "feature": "opp_availability_questionable_count",
+      "op": "<=",
+      "threshold": 2.0,
+      "discovery": {
+        "n": 76,
+        "wins": 40,
+        "losses": 36,
+        "win_rate": 0.5263157894736842,
+        "roi": 0.48644736842105263,
+        "units": 36.97
+      },
+      "score": 4.240749840597335,
+      "validation": {
+        "n": 94,
+        "wins": 41,
+        "losses": 53,
+        "win_rate": 0.43617021276595747,
+        "roi": 0.21755319148936172,
+        "units": 20.450000000000003
+      },
+      "validated": true
+    },
+    {
+      "outcome": "AWAY",
+      "price_band": "P30_40",
+      "feature": "edge_availability_questionable_count",
+      "op": ">=",
+      "threshold": 0.0,
+      "discovery": {
+        "n": 62,
+        "wins": 34,
+        "losses": 28,
+        "win_rate": 0.5483870967741935,
+        "roi": 0.538225806451613,
+        "units": 33.370000000000005
+      },
+      "score": 4.237994237996358,
+      "validation": {
+        "n": 68,
+        "wins": 31,
+        "losses": 37,
+        "win_rate": 0.45588235294117646,
+        "roi": 0.2742647058823529,
+        "units": 18.65
+      },
+      "validated": true
+    },
+    {
+      "outcome": "AWAY",
+      "price_band": "P25_35",
+      "feature": "sel_availability_weighted_missing_xgi_share5",
+      "op": "<=",
+      "threshold": 0.0,
+      "discovery": {
+        "n": 41,
+        "wins": 21,
+        "losses": 20,
+        "win_rate": 0.5121951219512195,
+        "roi": 0.6565853658536586,
+        "units": 26.92
+      },
+      "score": 4.2041976700412755,
+      "validation": {
+        "n": 28,
+        "wins": 10,
+        "losses": 18,
+        "win_rate": 0.35714285714285715,
+        "roi": 0.15857142857142856,
+        "units": 4.4399999999999995
+      },
+      "validated": true
+    },
+    {
+      "outcome": "AWAY",
+      "price_band": "P25_35",
+      "feature": "edge_availability_out_count",
+      "op": ">=",
+      "threshold": 2.0,
+      "discovery": {
+        "n": 31,
+        "wins": 17,
+        "losses": 14,
+        "win_rate": 0.5483870967741935,
+        "roi": 0.7545161290322581,
+        "units": 23.39
+      },
+      "score": 4.200968014406264,
+      "validation": {
+        "n": 36,
+        "wins": 11,
+        "losses": 25,
+        "win_rate": 0.3055555555555556,
+        "roi": 0.015833333333333293,
+        "units": 0.5699999999999985
+      },
+      "validated": true
+    },
+    {
+      "outcome": "AWAY",
+      "price_band": "P25_35",
+      "feature": "edge_availability_weighted_missing_minutes_share5",
+      "op": "<=",
+      "threshold": 0.023086197463500775,
+      "discovery": {
+        "n": 74,
+        "wins": 33,
+        "losses": 41,
+        "win_rate": 0.44594594594594594,
+        "roi": 0.48756756756756753,
+        "units": 36.08
+      },
+      "score": 4.1942148058769995,
+      "validation": {
+        "n": 71,
+        "wins": 27,
+        "losses": 44,
+        "win_rate": 0.38028169014084506,
+        "roi": 0.24704225352112674,
+        "units": 17.54
+      },
+      "validated": true
+    },
+    {
+      "outcome": "AWAY",
+      "price_band": "P25_35",
+      "feature": "sel_availability_missing_top3_xgi_count5",
+      "op": "<=",
+      "threshold": 0.0,
+      "discovery": {
+        "n": 107,
+        "wins": 46,
+        "losses": 61,
+        "win_rate": 0.42990654205607476,
+        "roi": 0.4009345794392523,
+        "units": 42.9
+      },
+      "score": 4.147299538005897,
+      "validation": {
+        "n": 102,
+        "wins": 31,
+        "losses": 71,
+        "win_rate": 0.30392156862745096,
+        "roi": -0.017647058823529436,
+        "units": -1.8000000000000025
+      },
+      "validated": false
+    }
+  ],
+  "availability_vetoes": [
+    {
+      "method": "MLS-R01",
+      "feature": "edge_availability_weighted_missing_gplus_share5",
+      "op": "<=",
+      "threshold": 0.0,
+      "score": 0.7576123737373738,
+      "discovery_base": {
+        "n": 20,
+        "wins": 12,
+        "losses": 8,
+        "win_rate": 0.6,
+        "roi": 0.26149999999999995,
+        "units": 5.2299999999999995
+      },
+      "discovery_risk": {
+        "n": 11,
+        "wins": 4,
+        "losses": 7,
+        "win_rate": 0.36363636363636365,
+        "roi": -0.23272727272727278,
+        "units": -2.5600000000000005
+      },
+      "discovery_safe": {
+        "n": 9,
+        "wins": 8,
+        "losses": 1,
+        "win_rate": 0.8888888888888888,
+        "roi": 0.8655555555555555,
+        "units": 7.79
+      },
+      "validation_base": {
+        "n": 19,
+        "wins": 10,
+        "losses": 9,
+        "win_rate": 0.5263157894736842,
+        "roi": 0.18473684210526314,
+        "units": 3.51
+      },
+      "validation_risk": {
+        "n": 8,
+        "wins": 5,
+        "losses": 3,
+        "win_rate": 0.625,
+        "roi": 0.43999999999999995,
+        "units": 3.5199999999999996
+      },
+      "validation_safe": {
+        "n": 11,
+        "wins": 5,
+        "losses": 6,
+        "win_rate": 0.45454545454545453,
+        "roi": -0.0009090909090909301,
+        "units": -0.010000000000000231
+      },
+      "validated": false
+    },
+    {
+      "method": "MLS-R01",
+      "feature": "sel_availability_weighted_missing_minutes_share5",
+      "op": ">=",
+      "threshold": 0.06118872080395246,
+      "score": 0.67075,
+      "discovery_base": {
+        "n": 20,
+        "wins": 12,
+        "losses": 8,
+        "win_rate": 0.6,
+        "roi": 0.26149999999999995,
+        "units": 5.2299999999999995
+      },
+      "discovery_risk": {
+        "n": 4,
+        "wins": 0,
+        "losses": 4,
+        "win_rate": 0.0,
+        "roi": -1.0,
+        "units": -4.0
+      },
+      "discovery_safe": {
+        "n": 16,
+        "wins": 12,
+        "losses": 4,
+        "win_rate": 0.75,
+        "roi": 0.5768749999999999,
+        "units": 9.229999999999999
+      },
+      "validation_base": {
+        "n": 19,
+        "wins": 10,
+        "losses": 9,
+        "win_rate": 0.5263157894736842,
+        "roi": 0.18473684210526314,
+        "units": 3.51
+      },
+      "validation_risk": {
+        "n": 8,
+        "wins": 5,
+        "losses": 3,
+        "win_rate": 0.625,
+        "roi": 0.44375,
+        "units": 3.55
+      },
+      "validation_safe": {
+        "n": 11,
+        "wins": 5,
+        "losses": 6,
+        "win_rate": 0.45454545454545453,
+        "roi": -0.0036363636363636394,
+        "units": -0.040000000000000036
+      },
+      "validated": false
+    },
+    {
+      "method": "MLS-R01",
+      "feature": "opp_availability_weighted_missing_gplus_share5",
+      "op": "<=",
+      "threshold": 0.05517853276718244,
+      "score": 0.6406896559677888,
+      "discovery_base": {
+        "n": 20,
+        "wins": 12,
+        "losses": 8,
+        "win_rate": 0.6,
+        "roi": 0.26149999999999995,
+        "units": 5.2299999999999995
+      },
+      "discovery_risk": {
+        "n": 13,
+        "wins": 6,
+        "losses": 7,
+        "win_rate": 0.46153846153846156,
+        "roi": -0.030000000000000027,
+        "units": -0.39000000000000035
+      },
+      "discovery_safe": {
+        "n": 7,
+        "wins": 6,
+        "losses": 1,
+        "win_rate": 0.8571428571428571,
+        "roi": 0.8028571428571428,
+        "units": 5.62
+      },
+      "validation_base": {
+        "n": 19,
+        "wins": 10,
+        "losses": 9,
+        "win_rate": 0.5263157894736842,
+        "roi": 0.18473684210526314,
+        "units": 3.51
+      },
+      "validation_risk": {
+        "n": 7,
+        "wins": 4,
+        "losses": 3,
+        "win_rate": 0.5714285714285714,
+        "roi": 0.27714285714285714,
+        "units": 1.94
+      },
+      "validation_safe": {
+        "n": 12,
+        "wins": 6,
+        "losses": 6,
+        "win_rate": 0.5,
+        "roi": 0.13083333333333333,
+        "units": 1.5699999999999998
+      },
+      "validated": false
+    },
+    {
+      "method": "MLS-R01",
+      "feature": "edge_availability_weighted_missing_minutes_share5",
+      "op": "<=",
+      "threshold": 0.010756986112635562,
+      "score": 0.5969259197040524,
+      "discovery_base": {
+        "n": 20,
+        "wins": 12,
+        "losses": 8,
+        "win_rate": 0.6,
+        "roi": 0.26149999999999995,
+        "units": 5.2299999999999995
+      },
+      "discovery_risk": {
+        "n": 13,
+        "wins": 6,
+        "losses": 7,
+        "win_rate": 0.46153846153846156,
+        "roi": -0.009230769230769256,
+        "units": -0.12000000000000033
+      },
+      "discovery_safe": {
+        "n": 7,
+        "wins": 6,
+        "losses": 1,
+        "win_rate": 0.8571428571428571,
+        "roi": 0.7642857142857141,
+        "units": 5.349999999999999
+      },
+      "validation_base": {
+        "n": 19,
+        "wins": 10,
+        "losses": 9,
+        "win_rate": 0.5263157894736842,
+        "roi": 0.18473684210526314,
+        "units": 3.51
+      },
+      "validation_risk": {
+        "n": 9,
+        "wins": 5,
+        "losses": 4,
+        "win_rate": 0.5555555555555556,
+        "roi": 0.25222222222222224,
+        "units": 2.27
+      },
+      "validation_safe": {
+        "n": 10,
+        "wins": 5,
+        "losses": 5,
+        "win_rate": 0.5,
+        "roi": 0.12399999999999997,
+        "units": 1.2399999999999998
+      },
+      "validated": false
+    },
+    {
+      "method": "MLS-R01",
+      "feature": "edge_availability_out_count",
+      "op": "<=",
+      "threshold": -2.0,
+      "score": 0.5459381667954075,
+      "discovery_base": {
+        "n": 20,
+        "wins": 12,
+        "losses": 8,
+        "win_rate": 0.6,
+        "roi": 0.26149999999999995,
+        "units": 5.2299999999999995
+      },
+      "discovery_risk": {
+        "n": 5,
+        "wins": 1,
+        "losses": 4,
+        "win_rate": 0.2,
+        "roi": -0.608,
+        "units": -3.04
+      },
+      "discovery_safe": {
+        "n": 15,
+        "wins": 11,
+        "losses": 4,
+        "win_rate": 0.7333333333333333,
+        "roi": 0.5513333333333333,
+        "units": 8.27
+      },
+      "validation_base": {
+        "n": 19,
+        "wins": 10,
+        "losses": 9,
+        "win_rate": 0.5263157894736842,
+        "roi": 0.18473684210526314,
+        "units": 3.51
+      },
+      "validation_risk": {
+        "n": 7,
+        "wins": 3,
+        "losses": 4,
+        "win_rate": 0.42857142857142855,
+        "roi": -0.040000000000000036,
+        "units": -0.28000000000000025
+      },
+      "validation_safe": {
+        "n": 12,
+        "wins": 7,
+        "losses": 5,
+        "win_rate": 0.5833333333333334,
+        "roi": 0.31583333333333324,
+        "units": 3.789999999999999
+      },
+      "validated": true
+    },
+    {
+      "method": "MLS-R01",
+      "feature": "edge_availability_questionable_count",
+      "op": "<=",
+      "threshold": 0.0,
+      "score": 0.5180416666666665,
+      "discovery_base": {
+        "n": 20,
+        "wins": 12,
+        "losses": 8,
+        "win_rate": 0.6,
+        "roi": 0.26149999999999995,
+        "units": 5.2299999999999995
+      },
+      "discovery_risk": {
+        "n": 11,
+        "wins": 5,
+        "losses": 6,
+        "win_rate": 0.45454545454545453,
+        "roi": -0.07000000000000002,
+        "units": -0.7700000000000002
+      },
+      "discovery_safe": {
+        "n": 9,
+        "wins": 7,
+        "losses": 2,
+        "win_rate": 0.7777777777777778,
+        "roi": 0.6666666666666665,
+        "units": 5.999999999999999
+      },
+      "validation_base": {
+        "n": 19,
+        "wins": 10,
+        "losses": 9,
+        "win_rate": 0.5263157894736842,
+        "roi": 0.18473684210526314,
+        "units": 3.51
+      },
+      "validation_risk": {
+        "n": 12,
+        "wins": 4,
+        "losses": 8,
+        "win_rate": 0.3333333333333333,
+        "roi": -0.24583333333333335,
+        "units": -2.95
+      },
+      "validation_safe": {
+        "n": 7,
+        "wins": 6,
+        "losses": 1,
+        "win_rate": 0.8571428571428571,
+        "roi": 0.9228571428571429,
+        "units": 6.460000000000001
+      },
+      "validated": true
+    },
+    {
+      "method": "MLS-R01",
+      "feature": "sel_availability_non_injury_out_count",
+      "op": ">=",
+      "threshold": 1.0,
+      "score": 0.4737243494847109,
+      "discovery_base": {
+        "n": 20,
+        "wins": 12,
+        "losses": 8,
+        "win_rate": 0.6,
+        "roi": 0.26149999999999995,
+        "units": 5.2299999999999995
+      },
+      "discovery_risk": {
+        "n": 8,
+        "wins": 3,
+        "losses": 5,
+        "win_rate": 0.375,
+        "roi": -0.21750000000000003,
+        "units": -1.7400000000000002
+      },
+      "discovery_safe": {
+        "n": 12,
+        "wins": 9,
+        "losses": 3,
+        "win_rate": 0.75,
+        "roi": 0.5808333333333333,
+        "units": 6.97
+      },
+      "validation_base": {
+        "n": 19,
+        "wins": 10,
+        "losses": 9,
+        "win_rate": 0.5263157894736842,
+        "roi": 0.18473684210526314,
+        "units": 3.51
+      },
+      "validation_risk": {
+        "n": 2,
+        "wins": 1,
+        "losses": 1,
+        "win_rate": 0.5,
+        "roi": 0.040000000000000036,
+        "units": 0.08000000000000007
+      },
+      "validation_safe": {
+        "n": 17,
+        "wins": 9,
+        "losses": 8,
+        "win_rate": 0.5294117647058824,
+        "roi": 0.20176470588235293,
+        "units": 3.4299999999999997
+      },
+      "validated": true
+    },
+    {
+      "method": "MLS-R01",
+      "feature": "opp_availability_questionable_count",
+      "op": "<=",
+      "threshold": 0.0,
+      "score": 0.44897014529631085,
+      "discovery_base": {
+        "n": 20,
+        "wins": 12,
+        "losses": 8,
+        "win_rate": 0.6,
+        "roi": 0.26149999999999995,
+        "units": 5.2299999999999995
+      },
+      "discovery_risk": {
+        "n": 6,
+        "wins": 2,
+        "losses": 4,
+        "win_rate": 0.3333333333333333,
+        "roi": -0.34500000000000003,
+        "units": -2.0700000000000003
+      },
+      "discovery_safe": {
+        "n": 14,
+        "wins": 10,
+        "losses": 4,
+        "win_rate": 0.7142857142857143,
+        "roi": 0.5214285714285714,
+        "units": 7.299999999999999
+      },
+      "validation_base": {
+        "n": 19,
+        "wins": 10,
+        "losses": 9,
+        "win_rate": 0.5263157894736842,
+        "roi": 0.18473684210526314,
+        "units": 3.51
+      },
+      "validation_risk": {
+        "n": 11,
+        "wins": 3,
+        "losses": 8,
+        "win_rate": 0.2727272727272727,
+        "roi": -0.3836363636363637,
+        "units": -4.220000000000001
+      },
+      "validation_safe": {
+        "n": 8,
+        "wins": 7,
+        "losses": 1,
+        "win_rate": 0.875,
+        "roi": 0.96625,
+        "units": 7.73
+      },
+      "validated": true
+    },
+    {
+      "method": "MLS-R01",
+      "feature": "edge_availability_injury_out_count",
+      "op": "<=",
+      "threshold": -1.1999999999999997,
+      "score": 0.42575,
+      "discovery_base": {
+        "n": 20,
+        "wins": 12,
+        "losses": 8,
+        "win_rate": 0.6,
+        "roi": 0.26149999999999995,
+        "units": 5.2299999999999995
+      },
+      "discovery_risk": {
+        "n": 4,
+        "wins": 1,
+        "losses": 3,
+        "win_rate": 0.25,
+        "roi": -0.51,
+        "units": -2.04
+      },
+      "discovery_safe": {
+        "n": 16,
+        "wins": 11,
+        "losses": 5,
+        "win_rate": 0.6875,
+        "roi": 0.454375,
+        "units": 7.27
+      },
+      "validation_base": {
+        "n": 19,
+        "wins": 10,
+        "losses": 9,
+        "win_rate": 0.5263157894736842,
+        "roi": 0.18473684210526314,
+        "units": 3.51
+      },
+      "validation_risk": {
+        "n": 5,
+        "wins": 2,
+        "losses": 3,
+        "win_rate": 0.4,
+        "roi": -0.07200000000000006,
+        "units": -0.3600000000000003
+      },
+      "validation_safe": {
+        "n": 14,
+        "wins": 8,
+        "losses": 6,
+        "win_rate": 0.5714285714285714,
+        "roi": 0.27642857142857136,
+        "units": 3.869999999999999
+      },
+      "validated": true
+    },
+    {
+      "method": "MLS-R01",
+      "feature": "edge_availability_non_injury_out_count",
+      "op": "<=",
+      "threshold": -1.0,
+      "score": 0.3255898534139806,
+      "discovery_base": {
+        "n": 20,
+        "wins": 12,
+        "losses": 8,
+        "win_rate": 0.6,
+        "roi": 0.26149999999999995,
+        "units": 5.2299999999999995
+      },
+      "discovery_risk": {
+        "n": 7,
+        "wins": 3,
+        "losses": 4,
+        "win_rate": 0.42857142857142855,
+        "roi": -0.10571428571428575,
+        "units": -0.7400000000000002
+      },
+      "discovery_safe": {
+        "n": 13,
+        "wins": 9,
+        "losses": 4,
+        "win_rate": 0.6923076923076923,
+        "roi": 0.4592307692307692,
+        "units": 5.97
+      },
+      "validation_base": {
+        "n": 19,
+        "wins": 10,
+        "losses": 9,
+        "win_rate": 0.5263157894736842,
+        "roi": 0.18473684210526314,
+        "units": 3.51
+      },
+      "validation_risk": {
+        "n": 2,
+        "wins": 1,
+        "losses": 1,
+        "win_rate": 0.5,
+        "roi": 0.040000000000000036,
+        "units": 0.08000000000000007
+      },
+      "validation_safe": {
+        "n": 17,
+        "wins": 9,
+        "losses": 8,
+        "win_rate": 0.5294117647058824,
+        "roi": 0.20176470588235293,
+        "units": 3.4299999999999997
+      },
+      "validated": true
+    },
+    {
+      "method": "MLS-R02",
+      "feature": "edge_availability_weighted_missing_gplus_share5",
+      "op": "<=",
+      "threshold": 0.007723642255959172,
+      "score": 0.6599672681943202,
+      "discovery_base": {
+        "n": 17,
+        "wins": 10,
+        "losses": 7,
+        "win_rate": 0.5882352941176471,
+        "roi": 0.22411764705882345,
+        "units": 3.8099999999999987
+      },
+      "discovery_risk": {
+        "n": 11,
+        "wins": 5,
+        "losses": 6,
+        "win_rate": 0.45454545454545453,
+        "roi": -0.08090909090909092,
+        "units": -0.8900000000000001
+      },
+      "discovery_safe": {
+        "n": 6,
+        "wins": 5,
+        "losses": 1,
+        "win_rate": 0.8333333333333334,
+        "roi": 0.7833333333333332,
+        "units": 4.699999999999999
+      },
+      "validation_base": {
+        "n": 16,
+        "wins": 8,
+        "losses": 8,
+        "win_rate": 0.5,
+        "roi": 0.116875,
+        "units": 1.87
+      },
+      "validation_risk": {
+        "n": 7,
+        "wins": 4,
+        "losses": 3,
+        "win_rate": 0.5714285714285714,
+        "roi": 0.3085714285714286,
+        "units": 2.16
+      },
+      "validation_safe": {
+        "n": 9,
+        "wins": 4,
+        "losses": 5,
+        "win_rate": 0.4444444444444444,
+        "roi": -0.03222222222222223,
+        "units": -0.29000000000000004
+      },
+      "validated": false
+    },
+    {
+      "method": "MLS-R02",
+      "feature": "opp_availability_weighted_missing_gplus_share5",
+      "op": "<=",
+      "threshold": 0.052994623176014326,
+      "score": 0.6088309045579565,
+      "discovery_base": {
+        "n": 17,
+        "wins": 10,
+        "losses": 7,
+        "win_rate": 0.5882352941176471,
+        "roi": 0.22411764705882345,
+        "units": 3.8099999999999987
+      },
+      "discovery_risk": {
+        "n": 11,
+        "wins": 5,
+        "losses": 6,
+        "win_rate": 0.45454545454545453,
+        "roi": -0.05636363636363637,
+        "units": -0.6200000000000001
+      },
+      "discovery_safe": {
+        "n": 6,
+        "wins": 5,
+        "losses": 1,
+        "win_rate": 0.8333333333333334,
+        "roi": 0.7383333333333333,
+        "units": 4.43
+      },
+      "validation_base": {
+        "n": 16,
+        "wins": 8,
+        "losses": 8,
+        "win_rate": 0.5,
+        "roi": 0.116875,
+        "units": 1.87
+      },
+      "validation_risk": {
+        "n": 7,
+        "wins": 4,
+        "losses": 3,
+        "win_rate": 0.5714285714285714,
+        "roi": 0.27714285714285714,
+        "units": 1.94
+      },
+      "validation_safe": {
+        "n": 9,
+        "wins": 4,
+        "losses": 5,
+        "win_rate": 0.4444444444444444,
+        "roi": -0.00777777777777776,
+        "units": -0.06999999999999984
+      },
+      "validated": false
+    },
+    {
+      "method": "MLS-R02",
+      "feature": "edge_availability_weighted_missing_minutes_share5",
+      "op": "<=",
+      "threshold": 0.010954280094721616,
+      "score": 0.5898915106185626,
+      "discovery_base": {
+        "n": 17,
+        "wins": 10,
+        "losses": 7,
+        "win_rate": 0.5882352941176471,
+        "roi": 0.22411764705882345,
+        "units": 3.8099999999999987
+      },
+      "discovery_risk": {
+        "n": 11,
+        "wins": 5,
+        "losses": 6,
+        "win_rate": 0.45454545454545453,
+        "roi": -0.04727272727272731,
+        "units": -0.5200000000000005
+      },
+      "discovery_safe": {
+        "n": 6,
+        "wins": 5,
+        "losses": 1,
+        "win_rate": 0.8333333333333334,
+        "roi": 0.7216666666666666,
+        "units": 4.329999999999999
+      },
+      "validation_base": {
+        "n": 16,
+        "wins": 8,
+        "losses": 8,
+        "win_rate": 0.5,
+        "roi": 0.116875,
+        "units": 1.87
+      },
+      "validation_risk": {
+        "n": 9,
+        "wins": 5,
+        "losses": 4,
+        "win_rate": 0.5555555555555556,
+        "roi": 0.25222222222222224,
+        "units": 2.27
+      },
+      "validation_safe": {
+        "n": 7,
+        "wins": 3,
+        "losses": 4,
+        "win_rate": 0.42857142857142855,
+        "roi": -0.05714285714285713,
+        "units": -0.3999999999999999
+      },
+      "validated": false
+    },
+    {
+      "method": "MLS-R02",
+      "feature": "opp_availability_weighted_missing_minutes_share5",
+      "op": "<=",
+      "threshold": 0.0235333146712038,
+      "score": 0.4659871035185273,
+      "discovery_base": {
+        "n": 17,
+        "wins": 10,
+        "losses": 7,
+        "win_rate": 0.5882352941176471,
+        "roi": 0.22411764705882345,
+        "units": 3.8099999999999987
+      },
+      "discovery_risk": {
+        "n": 6,
+        "wins": 2,
+        "losses": 4,
+        "win_rate": 0.3333333333333333,
+        "roi": -0.32,
+        "units": -1.9200000000000002
+      },
+      "discovery_safe": {
+        "n": 11,
+        "wins": 8,
+        "losses": 3,
+        "win_rate": 0.7272727272727273,
+        "roi": 0.5209090909090909,
+        "units": 5.7299999999999995
+      },
+      "validation_base": {
+        "n": 16,
+        "wins": 8,
+        "losses": 8,
+        "win_rate": 0.5,
+        "roi": 0.116875,
+        "units": 1.87
+      },
+      "validation_risk": {
+        "n": 2,
+        "wins": 1,
+        "losses": 1,
+        "win_rate": 0.5,
+        "roi": 0.040000000000000036,
+        "units": 0.08000000000000007
+      },
+      "validation_safe": {
+        "n": 14,
+        "wins": 7,
+        "losses": 7,
+        "win_rate": 0.5,
+        "roi": 0.12785714285714286,
+        "units": 1.79
+      },
+      "validated": true
+    },
+    {
+      "method": "MLS-R02",
+      "feature": "sel_availability_weighted_missing_minutes_share5",
+      "op": ">=",
+      "threshold": 0.06053016042866072,
+      "score": 0.4273422774605222,
+      "discovery_base": {
+        "n": 17,
+        "wins": 10,
+        "losses": 7,
+        "win_rate": 0.5882352941176471,
+        "roi": 0.22411764705882345,
+        "units": 3.8099999999999987
+      },
+      "discovery_risk": {
+        "n": 4,
+        "wins": 1,
+        "losses": 3,
+        "win_rate": 0.25,
+        "roi": -0.47750000000000004,
+        "units": -1.9100000000000001
+      },
+      "discovery_safe": {
+        "n": 13,
+        "wins": 9,
+        "losses": 4,
+        "win_rate": 0.6923076923076923,
+        "roi": 0.4399999999999999,
+        "units": 5.719999999999999
+      },
+      "validation_base": {
+        "n": 16,
+        "wins": 8,
+        "losses": 8,
+        "win_rate": 0.5,
+        "roi": 0.116875,
+        "units": 1.87
+      },
+      "validation_risk": {
+        "n": 7,
+        "wins": 4,
+        "losses": 3,
+        "win_rate": 0.5714285714285714,
+        "roi": 0.31285714285714283,
+        "units": 2.19
+      },
+      "validation_safe": {
+        "n": 9,
+        "wins": 4,
+        "losses": 5,
+        "win_rate": 0.4444444444444444,
+        "roi": -0.035555555555555535,
+        "units": -0.31999999999999984
+      },
+      "validated": false
+    },
+    {
+      "method": "MLS-R02",
+      "feature": "edge_availability_questionable_count",
+      "op": "<=",
+      "threshold": 0.0,
+      "score": 0.3707621349593855,
+      "discovery_base": {
+        "n": 17,
+        "wins": 10,
+        "losses": 7,
+        "win_rate": 0.5882352941176471,
+        "roi": 0.22411764705882345,
+        "units": 3.8099999999999987
+      },
+      "discovery_risk": {
+        "n": 10,
+        "wins": 5,
+        "losses": 5,
+        "win_rate": 0.5,
+        "roi": 0.018999999999999972,
+        "units": 0.18999999999999972
+      },
+      "discovery_safe": {
+        "n": 7,
+        "wins": 5,
+        "losses": 2,
+        "win_rate": 0.7142857142857143,
+        "roi": 0.5171428571428571,
+        "units": 3.6199999999999997
+      },
+      "validation_base": {
+        "n": 16,
+        "wins": 8,
+        "losses": 8,
+        "win_rate": 0.5,
+        "roi": 0.116875,
+        "units": 1.87
+      },
+      "validation_risk": {
+        "n": 8,
+        "wins": 3,
+        "losses": 5,
+        "win_rate": 0.375,
+        "roi": -0.15375,
+        "units": -1.23
+      },
+      "validation_safe": {
+        "n": 8,
+        "wins": 5,
+        "losses": 3,
+        "win_rate": 0.625,
+        "roi": 0.3875,
+        "units": 3.1
+      },
+      "validated": true
+    },
+    {
+      "method": "MLS-R02",
+      "feature": "sel_availability_out_count",
+      "op": "<=",
+      "threshold": 2.0,
+      "score": 0.35174882702185184,
+      "discovery_base": {
+        "n": 17,
+        "wins": 10,
+        "losses": 7,
+        "win_rate": 0.5882352941176471,
+        "roi": 0.22411764705882345,
+        "units": 3.8099999999999987
+      },
+      "discovery_risk": {
+        "n": 7,
+        "wins": 3,
+        "losses": 4,
+        "win_rate": 0.42857142857142855,
+        "roi": -0.11285714285714286,
+        "units": -0.79
+      },
+      "discovery_safe": {
+        "n": 10,
+        "wins": 7,
+        "losses": 3,
+        "win_rate": 0.7,
+        "roi": 0.45999999999999996,
+        "units": 4.6
+      },
+      "validation_base": {
+        "n": 16,
+        "wins": 8,
+        "losses": 8,
+        "win_rate": 0.5,
+        "roi": 0.116875,
+        "units": 1.87
+      },
+      "validation_risk": {
+        "n": 4,
+        "wins": 3,
+        "losses": 1,
+        "win_rate": 0.75,
+        "roi": 0.7050000000000001,
+        "units": 2.8200000000000003
+      },
+      "validation_safe": {
+        "n": 12,
+        "wins": 5,
+        "losses": 7,
+        "win_rate": 0.4166666666666667,
+        "roi": -0.07916666666666668,
+        "units": -0.9500000000000002
+      },
+      "validated": false
+    },
+    {
+      "method": "MLS-R02",
+      "feature": "edge_availability_out_count",
+      "op": "<=",
+      "threshold": -2.0,
+      "score": 0.3320527808572599,
+      "discovery_base": {
+        "n": 17,
+        "wins": 10,
+        "losses": 7,
+        "win_rate": 0.5882352941176471,
+        "roi": 0.22411764705882345,
+        "units": 3.8099999999999987
+      },
+      "discovery_risk": {
+        "n": 5,
+        "wins": 2,
+        "losses": 3,
+        "win_rate": 0.4,
+        "roi": -0.22200000000000003,
+        "units": -1.11
+      },
+      "discovery_safe": {
+        "n": 12,
+        "wins": 8,
+        "losses": 4,
+        "win_rate": 0.6666666666666666,
+        "roi": 0.41,
+        "units": 4.92
+      },
+      "validation_base": {
+        "n": 16,
+        "wins": 8,
+        "losses": 8,
+        "win_rate": 0.5,
+        "roi": 0.116875,
+        "units": 1.87
+      },
+      "validation_risk": {
+        "n": 5,
+        "wins": 2,
+        "losses": 3,
+        "win_rate": 0.4,
+        "roi": -0.12800000000000003,
+        "units": -0.6400000000000001
+      },
+      "validation_safe": {
+        "n": 11,
+        "wins": 6,
+        "losses": 5,
+        "win_rate": 0.5454545454545454,
+        "roi": 0.2281818181818182,
+        "units": 2.5100000000000002
+      },
+      "validated": true
+    },
+    {
+      "method": "MLS-R02",
+      "feature": "opp_availability_questionable_count",
+      "op": "<=",
+      "threshold": 0.0,
+      "score": 0.3320527808572599,
+      "discovery_base": {
+        "n": 17,
+        "wins": 10,
+        "losses": 7,
+        "win_rate": 0.5882352941176471,
+        "roi": 0.22411764705882345,
+        "units": 3.8099999999999987
+      },
+      "discovery_risk": {
+        "n": 5,
+        "wins": 2,
+        "losses": 3,
+        "win_rate": 0.4,
+        "roi": -0.22200000000000003,
+        "units": -1.11
+      },
+      "discovery_safe": {
+        "n": 12,
+        "wins": 8,
+        "losses": 4,
+        "win_rate": 0.6666666666666666,
+        "roi": 0.41,
+        "units": 4.92
+      },
+      "validation_base": {
+        "n": 16,
+        "wins": 8,
+        "losses": 8,
+        "win_rate": 0.5,
+        "roi": 0.116875,
+        "units": 1.87
+      },
+      "validation_risk": {
+        "n": 6,
+        "wins": 2,
+        "losses": 4,
+        "win_rate": 0.3333333333333333,
+        "roi": -0.25,
+        "units": -1.5
+      },
+      "validation_safe": {
+        "n": 10,
+        "wins": 6,
+        "losses": 4,
+        "win_rate": 0.6,
+        "roi": 0.337,
+        "units": 3.37
+      },
+      "validated": true
+    },
+    {
+      "method": "MLS-R02",
+      "feature": "opp_availability_injury_out_count",
+      "op": ">=",
+      "threshold": 4.0,
+      "score": 0.2880527808572599,
+      "discovery_base": {
+        "n": 17,
+        "wins": 10,
+        "losses": 7,
+        "win_rate": 0.5882352941176471,
+        "roi": 0.22411764705882345,
+        "units": 3.8099999999999987
+      },
+      "discovery_risk": {
+        "n": 5,
+        "wins": 2,
+        "losses": 3,
+        "win_rate": 0.4,
+        "roi": -0.15600000000000006,
+        "units": -0.7800000000000002
+      },
+      "discovery_safe": {
+        "n": 12,
+        "wins": 8,
+        "losses": 4,
+        "win_rate": 0.6666666666666666,
+        "roi": 0.3824999999999999,
+        "units": 4.589999999999999
+      },
+      "validation_base": {
+        "n": 16,
+        "wins": 8,
+        "losses": 8,
+        "win_rate": 0.5,
+        "roi": 0.116875,
+        "units": 1.87
+      },
+      "validation_risk": {
+        "n": 5,
+        "wins": 1,
+        "losses": 4,
+        "win_rate": 0.2,
+        "roi": -0.5780000000000001,
+        "units": -2.89
+      },
+      "validation_safe": {
+        "n": 11,
+        "wins": 7,
+        "losses": 4,
+        "win_rate": 0.6363636363636364,
+        "roi": 0.4327272727272727,
+        "units": 4.76
+      },
+      "validated": true
+    },
+    {
+      "method": "MLS-R03",
+      "feature": "opp_availability_weighted_missing_gplus_share5",
+      "op": "<=",
+      "threshold": 0.03777965601164958,
+      "score": 1.0766864373507559,
+      "discovery_base": {
+        "n": 11,
+        "wins": 6,
+        "losses": 5,
+        "win_rate": 0.5454545454545454,
+        "roi": 0.8054545454545454,
+        "units": 8.86
+      },
+      "discovery_risk": {
+        "n": 6,
+        "wins": 2,
+        "losses": 4,
+        "win_rate": 0.3333333333333333,
+        "roi": 0.0783333333333333,
+        "units": 0.46999999999999975
+      },
+      "discovery_safe": {
+        "n": 5,
+        "wins": 4,
+        "losses": 1,
+        "win_rate": 0.8,
+        "roi": 1.6780000000000002,
+        "units": 8.39
+      },
+      "validation_base": {
+        "n": 13,
+        "wins": 6,
+        "losses": 7,
+        "win_rate": 0.46153846153846156,
+        "roi": 0.58,
+        "units": 7.539999999999999
+      },
+      "validation_risk": {
+        "n": 7,
+        "wins": 6,
+        "losses": 1,
+        "win_rate": 0.8571428571428571,
+        "roi": 1.9342857142857142,
+        "units": 13.54
+      },
+      "validation_safe": {
+        "n": 6,
+        "wins": 0,
+        "losses": 6,
+        "win_rate": 0.0,
+        "roi": -1.0,
+        "units": -6.0
+      },
+      "validated": false
+    },
+    {
+      "method": "MLS-R03",
+      "feature": "opp_availability_questionable_count",
+      "op": ">=",
+      "threshold": 1.0,
+      "score": 1.028353104017422,
+      "discovery_base": {
+        "n": 11,
+        "wins": 6,
+        "losses": 5,
+        "win_rate": 0.5454545454545454,
+        "roi": 0.8054545454545454,
+        "units": 8.86
+      },
+      "discovery_risk": {
+        "n": 6,
+        "wins": 2,
+        "losses": 4,
+        "win_rate": 0.3333333333333333,
+        "roi": 0.11166666666666665,
+        "units": 0.6699999999999999
+      },
+      "discovery_safe": {
+        "n": 5,
+        "wins": 4,
+        "losses": 1,
+        "win_rate": 0.8,
+        "roi": 1.638,
+        "units": 8.19
+      },
+      "validation_base": {
+        "n": 13,
+        "wins": 6,
+        "losses": 7,
+        "win_rate": 0.46153846153846156,
+        "roi": 0.58,
+        "units": 7.539999999999999
+      },
+      "validation_risk": {
+        "n": 5,
+        "wins": 3,
+        "losses": 2,
+        "win_rate": 0.6,
+        "roi": 1.03,
+        "units": 5.15
+      },
+      "validation_safe": {
+        "n": 8,
+        "wins": 3,
+        "losses": 5,
+        "win_rate": 0.375,
+        "roi": 0.29875,
+        "units": 2.39
+      },
+      "validated": false
+    },
+    {
+      "method": "MLS-R03",
+      "feature": "edge_availability_questionable_count",
+      "op": ">=",
+      "threshold": 1.0,
+      "score": 1.028353104017422,
+      "discovery_base": {
+        "n": 11,
+        "wins": 6,
+        "losses": 5,
+        "win_rate": 0.5454545454545454,
+        "roi": 0.8054545454545454,
+        "units": 8.86
+      },
+      "discovery_risk": {
+        "n": 6,
+        "wins": 2,
+        "losses": 4,
+        "win_rate": 0.3333333333333333,
+        "roi": 0.11166666666666665,
+        "units": 0.6699999999999999
+      },
+      "discovery_safe": {
+        "n": 5,
+        "wins": 4,
+        "losses": 1,
+        "win_rate": 0.8,
+        "roi": 1.638,
+        "units": 8.19
+      },
+      "validation_base": {
+        "n": 13,
+        "wins": 6,
+        "losses": 7,
+        "win_rate": 0.46153846153846156,
+        "roi": 0.58,
+        "units": 7.539999999999999
+      },
+      "validation_risk": {
+        "n": 4,
+        "wins": 3,
+        "losses": 1,
+        "win_rate": 0.75,
+        "roi": 1.5375,
+        "units": 6.15
+      },
+      "validation_safe": {
+        "n": 9,
+        "wins": 3,
+        "losses": 6,
+        "win_rate": 0.3333333333333333,
+        "roi": 0.15444444444444447,
+        "units": 1.3900000000000001
+      },
+      "validated": false
+    },
+    {
+      "method": "MLS-R03",
+      "feature": "edge_availability_weighted_missing_gplus_share5",
+      "op": "<=",
+      "threshold": 0.005977066904754452,
+      "score": 0.9196031040174222,
+      "discovery_base": {
+        "n": 11,
+        "wins": 6,
+        "losses": 5,
+        "win_rate": 0.5454545454545454,
+        "roi": 0.8054545454545454,
+        "units": 8.86
+      },
+      "discovery_risk": {
+        "n": 6,
+        "wins": 2,
+        "losses": 4,
+        "win_rate": 0.3333333333333333,
+        "roi": 0.18666666666666668,
+        "units": 1.12
+      },
+      "discovery_safe": {
+        "n": 5,
+        "wins": 4,
+        "losses": 1,
+        "win_rate": 0.8,
+        "roi": 1.548,
+        "units": 7.74
+      },
+      "validation_base": {
+        "n": 13,
+        "wins": 6,
+        "losses": 7,
+        "win_rate": 0.46153846153846156,
+        "roi": 0.58,
+        "units": 7.539999999999999
+      },
+      "validation_risk": {
+        "n": 8,
+        "wins": 5,
+        "losses": 3,
+        "win_rate": 0.625,
+        "roi": 1.1475,
+        "units": 9.18
+      },
+      "validation_safe": {
+        "n": 5,
+        "wins": 1,
+        "losses": 4,
+        "win_rate": 0.2,
+        "roi": -0.328,
+        "units": -1.6400000000000001
+      },
+      "validated": false
+    },
+    {
+      "method": "MLS-R03",
+      "feature": "edge_availability_injury_out_count",
+      "op": ">=",
+      "threshold": 1.0,
+      "score": 0.580737321670256,
+      "discovery_base": {
+        "n": 11,
+        "wins": 6,
+        "losses": 5,
+        "win_rate": 0.5454545454545454,
+        "roi": 0.8054545454545454,
+        "units": 8.86
+      },
+      "discovery_risk": {
+        "n": 5,
+        "wins": 2,
+        "losses": 3,
+        "win_rate": 0.4,
+        "roi": 0.292,
+        "units": 1.46
+      },
+      "discovery_safe": {
+        "n": 6,
+        "wins": 4,
+        "losses": 2,
+        "win_rate": 0.6666666666666666,
+        "roi": 1.2333333333333334,
+        "units": 7.4
+      },
+      "validation_base": {
+        "n": 13,
+        "wins": 6,
+        "losses": 7,
+        "win_rate": 0.46153846153846156,
+        "roi": 0.58,
+        "units": 7.539999999999999
+      },
+      "validation_risk": {
+        "n": 4,
+        "wins": 3,
+        "losses": 1,
+        "win_rate": 0.75,
+        "roi": 1.5375,
+        "units": 6.15
+      },
+      "validation_safe": {
+        "n": 9,
+        "wins": 3,
+        "losses": 6,
+        "win_rate": 0.3333333333333333,
+        "roi": 0.15444444444444447,
+        "units": 1.3900000000000001
+      },
+      "validated": false
+    },
+    {
+      "method": "MLS-R03",
+      "feature": "opp_availability_weighted_missing_minutes_share5",
+      "op": ">=",
+      "threshold": 0.08307524139187467,
+      "score": 0.43794336215655283,
+      "discovery_base": {
+        "n": 11,
+        "wins": 6,
+        "losses": 5,
+        "win_rate": 0.5454545454545454,
+        "roi": 0.8054545454545454,
+        "units": 8.86
+      },
+      "discovery_risk": {
+        "n": 3,
+        "wins": 1,
+        "losses": 2,
+        "win_rate": 0.3333333333333333,
+        "roi": 0.15000000000000005,
+        "units": 0.4500000000000002
+      },
+      "discovery_safe": {
+        "n": 8,
+        "wins": 5,
+        "losses": 3,
+        "win_rate": 0.625,
+        "roi": 1.05125,
+        "units": 8.41
+      },
+      "validation_base": {
+        "n": 13,
+        "wins": 6,
+        "losses": 7,
+        "win_rate": 0.46153846153846156,
+        "roi": 0.58,
+        "units": 7.539999999999999
+      },
+      "validation_risk": {
+        "n": 3,
+        "wins": 0,
+        "losses": 3,
+        "win_rate": 0.0,
+        "roi": -1.0,
+        "units": -3.0
+      },
+      "validation_safe": {
+        "n": 10,
+        "wins": 6,
+        "losses": 4,
+        "win_rate": 0.6,
+        "roi": 1.0539999999999998,
+        "units": 10.54
+      },
+      "validated": true
+    },
+    {
+      "method": "MLS-R03",
+      "feature": "edge_availability_weighted_missing_minutes_share5",
+      "op": ">=",
+      "threshold": 0.04438292552241472,
+      "score": 0.43794336215655283,
+      "discovery_base": {
+        "n": 11,
+        "wins": 6,
+        "losses": 5,
+        "win_rate": 0.5454545454545454,
+        "roi": 0.8054545454545454,
+        "units": 8.86
+      },
+      "discovery_risk": {
+        "n": 3,
+        "wins": 1,
+        "losses": 2,
+        "win_rate": 0.3333333333333333,
+        "roi": 0.15000000000000005,
+        "units": 0.4500000000000002
+      },
+      "discovery_safe": {
+        "n": 8,
+        "wins": 5,
+        "losses": 3,
+        "win_rate": 0.625,
+        "roi": 1.05125,
+        "units": 8.41
+      },
+      "validation_base": {
+        "n": 13,
+        "wins": 6,
+        "losses": 7,
+        "win_rate": 0.46153846153846156,
+        "roi": 0.58,
+        "units": 7.539999999999999
+      },
+      "validation_risk": {
+        "n": 3,
+        "wins": 0,
+        "losses": 3,
+        "win_rate": 0.0,
+        "roi": -1.0,
+        "units": -3.0
+      },
+      "validation_safe": {
+        "n": 10,
+        "wins": 6,
+        "losses": 4,
+        "win_rate": 0.6,
+        "roi": 1.0539999999999998,
+        "units": 10.54
+      },
+      "validated": true
+    },
+    {
+      "method": "MLS-R03",
+      "feature": "opp_availability_weighted_missing_xgi_share5",
+      "op": "<=",
+      "threshold": 0.005046557466186365,
+      "score": 0.43586002882321956,
+      "discovery_base": {
+        "n": 11,
+        "wins": 6,
+        "losses": 5,
+        "win_rate": 0.5454545454545454,
+        "roi": 0.8054545454545454,
+        "units": 8.86
+      },
+      "discovery_risk": {
+        "n": 3,
+        "wins": 1,
+        "losses": 2,
+        "win_rate": 0.3333333333333333,
+        "roi": 0.15333333333333332,
+        "units": 0.45999999999999996
+      },
+      "discovery_safe": {
+        "n": 8,
+        "wins": 5,
+        "losses": 3,
+        "win_rate": 0.625,
+        "roi": 1.05,
+        "units": 8.4
+      },
+      "validation_base": {
+        "n": 13,
+        "wins": 6,
+        "losses": 7,
+        "win_rate": 0.46153846153846156,
+        "roi": 0.58,
+        "units": 7.539999999999999
+      },
+      "validation_risk": {
+        "n": 5,
+        "wins": 4,
+        "losses": 1,
+        "win_rate": 0.8,
+        "roi": 1.832,
+        "units": 9.16
+      },
+      "validation_safe": {
+        "n": 8,
+        "wins": 2,
+        "losses": 6,
+        "win_rate": 0.25,
+        "roi": -0.2025,
+        "units": -1.62
+      },
+      "validated": false
+    },
+    {
+      "method": "MLS-R03",
+      "feature": "sel_availability_weighted_missing_gplus_share5",
+      "op": "<=",
+      "threshold": 0.011172634121404137,
+      "score": 0.35168643735075555,
+      "discovery_base": {
+        "n": 11,
+        "wins": 6,
+        "losses": 5,
+        "win_rate": 0.5454545454545454,
+        "roi": 0.8054545454545454,
+        "units": 8.86
+      },
+      "discovery_risk": {
+        "n": 6,
+        "wins": 3,
+        "losses": 3,
+        "win_rate": 0.5,
+        "roi": 0.5783333333333333,
+        "units": 3.4699999999999998
+      },
+      "discovery_safe": {
+        "n": 5,
+        "wins": 3,
+        "losses": 2,
+        "win_rate": 0.6,
+        "roi": 1.078,
+        "units": 5.390000000000001
+      },
+      "validation_base": {
+        "n": 13,
+        "wins": 6,
+        "losses": 7,
+        "win_rate": 0.46153846153846156,
+        "roi": 0.58,
+        "units": 7.539999999999999
+      },
+      "validation_risk": {
+        "n": 6,
+        "wins": 3,
+        "losses": 3,
+        "win_rate": 0.5,
+        "roi": 0.5883333333333333,
+        "units": 3.5299999999999994
+      },
+      "validation_safe": {
+        "n": 7,
+        "wins": 3,
+        "losses": 4,
+        "win_rate": 0.42857142857142855,
+        "roi": 0.5728571428571428,
+        "units": 4.01
+      },
+      "validated": false
+    },
+    {
+      "method": "MLS-R03",
+      "feature": "sel_availability_out_count",
+      "op": "<=",
+      "threshold": 3.0,
+      "score": 0.34926977068408893,
+      "discovery_base": {
+        "n": 11,
+        "wins": 6,
+        "losses": 5,
+        "win_rate": 0.5454545454545454,
+        "roi": 0.8054545454545454,
+        "units": 8.86
+      },
+      "discovery_risk": {
+        "n": 6,
+        "wins": 3,
+        "losses": 3,
+        "win_rate": 0.5,
+        "roi": 0.58,
+        "units": 3.4799999999999995
+      },
+      "discovery_safe": {
+        "n": 5,
+        "wins": 3,
+        "losses": 2,
+        "win_rate": 0.6,
+        "roi": 1.076,
+        "units": 5.380000000000001
+      },
+      "validation_base": {
+        "n": 13,
+        "wins": 6,
+        "losses": 7,
+        "win_rate": 0.46153846153846156,
+        "roi": 0.58,
+        "units": 7.539999999999999
+      },
+      "validation_risk": {
+        "n": 6,
+        "wins": 3,
+        "losses": 3,
+        "win_rate": 0.5,
+        "roi": 0.7033333333333333,
+        "units": 4.22
+      },
+      "validation_safe": {
+        "n": 7,
+        "wins": 3,
+        "losses": 4,
+        "win_rate": 0.42857142857142855,
+        "roi": 0.47428571428571425,
+        "units": 3.32
+      },
+      "validated": false
+    }
+  ]
+}
