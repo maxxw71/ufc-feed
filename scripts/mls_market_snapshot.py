@@ -1,67 +1,68 @@
 #!/usr/bin/env python3
 from __future__ import annotations
-import json, os, urllib.parse, urllib.request
-from datetime import datetime, timezone
+import json,re,urllib.request
+from datetime import datetime,timezone,timedelta
 from pathlib import Path
 
 ROOT=Path('/home/anestishkurti92/mls-predictor-v1')
 OUT=ROOT/'live/market_snapshots';OUT.mkdir(parents=True,exist_ok=True)
-ENV_PATHS=[
- Path('/home/anestishkurti92/.config/ufc-watcher.env'),
- Path('/home/anestishkurti92/.config/nfl-watcher.env'),
- ROOT/'.env',
-]
+JINA='https://r.jina.ai/'
+BASE='https://site.api.espn.com/apis/site/v2/sports/soccer/usa.1/scoreboard?dates='
+UA='Mozilla/5.0 AppwizaMLS/1.0'
 
-def load_env():
-    env=dict(os.environ)
-    for p in ENV_PATHS:
-        if not p.exists():continue
-        for line in p.read_text(errors='ignore').splitlines():
-            line=line.strip()
-            if not line or line.startswith('#') or '=' not in line:continue
-            k,v=line.split('=',1);k=k.strip();v=v.strip().strip('"').strip("'")
-            env.setdefault(k,v)
-    return env
-def get_key(env):
-    for k in ['ODDS_API_KEY','THE_ODDS_API_KEY','THEODDSAPI_KEY','ODDSAPI_KEY']:
-        if env.get(k):return env[k]
-    for k,v in env.items():
-        if 'ODDS' in k.upper() and 'KEY' in k.upper() and v:return v
-    return None
-def fetch():
-    env=load_env();key=get_key(env)
-    if not key:
-        raise RuntimeError('No Odds API key found in existing Appwiza environment')
-    qs=urllib.parse.urlencode({'apiKey':key,'regions':'us,us2','markets':'h2h','oddsFormat':'decimal','dateFormat':'iso'})
-    url='https://api.the-odds-api.com/v4/sports/soccer_usa_mls/odds?'+qs
-    req=urllib.request.Request(url,headers={'User-Agent':'Appwiza-MLS/1.0'})
-    with urllib.request.urlopen(req,timeout=45) as r:
-        raw=r.read();headers=dict(r.headers)
-    data=json.loads(raw)
-    ts=datetime.now(timezone.utc)
-    stamp=ts.strftime('%Y%m%dT%H%M%SZ')
-    (OUT/f'{stamp}_raw.json').write_bytes(raw)
+def american_to_decimal(v):
+    v=float(v)
+    return 1+v/100 if v>0 else 1+100/abs(v)
+def novig(h,d,a):
+    inv=[1/h,1/d,1/a];s=sum(inv);return inv[0]/s,inv[1]/s,inv[2]/s,s-1
+def fetch_day(day):
+    url=JINA+BASE+day.strftime('%Y%m%d')
+    req=urllib.request.Request(url,headers={'User-Agent':UA,'Accept':'text/plain'})
+    raw=urllib.request.urlopen(req,timeout=60).read().decode('utf-8','replace')
+    mark='Markdown Content:\n'
+    payload=raw.split(mark,1)[1] if mark in raw else raw
+    return json.loads(payload.strip())
+def main():
+    now=datetime.now(timezone.utc)
     rows=[]
-    for ev in data:
-        home=ev.get('home_team');away=ev.get('away_team')
-        for b in ev.get('bookmakers') or []:
-            for m in b.get('markets') or []:
-                if m.get('key')!='h2h':continue
-                outcomes={str(o.get('name')):o.get('price') for o in m.get('outcomes') or []}
-                row={'captured_at':ts.isoformat(),'event_id':ev.get('id'),'commence_time':ev.get('commence_time'),
-                     'home_team':home,'away_team':away,'bookmaker_key':b.get('key'),'bookmaker':b.get('title'),
-                     'bookmaker_updated_at':b.get('last_update'),'home_odds':outcomes.get(home),'away_odds':outcomes.get(away),
-                     'draw_odds':outcomes.get('Draw')}
-                if all(isinstance(row[x],(int,float)) and row[x]>1 for x in ['home_odds','draw_odds','away_odds']):
-                    inv=[1/row['home_odds'],1/row['draw_odds'],1/row['away_odds']];tot=sum(inv)
-                    row.update(home_novig_prob=inv[0]/tot,draw_novig_prob=inv[1]/tot,away_novig_prob=inv[2]/tot,overround=tot-1)
-                rows.append(row)
-    with (OUT/f'{stamp}.jsonl').open('w') as f:
-        for row in rows:f.write(json.dumps(row,sort_keys=True)+'\n')
-    summary={'captured_at':ts.isoformat(),'events':len(data),'quotes':len(rows),
-             'complete_3way_quotes':sum(all(isinstance(r.get(x),(int,float)) for x in ['home_odds','draw_odds','away_odds']) for r in rows),
-             'remaining_requests':headers.get('x-requests-remaining'),'used_requests':headers.get('x-requests-used'),
-             'snapshot':str(OUT/f'{stamp}.jsonl')}
+    for off in range(0,15):
+        day=(now+timedelta(days=off)).date()
+        try:d=fetch_day(day)
+        except Exception as e:
+            print('warn',day,type(e).__name__,str(e)[:180]);continue
+        for ev in d.get('events') or []:
+            comp=(ev.get('competitions') or [{}])[0]
+            st=(comp.get('status') or {}).get('type') or {}
+            if st.get('state') not in {'pre','in'} and st.get('completed'):continue
+            teams={x.get('homeAway'):x.get('team',{}).get('displayName') for x in comp.get('competitors') or []}
+            home,away=teams.get('home'),teams.get('away')
+            odds=(comp.get('odds') or [])
+            if not home or not away or not odds:continue
+            o=odds[0];ml=(o.get('moneyline') or {})
+            def get(side):
+                z=(ml.get(side) or {}).get('close') or {}
+                return z.get('odds')
+            ah,ad,aa=get('home'),get('draw'),get('away')
+            if ah is None or ad is None or aa is None:continue
+            dec_h,dec_d,dec_a=map(american_to_decimal,[ah,ad,aa])
+            ph,pd_,pa,over=novig(dec_h,dec_d,dec_a)
+            rows.append({
+              'captured_at':now.isoformat(),'event_id':ev.get('id'),'commence_time':ev.get('date'),
+              'home_team':home,'away_team':away,'provider':(o.get('provider') or {}).get('displayName') or (o.get('provider') or {}).get('name') or 'DraftKings',
+              'home_american':ah,'draw_american':ad,'away_american':aa,
+              'home_odds':dec_h,'draw_odds':dec_d,'away_odds':dec_a,
+              'home_novig_prob':ph,'draw_novig_prob':pd_,'away_novig_prob':pa,'overround':over,
+              'source':'ESPN scoreboard via Jina relay'
+            })
+    # exact duplicate event ids can appear in multiple day queries; keep one.
+    ded={str(r['event_id']):r for r in rows};rows=sorted(ded.values(),key=lambda r:r['commence_time'] or '')
+    stamp=now.strftime('%Y%m%dT%H%M%SZ')
+    path=OUT/f'{stamp}.jsonl'
+    with path.open('w') as f:
+        for r in rows:f.write(json.dumps(r,sort_keys=True)+'\n')
+    summary={'captured_at':now.isoformat(),'events':len(rows),'complete_3way_quotes':len(rows),
+             'provider':'DraftKings via ESPN/Jina','snapshot':str(path)}
+    (OUT/'latest.json').write_text(json.dumps({'summary':summary,'events':rows},indent=2))
     (OUT/'latest_summary.json').write_text(json.dumps(summary,indent=2))
     print(json.dumps(summary,indent=2))
-if __name__=='__main__':fetch()
+if __name__=='__main__':main()
