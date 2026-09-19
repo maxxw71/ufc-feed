@@ -8,48 +8,71 @@ on:
   workflow_dispatch:
 
 jobs:
-  inspect-real-mls:
+  diagnose-mls:
     runs-on: [self-hosted, Linux, X64, appwiza]
     timeout-minutes: 12
     steps:
       - uses: actions/checkout@v4
-      - name: Inspect real MLS warehouse through established SSH bridge
+      - name: Diagnose MLS availability identity and archive joins
         shell: bash
         run: |
           set -Eeuo pipefail
           KEY=/home/appwiza-runner/.ssh/appwiza_vps
           HOST=anestishkurti92@127.0.0.1
           SSH="ssh -i $KEY -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=accept-new $HOST"
-          $SSH 'set -Eeuo pipefail; cd /home/anestishkurti92/mls-predictor-v1; echo "== ROOT =="; pwd; echo "== TOP =="; find . -maxdepth 2 -type f | sort | head -250; echo "== PROCESSED =="; ls -lh data/processed | tail -80; echo "== REPORTS =="; ls -lh reports | tail -80; echo "== AVAILABILITY =="; find data/raw/availability_archive live/availability -maxdepth 2 -type f -printf "%p %s bytes\n" 2>/dev/null | sort | tail -120; venv/bin/python - <<'"'"'PY'"'"'
-          import json
+          $SSH 'set -Eeuo pipefail; cd /home/anestishkurti92/mls-predictor-v1; venv/bin/python - <<'"'"'PY'"'"'
+          import json, re, unicodedata
           from pathlib import Path
+          from rapidfuzz import fuzz, process
           import pandas as pd
+          from mls_bootstrap_warehouse import canon_team
+
           root=Path("/home/anestishkurti92/mls-predictor-v1")
-          print("== DATAFRAME SCHEMAS ==")
-          for rel in [
-              "data/processed/mls_match_features_advanced.parquet",
-              "data/processed/mls_player_manager_pregame_features.parquet",
-              "data/processed/mls_match_features_player_enriched.parquet",
-              "data/raw/availability_archive/availability_archive_2024_2025.parquet",
-          ]:
-              p=root/rel
-              if not p.exists():
-                  print(rel, "MISSING")
-                  continue
-              d=pd.read_parquet(p)
-              print(rel, "shape=",d.shape)
-              print("columns=",list(d.columns))
-              print("season_counts=", d["season"].value_counts().sort_index().to_dict() if "season" in d else "n/a")
-          print("== ARCHIVE META ==")
-          p=root/"data/raw/availability_archive/meta.json"
-          print(p.read_text() if p.exists() else "missing")
-          print("== LATEST UNMATCHED ==")
-          p=root/"live/availability/latest.json"
-          if p.exists():
-              d=json.loads(p.read_text())
-              print(json.dumps(d.get("unmatched") or [],indent=2,ensure_ascii=False))
-              print("team_summary_keys", sorted((d.get("team_summary") or {}).keys()))
-          print("== MERGE META ==")
-          p=root/"reports/player_merge_meta.json"
-          print(p.read_text() if p.exists() else "missing")
+          def norm(s):
+              x=unicodedata.normalize("NFKD",str(s or "")).encode("ascii","ignore").decode().lower()
+              x=re.sub(r"[^a-z0-9]+"," ",x)
+              return re.sub(r"\s+"," ",x).strip()
+
+          players=pd.read_parquet(root/"data/processed/asa_players.parquet")
+          teams=pd.read_parquet(root/"data/processed/asa_teams.parquet")
+          xg=pd.read_parquet(root/"data/processed/asa_player_xg_game_2013_present.parquet")
+          team_map={str(r.team_id):canon_team(r.team_name) for _,r in teams.iterrows()}
+          pmap={str(r.player_id):str(r.player_name) for _,r in players.iterrows()}
+          latest=json.loads((root/"live/availability/latest.json").read_text())
+          print("== UNMATCHED CANDIDATES ==")
+          x26=xg[xg.get("_season",pd.Series(index=xg.index,dtype=float)).eq(2026)].copy()
+          x26["team"]=x26.team_id.astype(str).map(team_map)
+          recent_rosters={t:sorted({pmap.get(str(pid),str(pid)) for pid in z.player_id}) for t,z in x26.groupby("team")}
+          all_names=sorted(set(players.player_name.astype(str)))
+          for u in latest.get("unmatched") or []:
+              name=u["player_name"]; team=canon_team(u["team_reported"])
+              roster=recent_rosters.get(team,[])
+              print("\n",u)
+              print("team_canon=",team)
+              print("team_top=",process.extract(name,roster,scorer=fuzz.WRatio,limit=5))
+              print("global_top=",process.extract(name,all_names,scorer=fuzz.WRatio,limit=5))
+
+          print("\n== ARCHIVE REPORT/MATCH COVERAGE ==")
+          arc=pd.read_parquet(root/"data/raw/availability_archive/availability_archive_2024_2025.parquet")
+          adv=pd.read_parquet(root/"data/processed/mls_match_features_advanced.parquet")
+          reports=arc[["year","matchday","url"]].drop_duplicates().sort_values(["year","matchday"])
+          total_matches=0
+          for _,r in reports.iterrows():
+              md=pd.to_numeric(adv["asa_matchday"],errors="coerce")
+              z=adv[(adv.season.eq(int(r.year))) & md.eq(int(r.matchday))]
+              total_matches+=len(z)
+              teams=set(z.home_team.astype(str))|set(z.away_team.astype(str))
+              reported={canon_team(x) for x in arc[(arc.year.eq(r.year))&(arc.matchday.eq(r.matchday))].team_reported.dropna().unique()}
+              overlap=len(teams & reported)
+              print(int(r.year),int(r.matchday),"matches",len(z),"match_teams",len(teams),"reported_teams",len(reported),"overlap",overlap)
+          print("reports",len(reports),"matched_schedule_rows",total_matches)
+
+          print("\n== PLAYER MERGE DRY RUN ==")
+          pfeat=pd.read_parquet(root/"data/processed/mls_player_manager_pregame_features.parquet")
+          pfeat=pfeat[pfeat.asa_game_id.notna()].copy()
+          keep=["asa_game_id"]+[c for c in pfeat.columns if c!="asa_game_id" and any(c.startswith(prefix) for prefix in ("home_player_","away_player_","edge_player_","home_manager_","away_manager_","edge_manager_"))]
+          z=adv.merge(pfeat[keep],on="asa_game_id",how="left",validate="m:1")
+          added=[c for c in z.columns if c not in adv.columns]
+          print("shape",z.shape,"added",len(added),"matched",int(z[added].notna().any(axis=1).sum()))
+          print("added_cols",added)
           PY'
