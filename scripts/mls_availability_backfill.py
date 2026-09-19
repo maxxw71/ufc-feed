@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 from __future__ import annotations
-import hashlib,json,re,time,unicodedata,urllib.request
+import hashlib,json,re,unicodedata,urllib.request
+from concurrent.futures import ThreadPoolExecutor,as_completed
 from datetime import datetime
 from pathlib import Path
 
@@ -51,10 +52,20 @@ def candidates():
         yield 2025,n,BASE+f'mls-player-status-report-matchday-{n}-2025'
 def main():
     reports=[];seen_hash=set()
-    for year,n,url in candidates():
-        try:text=fetch(url)
-        except Exception as e:
-            print('MISS',year,n,type(e).__name__,str(e)[:100]);continue
+    tasks=list(candidates())
+    fetched=[]
+    def work(item):
+        year,n,url=item
+        try:return item,fetch(url),None
+        except Exception as e:return item,None,(type(e).__name__,str(e)[:120])
+    with ThreadPoolExecutor(max_workers=4) as ex:
+        futs=[ex.submit(work,x) for x in tasks]
+        for fut in as_completed(futs):
+            item,text,err=fut.result();year,n,url=item
+            if err:
+                print('MISS',year,n,*err);continue
+            fetched.append((year,n,url,text))
+    for year,n,url,text in sorted(fetched):
         if 'Player Status Report' not in text or not re.search(r'\b(?:Out|Questionable)\b',text,re.I):
             continue
         md=extract_matchday(text)
@@ -69,7 +80,6 @@ def main():
         reports.append(r)
         (OUT/f'{year}_matchday_{n:02d}.json').write_text(json.dumps(r,indent=2,ensure_ascii=False))
         print('FOUND',year,n,'dates',dates,'entries',len(rows))
-        time.sleep(.12)
     flat=[]
     for r in reports:
         for x in r['entries']:flat.append({**{k:r[k] for k in ['year','matchday','url','raw_sha256']},'report_dates':';'.join(r['report_dates']),**x})
