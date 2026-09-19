@@ -83,7 +83,7 @@ jobs:
           KEY=/home/appwiza-runner/.ssh/appwiza_vps
           HOST=anestishkurti92@127.0.0.1
           SSH="ssh -i $KEY -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=accept-new $HOST"
-          $SSH 'cd /home/anestishkurti92/mls-predictor-v1 && ./mls_current_asa.py && ./mls_pipeline.sh status' | tee /tmp/mls-status.txt
+          $SSH 'cd /home/anestishkurti92/mls-predictor-v1 && venv/bin/python mls_current_asa.py && ./mls_pipeline.sh status' | tee /tmp/mls-status.txt
           grep -q '"official_autopromotions": 0' /tmp/mls-status.txt
           grep -q '"shadow_candidates":' /tmp/mls-status.txt
           $SSH "crontab -l | grep -q '# BEGIN APPWIZA MLS RESEARCH'"
