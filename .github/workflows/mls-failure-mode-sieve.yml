@@ -1,0 +1,66 @@
+name: MLS Failure Mode Sieve
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/mls_failure_mode_sieve.py'
+      - '.github/workflows/mls-failure-mode-sieve.yml'
+
+concurrency:
+  group: mls-research
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  sieve:
+    runs-on: [self-hosted, Linux, X64, appwiza]
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+        with: {fetch-depth: 0}
+
+      - name: Run preholdout veto discovery and frozen holdout test
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          KEY=/home/appwiza-runner/.ssh/appwiza_vps
+          HOST=anestishkurti92@127.0.0.1
+          SSH="ssh -i $KEY -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=accept-new $HOST"
+
+          for f in mls_autoresearch.py mls_failure_mode_sieve.py; do
+            cat "scripts/$f" | $SSH "set -e; D=/home/anestishkurti92/mls-predictor-v1; cat > \"\$D/$f.new\"; chmod 0644 \"\$D/$f.new\"; mv -f \"\$D/$f.new\" \"\$D/$f\""
+          done
+          $SSH 'set -Eeuo pipefail; cd /home/anestishkurti92/mls-predictor-v1; venv/bin/python -m py_compile mls_autoresearch.py mls_failure_mode_sieve.py; OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 nice -n 15 timeout 15m venv/bin/python mls_failure_mode_sieve.py'
+
+      - name: Pull sieve results
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          KEY=/home/appwiza-runner/.ssh/appwiza_vps
+          HOST=anestishkurti92@127.0.0.1
+          SSH="ssh -i $KEY -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=accept-new $HOST"
+          mkdir -p mls/research/failure_sieve
+          for f in report.txt preholdout_veto_candidates.csv frozen_veto_holdout.csv; do
+            $SSH "cat /home/anestishkurti92/mls-predictor-v1/research/failure_sieve/$f" > "mls/research/failure_sieve/$f"
+          done
+          echo '=== MLS FAILURE SIEVE ==='
+          cat mls/research/failure_sieve/report.txt
+          echo '=== SERVER ==='
+          $SSH 'uptime; free -h | head -2'
+
+      - name: Persist sieve results
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git add mls/research/failure_sieve
+          if ! git diff --cached --quiet; then
+            git commit -m 'Publish MLS failure-mode sieve'
+            git pull --rebase origin main
+            git push origin HEAD:main
+          fi
