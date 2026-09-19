@@ -1,38 +1,63 @@
 name: MLS maintenance bridge
 
 on:
-  push:
-    paths:
-      - ".github/workflows/mls-maintenance.yml"
   pull_request:
     paths:
       - ".github/workflows/mls-maintenance.yml"
       - ".github/mls-probe.txt"
+      - "mls_research/**"
   workflow_dispatch:
 
 jobs:
-  inspect-mls:
+  validate-mls:
     runs-on: [self-hosted, appwiza]
-    timeout-minutes: 10
+    timeout-minutes: 20
     steps:
-      - name: Inspect MLS project state
+      - uses: actions/checkout@v4
+      - name: Build isolated MLS test environment
         shell: bash
         run: |
           set -euo pipefail
-          echo "HOST=$(hostname)"
-          echo "USER=$(whoami)"
-          if sudo -n true 2>/dev/null; then
-            echo "SUDO_NONINTERACTIVE=yes"
-          else
-            echo "SUDO_NONINTERACTIVE=no"
-          fi
-          echo "== MLS directories =="
-          sudo -n find /home /srv /opt -maxdepth 6 -type d \( -iname '*mls*' -o -iname '*soccer*' \) 2>/dev/null | sort | head -300 || true
-          echo "== MLS-named files =="
-          sudo -n find /home /srv /opt -maxdepth 7 -type f \( -iname '*mls*' -o -path '*/mls/*' \) 2>/dev/null | sort | head -500 || true
-          echo "== Home project roots =="
-          sudo -n find /home/anestishkurti92 -maxdepth 3 -type d 2>/dev/null | sort | head -300 || true
-          echo "== Services mentioning MLS =="
-          sudo -n systemctl list-unit-files --type=service 2>/dev/null | grep -i mls || true
-          echo "== Cron mentioning MLS =="
-          sudo -n grep -Ril --exclude-dir=.git 'mls' /etc/cron.d /etc/systemd/system 2>/dev/null | head -100 || true
+          python3 -m venv "$RUNNER_TEMP/mls-research-venv"
+          source "$RUNNER_TEMP/mls-research-venv/bin/activate"
+          python -m pip install --upgrade pip
+          python -m pip install -r mls_research/requirements.txt
+      - name: Run MLS unit tests
+        shell: bash
+        run: |
+          set -euo pipefail
+          source "$RUNNER_TEMP/mls-research-venv/bin/activate"
+          python -m unittest discover -s mls_research/tests -v
+      - name: Live official MLS status report smoke test
+        shell: bash
+        run: |
+          set -euo pipefail
+          source "$RUNNER_TEMP/mls-research-venv/bin/activate"
+          OUT="$RUNNER_TEMP/mls_status.jsonl"
+          RAW="$RUNNER_TEMP/mls_status_raw"
+          python -m mls_research.collect_mls_status --output "$OUT" --raw-dir "$RAW"
+          python - <<'PY'
+          import json, os
+          p=os.environ["RUNNER_TEMP"]+"/mls_status.jsonl"
+          rows=[json.loads(x) for x in open(p,encoding="utf-8") if x.strip()]
+          print("status_snapshots", len(rows))
+          print("status_teams", sorted({r["team"] for r in rows})[:40])
+          assert len(rows) >= 20, "Expected broad team coverage from official status report"
+          PY
+      - name: Live ASA point-in-time player-strength smoke test
+        shell: bash
+        run: |
+          set -euo pipefail
+          source "$RUNNER_TEMP/mls-research-venv/bin/activate"
+          OUT="$RUNNER_TEMP/mls_strength_2026-09-18.csv"
+          python -m mls_research.build_player_strength --as-of 2026-09-18 --lookback-days 120 --output "$OUT"
+          python - <<'PY'
+          import os, pandas as pd
+          p=os.environ["RUNNER_TEMP"]+"/mls_strength_2026-09-18.csv"
+          df=pd.read_csv(p)
+          print("strength_rows", len(df))
+          print("strength_columns", list(df.columns))
+          print(df[["player_name","team_name","minutes_played","gplus_p96","xg_xa_p96","impact_index"]].head(15).to_string(index=False))
+          assert len(df) >= 300, "Unexpectedly small MLS player-strength snapshot"
+          assert df["impact_index"].between(0,1).all()
+          PY
