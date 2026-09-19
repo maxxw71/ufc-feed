@@ -1,9 +1,6 @@
 name: MLS maintenance bridge
 
 on:
-  push:
-    paths:
-      - ".github/workflows/mls-maintenance.yml"
   pull_request:
     paths:
       - ".github/workflows/mls-maintenance.yml"
@@ -11,20 +8,33 @@ on:
   workflow_dispatch:
 
 jobs:
-  inspect-mls:
-    runs-on: [self-hosted, appwiza]
-    timeout-minutes: 10
+  inspect-media-archive:
+    runs-on: [self-hosted, Linux, X64, appwiza]
+    timeout-minutes: 12
     steps:
-      - name: Inspect MLS project state
+      - uses: actions/checkout@v4
+      - name: Test first-party media archive link extraction
         shell: bash
         run: |
-          set -euo pipefail
-          echo "HOST=$(hostname)"
-          echo "USER=$(whoami)"
-          echo "PWD=$(pwd)"
-          echo "== MLS directories =="
-          find /home/anestishkurti92 -maxdepth 5 -type d \( -iname '*mls*' -o -iname '*soccer*' \) 2>/dev/null | sort | head -200
-          echo "== Candidate MLS files =="
-          find /home/anestishkurti92 -maxdepth 6 -type f \( -iname '*mls*' -o -path '*/mls/*' \) 2>/dev/null | sort | head -300
-          echo "== appwiza public sports dirs =="
-          find /srv/appwiza-sports/public -maxdepth 2 -type d 2>/dev/null | sort | head -100 || true
+          set -Eeuo pipefail
+          KEY=/home/appwiza-runner/.ssh/appwiza_vps
+          HOST=anestishkurti92@127.0.0.1
+          SSH="ssh -i $KEY -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=accept-new $HOST"
+          $SSH 'set -Eeuo pipefail; cd /home/anestishkurti92/mls-predictor-v1; venv/bin/python - <<'"'"'PY'"'"'
+          import re, urllib.request
+          from urllib.parse import urljoin
+          UA="Mozilla/5.0 AppwizaMLSArchiveDiscovery/1.0"
+          for n in [7,8,9,10,11,12,13,14,15,20,21,22,23]:
+              url=f"https://www.mlssoccer.com/media-resources/press-releases/more/{n}"
+              print("\nPAGE",n,url)
+              try:
+                  req=urllib.request.Request(url,headers={"User-Agent":UA})
+                  raw=urllib.request.urlopen(req,timeout=30).read().decode("utf-8","replace")
+                  print("bytes",len(raw))
+                  hrefs=re.findall(r"href=[\\\"\\x27]([^\\\"\\x27]+)[\\\"\\x27]",raw,re.I)
+                  matches=sorted({urljoin(url,h) for h in hrefs if "player-status-report" in h.lower()})
+                  print("status_links",len(matches))
+                  for x in matches:print("LINK",x)
+              except Exception as e:
+                  print("ERR",type(e).__name__,str(e)[:180])
+          PY'
