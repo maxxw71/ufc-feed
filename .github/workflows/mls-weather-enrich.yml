@@ -1,0 +1,63 @@
+name: MLS Weather Context Enrichment
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/mls_weather_enrich.py'
+      - 'mls/transactions/feature_meta.json'
+      - '.github/workflows/mls-weather-enrich.yml'
+
+concurrency:
+  group: mls-weather-enrich
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    if: github.repository == 'maxxw71/ufc-feed'
+    runs-on: [self-hosted, Linux, X64, appwiza]
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+        with: {fetch-depth: 0}
+
+      - name: Deploy and build historical weather context
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          KEY=/home/appwiza-runner/.ssh/appwiza_vps
+          HOST=anestishkurti92@127.0.0.1
+          SSH="ssh -i $KEY -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=accept-new $HOST"
+          D=/home/anestishkurti92/mls-predictor-v1
+          cat scripts/mls_weather_enrich.py | $SSH 'set -e; D=/home/anestishkurti92/mls-predictor-v1; cat > "$D/mls_weather_enrich.py.new"; chmod 0644 "$D/mls_weather_enrich.py.new"; mv -f "$D/mls_weather_enrich.py.new" "$D/mls_weather_enrich.py"'
+          $SSH 'set -Eeuo pipefail; cd /home/anestishkurti92/mls-predictor-v1; venv/bin/python -m py_compile mls_weather_enrich.py; OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 nice -n 15 timeout 18m venv/bin/python mls_weather_enrich.py'
+
+      - name: Pull weather audit
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          KEY=/home/appwiza-runner/.ssh/appwiza_vps
+          HOST=anestishkurti92@127.0.0.1
+          mkdir -p mls/weather
+          ssh -i "$KEY" -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=accept-new "$HOST" 'cat /home/anestishkurti92/mls-predictor-v1/reports/weather_feature_meta.json' > mls/weather/feature_meta.json
+
+      - name: Persist weather audit
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          cp mls/weather/feature_meta.json "$RUNNER_TEMP/weather_meta.json"
+          git fetch origin main
+          git reset --hard origin/main
+          mkdir -p mls/weather
+          cp "$RUNNER_TEMP/weather_meta.json" mls/weather/feature_meta.json
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git add mls/weather/feature_meta.json
+          if ! git diff --cached --quiet; then
+            git commit -m 'Publish MLS weather context audit'
+            git push origin HEAD:main
+          fi
