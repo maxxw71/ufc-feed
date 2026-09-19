@@ -1,0 +1,32 @@
+name: MLS ASA Games Signature Audit
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/mls-asa-games-signature-audit.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  audit:
+    runs-on: [self-hosted, Linux, X64, appwiza]
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Inspect ASA games API signature
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          KEY=/home/appwiza-runner/.ssh/appwiza_vps
+          HOST=anestishkurti92@127.0.0.1
+          ssh -i "$KEY" -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=accept-new "$HOST" 'bash -s' <<'EOF'
+          set -Eeuo pipefail
+          cd /home/anestishkurti92/mls-predictor-v1
+          venv/bin/python - <<'PY'
+          import inspect
+          from itscalledsoccer import AmericanSoccerAnalysis
+          a=AmericanSoccerAnalysis()
+          print(inspect.signature(a.get_games))
+          print(inspect.getsource(a.get_games)[:5000])
+          PY
+          EOF
