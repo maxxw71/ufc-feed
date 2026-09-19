@@ -1,25 +1,23 @@
 MLS AUTONOMOUS SHADOW RESEARCH
 ====================================================================================================
-mode=daily selection_rows=13,950 tested=7,272 survivors=18
+mode=daily selection_rows=12,420 tested=7,272 survivors=15
+Universe: MLS regular season only (ASA knockout_game=False)
 Splits: 2012-2018 train | 2019-2022 validation | 2023-2025 holdout | 2026 prospective only
 No automatic promotion to live/email/website.
 
 TOP SURVIVORS
-AWAY P35_45 | edge_travel_miles >= 844.2 | n=170 79-91 win=46.5% ROI=+16.0% | train=+15.4% val=+4.0% hold=+27.1% n=59 | +season=71%
-AWAY P25_35 | elo_edge <= -41.31 | n=203 71-132 win=35.0% ROI=+20.5% | train=+18.9% val=+18.0% hold=+24.0% n=77 | +season=64%
-AWAY P40_50 | sel_last5_gdpg <= 0.4 | n=131 66-65 win=50.4% ROI=+11.1% | train=+5.2% val=+7.2% hold=+23.1% n=38 | +season=64%
-HOME P55_70 | opp_season_gdpg >= 0.2222 | n=176 120-56 win=68.2% ROI=+11.9% | train=+5.7% val=+12.1% hold=+21.8% n=49 | +season=85%
-HOME P45_55 | edge_venue5_ppg >= 1.2 | n=467 262-205 win=56.1% ROI=+8.9% | train=+5.6% val=+9.3% hold=+17.3% n=101 | +season=71%
-HOME P50_60 | sel_last10_xgapg >= 1.455 | n=339 207-132 win=61.1% ROI=+8.5% | train=+6.9% val=+7.2% hold=+11.4% n=116 | +season=69%
-AWAY P20_30 | opp_last3_xgdpg <= -0.3314 | n=505 149-356 win=29.5% ROI=+12.8% | train=+14.7% val=+12.3% hold=+10.4% n=149 | +season=69%
-HOME P45_55 | sel_venue5_ppg >= 2.2 | n=454 258-196 win=56.8% ROI=+11.0% | train=+12.8% val=+7.2% hold=+10.4% n=102 | +season=71%
-HOME P50_60 | edge_last5_xgapg <= -0.1863 | n=480 295-185 win=61.5% ROI=+7.9% | train=+5.6% val=+11.1% hold=+8.0% n=134 | +season=92%
-HOME P50_60 | edge_last5_gdpg <= -0.6 | n=321 204-117 win=63.6% ROI=+13.5% | train=+20.9% val=+8.6% hold=+7.2% n=88 | +season=79%
-HOME P50_60 | opp_last5_xgapg >= 1.454 | n=560 339-221 win=60.5% ROI=+6.7% | train=+7.5% val=+7.7% hold=+4.7% n=180 | +season=77%
-HOME P50_60 | edge_last3_ppg <= -0.6667 | n=360 215-145 win=59.7% ROI=+6.5% | train=+7.4% val=+7.0% hold=+4.6% n=97 | +season=79%
-AWAY P25_35 | edge_last10_xgdpg <= -0.2433 | n=235 76-159 win=32.3% ROI=+10.9% | train=+23.0% val=+4.9% hold=+4.5% n=77 | +season=69%
-HOME P50_60 | opp_last10_xgdpg >= 0.1895 | n=284 175-109 win=61.6% ROI=+10.0% | train=+15.2% val=+10.5% hold=+4.4% n=102 | +season=69%
-AWAY P20_30 | edge_last3_xgdpg >= 0.4948 | n=493 140-353 win=28.4% ROI=+7.4% | train=+10.1% val=+7.7% hold=+3.3% n=143 | +season=69%
-HOME P45_55 | opp_last10_xgfpg <= 1.225 | n=449 253-196 win=56.3% ROI=+9.3% | train=+15.4% val=+5.4% hold=+3.3% n=109 | +season=77%
-HOME P40_50 | opp_last3_ppg <= 1 | n=505 249-256 win=49.3% ROI=+6.2% | train=+5.5% val=+9.9% hold=+3.2% n=135 | +season=71%
-HOME P50_60 | opp_last10_xgapg >= 1.439 | n=561 344-217 win=61.3% ROI=+7.9% | train=+10.2% val=+10.5% hold=+3.1% n=187 | +season=92%
+AWAY P25_35 | edge_last10_gdpg <= -0.3 | n=321 108-213 win=33.6% ROI=+15.0% | train=+9.5% val=+3.1% hold=+33.6% n=101 | +season=69%
+AWAY P25_35 | sel_last10_xgdpg <= -0.1721 | n=339 116-223 win=34.2% ROI=+14.4% | train=+8.6% val=+5.8% hold=+29.0% n=113 | +season=77%
+AWAY P25_35 | elo_edge <= -40.85 | n=188 67-121 win=35.6% ROI=+22.8% | train=+37.6% val=+4.5% hold=+27.3% n=75 | +season=69%
+AWAY P25_35 | edge_last10_ppg <= -0.3 | n=296 105-191 win=35.5% ROI=+20.6% | train=+23.5% val=+12.1% hold=+25.6% n=99 | +season=77%
+AWAY P25_35 | opp_last5_ppg >= 1.6 | n=494 165-329 win=33.4% ROI=+10.9% | train=+5.7% val=+5.3% hold=+21.6% n=164 | +season=69%
+AWAY P35_45 | edge_travel_miles >= 869.5 | n=144 69-75 win=47.9% ROI=+19.8% | train=+24.1% val=+14.2% hold=+20.9% n=56 | +season=67%
+AWAY P25_35 | edge_last10_xgdpg <= -0.2202 | n=259 90-169 win=34.7% ROI=+19.3% | train=+28.6% val=+10.0% hold=+19.1% n=88 | +season=69%
+HOME P55_70 | opp_season_gdpg >= 0.2 | n=163 110-53 win=67.5% ROI=+10.1% | train=+6.7% val=+13.8% hold=+11.2% n=46 | +season=85%
+AWAY P25_35 | sel_season_xgdpg <= -0.1353 | n=356 117-239 win=32.9% ROI=+10.1% | train=+15.9% val=+7.3% hold=+8.0% n=117 | +season=77%
+HOME P40_50 | opp_last5_xgapg <= 1.174 | n=460 230-230 win=50.0% ROI=+8.5% | train=+10.1% val=+6.1% hold=+7.8% n=102 | +season=77%
+HOME P50_60 | edge_last5_gdpg <= -0.6 | n=288 179-109 win=62.2% ROI=+10.9% | train=+17.7% val=+6.7% hold=+6.6% n=85 | +season=77%
+HOME P40_50 | opp_last3_xgfpg <= 1.156 | n=386 190-196 win=49.2% ROI=+5.1% | train=+4.6% val=+6.1% hold=+5.1% n=104 | +season=62%
+HOME P45_55 | opp_last5_xgfpg >= 1.49 | n=472 261-211 win=55.3% ROI=+8.5% | train=+13.4% val=+6.2% hold=+3.9% n=139 | +season=85%
+HOME P45_55 | edge_season_xgapg >= 0.1257 | n=392 210-182 win=53.6% ROI=+5.5% | train=+6.5% val=+5.9% hold=+3.6% n=110 | +season=69%
+HOME P45_55 | sel_venue5_ppg >= 2 | n=573 317-256 win=55.3% ROI=+7.8% | train=+12.5% val=+3.5% hold=+3.4% n=151 | +season=77%
