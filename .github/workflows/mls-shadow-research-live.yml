@@ -1,0 +1,62 @@
+name: MLS Shadow Research Live
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/mls_autoresearch.py'
+      - '.github/workflows/mls-shadow-research-live.yml'
+
+concurrency:
+  group: mls-research
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  deploy:
+    runs-on: [self-hosted, Linux, X64, appwiza]
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with: {fetch-depth: 0}
+
+      - name: Install MLS research engine and run first daily pass
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          KEY=/home/appwiza-runner/.ssh/appwiza_vps
+          HOST=anestishkurti92@127.0.0.1
+          SSH="ssh -i $KEY -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=accept-new $HOST"
+
+          cat scripts/mls_autoresearch.py | $SSH 'set -e; D=/home/anestishkurti92/mls-predictor-v1; cat > "$D/mls_autoresearch.py.new"; chmod 0644 "$D/mls_autoresearch.py.new"; mv -f "$D/mls_autoresearch.py.new" "$D/mls_autoresearch.py"'
+          $SSH 'set -Eeuo pipefail; cd /home/anestishkurti92/mls-predictor-v1; venv/bin/python -m py_compile mls_autoresearch.py; OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 nice -n 14 timeout 20m venv/bin/python mls_autoresearch.py daily; venv/bin/python mls_autoresearch.py status'
+
+      - name: Pull first MLS research report
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          KEY=/home/appwiza-runner/.ssh/appwiza_vps
+          HOST=anestishkurti92@127.0.0.1
+          SSH="ssh -i $KEY -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=accept-new $HOST"
+          mkdir -p mls/research
+          $SSH 'cat /home/anestishkurti92/mls-predictor-v1/auto_research/reports/latest.txt' > mls/research/latest.txt
+          echo '=== MLS FIRST SHADOW PASS ==='
+          cat mls/research/latest.txt
+          echo '=== SERVER LOAD AFTER PASS ==='
+          $SSH 'uptime; free -h | head -2; du -sh /home/anestishkurti92/mls-predictor-v1'
+
+      - name: Persist MLS first research report
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git add mls/research/latest.txt
+          if ! git diff --cached --quiet; then
+            git commit -m 'Publish first MLS shadow research pass'
+            git pull --rebase origin main
+            git push origin HEAD:main
+          fi
