@@ -125,12 +125,17 @@ def main():
     for name,out,pb,rules in families:
         x=exact_family(s,name,out,pb,rules);m=met(x)
         if not m:continue
+        ev=ar.evaluate(s[s.outcome.eq(out)].copy(), (s[s.outcome.eq(out)].index.isin(x.index))) if False else None
+        train=met(x[x.season.between(*ar.SPLIT['train'])]);val=met(x[x.season.between(*ar.SPLIT['validation'])]);hold=met(x[x.season.between(*ar.SPLIT['holdout'])])
         ci=bootstrap_roi(x);conc=concentration(x);yrs=year_table(x);teams=team_table(x)
+        loo=leave_one_season_out(x);loo_rois=[r['roi'] for r in loo if r.get('roi') is not None]
         summaries.append({'family':name,'outcome':out,'price_band':pb,'rules':' AND '.join(f'{a} {b} {c:g}' for a,b,c in rules),
-                          **m,'bootstrap_lo':ci[0],'bootstrap_hi':ci[1],**conc})
+                          **m,'train_n':train.get('n'),'train_roi':train.get('roi'),'validation_n':val.get('n'),'validation_roi':val.get('roi'),
+                          'holdout_n':hold.get('n'),'holdout_roi':hold.get('roi'),'bootstrap_lo':ci[0],'bootstrap_hi':ci[1],
+                          'loo_min_roi':min(loo_rois) if loo_rois else np.nan,'loo_max_roi':max(loo_rois) if loo_rois else np.nan,**conc})
         loss=loss_rows(x);all_losses.append(loss)
         report += [f"{name} | {out} {pb} | {' AND '.join(f'{a} {b} {c:g}' for a,b,c in rules)}",
-                   f"n={m['n']} {m['wins']}-{m['losses']} win={m['win_rate']:.1%} ROI={m['roi']:+.1%} | bootstrap95={ci[0]:+.1%}..{ci[1]:+.1%} | teams={conc['teams']} top1={conc['top_team_share']:.1%} top3={conc['top3_team_share']:.1%}",
+                   f"n={m['n']} {m['wins']}-{m['losses']} win={m['win_rate']:.1%} ROI={m['roi']:+.1%} | train={train.get('roi',np.nan):+.1%} val={val.get('roi',np.nan):+.1%} hold={hold.get('roi',np.nan):+.1%} (n={hold.get('n',0)}) | bootstrap95={ci[0]:+.1%}..{ci[1]:+.1%} | LOO={min(loo_rois) if loo_rois else np.nan:+.1%}..{max(loo_rois) if loo_rois else np.nan:+.1%} | teams={conc['teams']} top1={conc['top_team_share']:.1%} top3={conc['top3_team_share']:.1%}",
                    'yearly: '+' | '.join(f"{int(r.season)} n={int(r.n)} ROI={r.roi:+.1%}" for _,r in yrs.iterrows()),
                    'thirds: '+' | '.join(f"{r['third']} n={r.get('n',0)} ROI={r.get('roi',np.nan):+.1%}" for r in thirds(x)),
                    'top teams: '+' | '.join(f"{r.selection_team} n={int(r.n)} ROI={r.roi:+.1%}" for _,r in teams.head(5).iterrows()),
@@ -142,7 +147,7 @@ def main():
         yrs.to_csv(OUT/f'{name}_yearly.csv',index=False)
         teams.to_csv(OUT/f'{name}_teams.csv',index=False)
         loss.to_csv(OUT/f'{name}_losses.csv',index=False)
-        pd.DataFrame(leave_one_season_out(x)).to_csv(OUT/f'{name}_loo.csv',index=False)
+        pd.DataFrame(loo).to_csv(OUT/f'{name}_loo.csv',index=False)
     pd.DataFrame(summaries).sort_values('holdout_roi' if 'holdout_roi' in pd.DataFrame(summaries).columns else 'roi',ascending=False).to_csv(OUT/'family_summary.csv',index=False)
     if all_losses:pd.concat(all_losses,ignore_index=True).to_csv(OUT/'all_losses.csv',index=False)
     (OUT/'report.txt').write_text('\n'.join(report)+'\n')
