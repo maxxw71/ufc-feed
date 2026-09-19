@@ -1,0 +1,84 @@
+name: UFC Canonical Surface Audit
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/ufc-canonical-surface-audit.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  audit:
+    runs-on: [self-hosted, Linux, X64, appwiza]
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Compare UFC watcher email website and tracker
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          KEY=/home/appwiza-runner/.ssh/appwiza_vps
+          HOST=anestishkurti92@127.0.0.1
+          ssh -i "$KEY" -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=accept-new "$HOST" 'bash -s' <<'EOF'
+          set -Eeuo pipefail
+          export HOME=/home/anestishkurti92
+          ROOT=/home/anestishkurti92/ufc-predictor-v1
+          PY="$ROOT/venv/bin/python"
+          echo '=== TIME ==='; date -u
+          echo '=== TIMER ==='
+          systemctl list-timers --all --no-pager | grep -Ei 'ufc|model-watcher' || true
+          systemctl cat ufc-model-watcher.timer 2>/dev/null || true
+          systemctl cat ufc-model-watcher.service 2>/dev/null || true
+
+          echo '=== WATCHER STATE FILES ==='
+          find "$ROOT" -maxdepth 3 -type f \( -iname '*status*.json' -o -iname '*preview*.txt' -o -iname '*sent*.json' -o -iname '*state*.json' \) -printf '%T@ %p\n' 2>/dev/null | sort -nr | head -80
+
+          echo '=== PUBLIC UFC STATE ==='
+          "$PY" - <<'PY'
+          import json
+          from pathlib import Path
+          p=Path('/srv/appwiza-sports/state/ufc.json')
+          if not p.exists():
+              print('MISSING');raise SystemExit
+          d=json.loads(p.read_text())
+          print('updated_at',d.get('updated_at'),'cards',len(d.get('cards',[])))
+          for c in d.get('cards',[]):
+              print(json.dumps({k:c.get(k) for k in ['id','start','selection','opponent','fixture','event','price','book','withdrawn','observed_at','first_seen','result']},sort_keys=True))
+              print('methods',[(m.get('id'),m.get('title'),m.get('win'),m.get('roi')) for m in c.get('methods',[])])
+          PY
+
+          echo '=== PUBLIC PAGE CURRENT PICKS ==='
+          python3 - <<'PY'
+          from pathlib import Path
+          import re
+          p=Path('/srv/appwiza-sports/public/ufc/index.html')
+          t=p.read_text() if p.exists() else ''
+          print('size',len(t))
+          plain=re.sub('<[^>]+>',' ',t)
+          plain=re.sub(r'\s+',' ',plain)
+          ix=plain.find('Available selections')
+          print(plain[ix:ix+12000] if ix>=0 else plain[:12000])
+          PY
+
+          echo '=== WATCHER EMAIL/PREVIEW LOCATIONS ==='
+          grep -nE 'preview|sent\.json|status\.json|send_email|render\(|publish_ufc|ufc_picks|state/ufc|pending' "$ROOT/ufc_email_watcher.py" | head -260 || true
+
+          echo '=== RECENT WATCHER LOG ==='
+          journalctl -u ufc-model-watcher.service -n 180 --no-pager 2>/dev/null || true
+
+          echo '=== BET TRACKER UFC PENDING ==='
+          "$PY" - <<'PY'
+          import sqlite3,os,json
+          p='/home/anestishkurti92/betting-ledger/assumed_bets.sqlite3'
+          if not os.path.exists(p):
+              print('missing');raise SystemExit
+          db=sqlite3.connect(p)
+          db.row_factory=sqlite3.Row
+          rows=db.execute("select key,event_date,start,selection,opponent,price,book,methods,result,payload from bets where sport='UFC' order by start,key").fetchall()
+          for r in rows:
+              print(dict(r))
+          PY
+
+          echo '=== WATCHER METHOD SYMBOLS ==='
+          grep -nE "def method_cards|def ufc_picks|hybrid|reach_hybrid|structural_edge|age_reach|wrestling_mismatch|striking_methods|U[0-9]+|KO_RECOVERY|EXPERIENCE_HEALTH|VETERAN_DECLINE" "$ROOT/ufc_email_watcher.py" | head -420 || true
+          EOF
