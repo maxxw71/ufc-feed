@@ -68,7 +68,7 @@ HISTORY={
             'enhanced_subset':{'rule':'opponent roster new players3 > 2','bets':144,'wins':68,'losses':76,
                                'roi':.5485416666666667,'holdout_roi':.8320588235294117,'holdout_n':34,
                                'bootstrap95_roi':[.2867204861111111,.8220954861111108],'perturbation_positive':'10/11'}},
- 'MLS-A06':{'bets':144,'wins':53,'losses':91,'roi':.5293055555555556,'holdout_roi':.6527777777777778,'holdout_n':54,
+ 'MLS-A06':{'bets':143,'wins':53,'losses':90,'roi':.54,'holdout_roi':.6527777777777778,'holdout_n':54,
             'positive_seasons':'10/13','bootstrap95_roi':[.19499131944444442,.8650017361111112],
             'perturbation_positive':'10/10','status':'PROSPECTIVE_PRIORITY_SHADOW'},
 }
@@ -297,8 +297,14 @@ def main():
     event_groups=defaultdict(list)
     for q in qualifiers:event_groups[str(q['event_id'])].append(q)
     conflicts=[]
+    consensus=[]
     for eid,grp in event_groups.items():
         sels={str(x['selection']) for x in grp}
+        if len(grp)>1 and len(sels)==1:
+            consensus.append({'event_id':eid,'home_team':grp[0]['home_team'],'away_team':grp[0]['away_team'],
+                              'methods':[x['method_id'] for x in grp],'selection':grp[0]['selection'],
+                              'policy':'CONSENSUS_SHADOW_SIGNAL'})
+            for x in grp:x['same_side_consensus']=True
         if len(sels)>1:
             conflicts.append({'event_id':eid,'home_team':grp[0]['home_team'],'away_team':grp[0]['away_team'],
                               'methods':[x['method_id'] for x in grp],'selections':[x['selection'] for x in grp],
@@ -314,7 +320,11 @@ def main():
         'MLS-A07':{'status':'RESEARCH_ONLY_REDUNDANT','reason':'60-74% exact overlap with R01/R02 family; useful signal absorbed into refinements instead of added separately.'}
       },
       'methods':{m['id']:{'name':m['name'],'status':m['research_status']} for m in METHODS},
-      'rows':rows,'qualifiers':qualifiers,'conflicts':conflicts,
+      'rows':rows,'qualifiers':qualifiers,'conflicts':conflicts,'consensus':consensus,
+      'portfolio_policy':{'opposite_side_conflict':'TRACK_FOR_RESEARCH_NO_COMBINED_ACTION',
+                          'same_side_consensus':'TAG_AND_TRACK_SEPARATELY',
+                          'historical_clean_portfolio_roi':.335,
+                          'historical_clean_holdout_roi':.3704281345565749},
       'status_counts':{m['id']:{st:sum(1 for r in rows if r['method_id']==m['id'] and r['status']==st)
                        for st in ['QUALIFIES_SHADOW','NO_MATCH','BLOCKED_STALE_INPUT']} for m in METHODS}
     }
@@ -322,7 +332,7 @@ def main():
     with (OUT/'shadow_observations.jsonl').open('a') as f:f.write(json.dumps(payload,default=str,separators=(',',':'))+'\n')
     print(json.dumps({'built_at':payload['built_at'],'market_captured_at':payload['market_captured_at'],
       'elo_updated_at':elo_updated,'elo_age_days':elo_age,'events':len(events),'method_checks':len(rows),
-      'qualifiers':len(qualifiers),'status_counts':payload['status_counts'],'conflicts':conflicts,
+      'qualifiers':len(qualifiers),'status_counts':payload['status_counts'],'conflicts':conflicts,'consensus':consensus,
       'qualifying':[(r['method_id'],r['selection'],r['opponent'],r['american_price'],r.get('confidence_tier')) for r in qualifiers],
       'retired_methods':payload['retired_methods'],'official_autopromotions':0},indent=2))
 
