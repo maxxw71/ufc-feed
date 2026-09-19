@@ -1,0 +1,61 @@
+name: MLS Active Portfolio Audit
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/mls_active_portfolio.py'
+      - '.github/workflows/mls-active-portfolio.yml'
+
+concurrency:
+  group: mls-active-portfolio
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  audit:
+    if: github.repository == 'maxxw71/ufc-feed'
+    runs-on: [self-hosted, Linux, X64, appwiza]
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with: {fetch-depth: 0}
+      - name: Deploy and run MLS active portfolio audit
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          KEY=/home/appwiza-runner/.ssh/appwiza_vps
+          HOST=anestishkurti92@127.0.0.1
+          SSH="ssh -i $KEY -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=accept-new $HOST"
+          D=/home/anestishkurti92/mls-predictor-v1
+          for f in mls_arsenal_research.py mls_active_portfolio.py; do
+            cat "scripts/$f" | $SSH "set -e; D=$D; cat > \"\$D/$f.new\"; chmod 0644 \"\$D/$f.new\"; mv -f \"\$D/$f.new\" \"\$D/$f\""
+          done
+          $SSH 'set -Eeuo pipefail; cd /home/anestishkurti92/mls-predictor-v1; venv/bin/python -m py_compile mls_arsenal_research.py mls_active_portfolio.py; OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 nice -n 12 timeout 10m venv/bin/python mls_active_portfolio.py'
+      - name: Pull audit
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          KEY=/home/appwiza-runner/.ssh/appwiza_vps
+          HOST=anestishkurti92@127.0.0.1
+          mkdir -p mls/research
+          ssh -i "$KEY" -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=accept-new "$HOST" 'cat /home/anestishkurti92/mls-predictor-v1/research/active_portfolio/latest.json' > mls/research/active_portfolio_latest.json
+      - name: Persist audit
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          cp mls/research/active_portfolio_latest.json "$RUNNER_TEMP/active_portfolio.json"
+          git fetch origin main
+          git reset --hard origin/main
+          mkdir -p mls/research
+          cp "$RUNNER_TEMP/active_portfolio.json" mls/research/active_portfolio_latest.json
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git add mls/research/active_portfolio_latest.json
+          if ! git diff --cached --quiet; then
+            git commit -m 'Publish MLS active portfolio audit'
+            git push origin HEAD:main
+          fi
