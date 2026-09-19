@@ -1,0 +1,77 @@
+name: MLS Prospective Lineup Snapshot
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '15 22,23,0,1,2,3,4 * * *'
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/mls_prospective_lineups.py'
+      - '.github/workflows/mls-prospective-lineups.yml'
+
+concurrency:
+  group: mls-prospective-lineups
+  cancel-in-progress: true
+
+permissions:
+  contents: write
+
+jobs:
+  snapshot:
+    if: github.repository == 'maxxw71/ufc-feed'
+    runs-on: [self-hosted, Linux, X64, appwiza]
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+        with: {fetch-depth: 0}
+
+      - name: Deploy and capture confirmed MLS lineups
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          KEY=/home/appwiza-runner/.ssh/appwiza_vps
+          HOST=anestishkurti92@127.0.0.1
+          SSH="ssh -i $KEY -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=accept-new $HOST"
+          D=/home/anestishkurti92/mls-predictor-v1
+          cat scripts/mls_prospective_lineups.py | $SSH 'set -e; D=/home/anestishkurti92/mls-predictor-v1; cat > "$D/mls_prospective_lineups.py.new"; chmod 0644 "$D/mls_prospective_lineups.py.new"; mv -f "$D/mls_prospective_lineups.py.new" "$D/mls_prospective_lineups.py"'
+          $SSH 'set -Eeuo pipefail; cd /home/anestishkurti92/mls-predictor-v1; venv/bin/python -m py_compile mls_prospective_lineups.py; timeout 8m venv/bin/python mls_prospective_lineups.py'
+
+      - name: Pull non-secret lineup snapshot status
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          KEY=/home/appwiza-runner/.ssh/appwiza_vps
+          HOST=anestishkurti92@127.0.0.1
+          mkdir -p mls/lineups
+          ssh -i "$KEY" -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=accept-new "$HOST" 'python3 - <<'"'"'PY'"'"'
+          import json
+          from pathlib import Path
+          root=Path("/home/anestishkurti92/mls-predictor-v1/live/lineups")
+          p=root/"latest.json"
+          d=json.loads(p.read_text()) if p.exists() else {"complete_lineups":0,"snapshots":[]}
+          out={
+            "captured_at":d.get("captured_at"),
+            "complete_lineups":d.get("complete_lineups",0),
+            "pregame_complete":sum(bool(x.get("pregame_known")) for x in d.get("snapshots") or []),
+            "first_pregame_files":len(list(root.glob("first_pregame_*.json")))
+          }
+          print(json.dumps(out,indent=2))
+          PY' > mls/lineups/prospective_status.json
+
+      - name: Persist lineup snapshot status
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          cp mls/lineups/prospective_status.json "$RUNNER_TEMP/prospective_status.json"
+          git fetch origin main
+          git reset --hard origin/main
+          mkdir -p mls/lineups
+          cp "$RUNNER_TEMP/prospective_status.json" mls/lineups/prospective_status.json
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git add mls/lineups/prospective_status.json
+          if ! git diff --cached --quiet; then
+            git commit -m 'Update MLS prospective lineup snapshot status'
+            git push origin HEAD:main
+          fi
