@@ -1,0 +1,41 @@
+MLS FINAL SHADOW VALIDATION
+====================================================================================================
+Primary candidate rules are frozen from prior train/validation discovery. Neighbor grids assess local stability; they do not redefine the center rule.
+2023-2025 remains the final historical holdout. 2026 is excluded from all metrics.
+
+MLS-R01 — Home xG Surge vs Market/Elo
+RULE: HOME P40_50 | edge_last3_xgfpg >= 0.45538 AND elo_edge <= 0.91
+FULL n=175 96-79 win=54.9% ROI=+18.7% units=+32.79
+TRAIN n=74 ROI=+16.8% | VAL n=45 ROI=+11.5% | HOLD n=56 ROI=+27.1%
+bootstrap95=+2.4%..+34.4% | LOO=+15.4%..+22.2% | +season=69%
+thirds: 1: n=59 ROI=+18.0% | 2: n=58 ROI=+8.0% | 3: n=58 ROI=+30.2%
+neighbors tested=15 positive_all_eras=15 (100%) holdout ROI range=+5.9%..+35.3%
+STATUS: SHADOW_READY
+
+MLS-R02 — Home xG Surge + Defensive Instability
+RULE: HOME P40_50 | edge_last3_xgfpg >= 0.45538 AND edge_last3_xgapg >= 0.0536
+FULL n=144 84-60 win=58.3% ROI=+25.8% units=+37.14
+TRAIN n=54 ROI=+27.9% | VAL n=37 ROI=+35.5% | HOLD n=53 ROI=+16.9%
+bootstrap95=+8.1%..+43.3% | LOO=+20.6%..+28.6% | +season=83%
+thirds: 1: n=48 ROI=+25.7% | 2: n=48 ROI=+35.6% | 3: n=48 ROI=+16.1%
+neighbors tested=25 positive_all_eras=25 (100%) holdout ROI range=+6.7%..+28.4%
+STATUS: SHADOW_READY
+
+MLS-R03 — Away Elo Underdog + xGA Veto
+RULE: AWAY P25_35 | elo_edge <= -41.31 AND edge_last5_xgapg < 0.01113
+FULL n=109 46-63 win=42.2% ROI=+45.0% units=+49.10
+TRAIN n=33 ROI=+64.6% | VAL n=39 ROI=+27.7% | HOLD n=37 ROI=+45.9%
+bootstrap95=+13.7%..+77.9% | LOO=+40.9%..+52.3% | +season=89%
+thirds: 1: n=37 ROI=+46.8% | 2: n=36 ROI=+46.1% | 3: n=36 ROI=+42.2%
+neighbors tested=24 positive_all_eras=23 (96%) holdout ROI range=+8.2%..+100.0%
+STATUS: SHADOW_READY
+
+MLS-W01 — Home xG Surge vs Season GD + Opponent GD Veto
+RULE: HOME P40_50 | edge_last3_xgfpg >= 0.45538 AND edge_season_gdpg <= -0.251028 AND opp_season_gdpg < 0.381169
+FULL n=63 43-20 win=68.3% ROI=+47.8% units=+30.11
+TRAIN n=29 ROI=+43.3% | VAL n=17 ROI=+80.4% | HOLD n=17 ROI=+22.8%
+bootstrap95=+21.7%..+71.8% | LOO=+43.6%..+53.2% | +season=89%
+thirds: 1: n=21 ROI=+44.3% | 2: n=21 ROI=+69.5% | 3: n=21 ROI=+29.5%
+neighbors tested=6 positive_all_eras=6 (100%) holdout ROI range=+8.9%..+19.1%
+STATUS: WATCHLIST
+
