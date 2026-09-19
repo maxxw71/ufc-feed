@@ -101,6 +101,11 @@ jobs:
               cm=canonical[k]['methods']; em=emailed[k].get('methods') or []
               # Email ledger currently stores internal tracker method labels; print all mismatches.
               if sorted(cm)!=sorted(em): print(k,cm,em)
+          print('CURRENT_CANONICAL_VS_BETS_TABLE')
+          betrows=db.execute("select key,selection,opponent,methods,result,first_sent from bets where sport='UFC' and result='pending'").fetchall()
+          B={r['key']:dict(r) for r in betrows}
+          for k,v in sorted(canonical.items()):
+              print(v.get('key'),'present' if v.get('key') in B else 'MISSING_FROM_BETS', B.get(v.get('key')))
           print('CURRENT_TRACKER_LABEL_MISMATCHES')
           for k,v in sorted(canonical.items()):
               if sorted(v.get('methods') or [])!=sorted(v.get('tracker_methods') or []):
