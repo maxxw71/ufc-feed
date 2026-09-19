@@ -1,12 +1,263 @@
 {
-  "built_at": "2026-09-19T10:51:15.793645+00:00",
+  "built_at": "2026-09-19T19:39:29.271936+00:00",
   "base_file": "/home/anestishkurti92/mls-predictor-v1/data/processed/mls_match_features_player_enriched.parquet",
   "rows": 9440,
   "columns": 228,
-  "availability_feature_rows": 14,
-  "valid_reports": 1,
-  "rejected_reports": [],
+  "availability_feature_rows": 853,
+  "valid_reports": 62,
+  "rejected_reports": [
+    {
+      "year": 2024,
+      "matchday": 19,
+      "url": "https://www.mlssoccer.com/news/mls-player-status-report-matchday-19",
+      "matches": 14,
+      "match_teams": 28,
+      "reported_status_teams": 8,
+      "overlap": 7,
+      "quality": 0.25
+    },
+    {
+      "year": 2025,
+      "matchday": 23,
+      "url": "https://www.mlssoccer.com/news/mls-player-status-report-matchday-23-july-9",
+      "matches": 15,
+      "match_teams": 28,
+      "reported_status_teams": 3,
+      "overlap": 3,
+      "quality": 0.10714285714285714
+    },
+    {
+      "year": 2025,
+      "matchday": 31,
+      "url": "https://www.mlssoccer.com/news/mls-player-status-report-matchday-31-saturday-august-30",
+      "matches": 3,
+      "match_teams": 6,
+      "reported_status_teams": 22,
+      "overlap": 4,
+      "quality": 0.6666666666666666
+    },
+    {
+      "year": 2025,
+      "matchday": 32,
+      "url": "https://www.mlssoccer.com/news/mls-player-status-report-matchday-32-saturday-september-6-sunday-september-7",
+      "matches": 15,
+      "match_teams": 30,
+      "reported_status_teams": 8,
+      "overlap": 8,
+      "quality": 0.26666666666666666
+    },
+    {
+      "year": 2025,
+      "matchday": 34,
+      "url": "https://www.mlssoccer.com/news/mls-player-status-report-matchday-34-tuesday-september-16",
+      "matches": 16,
+      "match_teams": 30,
+      "reported_status_teams": 5,
+      "overlap": 5,
+      "quality": 0.16666666666666666
+    },
+    {
+      "year": 2025,
+      "matchday": 36,
+      "url": "https://www.mlssoccer.com/news/mls-player-status-report-matchday-36-wednesday-september-24",
+      "matches": 15,
+      "match_teams": 30,
+      "reported_status_teams": 4,
+      "overlap": 4,
+      "quality": 0.13333333333333333
+    }
+  ],
   "valid_report_details": [
+    {
+      "year": 2024,
+      "matchday": 3,
+      "url": "https://www.mlssoccer.com/news/mls-player-status-report-matchday-3",
+      "matches": 14,
+      "match_teams": 28,
+      "reported_status_teams": 28,
+      "overlap": 27,
+      "quality": 0.9642857142857143
+    },
+    {
+      "year": 2024,
+      "matchday": 4,
+      "url": "https://www.mlssoccer.com/news/mls-player-status-report-matchday-4",
+      "matches": 14,
+      "match_teams": 28,
+      "reported_status_teams": 28,
+      "overlap": 27,
+      "quality": 0.9642857142857143
+    },
+    {
+      "year": 2024,
+      "matchday": 5,
+      "url": "https://www.mlssoccer.com/news/mls-player-status-report-matchday-5",
+      "matches": 13,
+      "match_teams": 26,
+      "reported_status_teams": 28,
+      "overlap": 25,
+      "quality": 0.9615384615384616
+    },
+    {
+      "year": 2024,
+      "matchday": 6,
+      "url": "https://www.mlssoccer.com/news/mls-player-status-report-matchday-6",
+      "matches": 14,
+      "match_teams": 28,
+      "reported_status_teams": 26,
+      "overlap": 25,
+      "quality": 0.8928571428571429
+    },
+    {
+      "year": 2024,
+      "matchday": 7,
+      "url": "https://www.mlssoccer.com/news/player-status-report-matchday-7-march-30-31",
+      "matches": 14,
+      "match_teams": 28,
+      "reported_status_teams": 28,
+      "overlap": 27,
+      "quality": 0.9642857142857143
+    },
+    {
+      "year": 2024,
+      "matchday": 8,
+      "url": "https://www.mlssoccer.com/news/mls-player-status-report-matchday-8",
+      "matches": 14,
+      "match_teams": 28,
+      "reported_status_teams": 28,
+      "overlap": 27,
+      "quality": 0.9642857142857143
+    },
+    {
+      "year": 2024,
+      "matchday": 10,
+      "url": "https://www.mlssoccer.com/news/mls-player-status-report-matchday-10",
+      "matches": 14,
+      "match_teams": 28,
+      "reported_status_teams": 28,
+      "overlap": 27,
+      "quality": 0.9642857142857143
+    },
+    {
+      "year": 2024,
+      "matchday": 11,
+      "url": "https://www.mlssoccer.com/news/mls-player-status-report-matchday-11",
+      "matches": 14,
+      "match_teams": 28,
+      "reported_status_teams": 27,
+      "overlap": 26,
+      "quality": 0.9285714285714286
+    },
+    {
+      "year": 2024,
+      "matchday": 12,
+      "url": "https://www.mlssoccer.com/news/mls-player-status-report-matchday-12",
+      "matches": 14,
+      "match_teams": 28,
+      "reported_status_teams": 28,
+      "overlap": 27,
+      "quality": 0.9642857142857143
+    },
+    {
+      "year": 2024,
+      "matchday": 13,
+      "url": "https://www.mlssoccer.com/news/mls-player-status-report-matchday-13",
+      "matches": 13,
+      "match_teams": 26,
+      "reported_status_teams": 28,
+      "overlap": 25,
+      "quality": 0.9615384615384616
+    },
+    {
+      "year": 2024,
+      "matchday": 14,
+      "url": "https://www.mlssoccer.com/news/mls-player-status-report-matchday-14",
+      "matches": 14,
+      "match_teams": 28,
+      "reported_status_teams": 27,
+      "overlap": 26,
+      "quality": 0.9285714285714286
+    },
+    {
+      "year": 2024,
+      "matchday": 15,
+      "url": "https://www.mlssoccer.com/news/mls-player-status-report-matchday-15",
+      "matches": 14,
+      "match_teams": 28,
+      "reported_status_teams": 28,
+      "overlap": 27,
+      "quality": 0.9642857142857143
+    },
+    {
+      "year": 2024,
+      "matchday": 16,
+      "url": "https://www.mlssoccer.com/news/mls-player-status-report-matchday-16",
+      "matches": 13,
+      "match_teams": 26,
+      "reported_status_teams": 28,
+      "overlap": 25,
+      "quality": 0.9615384615384616
+    },
+    {
+      "year": 2024,
+      "matchday": 17,
+      "url": "https://www.mlssoccer.com/news/mls-player-status-report-matchday-17",
+      "matches": 14,
+      "match_teams": 28,
+      "reported_status_teams": 24,
+      "overlap": 23,
+      "quality": 0.8214285714285714
+    },
+    {
+      "year": 2024,
+      "matchday": 18,
+      "url": "https://www.mlssoccer.com/news/mls-player-status-report-matchday-18",
+      "matches": 4,
+      "match_teams": 8,
+      "reported_status_teams": 26,
+      "overlap": 7,
+      "quality": 0.875
+    },
+    {
+      "year": 2024,
+      "matchday": 21,
+      "url": "https://www.mlssoccer.com/news/mls-player-status-report-matchday-21",
+      "matches": 14,
+      "match_teams": 28,
+      "reported_status_teams": 26,
+      "overlap": 25,
+      "quality": 0.8928571428571429
+    },
+    {
+      "year": 2024,
+      "matchday": 23,
+      "url": "https://www.mlssoccer.com/news/mls-player-status-report-matchday-23",
+      "matches": 13,
+      "match_teams": 26,
+      "reported_status_teams": 28,
+      "overlap": 25,
+      "quality": 0.9615384615384616
+    },
+    {
+      "year": 2024,
+      "matchday": 24,
+      "url": "https://www.mlssoccer.com/news/mls-player-status-report-matchday-24",
+      "matches": 14,
+      "match_teams": 28,
+      "reported_status_teams": 26,
+      "overlap": 25,
+      "quality": 0.8928571428571429
+    },
+    {
+      "year": 2024,
+      "matchday": 25,
+      "url": "https://www.mlssoccer.com/news/mls-player-status-report-matchday-25",
+      "matches": 14,
+      "match_teams": 28,
+      "reported_status_teams": 27,
+      "overlap": 26,
+      "quality": 0.9285714285714286
+    },
     {
       "year": 2024,
       "matchday": 26,
@@ -16,16 +267,437 @@
       "reported_status_teams": 28,
       "overlap": 27,
       "quality": 0.9642857142857143
+    },
+    {
+      "year": 2024,
+      "matchday": 27,
+      "url": "https://www.mlssoccer.com/news/mls-player-status-report-matchday-27",
+      "matches": 14,
+      "match_teams": 28,
+      "reported_status_teams": 28,
+      "overlap": 27,
+      "quality": 0.9642857142857143
+    },
+    {
+      "year": 2024,
+      "matchday": 28,
+      "url": "https://www.mlssoccer.com/news/mls-player-status-report-matchday-28",
+      "matches": 14,
+      "match_teams": 28,
+      "reported_status_teams": 28,
+      "overlap": 27,
+      "quality": 0.9642857142857143
+    },
+    {
+      "year": 2024,
+      "matchday": 29,
+      "url": "https://www.mlssoccer.com/news/mls-player-status-report-matchday-29",
+      "matches": 14,
+      "match_teams": 28,
+      "reported_status_teams": 24,
+      "overlap": 23,
+      "quality": 0.8214285714285714
+    },
+    {
+      "year": 2024,
+      "matchday": 32,
+      "url": "https://www.mlssoccer.com/news/mls-player-status-reports-matchday-32",
+      "matches": 13,
+      "match_teams": 26,
+      "reported_status_teams": 28,
+      "overlap": 25,
+      "quality": 0.9615384615384616
+    },
+    {
+      "year": 2024,
+      "matchday": 33,
+      "url": "https://www.mlssoccer.com/news/mls-player-status-report-matchday-33",
+      "matches": 14,
+      "match_teams": 28,
+      "reported_status_teams": 26,
+      "overlap": 25,
+      "quality": 0.8928571428571429
+    },
+    {
+      "year": 2024,
+      "matchday": 34,
+      "url": "https://www.mlssoccer.com/news/mls-player-status-report-matchday-34",
+      "matches": 14,
+      "match_teams": 28,
+      "reported_status_teams": 28,
+      "overlap": 27,
+      "quality": 0.9642857142857143
+    },
+    {
+      "year": 2024,
+      "matchday": 35,
+      "url": "https://www.mlssoccer.com/news/mls-player-status-report-matchday-35",
+      "matches": 14,
+      "match_teams": 28,
+      "reported_status_teams": 28,
+      "overlap": 27,
+      "quality": 0.9642857142857143
+    },
+    {
+      "year": 2024,
+      "matchday": 36,
+      "url": "https://www.mlssoccer.com/news/mls-player-status-report-matchday-36",
+      "matches": 14,
+      "match_teams": 28,
+      "reported_status_teams": 27,
+      "overlap": 26,
+      "quality": 0.9285714285714286
+    },
+    {
+      "year": 2024,
+      "matchday": 37,
+      "url": "https://www.mlssoccer.com/news/mls-player-status-report-matchday-37",
+      "matches": 14,
+      "match_teams": 28,
+      "reported_status_teams": 28,
+      "overlap": 27,
+      "quality": 0.9642857142857143
+    },
+    {
+      "year": 2025,
+      "matchday": 1,
+      "url": "https://www.mlssoccer.com/news/mls-player-status-report-matchday-1-2025",
+      "matches": 15,
+      "match_teams": 30,
+      "reported_status_teams": 30,
+      "overlap": 30,
+      "quality": 1.0
+    },
+    {
+      "year": 2025,
+      "matchday": 2,
+      "url": "https://www.mlssoccer.com/news/mls-player-status-report-matchday-2",
+      "matches": 15,
+      "match_teams": 30,
+      "reported_status_teams": 30,
+      "overlap": 30,
+      "quality": 1.0
+    },
+    {
+      "year": 2025,
+      "matchday": 3,
+      "url": "https://www.mlssoccer.com/news/mls-player-status-report-matchday-3-x6720",
+      "matches": 15,
+      "match_teams": 30,
+      "reported_status_teams": 30,
+      "overlap": 30,
+      "quality": 1.0
+    },
+    {
+      "year": 2025,
+      "matchday": 4,
+      "url": "https://www.mlssoccer.com/news/mls-player-status-report-matchday-4-saturday-march-15",
+      "matches": 15,
+      "match_teams": 30,
+      "reported_status_teams": 30,
+      "overlap": 30,
+      "quality": 1.0
+    },
+    {
+      "year": 2025,
+      "matchday": 5,
+      "url": "https://www.mlssoccer.com/news/mls-player-status-report-matchday-5-saturday-march-22-sunday-march-23",
+      "matches": 14,
+      "match_teams": 28,
+      "reported_status_teams": 28,
+      "overlap": 28,
+      "quality": 1.0
+    },
+    {
+      "year": 2025,
+      "matchday": 6,
+      "url": "https://www.mlssoccer.com/news/mls-player-status-report-matchday-6-saturday-march-29",
+      "matches": 15,
+      "match_teams": 30,
+      "reported_status_teams": 30,
+      "overlap": 30,
+      "quality": 1.0
+    },
+    {
+      "year": 2025,
+      "matchday": 7,
+      "url": "https://www.mlssoccer.com/news/mls-player-status-report-matchday-7-saturday-april-5",
+      "matches": 15,
+      "match_teams": 30,
+      "reported_status_teams": 30,
+      "overlap": 30,
+      "quality": 1.0
+    },
+    {
+      "year": 2025,
+      "matchday": 8,
+      "url": "https://www.mlssoccer.com/news/mls-player-status-report-matchday-8-saturday-april-12",
+      "matches": 15,
+      "match_teams": 30,
+      "reported_status_teams": 30,
+      "overlap": 30,
+      "quality": 1.0
+    },
+    {
+      "year": 2025,
+      "matchday": 9,
+      "url": "https://www.mlssoccer.com/news/mls-player-status-report-matchday-9-saturday-april-19",
+      "matches": 15,
+      "match_teams": 30,
+      "reported_status_teams": 30,
+      "overlap": 30,
+      "quality": 1.0
+    },
+    {
+      "year": 2025,
+      "matchday": 10,
+      "url": "https://www.mlssoccer.com/news/mls-player-status-report-matchday-10-saturday-april-26-and-sunday-april-27",
+      "matches": 15,
+      "match_teams": 30,
+      "reported_status_teams": 30,
+      "overlap": 30,
+      "quality": 1.0
+    },
+    {
+      "year": 2025,
+      "matchday": 11,
+      "url": "https://www.mlssoccer.com/news/mls-player-status-report-matchday-11-saturday-may-3",
+      "matches": 15,
+      "match_teams": 30,
+      "reported_status_teams": 30,
+      "overlap": 30,
+      "quality": 1.0
+    },
+    {
+      "year": 2025,
+      "matchday": 12,
+      "url": "https://www.mlssoccer.com/news/mls-player-status-report-matchday-12-2025",
+      "matches": 15,
+      "match_teams": 30,
+      "reported_status_teams": 30,
+      "overlap": 30,
+      "quality": 1.0
+    },
+    {
+      "year": 2025,
+      "matchday": 13,
+      "url": "https://www.mlssoccer.com/news/mls-player-status-report-matchday-13-wednesday-may-14",
+      "matches": 13,
+      "match_teams": 26,
+      "reported_status_teams": 26,
+      "overlap": 26,
+      "quality": 1.0
+    },
+    {
+      "year": 2025,
+      "matchday": 14,
+      "url": "https://www.mlssoccer.com/news/mls-player-status-report-matchday-14-saturday-may-17",
+      "matches": 15,
+      "match_teams": 30,
+      "reported_status_teams": 30,
+      "overlap": 30,
+      "quality": 1.0
+    },
+    {
+      "year": 2025,
+      "matchday": 15,
+      "url": "https://www.mlssoccer.com/news/mls-player-status-report-matchday-15-saturday-may-24",
+      "matches": 15,
+      "match_teams": 30,
+      "reported_status_teams": 30,
+      "overlap": 30,
+      "quality": 1.0
+    },
+    {
+      "year": 2025,
+      "matchday": 16,
+      "url": "https://www.mlssoccer.com/news/mls-player-status-report-matchday-16-wednesday-may-28",
+      "matches": 14,
+      "match_teams": 28,
+      "reported_status_teams": 26,
+      "overlap": 26,
+      "quality": 0.9285714285714286
+    },
+    {
+      "year": 2025,
+      "matchday": 17,
+      "url": "https://www.mlssoccer.com/news/mls-player-status-report-matchday-17-saturday-may-31",
+      "matches": 15,
+      "match_teams": 30,
+      "reported_status_teams": 26,
+      "overlap": 26,
+      "quality": 0.8666666666666667
+    },
+    {
+      "year": 2025,
+      "matchday": 18,
+      "url": "https://www.mlssoccer.com/news/mls-player-status-report-matchday-18-saturday-june-7-and-sunday-june-8",
+      "matches": 4,
+      "match_teams": 8,
+      "reported_status_teams": 9,
+      "overlap": 8,
+      "quality": 1.0
+    },
+    {
+      "year": 2025,
+      "matchday": 19,
+      "url": "https://www.mlssoccer.com/news/mls-player-status-report-matchday-19-saturday-june-14",
+      "matches": 14,
+      "match_teams": 28,
+      "reported_status_teams": 26,
+      "overlap": 26,
+      "quality": 0.9285714285714286
+    },
+    {
+      "year": 2025,
+      "matchday": 20,
+      "url": "https://www.mlssoccer.com/news/mls-player-status-report-matchday-20-wednesday-june-25",
+      "matches": 12,
+      "match_teams": 24,
+      "reported_status_teams": 22,
+      "overlap": 22,
+      "quality": 0.9166666666666666
+    },
+    {
+      "year": 2025,
+      "matchday": 21,
+      "url": "https://www.mlssoccer.com/news/mls-player-status-report-matchday-21-saturday-june-28",
+      "matches": 15,
+      "match_teams": 30,
+      "reported_status_teams": 27,
+      "overlap": 27,
+      "quality": 0.9
+    },
+    {
+      "year": 2025,
+      "matchday": 22,
+      "url": "https://www.mlssoccer.com/news/mls-player-status-report-matchday-22-july-3-6",
+      "matches": 15,
+      "match_teams": 30,
+      "reported_status_teams": 29,
+      "overlap": 29,
+      "quality": 0.9666666666666667
+    },
+    {
+      "year": 2025,
+      "matchday": 24,
+      "url": "https://www.mlssoccer.com/news/mls-player-status-report-matchday-24-saturday-july-12",
+      "matches": 15,
+      "match_teams": 29,
+      "reported_status_teams": 29,
+      "overlap": 28,
+      "quality": 0.9655172413793104
+    },
+    {
+      "year": 2025,
+      "matchday": 25,
+      "url": "https://www.mlssoccer.com/news/mls-player-status-report-matchday-25-july-16",
+      "matches": 14,
+      "match_teams": 28,
+      "reported_status_teams": 27,
+      "overlap": 25,
+      "quality": 0.8928571428571429
+    },
+    {
+      "year": 2025,
+      "matchday": 26,
+      "url": "https://www.mlssoccer.com/news/mls-player-status-report-matchday-26-saturday-july-19",
+      "matches": 15,
+      "match_teams": 30,
+      "reported_status_teams": 27,
+      "overlap": 27,
+      "quality": 0.9
+    },
+    {
+      "year": 2025,
+      "matchday": 27,
+      "url": "https://www.mlssoccer.com/news/mls-player-status-report-matchday-27-friday-july-25-and-saturday-july-26",
+      "matches": 15,
+      "match_teams": 30,
+      "reported_status_teams": 29,
+      "overlap": 29,
+      "quality": 0.9666666666666667
+    },
+    {
+      "year": 2025,
+      "matchday": 28,
+      "url": "https://www.mlssoccer.com/news/mls-player-status-report-matchday-28-saturday-august-9-and-sunday-august-10",
+      "matches": 15,
+      "match_teams": 30,
+      "reported_status_teams": 27,
+      "overlap": 27,
+      "quality": 0.9
+    },
+    {
+      "year": 2025,
+      "matchday": 29,
+      "url": "https://www.mlssoccer.com/news/mls-player-status-report-matchday-29-2025",
+      "matches": 15,
+      "match_teams": 30,
+      "reported_status_teams": 29,
+      "overlap": 29,
+      "quality": 0.9666666666666667
+    },
+    {
+      "year": 2025,
+      "matchday": 30,
+      "url": "https://www.mlssoccer.com/news/mls-player-status-report-matchday-30-saturday-august-23-and-sunday-august-24",
+      "matches": 15,
+      "match_teams": 30,
+      "reported_status_teams": 29,
+      "overlap": 29,
+      "quality": 0.9666666666666667
+    },
+    {
+      "year": 2025,
+      "matchday": 33,
+      "url": "https://www.mlssoccer.com/news/mls-player-status-report-matchday-33-saturday-september-13",
+      "matches": 16,
+      "match_teams": 30,
+      "reported_status_teams": 29,
+      "overlap": 29,
+      "quality": 0.9666666666666667
+    },
+    {
+      "year": 2025,
+      "matchday": 35,
+      "url": "https://www.mlssoccer.com/news/mls-player-status-report-matchday-35-saturday-september-20-sunday-september-21",
+      "matches": 15,
+      "match_teams": 30,
+      "reported_status_teams": 29,
+      "overlap": 29,
+      "quality": 0.9666666666666667
+    },
+    {
+      "year": 2025,
+      "matchday": 38,
+      "url": "https://www.mlssoccer.com/news/mls-player-status-report-matchday-38-saturday-october-4-sunday-october-5",
+      "matches": 8,
+      "match_teams": 16,
+      "reported_status_teams": 29,
+      "overlap": 15,
+      "quality": 0.9375
+    },
+    {
+      "year": 2025,
+      "matchday": 39,
+      "url": "https://www.mlssoccer.com/news/mls-player-status-report-matchday-39-saturday-october-18",
+      "matches": 8,
+      "match_teams": 16,
+      "reported_status_teams": 29,
+      "overlap": 15,
+      "quality": 0.9375
     }
   ],
-  "team_sides": 28,
-  "explicit_status_sides": 26,
-  "explicit_clear_sides": 1,
-  "inferred_clear_sides": 1,
-  "resolved_status_players_with_prior5": 40,
-  "unresolved_or_no_prior5_status_players": 66,
+  "team_sides": 1706,
+  "explicit_status_sides": 1595,
+  "explicit_clear_sides": 31,
+  "inferred_clear_sides": 80,
+  "resolved_status_players_with_prior5": 3401,
+  "unresolved_or_no_prior5_status_players": 2950,
   "coverage_seasons": [
-    2024
+    2024,
+    2025
   ],
   "output": "/home/anestishkurti92/mls-predictor-v1/data/processed/mls_match_features_availability_enriched.parquet",
   "leakage_note": "Availability is joined only to its official season/matchday report. Missing-player impact uses only each team player rows from its five matches strictly before the target match. Reports failing schedule-team coverage >=75% are rejected. Explicit CLEAR rows are confirmed zero absences; only match teams absent from a validated report are marked inferred_clear."
