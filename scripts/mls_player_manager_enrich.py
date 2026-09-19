@@ -110,7 +110,24 @@ def collect():
     (REP/'player_game_coverage.json').write_text(json.dumps(meta,indent=2,default=str))
     return meta
 def build_features():
-    games=pd.read_parquet(PROC/'asa_mls_games_2012_present.parquet').copy()
+    gp_new=PROC/'asa_mls_games_2012_present.parquet'
+    gp_old=PROC/'asa_mls_games_2013_present.parquet'
+    if gp_new.exists():
+        games=pd.read_parquet(gp_new).copy()
+    elif gp_old.exists():
+        games=pd.read_parquet(gp_old).copy()
+    else:
+        asa=AmericanSoccerAnalysis()
+        parts=[]
+        for y in range(2013,2027):
+            z=asa.get_games(leagues='mls',season_name=str(y))
+            if not isinstance(z,pd.DataFrame): z=pd.DataFrame(z)
+            if len(z):
+                z['_season_requested']=y
+                parts.append(z)
+        if not parts: raise RuntimeError('ASA games metadata unavailable')
+        games=pd.concat(parts,ignore_index=True,sort=False)
+        games.to_parquet(gp_new,index=False)
     teams=pd.read_parquet(PROC/'asa_teams.parquet').copy()
     players=pd.read_parquet(PROC/'asa_players.parquet').copy()
     xg=pd.read_parquet(PROC/'asa_player_xg_game_2013_present.parquet').copy()
