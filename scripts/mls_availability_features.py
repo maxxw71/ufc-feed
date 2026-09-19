@@ -85,7 +85,13 @@ def main():
     keys=['player_id','game_id','team_id']
     xcols=[c for c in ['player_id','game_id','team_id','general_position','minutes_played','xgoals_plus_xassists'] if c in xg.columns]
     gcols=[c for c in ['player_id','game_id','team_id','gplus_raw'] if c in gp.columns]
-    pg=xg[xcols].merge(gp[gcols],on=keys,how='left')
+    # Player/game/team must be unique before joining; fail closed rather than
+    # accidentally multiplying a target player's historical value.
+    if xg[keys].duplicated().any():
+        raise RuntimeError('Duplicate xG player/game/team rows')
+    if gp[keys].duplicated().any():
+        raise RuntimeError('Duplicate Goals Added player/game/team rows')
+    pg=xg[xcols].merge(gp[gcols],on=keys,how='left',validate='1:1')
     pg['team']=pg.team_id.map(team_map)
     pg['date']=pg.game_id.map(game_date)
     pg['season']=pg.game_id.map(game_season)
@@ -203,7 +209,6 @@ def main():
                 if known:
                     top11=set(vals.nlargest(11,'minutes').player_id.astype(str)) if len(vals) else set()
                     top3x=set(vals.nlargest(3,'xgi').player_id.astype(str)) if len(vals) else set()
-                    vindex=vals.set_index(vals.player_id.astype(str)) if len(vals) else pd.DataFrame()
                     for _,e in entries.iterrows():
                         status=str(e.status).upper();w=STATUS_WEIGHT.get(status,0.0)
                         if status=='OUT':
