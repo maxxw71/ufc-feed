@@ -65,10 +65,12 @@ jobs:
             'elo_age_days':d.get('elo_age_days'),
             'qualifier_count':len(d.get('qualifiers') or []),
             'qualifiers':[
-              {k:r.get(k) for k in ['method_id','selection','opponent','commence_time','american_price','book','market_prob','research_status','confidence_tier','portfolio_conflict']}
+              {k:r.get(k) for k in ['method_id','selection','opponent','commence_time','american_price','book','market_prob','research_status','confidence_tier','portfolio_conflict','same_side_consensus']}
               for r in d.get('qualifiers') or []
             ],
             'conflicts':d.get('conflicts') or [],
+            'consensus':d.get('consensus') or [],
+            'portfolio_policy':d.get('portfolio_policy') or {},
             'retired_methods':d.get('retired_methods') or {},
             'shadow_only':True,
             'official_autopromotions':0
