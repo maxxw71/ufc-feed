@@ -1,0 +1,65 @@
+name: MLS Bootstrap Warehouse
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/mls_bootstrap_warehouse.py'
+      - '.github/workflows/mls-bootstrap-warehouse.yml'
+
+concurrency:
+  group: mls-research
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  bootstrap:
+    runs-on: [self-hosted, Linux, X64, appwiza]
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+        with: {fetch-depth: 0}
+
+      - name: Install and run MLS warehouse
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          KEY=/home/appwiza-runner/.ssh/appwiza_vps
+          HOST=anestishkurti92@127.0.0.1
+          SSH="ssh -i $KEY -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=accept-new $HOST"
+
+          $SSH 'set -Eeuo pipefail; ROOT=/home/anestishkurti92/mls-predictor-v1; mkdir -p "$ROOT"; if [ ! -x "$ROOT/venv/bin/python" ]; then python3 -m venv "$ROOT/venv"; "$ROOT/venv/bin/pip" install --quiet --upgrade pip; "$ROOT/venv/bin/pip" install --quiet pandas numpy pyarrow openpyxl; fi'
+          cat scripts/mls_bootstrap_warehouse.py | $SSH 'set -e; ROOT=/home/anestishkurti92/mls-predictor-v1; cat > "$ROOT/mls_bootstrap_warehouse.py.new"; chmod 0644 "$ROOT/mls_bootstrap_warehouse.py.new"; mv -f "$ROOT/mls_bootstrap_warehouse.py.new" "$ROOT/mls_bootstrap_warehouse.py"'
+          $SSH 'set -Eeuo pipefail; export HOME=/home/anestishkurti92; cd /home/anestishkurti92/mls-predictor-v1; venv/bin/python -m py_compile mls_bootstrap_warehouse.py; OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 nice -n 12 timeout 20m venv/bin/python mls_bootstrap_warehouse.py'
+
+      - name: Pull audit reports
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          KEY=/home/appwiza-runner/.ssh/appwiza_vps
+          HOST=anestishkurti92@127.0.0.1
+          SSH="ssh -i $KEY -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=accept-new $HOST"
+          mkdir -p mls/bootstrap
+          for f in bootstrap_report.txt season_coverage.csv warehouse_meta.json betting_workbook_structure.json betting_column_detection.json; do
+            $SSH "cat /home/anestishkurti92/mls-predictor-v1/reports/$f" > "mls/bootstrap/$f"
+          done
+          echo '=== MLS BOOTSTRAP ==='
+          cat mls/bootstrap/bootstrap_report.txt
+          echo '=== SERVER FOOTPRINT ==='
+          $SSH 'du -sh /home/anestishkurti92/mls-predictor-v1; df -h / | tail -1; free -h | head -2'
+
+      - name: Persist MLS bootstrap audit
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git add mls/bootstrap
+          if ! git diff --cached --quiet; then
+            git commit -m 'Publish MLS warehouse bootstrap audit'
+            git pull --rebase origin main
+            git push origin HEAD:main
+          fi
