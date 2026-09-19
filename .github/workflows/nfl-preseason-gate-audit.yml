@@ -35,6 +35,16 @@ jobs:
           else
             echo 'MISSING page context'
           fi
+          echo '=== AUDITED PRESEASON HISTORY SOURCE ==='
+          PRE=/home/appwiza-runner/nfl-context-data/raw/preseason_team_2006_2026.csv
+          test -r "$PRE" && echo READABLE=yes || echo READABLE=no
+          "$PY" - <<'PY'
+          import pandas as pd,os
+          p='/home/appwiza-runner/nfl-context-data/raw/preseason_team_2006_2026.csv'
+          if os.path.exists(p):
+              d=pd.read_csv(p)
+              print(d[(d.season==2026)&d.team.isin(['TB','BAL','NO'])][['season','team','preseason_wins','preseason_games','preseason_record_equiv','preseason_win_pct','preseason_source']].to_string(index=False))
+          PY
           echo '=== AUTHORITATIVE 2026 PRESEASON FROM NFLVERSE SCHEDULE ==='
           "$PY" - <<'PY'
           import io,pandas as pd
