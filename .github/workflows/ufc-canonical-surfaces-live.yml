@@ -1,0 +1,148 @@
+name: UFC Canonical Surfaces Live
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/patch_ufc_canonical_surfaces.py'
+      - '.github/workflows/ufc-canonical-surfaces-live.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  deploy:
+    runs-on: [self-hosted, Linux, X64, appwiza]
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Deploy canonical UFC selection boundary
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          KEY=/home/appwiza-runner/.ssh/appwiza_vps
+          HOST=anestishkurti92@127.0.0.1
+          scp -i "$KEY" -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=accept-new             scripts/patch_ufc_canonical_surfaces.py "$HOST":/tmp/patch_ufc_canonical_surfaces.py
+
+          ssh -i "$KEY" -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=accept-new "$HOST" 'bash -s' <<'EOF'
+          set -Eeuo pipefail
+          export HOME=/home/anestishkurti92
+          ROOT=/home/anestishkurti92/ufc-predictor-v1
+          PY="$ROOT/venv/bin/python"
+          W="$ROOT/ufc_email_watcher.py"
+          cd "$ROOT"
+
+          cp "$W" "$W.pre-canonical-surfaces.$(date +%Y%m%d-%H%M%S).bak"
+          "$PY" /tmp/patch_ufc_canonical_surfaces.py "$W"
+          "$PY" -m py_compile "$W"
+          echo '[20%] Canonical UFC patch syntax verified'
+
+          # Side-effect-free recomputation + website refresh. No email send.
+          "$PY" - <<'PY'
+          import importlib.util,json,sqlite3
+          from pathlib import Path
+          from datetime import datetime,timezone
+
+          spec=importlib.util.spec_from_file_location('w','ufc_email_watcher.py')
+          w=importlib.util.module_from_spec(spec);spec.loader.exec_module(w)
+
+          feed=w.fetch_feed()
+          raw=feed.get('events')
+          if not isinstance(raw,list):raise RuntimeError('feed events missing')
+          events=w.ufc_lifecycle.future_events(raw)
+          bundle=w.joblib.load(w.BUNDLE_PATH)
+          reach=w.load_reach_index();skills=w.load_skill_index()
+          preds={}
+          for e in events:
+              try: ed=w.pd.Timestamp(e['date']).date()
+              except Exception: continue
+              preds[w.event_key(e)]=[w.predict_bout(b,ed,bundle,reach,skills) for b in e.get('bouts') or []]
+
+          canonical=w.canonical_ufc_all_picks(events,preds)
+          print('[40%] canonical_count',len(canonical))
+          for q in canonical:
+              print(q['key'],q['selection'],'vs',q['opponent'],q['methods'],q.get('price'),q.get('book'))
+          assert len(canonical)==9, len(canonical)
+
+          # Refresh the public state from the same predictions.
+          w.sports_publish.publish_ufc(events,preds,w.__dict__)
+          try:
+              import ufc_public_page
+              ufc_public_page.safe_enhance(w.sports_publish)
+          except Exception as exc:
+              raise RuntimeError('public dashboard refresh failed: '+repr(exc))
+          assert w.validate_ufc_public_canonical(canonical)
+          payload=w.write_ufc_canonical(canonical)
+          assert payload['selection_count']==9
+          print('[60%] public/canonical PASS')
+
+          # Build the exact full-slate email body without sending it.
+          event_keys={str(q.get('key') or '').split(':')[1] for q in canonical}
+          ce=[e for e in events if w.event_key(e) in event_keys]
+          blocks=[w.event_block(e,preds[w.event_key(e)]) for e in ce]
+          body=w.shell(f"UFC Model — Current Qualifying Slate Preview — {len(canonical)} selections",
+                       blocks,feed,bundle,bet_picks=canonical)
+          Path('canonical_email_preview.html').write_text(str(body))
+          staged=list(getattr(body,'picks',[]))
+          assert [q['key'] for q in staged]==[q['key'] for q in canonical]
+          for q in canonical:
+              assert q['selection'] in str(body), q['selection']
+          print('[70%] canonical email preview PASS')
+
+          # Correct method attribution on existing PENDING bets only.
+          # Preserve first_sent, price, book, delivery IDs, and historical delivery payloads.
+          dbp='/home/anestishkurti92/betting-ledger/assumed_bets.sqlite3'
+          db=sqlite3.connect(dbp);db.row_factory=sqlite3.Row
+          now=datetime.now(timezone.utc).isoformat()
+          corrected=[];missing=[]
+          for q in canonical:
+              row=db.execute("select key,methods,payload,result from bets where key=?",(q['key'],)).fetchone()
+              if row is None:
+                  missing.append(q['key']);continue
+              if row['result']!='pending':
+                  continue
+              methods=json.dumps(q['methods'])
+              if row['methods']==methods:
+                  continue
+              payload0=json.loads(row['payload'] or '{}')
+              payload0['methods']=list(q['methods'])
+              payload0['canonical_method_ids']=list(q['methods'])
+              db.execute("update bets set methods=?,payload=? where key=?",
+                         (methods,json.dumps(payload0,default=str),q['key']))
+              db.execute("insert into audit(at,bet_key,action,details) values (?,?,?,?)",
+                         (now,q['key'],'canonical_method_label_correction',
+                          json.dumps({'old_methods':json.loads(row['methods'] or '[]'),'new_methods':q['methods']})))
+              corrected.append((q['key'],json.loads(row['methods'] or '[]'),q['methods']))
+          if missing:
+              raise RuntimeError('Canonical current selections missing from tracker history: '+repr(missing))
+          db.commit()
+          print('[80%] tracker label corrections',corrected)
+
+          # Final four-way verification: canonical snapshot, public state, preview picks, pending tracker.
+          d=json.loads(Path('/srv/appwiza-sports/state/ufc.json').read_text())
+          nowdt=datetime.now(timezone.utc)
+          public={}
+          for c in d.get('cards',[]):
+              try: st=datetime.fromisoformat(str(c.get('start')).replace('Z','+00:00'))
+              except Exception: continue
+              if st<=nowdt or c.get('withdrawn'):continue
+              public[c['id']]=sorted([m.get('id') for m in c.get('methods',[]) if m.get('id')],key=w._ufc_method_sort)
+          canon={q['key']:sorted(q['methods'],key=w._ufc_method_sort) for q in canonical}
+          assert public==canon,(public,canon)
+
+          pending={}
+          for r in db.execute("select key,methods from bets where sport='UFC' and result='pending'"):
+              if r['key'] in canon:pending[r['key']]=sorted(json.loads(r['methods'] or '[]'),key=w._ufc_method_sort)
+          assert pending==canon,(pending,canon)
+
+          snap=json.loads(Path('canonical_selections.json').read_text())
+          assert {x['id']:sorted(x['methods'],key=w._ufc_method_sort) for x in snap['selections']}==canon
+          assert {q['key']:sorted(q['methods'],key=w._ufc_method_sort) for q in staged}==canon
+          print('[95%] FOUR-WAY UFC CONSISTENCY PASS')
+          print('canonical=',json.dumps(canon,sort_keys=True))
+          PY
+
+          systemctl is-active ufc-model-watcher.timer
+          grep -q 'UFC_CANONICAL_SURFACE_V1' "$W"
+          echo '[100%] UFC CANONICAL WEBSITE / EMAIL / TRACKER BOUNDARY ACTIVE'
+          echo 'No test email was sent.'
+          EOF
