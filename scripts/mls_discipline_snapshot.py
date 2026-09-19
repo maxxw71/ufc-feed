@@ -59,7 +59,43 @@ def main():
         if low=='caution accumulation warnings':
             if pending:suspensions.append(pending);pending=None
             section='warning';continue
-        mdate=re.match(r'^As of\s+(.+)$',line,re.I)
+        mdate=re.search(r'As of\s+(.+)
+        if mdate and not source_as_of:source_as_of=mdate.group(1).strip()
+        if section=='suspension':
+            m=re.match(r'^(.+?)\s*\(([A-Z]{2,5})\)\s*-\s*Suspended:\s*(.+)$',line,re.I)
+            if m:
+                if pending:suspensions.append(pending)
+                info=team(m.group(2))
+                pending={'player_name':m.group(1).strip().lstrip('*').strip(),'team_abbreviation':m.group(2).upper(),
+                         'team_id':info['team_id'],'team_name':info['team_name'],'reason':m.group(3).strip(),
+                         'subject_type':'technical_staff' if 'technical staff' in m.group(3).lower() else 'player','applies_to':None}
+                continue
+            if pending and re.match(r'^(January|February|March|April|May|June|July|August|September|October|November|December)\s+\d{1,2}\b',line,re.I):
+                pending['applies_to']=line
+                suspensions.append(pending);pending=None
+                continue
+        elif section=='warning':
+            m=re.match(r'^(.+?),\s*([A-Z]{2,5})$',line)
+            if m:
+                info=team(m.group(2))
+                warnings.append({'player_name':m.group(1).strip().lstrip('*').strip(),'team_abbreviation':m.group(2),
+                                 'team_id':info['team_id'],'team_name':info['team_name']})
+    if pending:suspensions.append(pending)
+    if not suspensions and not warnings:
+        raise RuntimeError('MLS disciplinary summary parsed no suspensions or warnings; fail closed')
+
+    payload={'captured_at':now.isoformat(),'source_url':URL,'source_as_of':source_as_of,
+             'raw_sha256':hashlib.sha256(text.encode()).hexdigest(),
+             'suspensions':suspensions,'caution_warnings':warnings}
+    stamp=now.strftime('%Y%m%dT%H%M%SZ')
+    (OUT/f'{stamp}.json').write_text(json.dumps(payload,indent=2,ensure_ascii=False))
+    (OUT/'latest.json').write_text(json.dumps(payload,indent=2,ensure_ascii=False))
+    with (OUT/'history.jsonl').open('a') as f:f.write(json.dumps(payload,ensure_ascii=False,separators=(',',':'))+'\n')
+    print(json.dumps({'captured_at':payload['captured_at'],'source_as_of':source_as_of,
+                      'suspensions':len(suspensions),'warnings':len(warnings)},indent=2))
+
+if __name__=='__main__':main()
+,line,re.I)
         if mdate and not source_as_of:source_as_of=mdate.group(1).strip()
         if section=='suspension':
             m=re.match(r'^(.+?)\s*\(([A-Z]{2,5})\)\s*-\s*Suspended:\s*(.+)$',line,re.I)
