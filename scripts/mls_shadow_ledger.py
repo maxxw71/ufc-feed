@@ -54,6 +54,9 @@ def conn():
       UNIQUE(signal_key,observed_at)
     );
     """)
+    cols={r[1] for r in db.execute("pragma table_info(signals)").fetchall()}
+    if 'confidence_tier' not in cols:
+        db.execute("alter table signals add column confidence_tier TEXT")
     db.commit();return db
 
 def ingest():
@@ -67,12 +70,12 @@ def ingest():
             row=db.execute('select signal_key from signals where signal_key=?',(key,)).fetchone()
             if row is None:
                 db.execute("""insert into signals(signal_key,method_id,method_name,event_id,commence_time,home_team,away_team,selection,opponent,side,
-                    first_seen_at,first_price_american,first_price_decimal,first_book,first_market_prob,status)
-                    values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,'pending')""",
+                    first_seen_at,first_price_american,first_price_decimal,first_book,first_market_prob,status,confidence_tier)
+                    values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,'pending',?)""",
                     (key,q['method_id'],q.get('method_name'),str(q['event_id']),q.get('commence_time'),
                      q.get('home_team'),q.get('away_team'),q.get('selection'),q.get('opponent'),q.get('side'),
                      q.get('captured_at') or d.get('market_captured_at') or now(),q.get('american_price'),q.get('decimal_price'),
-                     q.get('book'),q.get('market_prob')))
+                     q.get('book'),q.get('market_prob'),q.get('confidence_tier')))
                 inserted+=1
             ts=q.get('captured_at') or d.get('market_captured_at') or now()
             cur=db.execute("""insert or ignore into observations(signal_key,observed_at,american_price,decimal_price,book,market_prob)
