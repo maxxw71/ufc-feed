@@ -316,6 +316,8 @@ def main():
         'status':'SHADOW_RESEARCH_ONLY',
         'top_singles_preholdout_order':singles_json[:30],
         'top_pairs_preholdout_order':pairs_json[:30],
+        'all_holdout_surviving_singles_preholdout_order':[x for x in singles_json if x['holdout_survived']],
+        'all_holdout_surviving_pairs_preholdout_order':[x for x in pairs_json if x['holdout_survived']],
     }
     (OUT/'latest.json').write_text(json.dumps(payload,indent=2,default=str))
 
