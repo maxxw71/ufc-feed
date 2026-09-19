@@ -1,0 +1,46 @@
+name: MLS Lineup Source Audit
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/mls-lineup-source-audit.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  audit:
+    runs-on: [self-hosted, Linux, X64, appwiza]
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Test Sofascore MLS seasons, events and lineups
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          python3 - <<'PY'
+          import json,urllib.request
+          UA={'User-Agent':'Mozilla/5.0 AppwizaMLS/1.0'}
+          def get(url):
+              req=urllib.request.Request(url,headers=UA)
+              return json.loads(urllib.request.urlopen(req,timeout=30).read())
+          base='https://www.sofascore.com/api/v1'
+          seasons=get(base+'/unique-tournament/242/seasons')
+          ss=seasons.get('seasons') or []
+          print('SEASONS',[(x.get('name'),x.get('id')) for x in ss[:30]])
+          target=next((x for x in ss if str(x.get('name'))=='2025'),None) or ss[0]
+          sid=target['id'];print('TARGET',target)
+          ev=get(f'{base}/unique-tournament/242/season/{sid}/events/last/0')
+          events=ev.get('events') or []
+          print('EVENTS_PAGE',len(events))
+          for e in events[:5]:
+              print('EVENT',e.get('id'),e.get('startTimestamp'),e.get('homeTeam',{}).get('name'),e.get('awayTeam',{}).get('name'))
+          if events:
+              eid=events[0]['id']
+              for suffix in ['lineups','missing-players','statistics','incidents']:
+                  try:
+                      z=get(f'{base}/event/{eid}/{suffix}')
+                      print('ENDPOINT',suffix,'keys',list(z)[:20])
+                      print(json.dumps(z,default=str)[:8000])
+                  except Exception as ex:
+                      print('ENDPOINT',suffix,'ERROR',type(ex).__name__,str(ex)[:300])
+          PY
