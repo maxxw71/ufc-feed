@@ -48,7 +48,7 @@ jobs:
                       try:p=w.predict_bout(b,e.get('date'),bundle,reach)
                       except TypeError:p=w.predict_bout(b,e.get('date'),bundle)
                   preds.append(p)
-                  cards=w.ufc_email_design.method_cards(p,w)
+                  cards=w.ufc_email_design.method_cards(p,w.__dict__)
                   if cards:
                       favs=sorted(set(str(c.get('favorite') or '') for c in cards if c.get('favorite')))
                       current.append({
