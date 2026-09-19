@@ -1,0 +1,26 @@
+name: MLS maintenance bridge
+
+on:
+  push:
+    paths:
+      - ".github/workflows/mls-maintenance.yml"
+  workflow_dispatch:
+
+jobs:
+  inspect-mls:
+    runs-on: [self-hosted, appwiza]
+    timeout-minutes: 10
+    steps:
+      - name: Inspect MLS project state
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo "HOST=$(hostname)"
+          echo "USER=$(whoami)"
+          echo "PWD=$(pwd)"
+          echo "== MLS directories =="
+          find /home/anestishkurti92 -maxdepth 5 -type d \( -iname '*mls*' -o -iname '*soccer*' \) 2>/dev/null | sort | head -200
+          echo "== Candidate MLS files =="
+          find /home/anestishkurti92 -maxdepth 6 -type f \( -iname '*mls*' -o -path '*/mls/*' \) 2>/dev/null | sort | head -300
+          echo "== appwiza public sports dirs =="
+          find /srv/appwiza-sports/public -maxdepth 2 -type d 2>/dev/null | sort | head -100 || true
