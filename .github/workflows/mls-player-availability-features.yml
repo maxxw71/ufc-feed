@@ -1,0 +1,69 @@
+name: MLS Player Availability Feature Merge
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/mls_merge_player_features.py'
+      - 'scripts/mls_availability_features.py'
+      - '.github/workflows/mls-player-availability-features.yml'
+
+concurrency:
+  group: mls-player-availability-features
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    if: github.repository == 'maxxw71/ufc-feed'
+    runs-on: [self-hosted, Linux, X64, appwiza]
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with: {fetch-depth: 0}
+
+      - name: Deploy and build enriched MLS warehouse
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          KEY=/home/appwiza-runner/.ssh/appwiza_vps
+          HOST=anestishkurti92@127.0.0.1
+          SSH="ssh -i $KEY -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=accept-new $HOST"
+          D=/home/anestishkurti92/mls-predictor-v1
+          for f in mls_merge_player_features.py mls_availability_features.py; do
+            cat "scripts/$f" | $SSH "set -e; cat > '$D/$f.new'; chmod 0644 '$D/$f.new'; mv -f '$D/$f.new' '$D/$f'"
+          done
+          $SSH 'set -Eeuo pipefail; cd /home/anestishkurti92/mls-predictor-v1; venv/bin/python -m py_compile mls_merge_player_features.py mls_availability_features.py; OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 nice -n 12 timeout 6m venv/bin/python mls_merge_player_features.py; OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 nice -n 12 timeout 8m venv/bin/python mls_availability_features.py'
+
+      - name: Pull non-secret MLS feature audits
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          KEY=/home/appwiza-runner/.ssh/appwiza_vps
+          HOST=anestishkurti92@127.0.0.1
+          SSH="ssh -i $KEY -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=accept-new $HOST"
+          mkdir -p mls/players mls/availability
+          $SSH 'cat /home/anestishkurti92/mls-predictor-v1/reports/player_merge_meta.json' > mls/players/player_merge_meta.json
+          $SSH 'cat /home/anestishkurti92/mls-predictor-v1/reports/availability_feature_meta.json' > mls/availability/feature_meta.json
+          echo '=== PLAYER MERGE ==='
+          cat mls/players/player_merge_meta.json
+          echo '=== AVAILABILITY FEATURES ==='
+          cat mls/availability/feature_meta.json
+          echo '=== FILES ==='
+          $SSH 'ls -lh /home/anestishkurti92/mls-predictor-v1/data/processed/mls_match_features_player_enriched.parquet /home/anestishkurti92/mls-predictor-v1/data/processed/mls_availability_pregame_features.parquet /home/anestishkurti92/mls-predictor-v1/data/processed/mls_match_features_availability_enriched.parquet'
+
+      - name: Persist feature audits
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git add mls/players/player_merge_meta.json mls/availability/feature_meta.json
+          if ! git diff --cached --quiet; then
+            git commit -m 'Publish MLS player availability feature audit'
+            git pull --rebase origin main
+            git push origin HEAD:main
+          fi
