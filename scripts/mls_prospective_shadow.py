@@ -107,11 +107,11 @@ def main():
             prob=ev['home_novig_prob'] if m['side']=='HOME' else ev['away_novig_prob']
             selection=home if m['side']=='HOME' else away
             opponent=away if m['side']=='HOME' else home
-            available=True;reasons=[]
+            available=True;reasons=[];stale_required_input=False
             if not (m['prob_lo']<=prob<=m['prob_hi']):
                 available=False;reasons.append(f"market_prob {prob:.3f} outside {m['prob_lo']:.2f}-{m['prob_hi']:.2f}")
             if m['requires_elo'] and elo_age>3:
-                available=False;reasons.append(f'Elo stale: {elo_age:.1f} days old')
+                available=False;stale_required_input=True;reasons.append(f'Elo stale: {elo_age:.1f} days old')
             checks=[]
             for feat,op,t in m['rules']:
                 v=fx.get(feat)
@@ -121,7 +121,7 @@ def main():
             rows.append({
               'captured_at':market['summary']['captured_at'],'event_id':ev['event_id'],'commence_time':ev['commence_time'],
               'home_team':home,'away_team':away,'selection':selection,'opponent':opponent,'side':m['side'],
-              'method_id':m['id'],'method_name':m['name'],'status':'QUALIFIES_SHADOW' if available else 'NO_MATCH',
+              'method_id':m['id'],'method_name':m['name'],'status':'QUALIFIES_SHADOW' if available else ('BLOCKED_STALE_INPUT' if stale_required_input else 'NO_MATCH'),
               'market_prob':prob,'american_price':ev['home_american'] if m['side']=='HOME' else ev['away_american'],
               'decimal_price':ev['home_odds'] if m['side']=='HOME' else ev['away_odds'],'book':ev['provider'],
               'checks':checks,'blocking_reasons':reasons,'features':fx,'history':HISTORY[m['id']],
@@ -130,12 +130,13 @@ def main():
     payload={'built_at':now().isoformat(),'market_captured_at':market['summary']['captured_at'],
              'elo_updated_at':elo_updated,'elo_age_days':elo_age,
              'methods':{m['id']:{'name':m['name'],'status':'SHADOW_READY'} for m in METHODS},
-             'rows':rows,'qualifiers':[r for r in rows if r['status']=='QUALIFIES_SHADOW']}
+             'rows':rows,'qualifiers':[r for r in rows if r['status']=='QUALIFIES_SHADOW'],
+             'status_counts':{m['id']:{s:sum(1 for r in rows if r['method_id']==m['id'] and r['status']==s) for s in ['QUALIFIES_SHADOW','NO_MATCH','BLOCKED_STALE_INPUT']} for m in METHODS}}
     (OUT/'current_shadow_board.json').write_text(json.dumps(payload,indent=2,default=str))
     with (OUT/'shadow_observations.jsonl').open('a') as f:
         f.write(json.dumps(payload,default=str,separators=(',',':'))+'\n')
     print(json.dumps({'built_at':payload['built_at'],'market_captured_at':payload['market_captured_at'],
                       'elo_updated_at':elo_updated,'elo_age_days':elo_age,'events':len(events),
-                      'method_checks':len(rows),'qualifiers':len(payload['qualifiers']),
+                      'method_checks':len(rows),'qualifiers':len(payload['qualifiers']),'status_counts':payload['status_counts'],
                       'qualifying':[(r['method_id'],r['selection'],r['opponent'],r['american_price']) for r in payload['qualifiers']]},indent=2))
 if __name__=='__main__':main()
