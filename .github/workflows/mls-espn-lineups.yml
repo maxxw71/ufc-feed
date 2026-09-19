@@ -1,0 +1,63 @@
+name: MLS ESPN Lineup Card Backfill
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/mls_espn_lineups_cards.py'
+      - '.github/workflows/mls-espn-lineups.yml'
+
+concurrency:
+  group: mls-espn-lineups
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  backfill:
+    if: github.repository == 'maxxw71/ufc-feed'
+    runs-on: [self-hosted, Linux, X64, appwiza]
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+        with: {fetch-depth: 0}
+
+      - name: Deploy and backfill confirmed MLS lineups/cards
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          KEY=/home/appwiza-runner/.ssh/appwiza_vps
+          HOST=anestishkurti92@127.0.0.1
+          SSH="ssh -i $KEY -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=accept-new $HOST"
+          D=/home/anestishkurti92/mls-predictor-v1
+          cat scripts/mls_espn_lineups_cards.py | $SSH 'set -e; D=/home/anestishkurti92/mls-predictor-v1; cat > "$D/mls_espn_lineups_cards.py.new"; chmod 0644 "$D/mls_espn_lineups_cards.py.new"; mv -f "$D/mls_espn_lineups_cards.py.new" "$D/mls_espn_lineups_cards.py"'
+          $SSH 'set -Eeuo pipefail; cd /home/anestishkurti92/mls-predictor-v1; venv/bin/python -m py_compile mls_espn_lineups_cards.py; OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 nice -n 12 timeout 28m venv/bin/python mls_espn_lineups_cards.py --years 2023 --workers 6'
+
+      - name: Pull lineup/card audit
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          KEY=/home/appwiza-runner/.ssh/appwiza_vps
+          HOST=anestishkurti92@127.0.0.1
+          mkdir -p mls/lineups
+          ssh -i "$KEY" -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=accept-new "$HOST" 'cat /home/anestishkurti92/mls-predictor-v1/reports/espn_lineup_card_meta.json' > mls/lineups/espn_meta.json
+          cat mls/lineups/espn_meta.json
+
+      - name: Persist lineup/card audit
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          cp mls/lineups/espn_meta.json "$RUNNER_TEMP/espn_meta.json"
+          git fetch origin main
+          git reset --hard origin/main
+          mkdir -p mls/lineups
+          cp "$RUNNER_TEMP/espn_meta.json" mls/lineups/espn_meta.json
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git add mls/lineups/espn_meta.json
+          if ! git diff --cached --quiet; then
+            git commit -m 'Publish MLS confirmed lineup card audit'
+            git push origin HEAD:main
+          fi
