@@ -1,0 +1,71 @@
+name: MLS Deep Combo and Loss Forensics
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/mls_weekly_combos.py'
+      - 'scripts/mls_loss_forensics.py'
+      - '.github/workflows/mls-deep-combo-forensics.yml'
+
+concurrency:
+  group: mls-research
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  research:
+    runs-on: [self-hosted, Linux, X64, appwiza]
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+        with: {fetch-depth: 0}
+
+      - name: Run deep interaction search and loss forensics
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          KEY=/home/appwiza-runner/.ssh/appwiza_vps
+          HOST=anestishkurti92@127.0.0.1
+          SSH="ssh -i $KEY -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=accept-new $HOST"
+
+          for f in mls_autoresearch.py mls_weekly_combos.py mls_loss_forensics.py; do
+            cat "scripts/$f" | $SSH "set -e; D=/home/anestishkurti92/mls-predictor-v1; cat > \"\$D/$f.new\"; chmod 0644 \"\$D/$f.new\"; mv -f \"\$D/$f.new\" \"\$D/$f\""
+          done
+
+          $SSH 'set -Eeuo pipefail; cd /home/anestishkurti92/mls-predictor-v1; venv/bin/python -m py_compile mls_autoresearch.py mls_weekly_combos.py mls_loss_forensics.py; OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 nice -n 15 timeout 25m venv/bin/python mls_weekly_combos.py; OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 nice -n 15 timeout 15m venv/bin/python mls_loss_forensics.py'
+
+      - name: Pull reports
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          KEY=/home/appwiza-runner/.ssh/appwiza_vps
+          HOST=anestishkurti92@127.0.0.1
+          SSH="ssh -i $KEY -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=accept-new $HOST"
+          mkdir -p mls/research/deep
+          $SSH 'cat /home/anestishkurti92/mls-predictor-v1/auto_research/reports/weekly_latest.txt' > mls/research/deep/weekly_latest.txt
+          $SSH 'cat /home/anestishkurti92/mls-predictor-v1/research/loss_forensics/report.txt' > mls/research/deep/loss_forensics.txt
+          $SSH 'cat /home/anestishkurti92/mls-predictor-v1/research/loss_forensics/family_summary.csv' > mls/research/deep/family_summary.csv
+          $SSH 'cat /home/anestishkurti92/mls-predictor-v1/research/loss_forensics/all_losses.csv' > mls/research/deep/all_losses.csv
+          echo '=== WEEKLY COMBOS ==='
+          cat mls/research/deep/weekly_latest.txt
+          echo '=== LOSS FORENSICS ==='
+          cat mls/research/deep/loss_forensics.txt
+          echo '=== SERVER AFTER DEEP RUN ==='
+          $SSH 'uptime; free -h | head -2; du -sh /home/anestishkurti92/mls-predictor-v1'
+
+      - name: Persist reports
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git add mls/research/deep
+          if ! git diff --cached --quiet; then
+            git commit -m 'Publish MLS combo and loss forensics'
+            git pull --rebase origin main
+            git push origin HEAD:main
+          fi
