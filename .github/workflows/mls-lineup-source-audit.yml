@@ -24,12 +24,19 @@ jobs:
               req=urllib.request.Request(url,headers=UA)
               return json.loads(urllib.request.urlopen(req,timeout=30).read())
           base='https://www.sofascore.com/api/v1'
-          seasons=get(base+'/unique-tournament/242/seasons')
+          jina='https://r.jina.ai/'
+          def getj(path):
+              req=urllib.request.Request(jina+base+path,headers=UA)
+              raw=urllib.request.urlopen(req,timeout=45).read().decode('utf-8','replace')
+              mark='Markdown Content:\n'
+              payload=raw.split(mark,1)[1] if mark in raw else raw
+              return json.loads(payload.strip())
+          seasons=getj('/unique-tournament/242/seasons')
           ss=seasons.get('seasons') or []
           print('SEASONS',[(x.get('name'),x.get('id')) for x in ss[:30]])
           target=next((x for x in ss if str(x.get('name'))=='2025'),None) or ss[0]
           sid=target['id'];print('TARGET',target)
-          ev=get(f'{base}/unique-tournament/242/season/{sid}/events/last/0')
+          ev=getj(f'/unique-tournament/242/season/{sid}/events/last/0')
           events=ev.get('events') or []
           print('EVENTS_PAGE',len(events))
           for e in events[:5]:
@@ -38,7 +45,7 @@ jobs:
               eid=events[0]['id']
               for suffix in ['lineups','missing-players','statistics','incidents']:
                   try:
-                      z=get(f'{base}/event/{eid}/{suffix}')
+                      z=getj(f'/event/{eid}/{suffix}')
                       print('ENDPOINT',suffix,'keys',list(z)[:20])
                       print(json.dumps(z,default=str)[:8000])
                   except Exception as ex:
