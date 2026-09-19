@@ -1,0 +1,50 @@
+name: MLS Server Capacity Audit
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/mls-server-capacity-audit.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  audit:
+    runs-on: [self-hosted, Linux, X64, appwiza]
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Audit server capacity and active workloads
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          KEY=/home/appwiza-runner/.ssh/appwiza_vps
+          HOST=anestishkurti92@127.0.0.1
+          ssh -i "$KEY" -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=accept-new "$HOST" 'bash -s' <<'EOF'
+          set -Eeuo pipefail
+          echo '=== HOST ==='
+          hostname
+          uname -a
+          echo '=== CPU ==='
+          nproc
+          lscpu | grep -E 'Model name|CPU\(s\)|Thread|Core|Socket' || true
+          echo '=== MEMORY ==='
+          free -h
+          echo '=== DISK ==='
+          df -h /
+          du -sh /home/anestishkurti92/nfl-predictor-v1 /home/anestishkurti92/ufc-predictor-v1 /home/anestishkurti92/boxing-research /srv/appwiza-sports 2>/dev/null || true
+          echo '=== LOAD ==='
+          uptime
+          cat /proc/loadavg
+          echo '=== TOP CPU/MEM ==='
+          ps -eo pid,user,%cpu,%mem,rss,etime,comm,args --sort=-%cpu | head -25
+          echo '=== SYSTEMD TIMERS ==='
+          systemctl list-timers --all --no-pager | grep -Ei 'nfl|ufc|boxing|appwiza' || true
+          echo '=== CRONTABS ==='
+          crontab -l 2>/dev/null || true
+          echo '=== RUNNER CRON ==='
+          sudo -n -u appwiza-runner crontab -l 2>/dev/null || true
+          echo '=== PROJECT PROCESSES ==='
+          pgrep -af 'nfl|ufc|boxing|appwiza' || true
+          echo '=== INODES ==='
+          df -ih /
+          EOF
