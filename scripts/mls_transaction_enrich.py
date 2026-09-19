@@ -82,7 +82,10 @@ def parse_page(year,text,url):
             team=cand;continue
         if not team or '|' not in line:continue
         if 'PLAYERS IN' in line.upper() or re.fullmatch(r'[-: |]+',line):continue
-        cells=[x.strip() for x in line.split('|')]
+        table_line=line.strip()
+        if table_line.startswith('|'):table_line=table_line[1:]
+        if table_line.endswith('|'):table_line=table_line[:-1]
+        cells=[x.strip() for x in table_line.split('|')]
         if len(cells)<2:continue
         left=parse_cell(cells[0],team,'IN',year,url)
         right=parse_cell(cells[1],team,'OUT',year,url)
