@@ -142,7 +142,7 @@ def extract_published_year(url):
 
 def _anchor_links(page_html):
     links=[]
-    for href,body in re.findall(r'<a\\b[^>]*href=["\\']([^"\\']+)["\\'][^>]*>(.*?)</a>',page_html,re.I|re.S):
+    for href,body in re.findall(r"""<a\\b[^>]*href=["']([^"']+)["'][^>]*>(.*?)</a>""",page_html,re.I|re.S):
         label=unescape(re.sub(r'<[^>]+>',' ',body))
         label=re.sub(r'\\s+',' ',label).strip()
         if 'player status report' in label.lower():
