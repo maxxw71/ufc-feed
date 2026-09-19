@@ -7,6 +7,7 @@ import re
 import urllib.request
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import datetime, timezone
+from html import unescape
 from pathlib import Path
 from urllib.parse import urljoin
 
@@ -139,26 +140,35 @@ def extract_published_year(url):
             return int(y.group(1))
     return None
 
+def _anchor_links(page_html):
+    links=[]
+    for href,body in re.findall(r'<a\\b[^>]*href=["\\']([^"\\']+)["\\'][^>]*>(.*?)</a>',page_html,re.I|re.S):
+        label=unescape(re.sub(r'<[^>]+>',' ',body))
+        label=re.sub(r'\\s+',' ',label).strip()
+        if 'player status report' in label.lower():
+            links.append((label,href))
+    return links
+
 def discover_status_urls():
     discovered={}
 
     def get_media(page):
         url=MEDIA+str(page)
         try:
-            return page,fetch_text(url),None
+            return page,fetch_html(url),None
         except Exception as e:
             return page,None,(type(e).__name__,str(e)[:100])
 
-    # Fetch Media Resources pages concurrently; this is discovery only and
-    # preserves the same first-party source and publication-year verification.
+    # Use the first-party HTML archive directly. Jina is retained for article
+    # body extraction, but direct HTML is materially more reliable for href discovery.
     with ThreadPoolExecutor(max_workers=8) as ex:
         futs=[ex.submit(get_media,page) for page in range(1,31)]
         for fut in as_completed(futs):
-            page,text,err=fut.result()
+            page,page_html,err=fut.result()
             if err:
                 print('MEDIA_MISS',page,*err,flush=True)
                 continue
-            for label,href in re.findall(r'\[([^\]]*Player Status Report[^\]]*)\]\((https?://[^)]+)\)',text,re.I):
+            for label,href in _anchor_links(page_html):
                 full=urljoin(MLS,href)
                 md=extract_matchday(label)
                 if md is None:
@@ -184,12 +194,19 @@ def discover_status_urls():
     return sorted(out,key=lambda x:(x['published_year'],extract_matchday(x['label']) or 999,x['url']))
 
 def legacy_candidates():
-    # Retain historical guessed slugs as a fallback; discovered Media Resources
-    # URLs win when available.
+    # Guessed slugs are fallback discovery only. Never assign their season from
+    # the guess: MLS has reused simple Matchday URLs across years.
+    seen=set()
     for n in range(1,41):
-        yield {'published_year':2024,'url':MLS+f'/news/mls-player-status-report-matchday-{n}','label':f'Matchday {n}','media_pages':[]}
-    for n in range(1,41):
-        yield {'published_year':2025,'url':MLS+f'/news/mls-player-status-report-matchday-{n}-2025','label':f'Matchday {n}','media_pages':[]}
+        for url in [
+            MLS+f'/news/mls-player-status-report-matchday-{n}',
+            MLS+f'/news/mls-player-status-report-matchday-{n}-2024',
+            MLS+f'/news/mls-player-status-report-matchday-{n}-2025',
+        ]:
+            if url in seen:
+                continue
+            seen.add(url)
+            yield {'published_year':None,'url':url,'label':f'Matchday {n}','media_pages':[]}
 
 def main():
     discovered=discover_status_urls()
@@ -199,6 +216,20 @@ def main():
     for rec in list(discovered)+list(legacy_candidates()):
         candidates.setdefault(rec['url'],rec)
 
+    # Verify the publication year of every fallback URL before fetching/parsing
+    # its report body. This prevents season contamination from reused slugs.
+    to_verify=[rec for rec in candidates.values() if rec.get('published_year') not in TARGET_YEARS]
+    def verify(rec):
+        return rec,extract_published_year(rec['url'])
+    with ThreadPoolExecutor(max_workers=8) as ex:
+        futs=[ex.submit(verify,rec) for rec in to_verify]
+        for fut in as_completed(futs):
+            rec,year=fut.result()
+            rec['published_year']=year
+
+    verified=[rec for rec in candidates.values() if rec.get('published_year') in TARGET_YEARS]
+    print('VERIFIED_CANDIDATES',len(verified),flush=True)
+
     fetched=[]
     def work(rec):
         try:
@@ -206,8 +237,8 @@ def main():
         except Exception as e:
             return rec,None,(type(e).__name__,str(e)[:140])
 
-    with ThreadPoolExecutor(max_workers=4) as ex:
-        futs=[ex.submit(work,rec) for rec in candidates.values()]
+    with ThreadPoolExecutor(max_workers=6) as ex:
+        futs=[ex.submit(work,rec) for rec in verified]
         for fut in as_completed(futs):
             rec,text,err=fut.result()
             if err:
