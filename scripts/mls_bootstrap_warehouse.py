@@ -80,7 +80,7 @@ ALIASES={
  'new york red bulls':'New York Red Bulls','ny red bulls':'New York Red Bulls','new york rb':'New York Red Bulls',
  'orlando city':'Orlando City SC','orlando city sc':'Orlando City SC',
  'philadelphia union':'Philadelphia Union','philadelphia':'Philadelphia Union',
- 'portland timbers':'Portland Timbers',
+ 'portland timbers':'Portland Timbers','portland timbers fc':'Portland Timbers',
  'real salt lake':'Real Salt Lake','salt lake':'Real Salt Lake',
  'san diego fc':'San Diego FC','san diego':'San Diego FC',
  'san jose earthquakes':'San Jose Earthquakes','san jose':'San Jose Earthquakes',
