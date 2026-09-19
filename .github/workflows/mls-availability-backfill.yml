@@ -44,11 +44,15 @@ jobs:
         shell: bash
         run: |
           set -Eeuo pipefail
+          cp mls/availability/archive/meta.json "$RUNNER_TEMP/archive_meta.json"
+          git fetch origin main
+          git reset --hard origin/main
+          mkdir -p mls/availability/archive
+          cp "$RUNNER_TEMP/archive_meta.json" mls/availability/archive/meta.json
           git config user.name github-actions
           git config user.email github-actions@github.com
           git add mls/availability/archive/meta.json
           if ! git diff --cached --quiet; then
             git commit -m 'Publish MLS availability archive audit'
-            git pull --rebase origin main
             git push origin HEAD:main
           fi
