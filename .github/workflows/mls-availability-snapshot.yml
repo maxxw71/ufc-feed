@@ -1,0 +1,76 @@
+name: MLS Availability Snapshot
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '20 1,7,13,19 * * *'
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/mls_availability_snapshot.py'
+      - '.github/workflows/mls-availability-snapshot.yml'
+
+concurrency:
+  group: mls-availability
+  cancel-in-progress: true
+
+permissions:
+  contents: write
+
+jobs:
+  snapshot:
+    if: github.repository == 'maxxw71/ufc-feed'
+    runs-on: [self-hosted, Linux, X64, appwiza]
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with: {fetch-depth: 0}
+
+      - name: Install and capture official MLS availability
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          KEY=/home/appwiza-runner/.ssh/appwiza_vps
+          HOST=anestishkurti92@127.0.0.1
+          SSH="ssh -i $KEY -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=accept-new $HOST"
+          ROOT=/home/anestishkurti92/mls-predictor-v1
+          cat scripts/mls_availability_snapshot.py | $SSH 'set -e; D=/home/anestishkurti92/mls-predictor-v1; cat > "$D/mls_availability_snapshot.py.new"; chmod 0644 "$D/mls_availability_snapshot.py.new"; mv -f "$D/mls_availability_snapshot.py.new" "$D/mls_availability_snapshot.py"'
+          $SSH 'set -Eeuo pipefail; cd /home/anestishkurti92/mls-predictor-v1; venv/bin/python -m py_compile mls_availability_snapshot.py; OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 nice -n 12 timeout 8m venv/bin/python mls_availability_snapshot.py'
+
+      - name: Pull non-secret availability summary
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          KEY=/home/appwiza-runner/.ssh/appwiza_vps
+          HOST=anestishkurti92@127.0.0.1
+          mkdir -p mls/availability
+          ssh -i "$KEY" -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=accept-new "$HOST" 'python3 - <<'"'"'PY'"'"'
+          import json
+          from pathlib import Path
+          p=Path("/home/anestishkurti92/mls-predictor-v1/live/availability/latest.json")
+          d=json.loads(p.read_text())
+          out={
+            "captured_at":d.get("captured_at"),
+            "source_url":d.get("source_url"),
+            "entries":len(d.get("entries") or []),
+            "matched":sum(bool(x.get("matched")) for x in d.get("entries") or []),
+            "unmatched":len(d.get("unmatched") or []),
+            "teams":len(d.get("team_summary") or {}),
+            "team_summary":d.get("team_summary") or {},
+          }
+          print(json.dumps(out,indent=2))
+          PY' > mls/availability/latest_summary.json
+          cat mls/availability/latest_summary.json
+
+      - name: Persist availability status
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git add mls/availability/latest_summary.json
+          if ! git diff --cached --quiet; then
+            git commit -m 'Update MLS availability snapshot status'
+            git pull --rebase origin main
+            git push origin HEAD:main
+          fi
