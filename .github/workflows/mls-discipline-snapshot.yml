@@ -50,9 +50,10 @@ jobs:
           d=json.loads(Path("/home/anestishkurti92/mls-predictor-v1/live/discipline/latest.json").read_text())
           print(json.dumps({
             "captured_at":d.get("captured_at"),"source_as_of":d.get("source_as_of"),
-            "suspensions":len(d.get("suspensions") or []),
+            "player_suspensions":len(d.get("player_suspensions") or []),
+            "technical_staff_suspensions":len(d.get("technical_staff_suspensions") or []),
             "caution_warnings":len(d.get("caution_warnings") or []),
-            "suspension_rows":d.get("suspensions") or []
+            "player_suspension_rows":d.get("player_suspensions") or []
           },indent=2,ensure_ascii=False))
           PY' > mls/discipline/latest_summary.json
 
