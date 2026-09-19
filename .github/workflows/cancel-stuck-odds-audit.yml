@@ -1,0 +1,16 @@
+name: Cancel stuck odds audit
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/cancel-stuck-odds-audit.yml'
+permissions:
+  actions: write
+  contents: read
+jobs:
+  cancel:
+    runs-on: ubuntu-latest
+    steps:
+      - env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh api -X POST repos/${GITHUB_REPOSITORY}/actions/runs/35427678295/cancel
