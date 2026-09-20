@@ -1,0 +1,126 @@
+name: Remove Steveson From UFC Public State
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/ufc-remove-steveson-public-state.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  remove:
+    runs-on: [self-hosted, Linux, X64, appwiza]
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with: {fetch-depth: 0}
+
+      - name: Remove exact public-state card and refresh page
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          KEY=/home/appwiza-runner/.ssh/appwiza_vps
+          HOST=anestishkurti92@127.0.0.1
+          ssh -i "$KEY" -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=accept-new "$HOST" 'bash -s' <<'EOF'
+          set -Eeuo pipefail
+          export HOME=/home/anestishkurti92
+          ROOT=/home/anestishkurti92/ufc-predictor-v1
+          PY="$ROOT/venv/bin/python"
+          cd "$ROOT"
+
+          "$PY" - <<'PY'
+          import json, shutil, sqlite3, importlib.util
+          from datetime import datetime, timezone
+          from pathlib import Path
+
+          key='UFC:cryptocom-ufc-331:gablesteveson:seansharaf'
+          state=Path('/srv/appwiza-sports/state/ufc.json')
+          out=Path('/home/anestishkurti92/ufc-predictor-v1/research/steveson_nonbet_public_state_removal.json')
+
+          if not state.exists():
+              raise RuntimeError('UFC public state file missing')
+
+          data=json.loads(state.read_text())
+          cards=list(data.get('cards') or [])
+          matches=[c for c in cards if str(c.get('id') or '')==key]
+          if len(matches)>1:
+              raise RuntimeError('Multiple Steveson public-state cards found')
+          before=len(cards)
+
+          if matches:
+              backup=state.with_name('ufc.json.pre-steveson-removal.'+datetime.now(timezone.utc).strftime('%Y%m%d-%H%M%S')+'.bak')
+              shutil.copy2(state,backup)
+              data['cards']=[c for c in cards if str(c.get('id') or '')!=key]
+              tmp=state.with_suffix('.tmp')
+              tmp.write_text(json.dumps(data,indent=2,default=str))
+              tmp.replace(state)
+              backup_path=str(backup)
+          else:
+              backup_path=None
+
+          db=sqlite3.connect('/home/anestishkurti92/betting-ledger/assumed_bets.sqlite3')
+          ledger_count=db.execute('select count(*) from bets where key=?',(key,)).fetchone()[0]
+          db.close()
+          if ledger_count!=0:
+              raise RuntimeError('Steveson ledger row still present')
+
+          # Regenerate the HTML from the corrected state file only.
+          spec=importlib.util.spec_from_file_location('w','ufc_email_watcher.py')
+          w=importlib.util.module_from_spec(spec);spec.loader.exec_module(w)
+          import ufc_public_page
+          ufc_public_page.safe_enhance(w.sports_publish)
+
+          data2=json.loads(state.read_text())
+          if any(str(c.get('id') or '')==key for c in data2.get('cards',[])):
+              raise RuntimeError('Steveson card still present after state removal')
+
+          html=Path('/srv/appwiza-sports/public/ufc/index.html')
+          if html.exists() and 'Gable Steveson' in html.read_text(errors='ignore'):
+              raise RuntimeError('Steveson still present in generated UFC HTML')
+
+          completed=[c for c in data2.get('cards',[]) if c.get('result') in {'win','loss'}]
+          sep=[c for c in completed if str(c.get('start') or '').startswith(('2026-09-19','2026-09-20'))]
+          wins=sum(c.get('result')=='win' for c in sep)
+          losses=sum(c.get('result')=='loss' for c in sep)
+
+          payload={
+              'status':'PASS',
+              'bet_key':key,
+              'ledger_present':False,
+              'public_state_present':False,
+              'public_html_present':False,
+              'cards_before':before,
+              'cards_after':len(data2.get('cards',[])),
+              'removed_public_cards':len(matches),
+              'state_backup':backup_path,
+              'sep19_20_record':f'{wins}-{losses}',
+              'sep19_20_completed_rows':len(sep),
+          }
+          out.write_text(json.dumps(payload,indent=2,default=str))
+          print(json.dumps(payload,indent=2,default=str))
+          PY
+          EOF
+
+      - name: Publish audit
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          KEY=/home/appwiza-runner/.ssh/appwiza_vps
+          HOST=anestishkurti92@127.0.0.1
+          mkdir -p ufc_record_adjustments
+          ssh -i "$KEY" -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=accept-new "$HOST"             'cat /home/anestishkurti92/ufc-predictor-v1/research/steveson_nonbet_public_state_removal.json'             > ufc_record_adjustments/steveson_nonbet_public_state_removal.json
+          cp ufc_record_adjustments/steveson_nonbet_public_state_removal.json "$RUNNER_TEMP/audit.json"
+          git fetch origin main
+          git reset --hard origin/main
+          mkdir -p ufc_record_adjustments
+          cp "$RUNNER_TEMP/audit.json" ufc_record_adjustments/steveson_nonbet_public_state_removal.json
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git add ufc_record_adjustments/steveson_nonbet_public_state_removal.json
+          if ! git diff --cached --quiet; then
+            git commit -m 'Remove Steveson non-wager from UFC public state'
+            git push origin HEAD:main
+          fi
