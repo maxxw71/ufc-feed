@@ -52,12 +52,18 @@ jobs:
         shell: bash
         run: |
           set -Eeuo pipefail
+          cp mls/prospective/latest_summary.json "$RUNNER_TEMP/mls_market_summary.json"
+          cp mls/prospective/market_history_meta.json "$RUNNER_TEMP/mls_market_history.json"
+          git fetch origin main
+          git reset --hard origin/main
+          mkdir -p mls/prospective
+          cp "$RUNNER_TEMP/mls_market_summary.json" mls/prospective/latest_summary.json
+          cp "$RUNNER_TEMP/mls_market_history.json" mls/prospective/market_history_meta.json
           git config user.name github-actions
           git config user.email github-actions@github.com
           git add mls/prospective/latest_summary.json mls/prospective/market_history_meta.json
           if ! git diff --cached --quiet; then
             git commit -m 'Update MLS prospective market snapshot status'
-            git pull --rebase origin main
             git push origin HEAD:main
           fi
 
