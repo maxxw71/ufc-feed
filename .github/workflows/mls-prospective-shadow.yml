@@ -8,6 +8,7 @@ on:
     branches: [main]
     paths:
       - 'scripts/mls_market_snapshot.py'
+      - 'scripts/mls_market_history.py'
       - 'scripts/mls_current_elo.py'
       - 'scripts/mls_prospective_shadow.py'
       - 'scripts/mls_shadow_ledger.py'
@@ -42,10 +43,10 @@ jobs:
           SSH="ssh -i $KEY -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=accept-new $HOST"
           ROOT=/home/anestishkurti92/mls-predictor-v1
 
-          for f in mls_market_snapshot.py mls_current_elo.py mls_prospective_shadow.py mls_shadow_ledger.py; do
+          for f in mls_market_snapshot.py mls_market_history.py mls_current_elo.py mls_prospective_shadow.py mls_shadow_ledger.py; do
             cat "scripts/$f" | $SSH "set -e; D=$ROOT; cat > \"\$D/$f.new\"; chmod 0644 \"\$D/$f.new\"; mv -f \"\$D/$f.new\" \"\$D/$f\""
           done
-          $SSH "set -Eeuo pipefail; cd $ROOT; venv/bin/python -m py_compile mls_market_snapshot.py mls_current_elo.py mls_prospective_shadow.py mls_shadow_ledger.py; timeout 120s venv/bin/python mls_market_snapshot.py; OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 nice -n 12 timeout 5m venv/bin/python mls_current_elo.py; OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 nice -n 12 timeout 5m venv/bin/python mls_prospective_shadow.py; OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 nice -n 12 timeout 5m venv/bin/python mls_shadow_ledger.py"
+          $SSH "set -Eeuo pipefail; cd $ROOT; venv/bin/python -m py_compile mls_market_snapshot.py mls_market_history.py mls_current_elo.py mls_prospective_shadow.py mls_shadow_ledger.py; timeout 120s venv/bin/python mls_market_snapshot.py; timeout 3m venv/bin/python mls_market_history.py; OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 nice -n 12 timeout 5m venv/bin/python mls_current_elo.py; OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 nice -n 12 timeout 5m venv/bin/python mls_prospective_shadow.py; OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 nice -n 12 timeout 5m venv/bin/python mls_shadow_ledger.py"
 
       - name: Pull non-secret MLS shadow status
         shell: bash
