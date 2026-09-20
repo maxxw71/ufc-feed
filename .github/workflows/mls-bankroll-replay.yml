@@ -1,0 +1,64 @@
+name: MLS Bankroll Replay
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/mls_bankroll_replay.py'
+      - '.github/workflows/mls-bankroll-replay.yml'
+
+concurrency:
+  group: mls-bankroll-replay
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  replay:
+    if: github.repository == 'maxxw71/ufc-feed'
+    runs-on: [self-hosted, Linux, X64, appwiza]
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with: {fetch-depth: 0}
+      - name: Deploy and run bankroll replay
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          KEY=/home/appwiza-runner/.ssh/appwiza_vps
+          HOST=anestishkurti92@127.0.0.1
+          SSH="ssh -i $KEY -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=accept-new $HOST"
+          D=/home/anestishkurti92/mls-predictor-v1
+          for f in mls_arsenal_research.py mls_bankroll_replay.py; do
+            cat "scripts/$f" | $SSH "set -e; D=$D; cat > \"\$D/$f.new\"; chmod 0644 \"\$D/$f.new\"; mv -f \"\$D/$f.new\" \"\$D/$f\""
+          done
+          $SSH 'set -Eeuo pipefail; cd /home/anestishkurti92/mls-predictor-v1; venv/bin/python -m py_compile mls_arsenal_research.py mls_bankroll_replay.py; OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 nice -n 12 timeout 10m venv/bin/python mls_bankroll_replay.py'
+      - name: Pull replay audit
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          KEY=/home/appwiza-runner/.ssh/appwiza_vps
+          HOST=anestishkurti92@127.0.0.1
+          mkdir -p mls/research
+          ssh -i "$KEY" -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=accept-new "$HOST" 'cat /home/anestishkurti92/mls-predictor-v1/research/bankroll_replay/latest.json' > mls/research/bankroll_replay_latest.json
+          ssh -i "$KEY" -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=accept-new "$HOST" 'cat /home/anestishkurti92/mls-predictor-v1/research/bankroll_replay/clean_signals.csv' > mls/research/bankroll_replay_clean_signals.csv
+      - name: Persist replay audit
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          cp mls/research/bankroll_replay_latest.json "$RUNNER_TEMP/bankroll.json"
+          cp mls/research/bankroll_replay_clean_signals.csv "$RUNNER_TEMP/signals.csv"
+          git fetch origin main
+          git reset --hard origin/main
+          mkdir -p mls/research
+          cp "$RUNNER_TEMP/bankroll.json" mls/research/bankroll_replay_latest.json
+          cp "$RUNNER_TEMP/signals.csv" mls/research/bankroll_replay_clean_signals.csv
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git add mls/research/bankroll_replay_latest.json mls/research/bankroll_replay_clean_signals.csv
+          if ! git diff --cached --quiet; then
+            git commit -m 'Publish MLS bankroll replay'
+            git push origin HEAD:main
+          fi
