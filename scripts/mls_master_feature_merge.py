@@ -57,6 +57,9 @@ def main():
         z=normalize_key(pd.read_parquet(path))
         ignore={'asa_game_id','season','asa_matchday'}
         payload=[c for c in z.columns if c!='match_id' and c not in ignore]
+        if len(z)==0 or not payload:
+            layer_meta[name]={'status':'NO_COVERAGE','path':str(path),'source_rows':len(z),'usable_columns':len(payload)}
+            continue
         collisions=[c for c in payload if c in d.columns]
         if collisions and not refresh:
             layer_meta[name]={'status':'COLLISION_REJECTED','path':str(path),'collisions':collisions[:50]}
