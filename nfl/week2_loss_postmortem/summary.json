@@ -1,5 +1,5 @@
 {
-  "built_at": "2026-09-20T22:26:49.951094+00:00",
+  "built_at": "2026-09-20T22:27:43.331734+00:00",
   "live_picks": [
     {
       "source": "state",
@@ -298,6 +298,36 @@
       "opp_current_passing_first_downs_avg": 19.0,
       "current_rushing_first_downs_avg": 12.0,
       "opp_current_rushing_first_downs_avg": 7.0
+    }
+  ],
+  "current_live_veto_evaluation": [
+    {
+      "id": "NFL:2026_02_CLE_TB",
+      "selection": "TB",
+      "opp_last_rank_def_allowed_giveaway_rate": null,
+      "last_rank_def_allowed_giveaway_rate": null,
+      "staff_change_count": null,
+      "full_staff_overhaul": null,
+      "returning_offense_snap_share": 0.77008177008177,
+      "returning_defense_snap_share": 0.6418807139747497,
+      "returning_ol_snap_share": 0.7756500351370345,
+      "returning_skill_snap_share": 0.724406659582005,
+      "m1_enriched_veto_status": "UNKNOWN_FAIL_CLOSED",
+      "m1_enriched_veto_rule": "opp_last_rank_def_allowed_giveaway_rate <= 14.8"
+    },
+    {
+      "id": "NFL:2026_02_NO_BAL",
+      "selection": "BAL",
+      "opp_last_rank_def_allowed_giveaway_rate": null,
+      "last_rank_def_allowed_giveaway_rate": null,
+      "staff_change_count": null,
+      "full_staff_overhaul": null,
+      "returning_offense_snap_share": 0.6245293168370092,
+      "returning_defense_snap_share": 0.7660701388331594,
+      "returning_ol_snap_share": 0.5698818897637795,
+      "returning_skill_snap_share": 0.6268774703557313,
+      "m1_enriched_veto_status": "UNKNOWN_FAIL_CLOSED",
+      "m1_enriched_veto_rule": "opp_last_rank_def_allowed_giveaway_rate <= 14.8"
     }
   ],
   "historical_variants": {
@@ -924,91 +954,246 @@
     },
     "M1_only_preseason": {
       "full": {
-        "n": 0,
-        "wins": 0,
-        "losses": 0,
-        "win_pct": NaN,
-        "roi": NaN,
-        "units": 0.0
+        "n": 16,
+        "wins": 14,
+        "losses": 2,
+        "win_pct": 0.875,
+        "roi": 0.28007215339059244,
+        "units": 4.481154454249479
       },
       "development": {
-        "n": 0,
-        "wins": 0,
+        "n": 3,
+        "wins": 3,
         "losses": 0,
-        "win_pct": NaN,
-        "roi": NaN,
-        "units": 0.0
+        "win_pct": 1.0,
+        "roi": 0.5449080725443313,
+        "units": 1.6347242176329937
       },
       "validation": {
-        "n": 0,
-        "wins": 0,
-        "losses": 0,
-        "win_pct": NaN,
-        "roi": NaN,
-        "units": 0.0
+        "n": 9,
+        "wins": 7,
+        "losses": 2,
+        "win_pct": 0.7777777777777778,
+        "roi": 0.13666731012187003,
+        "units": 1.2300057910968303
       },
       "holdout": {
-        "n": 0,
-        "wins": 0,
+        "n": 4,
+        "wins": 4,
         "losses": 0,
-        "win_pct": NaN,
-        "roi": NaN,
-        "units": 0.0
+        "win_pct": 1.0,
+        "roi": 0.4041061113799138,
+        "units": 1.6164244455196553
       },
       "recent3": {
-        "n": 0,
-        "wins": 0,
+        "n": 2,
+        "wins": 2,
         "losses": 0,
-        "win_pct": NaN,
-        "roi": NaN,
-        "units": 0.0
+        "win_pct": 1.0,
+        "roi": 0.47474747474747475,
+        "units": 0.9494949494949495
       },
-      "positive_season_ratio": NaN,
-      "by_season": []
+      "positive_season_ratio": 0.8333333333333334,
+      "by_season": [
+        {
+          "season": 2007,
+          "n": 1,
+          "wins": 1,
+          "losses": 0,
+          "win_pct": 1.0,
+          "roi": 0.1941747572815534,
+          "units": 0.1941747572815534
+        },
+        {
+          "season": 2013,
+          "n": 2,
+          "wins": 2,
+          "losses": 0,
+          "win_pct": 1.0,
+          "roi": 0.7202747301757202,
+          "units": 1.4405494603514404
+        },
+        {
+          "season": 2014,
+          "n": 1,
+          "wins": 1,
+          "losses": 0,
+          "win_pct": 1.0,
+          "roi": 0.2631578947368421,
+          "units": 0.2631578947368421
+        },
+        {
+          "season": 2015,
+          "n": 1,
+          "wins": 1,
+          "losses": 0,
+          "win_pct": 1.0,
+          "roi": 0.4545454545454545,
+          "units": 0.4545454545454545
+        },
+        {
+          "season": 2017,
+          "n": 2,
+          "wins": 1,
+          "losses": 1,
+          "win_pct": 0.5,
+          "roi": -0.20930232558139533,
+          "units": -0.41860465116279066
+        },
+        {
+          "season": 2018,
+          "n": 3,
+          "wins": 2,
+          "losses": 1,
+          "win_pct": 0.6666666666666666,
+          "roi": 0.013381543211405278,
+          "units": 0.040144629634215834
+        },
+        {
+          "season": 2019,
+          "n": 2,
+          "wins": 2,
+          "losses": 0,
+          "win_pct": 1.0,
+          "roi": 0.4453812316715543,
+          "units": 0.8907624633431086
+        },
+        {
+          "season": 2020,
+          "n": 2,
+          "wins": 2,
+          "losses": 0,
+          "win_pct": 1.0,
+          "roi": 0.33346474801235293,
+          "units": 0.6669294960247059
+        },
+        {
+          "season": 2024,
+          "n": 2,
+          "wins": 2,
+          "losses": 0,
+          "win_pct": 1.0,
+          "roi": 0.47474747474747475,
+          "units": 0.9494949494949495
+        }
+      ]
     },
     "M1_only_preseason_plus_enriched_veto": {
       "full": {
-        "n": 0,
-        "wins": 0,
-        "losses": 0,
-        "win_pct": NaN,
-        "roi": NaN,
-        "units": 0.0
+        "n": 12,
+        "wins": 11,
+        "losses": 1,
+        "win_pct": 0.9166666666666666,
+        "roi": 0.37720101869287054,
+        "units": 4.526412224314447
       },
       "development": {
-        "n": 0,
-        "wins": 0,
+        "n": 3,
+        "wins": 3,
         "losses": 0,
-        "win_pct": NaN,
-        "roi": NaN,
-        "units": 0.0
+        "win_pct": 1.0,
+        "roi": 0.5449080725443313,
+        "units": 1.6347242176329937
       },
       "validation": {
-        "n": 0,
-        "wins": 0,
-        "losses": 0,
-        "win_pct": NaN,
-        "roi": NaN,
-        "units": 0.0
+        "n": 5,
+        "wins": 4,
+        "losses": 1,
+        "win_pct": 0.8,
+        "roi": 0.2550527122323595,
+        "units": 1.2752635611617975
       },
       "holdout": {
-        "n": 0,
-        "wins": 0,
+        "n": 4,
+        "wins": 4,
         "losses": 0,
-        "win_pct": NaN,
-        "roi": NaN,
-        "units": 0.0
+        "win_pct": 1.0,
+        "roi": 0.4041061113799138,
+        "units": 1.6164244455196553
       },
       "recent3": {
-        "n": 0,
-        "wins": 0,
+        "n": 2,
+        "wins": 2,
         "losses": 0,
-        "win_pct": NaN,
-        "roi": NaN,
-        "units": 0.0
+        "win_pct": 1.0,
+        "roi": 0.47474747474747475,
+        "units": 0.9494949494949495
       },
-      "positive_season_ratio": NaN,
-      "by_season": []
+      "positive_season_ratio": 0.75,
+      "by_season": [
+        {
+          "season": 2007,
+          "n": 1,
+          "wins": 1,
+          "losses": 0,
+          "win_pct": 1.0,
+          "roi": 0.1941747572815534,
+          "units": 0.1941747572815534
+        },
+        {
+          "season": 2013,
+          "n": 2,
+          "wins": 2,
+          "losses": 0,
+          "win_pct": 1.0,
+          "roi": 0.7202747301757202,
+          "units": 1.4405494603514404
+        },
+        {
+          "season": 2015,
+          "n": 1,
+          "wins": 1,
+          "losses": 0,
+          "win_pct": 1.0,
+          "roi": 0.4545454545454545,
+          "units": 0.4545454545454545
+        },
+        {
+          "season": 2017,
+          "n": 2,
+          "wins": 1,
+          "losses": 1,
+          "win_pct": 0.5,
+          "roi": -0.20930232558139533,
+          "units": -0.41860465116279066
+        },
+        {
+          "season": 2018,
+          "n": 1,
+          "wins": 1,
+          "losses": 0,
+          "win_pct": 1.0,
+          "roi": 0.6711409395973155,
+          "units": 0.6711409395973155
+        },
+        {
+          "season": 2019,
+          "n": 1,
+          "wins": 1,
+          "losses": 0,
+          "win_pct": 1.0,
+          "roi": 0.5681818181818182,
+          "units": 0.5681818181818182
+        },
+        {
+          "season": 2020,
+          "n": 2,
+          "wins": 2,
+          "losses": 0,
+          "win_pct": 1.0,
+          "roi": 0.33346474801235293,
+          "units": 0.6669294960247059
+        },
+        {
+          "season": 2024,
+          "n": 2,
+          "wins": 2,
+          "losses": 0,
+          "win_pct": 1.0,
+          "roi": 0.47474747474747475,
+          "units": 0.9494949494949495
+        }
+      ]
     },
     "M2_stricter_baseline": {
       "full": {
@@ -1435,12 +1620,12 @@
       "posterior_predictive_two_losses_before_2026": 0.009497964721845319
     },
     "M1_only_preseason": {
-      "historical_wins": 0,
-      "historical_losses": 0,
+      "historical_wins": 14,
+      "historical_losses": 2,
       "added_2026_losses": 2,
-      "updated_win_pct": 0.0,
-      "updated_record": "0-2",
-      "posterior_predictive_two_losses_before_2026": 0.3333333333333333
+      "updated_win_pct": 0.7777777777777778,
+      "updated_record": "14-4",
+      "posterior_predictive_two_losses_before_2026": 0.03508771929824561
     },
     "M1_original_preseason_plus_enriched_veto": {
       "historical_wins": 46,
@@ -1451,12 +1636,12 @@
       "posterior_predictive_two_losses_before_2026": 0.007541478129713424
     },
     "M1_only_preseason_plus_enriched_veto": {
-      "historical_wins": 0,
-      "historical_losses": 0,
+      "historical_wins": 11,
+      "historical_losses": 1,
       "added_2026_losses": 2,
-      "updated_win_pct": 0.0,
-      "updated_record": "0-2",
-      "posterior_predictive_two_losses_before_2026": 0.3333333333333333
+      "updated_win_pct": 0.7857142857142857,
+      "updated_record": "11-3",
+      "posterior_predictive_two_losses_before_2026": 0.02857142857142857
     },
     "M2_stricter_preseason_fail_closed": {
       "historical_wins": 45,
@@ -1659,12 +1844,12 @@
             "units": 0.0
           },
           "safe": {
-            "n": 0,
-            "wins": 0,
+            "n": 3,
+            "wins": 3,
             "losses": 0,
-            "win_pct": NaN,
-            "roi": NaN,
-            "units": 0.0
+            "win_pct": 1.0,
+            "roi": 0.5449080725443313,
+            "units": 1.6347242176329937
           },
           "roi_gap_safe_minus_risk": null
         },
@@ -1672,43 +1857,43 @@
           "condition": "low_offense_continuity_lt65",
           "era": "validation",
           "risk": {
-            "n": 0,
-            "wins": 0,
-            "losses": 0,
-            "win_pct": NaN,
-            "roi": NaN,
-            "units": 0.0
+            "n": 3,
+            "wins": 2,
+            "losses": 1,
+            "win_pct": 0.6666666666666666,
+            "roi": 0.01198026779422127,
+            "units": 0.03594080338266381
           },
           "safe": {
-            "n": 0,
-            "wins": 0,
-            "losses": 0,
-            "win_pct": NaN,
-            "roi": NaN,
-            "units": 0.0
+            "n": 6,
+            "wins": 5,
+            "losses": 1,
+            "win_pct": 0.8333333333333334,
+            "roi": 0.19901083128569438,
+            "units": 1.1940649877141662
           },
-          "roi_gap_safe_minus_risk": null
+          "roi_gap_safe_minus_risk": 0.18703056349147312
         },
         {
           "condition": "low_offense_continuity_lt65",
           "era": "holdout",
           "risk": {
-            "n": 0,
-            "wins": 0,
+            "n": 1,
+            "wins": 1,
             "losses": 0,
-            "win_pct": NaN,
-            "roi": NaN,
-            "units": 0.0
+            "win_pct": 1.0,
+            "roi": 0.5050505050505051,
+            "units": 0.5050505050505051
           },
           "safe": {
-            "n": 0,
-            "wins": 0,
+            "n": 3,
+            "wins": 3,
             "losses": 0,
-            "win_pct": NaN,
-            "roi": NaN,
-            "units": 0.0
+            "win_pct": 1.0,
+            "roi": 0.3704579801563834,
+            "units": 1.1113739404691503
           },
-          "roi_gap_safe_minus_risk": null
+          "roi_gap_safe_minus_risk": -0.13459252489412166
         },
         {
           "condition": "low_defense_continuity_lt65",
@@ -1722,12 +1907,12 @@
             "units": 0.0
           },
           "safe": {
-            "n": 0,
-            "wins": 0,
+            "n": 3,
+            "wins": 3,
             "losses": 0,
-            "win_pct": NaN,
-            "roi": NaN,
-            "units": 0.0
+            "win_pct": 1.0,
+            "roi": 0.5449080725443313,
+            "units": 1.6347242176329937
           },
           "roi_gap_safe_minus_risk": null
         },
@@ -1735,43 +1920,43 @@
           "condition": "low_defense_continuity_lt65",
           "era": "validation",
           "risk": {
-            "n": 0,
-            "wins": 0,
-            "losses": 0,
-            "win_pct": NaN,
-            "roi": NaN,
-            "units": 0.0
+            "n": 3,
+            "wins": 2,
+            "losses": 1,
+            "win_pct": 0.6666666666666666,
+            "roi": -0.09409888357256779,
+            "units": -0.2822966507177034
           },
           "safe": {
-            "n": 0,
-            "wins": 0,
-            "losses": 0,
-            "win_pct": NaN,
-            "roi": NaN,
-            "units": 0.0
+            "n": 6,
+            "wins": 5,
+            "losses": 1,
+            "win_pct": 0.8333333333333334,
+            "roi": 0.2520504069690889,
+            "units": 1.5123024418145337
           },
-          "roi_gap_safe_minus_risk": null
+          "roi_gap_safe_minus_risk": 0.3461492905416567
         },
         {
           "condition": "low_defense_continuity_lt65",
           "era": "holdout",
           "risk": {
-            "n": 0,
-            "wins": 0,
+            "n": 1,
+            "wins": 1,
             "losses": 0,
-            "win_pct": NaN,
-            "roi": NaN,
-            "units": 0.0
+            "win_pct": 1.0,
+            "roi": 0.4444444444444444,
+            "units": 0.4444444444444444
           },
           "safe": {
-            "n": 0,
-            "wins": 0,
+            "n": 3,
+            "wins": 3,
             "losses": 0,
-            "win_pct": NaN,
-            "roi": NaN,
-            "units": 0.0
+            "win_pct": 1.0,
+            "roi": 0.3906600003584037,
+            "units": 1.171980001075211
           },
-          "roi_gap_safe_minus_risk": null
+          "roi_gap_safe_minus_risk": -0.05378444408604072
         }
       ],
       "stable": []

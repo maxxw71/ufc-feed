@@ -10,12 +10,16 @@ Ravens vs Saints | -375.0 | methods=[{'id': 'M1', 'title': 'Home opener · Run d
 TB vs CLE | -285.0 | methods=['original', 'stricter'] | result=pending | source=ledger
 BAL vs NO | -355.0 | methods=['original'] | result=pending | source=ledger
 
+CURRENT CONFIRMED M1 VETO EVALUATION
+TB | UNKNOWN_FAIL_CLOSED | opp giveaway-defense rank=None | rule=opp_last_rank_def_allowed_giveaway_rate <= 14.8
+BAL | UNKNOWN_FAIL_CLOSED | opp giveaway-defense rank=None | rule=opp_last_rank_def_allowed_giveaway_rate <= 14.8
+
 HISTORICAL VARIANTS
 M1_original_baseline: 75-16 n=91 win=82.4% ROI=+16.0% | hold n=32 win=81.2% ROI=+14.2% | 2023-25 n=18 ROI=+16.6%
 M1_original_preseason_fail_closed: 59-5 n=64 win=92.2% ROI=+25.2% | hold n=19 win=94.7% ROI=+31.9% | 2023-25 n=11 ROI=+24.8%
 M1_original_preseason_plus_enriched_veto: 46-3 n=49 win=93.9% ROI=+28.4% | hold n=15 win=93.3% ROI=+27.9% | 2023-25 n=8 ROI=+17.0%
-M1_only_preseason: 0-0 n=0 win=nan% ROI=+nan% | hold n=0 win=nan% ROI=+nan% | 2023-25 n=0 ROI=+nan%
-M1_only_preseason_plus_enriched_veto: 0-0 n=0 win=nan% ROI=+nan% | hold n=0 win=nan% ROI=+nan% | 2023-25 n=0 ROI=+nan%
+M1_only_preseason: 14-2 n=16 win=87.5% ROI=+28.0% | hold n=4 win=100.0% ROI=+40.4% | 2023-25 n=2 ROI=+47.5%
+M1_only_preseason_plus_enriched_veto: 11-1 n=12 win=91.7% ROI=+37.7% | hold n=4 win=100.0% ROI=+40.4% | 2023-25 n=2 ROI=+47.5%
 M2_stricter_baseline: 55-9 n=64 win=85.9% ROI=+17.2% | hold n=23 win=82.6% ROI=+12.4% | 2023-25 n=15 ROI=+6.3%
 M2_stricter_preseason_fail_closed: 45-3 n=48 win=93.8% ROI=+24.3% | hold n=15 win=93.3% ROI=+29.6% | 2023-25 n=9 ROI=+19.7%
 
