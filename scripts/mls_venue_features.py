@@ -96,7 +96,7 @@ def main():
         row['edge_stadium_familiarity20']=(h-a) if pd.notna(h) and pd.notna(a) else np.nan
         rows.append(row)
         if stid:
-            rec={'dt':g.dt,'stadium_id':stid,'lat':meta.get('lat',np.nan),'lon':meta.get('lon',np.nan)}
+            rec={'dt':g['dt'],'stadium_id':stid,'lat':meta.get('lat',np.nan),'lon':meta.get('lon',np.nan)}
             for side in ['home','away']:
                 team=canon_team(g[f'{side}_team']);team_hist[team].append(rec)
             home_hist[canon_team(g.home_team)].append(rec)
