@@ -57,6 +57,12 @@ def conn():
     cols={r[1] for r in db.execute("pragma table_info(signals)").fetchall()}
     if 'confidence_tier' not in cols:
         db.execute("alter table signals add column confidence_tier TEXT")
+    if 'tracking_tier' not in cols:
+        db.execute("alter table signals add column tracking_tier TEXT")
+    if 'portfolio_eligible' not in cols:
+        db.execute("alter table signals add column portfolio_eligible INTEGER")
+    if 'portfolio_conflict' not in cols:
+        db.execute("alter table signals add column portfolio_conflict INTEGER")
     db.commit();return db
 
 def ingest():
@@ -70,13 +76,20 @@ def ingest():
             row=db.execute('select signal_key from signals where signal_key=?',(key,)).fetchone()
             if row is None:
                 db.execute("""insert into signals(signal_key,method_id,method_name,event_id,commence_time,home_team,away_team,selection,opponent,side,
-                    first_seen_at,first_price_american,first_price_decimal,first_book,first_market_prob,status,confidence_tier)
-                    values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,'pending',?)""",
+                    first_seen_at,first_price_american,first_price_decimal,first_book,first_market_prob,status,confidence_tier,
+                    tracking_tier,portfolio_eligible,portfolio_conflict)
+                    values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,'pending',?,?,?,?)""",
                     (key,q['method_id'],q.get('method_name'),str(q['event_id']),q.get('commence_time'),
                      q.get('home_team'),q.get('away_team'),q.get('selection'),q.get('opponent'),q.get('side'),
                      q.get('captured_at') or d.get('market_captured_at') or now(),q.get('american_price'),q.get('decimal_price'),
-                     q.get('book'),q.get('market_prob'),q.get('confidence_tier')))
+                     q.get('book'),q.get('market_prob'),q.get('confidence_tier'),q.get('tracking_tier'),
+                     1 if q.get('portfolio_eligible') else 0,1 if q.get('portfolio_conflict') else 0))
                 inserted+=1
+            db.execute("""update signals set tracking_tier=coalesce(?,tracking_tier),
+                          portfolio_eligible=?,portfolio_conflict=?,confidence_tier=coalesce(?,confidence_tier)
+                          where signal_key=?""",
+                       (q.get('tracking_tier'),1 if q.get('portfolio_eligible') else 0,
+                        1 if q.get('portfolio_conflict') else 0,q.get('confidence_tier'),key))
             ts=q.get('captured_at') or d.get('market_captured_at') or now()
             cur=db.execute("""insert or ignore into observations(signal_key,observed_at,american_price,decimal_price,book,market_prob)
                               values(?,?,?,?,?,?)""",
@@ -141,7 +154,13 @@ def build_report():
     for m in methods.values():
         m['win_rate']=m['wins']/m['settled'] if m['settled'] else None
         m['roi']=m['units']/m['settled'] if m['settled'] else None
-    payload={'updated_at':now(),'shadow_only':True,'official_autopromotions':0,'methods':methods,'signals':rows}
+    active=[r for r in rows if r.get('tracking_tier')=='ACTIVE_PROSPECTIVE']
+    watch=[r for r in rows if r.get('tracking_tier')=='WATCH_ONLY']
+    payload={'updated_at':now(),'shadow_only':True,'official_autopromotions':0,
+             'active_method_ids':['MLS-R01V2','MLS-R02V2','MLS-R03','MLS-A02','MLS-A03','MLS-A05','MLS-A06'],
+             'watch_only_method_ids':['MLS-A04'],
+             'methods':methods,'signals':rows,
+             'active_signals':len(active),'watch_only_signals':len(watch)}
     REPORT.write_text(json.dumps(payload,indent=2,default=str))
     return payload
 
