@@ -52,6 +52,8 @@ def load_exact(path,method):
         'opponent':d.away_team.replace(ALIASES),'moneyline':num(d.home_moneyline),
         'win':num(d.win),'profit_units':num(d.profit),
         'record_gap':(num(d.prior_win_pct)-num(d.opponent_prior_win_pct)) if {'prior_win_pct','opponent_prior_win_pct'}.issubset(d.columns) else num(d.edge),
+        'prior_win_pct':num(d.prior_win_pct) if 'prior_win_pct' in d else np.nan,
+        'opponent_prior_win_pct':num(d.opponent_prior_win_pct) if 'opponent_prior_win_pct' in d else np.nan,
         'run_def_rank':num(d.run_rank if 'run_rank' in d else d.last_rank_def_allowed_rush_epa_per_carry),
     })
     # Preserve confirmed enriched-veto field from the exact frozen historical sample.
@@ -244,6 +246,11 @@ def main():
       'M1_only_preseason_plus_enriched_veto':m1_only_enriched_fc,
       'M2_stricter_baseline':strict,
       'M2_stricter_preseason_fail_closed':strict_pre,
+      'M1_preseason_prior_record_ge500':orig_pre[num(orig_pre.prior_win_pct).ge(.5)],
+      'M1_preseason_prior_record_winning':orig_pre[num(orig_pre.prior_win_pct).gt(.5)],
+      'M1_enriched_prior_record_ge500':orig_pre_enriched_fc[num(orig_pre_enriched_fc.prior_win_pct).ge(.5)],
+      'M2_preseason_prior_record_ge500':strict_pre[num(strict_pre.prior_win_pct).ge(.5)],
+      'M2_preseason_prior_record_winning':strict_pre[num(strict_pre.prior_win_pct).gt(.5)],
     }
 
     results={k:era_metrics(v) for k,v in variants.items()}
@@ -351,6 +358,11 @@ def main():
     if m1only['n'] and m1only['roi']<=0:
         recommendations.append('Retire M1-only signals; require M2 overlap or another independently validated gate.')
     recommendations.append('Change production deep-audit behavior from fail-open to fail-closed: missing required audit/veto features => NO BET.')
+    m1win=results['M1_preseason_prior_record_ge500']['holdout'];m2win=results['M2_preseason_prior_record_ge500']['holdout']
+    if m1win['n']>=8 and m1win['roi']>results['M1_original_preseason_fail_closed']['holdout']['roi']:
+        recommendations.append('Prior-record >=.500 is a promising natural M1 refinement; it improves holdout ROI and would have excluded both 8-9 Week 2 selections. Keep research/shadow until prospective confirmation.')
+    if m2win['n']>=8 and m2win['roi']>results['M2_stricter_preseason_fail_closed']['holdout']['roi']:
+        recommendations.append('Prior-record >=.500 is a promising natural M2 refinement; it improves holdout ROI and would have excluded Tampa. Keep research/shadow until prospective confirmation.')
 
     summary={
       'built_at':pd.Timestamp.now('UTC').isoformat(),'live_picks':exact,'observed_losses':observed,
