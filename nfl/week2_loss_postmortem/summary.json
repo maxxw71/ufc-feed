@@ -1,6 +1,101 @@
 {
-  "built_at": "2026-09-20T22:26:29.391835+00:00",
-  "live_picks": [],
+  "built_at": "2026-09-20T22:26:49.951094+00:00",
+  "live_picks": [
+    {
+      "source": "state",
+      "selection": "Buccaneers",
+      "opponent": "Browns",
+      "price": -425.0,
+      "methods": [
+        {
+          "id": "M1",
+          "title": "Home opener \u00b7 Run defense + preseason gate",
+          "win": "92.2%",
+          "sample": "59 / 64",
+          "roi": "+25.2%",
+          "note": "Archived opening prices \u00b7 validated preseason refinement",
+          "definition": "Previous-season run defense in the top 10, a better regular-season record than the opponent, and at least 2 preseason wins when the league held a preseason.",
+          "checks": [
+            "First non-neutral regular-season home game \u00b7 Week 2",
+            "Previous-season run defense: #5 of 32 (required: top 10)",
+            "Previous-season records: Buccaneers 8\u20139\u20130 vs Browns 5\u201312\u20130",
+            "Winning-percentage advantage: 17.65 points (required: >0)",
+            "Preseason: 2-1 \u00b7 wins 2.0 (required: \u22652 when preseason exists)"
+          ],
+          "consistency": ""
+        },
+        {
+          "id": "M2",
+          "title": "Home opener \u00b7 Larger record edge + preseason gate",
+          "win": "93.8%",
+          "sample": "45 / 48",
+          "roi": "+24.3%",
+          "note": "Archived opening prices \u00b7 validated preseason refinement",
+          "definition": "All M1 conditions, plus a winning-percentage advantage greater than 12.5 percentage points.",
+          "checks": [
+            "First non-neutral regular-season home game \u00b7 Week 2",
+            "Previous-season run defense: #5 of 32 (required: top 10)",
+            "Previous-season records: Buccaneers 8\u20139\u20130 vs Browns 5\u201312\u20130",
+            "Winning-percentage advantage: 17.65 points (required: >12.5)",
+            "Preseason: 2-1 \u00b7 wins 2.0 (required: \u22652 when preseason exists)"
+          ],
+          "consistency": ""
+        }
+      ],
+      "result": null,
+      "id": "NFL:2026_02_CLE_TB"
+    },
+    {
+      "source": "state",
+      "selection": "Ravens",
+      "opponent": "Saints",
+      "price": -375.0,
+      "methods": [
+        {
+          "id": "M1",
+          "title": "Home opener \u00b7 Run defense + preseason gate",
+          "win": "92.2%",
+          "sample": "59 / 64",
+          "roi": "+25.2%",
+          "note": "Archived opening prices \u00b7 validated preseason refinement",
+          "definition": "Previous-season run defense in the top 10, a better regular-season record than the opponent, and at least 2 preseason wins when the league held a preseason.",
+          "checks": [
+            "First non-neutral regular-season home game \u00b7 Week 2",
+            "Previous-season run defense: #6 of 32 (required: top 10)",
+            "Previous-season records: Ravens 8\u20139\u20130 vs Saints 6\u201311\u20130",
+            "Winning-percentage advantage: 11.76 points (required: >0)",
+            "Preseason: 3-0 \u00b7 wins 3.0 (required: \u22652 when preseason exists)"
+          ],
+          "consistency": ""
+        }
+      ],
+      "result": null,
+      "id": "NFL:2026_02_NO_BAL"
+    },
+    {
+      "source": "ledger",
+      "selection": "TB",
+      "opponent": "CLE",
+      "price": -285.0,
+      "methods": [
+        "original",
+        "stricter"
+      ],
+      "result": "pending",
+      "id": "NFL:2026_02_CLE_TB"
+    },
+    {
+      "source": "ledger",
+      "selection": "BAL",
+      "opponent": "NO",
+      "price": -355.0,
+      "methods": [
+        "original"
+      ],
+      "result": "pending",
+      "id": "NFL:2026_02_NO_BAL"
+    }
+  ],
   "observed_losses": [
     {
       "selection": "BAL",
@@ -1366,9 +1461,9 @@
     "M2_stricter_preseason_fail_closed": {
       "historical_wins": 45,
       "historical_losses": 3,
-      "added_2026_losses": 0,
-      "updated_win_pct": 0.9375,
-      "updated_record": "45-3",
+      "added_2026_losses": 1,
+      "updated_win_pct": 0.9183673469387755,
+      "updated_record": "45-4",
       "posterior_predictive_two_losses_before_2026": 0.00784313725490196
     }
   },
