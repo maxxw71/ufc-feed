@@ -1,6 +1,6 @@
 {
-  "built_at": "2026-09-20T03:35:21.173187+00:00",
-  "transaction_rows": 3386,
+  "built_at": "2026-09-20T04:16:16.187311+00:00",
+  "transaction_rows": 3960,
   "source_audit": {
     "2021": {
       "rows": 519,
@@ -26,25 +26,34 @@
       "teams": 29,
       "url": "https://www.mlssoccer.com/news/2024-mls-transactions"
     },
+    "2025_partial": {
+      "rows": 579,
+      "teams": 30,
+      "url": "https://stats-api.stg.mlssoccer.com/league-reports/all-transfers/",
+      "coverage_through": "2025-04-04"
+    },
     "2026": {
       "rows": 796,
       "teams": 29,
       "url": "https://www.mlssoccer.com/league-reports/all-transfers/"
     }
   },
-  "coverage_seasons": [
+  "coverage_seasons_full": [
     2021,
     2022,
     2023,
     2024,
     2026
   ],
+  "coverage_seasons_partial": {
+    "2025": "through 2025-04-04"
+  },
   "known_gap_seasons": [
-    2025
+    "2025 after 2025-04-04"
   ],
   "rows": 9440,
   "columns": 53,
   "output": "/home/anestishkurti92/mls-predictor-v1/data/processed/mls_transaction_features.parquet",
   "leakage_note": "Only official MLS transaction entries dated strictly before each target match are used. Seasons without verified team-attributed source pages remain NaN, never zero.",
-  "source_note": "Historical 2021-24 pages are parsed from direct first-party MLS HTML so team headings are preserved. 2026 uses the live first-party All Transfers report."
+  "source_note": "Historical 2021-24 pages are parsed from direct first-party MLS HTML so team headings are preserved. A first-party staging All Transfers snapshot covers 2025 only through Apr 4; later 2025 matches remain unknown. 2026 uses the live first-party All Transfers report."
 }
