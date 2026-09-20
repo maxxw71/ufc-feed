@@ -1,0 +1,1281 @@
+{
+  "built_at": "2026-09-20T19:11:47.695330+00:00",
+  "dataset": "/home/anestishkurti92/ufc-predictor-v1/feature_expansion/prefight_favorite_features_v6.csv",
+  "dataset_rows": 3322,
+  "priced_rows": 3322,
+  "schema": {
+    "date": "event_date",
+    "favorite": "favorite",
+    "opponent": "opponent",
+    "win": "won",
+    "american": null,
+    "decimal": "fav_decimal",
+    "prob": "market_prob",
+    "profit": "profit100"
+  },
+  "all_priced_favorites": {
+    "n": 3322,
+    "wins": 2162,
+    "losses": 1160,
+    "win_rate": 0.6508127633955448,
+    "roi_flat_stake": -0.032567182050329914,
+    "units_flat_stake": -108.18817877119596,
+    "avg_american": -244.21596404591227,
+    "median_american": -190.00000000000006
+  },
+  "exclude_four_digit_favorites": {
+    "n": 3305,
+    "wins": 2146,
+    "losses": 1159,
+    "win_rate": 0.6493192133131619,
+    "roi_flat_stake": -0.03281343222551013,
+    "units_flat_stake": -108.44839350531097,
+    "avg_american": -238.67032755235115,
+    "median_american": -190.00000000000006
+  },
+  "four_digit_favorites_le_minus1000": {
+    "n": 17,
+    "wins": 16,
+    "losses": 1,
+    "win_rate": 0.9411764705882353,
+    "roi_flat_stake": 0.0153067490655876,
+    "units_flat_stake": 0.2602147341149892,
+    "avg_american": -1322.352941176471,
+    "median_american": -1200.0000000000011
+  },
+  "by_threshold": {
+    "-500": {
+      "n": 221,
+      "wins": 195,
+      "losses": 26,
+      "win_rate": 0.8823529411764706,
+      "roi_flat_stake": 0.016101802075422493,
+      "units_flat_stake": 3.5584982586683713,
+      "avg_american": -708.9217624745132,
+      "median_american": -630.0000000000005
+    },
+    "-750": {
+      "n": 66,
+      "wins": 58,
+      "losses": 8,
+      "win_rate": 0.8787878787878788,
+      "roi_flat_stake": -0.028562591093267482,
+      "units_flat_stake": -1.885131012155654,
+      "avg_american": -984.6901885992795,
+      "median_american": -930.0000000000009
+    },
+    "-1000": {
+      "n": 17,
+      "wins": 16,
+      "losses": 1,
+      "win_rate": 0.9411764705882353,
+      "roi_flat_stake": 0.0153067490655876,
+      "units_flat_stake": 0.2602147341149892,
+      "avg_american": -1322.352941176471,
+      "median_american": -1200.0000000000011
+    },
+    "-1250": {
+      "n": 7,
+      "wins": 6,
+      "losses": 1,
+      "win_rate": 0.8571428571428571,
+      "roi_flat_stake": -0.08809978536869292,
+      "units_flat_stake": -0.6166984975808505,
+      "avg_american": -1575.714285714285,
+      "median_american": -1600.0
+    },
+    "-1500": {
+      "n": 4,
+      "wins": 4,
+      "losses": 0,
+      "win_rate": 1.0,
+      "roi_flat_stake": 0.0580357142857143,
+      "units_flat_stake": 0.2321428571428572,
+      "avg_american": -1737.4999999999993,
+      "median_american": -1674.9999999999995
+    },
+    "-2000": null
+  },
+  "by_band": {
+    "-500_to_-749": {
+      "n": 155,
+      "wins": 137,
+      "losses": 18,
+      "win_rate": 0.8838709677419355,
+      "roi_flat_stake": 0.03512018884402597,
+      "units_flat_stake": 5.443629270824025,
+      "avg_american": -591.4977874794513,
+      "median_american": -579.9999999999995
+    },
+    "-750_to_-999": {
+      "n": 41,
+      "wins": 34,
+      "losses": 7,
+      "win_rate": 0.8292682926829268,
+      "roi_flat_stake": -0.0718377011285523,
+      "units_flat_stake": -2.945345746270644,
+      "avg_american": -841.6964011598161,
+      "median_american": -815.0000000000002
+    },
+    "-1000_to_-1249": {
+      "n": 9,
+      "wins": 9,
+      "losses": 0,
+      "win_rate": 1.0,
+      "roi_flat_stake": 0.08854591463287106,
+      "units_flat_stake": 0.7969132316958396,
+      "avg_american": -1133.3333333333346,
+      "median_american": -1150.0000000000007
+    },
+    "-1250_to_-1499": {
+      "n": 3,
+      "wins": 2,
+      "losses": 1,
+      "win_rate": 0.6666666666666666,
+      "roi_flat_stake": -0.2829471182412359,
+      "units_flat_stake": -0.8488413547237077,
+      "avg_american": -1359.9999999999998,
+      "median_american": -1374.9999999999995
+    },
+    "-1500_to_-1999": {
+      "n": 3,
+      "wins": 3,
+      "losses": 0,
+      "win_rate": 1.0,
+      "roi_flat_stake": 0.06071428571428572,
+      "units_flat_stake": 0.18214285714285716,
+      "avg_american": -1649.9999999999998,
+      "median_american": -1600.0
+    },
+    "-2000_or_shorter": null
+  },
+  "four_digit_yearly": [
+    {
+      "year": 2014,
+      "n": 1,
+      "wins": 1,
+      "losses": 0,
+      "win_rate": 1.0,
+      "roi_flat_stake": 0.09523809523809512,
+      "units_flat_stake": 0.09523809523809512,
+      "avg_american": -1050.0000000000014,
+      "median_american": -1050.0000000000014
+    },
+    {
+      "year": 2015,
+      "n": 2,
+      "wins": 2,
+      "losses": 0,
+      "win_rate": 1.0,
+      "roi_flat_stake": 0.07046568627450978,
+      "units_flat_stake": 0.14093137254901955,
+      "avg_american": -1437.5000000000005,
+      "median_american": -1437.5000000000005
+    },
+    {
+      "year": 2018,
+      "n": 2,
+      "wins": 2,
+      "losses": 0,
+      "win_rate": 1.0,
+      "roi_flat_stake": 0.078030303030303,
+      "units_flat_stake": 0.156060606060606,
+      "avg_american": -1287.5000000000005,
+      "median_american": -1287.5000000000005
+    },
+    {
+      "year": 2020,
+      "n": 1,
+      "wins": 0,
+      "losses": 1,
+      "win_rate": 0.0,
+      "roi_flat_stake": -1.0,
+      "units_flat_stake": -1.0,
+      "avg_american": -1429.9999999999984,
+      "median_american": -1429.9999999999984
+    },
+    {
+      "year": 2022,
+      "n": 2,
+      "wins": 2,
+      "losses": 0,
+      "win_rate": 1.0,
+      "roi_flat_stake": 0.06847826086956521,
+      "units_flat_stake": 0.13695652173913042,
+      "avg_american": -1574.9999999999995,
+      "median_american": -1574.9999999999995
+    },
+    {
+      "year": 2023,
+      "n": 4,
+      "wins": 4,
+      "losses": 0,
+      "win_rate": 1.0,
+      "roi_flat_stake": 0.08630952380952372,
+      "units_flat_stake": 0.3452380952380949,
+      "avg_american": -1162.5000000000011,
+      "median_american": -1200.0000000000011
+    },
+    {
+      "year": 2024,
+      "n": 4,
+      "wins": 4,
+      "losses": 0,
+      "win_rate": 1.0,
+      "roi_flat_stake": 0.07644751082251078,
+      "units_flat_stake": 0.3057900432900431,
+      "avg_american": -1375.0000000000002,
+      "median_american": -1350.0000000000005
+    },
+    {
+      "year": 2025,
+      "n": 1,
+      "wins": 1,
+      "losses": 0,
+      "win_rate": 1.0,
+      "roi_flat_stake": 0.08000000000000007,
+      "units_flat_stake": 0.08000000000000007,
+      "avg_american": -1249.9999999999989,
+      "median_american": -1249.9999999999989
+    }
+  ],
+  "four_digit_losses": [
+    {
+      "date": "2020-08-22",
+      "favorite": "Mariya Agapova",
+      "opponent": "Shana Dobson",
+      "american": -1429.9999999999984,
+      "decimal": 1.06993006993007
+    }
+  ],
+  "yesterday_prefight_rows": [],
+  "current_state": {
+    "updated_at": "2026-09-20T14:00:45.066088+00:00",
+    "top_keys": [
+      "sport",
+      "updated_at",
+      "cards"
+    ],
+    "cards_count": 12,
+    "cards_tail": [
+      {
+        "id": "UFC:cryptocom-ufc-331:armantsarukyan:mauricioruffy",
+        "start": "2026-09-20T02:45:00+00:00",
+        "selection": "Arman Tsarukyan",
+        "opponent": "Mauricio Ruffy",
+        "fixture": "Arman Tsarukyan vs Mauricio Ruffy",
+        "event": "Crypto.com UFC 331: Van vs. Pantoja 2",
+        "price": -310.0,
+        "book": "DraftKings",
+        "quote_at": "2026-09-19T11:05:13Z",
+        "methods": [
+          {
+            "id": "U5",
+            "title": "Wrestling Mismatch",
+            "win": "77.8%",
+            "sample": "56 / 72",
+            "roi": "+16.24%",
+            "note": "Pre-2020 ROI +9.50%; 2020+ ROI +22.61%.",
+            "definition": "",
+            "checks": [
+              "Prior fights: favorite 12, opponent 6 (required \u22652 each)",
+              "Favorite takedowns per 15 min: 8.66 attempted (\u22655), 3.26 landed (\u22651)",
+              "Favorite control per 15 min: 6.36 minutes (\u22651)",
+              "Opponent TD attempts/15: 0.34 (\u22642); control/15: 0.64 minutes (\u22640.75)"
+            ],
+            "consistency": ""
+          }
+        ],
+        "first_seen": "2026-09-13T05:32:28.399505+00:00",
+        "observed_at": "2026-09-19T14:00:12.303138+00:00",
+        "withdrawn": false,
+        "tracking": {
+          "selection": "Arman Tsarukyan",
+          "opponent": "Mauricio Ruffy",
+          "start": "2026-09-20T02:45:00+00:00",
+          "fixture": "Arman Tsarukyan vs Mauricio Ruffy",
+          "event": "Crypto.com UFC 331: Van vs. Pantoja 2",
+          "price": -330.0,
+          "book": "Bovada",
+          "quote_at": "2026-09-13T04:48:52Z",
+          "methods": [
+            {
+              "id": "U5",
+              "title": "Wrestling Mismatch",
+              "win": "77.8%",
+              "sample": "56 / 72",
+              "roi": "+16.24%",
+              "note": "Pre-2020 ROI +9.50%; 2020+ ROI +22.61%.",
+              "definition": "",
+              "checks": [
+                "Prior fights: favorite 12, opponent 6 (required \u22652 each)",
+                "Favorite takedowns per 15 min: 8.66 attempted (\u22655), 3.26 landed (\u22651)",
+                "Favorite control per 15 min: 6.36 minutes (\u22651)",
+                "Opponent TD attempts/15: 0.34 (\u22642); control/15: 0.64 minutes (\u22640.75)"
+              ],
+              "consistency": ""
+            }
+          ],
+          "first_seen": "2026-09-13T05:32:28.399505+00:00"
+        },
+        "result_checked_at": "2026-09-20T14:00:45.066088+00:00",
+        "result": "win",
+        "profit_units": 0.30303030303030304,
+        "result_source": "https://site.api.espn.com/apis/site/v2/sports/mma/ufc/scoreboard?dates=20260919&limit=100",
+        "settled_at": "2026-09-20T14:00:45.066088+00:00"
+      },
+      {
+        "id": "UFC:cryptocom-ufc-331:gablesteveson:seansharaf",
+        "start": "2026-09-20T01:45:00+00:00",
+        "selection": "Gable Steveson",
+        "opponent": "Sean Sharaf",
+        "fixture": "Gable Steveson vs Sean Sharaf",
+        "event": "Crypto.com UFC 331: Van vs. Pantoja 2",
+        "price": -2200.0,
+        "book": "FanDuel",
+        "quote_at": "2026-09-19T11:05:36Z",
+        "methods": [
+          {
+            "id": "U1",
+            "title": "Age Hybrid \u00b7 Strong",
+            "win": "83.1%",
+            "sample": "739 / 889",
+            "roi": "+5.05%",
+            "note": "Full 2006\u20132026 age-hybrid master, including both tiers. Recent 2024\u20132026: 140 bets, 84.3% wins, +4.78% ROI. Historical price comparison (-500 or worse): 228 bets, 89.0% wins, +2.73% ROI.",
+            "definition": "",
+            "checks": [
+              "Market probability 92.6% (required \u226570%)",
+              "Favorite 6.9 years younger (required \u22654)",
+              "Skill veto not triggered"
+            ],
+            "consistency": ""
+          }
+        ],
+        "first_seen": "2026-09-13T05:32:28.399505+00:00",
+        "observed_at": "2026-09-19T14:00:12.303138+00:00",
+        "withdrawn": false,
+        "tracking": {
+          "selection": "Gable Steveson",
+          "opponent": "Sean Sharaf",
+          "start": "2026-09-20T00:45:00+00:00",
+          "fixture": "Gable Steveson vs Sean Sharaf",
+          "event": "Crypto.com UFC 331: Van vs. Pantoja 2",
+          "price": -1430.0,
+          "book": "BetRivers",
+          "quote_at": "2026-09-13T04:52:42Z",
+          "methods": [
+            {
+              "id": "U1",
+              "title": "Age Hybrid \u00b7 Strong",
+              "win": "83.1%",
+              "sample": "739 / 889",
+              "roi": "+5.05%",
+              "note": "Full 2006\u20132026 age-hybrid master, including both tiers. Recent 2024\u20132026: 140 bets, 84.3% wins, +4.78% ROI. Historical price comparison (-500 or worse): 228 bets, 89.0% wins, +2.73% ROI.",
+              "definition": "",
+              "checks": [
+                "Market probability 90.4% (required \u226570%)",
+                "Favorite 6.9 years younger (required \u22654)",
+                "Skill veto not triggered"
+              ],
+              "consistency": ""
+            }
+          ],
+          "first_seen": "2026-09-13T05:32:28.399505+00:00"
+        },
+        "result_checked_at": "2026-09-20T14:00:45.066088+00:00",
+        "result": "loss",
+        "profit_units": -1,
+        "result_source": "https://site.api.espn.com/apis/site/v2/sports/mma/ufc/scoreboard?dates=20260919&limit=100",
+        "settled_at": "2026-09-20T14:00:45.066088+00:00"
+      },
+      {
+        "id": "UFC:cryptocom-ufc-331:gigachikadze:joandersonbrito",
+        "start": "2026-09-19T21:45:00+00:00",
+        "selection": "Joanderson Brito",
+        "opponent": "Giga Chikadze",
+        "fixture": "Joanderson Brito vs Giga Chikadze",
+        "event": "Crypto.com UFC 331: Van vs. Pantoja 2",
+        "price": -410.0,
+        "book": "BetOnline.ag",
+        "quote_at": "2026-09-19T11:05:41Z",
+        "methods": [
+          {
+            "id": "U1",
+            "title": "Age Hybrid \u00b7 Strong",
+            "win": "83.1%",
+            "sample": "739 / 889",
+            "roi": "+5.05%",
+            "note": "Full 2006\u20132026 age-hybrid master, including both tiers. Recent 2024\u20132026: 140 bets, 84.3% wins, +4.78% ROI. Historical price comparison (-400 to -499): 161 bets, 86.3% wins, +6.23% ROI.",
+            "definition": "",
+            "checks": [
+              "Market probability 77.2% (required \u226570%)",
+              "Favorite 6.5 years younger (required \u22654)",
+              "Skill veto not triggered"
+            ],
+            "consistency": ""
+          }
+        ],
+        "first_seen": "2026-09-13T05:32:28.399505+00:00",
+        "observed_at": "2026-09-19T14:00:12.303138+00:00",
+        "withdrawn": false,
+        "tracking": {
+          "selection": "Joanderson Brito",
+          "opponent": "Giga Chikadze",
+          "start": "2026-09-19T21:15:00+00:00",
+          "fixture": "Joanderson Brito vs Giga Chikadze",
+          "event": "Crypto.com UFC 331: Van vs. Pantoja 2",
+          "price": -345.0,
+          "book": "BetRivers",
+          "quote_at": "2026-09-13T04:52:42Z",
+          "methods": [
+            {
+              "id": "U1",
+              "title": "Age Hybrid \u00b7 Strong",
+              "win": "83.1%",
+              "sample": "739 / 889",
+              "roi": "+5.05%",
+              "note": "Full 2006\u20132026 age-hybrid master, including both tiers. Recent 2024\u20132026: 140 bets, 84.3% wins, +4.78% ROI. Historical price comparison (-300 to -399): 290 bets, 80.0% wins, +3.93% ROI.",
+              "definition": "",
+              "checks": [
+                "Market probability 75.7% (required \u226570%)",
+                "Favorite 6.5 years younger (required \u22654)",
+                "Skill veto not triggered"
+              ],
+              "consistency": ""
+            }
+          ],
+          "first_seen": "2026-09-13T05:32:28.399505+00:00"
+        },
+        "result_checked_at": "2026-09-20T14:00:45.066088+00:00",
+        "result": "win",
+        "profit_units": 0.2898550724637681,
+        "result_source": "https://site.api.espn.com/apis/site/v2/sports/mma/ufc/scoreboard?dates=20260919&limit=100",
+        "settled_at": "2026-09-20T14:00:45.066088+00:00"
+      },
+      {
+        "id": "UFC:ufc-332:deivesonfigueiredo:paytontalbott",
+        "start": "2026-10-04T01:00:00+00:00",
+        "selection": "Payton Talbott",
+        "opponent": "Deiveson Figueiredo",
+        "fixture": "Payton Talbott vs Deiveson Figueiredo",
+        "event": "UFC 332: Silva vs. Wang",
+        "price": -625.0,
+        "book": "BetRivers",
+        "quote_at": "2026-09-20T11:29:50Z",
+        "methods": [
+          {
+            "id": "U1",
+            "title": "Age Hybrid \u00b7 Strong",
+            "win": "83.1%",
+            "sample": "739 / 889",
+            "roi": "+5.05%",
+            "note": "Full 2006\u20132026 age-hybrid master, including both tiers. Recent 2024\u20132026: 140 bets, 84.3% wins, +4.78% ROI. Historical price comparison (-500 or worse): 228 bets, 89.0% wins, +2.73% ROI.",
+            "definition": "",
+            "checks": [
+              "Market probability 83.1% (required \u226570%)",
+              "Favorite 10.7 years younger (required \u22654)",
+              "Skill veto not triggered"
+            ],
+            "consistency": ""
+          },
+          {
+            "id": "U7",
+            "title": "Striking + TD Defense",
+            "win": "94.4%",
+            "sample": "51 / 54",
+            "roi": "+17.64%",
+            "note": "Pre-2020 ROI +16.28%; 2020+ ROI +19.09%.",
+            "definition": "",
+            "checks": [
+              "Market probability 83.1% (required \u226570%)",
+              "Prior fights: favorite 6, opponent 22 (required \u22654 each)",
+              "Significant-strike differential advantage: 3.74 per min (\u22651.0)",
+              "Takedown-defense advantage: 14.9 percentage points (\u226510)"
+            ],
+            "consistency": ""
+          },
+          {
+            "id": "U8",
+            "title": "Striking Differential",
+            "win": "97.1%",
+            "sample": "66 / 68",
+            "roi": "+17.34%",
+            "note": "Pre-2020 ROI +16.23%; 2020+ ROI +19.02%.",
+            "definition": "",
+            "checks": [
+              "Market probability 83.1% (required \u226575%)",
+              "Prior fights: favorite 6, opponent 22 (required \u22654 each)",
+              "Significant-strike differential advantage: 3.74 per min (\u22651.0)",
+              "Favorite significant-strike differential: 2.87 per min (\u22650.5)"
+            ],
+            "consistency": ""
+          }
+        ],
+        "first_seen": "2026-09-13T05:32:28.399505+00:00",
+        "observed_at": "2026-09-20T14:00:45.066088+00:00",
+        "withdrawn": false,
+        "tracking": {
+          "selection": "Payton Talbott",
+          "opponent": "Deiveson Figueiredo",
+          "start": "2026-10-04T01:00:00+00:00",
+          "fixture": "Payton Talbott vs Deiveson Figueiredo",
+          "event": "UFC 332: Silva vs. Wang",
+          "price": -530.0,
+          "book": "BetRivers",
+          "quote_at": "2026-09-13T04:52:42Z",
+          "methods": [
+            {
+              "id": "U1",
+              "title": "Age Hybrid \u00b7 Strong",
+              "win": "83.1%",
+              "sample": "739 / 889",
+              "roi": "+5.05%",
+              "note": "Full 2006\u20132026 age-hybrid master, including both tiers. Recent 2024\u20132026: 140 bets, 84.3% wins, +4.78% ROI. Historical price comparison (-500 or worse): 228 bets, 89.0% wins, +2.73% ROI.",
+              "definition": "",
+              "checks": [
+                "Market probability 81.6% (required \u226570%)",
+                "Favorite 10.7 years younger (required \u22654)",
+                "Skill veto not triggered"
+              ],
+              "consistency": ""
+            },
+            {
+              "id": "U7",
+              "title": "Striking + TD Defense",
+              "win": "94.4%",
+              "sample": "51 / 54",
+              "roi": "+17.64%",
+              "note": "Pre-2020 ROI +16.28%; 2020+ ROI +19.09%.",
+              "definition": "",
+              "checks": [
+                "Market probability 81.6% (required \u226570%)",
+                "Prior fights: favorite 6, opponent 22 (required \u22654 each)",
+                "Significant-strike differential advantage: 3.74 per min (\u22651.0)",
+                "Takedown-defense advantage: 14.9 percentage points (\u226510)"
+              ],
+              "consistency": ""
+            },
+            {
+              "id": "U8",
+              "title": "Striking Differential",
+              "win": "97.1%",
+              "sample": "66 / 68",
+              "roi": "+17.34%",
+              "note": "Pre-2020 ROI +16.23%; 2020+ ROI +19.02%.",
+              "definition": "",
+              "checks": [
+                "Market probability 81.6% (required \u226575%)",
+                "Prior fights: favorite 6, opponent 22 (required \u22654 each)",
+                "Significant-strike differential advantage: 3.74 per min (\u22651.0)",
+                "Favorite significant-strike differential: 2.87 per min (\u22650.5)"
+              ],
+              "consistency": ""
+            }
+          ],
+          "first_seen": "2026-09-13T05:32:28.399505+00:00"
+        }
+      },
+      {
+        "id": "UFC:recovered:2026-09-12:alexagrasso:manonfiorot",
+        "start": "2026-09-12T18:15:00-04:00",
+        "selection": "Manon Fiorot",
+        "opponent": "Alexa Grasso",
+        "fixture": "Manon Fiorot vs Alexa Grasso",
+        "event": "UFC \u00b7 2026-09-12",
+        "price": -270.0,
+        "book": "BetUS",
+        "quote_at": "2026-09-12T15:36:15.540899+00:00",
+        "methods": [
+          {
+            "id": "U7",
+            "title": "Striking + TD Defense",
+            "win": "94.4%",
+            "sample": "51 / 54",
+            "roi": "+17.64%",
+            "definition": "",
+            "note": "Preserved pre-fight method evidence",
+            "checks": [
+              "Market probability 70.3% (required \u226570%)",
+              "Prior fights: favorite 9, opponent 15 (required \u22654 each)",
+              "Significant-strike differential advantage: 1.68 per min (\u22651.0)",
+              "Takedown-defense advantage: 32.7 percentage points (\u226510)"
+            ],
+            "consistency": ""
+          }
+        ],
+        "first_seen": "2026-09-12T15:36:15.540899+00:00",
+        "observed_at": "2026-09-12T15:36:15.540899+00:00",
+        "withdrawn": false,
+        "tracking_source": "Recovered from saved pre-fight preview; email delivery not verified.",
+        "preview_sha256": "0767ebd612dc36393149a96fff7fc040f91b35b02d478d2fb483dfb0da7f2248",
+        "tracking": {
+          "selection": "Manon Fiorot",
+          "opponent": "Alexa Grasso",
+          "start": "2026-09-12T18:15:00-04:00",
+          "fixture": "Manon Fiorot vs Alexa Grasso",
+          "event": "UFC \u00b7 2026-09-12",
+          "price": -270.0,
+          "book": "BetUS",
+          "quote_at": "2026-09-12T15:36:15.540899+00:00",
+          "methods": [
+            {
+              "id": "U7",
+              "title": "Striking + TD Defense",
+              "win": "94.4%",
+              "sample": "51 / 54",
+              "roi": "+17.64%",
+              "definition": "",
+              "note": "Preserved pre-fight method evidence",
+              "checks": [
+                "Market probability 70.3% (required \u226570%)",
+                "Prior fights: favorite 9, opponent 15 (required \u22654 each)",
+                "Significant-strike differential advantage: 1.68 per min (\u22651.0)",
+                "Takedown-defense advantage: 32.7 percentage points (\u226510)"
+              ],
+              "consistency": ""
+            }
+          ],
+          "first_seen": "2026-09-12T15:36:15.540899+00:00"
+        },
+        "result_checked_at": "2026-09-13T06:50:30.546389+00:00",
+        "result": "loss",
+        "profit_units": -1,
+        "result_source": "https://site.api.espn.com/apis/site/v2/sports/mma/ufc/scoreboard?dates=20260912&limit=100",
+        "settled_at": "2026-09-13T06:50:30.546389+00:00"
+      },
+      {
+        "id": "UFC:recovered:2026-09-12:danige:davidmartinez",
+        "start": "2026-09-12T17:15:00-04:00",
+        "selection": "David Martinez",
+        "opponent": "Dan Ige",
+        "fixture": "David Martinez vs Dan Ige",
+        "event": "UFC \u00b7 2026-09-12",
+        "price": -380.0,
+        "book": "BetOnline.ag",
+        "quote_at": "2026-09-12T15:36:15.540899+00:00",
+        "methods": [
+          {
+            "id": "U1",
+            "title": "Age Hybrid \u00b7 Strong",
+            "win": "83.1%",
+            "sample": "739 / 889",
+            "roi": "+5.05%",
+            "definition": "",
+            "note": "Preserved pre-fight method evidence",
+            "checks": [
+              "Market probability 77.6% (required \u226570%)",
+              "Favorite 7.0 years younger (required \u22654)",
+              "Skill veto not triggered"
+            ],
+            "consistency": ""
+          }
+        ],
+        "first_seen": "2026-09-12T15:36:15.540899+00:00",
+        "observed_at": "2026-09-12T15:36:15.540899+00:00",
+        "withdrawn": false,
+        "tracking_source": "Recovered from saved pre-fight preview; email delivery not verified.",
+        "preview_sha256": "0767ebd612dc36393149a96fff7fc040f91b35b02d478d2fb483dfb0da7f2248",
+        "tracking": {
+          "selection": "David Martinez",
+          "opponent": "Dan Ige",
+          "start": "2026-09-12T17:15:00-04:00",
+          "fixture": "David Martinez vs Dan Ige",
+          "event": "UFC \u00b7 2026-09-12",
+          "price": -380.0,
+          "book": "BetOnline.ag",
+          "quote_at": "2026-09-12T15:36:15.540899+00:00",
+          "methods": [
+            {
+              "id": "U1",
+              "title": "Age Hybrid \u00b7 Strong",
+              "win": "83.1%",
+              "sample": "739 / 889",
+              "roi": "+5.05%",
+              "definition": "",
+              "note": "Preserved pre-fight method evidence",
+              "checks": [
+                "Market probability 77.6% (required \u226570%)",
+                "Favorite 7.0 years younger (required \u22654)",
+                "Skill veto not triggered"
+              ],
+              "consistency": ""
+            }
+          ],
+          "first_seen": "2026-09-12T15:36:15.540899+00:00"
+        },
+        "result_checked_at": "2026-09-13T06:50:30.546389+00:00",
+        "result": "win",
+        "profit_units": 0.2631578947368421,
+        "result_source": "https://site.api.espn.com/apis/site/v2/sports/mma/ufc/scoreboard?dates=20260912&limit=100",
+        "settled_at": "2026-09-13T06:50:30.546389+00:00"
+      },
+      {
+        "id": "UFC:recovered:2026-09-12:ignaciobahamondes:muslimsalikhov",
+        "start": "2026-09-12T16:30:00-04:00",
+        "selection": "Ignacio Bahamondes",
+        "opponent": "Muslim Salikhov",
+        "fixture": "Ignacio Bahamondes vs Muslim Salikhov",
+        "event": "UFC \u00b7 2026-09-12",
+        "price": -525.0,
+        "book": "Bovada",
+        "quote_at": "2026-09-12T15:36:15.540899+00:00",
+        "methods": [
+          {
+            "id": "U1",
+            "title": "Age Hybrid \u00b7 Strong",
+            "win": "83.1%",
+            "sample": "739 / 889",
+            "roi": "+5.05%",
+            "definition": "",
+            "note": "Preserved pre-fight method evidence",
+            "checks": [
+              "Market probability 81.2% (required \u226570%)",
+              "Favorite 13.2 years younger (required \u22654)",
+              "Skill veto not triggered"
+            ],
+            "consistency": ""
+          },
+          {
+            "id": "U2",
+            "title": "Reach Hybrid",
+            "win": "79.8%",
+            "sample": "331 / 415",
+            "roi": "+4.25%",
+            "definition": "",
+            "note": "Preserved pre-fight method evidence",
+            "checks": [
+              "Market probability 81.2% (required \u226565%)",
+              "Reach advantage 5.0 inches (required \u22654)",
+              "Skill veto not triggered"
+            ],
+            "consistency": ""
+          },
+          {
+            "id": "U4",
+            "title": "Age + Reach Premium",
+            "win": "88.0%",
+            "sample": "117 / 133",
+            "roi": "+10.07%",
+            "definition": "",
+            "note": "Preserved pre-fight method evidence",
+            "checks": [
+              "Market probability 81.2% (required \u226570%)",
+              "Favorite 13.2 years younger (required \u22653)",
+              "Reach advantage 5.0 inches (required \u22654)",
+              "Skill veto not triggered"
+            ],
+            "consistency": ""
+          },
+          {
+            "id": "U8",
+            "title": "Striking Differential",
+            "win": "97.1%",
+            "sample": "66 / 68",
+            "roi": "+17.34%",
+            "definition": "",
+            "note": "Preserved pre-fight method evidence",
+            "checks": [
+              "Market probability 81.2% (required \u226575%)",
+              "Prior fights: favorite 10, opponent 13 (required \u22654 each)",
+              "Significant-strike differential advantage: 1.18 per min (\u22651.0)",
+              "Favorite significant-strike differential: 1.64 per min (\u22650.5)"
+            ],
+            "consistency": ""
+          }
+        ],
+        "first_seen": "2026-09-12T15:36:15.540899+00:00",
+        "observed_at": "2026-09-12T15:36:15.540899+00:00",
+        "withdrawn": false,
+        "tracking_source": "Recovered from saved pre-fight preview; email delivery not verified.",
+        "preview_sha256": "0767ebd612dc36393149a96fff7fc040f91b35b02d478d2fb483dfb0da7f2248",
+        "tracking": {
+          "selection": "Ignacio Bahamondes",
+          "opponent": "Muslim Salikhov",
+          "start": "2026-09-12T16:30:00-04:00",
+          "fixture": "Ignacio Bahamondes vs Muslim Salikhov",
+          "event": "UFC \u00b7 2026-09-12",
+          "price": -525.0,
+          "book": "Bovada",
+          "quote_at": "2026-09-12T15:36:15.540899+00:00",
+          "methods": [
+            {
+              "id": "U1",
+              "title": "Age Hybrid \u00b7 Strong",
+              "win": "83.1%",
+              "sample": "739 / 889",
+              "roi": "+5.05%",
+              "definition": "",
+              "note": "Preserved pre-fight method evidence",
+              "checks": [
+                "Market probability 81.2% (required \u226570%)",
+                "Favorite 13.2 years younger (required \u22654)",
+                "Skill veto not triggered"
+              ],
+              "consistency": ""
+            },
+            {
+              "id": "U2",
+              "title": "Reach Hybrid",
+              "win": "79.8%",
+              "sample": "331 / 415",
+              "roi": "+4.25%",
+              "definition": "",
+              "note": "Preserved pre-fight method evidence",
+              "checks": [
+                "Market probability 81.2% (required \u226565%)",
+                "Reach advantage 5.0 inches (required \u22654)",
+                "Skill veto not triggered"
+              ],
+              "consistency": ""
+            },
+            {
+              "id": "U4",
+              "title": "Age + Reach Premium",
+              "win": "88.0%",
+              "sample": "117 / 133",
+              "roi": "+10.07%",
+              "definition": "",
+              "note": "Preserved pre-fight method evidence",
+              "checks": [
+                "Market probability 81.2% (required \u226570%)",
+                "Favorite 13.2 years younger (required \u22653)",
+                "Reach advantage 5.0 inches (required \u22654)",
+                "Skill veto not triggered"
+              ],
+              "consistency": ""
+            },
+            {
+              "id": "U8",
+              "title": "Striking Differential",
+              "win": "97.1%",
+              "sample": "66 / 68",
+              "roi": "+17.34%",
+              "definition": "",
+              "note": "Preserved pre-fight method evidence",
+              "checks": [
+                "Market probability 81.2% (required \u226575%)",
+                "Prior fights: favorite 10, opponent 13 (required \u22654 each)",
+                "Significant-strike differential advantage: 1.18 per min (\u22651.0)",
+                "Favorite significant-strike differential: 1.64 per min (\u22650.5)"
+              ],
+              "consistency": ""
+            }
+          ],
+          "first_seen": "2026-09-12T15:36:15.540899+00:00"
+        },
+        "result_checked_at": "2026-09-13T06:50:30.546389+00:00",
+        "result": "win",
+        "profit_units": 0.19047619047619047,
+        "result_source": "https://site.api.espn.com/apis/site/v2/sports/mma/ufc/scoreboard?dates=20260912&limit=100",
+        "settled_at": "2026-09-13T06:50:30.546389+00:00"
+      },
+      {
+        "id": "UFC:cryptocom-ufc-331:ozzydiaz:ryangandra",
+        "start": "2026-09-19T23:15:00+00:00",
+        "selection": "Ryan Gandra",
+        "opponent": "Ozzy Diaz",
+        "fixture": "Ryan Gandra vs Ozzy Diaz",
+        "event": "Crypto.com UFC 331: Van vs. Pantoja 2",
+        "price": -500.0,
+        "book": "BetOnline.ag",
+        "quote_at": "2026-09-19T11:05:41Z",
+        "methods": [
+          {
+            "id": "U1",
+            "title": "Age Hybrid \u00b7 Strong",
+            "win": "83.1%",
+            "sample": "739 / 889",
+            "roi": "+5.05%",
+            "note": "Full 2006\u20132026 age-hybrid master, including both tiers. Recent 2024\u20132026: 140 bets, 84.3% wins, +4.78% ROI. Historical price comparison (-500 or worse): 228 bets, 89.0% wins, +2.73% ROI.",
+            "definition": "",
+            "checks": [
+              "Market probability 80.4% (required \u226570%)",
+              "Favorite 4.5 years younger (required \u22654)",
+              "Skill veto not triggered"
+            ],
+            "consistency": ""
+          }
+        ],
+        "first_seen": "2026-09-14T14:00:25.389405+00:00",
+        "observed_at": "2026-09-19T14:00:12.303138+00:00",
+        "withdrawn": false,
+        "tracking": {
+          "selection": "Ryan Gandra",
+          "opponent": "Ozzy Diaz",
+          "start": "2026-09-20T00:00:00+00:00",
+          "fixture": "Ryan Gandra vs Ozzy Diaz",
+          "event": "Crypto.com UFC 331: Van vs. Pantoja 2",
+          "price": -450.0,
+          "book": "BetOnline.ag",
+          "quote_at": "2026-09-14T12:53:39Z",
+          "methods": [
+            {
+              "id": "U1",
+              "title": "Age Hybrid \u00b7 Strong",
+              "win": "83.1%",
+              "sample": "739 / 889",
+              "roi": "+5.05%",
+              "note": "Full 2006\u20132026 age-hybrid master, including both tiers. Recent 2024\u20132026: 140 bets, 84.3% wins, +4.78% ROI. Historical price comparison (-400 to -499): 161 bets, 86.3% wins, +6.23% ROI.",
+              "definition": "",
+              "checks": [
+                "Market probability 78.7% (required \u226570%)",
+                "Favorite 4.5 years younger (required \u22654)",
+                "Skill veto not triggered"
+              ],
+              "consistency": ""
+            }
+          ],
+          "first_seen": "2026-09-14T14:00:25.389405+00:00"
+        },
+        "result_checked_at": "2026-09-20T14:00:45.066088+00:00",
+        "result": "win",
+        "profit_units": 0.2222222222222222,
+        "result_source": "https://site.api.espn.com/apis/site/v2/sports/mma/ufc/scoreboard?dates=20260919&limit=100",
+        "settled_at": "2026-09-20T14:00:45.066088+00:00"
+      },
+      {
+        "id": "UFC:cryptocom-ufc-331:alexandrepantoja:joshuavan",
+        "start": "2026-09-20T03:30:00+00:00",
+        "selection": "Joshua Van",
+        "opponent": "Alexandre Pantoja",
+        "fixture": "Joshua Van vs Alexandre Pantoja",
+        "event": "Crypto.com UFC 331: Van vs. Pantoja 2",
+        "price": -136.0,
+        "book": "FanDuel",
+        "quote_at": "2026-09-19T11:05:36Z",
+        "methods": [
+          {
+            "id": "U10",
+            "title": "KO/TKO Recovery Gap",
+            "win": "71.5%",
+            "sample": "238 / 333",
+            "roi": "+8.24%",
+            "note": "Pre-2020 ROI +5.65%; 2020+ ROI +10.85%. Both fighters must have a prior UFC KO/TKO loss.",
+            "definition": "",
+            "checks": [
+              "Favorite last KO/TKO loss: 2024-07-13 (799 days ago)",
+              "Opponent last KO/TKO loss: 2025-12-06 (288 days ago)",
+              "Recovery gap: 511 days (required \u2265105)"
+            ],
+            "consistency": ""
+          }
+        ],
+        "first_seen": "2026-09-16T14:00:21.684697+00:00",
+        "observed_at": "2026-09-19T14:00:12.303138+00:00",
+        "withdrawn": false,
+        "tracking": {
+          "selection": "Joshua Van",
+          "opponent": "Alexandre Pantoja",
+          "start": "2026-09-20T03:15:00+00:00",
+          "fixture": "Joshua Van vs Alexandre Pantoja",
+          "event": "Crypto.com UFC 331: Van vs. Pantoja 2",
+          "price": -128.0,
+          "book": "Bovada",
+          "quote_at": "2026-09-16T11:35:58Z",
+          "methods": [
+            {
+              "id": "U10",
+              "title": "KO/TKO Recovery Gap",
+              "win": "71.5%",
+              "sample": "238 / 333",
+              "roi": "+8.24%",
+              "note": "Pre-2020 ROI +5.65%; 2020+ ROI +10.85%. Both fighters must have a prior UFC KO/TKO loss.",
+              "definition": "",
+              "checks": [
+                "Favorite last KO/TKO loss: 2024-07-13 (799 days ago)",
+                "Opponent last KO/TKO loss: 2025-12-06 (288 days ago)",
+                "Recovery gap: 511 days (required \u2265105)"
+              ],
+              "consistency": ""
+            }
+          ],
+          "first_seen": "2026-09-16T14:00:21.684697+00:00"
+        },
+        "result_checked_at": "2026-09-20T14:00:45.066088+00:00",
+        "result": "win",
+        "profit_units": 0.78125,
+        "result_source": "https://site.api.espn.com/apis/site/v2/sports/mma/ufc/scoreboard?dates=20260919&limit=100",
+        "settled_at": "2026-09-20T14:00:45.066088+00:00"
+      },
+      {
+        "id": "UFC:cryptocom-ufc-331:brunnoferreira:edmenshahbazyan",
+        "start": "2026-09-19T22:45:00+00:00",
+        "selection": "Edmen Shahbazyan",
+        "opponent": "Brunno Ferreira",
+        "fixture": "Edmen Shahbazyan vs Brunno Ferreira",
+        "event": "Crypto.com UFC 331: Van vs. Pantoja 2",
+        "price": -183.0,
+        "book": "Bovada",
+        "quote_at": "2026-09-19T11:04:08Z",
+        "methods": [
+          {
+            "id": "U10",
+            "title": "KO/TKO Recovery Gap",
+            "win": "71.5%",
+            "sample": "238 / 333",
+            "roi": "+8.24%",
+            "note": "Pre-2020 ROI +5.65%; 2020+ ROI +10.85%. Both fighters must have a prior UFC KO/TKO loss.",
+            "definition": "",
+            "checks": [
+              "Favorite last KO/TKO loss: 2023-05-20 (1219 days ago)",
+              "Opponent last KO/TKO loss: 2026-03-07 (197 days ago)",
+              "Recovery gap: 1022 days (required \u2265105)"
+            ],
+            "consistency": ""
+          }
+        ],
+        "first_seen": "2026-09-16T14:00:21.684697+00:00",
+        "observed_at": "2026-09-19T14:00:12.303138+00:00",
+        "withdrawn": false,
+        "tracking": {
+          "selection": "Edmen Shahbazyan",
+          "opponent": "Brunno Ferreira",
+          "start": "2026-09-19T22:15:00+00:00",
+          "fixture": "Edmen Shahbazyan vs Brunno Ferreira",
+          "event": "Crypto.com UFC 331: Van vs. Pantoja 2",
+          "price": -154.0,
+          "book": "BetOnline.ag",
+          "quote_at": "2026-09-16T11:40:12Z",
+          "methods": [
+            {
+              "id": "U10",
+              "title": "KO/TKO Recovery Gap",
+              "win": "71.5%",
+              "sample": "238 / 333",
+              "roi": "+8.24%",
+              "note": "Pre-2020 ROI +5.65%; 2020+ ROI +10.85%. Both fighters must have a prior UFC KO/TKO loss.",
+              "definition": "",
+              "checks": [
+                "Favorite last KO/TKO loss: 2023-05-20 (1219 days ago)",
+                "Opponent last KO/TKO loss: 2026-03-07 (197 days ago)",
+                "Recovery gap: 1022 days (required \u2265105)"
+              ],
+              "consistency": ""
+            }
+          ],
+          "first_seen": "2026-09-16T14:00:21.684697+00:00"
+        },
+        "result_checked_at": "2026-09-20T14:00:45.066088+00:00",
+        "result": "win",
+        "profit_units": 0.6493506493506493,
+        "result_source": "https://site.api.espn.com/apis/site/v2/sports/mma/ufc/scoreboard?dates=20260919&limit=100",
+        "settled_at": "2026-09-20T14:00:45.066088+00:00"
+      },
+      {
+        "id": "UFC:ufc-fight-night-september-26-2026:robertbryczek:rodolfovieira",
+        "start": "2026-09-26T22:00:00+00:00",
+        "selection": "Rodolfo Vieira",
+        "opponent": "Robert Bryczek",
+        "fixture": "Rodolfo Vieira vs Robert Bryczek",
+        "event": "UFC Fight Night: Rosas Jr. vs. Barcelos",
+        "price": -110.0,
+        "book": "BetMGM",
+        "quote_at": "2026-09-20T11:30:31Z",
+        "methods": [
+          {
+            "id": "U5",
+            "title": "Wrestling Mismatch",
+            "win": "77.8%",
+            "sample": "56 / 72",
+            "roi": "+16.24%",
+            "note": "Pre-2020 ROI +9.50%; 2020+ ROI +22.61%.",
+            "definition": "",
+            "checks": [
+              "Prior fights: favorite 11, opponent 3 (required \u22652 each)",
+              "Favorite takedowns per 15 min: 12.93 attempted (\u22655), 2.87 landed (\u22651)",
+              "Favorite control per 15 min: 4.60 minutes (\u22651)",
+              "Opponent TD attempts/15: 0.36 (\u22642); control/15: 0.70 minutes (\u22640.75)"
+            ],
+            "consistency": ""
+          }
+        ],
+        "first_seen": "2026-09-18T14:00:28.661987+00:00",
+        "observed_at": "2026-09-20T14:00:45.066088+00:00",
+        "withdrawn": false,
+        "tracking": {
+          "selection": "Rodolfo Vieira",
+          "opponent": "Robert Bryczek",
+          "start": "2026-09-26T22:00:00+00:00",
+          "fixture": "Rodolfo Vieira vs Robert Bryczek",
+          "event": "UFC Fight Night: Rosas Jr. vs. Barcelos",
+          "price": -108.0,
+          "book": "BetOnline.ag",
+          "quote_at": "2026-09-18T11:16:31Z",
+          "methods": [
+            {
+              "id": "U5",
+              "title": "Wrestling Mismatch",
+              "win": "77.8%",
+              "sample": "56 / 72",
+              "roi": "+16.24%",
+              "note": "Pre-2020 ROI +9.50%; 2020+ ROI +22.61%.",
+              "definition": "",
+              "checks": [
+                "Prior fights: favorite 11, opponent 3 (required \u22652 each)",
+                "Favorite takedowns per 15 min: 12.93 attempted (\u22655), 2.87 landed (\u22651)",
+                "Favorite control per 15 min: 4.60 minutes (\u22651)",
+                "Opponent TD attempts/15: 0.36 (\u22642); control/15: 0.70 minutes (\u22640.75)"
+              ],
+              "consistency": ""
+            }
+          ],
+          "first_seen": "2026-09-18T14:00:28.661987+00:00"
+        }
+      },
+      {
+        "id": "UFC:ufc-fight-night-september-26-2026:vanessademopoulos:yazminjauregui",
+        "start": "2026-09-26T22:00:00+00:00",
+        "selection": "Yazmin Jauregui",
+        "opponent": "Vanessa Demopoulos",
+        "fixture": "Yazmin Jauregui vs Vanessa Demopoulos",
+        "event": "UFC Fight Night: Rosas Jr. vs. Barcelos",
+        "price": -800.0,
+        "book": "BetMGM",
+        "quote_at": "2026-09-20T11:30:31Z",
+        "methods": [
+          {
+            "id": "U1",
+            "title": "Age Hybrid \u00b7 Strong",
+            "win": "83.1%",
+            "sample": "739 / 889",
+            "roi": "+5.05%",
+            "note": "Full 2006\u20132026 age-hybrid master, including both tiers. Recent 2024\u20132026: 140 bets, 84.3% wins, +4.78% ROI. Historical price comparison (-500 or worse): 228 bets, 89.0% wins, +2.73% ROI.",
+            "definition": "",
+            "checks": [
+              "Market probability 85.7% (required \u226570%)",
+              "Favorite 10.4 years younger (required \u22654)",
+              "Skill veto not triggered"
+            ],
+            "consistency": ""
+          },
+          {
+            "id": "U2",
+            "title": "Reach Hybrid",
+            "win": "79.8%",
+            "sample": "331 / 415",
+            "roi": "+4.25%",
+            "note": "2006\u20132019 ROI +1.86%; 2020+ ROI +8.42%.",
+            "definition": "",
+            "checks": [
+              "Market probability 85.7% (required \u226565%)",
+              "Reach advantage 5.0 inches (required \u22654)",
+              "Skill veto not triggered"
+            ],
+            "consistency": ""
+          },
+          {
+            "id": "U4",
+            "title": "Age + Reach Premium",
+            "win": "88.0%",
+            "sample": "117 / 133",
+            "roi": "+10.07%",
+            "note": "2006\u20132019 ROI +8.25%; 2020+ ROI +13.63%.",
+            "definition": "",
+            "checks": [
+              "Market probability 85.7% (required \u226570%)",
+              "Favorite 10.4 years younger (required \u22653)",
+              "Reach advantage 5.0 inches (required \u22654)",
+              "Skill veto not triggered"
+            ],
+            "consistency": ""
+          },
+          {
+            "id": "U8",
+            "title": "Striking Differential",
+            "win": "97.1%",
+            "sample": "66 / 68",
+            "roi": "+17.34%",
+            "note": "Pre-2020 ROI +16.23%; 2020+ ROI +19.02%.",
+            "definition": "",
+            "checks": [
+              "Market probability 85.7% (required \u226575%)",
+              "Prior fights: favorite 5, opponent 10 (required \u22654 each)",
+              "Significant-strike differential advantage: 3.46 per min (\u22651.0)",
+              "Favorite significant-strike differential: 1.39 per min (\u22650.5)"
+            ],
+            "consistency": ""
+          }
+        ],
+        "first_seen": "2026-09-18T14:00:28.661987+00:00",
+        "observed_at": "2026-09-20T14:00:45.066088+00:00",
+        "withdrawn": false,
+        "tracking": {
+          "selection": "Yazmin Jauregui",
+          "opponent": "Vanessa Demopoulos",
+          "start": "2026-09-26T22:00:00+00:00",
+          "fixture": "Yazmin Jauregui vs Vanessa Demopoulos",
+          "event": "UFC Fight Night: Rosas Jr. vs. Barcelos",
+          "price": -600.0,
+          "book": "BetOnline.ag",
+          "quote_at": "2026-09-18T11:16:31Z",
+          "methods": [
+            {
+              "id": "U1",
+              "title": "Age Hybrid \u00b7 Strong",
+              "win": "83.1%",
+              "sample": "739 / 889",
+              "roi": "+5.05%",
+              "note": "Full 2006\u20132026 age-hybrid master, including both tiers. Recent 2024\u20132026: 140 bets, 84.3% wins, +4.78% ROI. Historical price comparison (-500 or worse): 228 bets, 89.0% wins, +2.73% ROI.",
+              "definition": "",
+              "checks": [
+                "Market probability 82.5% (required \u226570%)",
+                "Favorite 10.4 years younger (required \u22654)",
+                "Skill veto not triggered"
+              ],
+              "consistency": ""
+            },
+            {
+              "id": "U2",
+              "title": "Reach Hybrid",
+              "win": "79.8%",
+              "sample": "331 / 415",
+              "roi": "+4.25%",
+              "note": "2006\u20132019 ROI +1.86%; 2020+ ROI +8.42%.",
+              "definition": "",
+              "checks": [
+                "Market probability 82.5% (required \u226565%)",
+                "Reach advantage 5.0 inches (required \u22654)",
+                "Skill veto not triggered"
+              ],
+              "consistency": ""
+            },
+            {
+              "id": "U4",
+              "title": "Age + Reach Premium",
+              "win": "88.0%",
+              "sample": "117 / 133",
+              "roi": "+10.07%",
+              "note": "2006\u20132019 ROI +8.25%; 2020+ ROI +13.63%.",
+              "definition": "",
+              "checks": [
+                "Market probability 82.5% (required \u226570%)",
+                "Favorite 10.4 years younger (required \u22653)",
+                "Reach advantage 5.0 inches (required \u22654)",
+                "Skill veto not triggered"
+              ],
+              "consistency": ""
+            },
+            {
+              "id": "U8",
+              "title": "Striking Differential",
+              "win": "97.1%",
+              "sample": "66 / 68",
+              "roi": "+17.34%",
+              "note": "Pre-2020 ROI +16.23%; 2020+ ROI +19.02%.",
+              "definition": "",
+              "checks": [
+                "Market probability 82.5% (required \u226575%)",
+                "Prior fights: favorite 5, opponent 10 (required \u22654 each)",
+                "Significant-strike differential advantage: 3.46 per min (\u22651.0)",
+                "Favorite significant-strike differential: 1.39 per min (\u22650.5)"
+              ],
+              "consistency": ""
+            }
+          ],
+          "first_seen": "2026-09-18T14:00:28.661987+00:00"
+        }
+      }
+    ]
+  },
+  "definition": "Four-digit favorite means American odds <= -1000. ROI uses 1 unit risked per bet (flat stake), profit = decimal_odds - 1 on wins and -1 on losses."
+}
