@@ -39,8 +39,16 @@ def hav(lat1,lon1,lat2,lon2):
 
 def main():
     if not BASE.exists():raise RuntimeError('MLS base missing')
-    if not GAMES.exists():raise RuntimeError('ASA games warehouse missing')
     asa=AmericanSoccerAnalysis()
+    if not GAMES.exists():
+        parts=[]
+        for year in range(2013,2027):
+            z=asa.get_games(leagues='mls',season_name=str(year))
+            if not isinstance(z,pd.DataFrame):z=pd.DataFrame(z)
+            if len(z):
+                z['_season_requested']=year;parts.append(z)
+        if not parts:raise RuntimeError('ASA games warehouse missing and rebuild returned zero rows')
+        pd.concat(parts,ignore_index=True,sort=False).to_parquet(GAMES,index=False)
     stad=asa.get_stadia(leagues='mls')
     if not isinstance(stad,pd.DataFrame):stad=pd.DataFrame(stad)
     if stad.empty:raise RuntimeError('ASA stadia returned zero rows')
