@@ -1,10 +1,50 @@
 {
-  "built_at": "2026-09-20T09:42:07.681321+00:00",
-  "market_captured_at": "2026-09-20T09:41:39.894847+00:00",
+  "built_at": "2026-09-20T12:35:02.660812+00:00",
+  "market_captured_at": "2026-09-20T12:33:43.844064+00:00",
   "elo_updated_at": "2026-09-18T23:30:00+00:00",
-  "elo_age_days": 1.424988356111111,
-  "qualifier_count": 0,
-  "qualifiers": [],
+  "elo_age_days": 1.544744479050926,
+  "qualifier_count": 3,
+  "qualifiers": [
+    {
+      "method_id": "MLS-R03",
+      "selection": "Real Salt Lake",
+      "opponent": "Seattle Sounders FC",
+      "commence_time": "2026-09-24T01:30Z",
+      "american_price": "+245",
+      "book": "DraftKings",
+      "market_prob": 0.26381365796672707,
+      "research_status": "SHADOW_READY",
+      "confidence_tier": "BASE",
+      "portfolio_conflict": false,
+      "same_side_consensus": null
+    },
+    {
+      "method_id": "MLS-R01V2",
+      "selection": "Atlanta United FC",
+      "opponent": "New York City FC",
+      "commence_time": "2026-09-26T23:30Z",
+      "american_price": "+110",
+      "book": "DraftKings",
+      "market_prob": 0.43530871858516906,
+      "research_status": "SHADOW_READY_REFINED",
+      "confidence_tier": "BASE",
+      "portfolio_conflict": false,
+      "same_side_consensus": null
+    },
+    {
+      "method_id": "MLS-A04",
+      "selection": "Charlotte FC",
+      "opponent": "Chicago Fire FC",
+      "commence_time": "2026-09-26T23:30Z",
+      "american_price": "+125",
+      "book": "DraftKings",
+      "market_prob": 0.4069192751235585,
+      "research_status": "SHADOW_WATCH",
+      "confidence_tier": "BASE",
+      "portfolio_conflict": false,
+      "same_side_consensus": null
+    }
+  ],
   "active_method_ids": [
     "MLS-A02",
     "MLS-A03",
@@ -17,9 +57,34 @@
   "watch_only_method_ids": [
     "MLS-A04"
   ],
-  "active_qualifier_count": 0,
-  "watch_qualifier_count": 0,
-  "portfolio_matches": [],
+  "active_qualifier_count": 2,
+  "watch_qualifier_count": 1,
+  "portfolio_matches": [
+    {
+      "event_id": "761543",
+      "home_team": "Seattle Sounders FC",
+      "away_team": "Real Salt Lake",
+      "selection": "Real Salt Lake",
+      "methods": [
+        "MLS-R03"
+      ],
+      "consensus": false,
+      "max_bankroll_exposure_pct": 1.0,
+      "staking_policy": "MAX_1_PERCENT_CURRENT_BANKROLL_PER_MATCH"
+    },
+    {
+      "event_id": "761830",
+      "home_team": "Atlanta United FC",
+      "away_team": "New York City FC",
+      "selection": "Atlanta United FC",
+      "methods": [
+        "MLS-R01V2"
+      ],
+      "consensus": false,
+      "max_bankroll_exposure_pct": 1.0,
+      "staking_policy": "MAX_1_PERCENT_CURRENT_BANKROLL_PER_MATCH"
+    }
+  ],
   "portfolio_conflicts": [],
   "conflicts": [],
   "consensus": [],
