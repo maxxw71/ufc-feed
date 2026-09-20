@@ -24,6 +24,7 @@ LAYERS=[
   ('team_style',PROC/'mls_team_style_features.parquet',False),
   ('referee_discipline',PROC/'mls_referee_discipline_features.parquet',False),
   ('venue',PROC/'mls_venue_features.parquet',False),
+  ('historical_multibook_odds',PROC/'mls_historical_multibook_market_features.parquet',False),
 ]
 
 def now():return datetime.now(timezone.utc).isoformat()
