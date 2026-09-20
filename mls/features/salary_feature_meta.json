@@ -1,0 +1,225 @@
+{
+  "built_at": "2026-09-20T03:23:38.084067+00:00",
+  "rows": 9440,
+  "columns": 37,
+  "output": "/home/anestishkurti92/mls-predictor-v1/data/processed/mls_salary_features.parquet",
+  "salary_rows": 19443,
+  "salary_api_coverage": [
+    {
+      "season": 2013,
+      "rows": 1697,
+      "columns": [
+        "player_id",
+        "team_id",
+        "season_name",
+        "position",
+        "base_salary",
+        "guaranteed_compensation",
+        "mlspa_release",
+        "_season_requested"
+      ]
+    },
+    {
+      "season": 2014,
+      "rows": 1124,
+      "columns": [
+        "player_id",
+        "team_id",
+        "season_name",
+        "position",
+        "base_salary",
+        "guaranteed_compensation",
+        "mlspa_release",
+        "_season_requested"
+      ]
+    },
+    {
+      "season": 2015,
+      "rows": 1132,
+      "columns": [
+        "player_id",
+        "team_id",
+        "season_name",
+        "position",
+        "base_salary",
+        "guaranteed_compensation",
+        "mlspa_release",
+        "_season_requested"
+      ]
+    },
+    {
+      "season": 2016,
+      "rows": 1130,
+      "columns": [
+        "player_id",
+        "team_id",
+        "season_name",
+        "position",
+        "base_salary",
+        "guaranteed_compensation",
+        "mlspa_release",
+        "_season_requested"
+      ]
+    },
+    {
+      "season": 2017,
+      "rows": 1268,
+      "columns": [
+        "player_id",
+        "team_id",
+        "season_name",
+        "position",
+        "base_salary",
+        "guaranteed_compensation",
+        "mlspa_release",
+        "_season_requested"
+      ]
+    },
+    {
+      "season": 2018,
+      "rows": 1354,
+      "columns": [
+        "player_id",
+        "team_id",
+        "season_name",
+        "position",
+        "base_salary",
+        "guaranteed_compensation",
+        "mlspa_release",
+        "_season_requested"
+      ]
+    },
+    {
+      "season": 2019,
+      "rows": 1403,
+      "columns": [
+        "player_id",
+        "team_id",
+        "season_name",
+        "position",
+        "base_salary",
+        "guaranteed_compensation",
+        "mlspa_release",
+        "_season_requested"
+      ]
+    },
+    {
+      "season": 2020,
+      "rows": 778,
+      "columns": [
+        "player_id",
+        "team_id",
+        "season_name",
+        "position",
+        "base_salary",
+        "guaranteed_compensation",
+        "mlspa_release",
+        "_season_requested"
+      ]
+    },
+    {
+      "season": 2021,
+      "rows": 1657,
+      "columns": [
+        "player_id",
+        "team_id",
+        "season_name",
+        "position",
+        "base_salary",
+        "guaranteed_compensation",
+        "mlspa_release",
+        "_season_requested"
+      ]
+    },
+    {
+      "season": 2022,
+      "rows": 1735,
+      "columns": [
+        "player_id",
+        "team_id",
+        "season_name",
+        "position",
+        "base_salary",
+        "guaranteed_compensation",
+        "mlspa_release",
+        "_season_requested"
+      ]
+    },
+    {
+      "season": 2023,
+      "rows": 1798,
+      "columns": [
+        "player_id",
+        "team_id",
+        "season_name",
+        "position",
+        "base_salary",
+        "guaranteed_compensation",
+        "mlspa_release",
+        "_season_requested"
+      ]
+    },
+    {
+      "season": 2024,
+      "rows": 1786,
+      "columns": [
+        "player_id",
+        "team_id",
+        "season_name",
+        "position",
+        "base_salary",
+        "guaranteed_compensation",
+        "mlspa_release",
+        "_season_requested"
+      ]
+    },
+    {
+      "season": 2025,
+      "rows": 1848,
+      "columns": [
+        "player_id",
+        "team_id",
+        "season_name",
+        "position",
+        "base_salary",
+        "guaranteed_compensation",
+        "mlspa_release",
+        "_season_requested"
+      ]
+    },
+    {
+      "season": 2026,
+      "rows": 916,
+      "columns": [
+        "player_id",
+        "team_id",
+        "season_name",
+        "position",
+        "base_salary",
+        "guaranteed_compensation",
+        "mlspa_release",
+        "_season_requested"
+      ]
+    }
+  ],
+  "matches_any_salary_snapshot": 4112,
+  "matches_both_salary_snapshots": 4112,
+  "seasons_with_salary": [
+    2013,
+    2014,
+    2015,
+    2016,
+    2017,
+    2018,
+    2019,
+    2020,
+    2021,
+    2022,
+    2023,
+    2024,
+    2025,
+    2026
+  ],
+  "leakage_note": "Salary snapshots use the latest MLSPA release strictly before the target match. Recent-player salary features use only player minutes from prior MLS matches.",
+  "designation_note": "DP/U22 designations are not inferred from salary. They remain absent until an authoritative dated designation source is available."
+}
