@@ -16,6 +16,7 @@ META=REP/'master_feature_meta.json'
 
 LAYERS=[
   ('availability',PROC/'mls_availability_pregame_features.parquet',True),
+  ('game_notes_availability',PROC/'mls_game_notes_availability_features.parquet',False),
   ('confirmed_lineup',PROC/'mls_confirmed_lineup_card_pregame_features.parquet',True),
   ('salary',PROC/'mls_salary_features.parquet',False),
   ('cross_comp',PROC/'mls_cross_comp_features.parquet',False),
