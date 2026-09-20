@@ -363,8 +363,8 @@ def main():
                           'same_side_consensus':'TAG_AND_TRACK_SEPARATELY_NO_STAKE_MULTIPLIER',
                           'staking_policy':'MAX_1_PERCENT_CURRENT_BANKROLL_PER_MATCH',
                           'max_match_exposure_pct':1.0,
-                          'historical_clean_portfolio_roi':.335,
-                          'historical_clean_holdout_roi':.3704281345565749},
+                          'historical_clean_portfolio_roi':.31467619848612277,
+                          'historical_clean_holdout_roi':.36385852090032156},
       'status_counts':{m['id']:{st:sum(1 for r in rows if r['method_id']==m['id'] and r['status']==st)
                        for st in ['QUALIFIES_SHADOW','NO_MATCH','BLOCKED_STALE_INPUT']} for m in METHODS}
     }
