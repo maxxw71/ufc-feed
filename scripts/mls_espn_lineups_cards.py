@@ -46,7 +46,7 @@ def canon_espn_team(x):
     raw=str(x or '').strip()
     return canon_team(ESPN_TEAM_ALIASES.get(raw,raw))
 
-def jina_json(path,timeout=60,retries=4):
+def jina_json(path,timeout=75,retries=8):
     url=JINA+path
     last=None
     for attempt in range(retries):
@@ -57,7 +57,7 @@ def jina_json(path,timeout=60,retries=4):
             return json.loads(payload),body
         except Exception as e:
             last=e
-            time.sleep(1.0*(attempt+1))
+            time.sleep(min(30,2.5*(attempt+1)))
     raise last
 
 def scoreboard(day):
@@ -84,11 +84,35 @@ def scoreboard(day):
     cache.write_text(json.dumps(events,ensure_ascii=False,separators=(',',':')))
     return events
 
+
+def scoreboard_year(year):
+    cache=CACHE/f'scoreboard_year_{year}.json'
+    if cache.exists():
+        return json.loads(cache.read_text())
+    data,_=jina_json(f'scoreboard?dates={year}&limit=1000',timeout=90,retries=6)
+    events=[]
+    for ev in data.get('events') or []:
+        comp=(ev.get('competitions') or [{}])[0]
+        if str((comp.get('type') or {}).get('abbreviation','')).lower()=='friendly':
+            continue
+        teams={}
+        for x in comp.get('competitors') or []:
+            teams[x.get('homeAway')]=canon_espn_team((x.get('team') or {}).get('displayName'))
+        if not teams.get('home') or not teams.get('away'):continue
+        events.append({
+            'espn_event_id':str(ev.get('id')),'date':ev.get('date'),
+            'home_team':teams['home'],'away_team':teams['away'],
+            'status':((((comp.get('status') or {}).get('type')) or {}).get('name')),
+        })
+    if not events:raise RuntimeError(f'ESPN yearly scoreboard returned zero events for {year}')
+    cache.write_text(json.dumps(events,ensure_ascii=False,separators=(',',':')))
+    return events
+
 def parse_summary(event_id):
     cache=CACHE/f'summary_{event_id}.json'
     if cache.exists():
         return json.loads(cache.read_text())
-    d,body=jina_json(f'summary?event={event_id}',timeout=75)
+    time.sleep(.35)\n    d,body=jina_json(f'summary?event={event_id}',timeout=90,retries=8)
 
     roster_rows=[]
     for tr in d.get('rosters') or []:
@@ -185,10 +209,17 @@ def main():
     dates=sorted(base.date.dt.strftime('%Y%m%d').unique())
     events=[]
     score_fail=[]
-    for i,day in enumerate(dates,1):
-        try:events.extend(scoreboard(day))
-        except Exception as e:score_fail.append({'day':day,'error':type(e).__name__+':'+str(e)[:180]})
-        if i%25==0:print('scoreboards',i,'/',len(dates),'events',len(events),flush=True)
+    for year in years:
+        try:
+            z=scoreboard_year(year);events.extend(z)
+            print('year scoreboard',year,'events',len(z),flush=True)
+        except Exception as e:
+            score_fail.append({'year':year,'error':type(e).__name__+':'+str(e)[:180]})
+            # Fail-soft fallback to exact match dates only.
+            ydays=[x for x in dates if str(x).startswith(str(year))]
+            for day in ydays:
+                try:events.extend(scoreboard(day))
+                except Exception as e2:score_fail.append({'day':day,'error':type(e2).__name__+':'+str(e2)[:180]})
 
     ev=pd.DataFrame(events)
     if ev.empty:raise RuntimeError('ESPN scoreboard mapping returned zero events')
@@ -252,7 +283,7 @@ def main():
     complete_from_df=int(((starter_counts.get('home',0)==11)&(starter_counts.get('away',0)==11)).sum()) if len(starter_counts) else 0
     meta={
         'built_at':now(),'years_requested':years,'warehouse_matches_requested':requested,
-        'scoreboard_dates':len(dates),'scoreboard_failures':score_fail,
+        'scoreboard_dates':len(dates),'scoreboard_years':years,'scoreboard_failures':score_fail,
         'matched_events':mapped_matches,'match_rate':mapped_matches/max(1,requested),
         'summary_ok':len(summaries),'summary_failures':sum_fail,
         'lineup_events':int(line_events),'complete_11v11_lineup_events':complete_from_df,
