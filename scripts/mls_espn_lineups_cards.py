@@ -112,7 +112,8 @@ def parse_summary(event_id):
     cache=CACHE/f'summary_{event_id}.json'
     if cache.exists():
         return json.loads(cache.read_text())
-    time.sleep(.35)\n    d,body=jina_json(f'summary?event={event_id}',timeout=90,retries=8)
+    time.sleep(.35)
+    d,body=jina_json(f'summary?event={event_id}',timeout=90,retries=8)
 
     roster_rows=[]
     for tr in d.get('rosters') or []:
