@@ -15,6 +15,7 @@ if 'UFC_CANONICAL_SURFACE_V1' not in s:
 # The exact method-card selections shown on Appwiza are also the selections
 # staged in email/tracker. Internal compatibility labels never leave this gate.
 _orig_ufc_picks_canonical=bet_tracker.ufc_picks
+# UFC_EXTREME_PRICE_NO_BET_V1
 UFC_NO_BET_AMERICAN_FAVORITE_CEILING=-2000
 UFC_EXTREME_PRICE_NO_BET={}
 
@@ -162,6 +163,50 @@ def write_ufc_canonical(picks,now=None):
     return payload
 '''
     s=s.replace(marker,addon+'\n'+marker,1)
+
+# Upgrade an already-installed canonical boundary with the extreme-price no-bet rule.
+if 'UFC_CANONICAL_SURFACE_V1' in s and 'UFC_EXTREME_PRICE_NO_BET_V1' not in s:
+    old="_orig_ufc_picks_canonical=bet_tracker.ufc_picks\n\ndef _ufc_method_sort(mid):"
+    new="_orig_ufc_picks_canonical=bet_tracker.ufc_picks\n# UFC_EXTREME_PRICE_NO_BET_V1\nUFC_NO_BET_AMERICAN_FAVORITE_CEILING=-2000\nUFC_EXTREME_PRICE_NO_BET={}\n\ndef _ufc_method_sort(mid):"
+    if old not in s:
+        raise SystemExit('existing canonical boundary anchor missing for extreme-price upgrade')
+    s=s.replace(old,new,1)
+
+    old="""        q['methods']=list(meta['methods'])
+        q['method_titles']=dict(meta['method_titles'])
+        q['canonical_method_ids']=list(meta['methods'])
+        out.append(q)"""
+    new="""        q['methods']=list(meta['methods'])
+        q['method_titles']=dict(meta['method_titles'])
+        q['canonical_method_ids']=list(meta['methods'])
+        try:
+            _price=float(q.get('price'))
+        except Exception:
+            _price=None
+        if _price is not None and _price<=UFC_NO_BET_AMERICAN_FAVORITE_CEILING:
+            q['no_bet']=True
+            q['no_bet_reason']='EXTREME_FAVORITE_PRICE'
+            q['no_bet_threshold']=UFC_NO_BET_AMERICAN_FAVORITE_CEILING
+            UFC_EXTREME_PRICE_NO_BET[str(q.get('key') or sel)]=q
+            continue
+        out.append(q)"""
+    if old not in s:
+        raise SystemExit('existing canonical pick append anchor missing for extreme-price upgrade')
+    s=s.replace(old,new,1)
+
+    old="      'selection_count':len(picks),\n      'selections':[{"
+    new="""      'selection_count':len(picks),
+      'no_bet_extreme_price_count':len(UFC_EXTREME_PRICE_NO_BET),
+      'no_bet_extreme_price':[{
+        'id':q.get('key'),'event':q.get('event'),'event_date':q.get('event_date'),'start':q.get('start'),
+        'selection':q.get('selection'),'opponent':q.get('opponent'),
+        'methods':list(q.get('methods') or []),'price':q.get('price'),'book':q.get('book'),
+        'reason':q.get('no_bet_reason'),'threshold':q.get('no_bet_threshold')
+      } for q in UFC_EXTREME_PRICE_NO_BET.values()],
+      'selections':[{"""
+    if old not in s:
+        raise SystemExit('existing canonical snapshot anchor missing for extreme-price upgrade')
+    s=s.replace(old,new,1)
 
 # Build canonical selection list before publishing so conflicts fail closed.
 anchor='''    sports_publish.safe_call(sports_publish.publish_ufc,events,preds_by_event,globals())
