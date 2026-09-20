@@ -77,12 +77,25 @@ def load_odds():
         else:
             latest=g.adding_date.max() if g.adding_date.notna().any() else pd.NaT
             snap=g[g.adding_date==latest].copy() if pd.notna(latest) else g.copy(); mode='historical_import_fallback'
-        i1=1/snap.odds_1.astype(float); i2=1/snap.odds_2.astype(float); tot=i1+i2
-        nv1=float((i1/tot).median()); nv2=1-nv1
-        if nv1>=nv2: favside=1; mp=nv1; best=float(snap.odds_1.max())
-        else: favside=2; mp=nv2; best=float(snap.odds_2.max())
-        r0=snap.iloc[0]
-        sel.append({'event_date':ev,'fighter_1':r0.fighter_1,'fighter_2':r0.fighter_2,'u1':r0.u1,'u2':r0.u2,'url_pair':pair,'favorite_side_odds':favside,'market_prob':mp,'favorite_decimal_odds':best,'snapshot_mode':mode,'fight_url':r0.get('fight_url'),'source':';'.join(sorted(set(snap.source.dropna().astype(str)))),'region':';'.join(sorted(set(snap.region.dropna().astype(str))))})
+        # Normalize every sportsbook row to the same fighter URL orientation
+        # before aggregating. The raw source can reverse fighter_1/fighter_2 across
+        # books; aggregating unaligned odds_1/odds_2 creates false favorite sides.
+        r0=snap.iloc[0]; ref1,ref2=r0.u1,r0.u2
+        direct=snap.u1.eq(ref1)&snap.u2.eq(ref2)
+        reverse=snap.u1.eq(ref2)&snap.u2.eq(ref1)
+        invalid=~(direct|reverse)
+        if invalid.any():
+            snap=snap.loc[~invalid].copy()
+            direct=snap.u1.eq(ref1)&snap.u2.eq(ref2)
+            reverse=snap.u1.eq(ref2)&snap.u2.eq(ref1)
+        if snap.empty: continue
+        snap['aligned_odds_1']=np.where(direct,snap.odds_1,snap.odds_2).astype(float)
+        snap['aligned_odds_2']=np.where(direct,snap.odds_2,snap.odds_1).astype(float)
+        i1=1/snap.aligned_odds_1; i2=1/snap.aligned_odds_2; tot=i1+i2
+        nv1=float((i1/tot).median()); nv2=float((i2/tot).median()); z=nv1+nv2; nv1/=z; nv2/=z
+        if nv1>=nv2: favside=1; mp=nv1; best=float(snap.aligned_odds_1.max())
+        else: favside=2; mp=nv2; best=float(snap.aligned_odds_2.max())
+        sel.append({'event_date':ev,'fighter_1':r0.fighter_1,'fighter_2':r0.fighter_2,'u1':r0.u1,'u2':r0.u2,'url_pair':pair,'favorite_side_odds':favside,'market_prob':mp,'favorite_decimal_odds':best,'snapshot_mode':mode,'orientation_reversed_rows':int(reverse.sum()),'orientation_invalid_rows':int(invalid.sum()),'fight_url':r0.get('fight_url'),'source':';'.join(sorted(set(snap.source.dropna().astype(str)))),'region':';'.join(sorted(set(snap.region.dropna().astype(str))))})
     return pd.DataFrame(sel)
 
 
