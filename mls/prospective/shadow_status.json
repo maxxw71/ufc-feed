@@ -1,109 +1,17 @@
 {
-  "built_at": "2026-09-19T22:52:11.788311+00:00",
-  "market_captured_at": "2026-09-19T22:51:47.476400+00:00",
+  "built_at": "2026-09-20T01:06:38.560492+00:00",
+  "market_captured_at": "2026-09-20T01:05:42.419190+00:00",
   "elo_updated_at": "2026-09-18T23:30:00+00:00",
-  "elo_age_days": 0.9736570902546295,
-  "qualifier_count": 6,
-  "qualifiers": [
-    {
-      "method_id": "MLS-A02",
-      "selection": "FC Dallas",
-      "opponent": "Austin FC",
-      "commence_time": "2026-09-20T00:30Z",
-      "american_price": "-160",
-      "book": "DraftKings",
-      "market_prob": 0.5690053970701618,
-      "research_status": "PROSPECTIVE_PRIORITY_SHADOW",
-      "confidence_tier": "BASE",
-      "portfolio_conflict": true,
-      "same_side_consensus": null
-    },
-    {
-      "method_id": "MLS-A06",
-      "selection": "Austin FC",
-      "opponent": "FC Dallas",
-      "commence_time": "2026-09-20T00:30Z",
-      "american_price": "+350",
-      "book": "DraftKings",
-      "market_prob": 0.2054741711642251,
-      "research_status": "PROSPECTIVE_PRIORITY_SHADOW",
-      "confidence_tier": "BASE",
-      "portfolio_conflict": true,
-      "same_side_consensus": null
-    },
-    {
-      "method_id": "MLS-A03",
-      "selection": "FC Cincinnati",
-      "opponent": "Houston Dynamo FC",
-      "commence_time": "2026-09-20T00:30Z",
-      "american_price": "+235",
-      "book": "DraftKings",
-      "market_prob": 0.27797602055381104,
-      "research_status": "PROSPECTIVE_PRIORITY_SHADOW",
-      "confidence_tier": "BASE",
-      "portfolio_conflict": null,
-      "same_side_consensus": null
-    },
-    {
-      "method_id": "MLS-A02",
-      "selection": "St. Louis City SC",
-      "opponent": "Toronto FC",
-      "commence_time": "2026-09-20T00:30Z",
-      "american_price": "-165",
-      "book": "DraftKings",
-      "market_prob": 0.5778994524639124,
-      "research_status": "PROSPECTIVE_PRIORITY_SHADOW",
-      "confidence_tier": "BASE",
-      "portfolio_conflict": null,
-      "same_side_consensus": null
-    },
-    {
-      "method_id": "MLS-A02",
-      "selection": "Colorado Rapids",
-      "opponent": "Seattle Sounders FC",
-      "commence_time": "2026-09-20T01:30Z",
-      "american_price": "-125",
-      "book": "DraftKings",
-      "market_prob": 0.5133404482390608,
-      "research_status": "PROSPECTIVE_PRIORITY_SHADOW",
-      "confidence_tier": "BASE",
-      "portfolio_conflict": null,
-      "same_side_consensus": null
-    },
-    {
-      "method_id": "MLS-R03",
-      "selection": "Atlanta United FC",
-      "opponent": "Portland Timbers",
-      "commence_time": "2026-09-20T02:30Z",
-      "american_price": "+230",
-      "book": "DraftKings",
-      "market_prob": 0.2797417768213956,
-      "research_status": "SHADOW_READY",
-      "confidence_tier": "BASE",
-      "portfolio_conflict": null,
-      "same_side_consensus": null
-    }
-  ],
-  "conflicts": [
-    {
-      "event_id": "761822",
-      "home_team": "FC Dallas",
-      "away_team": "Austin FC",
-      "methods": [
-        "MLS-A02",
-        "MLS-A06"
-      ],
-      "selections": [
-        "FC Dallas",
-        "Austin FC"
-      ],
-      "policy": "TRACK_BOTH_SHADOW_ONLY_NO_COMBINED_ACTION"
-    }
-  ],
+  "elo_age_days": 1.066846183599537,
+  "qualifier_count": 0,
+  "qualifiers": [],
+  "conflicts": [],
   "consensus": [],
   "portfolio_policy": {
     "opposite_side_conflict": "TRACK_FOR_RESEARCH_NO_COMBINED_ACTION",
-    "same_side_consensus": "TAG_AND_TRACK_SEPARATELY",
+    "same_side_consensus": "TAG_AND_TRACK_SEPARATELY_NO_STAKE_MULTIPLIER",
+    "staking_policy": "MAX_1_PERCENT_CURRENT_BANKROLL_PER_MATCH",
+    "max_match_exposure_pct": 1.0,
     "historical_clean_portfolio_roi": 0.335,
     "historical_clean_holdout_roi": 0.3704281345565749
   },
