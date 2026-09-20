@@ -19,6 +19,22 @@ jobs:
       - uses: actions/checkout@v4
         with: {fetch-depth: 0}
 
+      - name: Stage read-only live NFL snapshots
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          KEY=/home/appwiza-runner/.ssh/appwiza_vps
+          HOST=anestishkurti92@127.0.0.1
+          ssh -i "$KEY" -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=accept-new "$HOST" 'cat /srv/appwiza-sports/state/nfl.json' > /tmp/nfl_postmortem_state.json
+          ssh -i "$KEY" -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=accept-new "$HOST" 'python3 - <<'"'"'PY'"'"'
+import sqlite3,json
+p="/home/anestishkurti92/betting-ledger/assumed_bets.sqlite3"
+db=sqlite3.connect(p);db.row_factory=sqlite3.Row
+rows=[dict(r) for r in db.execute("select * from bets where upper(sport)=? and start like ?",("NFL","%2026-09-20%"))]
+print(json.dumps(rows,default=str))
+PY' > /tmp/nfl_postmortem_ledger.json
+          echo "state bytes=$(wc -c </tmp/nfl_postmortem_state.json) ledger bytes=$(wc -c </tmp/nfl_postmortem_ledger.json)"
+
       - name: Run frozen-rule postmortem against live state
         shell: bash
         run: |
