@@ -22,6 +22,11 @@ M1_only_preseason: 14-2 n=16 win=87.5% ROI=+28.0% | hold n=4 win=100.0% ROI=+40.
 M1_only_preseason_plus_enriched_veto: 11-1 n=12 win=91.7% ROI=+37.7% | hold n=4 win=100.0% ROI=+40.4% | 2023-25 n=2 ROI=+47.5%
 M2_stricter_baseline: 55-9 n=64 win=85.9% ROI=+17.2% | hold n=23 win=82.6% ROI=+12.4% | 2023-25 n=15 ROI=+6.3%
 M2_stricter_preseason_fail_closed: 45-3 n=48 win=93.8% ROI=+24.3% | hold n=15 win=93.3% ROI=+29.6% | 2023-25 n=9 ROI=+19.7%
+M1_preseason_prior_record_ge500: 54-4 n=58 win=93.1% ROI=+24.6% | hold n=15 win=100.0% ROI=+36.8% | 2023-25 n=8 ROI=+31.0%
+M1_preseason_prior_record_winning: 44-3 n=47 win=93.6% ROI=+24.2% | hold n=11 win=100.0% ROI=+32.8% | 2023-25 n=7 ROI=+31.2%
+M1_enriched_prior_record_ge500: 43-2 n=45 win=95.6% ROI=+29.1% | hold n=12 win=100.0% ROI=+36.5% | 2023-25 n=6 ROI=+30.9%
+M2_preseason_prior_record_ge500: 44-2 n=46 win=95.7% ROI=+25.9% | hold n=13 win=100.0% ROI=+36.1% | 2023-25 n=7 ROI=+29.1%
+M2_preseason_prior_record_winning: 37-2 n=39 win=94.9% ROI=+23.6% | hold n=10 win=100.0% ROI=+31.6% | 2023-25 n=6 ROI=+29.0%
 
 PRODUCTION FINDINGS
 CRITICAL ENRICHED_VETO_NOT_ENFORCED: The frozen research confirmed an enriched veto for original/M1, but nfl_public_page._audit_action did not inspect enriched_veto_status/rule. Baltimore archived with enriched_veto_status=UNKNOWN and remained actionable.
@@ -43,3 +48,5 @@ RECOMMENDATIONS
 - Keep M1 family only with the already-confirmed enriched veto AND fail-closed feature availability; do not allow raw scanner-only M1.
 - Keep M2 under the validated preseason>=2 fail-closed gate; continue prospective monitoring rather than deleting after one loss.
 - Change production deep-audit behavior from fail-open to fail-closed: missing required audit/veto features => NO BET.
+- Prior-record >=.500 is a promising natural M1 refinement; it improves holdout ROI and would have excluded both 8-9 Week 2 selections. Keep research/shadow until prospective confirmation.
+- Prior-record >=.500 is a promising natural M2 refinement; it improves holdout ROI and would have excluded Tampa. Keep research/shadow until prospective confirmation.
