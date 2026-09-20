@@ -61,7 +61,8 @@ jobs:
           print('[40%] canonical_count',len(canonical))
           for q in canonical:
               print(q['key'],q['selection'],'vs',q['opponent'],q['methods'],q.get('price'),q.get('book'))
-          assert len(canonical)==9, len(canonical)
+          assert all((q.get('price') is None or float(q.get('price')) > w.UFC_NO_BET_AMERICAN_FAVORITE_CEILING) for q in canonical)
+          print('[45%] extreme-price wager veto PASS', w.UFC_NO_BET_AMERICAN_FAVORITE_CEILING)
 
           # Refresh the public state from the same predictions.
           w.sports_publish.publish_ufc(events,preds,w.__dict__)
@@ -72,7 +73,8 @@ jobs:
               raise RuntimeError('public dashboard refresh failed: '+repr(exc))
           assert w.validate_ufc_public_canonical(canonical)
           payload=w.write_ufc_canonical(canonical)
-          assert payload['selection_count']==9
+          assert payload['selection_count']==len(canonical)
+          assert payload.get('no_bet_extreme_price_count',0)==len(w.UFC_EXTREME_PRICE_NO_BET)
           print('[60%] public/canonical PASS')
 
           # Build the exact full-slate email body without sending it.
