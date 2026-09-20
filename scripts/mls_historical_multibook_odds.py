@@ -216,6 +216,9 @@ def main():
         meta={
           'built_at':now(),'status':'CREDENTIAL_REQUIRED','provider':'The Odds API',
           'coverage_start':FIRST_AVAILABLE.isoformat(),'target_matches':len(schedule),
+          'target_kickoff_groups':int(schedule.kickoff_utc.nunique()) if len(schedule) else 0,
+          'estimated_credits_us_only':int(schedule.kickoff_utc.nunique())*10 if len(schedule) else 0,
+          'estimated_credits_default_3_regions':int(schedule.kickoff_utc.nunique())*30 if len(schedule) else 0,
           'base_file':str(base_path),'output':str(OUT),'features_output':str(FEATURES),
           'required_env':'THE_ODDS_API_KEY',
           'optional_env':['THE_ODDS_API_REGIONS','THE_ODDS_API_BOOKMAKERS'],
