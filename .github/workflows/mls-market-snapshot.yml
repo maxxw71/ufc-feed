@@ -6,6 +6,7 @@ on:
     branches: [main]
     paths:
       - 'scripts/mls_market_snapshot.py'
+      - 'scripts/mls_market_history.py'
       - '.github/workflows/mls-market-snapshot.yml'
 
 concurrency:
@@ -30,8 +31,10 @@ jobs:
           KEY=/home/appwiza-runner/.ssh/appwiza_vps
           HOST=anestishkurti92@127.0.0.1
           SSH="ssh -i $KEY -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=accept-new $HOST"
-          cat scripts/mls_market_snapshot.py | $SSH 'set -e; D=/home/anestishkurti92/mls-predictor-v1; cat > "$D/mls_market_snapshot.py.new"; chmod 0644 "$D/mls_market_snapshot.py.new"; mv -f "$D/mls_market_snapshot.py.new" "$D/mls_market_snapshot.py"'
-          $SSH 'set -Eeuo pipefail; cd /home/anestishkurti92/mls-predictor-v1; venv/bin/python -m py_compile mls_market_snapshot.py; timeout 90s venv/bin/python mls_market_snapshot.py'
+          for f in mls_market_snapshot.py mls_market_history.py; do
+            cat "scripts/$f" | $SSH "set -e; D=/home/anestishkurti92/mls-predictor-v1; cat > \"\$D/$f.new\"; chmod 0644 \"\$D/$f.new\"; mv -f \"\$D/$f.new\" \"\$D/$f\""
+          done
+          $SSH 'set -Eeuo pipefail; cd /home/anestishkurti92/mls-predictor-v1; venv/bin/python -m py_compile mls_market_snapshot.py mls_market_history.py; timeout 90s venv/bin/python mls_market_snapshot.py; timeout 3m venv/bin/python mls_market_history.py'
 
       - name: Pull non-secret snapshot summary
         shell: bash
@@ -41,7 +44,9 @@ jobs:
           HOST=anestishkurti92@127.0.0.1
           mkdir -p mls/prospective
           ssh -i "$KEY" -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=accept-new "$HOST"             'cat /home/anestishkurti92/mls-predictor-v1/live/market_snapshots/latest_summary.json' > mls/prospective/latest_summary.json
+          ssh -i "$KEY" -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=accept-new "$HOST" 'cat /home/anestishkurti92/mls-predictor-v1/reports/market_history_meta.json' > mls/prospective/market_history_meta.json
           cat mls/prospective/latest_summary.json
+          cat mls/prospective/market_history_meta.json
 
       - name: Persist snapshot status
         shell: bash
@@ -49,7 +54,7 @@ jobs:
           set -Eeuo pipefail
           git config user.name github-actions
           git config user.email github-actions@github.com
-          git add mls/prospective/latest_summary.json
+          git add mls/prospective/latest_summary.json mls/prospective/market_history_meta.json
           if ! git diff --cached --quiet; then
             git commit -m 'Update MLS prospective market snapshot status'
             git pull --rebase origin main
