@@ -23,6 +23,10 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with: {fetch-depth: 0}
+      - name: Verify MLS method registry
+        shell: bash
+        run: python3 scripts/mls_method_registry_guard.py
+
       - name: Deploy and run MLS active portfolio audit
         shell: bash
         run: |
