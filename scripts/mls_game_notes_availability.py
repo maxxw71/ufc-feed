@@ -8,6 +8,10 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 from pypdf import PdfReader
+try:
+    import pdfplumber
+except Exception:
+    pdfplumber=None
 
 from mls_bootstrap_warehouse import canon_team
 
@@ -39,7 +43,9 @@ def extract_report(text):
     text=text.replace('\u00a0',' ')
     m=re.search(r'PLAYER\s+AVAILABILITY\s+REPORT(.*?)(?:SOCIAL\s+MEDIA|PRONUNCIATION\s+GUIDE|2023\s+MLS\s+SCHEDULE|MLS\s+SCHEDULE)',text,re.I|re.S)
     if not m:return []
-    sec=normspace(m.group(1))
+    sec=m.group(1)
+    sec=re.sub(r'[\t\r]+',' ',sec)
+    sec=re.sub(r' {2,}',' ',sec)
     # Normalize status headings, including "OUT - INTERNATIONAL DUTY".
     marks=[]
     for mm in re.finditer(r'\b(OUT(?:\s*-\s*INTERNATIONAL\s+DUTY)?|QUESTIONABLE)\s*:\s*',sec,re.I):
@@ -48,6 +54,7 @@ def extract_report(text):
     rows=[]
     for i,(s,e,status_label) in enumerate(marks):
         chunk=sec[e:(marks[i+1][0] if i+1<len(marks) else len(sec))].strip()
+        chunk=re.sub(r'\n+',' | ',chunk)
         status='OUT' if status_label.startswith('OUT') else 'QUESTIONABLE'
         forced_intl='INTERNATIONAL DUTY' in status_label
         # Most game notes render "Player – Reason" repeatedly. Split at likely name/reason pairs
@@ -89,7 +96,15 @@ def main():
         team=canon_team(item['team']);day=item['date'];url=item['url']
         try:
             data=fetch_pdf(url);reader=PdfReader(io.BytesIO(data))
-            text='\n'.join((p.extract_text() or '') for p in reader.pages)
+            text=''
+            if pdfplumber is not None:
+                try:
+                    with pdfplumber.open(io.BytesIO(data)) as pdf:
+                        text='\n'.join((p.extract_text(layout=True) or '') for p in pdf.pages[:3])
+                except Exception:
+                    text=''
+            if not text.strip():
+                text='\n'.join((p.extract_text() or '') for p in reader.pages[:3])
             entries=extract_report(text)
             matches=base[(base.date_day.eq(day))&((base.home_team.map(canon_team).eq(team))|(base.away_team.map(canon_team).eq(team)))]
             mid=str(matches.iloc[0].match_id) if len(matches)==1 else None
