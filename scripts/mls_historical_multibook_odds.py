@@ -110,17 +110,23 @@ def load_source_meta(z):
         ('A','odds_series_matches.csv.gz','odds_series.csv.gz'),
         ('B','odds_series_b_matches.csv.gz','odds_series_b.csv.gz')]:
         with read_gz_from_zip(z,mfn) as raw,io.TextIOWrapper(raw,encoding='utf-8',errors='replace',newline='') as txt:
-            rd=csv.DictReader(txt)
-            for r in rd:
-                league=(r.get('league') or r.get(' league') or '').strip()
-                if league!='USA: MLS':continue
-                score=str(r.get('score') or '').strip()
+            rd=csv.reader(txt)
+            header=[str(x).strip() for x in next(rd)]
+            pos={name:i for i,name in enumerate(header)}
+            required=['match_id','league','home_team','away_team','score','match_datetime']
+            missing=[x for x in required if x not in pos]
+            if missing:raise RuntimeError(f'{mfn}: missing columns {missing}; header={header}')
+            for row in rd:
+                if len(row)<len(header):continue
+                if str(row[pos['league']]).strip()!='USA: MLS':continue
+                score=str(row[pos['score']]).strip()
                 m=re.match(r'\s*(\d+)\s*:\s*(\d+)',score)
+                dt_raw=str(row[pos['match_datetime']]).strip()
+                dt=pd.to_datetime(dt_raw,errors='coerce')
                 rows.append({
-                    'dataset':dataset,'series_file':sfn,'source_match_id':str(r['match_id']).strip(),
-                    'source_home':str(r['home_team']).strip(),'source_away':str(r['away_team']).strip(),
-                    'source_match_datetime':str(r['match_datetime']).strip(),
-                    'source_date':pd.to_datetime(r['match_datetime'],errors='coerce').date() if pd.notna(pd.to_datetime(r['match_datetime'],errors='coerce')) else None,
+                    'dataset':dataset,'series_file':sfn,'source_match_id':str(row[pos['match_id']]).strip(),
+                    'source_home':str(row[pos['home_team']]).strip(),'source_away':str(row[pos['away_team']]).strip(),
+                    'source_match_datetime':dt_raw,'source_date':dt.date() if pd.notna(dt) else None,
                     'source_home_score':int(m.group(1)) if m else None,'source_away_score':int(m.group(2)) if m else None,
                 })
     return pd.DataFrame(rows)
