@@ -33,7 +33,7 @@ jobs:
           SSH="ssh -i $KEY -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=accept-new $HOST"
           D=/home/anestishkurti92/mls-predictor-v1
           cat scripts/mls_espn_lineups_cards.py | $SSH 'set -e; D=/home/anestishkurti92/mls-predictor-v1; cat > "$D/mls_espn_lineups_cards.py.new"; chmod 0644 "$D/mls_espn_lineups_cards.py.new"; mv -f "$D/mls_espn_lineups_cards.py.new" "$D/mls_espn_lineups_cards.py"'
-          $SSH 'set -Eeuo pipefail; cd /home/anestishkurti92/mls-predictor-v1; venv/bin/python -m py_compile mls_espn_lineups_cards.py; OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 nice -n 12 timeout 72m venv/bin/python mls_espn_lineups_cards.py --years 2024 2025 --workers 2'
+          $SSH 'set -Eeuo pipefail; cd /home/anestishkurti92/mls-predictor-v1; venv/bin/python -m py_compile mls_espn_lineups_cards.py; OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 nice -n 12 timeout 72m venv/bin/python mls_espn_lineups_cards.py --years 2022 --workers 2'
 
       - name: Pull lineup/card audit
         shell: bash
@@ -63,3 +63,5 @@ jobs:
           fi
 
 # parser-fix-trigger 20260920
+
+# backfill-2022-trigger 20260920
