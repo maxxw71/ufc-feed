@@ -187,14 +187,14 @@ def main():
     for _,r in base[base.dt.notna()].sort_values(['dt','match_id']).iterrows():
         for side,opp in [('home','away'),('away','home')]:
             t=cteam(r[f'{side}_team'])
-            mls_hist[t].append({'dt':pd.Timestamp(r.dt),'competition':'MLS','is_home':int(side=='home'),
+            mls_hist[t].append({'dt':pd.Timestamp(r['dt']),'competition':'MLS','is_home':int(side=='home'),
                                 'opponent':cteam(r[f'{opp}_team']),'minutes':90.0,'extra_time':0,'match_id':str(r.match_id)})
 
     rows=[]
     for _,g in base[base.dt.notna()].sort_values(['dt','match_id']).iterrows():
         row={'match_id':g.match_id}
         for side in ['home','away']:
-            team=cteam(g[f'{side}_team']);target=pd.Timestamp(g.dt)
+            team=cteam(g[f'{side}_team']);target=pd.Timestamp(g['dt'])
             history=[]
             for x in mls_hist.get(team,[]):
                 if x['dt']<target:history.append(x)
