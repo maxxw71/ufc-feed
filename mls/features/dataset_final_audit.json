@@ -1,15 +1,15 @@
 {
-  "built_at": "2026-09-20T06:21:10.313602+00:00",
+  "built_at": "2026-09-20T11:42:02.406079+00:00",
   "master_file": "/home/anestishkurti92/mls-predictor-v1/data/processed/mls_match_features_master.parquet",
   "checks": {
     "rows": 9440,
-    "columns": 813,
+    "columns": 830,
     "duplicate_match_ids": 0,
     "missing_match_ids": 0,
     "season_min": 1996,
     "season_max": 2026,
     "infinite_numeric_cells": 0,
-    "constant_or_empty_columns_count": 27,
+    "constant_or_empty_columns_count": 29,
     "constant_or_empty_columns": [
       {
         "column": "asa_status",
@@ -145,11 +145,29 @@
         "column": "away_canadian_championship_matches_30d",
         "unique_non_null": 1,
         "non_null": 9440
+      },
+      {
+        "column": "external_pinnacle_matched",
+        "unique_non_null": 1,
+        "non_null": 5786
+      },
+      {
+        "column": "external_pinnacle_source_url",
+        "unique_non_null": 1,
+        "non_null": 5786
       }
     ],
     "negative_overround_rows": 0,
     "invalid_probability_cells": 0,
     "invalid_decimal_odds_cells": 0,
+    "historical_multibook_feature_columns": 0,
+    "invalid_hist_mb_absolute_probability_cells": 0,
+    "invalid_hist_mb_movement_delta_cells": 0,
+    "invalid_hist_mb_decimal_odds_cells": 0,
+    "historical_multibook_movement_matches": 0,
+    "historical_multibook_movement_meta_status": null,
+    "historical_multibook_movement_meta_mapped_matches": 0,
+    "historical_multibook_timing_policy_present": false,
     "modern_2013plus_rows": 5835,
     "modern_2013plus_priced_rows": 5148,
     "modern_2013plus_priced_share": 0.8822622107969151,
@@ -181,7 +199,7 @@
         "share_any": 1.0
       },
       "cross_comp": {
-        "columns": 45,
+        "columns": 62,
         "rows_any": 5835,
         "share_any": 1.0
       },
@@ -209,10 +227,15 @@
         "columns": 15,
         "rows_any": 5835,
         "share_any": 1.0
+      },
+      "historical_multibook_movement": {
+        "columns": 0,
+        "rows_any": 0,
+        "share_any": 0
       }
     },
-    "critical_pass": true
+    "critical_pass": false
   },
-  "status": "PASS",
-  "note": "This audit checks structural integrity and obvious leakage hazards. It does not claim that every feature is predictive or available for every historical season."
+  "status": "FAIL",
+  "note": "Structural, odds/probability, timing-metadata and obvious leakage audit. Historical continuous multi-book movement coverage is explicitly required for this final MLS build; feature predictiveness is not asserted."
 }
