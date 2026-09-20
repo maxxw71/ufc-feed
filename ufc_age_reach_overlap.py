@@ -12,6 +12,12 @@ IND_URL='https://raw.githubusercontent.com/DanMcInerney/mma-ai/main/data/raw/ufc
 ODDS_ZIP=Path('/tmp/odds.zip')
 DISC_END=pd.Timestamp('2019-12-31'); VAL_START=pd.Timestamp('2020-01-01')
 
+def norm_name(s):
+    s=str(s or '').lower().replace('’',"'").replace('-',' ')
+    s=re.sub(r'\b(jr|sr|ii|iii|iv)\b',' ',s)
+    s=re.sub(r'[^a-z0-9]+',' ',s)
+    return re.sub(r'\s+',' ',s).strip()
+
 def parse_reach(v):
     s=str(v or '').strip()
     m=re.search(r'(\d+(?:\.\d+)?)',s)
@@ -42,6 +48,7 @@ def load_fights():
     c=c.dropna(subset=['dob1','dob2','reach1','reach2']).copy()
     c['age1']=(c['event_date']-c['dob1']).dt.days/365.2425; c['age2']=(c['event_date']-c['dob2']).dt.days/365.2425
     c['p1_won']=c['result_norm'].eq('W')
+    c['p1_norm']=c['player1'].map(norm_name); c['p2_norm']=c['player2'].map(norm_name)
     c['pair_key']=c.apply(lambda r:'|'.join(sorted([str(r['player1_url']).strip(),str(r['player2_url']).strip()])),axis=1)
     return c
 
@@ -53,21 +60,34 @@ def load_odds():
     x['odds_1']=pd.to_numeric(x['odds_1'],errors='coerce'); x['odds_2']=pd.to_numeric(x['odds_2'],errors='coerce')
     x=x.dropna(subset=['event_date','fighter_1_url','fighter_2_url','odds_1','odds_2'])
     x=x[(x.odds_1>1)&(x.odds_2>1)].copy()
-    x['u1']=x['fighter_1_url'].astype(str).str.strip(); x['u2']=x['fighter_2_url'].astype(str).str.strip(); x['pair_key']=x.apply(lambda r:'|'.join(sorted([r.u1,r.u2])),axis=1)
+    x['u1']=x['fighter_1_url'].astype(str).str.strip(); x['u2']=x['fighter_2_url'].astype(str).str.strip()
+    x['n1']=x['fighter_1'].map(norm_name); x['n2']=x['fighter_2'].map(norm_name)
+    x['pair_key']=x.apply(lambda r:'|'.join(sorted([r.u1,r.u2])),axis=1)
     x['region_norm']=x['region'].fillna('').astype(str).str.lower()
     rows=[]
     for (date,pair),g in x.groupby(['event_date','pair_key'],sort=False):
         us=g[g.region_norm.eq('us')]; g=us if not us.empty else g
-        cutoff=pd.Timestamp(date,tz='UTC')+pd.Timedelta(hours=36)
-        timely=g[g.adding_date.notna() & (g.adding_date<=cutoff)]
-        if not timely.empty: g=timely[timely.adding_date==timely.adding_date.max()]
-        elif g.adding_date.notna().any(): g=g[g.adding_date==g.adding_date.max()]
-        imp1=1/g.odds_1.astype(float); imp2=1/g.odds_2.astype(float); total=imp1+imp2
-        nv1=float((imp1/total).median()); nv2=1-nv1
-        # Median decimal for each side at selected snapshot, to price bet.
-        d1=float(g.odds_1.astype(float).median()); d2=float(g.odds_2.astype(float).median())
-        r0=g.iloc[0]
-        rows.append({'odds_date':date,'pair_key':pair,'ou1':r0.u1,'ou2':r0.u2,'nv1':nv1,'nv2':nv2,'d1':d1,'d2':d2})
+        cutoff=pd.Timestamp(date,tz='UTC')
+        timely=g[g.adding_date.notna() & (g.adding_date<cutoff)]
+        if not timely.empty:
+            g=timely[timely.adding_date==timely.adding_date.max()].copy()
+        else:
+            late=g.adding_date.notna() & (g.adding_date>=cutoff+pd.Timedelta(days=3))
+            if late.all() and g.adding_date.notna().any():
+                g=g[g.adding_date==g.adding_date.max()].copy()
+            else:
+                continue
+        r0=g.iloc[0]; ref1,ref2=r0.n1,r0.n2
+        direct=g.n1.eq(ref1)&g.n2.eq(ref2); reverse=g.n1.eq(ref2)&g.n2.eq(ref1)
+        g=g[direct|reverse].copy()
+        if g.empty: continue
+        direct=g.n1.eq(ref1)&g.n2.eq(ref2)
+        g['a1']=np.where(direct,g.odds_1,g.odds_2).astype(float)
+        g['a2']=np.where(direct,g.odds_2,g.odds_1).astype(float)
+        imp1=1/g.a1; imp2=1/g.a2; total=imp1+imp2
+        nv1=float((imp1/total).median()); nv2=float((imp2/total).median()); z=nv1+nv2; nv1/=z; nv2/=z
+        d1=float(g.a1.median()); d2=float(g.a2.median())
+        rows.append({'odds_date':date,'pair_key':pair,'on1':ref1,'on2':ref2,'nv1':nv1,'nv2':nv2,'d1':d1,'d2':d2})
     return pd.DataFrame(rows)
 
 def attach(f,od):
@@ -77,11 +97,13 @@ def attach(f,od):
         if g is None: continue
         delta=(g.odds_date-r.event_date).dt.days.abs(); idx=delta.idxmin()
         if delta.loc[idx]>1: continue
-        o=g.loc[idx]; p1url=str(r.player1_url).strip()
-        if o.ou1==p1url:
+        o=g.loc[idx]
+        if o.on1==r.p1_norm and o.on2==r.p2_norm:
             p1prob,p2prob,d1,d2=o.nv1,o.nv2,o.d1,o.d2
-        else:
+        elif o.on1==r.p2_norm and o.on2==r.p1_norm:
             p1prob,p2prob,d1,d2=o.nv2,o.nv1,o.d2,o.d1
+        else:
+            continue
         fav_is_p1=p1prob>=p2prob
         fav_prob=max(p1prob,p2prob)
         fav_dec=d1 if fav_is_p1 else d2
