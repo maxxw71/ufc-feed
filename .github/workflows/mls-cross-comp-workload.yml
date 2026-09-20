@@ -29,6 +29,7 @@ jobs:
           KEY=/home/appwiza-runner/.ssh/appwiza_vps
           HOST=anestishkurti92@127.0.0.1
           D=/home/anestishkurti92/mls-predictor-v1
+          ssh -i "$KEY" -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=accept-new "$HOST" "cd $D && venv/bin/pip install --quiet openpyxl"
           cat scripts/mls_cross_comp_workload.py | ssh -i "$KEY" -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=accept-new "$HOST" "cat > $D/mls_cross_comp_workload.py"
           ssh -i "$KEY" -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=accept-new "$HOST" "cd $D && venv/bin/python -m py_compile mls_cross_comp_workload.py && venv/bin/python mls_cross_comp_workload.py"
       - name: Pull audit
