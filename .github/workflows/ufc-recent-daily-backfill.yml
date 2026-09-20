@@ -50,4 +50,5 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add ufc_recent_daily_backfill/
           git commit -m "Add complete UFC 2024-current daily odds backfill" || exit 0
+          git pull --rebase origin main
           git push
