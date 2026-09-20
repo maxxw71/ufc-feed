@@ -1,0 +1,59 @@
+name: MLS New Family Research
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/mls_new_family_research.py'
+      - '.github/workflows/mls-new-family-research.yml'
+  workflow_dispatch:
+
+concurrency:
+  group: mls-new-family-research
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  research:
+    runs-on: [self-hosted, Linux, X64, appwiza]
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+        with: {fetch-depth: 0}
+      - name: Run new-family MLS research
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          KEY=/home/appwiza-runner/.ssh/appwiza_vps
+          HOST=anestishkurti92@127.0.0.1
+          D=/home/anestishkurti92/mls-predictor-v1
+          for f in mls_autoresearch.py mls_player_manager_research.py mls_context_research.py mls_arsenal_research.py mls_active_portfolio.py mls_new_family_research.py; do
+            cat "scripts/$f" | ssh -i "$KEY" -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=accept-new "$HOST" "cat > $D/$f"
+          done
+          ssh -i "$KEY" -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=accept-new "$HOST" "cd $D && venv/bin/python -m py_compile mls_new_family_research.py && OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 nice -n 12 timeout 38m venv/bin/python mls_new_family_research.py"
+      - name: Pull research audit
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          KEY=/home/appwiza-runner/.ssh/appwiza_vps
+          HOST=anestishkurti92@127.0.0.1
+          mkdir -p mls/research
+          ssh -i "$KEY" -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=accept-new "$HOST" 'cat /home/anestishkurti92/mls-predictor-v1/research/new_families/latest.json' > mls/research/new_family_latest.json
+      - name: Persist research audit
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          cp mls/research/new_family_latest.json "$RUNNER_TEMP/new_family.json"
+          git fetch origin main
+          git reset --hard origin/main
+          mkdir -p mls/research
+          cp "$RUNNER_TEMP/new_family.json" mls/research/new_family_latest.json
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git add mls/research/new_family_latest.json
+          if ! git diff --cached --quiet; then
+            git commit -m 'Publish MLS new-family research audit'
+            git push origin HEAD:main
+          fi
