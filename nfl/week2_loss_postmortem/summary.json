@@ -1,5 +1,5 @@
 {
-  "built_at": "2026-09-20T22:27:43.331734+00:00",
+  "built_at": "2026-09-20T22:29:03.203281+00:00",
   "live_picks": [
     {
       "source": "state",
@@ -313,7 +313,13 @@
       "returning_ol_snap_share": 0.7756500351370345,
       "returning_skill_snap_share": 0.724406659582005,
       "m1_enriched_veto_status": "UNKNOWN_FAIL_CLOSED",
-      "m1_enriched_veto_rule": "opp_last_rank_def_allowed_giveaway_rate <= 14.8"
+      "m1_enriched_veto_rule": "opp_last_rank_def_allowed_giveaway_rate <= 14.8",
+      "current_prior_games": 0,
+      "current_prior_rushing_epa": null,
+      "current_prior_passing_epa": null,
+      "current_prior_passing_cpoe": null,
+      "current_prior_rushing_yards": null,
+      "current_prior_passing_yards": null
     },
     {
       "id": "NFL:2026_02_NO_BAL",
@@ -327,7 +333,13 @@
       "returning_ol_snap_share": 0.5698818897637795,
       "returning_skill_snap_share": 0.6268774703557313,
       "m1_enriched_veto_status": "UNKNOWN_FAIL_CLOSED",
-      "m1_enriched_veto_rule": "opp_last_rank_def_allowed_giveaway_rate <= 14.8"
+      "m1_enriched_veto_rule": "opp_last_rank_def_allowed_giveaway_rate <= 14.8",
+      "current_prior_games": 0,
+      "current_prior_rushing_epa": null,
+      "current_prior_passing_epa": null,
+      "current_prior_passing_cpoe": null,
+      "current_prior_rushing_yards": null,
+      "current_prior_passing_yards": null
     }
   ],
   "historical_variants": {
@@ -1780,6 +1792,132 @@
             "units": 5.9874213825406155
           },
           "roi_gap_safe_minus_risk": 0.38232756017363034
+        },
+        {
+          "condition": "prior_current_rushing_epa_positive",
+          "era": "development",
+          "risk": {
+            "n": 5,
+            "wins": 4,
+            "losses": 1,
+            "win_pct": 0.8,
+            "roi": 0.034623107562757105,
+            "units": 0.17311553781378552
+          },
+          "safe": {
+            "n": 16,
+            "wins": 15,
+            "losses": 1,
+            "win_pct": 0.9375,
+            "roi": 0.20427122466616757,
+            "units": 3.268339594658681
+          },
+          "roi_gap_safe_minus_risk": 0.16964811710341046
+        },
+        {
+          "condition": "prior_current_rushing_epa_positive",
+          "era": "validation",
+          "risk": {
+            "n": 3,
+            "wins": 3,
+            "losses": 0,
+            "win_pct": 1.0,
+            "roi": 0.13637239953029423,
+            "units": 0.4091171985908827
+          },
+          "safe": {
+            "n": 21,
+            "wins": 19,
+            "losses": 2,
+            "win_pct": 0.9047619047619048,
+            "roi": 0.2967677356662947,
+            "units": 6.232122448992189
+          },
+          "roi_gap_safe_minus_risk": 0.1603953361360005
+        },
+        {
+          "condition": "prior_current_rushing_epa_positive",
+          "era": "holdout",
+          "risk": {
+            "n": 6,
+            "wins": 5,
+            "losses": 1,
+            "win_pct": 0.8333333333333334,
+            "roi": 0.1725344858759791,
+            "units": 1.0352069152558747
+          },
+          "safe": {
+            "n": 13,
+            "wins": 13,
+            "losses": 0,
+            "win_pct": 1.0,
+            "roi": 0.386119225277004,
+            "units": 5.019549928601052
+          },
+          "roi_gap_safe_minus_risk": 0.21358473940102488
+        },
+        {
+          "condition": "prior_current_passing_epa_negative",
+          "era": "development",
+          "risk": {
+            "n": 4,
+            "wins": 3,
+            "losses": 1,
+            "win_pct": 0.75,
+            "roi": -0.14188988095238098,
+            "units": -0.5675595238095239
+          },
+          "safe": {
+            "n": 17,
+            "wins": 16,
+            "losses": 1,
+            "win_pct": 0.9411764705882353,
+            "roi": 0.23582439154599943,
+            "units": 4.00901465628199
+          },
+          "roi_gap_safe_minus_risk": 0.3777142724983804
+        },
+        {
+          "condition": "prior_current_passing_epa_negative",
+          "era": "validation",
+          "risk": {
+            "n": 4,
+            "wins": 3,
+            "losses": 1,
+            "win_pct": 0.75,
+            "roi": -0.12139423076923078,
+            "units": -0.48557692307692313
+          },
+          "safe": {
+            "n": 20,
+            "wins": 19,
+            "losses": 1,
+            "win_pct": 0.95,
+            "roi": 0.35634082853299975,
+            "units": 7.126816570659995
+          },
+          "roi_gap_safe_minus_risk": 0.47773505930223054
+        },
+        {
+          "condition": "prior_current_passing_epa_negative",
+          "era": "holdout",
+          "risk": {
+            "n": 5,
+            "wins": 4,
+            "losses": 1,
+            "win_pct": 0.8,
+            "roi": 0.12631816761172815,
+            "units": 0.6315908380586408
+          },
+          "safe": {
+            "n": 14,
+            "wins": 14,
+            "losses": 0,
+            "win_pct": 1.0,
+            "roi": 0.38736900041416317,
+            "units": 5.423166005798285
+          },
+          "roi_gap_safe_minus_risk": 0.261050832802435
         }
       ],
       "stable": [
@@ -1826,6 +1964,96 @@
               "units": 5.9874213825406155
             },
             "roi_gap_safe_minus_risk": 0.38232756017363034
+          }
+        },
+        {
+          "condition": "prior_current_rushing_epa_positive",
+          "validation": {
+            "condition": "prior_current_rushing_epa_positive",
+            "era": "validation",
+            "risk": {
+              "n": 3,
+              "wins": 3,
+              "losses": 0,
+              "win_pct": 1.0,
+              "roi": 0.13637239953029423,
+              "units": 0.4091171985908827
+            },
+            "safe": {
+              "n": 21,
+              "wins": 19,
+              "losses": 2,
+              "win_pct": 0.9047619047619048,
+              "roi": 0.2967677356662947,
+              "units": 6.232122448992189
+            },
+            "roi_gap_safe_minus_risk": 0.1603953361360005
+          },
+          "holdout": {
+            "condition": "prior_current_rushing_epa_positive",
+            "era": "holdout",
+            "risk": {
+              "n": 6,
+              "wins": 5,
+              "losses": 1,
+              "win_pct": 0.8333333333333334,
+              "roi": 0.1725344858759791,
+              "units": 1.0352069152558747
+            },
+            "safe": {
+              "n": 13,
+              "wins": 13,
+              "losses": 0,
+              "win_pct": 1.0,
+              "roi": 0.386119225277004,
+              "units": 5.019549928601052
+            },
+            "roi_gap_safe_minus_risk": 0.21358473940102488
+          }
+        },
+        {
+          "condition": "prior_current_passing_epa_negative",
+          "validation": {
+            "condition": "prior_current_passing_epa_negative",
+            "era": "validation",
+            "risk": {
+              "n": 4,
+              "wins": 3,
+              "losses": 1,
+              "win_pct": 0.75,
+              "roi": -0.12139423076923078,
+              "units": -0.48557692307692313
+            },
+            "safe": {
+              "n": 20,
+              "wins": 19,
+              "losses": 1,
+              "win_pct": 0.95,
+              "roi": 0.35634082853299975,
+              "units": 7.126816570659995
+            },
+            "roi_gap_safe_minus_risk": 0.47773505930223054
+          },
+          "holdout": {
+            "condition": "prior_current_passing_epa_negative",
+            "era": "holdout",
+            "risk": {
+              "n": 5,
+              "wins": 4,
+              "losses": 1,
+              "win_pct": 0.8,
+              "roi": 0.12631816761172815,
+              "units": 0.6315908380586408
+            },
+            "safe": {
+              "n": 14,
+              "wins": 14,
+              "losses": 0,
+              "win_pct": 1.0,
+              "roi": 0.38736900041416317,
+              "units": 5.423166005798285
+            },
+            "roi_gap_safe_minus_risk": 0.261050832802435
           }
         }
       ]
@@ -1957,6 +2185,132 @@
             "units": 1.171980001075211
           },
           "roi_gap_safe_minus_risk": -0.05378444408604072
+        },
+        {
+          "condition": "prior_current_rushing_epa_positive",
+          "era": "development",
+          "risk": {
+            "n": 0,
+            "wins": 0,
+            "losses": 0,
+            "win_pct": NaN,
+            "roi": NaN,
+            "units": 0.0
+          },
+          "safe": {
+            "n": 3,
+            "wins": 3,
+            "losses": 0,
+            "win_pct": 1.0,
+            "roi": 0.5449080725443313,
+            "units": 1.6347242176329937
+          },
+          "roi_gap_safe_minus_risk": null
+        },
+        {
+          "condition": "prior_current_rushing_epa_positive",
+          "era": "validation",
+          "risk": {
+            "n": 0,
+            "wins": 0,
+            "losses": 0,
+            "win_pct": NaN,
+            "roi": NaN,
+            "units": 0.0
+          },
+          "safe": {
+            "n": 9,
+            "wins": 7,
+            "losses": 2,
+            "win_pct": 0.7777777777777778,
+            "roi": 0.13666731012187003,
+            "units": 1.2300057910968303
+          },
+          "roi_gap_safe_minus_risk": null
+        },
+        {
+          "condition": "prior_current_rushing_epa_positive",
+          "era": "holdout",
+          "risk": {
+            "n": 1,
+            "wins": 1,
+            "losses": 0,
+            "win_pct": 1.0,
+            "roi": 0.2923976608187134,
+            "units": 0.2923976608187134
+          },
+          "safe": {
+            "n": 3,
+            "wins": 3,
+            "losses": 0,
+            "win_pct": 1.0,
+            "roi": 0.44134226156698064,
+            "units": 1.324026784700942
+          },
+          "roi_gap_safe_minus_risk": 0.14894460074826726
+        },
+        {
+          "condition": "prior_current_passing_epa_negative",
+          "era": "development",
+          "risk": {
+            "n": 0,
+            "wins": 0,
+            "losses": 0,
+            "win_pct": NaN,
+            "roi": NaN,
+            "units": 0.0
+          },
+          "safe": {
+            "n": 3,
+            "wins": 3,
+            "losses": 0,
+            "win_pct": 1.0,
+            "roi": 0.5449080725443313,
+            "units": 1.6347242176329937
+          },
+          "roi_gap_safe_minus_risk": null
+        },
+        {
+          "condition": "prior_current_passing_epa_negative",
+          "era": "validation",
+          "risk": {
+            "n": 1,
+            "wins": 0,
+            "losses": 1,
+            "win_pct": 0.0,
+            "roi": -1.0,
+            "units": -1.0
+          },
+          "safe": {
+            "n": 8,
+            "wins": 7,
+            "losses": 1,
+            "win_pct": 0.875,
+            "roi": 0.2787507238871038,
+            "units": 2.2300057910968305
+          },
+          "roi_gap_safe_minus_risk": 1.2787507238871039
+        },
+        {
+          "condition": "prior_current_passing_epa_negative",
+          "era": "holdout",
+          "risk": {
+            "n": 1,
+            "wins": 1,
+            "losses": 0,
+            "win_pct": 1.0,
+            "roi": 0.2923976608187134,
+            "units": 0.2923976608187134
+          },
+          "safe": {
+            "n": 3,
+            "wins": 3,
+            "losses": 0,
+            "win_pct": 1.0,
+            "roi": 0.44134226156698064,
+            "units": 1.324026784700942
+          },
+          "roi_gap_safe_minus_risk": 0.14894460074826726
         }
       ],
       "stable": []
@@ -2088,9 +2442,226 @@
             "units": 4.815441381465405
           },
           "roi_gap_safe_minus_risk": 0.5269897761648288
+        },
+        {
+          "condition": "prior_current_rushing_epa_positive",
+          "era": "development",
+          "risk": {
+            "n": 5,
+            "wins": 4,
+            "losses": 1,
+            "win_pct": 0.8,
+            "roi": 0.034623107562757105,
+            "units": 0.17311553781378552
+          },
+          "safe": {
+            "n": 13,
+            "wins": 12,
+            "losses": 1,
+            "win_pct": 0.9230769230769231,
+            "roi": 0.12566272130966827,
+            "units": 1.6336153770256876
+          },
+          "roi_gap_safe_minus_risk": 0.09103961374691116
+        },
+        {
+          "condition": "prior_current_rushing_epa_positive",
+          "era": "validation",
+          "risk": {
+            "n": 3,
+            "wins": 3,
+            "losses": 0,
+            "win_pct": 1.0,
+            "roi": 0.13637239953029423,
+            "units": 0.4091171985908827
+          },
+          "safe": {
+            "n": 12,
+            "wins": 12,
+            "losses": 0,
+            "win_pct": 1.0,
+            "roi": 0.4168430548246132,
+            "units": 5.002116657895359
+          },
+          "roi_gap_safe_minus_risk": 0.28047065529431897
+        },
+        {
+          "condition": "prior_current_rushing_epa_positive",
+          "era": "holdout",
+          "risk": {
+            "n": 5,
+            "wins": 4,
+            "losses": 1,
+            "win_pct": 0.8,
+            "roi": 0.1485618508874323,
+            "units": 0.7428092544371614
+          },
+          "safe": {
+            "n": 10,
+            "wins": 10,
+            "losses": 0,
+            "win_pct": 1.0,
+            "roi": 0.3695523143900109,
+            "units": 3.6955231439001093
+          },
+          "roi_gap_safe_minus_risk": 0.22099046350257862
+        },
+        {
+          "condition": "prior_current_passing_epa_negative",
+          "era": "development",
+          "risk": {
+            "n": 4,
+            "wins": 3,
+            "losses": 1,
+            "win_pct": 0.75,
+            "roi": -0.14188988095238098,
+            "units": -0.5675595238095239
+          },
+          "safe": {
+            "n": 14,
+            "wins": 13,
+            "losses": 1,
+            "win_pct": 0.9285714285714286,
+            "roi": 0.16959217418921405,
+            "units": 2.3742904386489965
+          },
+          "roi_gap_safe_minus_risk": 0.311482055141595
+        },
+        {
+          "condition": "prior_current_passing_epa_negative",
+          "era": "validation",
+          "risk": {
+            "n": 3,
+            "wins": 3,
+            "losses": 0,
+            "win_pct": 1.0,
+            "roi": 0.17147435897435895,
+            "units": 0.5144230769230769
+          },
+          "safe": {
+            "n": 12,
+            "wins": 12,
+            "losses": 0,
+            "win_pct": 1.0,
+            "roi": 0.40806756496359703,
+            "units": 4.896810779563165
+          },
+          "roi_gap_safe_minus_risk": 0.23659320598923808
+        },
+        {
+          "condition": "prior_current_passing_epa_negative",
+          "era": "holdout",
+          "risk": {
+            "n": 4,
+            "wins": 3,
+            "losses": 1,
+            "win_pct": 0.75,
+            "roi": 0.08479829430998187,
+            "units": 0.3391931772399275
+          },
+          "safe": {
+            "n": 11,
+            "wins": 11,
+            "losses": 0,
+            "win_pct": 1.0,
+            "roi": 0.3726490200997585,
+            "units": 4.099139221097343
+          },
+          "roi_gap_safe_minus_risk": 0.2878507257897766
         }
       ],
-      "stable": []
+      "stable": [
+        {
+          "condition": "prior_current_rushing_epa_positive",
+          "validation": {
+            "condition": "prior_current_rushing_epa_positive",
+            "era": "validation",
+            "risk": {
+              "n": 3,
+              "wins": 3,
+              "losses": 0,
+              "win_pct": 1.0,
+              "roi": 0.13637239953029423,
+              "units": 0.4091171985908827
+            },
+            "safe": {
+              "n": 12,
+              "wins": 12,
+              "losses": 0,
+              "win_pct": 1.0,
+              "roi": 0.4168430548246132,
+              "units": 5.002116657895359
+            },
+            "roi_gap_safe_minus_risk": 0.28047065529431897
+          },
+          "holdout": {
+            "condition": "prior_current_rushing_epa_positive",
+            "era": "holdout",
+            "risk": {
+              "n": 5,
+              "wins": 4,
+              "losses": 1,
+              "win_pct": 0.8,
+              "roi": 0.1485618508874323,
+              "units": 0.7428092544371614
+            },
+            "safe": {
+              "n": 10,
+              "wins": 10,
+              "losses": 0,
+              "win_pct": 1.0,
+              "roi": 0.3695523143900109,
+              "units": 3.6955231439001093
+            },
+            "roi_gap_safe_minus_risk": 0.22099046350257862
+          }
+        },
+        {
+          "condition": "prior_current_passing_epa_negative",
+          "validation": {
+            "condition": "prior_current_passing_epa_negative",
+            "era": "validation",
+            "risk": {
+              "n": 3,
+              "wins": 3,
+              "losses": 0,
+              "win_pct": 1.0,
+              "roi": 0.17147435897435895,
+              "units": 0.5144230769230769
+            },
+            "safe": {
+              "n": 12,
+              "wins": 12,
+              "losses": 0,
+              "win_pct": 1.0,
+              "roi": 0.40806756496359703,
+              "units": 4.896810779563165
+            },
+            "roi_gap_safe_minus_risk": 0.23659320598923808
+          },
+          "holdout": {
+            "condition": "prior_current_passing_epa_negative",
+            "era": "holdout",
+            "risk": {
+              "n": 4,
+              "wins": 3,
+              "losses": 1,
+              "win_pct": 0.75,
+              "roi": 0.08479829430998187,
+              "units": 0.3391931772399275
+            },
+            "safe": {
+              "n": 11,
+              "wins": 11,
+              "losses": 0,
+              "win_pct": 1.0,
+              "roi": 0.3726490200997585,
+              "units": 4.099139221097343
+            },
+            "roi_gap_safe_minus_risk": 0.2878507257897766
+          }
+        }
+      ]
     }
   },
   "production_findings": [

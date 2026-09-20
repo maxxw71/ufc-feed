@@ -31,10 +31,13 @@ INFO NEW_H_SERIES_NOT_RESPONSIBLE: H-series is shadow-only and Week4+/Week7+ gat
 PRE-SPECIFIED CONTEXT STABILITY
 M1_original_preseason:
   STABLE low_defense_continuity_lt65 | validation risk ROI=+15.1% safe=+30.2% | hold risk=+1.7% safe=+39.9%
+  STABLE prior_current_rushing_epa_positive | validation risk ROI=+13.6% safe=+29.7% | hold risk=+17.3% safe=+38.6%
+  STABLE prior_current_passing_epa_negative | validation risk ROI=-12.1% safe=+35.6% | hold risk=+12.6% safe=+38.7%
 M1_only_preseason:
   no coaching/continuity condition passed the repeated validation+holdout stability screen
 M2_stricter_preseason:
-  no coaching/continuity condition passed the repeated validation+holdout stability screen
+  STABLE prior_current_rushing_epa_positive | validation risk ROI=+13.6% safe=+41.7% | hold risk=+14.9% safe=+37.0%
+  STABLE prior_current_passing_epa_negative | validation risk ROI=+17.1% safe=+40.8% | hold risk=+8.5% safe=+37.3%
 
 RECOMMENDATIONS
 - Keep M1 family only with the already-confirmed enriched veto AND fail-closed feature availability; do not allow raw scanner-only M1.
