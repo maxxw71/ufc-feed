@@ -1,0 +1,40 @@
+name: MLS BeatTheBookie Source Audit
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/mls-beatthebookie-source-audit.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  audit:
+    runs-on: [self-hosted, Linux, X64, appwiza]
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Probe published odds-series archives
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          python3 - <<'PY'
+          import urllib.request
+          urls={
+            'closing':'https://www.dropbox.com/s/g9vpjjlxjeruc3u/closing_odds.zip?dl=1',
+            'series_a':'https://www.dropbox.com/s/gqp3m6o5zsd8v63/odds_series.zip?dl=1',
+            'series_b':'https://www.dropbox.com/s/t26rwzvlwtt6xnb/odds_series_b.zip?dl=1',
+          }
+          for name,url in urls.items():
+              print('===',name,'===')
+              req=urllib.request.Request(url,method='HEAD',headers={'User-Agent':'Mozilla/5.0 AppwizaMLS/1.0'})
+              try:
+                  with urllib.request.urlopen(req,timeout=60) as r:
+                      print('final_url',r.geturl())
+                      print('status',r.status)
+                      print('length',r.headers.get('Content-Length'))
+                      print('type',r.headers.get('Content-Type'))
+                      print('disposition',r.headers.get('Content-Disposition'))
+                      print('accept_ranges',r.headers.get('Accept-Ranges'))
+              except Exception as e:
+                  print('ERROR',type(e).__name__,str(e))
+          PY
