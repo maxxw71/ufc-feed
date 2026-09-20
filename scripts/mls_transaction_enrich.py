@@ -72,10 +72,21 @@ def parse_entry(text,team,direction,source_year,url):
 
 def nearest_team(table):
     # Team heading is present in the real MLS HTML even though some Markdown relays drop it.
-    for node in table.find_all_previous(['h2','h3','h4','h5','strong','p'],limit=30):
+    # Search nearby preceding DOM nodes, but only accept text that canonically resolves to
+    # exactly one known MLS club; never infer a team from table order.
+    seen=set()
+    for node in table.find_all_previous(limit=160):
+        if not getattr(node,'get_text',None):continue
         txt=clean(node.get_text(' ',strip=True))
-        c=cteam(txt)
-        if c in TEAM_SET and len(txt)<80:return c
+        if not txt or len(txt)>90 or txt in seen:continue
+        seen.add(txt)
+        cand=cteam(txt)
+        if cand in TEAM_SET:return cand
+        # Some headings contain a short suffix such as "Atlanta United Transactions".
+        for suffix in [' Transactions',' Roster Transactions',' - Transactions']:
+            if txt.endswith(suffix):
+                cand=cteam(txt[:-len(suffix)])
+                if cand in TEAM_SET:return cand
     return None
 
 def parse_historical(year,url,html):
@@ -120,6 +131,17 @@ def main():
         html=fetch_html(url)
         rows,audit=parse_historical(year,url,html)
         if len(rows)<100 or audit['teams']<15:
+            soup=BeautifulSoup(html,'html.parser')
+            samples=[]
+            for t in soup.find_all('table')[:4]:
+                prev=[]
+                for n in t.find_all_previous(limit=20):
+                    if getattr(n,'get_text',None):
+                        x=clean(n.get_text(' ',strip=True))
+                        if x and len(x)<160 and x not in prev:prev.append(x)
+                    if len(prev)>=6:break
+                samples.append({'table_head':clean(t.get_text(' ',strip=True))[:260],'previous':prev})
+            print(json.dumps({'transaction_parse_debug':year,'table_count':len(soup.find_all('table')),'samples':samples},ensure_ascii=False),flush=True)
             raise RuntimeError(f'{year} direct MLS HTML parse insufficient: rows={len(rows)} teams={audit["teams"]}')
         allrows.extend(rows);source_audit[str(year)]={'rows':len(rows),**audit,'url':url}
         (RAW/f'{year}.json').write_text(json.dumps(rows,indent=2,default=str,ensure_ascii=False))
