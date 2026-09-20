@@ -1,9 +1,9 @@
 {
-  "built_at": "2026-09-20T11:00:19.530455+00:00",
+  "built_at": "2026-09-20T11:44:28.996366+00:00",
   "base_file": "/home/anestishkurti92/mls-predictor-v1/data/processed/mls_match_features_weather_enriched.parquet",
   "output": "/home/anestishkurti92/mls-predictor-v1/data/processed/mls_match_features_master.parquet",
   "rows": 9440,
-  "columns": 830,
+  "columns": 1034,
   "base_columns": 323,
   "layers": {
     "availability": {
@@ -158,8 +158,11 @@
       "collisions_refreshed": []
     },
     "historical_multibook_odds": {
-      "status": "MISSING",
-      "path": "/home/anestishkurti92/mls-predictor-v1/data/processed/mls_historical_multibook_market_features.parquet"
+      "status": "MERGED",
+      "path": "/home/anestishkurti92/mls-predictor-v1/data/processed/mls_historical_multibook_market_features.parquet",
+      "source_rows": 428,
+      "added_or_refreshed_columns": 204,
+      "collisions_refreshed": []
     }
   },
   "coverage": {
@@ -1630,11 +1633,174 @@
         }
       }
     },
+    "historical_multibook_odds": {
+      "columns": 204,
+      "rows_any": 428,
+      "rows_all": 349,
+      "mean_non_null": 0.044373130608175465,
+      "by_season": {
+        "1996": {
+          "rows": 177,
+          "any": 0,
+          "all": 0
+        },
+        "1997": {
+          "rows": 173,
+          "any": 0,
+          "all": 0
+        },
+        "1998": {
+          "rows": 206,
+          "any": 0,
+          "all": 0
+        },
+        "1999": {
+          "rows": 208,
+          "any": 0,
+          "all": 0
+        },
+        "2000": {
+          "rows": 209,
+          "any": 0,
+          "all": 0
+        },
+        "2001": {
+          "rows": 176,
+          "any": 0,
+          "all": 0
+        },
+        "2002": {
+          "rows": 157,
+          "any": 0,
+          "all": 0
+        },
+        "2003": {
+          "rows": 161,
+          "any": 0,
+          "all": 0
+        },
+        "2004": {
+          "rows": 161,
+          "any": 0,
+          "all": 0
+        },
+        "2005": {
+          "rows": 203,
+          "any": 0,
+          "all": 0
+        },
+        "2006": {
+          "rows": 203,
+          "any": 0,
+          "all": 0
+        },
+        "2007": {
+          "rows": 206,
+          "any": 0,
+          "all": 0
+        },
+        "2008": {
+          "rows": 221,
+          "any": 0,
+          "all": 0
+        },
+        "2009": {
+          "rows": 236,
+          "any": 0,
+          "all": 0
+        },
+        "2010": {
+          "rows": 251,
+          "any": 0,
+          "all": 0
+        },
+        "2011": {
+          "rows": 319,
+          "any": 0,
+          "all": 0
+        },
+        "2012": {
+          "rows": 338,
+          "any": 0,
+          "all": 0
+        },
+        "2013": {
+          "rows": 338,
+          "any": 0,
+          "all": 0
+        },
+        "2014": {
+          "rows": 338,
+          "any": 0,
+          "all": 0
+        },
+        "2015": {
+          "rows": 357,
+          "any": 78,
+          "all": 57
+        },
+        "2016": {
+          "rows": 357,
+          "any": 350,
+          "all": 292
+        },
+        "2017": {
+          "rows": 391,
+          "any": 0,
+          "all": 0
+        },
+        "2018": {
+          "rows": 408,
+          "any": 0,
+          "all": 0
+        },
+        "2019": {
+          "rows": 421,
+          "any": 0,
+          "all": 0
+        },
+        "2020": {
+          "rows": 324,
+          "any": 0,
+          "all": 0
+        },
+        "2021": {
+          "rows": 472,
+          "any": 0,
+          "all": 0
+        },
+        "2022": {
+          "rows": 489,
+          "any": 0,
+          "all": 0
+        },
+        "2023": {
+          "rows": 521,
+          "any": 0,
+          "all": 0
+        },
+        "2024": {
+          "rows": 522,
+          "any": 0,
+          "all": 0
+        },
+        "2025": {
+          "rows": 540,
+          "any": 0,
+          "all": 0
+        },
+        "2026": {
+          "rows": 357,
+          "any": 0,
+          "all": 0
+        }
+      }
+    },
     "base_market_form": {
-      "columns": 62,
+      "columns": 128,
       "rows_any": 9440,
-      "rows_all": 5079,
-      "mean_non_null": 0.8424429332968836,
+      "rows_all": 345,
+      "mean_non_null": 0.43094958289194907,
       "by_season": {
         "1996": {
           "rows": 177,
@@ -1724,67 +1890,67 @@
         "2013": {
           "rows": 338,
           "any": 338,
-          "all": 315
+          "all": 0
         },
         "2014": {
           "rows": 338,
           "any": 338,
-          "all": 337
+          "all": 0
         },
         "2015": {
           "rows": 357,
           "any": 357,
-          "all": 354
+          "all": 57
         },
         "2016": {
           "rows": 357,
           "any": 357,
-          "all": 348
+          "all": 288
         },
         "2017": {
           "rows": 391,
           "any": 391,
-          "all": 341
+          "all": 0
         },
         "2018": {
           "rows": 408,
           "any": 408,
-          "all": 365
+          "all": 0
         },
         "2019": {
           "rows": 421,
           "any": 421,
-          "all": 382
+          "all": 0
         },
         "2020": {
           "rows": 324,
           "any": 324,
-          "all": 297
+          "all": 0
         },
         "2021": {
           "rows": 472,
           "any": 472,
-          "all": 434
+          "all": 0
         },
         "2022": {
           "rows": 489,
           "any": 489,
-          "all": 453
+          "all": 0
         },
         "2023": {
           "rows": 521,
           "any": 521,
-          "all": 482
+          "all": 0
         },
         "2024": {
           "rows": 522,
           "any": 522,
-          "all": 482
+          "all": 0
         },
         "2025": {
           "rows": 540,
           "any": 540,
-          "all": 489
+          "all": 0
         },
         "2026": {
           "rows": 357,
@@ -2317,8 +2483,7 @@
     "2026": 357
   },
   "missing_layers": [
-    "game_notes_availability",
-    "historical_multibook_odds"
+    "game_notes_availability"
   ],
   "leakage_policy": "Master merge is structural only. Each source layer is responsible for strict pregame construction; audit metadata is preserved separately. No missing feature is imputed as zero during merge."
 }
