@@ -89,12 +89,12 @@ def main():
         team=canon_team(item['team']);day=item['date'];url=item['url']
         try:
             data=fetch_pdf(url);reader=PdfReader(io.BytesIO(data))
-            text='\n'.join((p.extract_text() or '') for p in reader.pages[:4])
+            text='\n'.join((p.extract_text() or '') for p in reader.pages)
             entries=extract_report(text)
             matches=base[(base.date_day.eq(day))&((base.home_team.map(canon_team).eq(team))|(base.away_team.map(canon_team).eq(team)))]
             mid=str(matches.iloc[0].match_id) if len(matches)==1 else None
             for e in entries:rows.append({'match_id':mid,'season':item['season'],'date':day,'team':team,'url':url,**e})
-            audit.append({'team':team,'date':day,'url':url,'pdf_bytes':len(data),'matched_games':len(matches),'entries':len(entries),'status':'OK' if mid and entries else 'PARTIAL'})
+            probe=re.search(r'.{0,220}AVAILAB.{0,800}',normspace(text),re.I)\n            audit.append({'team':team,'date':day,'url':url,'pdf_bytes':len(data),'pages':len(reader.pages),'matched_games':len(matches),'entries':len(entries),'availability_probe':probe.group(0)[:1000] if probe else None,'status':'OK' if mid and entries else 'PARTIAL'})
         except Exception as e:
             audit.append({'team':team,'date':day,'url':url,'status':'ERROR','error':type(e).__name__+': '+str(e)[:240]})
     raw=pd.DataFrame(rows)
