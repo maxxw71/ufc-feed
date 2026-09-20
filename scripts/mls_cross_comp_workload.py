@@ -60,45 +60,71 @@ def jina_json(url):
 
 def espn_year(label,slug,year):
     cache=RAW/f'espn_{slug.replace(".","_")}_{year}.json'
-    if cache.exists():return json.loads(cache.read_text())
-    url=f'https://site.api.espn.com/apis/site/v2/sports/soccer/{slug}/scoreboard?dates={year}&limit=1000'
-    d,_=jina_json(url)
-    rows=[]
-    for ev in d.get('events') or []:
-        comp=(ev.get('competitions') or [{}])[0]
-        status=(comp.get('status') or ev.get('status') or {})
-        stype=status.get('type') or {}
-        completed=bool(stype.get('completed')) or str(stype.get('name','')).upper() in {'STATUS_FINAL','FINAL'}
-        period=pd.to_numeric(status.get('period'),errors='coerce')
-        detail=' '.join(str(x or '') for x in [stype.get('detail'),stype.get('shortDetail'),status.get('displayClock')])
-        extra=bool((pd.notna(period) and float(period)>2) or re.search(r'\b(AET|EXTRA TIME|ET)\b',detail,re.I))
-        teams={}
-        scores={}
-        for q in comp.get('competitors') or []:
-            ha=q.get('homeAway')
-            teams[ha]=cteam((q.get('team') or {}).get('displayName'))
-            scores[ha]=pd.to_numeric(q.get('score'),errors='coerce')
-        if not teams.get('home') or not teams.get('away'):continue
-        rows.append({
-          'event_id':str(ev.get('id')),'competition':label,'source':'ESPN',
-          'date_time_utc':ev.get('date'),'home_team':teams['home'],'away_team':teams['away'],
-          'home_score':None if pd.isna(scores.get('home')) else float(scores['home']),
-          'away_score':None if pd.isna(scores.get('away')) else float(scores['away']),
-          'completed':completed,'extra_time':extra,'minutes_estimate':120 if extra else 90,
-          'source_url':url,
-        })
-    cache.write_text(json.dumps(rows,ensure_ascii=False,separators=(',',':')))
-    return rows
+    rows=None
+    if cache.exists():
+        try: rows=json.loads(cache.read_text())
+        except Exception: rows=None
+    if rows is None:
+        url=f'https://site.api.espn.com/apis/site/v2/sports/soccer/{slug}/scoreboard?dates={year}&limit=1000'
+        d,_=jina_json(url)
+        rows=[]
+        for ev in d.get('events') or []:
+            comp=(ev.get('competitions') or [{}])[0]
+            status=(comp.get('status') or ev.get('status') or {})
+            stype=status.get('type') or {}
+            completed=bool(stype.get('completed')) or str(stype.get('name','')).upper() in {'STATUS_FINAL','FINAL'}
+            period=pd.to_numeric(status.get('period'),errors='coerce')
+            detail=' '.join(str(x or '') for x in [stype.get('detail'),stype.get('shortDetail'),status.get('displayClock')])
+            extra=bool((pd.notna(period) and float(period)>2) or re.search(r'\b(AET|EXTRA TIME|ET)\b',detail,re.I))
+            teams={};scores={}
+            for q in comp.get('competitors') or []:
+                ha=q.get('homeAway')
+                teams[ha]=cteam((q.get('team') or {}).get('displayName'))
+                scores[ha]=pd.to_numeric(q.get('score'),errors='coerce')
+            if not teams.get('home') or not teams.get('away'):continue
+            rows.append({
+              'event_id':str(ev.get('id')),'competition':label,'source':'ESPN',
+              'date_time_utc':ev.get('date'),'home_team':teams['home'],'away_team':teams['away'],
+              'home_score':None if pd.isna(scores.get('home')) else float(scores['home']),
+              'away_score':None if pd.isna(scores.get('away')) else float(scores['away']),
+              'completed':completed,'extra_time':extra,'minutes_estimate':120 if extra else 90,
+              'source_url':url,
+            })
+    # Hard quality gate: a year query may return stale/adjacent-season events.
+    clean=[]
+    for r in rows:
+        dt=pd.to_datetime(r.get('date_time_utc'),errors='coerce',utc=True)
+        if pd.isna(dt) or int(dt.year)!=int(year):continue
+        clean.append(r)
+    cache.write_text(json.dumps(clean,ensure_ascii=False,separators=(',',':')))
+    return clean
 
 def parse_image_team(line):
-    x=re.sub(r'^Image:\s*','',line.strip(),flags=re.I).strip()
-    m=re.match(r'^(.*?)(?:\s+(-?\d+))?$',x)
-    name=(m.group(1) or '').strip(); score=m.group(2)
+    x=line.strip()
+    # Jina/Canada Soccer may render images as markdown links:
+    # ![Image: Toronto FC](...) Toronto FC 5
+    alt=None
+    ma=re.search(r'Image:\s*([^\]]+)',x,re.I)
+    if ma:alt=ma.group(1).strip()
+    x=re.sub(r'!?\[[^\]]*\]\([^\)]*\)',' ',x)
+    x=re.sub(r'^.*?Image:\s*','',x,flags=re.I).strip()
+    x=re.sub(r'\s+',' ',x)
+    # Score can be "0", "2 (5)" etc.; penalty score is not the regulation score.
+    m=re.match(r'^(.*?)(?:\s+(-?\d+))(?:\s*\(\d+\))?\s*$',x)
+    if m:
+        body=(m.group(1) or '').strip();score=float(m.group(2))
+    else:
+        body=x;score=None
+    name=body
+    if alt:
+        # Prefer the explicit image alt club name when it is sensible.
+        ca=cteam(alt)
+        if ca: name=alt
     words=name.split()
     if len(words)%2==0 and len(words)>=2:
         h=len(words)//2
         if words[:h]==words[h:]:name=' '.join(words[:h])
-    return cteam(name), (float(score) if score is not None else None)
+    return cteam(name),score
 
 def canada_year(year):
     cache=RAW/f'canadian_championship_{year}.json'
@@ -111,7 +137,7 @@ def canada_year(year):
     date_re=re.compile(r'^(\d{1,2})\s+([A-Za-z]{3,9})\s+(\d{4})$')
     months={m[:3].lower():i for i,m in enumerate(['January','February','March','April','May','June','July','August','September','October','November','December'],1)}
     while i<len(lines)-1:
-        if lines[i].lower().startswith('image:') and lines[i+1].lower().startswith('image:'):
+        if 'image:' in lines[i].lower() and 'image:' in lines[i+1].lower():
             ht,hs=parse_image_team(lines[i]);at,as_=parse_image_team(lines[i+1])
             dt=None;completed=False
             for j in range(i+2,min(len(lines),i+10)):
