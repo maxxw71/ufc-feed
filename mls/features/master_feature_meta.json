@@ -1,9 +1,9 @@
 {
-  "built_at": "2026-09-20T10:58:30.648666+00:00",
+  "built_at": "2026-09-20T11:00:19.530455+00:00",
   "base_file": "/home/anestishkurti92/mls-predictor-v1/data/processed/mls_match_features_weather_enriched.parquet",
   "output": "/home/anestishkurti92/mls-predictor-v1/data/processed/mls_match_features_master.parquet",
   "rows": 9440,
-  "columns": 813,
+  "columns": 830,
   "base_columns": 323,
   "layers": {
     "availability": {
@@ -151,8 +151,11 @@
       "collisions_refreshed": []
     },
     "external_pinnacle": {
-      "status": "MISSING",
-      "path": "/home/anestishkurti92/mls-predictor-v1/data/processed/mls_external_pinnacle_closing_features.parquet"
+      "status": "MERGED",
+      "path": "/home/anestishkurti92/mls-predictor-v1/data/processed/mls_external_pinnacle_closing_features.parquet",
+      "source_rows": 5786,
+      "added_or_refreshed_columns": 17,
+      "collisions_refreshed": []
     },
     "historical_multibook_odds": {
       "status": "MISSING",
@@ -1464,11 +1467,174 @@
         }
       }
     },
+    "external_pinnacle": {
+      "columns": 17,
+      "rows_any": 5786,
+      "rows_all": 5786,
+      "mean_non_null": 0.6129237288135593,
+      "by_season": {
+        "1996": {
+          "rows": 177,
+          "any": 0,
+          "all": 0
+        },
+        "1997": {
+          "rows": 173,
+          "any": 0,
+          "all": 0
+        },
+        "1998": {
+          "rows": 206,
+          "any": 0,
+          "all": 0
+        },
+        "1999": {
+          "rows": 208,
+          "any": 0,
+          "all": 0
+        },
+        "2000": {
+          "rows": 209,
+          "any": 0,
+          "all": 0
+        },
+        "2001": {
+          "rows": 176,
+          "any": 0,
+          "all": 0
+        },
+        "2002": {
+          "rows": 157,
+          "any": 0,
+          "all": 0
+        },
+        "2003": {
+          "rows": 161,
+          "any": 0,
+          "all": 0
+        },
+        "2004": {
+          "rows": 161,
+          "any": 0,
+          "all": 0
+        },
+        "2005": {
+          "rows": 203,
+          "any": 0,
+          "all": 0
+        },
+        "2006": {
+          "rows": 203,
+          "any": 0,
+          "all": 0
+        },
+        "2007": {
+          "rows": 206,
+          "any": 0,
+          "all": 0
+        },
+        "2008": {
+          "rows": 221,
+          "any": 0,
+          "all": 0
+        },
+        "2009": {
+          "rows": 236,
+          "any": 0,
+          "all": 0
+        },
+        "2010": {
+          "rows": 251,
+          "any": 0,
+          "all": 0
+        },
+        "2011": {
+          "rows": 319,
+          "any": 0,
+          "all": 0
+        },
+        "2012": {
+          "rows": 338,
+          "any": 338,
+          "all": 338
+        },
+        "2013": {
+          "rows": 338,
+          "any": 334,
+          "all": 334
+        },
+        "2014": {
+          "rows": 338,
+          "any": 337,
+          "all": 337
+        },
+        "2015": {
+          "rows": 357,
+          "any": 356,
+          "all": 356
+        },
+        "2016": {
+          "rows": 357,
+          "any": 356,
+          "all": 356
+        },
+        "2017": {
+          "rows": 391,
+          "any": 389,
+          "all": 389
+        },
+        "2018": {
+          "rows": 408,
+          "any": 406,
+          "all": 406
+        },
+        "2019": {
+          "rows": 421,
+          "any": 421,
+          "all": 421
+        },
+        "2020": {
+          "rows": 324,
+          "any": 322,
+          "all": 322
+        },
+        "2021": {
+          "rows": 472,
+          "any": 471,
+          "all": 471
+        },
+        "2022": {
+          "rows": 489,
+          "any": 489,
+          "all": 489
+        },
+        "2023": {
+          "rows": 521,
+          "any": 521,
+          "all": 521
+        },
+        "2024": {
+          "rows": 522,
+          "any": 521,
+          "all": 521
+        },
+        "2025": {
+          "rows": 540,
+          "any": 525,
+          "all": 525
+        },
+        "2026": {
+          "rows": 357,
+          "any": 0,
+          "all": 0
+        }
+      }
+    },
     "base_market_form": {
-      "columns": 59,
+      "columns": 62,
       "rows_any": 9440,
-      "rows_all": 5092,
-      "mean_non_null": 0.8541134013214592,
+      "rows_all": 5079,
+      "mean_non_null": 0.8424429332968836,
       "by_season": {
         "1996": {
           "rows": 177,
@@ -1558,32 +1724,32 @@
         "2013": {
           "rows": 338,
           "any": 338,
-          "all": 318
+          "all": 315
         },
         "2014": {
           "rows": 338,
           "any": 338,
-          "all": 338
+          "all": 337
         },
         "2015": {
           "rows": 357,
           "any": 357,
-          "all": 355
+          "all": 354
         },
         "2016": {
           "rows": 357,
           "any": 357,
-          "all": 349
+          "all": 348
         },
         "2017": {
           "rows": 391,
           "any": 391,
-          "all": 343
+          "all": 341
         },
         "2018": {
           "rows": 408,
           "any": 408,
-          "all": 367
+          "all": 365
         },
         "2019": {
           "rows": 421,
@@ -1593,12 +1759,12 @@
         "2020": {
           "rows": 324,
           "any": 324,
-          "all": 298
+          "all": 297
         },
         "2021": {
           "rows": 472,
           "any": 472,
-          "all": 435
+          "all": 434
         },
         "2022": {
           "rows": 489,
@@ -1613,7 +1779,7 @@
         "2024": {
           "rows": 522,
           "any": 522,
-          "all": 483
+          "all": 482
         },
         "2025": {
           "rows": 540,
@@ -2152,7 +2318,6 @@
   },
   "missing_layers": [
     "game_notes_availability",
-    "external_pinnacle",
     "historical_multibook_odds"
   ],
   "leakage_policy": "Master merge is structural only. Each source layer is responsible for strict pregame construction; audit metadata is preserved separately. No missing feature is imputed as zero during merge."
