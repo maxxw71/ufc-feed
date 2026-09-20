@@ -1,5 +1,5 @@
 {
-  "built_at": "2026-09-20T06:20:59.248991+00:00",
+  "built_at": "2026-09-20T09:39:06.702917+00:00",
   "base_file": "/home/anestishkurti92/mls-predictor-v1/data/processed/mls_match_features_weather_enriched.parquet",
   "output": "/home/anestishkurti92/mls-predictor-v1/data/processed/mls_match_features_master.parquet",
   "rows": 9440,
@@ -63,11 +63,10 @@
       ]
     },
     "game_notes_availability": {
-      "status": "MERGED",
+      "status": "NO_COVERAGE",
       "path": "/home/anestishkurti92/mls-predictor-v1/data/processed/mls_game_notes_availability_features.parquet",
       "source_rows": 0,
-      "added_or_refreshed_columns": 0,
-      "collisions_refreshed": []
+      "usable_columns": 0
     },
     "confirmed_lineup": {
       "status": "MERGED_REFRESH",
@@ -316,18 +315,11 @@
         }
       }
     },
-    "game_notes_availability": {
-      "columns": 0,
-      "rows_any": 0,
-      "rows_all": 0,
-      "mean_non_null": 0.0,
-      "by_season": {}
-    },
     "confirmed_lineup": {
       "columns": 32,
       "rows_any": 9440,
-      "rows_all": 1419,
-      "mean_non_null": 0.24899364406779662,
+      "rows_all": 1919,
+      "mean_non_null": 0.29771583686440684,
       "by_season": {
         "1996": {
           "rows": 177,
@@ -462,12 +454,12 @@
         "2022": {
           "rows": 489,
           "any": 489,
-          "all": 0
+          "all": 461
         },
         "2023": {
           "rows": 521,
           "any": 521,
-          "all": 43
+          "all": 82
         },
         "2024": {
           "rows": 522,
@@ -1957,7 +1949,7 @@
       "columns": 57,
       "rows_any": 5835,
       "rows_all": 589,
-      "mean_non_null": 0.5649513083556348,
+      "mean_non_null": 0.5677389979185251,
       "by_season": {
         "1996": {
           "rows": 177,
@@ -2150,6 +2142,8 @@
     "2025": 540,
     "2026": 357
   },
-  "missing_layers": [],
+  "missing_layers": [
+    "game_notes_availability"
+  ],
   "leakage_policy": "Master merge is structural only. Each source layer is responsible for strict pregame construction; audit metadata is preserved separately. No missing feature is imputed as zero during merge."
 }
