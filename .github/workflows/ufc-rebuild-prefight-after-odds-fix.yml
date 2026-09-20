@@ -1,0 +1,118 @@
+name: UFC Rebuild Prefight After Odds Fix
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/run_new_category_discovery.sh'
+      - '.github/workflows/ufc-rebuild-prefight-after-odds-fix.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  rebuild:
+    runs-on: [self-hosted, appwiza]
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+        with: {fetch-depth: 0}
+      - name: Deploy corrected source and rebuild prefight warehouse
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          KEY=/home/appwiza-runner/.ssh/appwiza_vps
+          HOST=anestishkurti92@127.0.0.1
+          ROOT=/home/anestishkurti92/ufc-predictor-v1
+          ssh -i "$KEY" -o BatchMode=yes -o StrictHostKeyChecking=accept-new "$HOST" "mkdir -p $ROOT/ufc_reach_method_analysis $ROOT/new_category_discovery $ROOT/feature_expansion"
+          scp -i "$KEY" -o BatchMode=yes -o StrictHostKeyChecking=accept-new             ufc_reach_method_analysis/reach_market_sample.csv "$HOST:$ROOT/ufc_reach_method_analysis/reach_market_sample.csv"
+          scp -i "$KEY" -o BatchMode=yes -o StrictHostKeyChecking=accept-new             scripts/run_new_category_discovery.sh "$HOST:$ROOT/run_new_category_discovery.sh"
+          for f in ufc_feature_expansion.py ufc_metadata_features.py ufc_weight_history_features.py ufc_context_crosscheck_features.py ufc_career_context_features.py; do
+            scp -i "$KEY" -o BatchMode=yes -o StrictHostKeyChecking=accept-new "scripts/$f" "$HOST:$ROOT/$f"
+          done
+          ssh -i "$KEY" -o BatchMode=yes -o StrictHostKeyChecking=accept-new "$HOST" 'bash -s' <<'EOF'
+          set -Eeuo pipefail
+          ROOT=/home/anestishkurti92/ufc-predictor-v1
+          cd "$ROOT"
+          stamp=$(date -u +%Y%m%dT%H%M%SZ)
+          if [ -s new_category_discovery/prefight_favorite_features.csv ]; then
+            cp new_category_discovery/prefight_favorite_features.csv "new_category_discovery/prefight_favorite_features.pre_odds_fix.$stamp.csv"
+          fi
+          rm -f new_category_discovery/prefight_favorite_features.csv
+          chmod 700 run_new_category_discovery.sh
+          UFC_REBUILD_CACHE_ONLY=1 timeout 25m bash run_new_category_discovery.sh
+          for f in ufc_feature_expansion.py ufc_metadata_features.py ufc_weight_history_features.py ufc_context_crosscheck_features.py ufc_career_context_features.py; do
+            venv/bin/python -m py_compile "$f"
+            OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 timeout 12m nice -n 12 venv/bin/python "$f"
+          done
+          mkdir -p research/odds_integrity
+          venv/bin/python - <<'PY'
+          import json,re
+          from pathlib import Path
+          import pandas as pd
+          root=Path('/home/anestishkurti92/ufc-predictor-v1')
+          base=pd.read_csv(root/'new_category_discovery/prefight_favorite_features.csv',low_memory=False)
+          v6=pd.read_csv(root/'feature_expansion/prefight_favorite_features_v6.csv',low_memory=False)
+          def norm(s): return re.sub(r'[^a-z0-9]+',' ',str(s or '').lower()).strip()
+          cases=[
+            ('2025-07-26',{'shara magomedov','marc andre barriault'}),
+            ('2025-08-09',{'roman dolidze','anthony hernandez'}),
+            ('2025-08-09',{'iasmin lucindo','angela hill'}),
+            ('2025-08-23',{'brian ortega','aljamain sterling'}),
+            ('2025-09-06',{'shauna bannon','sam hughes'}),
+            ('2025-09-06',{'nassourdine imavov','caio borralho'}),
+          ]
+          expected={
+            frozenset({'roman dolidze','anthony hernandez'}):'anthony hernandez',
+            frozenset({'iasmin lucindo','angela hill'}):'iasmin lucindo',
+            frozenset({'brian ortega','aljamain sterling'}):'aljamain sterling',
+            frozenset({'shauna bannon','sam hughes'}):'sam hughes',
+          }
+          rows=[]
+          for date,names in cases:
+            q=base[base.event_date.astype(str).str[:10].eq(date)].copy()
+            q=q[q.apply(lambda r:{norm(r.favorite),norm(r.opponent)}==names,axis=1)]
+            if len(q):
+              r=q.iloc[0]
+              pair=frozenset(names)
+              exp=expected.get(pair)
+              if exp and norm(r.favorite)!=exp:
+                raise RuntimeError(f'Favorite orientation still wrong for {date} {sorted(names)}: {r.favorite}')
+              if float(r.market_prob)>=0.90:
+                raise RuntimeError(f'Suspicious extreme probability remains for {date} {sorted(names)}: {r.market_prob}')
+              rows.append({'date':date,'pair':sorted(names),'favorite':r.favorite,'opponent':r.opponent,
+                           'market_prob':float(r.market_prob),'fav_decimal':float(r.fav_decimal),'present':True})
+            else:
+              rows.append({'date':date,'pair':sorted(names),'present':False})
+          if len(base)!=len(v6):
+            raise RuntimeError(f'v6 row count mismatch base={len(base)} v6={len(v6)}')
+          payload={'built_at':pd.Timestamp.now(tz='UTC').isoformat(),'status':'PASS',
+                   'base_rows':len(base),'v6_rows':len(v6),'base_date_min':str(base.event_date.min()),
+                   'base_date_max':str(base.event_date.max()),'spot_checks':rows,
+                   'note':'Core prefight warehouse rebuilt from corrected pre-event/name-oriented reach-market sample.'}
+          (root/'research/odds_integrity/prefight_rebuild_audit.json').write_text(json.dumps(payload,indent=2,default=str))
+          print(json.dumps(payload,indent=2,default=str))
+          PY
+          EOF
+      - name: Pull audit
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          KEY=/home/appwiza-runner/.ssh/appwiza_vps
+          HOST=anestishkurti92@127.0.0.1
+          mkdir -p ufc_data_integrity
+          ssh -i "$KEY" -o BatchMode=yes -o StrictHostKeyChecking=accept-new "$HOST"             'cat /home/anestishkurti92/ufc-predictor-v1/research/odds_integrity/prefight_rebuild_audit.json'             > ufc_data_integrity/prefight_rebuild_audit.json
+      - name: Persist audit
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          cp ufc_data_integrity/prefight_rebuild_audit.json "$RUNNER_TEMP/prefight_rebuild_audit.json"
+          git fetch origin main
+          git reset --hard origin/main
+          mkdir -p ufc_data_integrity
+          cp "$RUNNER_TEMP/prefight_rebuild_audit.json" ufc_data_integrity/prefight_rebuild_audit.json
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git add ufc_data_integrity/prefight_rebuild_audit.json
+          if ! git diff --cached --quiet; then
+            git commit -m 'Publish UFC prefight odds integrity audit'
+            git push origin HEAD:main
+          fi
