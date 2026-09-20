@@ -113,18 +113,74 @@ def simulate(rows,mode):
     recovery_days=None
     if max_dd_start is not None and max_dd_recovery is not None:
         recovery_days=int((max_dd_recovery-max_dd_start).days)
+
+    # Longest time spent below a prior bankroll peak.
+    bankroll=10000.0
+    peak=bankroll
+    peak_date=None
+    underwater_start=None
+    longest_underwater_days=0
+    longest_underwater_start=None
+    longest_underwater_end=None
+    longest_underwater_open=False
+    for match_id,g in rows.groupby('match_id',sort=False):
+        pre=bankroll
+        stake=100.0 if mode=='flat100' else pre*.01
+        bankroll+=float((g.profit*stake).sum())
+        dt=pd.to_datetime(g.date.iloc[0])
+        if bankroll>=peak:
+            if underwater_start is not None:
+                dur=int((dt-underwater_start).days)
+                if dur>longest_underwater_days:
+                    longest_underwater_days=dur
+                    longest_underwater_start=underwater_start
+                    longest_underwater_end=dt
+                underwater_start=None
+            peak=bankroll
+            peak_date=dt
+        elif underwater_start is None:
+            underwater_start=peak_date or dt
+    if underwater_start is not None:
+        dt=pd.to_datetime(rows.date.iloc[-1])
+        dur=int((dt-underwater_start).days)
+        if dur>longest_underwater_days:
+            longest_underwater_days=dur
+            longest_underwater_start=underwater_start
+            longest_underwater_end=dt
+            longest_underwater_open=True
+
+    # Losing streak with dates.
+    cur=0;best=0;cur_start=None;best_start=None;best_end=None
+    for _,r in rows.iterrows():
+        dt=pd.to_datetime(r.date)
+        if float(r.profit)<0:
+            if cur==0: cur_start=dt
+            cur+=1
+            if cur>best:
+                best=cur;best_start=cur_start;best_end=dt
+        else:
+            cur=0;cur_start=None
+
     return {
       'mode':mode,'starting_bankroll':10000.0,'ending_bankroll':bankroll,
       'net_profit':bankroll-10000.0,'total_staked':total_staked,
       'signals':int(len(rows)),'unique_matches':int(rows.match_id.nunique()),
       'wins':int((rows.profit>0).sum()),'losses':int((rows.profit<0).sum()),
-      'max_consecutive_losses':max_loss_streak(signal_profits),
+      'max_consecutive_losses':best,
+      'max_consecutive_losses_start':None if best_start is None else best_start.date().isoformat(),
+      'max_consecutive_losses_end':None if best_end is None else best_end.date().isoformat(),
       'lowest_bankroll':lowest,'lowest_bankroll_date':lowest_date,
       'max_drawdown_amount':max_dd_amt,'max_drawdown_pct':max_dd_pct,
       'max_drawdown_start':None if max_dd_start is None else max_dd_start.date().isoformat(),
       'max_drawdown_trough':None if max_dd_trough is None else max_dd_trough.date().isoformat(),
       'max_drawdown_recovery':None if max_dd_recovery is None else max_dd_recovery.date().isoformat(),
       'max_drawdown_recovery_days':recovery_days,
+      'longest_underwater_days':longest_underwater_days,
+      'longest_underwater_start':None if longest_underwater_start is None else longest_underwater_start.date().isoformat(),
+      'longest_underwater_end':None if longest_underwater_end is None else longest_underwater_end.date().isoformat(),
+      'longest_underwater_open':longest_underwater_open,
+      'ending_1pct_stake':bankroll*.01 if mode=='pct1' else None,
+      'average_stake':total_staked/len(rows) if len(rows) else None,
       'annual':annual,'records':rec
     }
 
