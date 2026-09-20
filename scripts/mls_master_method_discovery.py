@@ -49,8 +49,10 @@ def period(df,k):
     return df.season.between(lo,hi)
 
 def date_period(df,lo,hi):
-    x=pd.to_datetime(df.date,errors='coerce')
-    return x.between(pd.Timestamp(lo),pd.Timestamp(hi),inclusive='both')
+    x=pd.to_datetime(df.date,errors='coerce',utc=True)
+    left=pd.Timestamp(lo,tz='UTC')
+    right=pd.Timestamp(hi,tz='UTC')+pd.Timedelta(days=1)-pd.Timedelta(microseconds=1)
+    return x.between(left,right,inclusive='both')
 
 def pmask(df,name):
     _,lo,hi=next(x for x in PRICE_BANDS if x[0]==name)
