@@ -217,6 +217,12 @@ def main():
                     'weighted_missing_gplus_share5':0.0,'missing_top11_minutes_count5':0.0,
                     'missing_top3_xgi_count5':0.0,'gk_out':0.0,'resolved_players':0.0,'unresolved_players':0.0,
                 }
+                for cat in ['injury','suspension','international_duty','illness','concussion','non_injury','unspecified']:
+                    feats[f'{cat}_weighted_missing_minutes_share5']=0.0
+                    feats[f'{cat}_weighted_missing_xgi_share5']=0.0
+                    feats[f'{cat}_weighted_missing_gplus_share5']=0.0
+                    feats[f'{cat}_missing_top11_minutes_count5']=0.0
+                    feats[f'{cat}_missing_top3_xgi_count5']=0.0
                 if known:
                     top11=set(vals.nlargest(11,'minutes').player_id.astype(str)) if len(vals) else set()
                     top3x=set(vals.nlargest(3,'xgi').player_id.astype(str)) if len(vals) else set()
@@ -238,13 +244,26 @@ def main():
                         feats['weighted_missing_minutes_share5']+=w*safe_div(float(vr.minutes),tot['minutes'])
                         feats['weighted_missing_xgi_share5']+=w*safe_div(float(vr.xgi),tot['xgi'])
                         feats['weighted_missing_gplus_share5']+=w*safe_div(float(vr.gplus_positive),tot['gplus_positive'])
-                        if status=='OUT' and pid in top11:feats['missing_top11_minutes_count5']+=1
-                        if status=='OUT' and pid in top3x:feats['missing_top3_xgi_count5']+=1
+                        cat=str(e.reason_category) if str(e.reason_category) in {'injury','suspension','international_duty','illness','concussion','non_injury','unspecified'} else 'unspecified'
+                        feats[f'{cat}_weighted_missing_minutes_share5']+=w*safe_div(float(vr.minutes),tot['minutes'])
+                        feats[f'{cat}_weighted_missing_xgi_share5']+=w*safe_div(float(vr.xgi),tot['xgi'])
+                        feats[f'{cat}_weighted_missing_gplus_share5']+=w*safe_div(float(vr.gplus_positive),tot['gplus_positive'])
+                        if status=='OUT' and pid in top11:
+                            feats['missing_top11_minutes_count5']+=1
+                            feats[f'{cat}_missing_top11_minutes_count5']+=1
+                        if status=='OUT' and pid in top3x:
+                            feats['missing_top3_xgi_count5']+=1
+                            feats[f'{cat}_missing_top3_xgi_count5']+=1
                         if status=='OUT' and str(vr.position).upper()=='GK':feats['gk_out']=1.0
                 for k,v in feats.items():row[prefix+k]=v
             # Positive edge means the away side carries the larger missing-player burden.
-            for metric in ['weighted_missing_minutes_share5','weighted_missing_xgi_share5','weighted_missing_gplus_share5',
-                           'out_count','questionable_count','missing_top11_minutes_count5','missing_top3_xgi_count5']:
+            edge_metrics=['weighted_missing_minutes_share5','weighted_missing_xgi_share5','weighted_missing_gplus_share5',
+                           'out_count','questionable_count','missing_top11_minutes_count5','missing_top3_xgi_count5']
+            for cat in ['injury','suspension','international_duty','illness','concussion','non_injury','unspecified']:
+                edge_metrics += [f'{cat}_weighted_missing_minutes_share5',f'{cat}_weighted_missing_xgi_share5',
+                                 f'{cat}_weighted_missing_gplus_share5',f'{cat}_missing_top11_minutes_count5',
+                                 f'{cat}_missing_top3_xgi_count5']
+            for metric in edge_metrics:
                 row['edge_home_availability_'+metric]=row['away_availability_'+metric]-row['home_availability_'+metric]
             feature_rows.append(row)
 
@@ -266,6 +285,7 @@ def main():
       'unresolved_or_no_prior5_status_players':unresolved,
       'coverage_seasons':sorted(int(x) for x in feat.season.dropna().unique()),
       'output':str(OUT_WAREHOUSE),
+      'reason_specific_impact_features':['injury','suspension','international_duty','illness','concussion','non_injury','unspecified'],
       'leakage_note':'Availability is joined only to its official season/matchday report. Missing-player impact uses only each team player rows from its five matches strictly before the target match. Reports failing schedule-team coverage >=75% are rejected. Explicit CLEAR rows are confirmed zero absences; only match teams absent from a validated report are marked inferred_clear.'
     }
     REPORT.write_text(json.dumps(meta,indent=2,default=str))
