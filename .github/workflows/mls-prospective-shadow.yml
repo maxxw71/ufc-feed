@@ -68,6 +68,12 @@ jobs:
               {k:r.get(k) for k in ['method_id','selection','opponent','commence_time','american_price','book','market_prob','research_status','confidence_tier','portfolio_conflict','same_side_consensus']}
               for r in d.get('qualifiers') or []
             ],
+            'active_method_ids':d.get('active_method_ids') or [],
+            'watch_only_method_ids':d.get('watch_only_method_ids') or [],
+            'active_qualifier_count':len(d.get('active_qualifiers') or []),
+            'watch_qualifier_count':len(d.get('watch_qualifiers') or []),
+            'portfolio_matches':d.get('portfolio_matches') or [],
+            'portfolio_conflicts':d.get('portfolio_conflicts') or [],
             'conflicts':d.get('conflicts') or [],
             'consensus':d.get('consensus') or [],
             'portfolio_policy':d.get('portfolio_policy') or {},
@@ -77,7 +83,7 @@ jobs:
           }
           Path('mls/prospective/shadow_status.json').write_text(json.dumps(out,indent=2))
           fwd=json.loads(Path('/tmp/mls_forward_record.json').read_text())
-          Path('mls/prospective/forward_record.json').write_text(json.dumps({k:fwd.get(k) for k in ['updated_at','shadow_only','official_autopromotions','methods','signals']},indent=2))
+          Path('mls/prospective/forward_record.json').write_text(json.dumps({k:fwd.get(k) for k in ['updated_at','shadow_only','official_autopromotions','active_method_ids','watch_only_method_ids','active_signals','watch_only_signals','methods','signals']},indent=2))
           print(json.dumps(out,indent=2))
           PY
 
