@@ -13,6 +13,8 @@ SH=ROOT/'live/shadow';SH.mkdir(parents=True,exist_ok=True)
 BOARD=SH/'current_shadow_board.json'
 DB=SH/'prospective.sqlite3'
 REPORT=SH/'forward_record.json'
+ACTIVE_METHOD_IDS={'MLS-R01V2','MLS-R02V2','MLS-R03','MLS-A02','MLS-A03','MLS-A05','MLS-A06'}
+WATCH_ONLY_METHOD_IDS={'MLS-A04'}
 
 def now():return datetime.now(timezone.utc).isoformat()
 def conn():
@@ -63,6 +65,24 @@ def conn():
         db.execute("alter table signals add column portfolio_eligible INTEGER")
     if 'portfolio_conflict' not in cols:
         db.execute("alter table signals add column portfolio_conflict INTEGER")
+    # Backfill immutable older signals created before tracking-tier columns existed.
+    qmarks=','.join('?' for _ in ACTIVE_METHOD_IDS)
+    db.execute(f"update signals set tracking_tier='ACTIVE_PROSPECTIVE' where method_id in ({qmarks})",
+               tuple(sorted(ACTIVE_METHOD_IDS)))
+    qmarks=','.join('?' for _ in WATCH_ONLY_METHOD_IDS)
+    db.execute(f"update signals set tracking_tier='WATCH_ONLY',portfolio_eligible=0,portfolio_conflict=0 where method_id in ({qmarks})",
+               tuple(sorted(WATCH_ONLY_METHOD_IDS)))
+    db.execute("update signals set tracking_tier='RETIRED_LEGACY',portfolio_eligible=0,portfolio_conflict=0 where tracking_tier is null")
+
+    # Reconstruct active portfolio conflict state from immutable first-seen signals.
+    active_rows=db.execute("select signal_key,event_id,selection from signals where tracking_tier='ACTIVE_PROSPECTIVE'").fetchall()
+    by_event={}
+    for r in active_rows: by_event.setdefault(str(r['event_id']),[]).append(r)
+    for grp in by_event.values():
+        conflict=len({str(r['selection']) for r in grp})>1
+        for r in grp:
+            db.execute("update signals set portfolio_eligible=?,portfolio_conflict=? where signal_key=?",
+                       (0 if conflict else 1,1 if conflict else 0,r['signal_key']))
     db.commit();return db
 
 def ingest():
@@ -157,8 +177,8 @@ def build_report():
     active=[r for r in rows if r.get('tracking_tier')=='ACTIVE_PROSPECTIVE']
     watch=[r for r in rows if r.get('tracking_tier')=='WATCH_ONLY']
     payload={'updated_at':now(),'shadow_only':True,'official_autopromotions':0,
-             'active_method_ids':['MLS-R01V2','MLS-R02V2','MLS-R03','MLS-A02','MLS-A03','MLS-A05','MLS-A06'],
-             'watch_only_method_ids':['MLS-A04'],
+             'active_method_ids':sorted(ACTIVE_METHOD_IDS),
+             'watch_only_method_ids':sorted(WATCH_ONLY_METHOD_IDS),
              'methods':methods,'signals':rows,
              'active_signals':len(active),'watch_only_signals':len(watch)}
     REPORT.write_text(json.dumps(payload,indent=2,default=str))
