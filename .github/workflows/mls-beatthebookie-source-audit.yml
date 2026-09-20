@@ -20,9 +20,10 @@ jobs:
           TMP=/tmp/appwiza-beatbookie
           rm -rf "$TMP"; mkdir -p "$TMP"
           python3 - <<'PY'
-          import urllib.request, pathlib
+          import urllib.request, pathlib, zipfile, re, os
           url='https://www.kaggle.com/api/v1/datasets/download/austro/beat-the-bookie-worldwide-football-dataset'
-          out=pathlib.Path('/tmp/appwiza-beatbookie/archive.zip')
+          root=pathlib.Path('/tmp/appwiza-beatbookie')
+          out=root/'archive.zip'
           req=urllib.request.Request(url,headers={'User-Agent':'Mozilla/5.0 AppwizaMLS/1.0'})
           with urllib.request.urlopen(req,timeout=180) as r, out.open('wb') as f:
               while True:
@@ -30,11 +31,28 @@ jobs:
                   if not b: break
                   f.write(b)
           print('download_bytes',out.stat().st_size)
+          with zipfile.ZipFile(out) as z:
+              infos=z.infolist()
+              print('zip_entries',len(infos))
+              for i in infos[:240]:
+                  print('ENTRY',i.filename,i.file_size)
+              dest=root/'unzip'; z.extractall(dest)
+          print('TOP FILES')
+          files=sorted((p for p in (root/'unzip').rglob('*') if p.is_file()),key=lambda p:str(p))
+          for p in files[:240]:
+              print('FILE',p,p.stat().st_size)
+          print('TEXT CANDIDATES')
+          for p in files:
+              if p.stat().st_size>250_000_000: continue
+              if p.suffix.lower() not in {'.csv','.txt','.sql','.json','.md'}: continue
+              try:
+                  t=p.read_text(errors='ignore')
+              except Exception:
+                  continue
+              if re.search(r'Major League Soccer|\bMLS\b|United States|USA',t,re.I):
+                  print('HIT',p,p.stat().st_size)
+                  for line in t.splitlines():
+                      if re.search(r'Major League Soccer|\bMLS\b|United States|USA',line,re.I):
+                          print('  ',line[:600])
+                          break
           PY
-          unzip -l "$TMP/archive.zip" | sed -n '1,240p'
-          mkdir -p "$TMP/unzip"
-          unzip -q "$TMP/archive.zip" -d "$TMP/unzip"
-          echo "TOP FILES"
-          find "$TMP/unzip" -maxdepth 4 -type f -printf '%p %s bytes\n' | head -240
-          echo "MLS TEXT HITS"
-          grep -RilE 'Major League Soccer|MLS|USA.*Soccer|United States' "$TMP/unzip" 2>/dev/null | head -100 || true
