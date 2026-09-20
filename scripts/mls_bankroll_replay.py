@@ -184,6 +184,128 @@ def simulate(rows,mode):
       'annual':annual,'records':rec
     }
 
+def simulate_match_cap(rows):
+    bankroll=10000.0
+    peak=bankroll
+    total_staked=0.0
+    lowest=bankroll; lowest_date=None
+    max_dd_amt=0.0; max_dd_pct=0.0
+    max_dd_start=None; max_dd_trough=None; max_dd_recovery=None
+    current_peak_date=None; active_dd_start=None
+    annual=[]
+    match_records=[]
+
+    # rows are already conflict-free: every signal on a match agrees on the same outcome.
+    # One wager per match, stake = 1% of bankroll immediately before that match.
+    for season,gseason in rows.groupby('season',sort=True):
+        start_bankroll=bankroll; season_staked=0.0
+        for match_id,g in gseason.groupby('match_id',sort=False):
+            pre=bankroll
+            stake=pre*.01
+            season_staked+=stake; total_staked+=stake
+            # Same-side duplicate method rows for one match should represent the same market outcome.
+            # Use the first row's realized unit profit; assert all duplicated rows agree on win/loss and price.
+            base=float(g.profit.iloc[0])
+            if len(g)>1:
+                profits=[float(x) for x in g.profit]
+                if any(abs(x-base)>1e-9 for x in profits):
+                    raise RuntimeError(f'inconsistent same-match profits for {match_id}: {profits}')
+            pnl=stake*base
+            bankroll+=pnl
+            dt=pd.to_datetime(g.date.iloc[0])
+            methods=sorted(g.method_id.astype(str).tolist())
+            match_records.append({
+                'date':dt.date().isoformat(),'match_id':str(match_id),'methods':methods,
+                'method_count':len(methods),'outcome':str(g.outcome.iloc[0]),'odds':float(g.odds.iloc[0]),
+                'stake':stake,'unit_profit':base,'profit':pnl,'bankroll_after':bankroll,
+                'consensus':len(methods)>1
+            })
+            if bankroll<lowest:
+                lowest=bankroll; lowest_date=dt.date().isoformat()
+            if bankroll>=peak:
+                peak=bankroll; current_peak_date=dt; active_dd_start=None
+            else:
+                if active_dd_start is None:
+                    active_dd_start=current_peak_date or dt
+                dd=peak-bankroll; ddpct=dd/peak if peak else 0
+                if dd>max_dd_amt:
+                    max_dd_amt=dd; max_dd_pct=ddpct; max_dd_start=active_dd_start; max_dd_trough=dt
+        annual.append({'season':int(season),'start_bankroll':start_bankroll,'end_bankroll':bankroll,
+                       'profit':bankroll-start_bankroll,'total_staked':season_staked,
+                       'return_on_start_bankroll':(bankroll/start_bankroll-1) if start_bankroll else None})
+
+    # recover the maximum drawdown peak
+    if max_dd_start is not None:
+        bankroll2=10000.0; peak2=bankroll2; target=None; trough_seen=False
+        for r in match_records:
+            dt=pd.to_datetime(r['date'])
+            pre=bankroll2; stake=pre*.01; bankroll2+=stake*float(r['unit_profit'])
+            if dt==max_dd_start:
+                target=peak2 if bankroll2<peak2 else bankroll2
+            peak2=max(peak2,bankroll2)
+            if dt>=max_dd_trough: trough_seen=True
+            if trough_seen and target is not None and bankroll2>=target:
+                max_dd_recovery=dt; break
+
+    # longest underwater period
+    bankroll2=10000.0; peak2=bankroll2; peak_date=None; uw_start=None
+    longest_days=0; longest_start=None; longest_end=None; open_uw=False
+    for r in match_records:
+        dt=pd.to_datetime(r['date'])
+        pre=bankroll2; stake=pre*.01; bankroll2+=stake*float(r['unit_profit'])
+        if bankroll2>=peak2:
+            if uw_start is not None:
+                dur=int((dt-uw_start).days)
+                if dur>longest_days:
+                    longest_days=dur; longest_start=uw_start; longest_end=dt
+                uw_start=None
+            peak2=bankroll2; peak_date=dt
+        elif uw_start is None:
+            uw_start=peak_date or dt
+    if uw_start is not None:
+        dt=pd.to_datetime(match_records[-1]['date'])
+        dur=int((dt-uw_start).days)
+        if dur>longest_days:
+            longest_days=dur; longest_start=uw_start; longest_end=dt; open_uw=True
+
+    # match-level losing streak
+    cur=best=0;cur_start=None;best_start=None;best_end=None
+    wins=losses=0
+    for r in match_records:
+        p=float(r['unit_profit']);dt=pd.to_datetime(r['date'])
+        if p>0:wins+=1
+        elif p<0:losses+=1
+        if p<0:
+            if cur==0:cur_start=dt
+            cur+=1
+            if cur>best:best=cur;best_start=cur_start;best_end=dt
+        else:
+            cur=0;cur_start=None
+
+    return {
+      'mode':'pct1_match_cap','starting_bankroll':10000.0,'ending_bankroll':bankroll,
+      'net_profit':bankroll-10000.0,'total_staked':total_staked,
+      'bets':len(match_records),'signals represented':int(len(rows)),
+      'consensus_matches':sum(1 for r in match_records if r['consensus']),
+      'wins':wins,'losses':losses,
+      'max_consecutive_losses':best,
+      'max_consecutive_losses_start':None if best_start is None else best_start.date().isoformat(),
+      'max_consecutive_losses_end':None if best_end is None else best_end.date().isoformat(),
+      'lowest_bankroll':lowest,'lowest_bankroll_date':lowest_date,
+      'max_drawdown_amount':max_dd_amt,'max_drawdown_pct':max_dd_pct,
+      'max_drawdown_start':None if max_dd_start is None else max_dd_start.date().isoformat(),
+      'max_drawdown_trough':None if max_dd_trough is None else max_dd_trough.date().isoformat(),
+      'max_drawdown_recovery':None if max_dd_recovery is None else max_dd_recovery.date().isoformat(),
+      'max_drawdown_recovery_days':None if max_dd_start is None or max_dd_recovery is None else int((max_dd_recovery-max_dd_start).days),
+      'longest_underwater_days':longest_days,
+      'longest_underwater_start':None if longest_start is None else longest_start.date().isoformat(),
+      'longest_underwater_end':None if longest_end is None else longest_end.date().isoformat(),
+      'longest_underwater_open':open_uw,
+      'ending_1pct_stake':bankroll*.01,
+      'average_stake':total_staked/len(match_records) if match_records else None,
+      'annual':annual,'records':match_records
+    }
+
 def main():
     src=json.loads(SRC.read_text());d=pd.read_parquet(Path(src['dataset']));s=arx.merged_selection_rows(d)
     rows=pd.concat([rows_for(s,m) for m in METHODS],ignore_index=True)
@@ -195,12 +317,12 @@ def main():
     side_count=rows.groupby('match_id').outcome.nunique()
     conflicts=set(side_count[side_count>1].index)
     clean=rows[~rows.match_id.isin(conflicts)].copy().sort_values(['date','match_id','method_id'])
-    flat=simulate(clean,'flat100');pct=simulate(clean,'pct1')
+    flat=simulate(clean,'flat100');pct=simulate(clean,'pct1');pct_match=simulate_match_cap(clean)
 
     payload={
       'built_at':pd.Timestamp.now('UTC').isoformat(),
       'definition':'Current refined active-method portfolio; opposite-side conflict matches excluded. Each method signal is one wager. Same-match same-side signals are separate wagers.',
-      'flat100':flat,'pct1':pct
+      'flat100':flat,'pct1':pct,'pct1_match_cap':pct_match
     }
     (OUT/'latest.json').write_text(json.dumps(payload,indent=2,default=str))
     # CSV with chronological signals for independent audit.
@@ -208,7 +330,8 @@ def main():
     csv.to_csv(OUT/'clean_signals.csv',index=False)
     print(json.dumps({
       'flat100':{k:v for k,v in flat.items() if k not in ['records']},
-      'pct1':{k:v for k,v in pct.items() if k not in ['records']}
+      'pct1':{k:v for k,v in pct.items() if k not in ['records']},
+      'pct1_match_cap':{k:v for k,v in pct_match.items() if k not in ['records']}
     },indent=2,default=str))
 
 if __name__=='__main__':main()
