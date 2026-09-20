@@ -72,10 +72,9 @@ jobs:
           key=r.get('key')
           if not key:
               raise RuntimeError('Matched wager has no key')
-          blob=json.dumps(r,default=str).lower()
-          if 'loss' not in blob:
-              raise RuntimeError('Matched Steveson row is not a settled loss; refusing deletion: '+json.dumps(r,default=str))
-
+          # User explicitly confirmed this selection was never wagered. Remove the
+          # exact tracked row regardless of whether reconciliation currently labels it
+          # pending or settled; the audit snapshot preserves the pre-removal state.
           # Preserve a complete audit record outside the deleted bet row.
           details={
               'reason':'USER_CONFIRMED_NOT_WAGERED',
