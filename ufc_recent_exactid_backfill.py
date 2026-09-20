@@ -78,13 +78,16 @@ def load_odds():
     for (pair,ev),g in x.groupby(['url_pair','event_date'],sort=False):
         us=g[g.region.fillna('').astype(str).str.lower().eq('us')]
         if not us.empty:g=us
-        cutoff=pd.Timestamp(ev,tz='UTC')+pd.Timedelta(hours=36)
-        timely=g[g.adding_date.notna()&(g.adding_date<=cutoff)]
+        cutoff=pd.Timestamp(ev,tz='UTC')
+        timely=g[g.adding_date.notna()&(g.adding_date<cutoff)]
         if not timely.empty:
-            latest=timely.adding_date.max(); snap=timely[timely.adding_date==latest].copy(); mode='pre_or_event_snapshot'
+            latest=timely.adding_date.max(); snap=timely[timely.adding_date==latest].copy(); mode='strict_pre_event_snapshot'
         else:
-            latest=g.adding_date.max() if g.adding_date.notna().any() else pd.NaT
-            snap=g[g.adding_date==latest].copy() if pd.notna(latest) else g.copy(); mode='historical_import_fallback'
+            late_import=g.adding_date.notna()&(g.adding_date>=cutoff+pd.Timedelta(days=3))
+            if late_import.all() and g.adding_date.notna().any():
+                latest=g.adding_date.max(); snap=g[g.adding_date==latest].copy(); mode='historical_import_fallback'
+            else:
+                continue
         # Normalize every sportsbook row to the same fighter URL orientation
         # before aggregating. The raw source can reverse fighter_1/fighter_2 across
         # books; aggregating unaligned odds_1/odds_2 creates false favorite sides.
