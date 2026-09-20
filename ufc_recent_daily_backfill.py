@@ -143,26 +143,42 @@ def choose_odds_snapshot(odds):
                 snap = g.copy()
             snapshot_mode = 'historical_import_fallback'
 
-        # If multiple books/sources exist in the same snapshot, use median no-vig
-        # probability and the best decimal price for the eventual market favorite.
-        i1 = 1.0 / snap['odds_1'].astype(float)
-        i2 = 1.0 / snap['odds_2'].astype(float)
+        # IMPORTANT: rows for the same fight may list the fighters in opposite
+        # order across books/sources. Align every quote to one canonical orientation
+        # BEFORE aggregating probabilities or prices. Mixing raw odds_1/odds_2 from
+        # reversed rows can manufacture a fake extreme favorite.
+        r0 = snap.iloc[0]
+        ref1, ref2 = r0['f1_norm'], r0['f2_norm']
+        direct = snap['f1_norm'].eq(ref1) & snap['f2_norm'].eq(ref2)
+        reverse = snap['f1_norm'].eq(ref2) & snap['f2_norm'].eq(ref1)
+        invalid = ~(direct | reverse)
+        if invalid.any():
+            snap = snap.loc[~invalid].copy()
+            direct = snap['f1_norm'].eq(ref1) & snap['f2_norm'].eq(ref2)
+            reverse = snap['f1_norm'].eq(ref2) & snap['f2_norm'].eq(ref1)
+        if snap.empty:
+            continue
+
+        snap['aligned_odds_1'] = np.where(direct, snap['odds_1'], snap['odds_2']).astype(float)
+        snap['aligned_odds_2'] = np.where(direct, snap['odds_2'], snap['odds_1']).astype(float)
+        i1 = 1.0 / snap['aligned_odds_1']
+        i2 = 1.0 / snap['aligned_odds_2']
         total = i1 + i2
         snap['nv1'] = i1 / total
         snap['nv2'] = i2 / total
 
         nv1 = float(snap['nv1'].median())
-        nv2 = 1.0 - nv1
+        nv2 = float(snap['nv2'].median())
+        normtot = nv1 + nv2
+        nv1, nv2 = nv1 / normtot, nv2 / normtot
         if nv1 >= nv2:
             favorite_side = 1
             market_prob = nv1
-            best_decimal = float(snap['odds_1'].max())
+            best_decimal = float(snap['aligned_odds_1'].max())
         else:
             favorite_side = 2
             market_prob = nv2
-            best_decimal = float(snap['odds_2'].max())
-
-        r0 = snap.iloc[0]
+            best_decimal = float(snap['aligned_odds_2'].max())
         selected.append({
             'fight_url': r0.get('fight_url'),
             'event_date': event_date,
@@ -176,6 +192,8 @@ def choose_odds_snapshot(odds):
             'favorite_decimal_odds': best_decimal,
             'snapshot_mode': snapshot_mode,
             'snapshot_rows': int(len(snap)),
+            'orientation_reversed_rows': int(reverse.sum()),
+            'orientation_invalid_rows': int(invalid.sum()) if 'invalid' in locals() else 0,
             'source_values': ';'.join(sorted(set(snap['source'].dropna().astype(str)))),
             'region_values': ';'.join(sorted(set(snap['region'].dropna().astype(str)))),
             'adding_date_selected': str(snap['adding_date'].max()),
