@@ -1,12 +1,24 @@
 {
-  "built_at": "2026-09-20T10:34:39.673167+00:00",
+  "built_at": "2026-09-20T10:35:25.951935+00:00",
   "status": "CREDENTIAL_REQUIRED",
   "provider": "The Odds API",
   "coverage_start": "2020-06-27T03:05:00+00:00",
   "target_matches": 3199,
   "target_kickoff_groups": 1862,
   "estimated_credits_us_only": 18620,
-  "estimated_credits_default_3_regions": 55860,
+  "estimated_credits_default_10_bookmakers": 18620,
+  "default_bookmakers": [
+    "pinnacle",
+    "draftkings",
+    "fanduel",
+    "betmgm",
+    "williamhill_us",
+    "bovada",
+    "betrivers",
+    "betonlineag",
+    "betfair_ex_eu",
+    "williamhill"
+  ],
   "base_file": "/home/anestishkurti92/mls-predictor-v1/data/processed/mls_match_features_master.parquet",
   "output": "/home/anestishkurti92/mls-predictor-v1/data/processed/mls_historical_multibook_closing_odds.parquet",
   "features_output": "/home/anestishkurti92/mls-predictor-v1/data/processed/mls_historical_multibook_market_features.parquet",
@@ -15,5 +27,6 @@
     "THE_ODDS_API_REGIONS",
     "THE_ODDS_API_BOOKMAKERS"
   ],
+  "default_query_mode": "10 named bookmakers across regions; billed as one region-equivalent",
   "integrity_note": "No unlicensed public workbook is imported. Missing historical licensed data remains missing."
 }
