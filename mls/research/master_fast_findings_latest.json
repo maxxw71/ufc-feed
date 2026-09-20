@@ -1,0 +1,3314 @@
+{
+  "built_at": "2026-09-20T19:10:07.945670+00:00",
+  "master_shape": [
+    9440,
+    1034
+  ],
+  "selection_rows": 14775,
+  "tested": 50670,
+  "survivor_count": 129,
+  "deduped_count": 60,
+  "results": [
+    {
+      "outcome": "HOME",
+      "price_band": "P50_60",
+      "feature": "new__goalkeeper_roster__gk_save_pct5__edge",
+      "family": "goalkeeper_roster",
+      "op": "<=",
+      "threshold": -0.10148378191856453,
+      "train": {
+        "n": 131,
+        "wins": 88,
+        "losses": 43,
+        "win_rate": 0.6717557251908397,
+        "roi": 0.20076335877862594,
+        "units": 26.299999999999997,
+        "positive_season_ratio": 0.8333333333333334
+      },
+      "validation": {
+        "n": 105,
+        "wins": 72,
+        "losses": 33,
+        "win_rate": 0.6857142857142857,
+        "roi": 0.21047619047619048,
+        "units": 22.1,
+        "positive_season_ratio": 1.0
+      },
+      "holdout": {
+        "n": 103,
+        "wins": 63,
+        "losses": 40,
+        "win_rate": 0.6116504854368932,
+        "roi": 0.08436893203883492,
+        "units": 8.689999999999996,
+        "positive_season_ratio": 0.6666666666666666
+      },
+      "holdout_baseline": {
+        "n": 429,
+        "wins": 237,
+        "losses": 192,
+        "win_rate": 0.5524475524475524,
+        "roi": -0.026107226107226114,
+        "units": -11.200000000000003,
+        "positive_season_ratio": 0.3333333333333333
+      },
+      "holdout_lift": 0.11047615814606103,
+      "full": {
+        "n": 339,
+        "wins": 223,
+        "losses": 116,
+        "win_rate": 0.6578171091445427,
+        "roi": 0.16840707964601767,
+        "units": 57.08999999999999,
+        "positive_season_ratio": 0.8461538461538461
+      },
+      "status": "STRONG"
+    },
+    {
+      "outcome": "HOME",
+      "price_band": "P50_60",
+      "feature": "new__style__style_pass_completed_over_expected_5__edge",
+      "family": "style",
+      "op": ">=",
+      "threshold": 5.134379999999999,
+      "train": {
+        "n": 150,
+        "wins": 100,
+        "losses": 50,
+        "win_rate": 0.6666666666666666,
+        "roi": 0.1822666666666667,
+        "units": 27.340000000000003,
+        "positive_season_ratio": 1.0
+      },
+      "validation": {
+        "n": 127,
+        "wins": 84,
+        "losses": 43,
+        "win_rate": 0.6614173228346457,
+        "roi": 0.16141732283464566,
+        "units": 20.5,
+        "positive_season_ratio": 1.0
+      },
+      "holdout": {
+        "n": 140,
+        "wins": 81,
+        "losses": 59,
+        "win_rate": 0.5785714285714286,
+        "roi": 0.013785714285714274,
+        "units": 1.9299999999999984,
+        "positive_season_ratio": 0.6666666666666666
+      },
+      "holdout_baseline": {
+        "n": 429,
+        "wins": 237,
+        "losses": 192,
+        "win_rate": 0.5524475524475524,
+        "roi": -0.026107226107226114,
+        "units": -11.200000000000003,
+        "positive_season_ratio": 0.3333333333333333
+      },
+      "holdout_lift": 0.03989294039294039,
+      "full": {
+        "n": 417,
+        "wins": 265,
+        "losses": 152,
+        "win_rate": 0.6354916067146283,
+        "roi": 0.11935251798561149,
+        "units": 49.76999999999999,
+        "positive_season_ratio": 0.9230769230769231
+      },
+      "status": "HOLDOUT_SURVIVOR"
+    },
+    {
+      "outcome": "DRAW",
+      "price_band": "P25_35",
+      "feature": "new__goalkeeper_roster__gk_goals_conceded_p96_5__balance",
+      "family": "goalkeeper_roster",
+      "op": "<=",
+      "threshold": 0.2094130089899524,
+      "train": {
+        "n": 359,
+        "wins": 112,
+        "losses": 247,
+        "win_rate": 0.31197771587743733,
+        "roi": 0.11924791086350976,
+        "units": 42.81,
+        "positive_season_ratio": 0.5
+      },
+      "validation": {
+        "n": 194,
+        "wins": 60,
+        "losses": 134,
+        "win_rate": 0.30927835051546393,
+        "roi": 0.11891752577319584,
+        "units": 23.069999999999993,
+        "positive_season_ratio": 1.0
+      },
+      "holdout": {
+        "n": 197,
+        "wins": 59,
+        "losses": 138,
+        "win_rate": 0.29949238578680204,
+        "roi": 0.0803045685279188,
+        "units": 15.820000000000002,
+        "positive_season_ratio": 0.6666666666666666
+      },
+      "holdout_baseline": {
+        "n": 800,
+        "wins": 228,
+        "losses": 572,
+        "win_rate": 0.285,
+        "roi": 0.0285875,
+        "units": 22.869999999999997,
+        "positive_season_ratio": 0.3333333333333333
+      },
+      "holdout_lift": 0.0517170685279188,
+      "full": {
+        "n": 750,
+        "wins": 231,
+        "losses": 519,
+        "win_rate": 0.308,
+        "roi": 0.10893333333333331,
+        "units": 81.69999999999999,
+        "positive_season_ratio": 0.6923076923076923
+      },
+      "status": "HOLDOUT_SURVIVOR"
+    },
+    {
+      "outcome": "HOME",
+      "price_band": "P25_35",
+      "feature": "new__style__style_delta3_prev5_gplus_passing__sel",
+      "family": "style",
+      "op": "<=",
+      "threshold": -0.009366666666666634,
+      "train": {
+        "n": 78,
+        "wins": 31,
+        "losses": 47,
+        "win_rate": 0.3974358974358974,
+        "roi": 0.2239743589743589,
+        "units": 17.469999999999995,
+        "positive_season_ratio": 0.8333333333333334
+      },
+      "validation": {
+        "n": 76,
+        "wins": 28,
+        "losses": 48,
+        "win_rate": 0.3684210526315789,
+        "roi": 0.1798684210526315,
+        "units": 13.669999999999995,
+        "positive_season_ratio": 0.75
+      },
+      "holdout": {
+        "n": 77,
+        "wins": 28,
+        "losses": 49,
+        "win_rate": 0.36363636363636365,
+        "roi": 0.11402597402597406,
+        "units": 8.780000000000003,
+        "positive_season_ratio": 0.3333333333333333
+      },
+      "holdout_baseline": {
+        "n": 150,
+        "wins": 40,
+        "losses": 110,
+        "win_rate": 0.26666666666666666,
+        "roi": -0.17239999999999997,
+        "units": -25.859999999999996,
+        "positive_season_ratio": 0.3333333333333333
+      },
+      "holdout_lift": 0.28642597402597403,
+      "full": {
+        "n": 231,
+        "wins": 87,
+        "losses": 144,
+        "win_rate": 0.37662337662337664,
+        "roi": 0.1728138528138528,
+        "units": 39.92,
+        "positive_season_ratio": 0.6923076923076923
+      },
+      "status": "HOLDOUT_SURVIVOR"
+    },
+    {
+      "outcome": "HOME",
+      "price_band": "P25_35",
+      "feature": "new__style__style_delta3_prev5_gplus_receiving__edge",
+      "family": "style",
+      "op": "<=",
+      "threshold": -0.021091786293333303,
+      "train": {
+        "n": 74,
+        "wins": 28,
+        "losses": 46,
+        "win_rate": 0.3783783783783784,
+        "roi": 0.1772972972972973,
+        "units": 13.12,
+        "positive_season_ratio": 0.8333333333333334
+      },
+      "validation": {
+        "n": 75,
+        "wins": 31,
+        "losses": 44,
+        "win_rate": 0.41333333333333333,
+        "roi": 0.33266666666666667,
+        "units": 24.95,
+        "positive_season_ratio": 1.0
+      },
+      "holdout": {
+        "n": 83,
+        "wins": 28,
+        "losses": 55,
+        "win_rate": 0.3373493975903614,
+        "roi": 0.03457831325301207,
+        "units": 2.870000000000002,
+        "positive_season_ratio": 0.3333333333333333
+      },
+      "holdout_baseline": {
+        "n": 150,
+        "wins": 40,
+        "losses": 110,
+        "win_rate": 0.26666666666666666,
+        "roi": -0.17239999999999997,
+        "units": -25.859999999999996,
+        "positive_season_ratio": 0.3333333333333333
+      },
+      "holdout_lift": 0.20697831325301203,
+      "full": {
+        "n": 232,
+        "wins": 87,
+        "losses": 145,
+        "win_rate": 0.375,
+        "roi": 0.17646551724137932,
+        "units": 40.940000000000005,
+        "positive_season_ratio": 0.7692307692307693
+      },
+      "status": "HOLDOUT_SURVIVOR"
+    },
+    {
+      "outcome": "DRAW",
+      "price_band": "ALL",
+      "feature": "new__player_manager__player_starter_proxy_continuity__balance",
+      "family": "player_manager",
+      "op": "<=",
+      "threshold": 0.07965686274509803,
+      "train": {
+        "n": 499,
+        "wins": 139,
+        "losses": 360,
+        "win_rate": 0.2785571142284569,
+        "roi": 0.07490981963927855,
+        "units": 37.379999999999995,
+        "positive_season_ratio": 0.8333333333333334
+      },
+      "validation": {
+        "n": 394,
+        "wins": 108,
+        "losses": 286,
+        "win_rate": 0.27411167512690354,
+        "roi": 0.07880710659898478,
+        "units": 31.05,
+        "positive_season_ratio": 0.75
+      },
+      "holdout": {
+        "n": 343,
+        "wins": 94,
+        "losses": 249,
+        "win_rate": 0.27405247813411077,
+        "roi": 0.07553935860058313,
+        "units": 25.91000000000001,
+        "positive_season_ratio": 0.6666666666666666
+      },
+      "holdout_baseline": {
+        "n": 1394,
+        "wins": 359,
+        "losses": 1035,
+        "win_rate": 0.25753228120516497,
+        "roi": -0.0060688665710186464,
+        "units": -8.459999999999994,
+        "positive_season_ratio": 0.3333333333333333
+      },
+      "holdout_lift": 0.08160822517160177,
+      "full": {
+        "n": 1236,
+        "wins": 341,
+        "losses": 895,
+        "win_rate": 0.2758899676375405,
+        "roi": 0.07632686084142393,
+        "units": 94.33999999999997,
+        "positive_season_ratio": 0.7692307692307693
+      },
+      "status": "STRONG"
+    },
+    {
+      "outcome": "AWAY",
+      "price_band": "P20_30",
+      "feature": "new__salary__salary_top11_minutes5_gc__edge",
+      "family": "salary",
+      "op": ">=",
+      "threshold": 1451395.3324999998,
+      "train": {
+        "n": 138,
+        "wins": 40,
+        "losses": 98,
+        "win_rate": 0.2898550724637681,
+        "roi": 0.13260869565217392,
+        "units": 18.3,
+        "positive_season_ratio": 0.6666666666666666
+      },
+      "validation": {
+        "n": 121,
+        "wins": 36,
+        "losses": 85,
+        "win_rate": 0.2975206611570248,
+        "roi": 0.14066115702479343,
+        "units": 17.020000000000003,
+        "positive_season_ratio": 1.0
+      },
+      "holdout": {
+        "n": 166,
+        "wins": 49,
+        "losses": 117,
+        "win_rate": 0.29518072289156627,
+        "roi": 0.126566265060241,
+        "units": 21.010000000000005,
+        "positive_season_ratio": 0.6666666666666666
+      },
+      "holdout_baseline": {
+        "n": 624,
+        "wins": 174,
+        "losses": 450,
+        "win_rate": 0.27884615384615385,
+        "roi": 0.08860576923076924,
+        "units": 55.290000000000006,
+        "positive_season_ratio": 0.6666666666666666
+      },
+      "holdout_lift": 0.03796049582947175,
+      "full": {
+        "n": 425,
+        "wins": 125,
+        "losses": 300,
+        "win_rate": 0.29411764705882354,
+        "roi": 0.13254117647058827,
+        "units": 56.33000000000001,
+        "positive_season_ratio": 0.75
+      },
+      "status": "STRONG"
+    },
+    {
+      "outcome": "AWAY",
+      "price_band": "P20_30",
+      "feature": "new__style__style_gplus_passing_3__sel",
+      "family": "style",
+      "op": ">=",
+      "threshold": 0.36743333333333333,
+      "train": {
+        "n": 221,
+        "wins": 65,
+        "losses": 156,
+        "win_rate": 0.29411764705882354,
+        "roi": 0.13176470588235298,
+        "units": 29.120000000000008,
+        "positive_season_ratio": 0.8333333333333334
+      },
+      "validation": {
+        "n": 120,
+        "wins": 36,
+        "losses": 84,
+        "win_rate": 0.3,
+        "roi": 0.16666666666666666,
+        "units": 20.0,
+        "positive_season_ratio": 0.5
+      },
+      "holdout": {
+        "n": 115,
+        "wins": 35,
+        "losses": 80,
+        "win_rate": 0.30434782608695654,
+        "roi": 0.1848695652173913,
+        "units": 21.26,
+        "positive_season_ratio": 1.0
+      },
+      "holdout_baseline": {
+        "n": 624,
+        "wins": 174,
+        "losses": 450,
+        "win_rate": 0.27884615384615385,
+        "roi": 0.08860576923076924,
+        "units": 55.290000000000006,
+        "positive_season_ratio": 0.6666666666666666
+      },
+      "holdout_lift": 0.09626379598662207,
+      "full": {
+        "n": 456,
+        "wins": 136,
+        "losses": 320,
+        "win_rate": 0.2982456140350877,
+        "roi": 0.15434210526315792,
+        "units": 70.38000000000001,
+        "positive_season_ratio": 0.7692307692307693
+      },
+      "status": "STRONG"
+    },
+    {
+      "outcome": "AWAY",
+      "price_band": "P30_40",
+      "feature": "new__goalkeeper_roster__roster_departed_minutes_share_prev5__edge",
+      "family": "goalkeeper_roster",
+      "op": ">=",
+      "threshold": 0.08086346201459904,
+      "train": {
+        "n": 76,
+        "wins": 31,
+        "losses": 45,
+        "win_rate": 0.40789473684210525,
+        "roi": 0.1723684210526316,
+        "units": 13.1,
+        "positive_season_ratio": 0.8333333333333334
+      },
+      "validation": {
+        "n": 63,
+        "wins": 26,
+        "losses": 37,
+        "win_rate": 0.4126984126984127,
+        "roi": 0.20444444444444448,
+        "units": 12.880000000000003,
+        "positive_season_ratio": 1.0
+      },
+      "holdout": {
+        "n": 57,
+        "wins": 23,
+        "losses": 34,
+        "win_rate": 0.40350877192982454,
+        "roi": 0.16999999999999996,
+        "units": 9.689999999999998,
+        "positive_season_ratio": 0.6666666666666666
+      },
+      "holdout_baseline": {
+        "n": 343,
+        "wins": 141,
+        "losses": 202,
+        "win_rate": 0.4110787172011662,
+        "roi": 0.1684548104956268,
+        "units": 57.779999999999994,
+        "positive_season_ratio": 0.6666666666666666
+      },
+      "holdout_lift": 0.0015451895043731567,
+      "full": {
+        "n": 196,
+        "wins": 80,
+        "losses": 116,
+        "win_rate": 0.40816326530612246,
+        "roi": 0.18198979591836728,
+        "units": 35.66999999999999,
+        "positive_season_ratio": 0.8461538461538461
+      },
+      "status": "STRONG"
+    },
+    {
+      "outcome": "HOME",
+      "price_band": "P20_30",
+      "feature": "new__style__style_top3_touch_share_5__sel",
+      "family": "style",
+      "op": ">=",
+      "threshold": 0.34253348997753486,
+      "train": {
+        "n": 43,
+        "wins": 14,
+        "losses": 29,
+        "win_rate": 0.32558139534883723,
+        "roi": 0.20790697674418604,
+        "units": 8.94,
+        "positive_season_ratio": 0.6
+      },
+      "validation": {
+        "n": 70,
+        "wins": 25,
+        "losses": 45,
+        "win_rate": 0.35714285714285715,
+        "roi": 0.351,
+        "units": 24.569999999999997,
+        "positive_season_ratio": 1.0
+      },
+      "holdout": {
+        "n": 32,
+        "wins": 10,
+        "losses": 22,
+        "win_rate": 0.3125,
+        "roi": 0.052812499999999984,
+        "units": 1.6899999999999995,
+        "positive_season_ratio": 0.6666666666666666
+      },
+      "holdout_baseline": {
+        "n": 48,
+        "wins": 12,
+        "losses": 36,
+        "win_rate": 0.25,
+        "roi": -0.14833333333333332,
+        "units": -7.119999999999999,
+        "positive_season_ratio": 0.6666666666666666
+      },
+      "holdout_lift": 0.2011458333333333,
+      "full": {
+        "n": 145,
+        "wins": 49,
+        "losses": 96,
+        "win_rate": 0.33793103448275863,
+        "roi": 0.2427586206896552,
+        "units": 35.2,
+        "positive_season_ratio": 0.75
+      },
+      "status": "HOLDOUT_SURVIVOR"
+    },
+    {
+      "outcome": "AWAY",
+      "price_band": "P20_30",
+      "feature": "new__goalkeeper_roster__roster_new_players3__opp",
+      "family": "goalkeeper_roster",
+      "op": "<=",
+      "threshold": 0.0,
+      "train": {
+        "n": 218,
+        "wins": 61,
+        "losses": 157,
+        "win_rate": 0.2798165137614679,
+        "roi": 0.10403669724770644,
+        "units": 22.680000000000003,
+        "positive_season_ratio": 0.5
+      },
+      "validation": {
+        "n": 170,
+        "wins": 48,
+        "losses": 122,
+        "win_rate": 0.2823529411764706,
+        "roi": 0.1128235294117647,
+        "units": 19.18,
+        "positive_season_ratio": 0.75
+      },
+      "holdout": {
+        "n": 174,
+        "wins": 53,
+        "losses": 121,
+        "win_rate": 0.3045977011494253,
+        "roi": 0.23143678160919537,
+        "units": 40.269999999999996,
+        "positive_season_ratio": 1.0
+      },
+      "holdout_baseline": {
+        "n": 624,
+        "wins": 174,
+        "losses": 450,
+        "win_rate": 0.27884615384615385,
+        "roi": 0.08860576923076924,
+        "units": 55.290000000000006,
+        "positive_season_ratio": 0.6666666666666666
+      },
+      "holdout_lift": 0.14283101237842613,
+      "full": {
+        "n": 562,
+        "wins": 162,
+        "losses": 400,
+        "win_rate": 0.28825622775800713,
+        "roi": 0.1461387900355872,
+        "units": 82.13,
+        "positive_season_ratio": 0.6923076923076923
+      },
+      "status": "HOLDOUT_SURVIVOR"
+    },
+    {
+      "outcome": "AWAY",
+      "price_band": "P20_30",
+      "feature": "new__goalkeeper_roster__roster_new_minutes_share3__opp",
+      "family": "goalkeeper_roster",
+      "op": "<=",
+      "threshold": 0.0,
+      "train": {
+        "n": 218,
+        "wins": 61,
+        "losses": 157,
+        "win_rate": 0.2798165137614679,
+        "roi": 0.10403669724770644,
+        "units": 22.680000000000003,
+        "positive_season_ratio": 0.5
+      },
+      "validation": {
+        "n": 170,
+        "wins": 48,
+        "losses": 122,
+        "win_rate": 0.2823529411764706,
+        "roi": 0.1128235294117647,
+        "units": 19.18,
+        "positive_season_ratio": 0.75
+      },
+      "holdout": {
+        "n": 174,
+        "wins": 53,
+        "losses": 121,
+        "win_rate": 0.3045977011494253,
+        "roi": 0.23143678160919537,
+        "units": 40.269999999999996,
+        "positive_season_ratio": 1.0
+      },
+      "holdout_baseline": {
+        "n": 624,
+        "wins": 174,
+        "losses": 450,
+        "win_rate": 0.27884615384615385,
+        "roi": 0.08860576923076924,
+        "units": 55.290000000000006,
+        "positive_season_ratio": 0.6666666666666666
+      },
+      "holdout_lift": 0.14283101237842613,
+      "full": {
+        "n": 562,
+        "wins": 162,
+        "losses": 400,
+        "win_rate": 0.28825622775800713,
+        "roi": 0.1461387900355872,
+        "units": 82.13,
+        "positive_season_ratio": 0.6923076923076923
+      },
+      "status": "HOLDOUT_SURVIVOR"
+    },
+    {
+      "outcome": "HOME",
+      "price_band": "P25_35",
+      "feature": "new__style__style_active_players_10__edge",
+      "family": "style",
+      "op": ">=",
+      "threshold": 0.10000000000000142,
+      "train": {
+        "n": 44,
+        "wins": 18,
+        "losses": 26,
+        "win_rate": 0.4090909090909091,
+        "roi": 0.27386363636363636,
+        "units": 12.05,
+        "positive_season_ratio": 0.6
+      },
+      "validation": {
+        "n": 71,
+        "wins": 27,
+        "losses": 44,
+        "win_rate": 0.38028169014084506,
+        "roi": 0.2004225352112676,
+        "units": 14.23,
+        "positive_season_ratio": 0.75
+      },
+      "holdout": {
+        "n": 82,
+        "wins": 28,
+        "losses": 54,
+        "win_rate": 0.34146341463414637,
+        "roi": 0.06646341463414636,
+        "units": 5.450000000000001,
+        "positive_season_ratio": 0.6666666666666666
+      },
+      "holdout_baseline": {
+        "n": 150,
+        "wins": 40,
+        "losses": 110,
+        "win_rate": 0.26666666666666666,
+        "roi": -0.17239999999999997,
+        "units": -25.859999999999996,
+        "positive_season_ratio": 0.3333333333333333
+      },
+      "holdout_lift": 0.23886341463414634,
+      "full": {
+        "n": 197,
+        "wins": 73,
+        "losses": 124,
+        "win_rate": 0.37055837563451777,
+        "roi": 0.16106598984771575,
+        "units": 31.730000000000004,
+        "positive_season_ratio": 0.6666666666666666
+      },
+      "status": "HOLDOUT_SURVIVOR"
+    },
+    {
+      "outcome": "AWAY",
+      "price_band": "P25_35",
+      "feature": "new__referee__global__referee_prior_over25_rate",
+      "family": "referee",
+      "op": "<=",
+      "threshold": 0.5348837209302325,
+      "train": {
+        "n": 339,
+        "wins": 112,
+        "losses": 227,
+        "win_rate": 0.3303834808259587,
+        "roi": 0.10843657817109144,
+        "units": 36.76,
+        "positive_season_ratio": 0.6666666666666666
+      },
+      "validation": {
+        "n": 144,
+        "wins": 52,
+        "losses": 92,
+        "win_rate": 0.3611111111111111,
+        "roi": 0.1763194444444445,
+        "units": 25.390000000000008,
+        "positive_season_ratio": 0.75
+      },
+      "holdout": {
+        "n": 105,
+        "wins": 40,
+        "losses": 65,
+        "win_rate": 0.38095238095238093,
+        "roi": 0.23952380952380947,
+        "units": 25.149999999999995,
+        "positive_season_ratio": 1.0
+      },
+      "holdout_baseline": {
+        "n": 519,
+        "wins": 175,
+        "losses": 344,
+        "win_rate": 0.3371868978805395,
+        "roi": 0.10818882466281311,
+        "units": 56.150000000000006,
+        "positive_season_ratio": 0.6666666666666666
+      },
+      "holdout_lift": 0.13133498486099637,
+      "full": {
+        "n": 588,
+        "wins": 204,
+        "losses": 384,
+        "win_rate": 0.3469387755102041,
+        "roi": 0.14846938775510207,
+        "units": 87.30000000000001,
+        "positive_season_ratio": 0.7692307692307693
+      },
+      "status": "STRONG"
+    },
+    {
+      "outcome": "DRAW",
+      "price_band": "P25_35",
+      "feature": "new__style__style_delta3_prev5_gplus_shooting__combined",
+      "family": "style",
+      "op": "<=",
+      "threshold": -0.0830052365333333,
+      "train": {
+        "n": 314,
+        "wins": 100,
+        "losses": 214,
+        "win_rate": 0.3184713375796178,
+        "roi": 0.13872611464968154,
+        "units": 43.56,
+        "positive_season_ratio": 0.8333333333333334
+      },
+      "validation": {
+        "n": 236,
+        "wins": 71,
+        "losses": 165,
+        "win_rate": 0.3008474576271186,
+        "roi": 0.07923728813559323,
+        "units": 18.700000000000003,
+        "positive_season_ratio": 0.75
+      },
+      "holdout": {
+        "n": 216,
+        "wins": 67,
+        "losses": 149,
+        "win_rate": 0.3101851851851852,
+        "roi": 0.1101851851851852,
+        "units": 23.800000000000004,
+        "positive_season_ratio": 1.0
+      },
+      "holdout_baseline": {
+        "n": 800,
+        "wins": 228,
+        "losses": 572,
+        "win_rate": 0.285,
+        "roi": 0.0285875,
+        "units": 22.869999999999997,
+        "positive_season_ratio": 0.3333333333333333
+      },
+      "holdout_lift": 0.0815976851851852,
+      "full": {
+        "n": 766,
+        "wins": 238,
+        "losses": 528,
+        "win_rate": 0.31070496083550914,
+        "roi": 0.11234986945169713,
+        "units": 86.06,
+        "positive_season_ratio": 0.8461538461538461
+      },
+      "status": "STRONG"
+    },
+    {
+      "outcome": "HOME",
+      "price_band": "P50_60",
+      "feature": "new__style__style_pass_completed_over_expected_3__edge",
+      "family": "style",
+      "op": ">=",
+      "threshold": 6.003599999999999,
+      "train": {
+        "n": 155,
+        "wins": 97,
+        "losses": 58,
+        "win_rate": 0.6258064516129033,
+        "roi": 0.10703225806451613,
+        "units": 16.59,
+        "positive_season_ratio": 0.8333333333333334
+      },
+      "validation": {
+        "n": 125,
+        "wins": 79,
+        "losses": 46,
+        "win_rate": 0.632,
+        "roi": 0.11432000000000002,
+        "units": 14.290000000000003,
+        "positive_season_ratio": 0.75
+      },
+      "holdout": {
+        "n": 117,
+        "wins": 67,
+        "losses": 50,
+        "win_rate": 0.5726495726495726,
+        "roi": 0.004871794871794842,
+        "units": 0.5699999999999965,
+        "positive_season_ratio": 0.3333333333333333
+      },
+      "holdout_baseline": {
+        "n": 429,
+        "wins": 237,
+        "losses": 192,
+        "win_rate": 0.5524475524475524,
+        "roi": -0.026107226107226114,
+        "units": -11.200000000000003,
+        "positive_season_ratio": 0.3333333333333333
+      },
+      "holdout_lift": 0.030979020979020958,
+      "full": {
+        "n": 397,
+        "wins": 243,
+        "losses": 154,
+        "win_rate": 0.6120906801007556,
+        "roi": 0.07921914357682619,
+        "units": 31.45,
+        "positive_season_ratio": 0.6923076923076923
+      },
+      "status": "HOLDOUT_SURVIVOR"
+    },
+    {
+      "outcome": "HOME",
+      "price_band": "P25_35",
+      "feature": "new__goalkeeper_roster__gk_save_pct5__opp",
+      "family": "goalkeeper_roster",
+      "op": ">=",
+      "threshold": 0.6666666666666666,
+      "train": {
+        "n": 89,
+        "wins": 36,
+        "losses": 53,
+        "win_rate": 0.4044943820224719,
+        "roi": 0.24640449438202247,
+        "units": 21.93,
+        "positive_season_ratio": 0.8333333333333334
+      },
+      "validation": {
+        "n": 94,
+        "wins": 33,
+        "losses": 61,
+        "win_rate": 0.35106382978723405,
+        "roi": 0.1253191489361702,
+        "units": 11.779999999999998,
+        "positive_season_ratio": 0.75
+      },
+      "holdout": {
+        "n": 90,
+        "wins": 30,
+        "losses": 60,
+        "win_rate": 0.3333333333333333,
+        "roi": 0.028111111111111108,
+        "units": 2.53,
+        "positive_season_ratio": 0.6666666666666666
+      },
+      "holdout_baseline": {
+        "n": 150,
+        "wins": 40,
+        "losses": 110,
+        "win_rate": 0.26666666666666666,
+        "roi": -0.17239999999999997,
+        "units": -25.859999999999996,
+        "positive_season_ratio": 0.3333333333333333
+      },
+      "holdout_lift": 0.20051111111111108,
+      "full": {
+        "n": 273,
+        "wins": 99,
+        "losses": 174,
+        "win_rate": 0.3626373626373626,
+        "roi": 0.13274725274725274,
+        "units": 36.24,
+        "positive_season_ratio": 0.7692307692307693
+      },
+      "status": "HOLDOUT_SURVIVOR"
+    },
+    {
+      "outcome": "DRAW",
+      "price_band": "ALL",
+      "feature": "new__style__style_gplus_receiving_10__combined",
+      "family": "style",
+      "op": ">=",
+      "threshold": 1.4696598446195002,
+      "train": {
+        "n": 471,
+        "wins": 127,
+        "losses": 344,
+        "win_rate": 0.26963906581740976,
+        "roi": 0.06210191082802548,
+        "units": 29.25,
+        "positive_season_ratio": 0.6666666666666666
+      },
+      "validation": {
+        "n": 288,
+        "wins": 80,
+        "losses": 208,
+        "win_rate": 0.2777777777777778,
+        "roi": 0.15493055555555552,
+        "units": 44.61999999999999,
+        "positive_season_ratio": 1.0
+      },
+      "holdout": {
+        "n": 397,
+        "wins": 103,
+        "losses": 294,
+        "win_rate": 0.2594458438287154,
+        "roi": 0.029345088161209065,
+        "units": 11.649999999999999,
+        "positive_season_ratio": 0.6666666666666666
+      },
+      "holdout_baseline": {
+        "n": 1394,
+        "wins": 359,
+        "losses": 1035,
+        "win_rate": 0.25753228120516497,
+        "roi": -0.0060688665710186464,
+        "units": -8.459999999999994,
+        "positive_season_ratio": 0.3333333333333333
+      },
+      "holdout_lift": 0.03541395473222771,
+      "full": {
+        "n": 1156,
+        "wins": 310,
+        "losses": 846,
+        "win_rate": 0.2681660899653979,
+        "roi": 0.07397923875432527,
+        "units": 85.52000000000001,
+        "positive_season_ratio": 0.7692307692307693
+      },
+      "status": "HOLDOUT_SURVIVOR"
+    },
+    {
+      "outcome": "HOME",
+      "price_band": "P50_60",
+      "feature": "new__goalkeeper_roster__gk_goals_minus_xg_p96_5__sel",
+      "family": "goalkeeper_roster",
+      "op": ">=",
+      "threshold": 0.22895931875830416,
+      "train": {
+        "n": 131,
+        "wins": 80,
+        "losses": 51,
+        "win_rate": 0.6106870229007634,
+        "roi": 0.09076335877862596,
+        "units": 11.89,
+        "positive_season_ratio": 0.8333333333333334
+      },
+      "validation": {
+        "n": 141,
+        "wins": 88,
+        "losses": 53,
+        "win_rate": 0.624113475177305,
+        "roi": 0.09957446808510638,
+        "units": 14.04,
+        "positive_season_ratio": 1.0
+      },
+      "holdout": {
+        "n": 121,
+        "wins": 72,
+        "losses": 49,
+        "win_rate": 0.5950413223140496,
+        "roi": 0.05049586776859503,
+        "units": 6.1099999999999985,
+        "positive_season_ratio": 0.6666666666666666
+      },
+      "holdout_baseline": {
+        "n": 429,
+        "wins": 237,
+        "losses": 192,
+        "win_rate": 0.5524475524475524,
+        "roi": -0.026107226107226114,
+        "units": -11.200000000000003,
+        "positive_season_ratio": 0.3333333333333333
+      },
+      "holdout_lift": 0.07660309387582115,
+      "full": {
+        "n": 393,
+        "wins": 240,
+        "losses": 153,
+        "win_rate": 0.6106870229007634,
+        "roi": 0.08152671755725188,
+        "units": 32.03999999999999,
+        "positive_season_ratio": 0.8461538461538461
+      },
+      "status": "STRONG"
+    },
+    {
+      "outcome": "HOME",
+      "price_band": "P25_35",
+      "feature": "new__style__style_key_passes_5__opp",
+      "family": "style",
+      "op": "<=",
+      "threshold": 9.2,
+      "train": {
+        "n": 50,
+        "wins": 20,
+        "losses": 30,
+        "win_rate": 0.4,
+        "roi": 0.18460000000000001,
+        "units": 9.23,
+        "positive_season_ratio": 0.6
+      },
+      "validation": {
+        "n": 78,
+        "wins": 29,
+        "losses": 49,
+        "win_rate": 0.3717948717948718,
+        "roi": 0.14038461538461539,
+        "units": 10.95,
+        "positive_season_ratio": 0.75
+      },
+      "holdout": {
+        "n": 47,
+        "wins": 17,
+        "losses": 30,
+        "win_rate": 0.3617021276595745,
+        "roi": 0.1268085106382979,
+        "units": 5.960000000000001,
+        "positive_season_ratio": 0.6666666666666666
+      },
+      "holdout_baseline": {
+        "n": 150,
+        "wins": 40,
+        "losses": 110,
+        "win_rate": 0.26666666666666666,
+        "roi": -0.17239999999999997,
+        "units": -25.859999999999996,
+        "positive_season_ratio": 0.3333333333333333
+      },
+      "holdout_lift": 0.2992085106382979,
+      "full": {
+        "n": 175,
+        "wins": 66,
+        "losses": 109,
+        "win_rate": 0.37714285714285717,
+        "roi": 0.14937142857142857,
+        "units": 26.14,
+        "positive_season_ratio": 0.6666666666666666
+      },
+      "status": "HOLDOUT_SURVIVOR"
+    },
+    {
+      "outcome": "DRAW",
+      "price_band": "ALL",
+      "feature": "new__weather__global__weather_humidity_pct",
+      "family": "weather",
+      "op": "<=",
+      "threshold": 45.0,
+      "train": {
+        "n": 499,
+        "wins": 141,
+        "losses": 358,
+        "win_rate": 0.28256513026052105,
+        "roi": 0.053967935871743505,
+        "units": 26.93000000000001,
+        "positive_season_ratio": 0.6666666666666666
+      },
+      "validation": {
+        "n": 332,
+        "wins": 94,
+        "losses": 238,
+        "win_rate": 0.28313253012048195,
+        "roi": 0.13066265060240964,
+        "units": 43.38,
+        "positive_season_ratio": 0.75
+      },
+      "holdout": {
+        "n": 331,
+        "wins": 93,
+        "losses": 238,
+        "win_rate": 0.2809667673716012,
+        "roi": 0.061027190332326293,
+        "units": 20.200000000000003,
+        "positive_season_ratio": 0.6666666666666666
+      },
+      "holdout_baseline": {
+        "n": 1394,
+        "wins": 359,
+        "losses": 1035,
+        "win_rate": 0.25753228120516497,
+        "roi": -0.0060688665710186464,
+        "units": -8.459999999999994,
+        "positive_season_ratio": 0.3333333333333333
+      },
+      "holdout_lift": 0.06709605690334494,
+      "full": {
+        "n": 1162,
+        "wins": 328,
+        "losses": 834,
+        "win_rate": 0.2822719449225473,
+        "roi": 0.07789156626506023,
+        "units": 90.50999999999999,
+        "positive_season_ratio": 0.6923076923076923
+      },
+      "status": "HOLDOUT_SURVIVOR"
+    },
+    {
+      "outcome": "HOME",
+      "price_band": "P30_40",
+      "feature": "new__goalkeeper_roster__gk_xg_faced_p96_5__opp",
+      "family": "goalkeeper_roster",
+      "op": ">=",
+      "threshold": 1.639798762886598,
+      "train": {
+        "n": 44,
+        "wins": 23,
+        "losses": 21,
+        "win_rate": 0.5227272727272727,
+        "roi": 0.40363636363636357,
+        "units": 17.759999999999998,
+        "positive_season_ratio": 0.8333333333333334
+      },
+      "validation": {
+        "n": 33,
+        "wins": 14,
+        "losses": 19,
+        "win_rate": 0.42424242424242425,
+        "roi": 0.1706060606060606,
+        "units": 5.63,
+        "positive_season_ratio": 0.75
+      },
+      "holdout": {
+        "n": 39,
+        "wins": 15,
+        "losses": 24,
+        "win_rate": 0.38461538461538464,
+        "roi": 0.015384615384615353,
+        "units": 0.5999999999999988,
+        "positive_season_ratio": 0.5
+      },
+      "holdout_baseline": {
+        "n": 260,
+        "wins": 75,
+        "losses": 185,
+        "win_rate": 0.28846153846153844,
+        "roi": -0.2128076923076923,
+        "units": -55.33,
+        "positive_season_ratio": 0.0
+      },
+      "holdout_lift": 0.22819230769230767,
+      "full": {
+        "n": 116,
+        "wins": 52,
+        "losses": 64,
+        "win_rate": 0.4482758620689655,
+        "roi": 0.2068103448275862,
+        "units": 23.99,
+        "positive_season_ratio": 0.75
+      },
+      "status": "HOLDOUT_SURVIVOR"
+    },
+    {
+      "outcome": "DRAW",
+      "price_band": "ALL",
+      "feature": "new__style__style_delta3_prev5_gplus_shooting__combined",
+      "family": "style",
+      "op": "<=",
+      "threshold": -0.0830052365333333,
+      "train": {
+        "n": 478,
+        "wins": 135,
+        "losses": 343,
+        "win_rate": 0.2824267782426778,
+        "roi": 0.06309623430962343,
+        "units": 30.159999999999997,
+        "positive_season_ratio": 0.5
+      },
+      "validation": {
+        "n": 415,
+        "wins": 112,
+        "losses": 303,
+        "win_rate": 0.26987951807228916,
+        "roi": 0.04754216867469878,
+        "units": 19.729999999999993,
+        "positive_season_ratio": 0.75
+      },
+      "holdout": {
+        "n": 357,
+        "wins": 102,
+        "losses": 255,
+        "win_rate": 0.2857142857142857,
+        "roi": 0.08974789915966384,
+        "units": 32.03999999999999,
+        "positive_season_ratio": 1.0
+      },
+      "holdout_baseline": {
+        "n": 1394,
+        "wins": 359,
+        "losses": 1035,
+        "win_rate": 0.25753228120516497,
+        "roi": -0.0060688665710186464,
+        "units": -8.459999999999994,
+        "positive_season_ratio": 0.3333333333333333
+      },
+      "holdout_lift": 0.09581676573068248,
+      "full": {
+        "n": 1250,
+        "wins": 349,
+        "losses": 901,
+        "win_rate": 0.2792,
+        "roi": 0.065544,
+        "units": 81.93,
+        "positive_season_ratio": 0.6923076923076923
+      },
+      "status": "HOLDOUT_SURVIVOR"
+    },
+    {
+      "outcome": "HOME",
+      "price_band": "P50_60",
+      "feature": "new__style__style_pass_completed_over_expected_10__opp",
+      "family": "style",
+      "op": "<=",
+      "threshold": -4.126495,
+      "train": {
+        "n": 144,
+        "wins": 91,
+        "losses": 53,
+        "win_rate": 0.6319444444444444,
+        "roi": 0.12680555555555553,
+        "units": 18.259999999999998,
+        "positive_season_ratio": 1.0
+      },
+      "validation": {
+        "n": 63,
+        "wins": 40,
+        "losses": 23,
+        "win_rate": 0.6349206349206349,
+        "roi": 0.12111111111111107,
+        "units": 7.629999999999997,
+        "positive_season_ratio": 0.5
+      },
+      "holdout": {
+        "n": 55,
+        "wins": 32,
+        "losses": 23,
+        "win_rate": 0.5818181818181818,
+        "roi": 0.03799999999999998,
+        "units": 2.089999999999999,
+        "positive_season_ratio": 1.0
+      },
+      "holdout_baseline": {
+        "n": 429,
+        "wins": 237,
+        "losses": 192,
+        "win_rate": 0.5524475524475524,
+        "roi": -0.026107226107226114,
+        "units": -11.200000000000003,
+        "positive_season_ratio": 0.3333333333333333
+      },
+      "holdout_lift": 0.06410722610722609,
+      "full": {
+        "n": 262,
+        "wins": 163,
+        "losses": 99,
+        "win_rate": 0.6221374045801527,
+        "roi": 0.10679389312977097,
+        "units": 27.979999999999993,
+        "positive_season_ratio": 0.8461538461538461
+      },
+      "status": "HOLDOUT_SURVIVOR"
+    },
+    {
+      "outcome": "DRAW",
+      "price_band": "ALL",
+      "feature": "new__style__style_xgi_3__combined",
+      "family": "style",
+      "op": ">=",
+      "threshold": 5.254375,
+      "train": {
+        "n": 496,
+        "wins": 140,
+        "losses": 356,
+        "win_rate": 0.28225806451612906,
+        "roi": 0.10028225806451614,
+        "units": 49.74000000000001,
+        "positive_season_ratio": 0.6666666666666666
+      },
+      "validation": {
+        "n": 388,
+        "wins": 98,
+        "losses": 290,
+        "win_rate": 0.25257731958762886,
+        "roi": 0.04641752577319587,
+        "units": 18.009999999999998,
+        "positive_season_ratio": 0.75
+      },
+      "holdout": {
+        "n": 479,
+        "wins": 127,
+        "losses": 352,
+        "win_rate": 0.2651356993736952,
+        "roi": 0.04716075156576199,
+        "units": 22.589999999999993,
+        "positive_season_ratio": 0.6666666666666666
+      },
+      "holdout_baseline": {
+        "n": 1394,
+        "wins": 359,
+        "losses": 1035,
+        "win_rate": 0.25753228120516497,
+        "roi": -0.0060688665710186464,
+        "units": -8.459999999999994,
+        "positive_season_ratio": 0.3333333333333333
+      },
+      "holdout_lift": 0.053229618136780635,
+      "full": {
+        "n": 1363,
+        "wins": 365,
+        "losses": 998,
+        "win_rate": 0.2677916360968452,
+        "roi": 0.0662802641232575,
+        "units": 90.33999999999999,
+        "positive_season_ratio": 0.6923076923076923
+      },
+      "status": "HOLDOUT_SURVIVOR"
+    },
+    {
+      "outcome": "HOME",
+      "price_band": "P50_60",
+      "feature": "new__style__style_delta3_prev5_top3_gplus_share__opp",
+      "family": "style",
+      "op": ">=",
+      "threshold": 0.039117280502148244,
+      "train": {
+        "n": 143,
+        "wins": 87,
+        "losses": 56,
+        "win_rate": 0.6083916083916084,
+        "roi": 0.08825174825174825,
+        "units": 12.62,
+        "positive_season_ratio": 0.6666666666666666
+      },
+      "validation": {
+        "n": 99,
+        "wins": 65,
+        "losses": 34,
+        "win_rate": 0.6565656565656566,
+        "roi": 0.15595959595959594,
+        "units": 15.439999999999998,
+        "positive_season_ratio": 0.75
+      },
+      "holdout": {
+        "n": 76,
+        "wins": 45,
+        "losses": 31,
+        "win_rate": 0.5921052631578947,
+        "roi": 0.04631578947368422,
+        "units": 3.5200000000000005,
+        "positive_season_ratio": 0.6666666666666666
+      },
+      "holdout_baseline": {
+        "n": 429,
+        "wins": 237,
+        "losses": 192,
+        "win_rate": 0.5524475524475524,
+        "roi": -0.026107226107226114,
+        "units": -11.200000000000003,
+        "positive_season_ratio": 0.3333333333333333
+      },
+      "holdout_lift": 0.07242301558091033,
+      "full": {
+        "n": 318,
+        "wins": 197,
+        "losses": 121,
+        "win_rate": 0.6194968553459119,
+        "roi": 0.09930817610062892,
+        "units": 31.58,
+        "positive_season_ratio": 0.6923076923076923
+      },
+      "status": "HOLDOUT_SURVIVOR"
+    },
+    {
+      "outcome": "HOME",
+      "price_band": "P40_50",
+      "feature": "new__style__style_gplus_raw_5__opp",
+      "family": "style",
+      "op": ">=",
+      "threshold": 2.123045,
+      "train": {
+        "n": 190,
+        "wins": 97,
+        "losses": 93,
+        "win_rate": 0.5105263157894737,
+        "roi": 0.09921052631578949,
+        "units": 18.85,
+        "positive_season_ratio": 0.8333333333333334
+      },
+      "validation": {
+        "n": 127,
+        "wins": 63,
+        "losses": 64,
+        "win_rate": 0.49606299212598426,
+        "roi": 0.0777952755905512,
+        "units": 9.880000000000003,
+        "positive_season_ratio": 0.75
+      },
+      "holdout": {
+        "n": 127,
+        "wins": 59,
+        "losses": 68,
+        "win_rate": 0.4645669291338583,
+        "roi": 0.0017322834645669533,
+        "units": 0.22000000000000308,
+        "positive_season_ratio": 0.6666666666666666
+      },
+      "holdout_baseline": {
+        "n": 477,
+        "wins": 193,
+        "losses": 284,
+        "win_rate": 0.40461215932914046,
+        "roi": -0.13215932914046122,
+        "units": -63.040000000000006,
+        "positive_season_ratio": 0.0
+      },
+      "holdout_lift": 0.13389161260502816,
+      "full": {
+        "n": 444,
+        "wins": 219,
+        "losses": 225,
+        "win_rate": 0.49324324324324326,
+        "roi": 0.0652027027027027,
+        "units": 28.95,
+        "positive_season_ratio": 0.7692307692307693
+      },
+      "status": "HOLDOUT_SURVIVOR"
+    },
+    {
+      "outcome": "HOME",
+      "price_band": "P45_55",
+      "feature": "new__style__style_top3_gplus_share_10__sel",
+      "family": "style",
+      "op": ">=",
+      "threshold": 0.5517837905259404,
+      "train": {
+        "n": 348,
+        "wins": 193,
+        "losses": 155,
+        "win_rate": 0.5545977011494253,
+        "roi": 0.08373563218390805,
+        "units": 29.14,
+        "positive_season_ratio": 0.6666666666666666
+      },
+      "validation": {
+        "n": 109,
+        "wins": 62,
+        "losses": 47,
+        "win_rate": 0.5688073394495413,
+        "roi": 0.11064220183486237,
+        "units": 12.059999999999999,
+        "positive_season_ratio": 1.0
+      },
+      "holdout": {
+        "n": 144,
+        "wins": 74,
+        "losses": 70,
+        "win_rate": 0.5138888888888888,
+        "roi": 0.0008333333333333248,
+        "units": 0.11999999999999877,
+        "positive_season_ratio": 0.6666666666666666
+      },
+      "holdout_baseline": {
+        "n": 477,
+        "wins": 221,
+        "losses": 256,
+        "win_rate": 0.46331236897274636,
+        "roi": -0.10148846960167715,
+        "units": -48.410000000000004,
+        "positive_season_ratio": 0.0
+      },
+      "holdout_lift": 0.10232180293501048,
+      "full": {
+        "n": 601,
+        "wins": 329,
+        "losses": 272,
+        "win_rate": 0.5474209650582362,
+        "roi": 0.06875207986688851,
+        "units": 41.31999999999999,
+        "positive_season_ratio": 0.7692307692307693
+      },
+      "status": "HOLDOUT_SURVIVOR"
+    },
+    {
+      "outcome": "HOME",
+      "price_band": "P45_55",
+      "feature": "new__style__style_xa_5__opp",
+      "family": "style",
+      "op": ">=",
+      "threshold": 1.09005,
+      "train": {
+        "n": 180,
+        "wins": 98,
+        "losses": 82,
+        "win_rate": 0.5444444444444444,
+        "roi": 0.07572222222222223,
+        "units": 13.630000000000003,
+        "positive_season_ratio": 0.6666666666666666
+      },
+      "validation": {
+        "n": 118,
+        "wins": 65,
+        "losses": 53,
+        "win_rate": 0.5508474576271186,
+        "roi": 0.07889830508474575,
+        "units": 9.309999999999999,
+        "positive_season_ratio": 0.75
+      },
+      "holdout": {
+        "n": 122,
+        "wins": 66,
+        "losses": 56,
+        "win_rate": 0.5409836065573771,
+        "roi": 0.05090163934426229,
+        "units": 6.209999999999999,
+        "positive_season_ratio": 0.6666666666666666
+      },
+      "holdout_baseline": {
+        "n": 477,
+        "wins": 221,
+        "losses": 256,
+        "win_rate": 0.46331236897274636,
+        "roi": -0.10148846960167715,
+        "units": -48.410000000000004,
+        "positive_season_ratio": 0.0
+      },
+      "holdout_lift": 0.15239010894593943,
+      "full": {
+        "n": 420,
+        "wins": 229,
+        "losses": 191,
+        "win_rate": 0.5452380952380952,
+        "roi": 0.0694047619047619,
+        "units": 29.149999999999995,
+        "positive_season_ratio": 0.6923076923076923
+      },
+      "status": "HOLDOUT_SURVIVOR"
+    },
+    {
+      "outcome": "HOME",
+      "price_band": "P45_55",
+      "feature": "new__style__style_delta3_prev5_gplus_receiving__edge",
+      "family": "style",
+      "op": "<=",
+      "threshold": -0.18656909565000002,
+      "train": {
+        "n": 165,
+        "wins": 92,
+        "losses": 73,
+        "win_rate": 0.5575757575757576,
+        "roi": 0.10339393939393941,
+        "units": 17.060000000000002,
+        "positive_season_ratio": 0.8333333333333334
+      },
+      "validation": {
+        "n": 116,
+        "wins": 64,
+        "losses": 52,
+        "win_rate": 0.5517241379310345,
+        "roi": 0.07594827586206897,
+        "units": 8.81,
+        "positive_season_ratio": 0.75
+      },
+      "holdout": {
+        "n": 117,
+        "wins": 61,
+        "losses": 56,
+        "win_rate": 0.5213675213675214,
+        "roi": 0.008547008547008544,
+        "units": 0.9999999999999998,
+        "positive_season_ratio": 0.3333333333333333
+      },
+      "holdout_baseline": {
+        "n": 477,
+        "wins": 221,
+        "losses": 256,
+        "win_rate": 0.46331236897274636,
+        "roi": -0.10148846960167715,
+        "units": -48.410000000000004,
+        "positive_season_ratio": 0.0
+      },
+      "holdout_lift": 0.1100354781486857,
+      "full": {
+        "n": 398,
+        "wins": 217,
+        "losses": 181,
+        "win_rate": 0.5452261306532663,
+        "roi": 0.06751256281407035,
+        "units": 26.869999999999997,
+        "positive_season_ratio": 0.6923076923076923
+      },
+      "status": "HOLDOUT_SURVIVOR"
+    },
+    {
+      "outcome": "HOME",
+      "price_band": "P45_55",
+      "feature": "new__weather__global__weather_wind_direction_deg",
+      "family": "weather",
+      "op": "<=",
+      "threshold": 125.0,
+      "train": {
+        "n": 181,
+        "wins": 100,
+        "losses": 81,
+        "win_rate": 0.5524861878453039,
+        "roi": 0.07386740331491715,
+        "units": 13.370000000000003,
+        "positive_season_ratio": 0.6666666666666666
+      },
+      "validation": {
+        "n": 115,
+        "wins": 69,
+        "losses": 46,
+        "win_rate": 0.6,
+        "roi": 0.18,
+        "units": 20.7,
+        "positive_season_ratio": 1.0
+      },
+      "holdout": {
+        "n": 128,
+        "wins": 70,
+        "losses": 58,
+        "win_rate": 0.546875,
+        "roi": 0.06445312499999997,
+        "units": 8.249999999999996,
+        "positive_season_ratio": 1.0
+      },
+      "holdout_baseline": {
+        "n": 477,
+        "wins": 221,
+        "losses": 256,
+        "win_rate": 0.46331236897274636,
+        "roi": -0.10148846960167715,
+        "units": -48.410000000000004,
+        "positive_season_ratio": 0.0
+      },
+      "holdout_lift": 0.16594159460167712,
+      "full": {
+        "n": 424,
+        "wins": 239,
+        "losses": 185,
+        "win_rate": 0.5636792452830188,
+        "roi": 0.09981132075471696,
+        "units": 42.31999999999999,
+        "positive_season_ratio": 0.8461538461538461
+      },
+      "status": "STRONG"
+    },
+    {
+      "outcome": "HOME",
+      "price_band": "P50_60",
+      "feature": "new__goalkeeper_roster__roster_churn_index__edge",
+      "family": "goalkeeper_roster",
+      "op": "<=",
+      "threshold": -0.09182494675600306,
+      "train": {
+        "n": 159,
+        "wins": 96,
+        "losses": 63,
+        "win_rate": 0.6037735849056604,
+        "roi": 0.07496855345911947,
+        "units": 11.919999999999996,
+        "positive_season_ratio": 0.8333333333333334
+      },
+      "validation": {
+        "n": 111,
+        "wins": 68,
+        "losses": 43,
+        "win_rate": 0.6126126126126126,
+        "roi": 0.07693693693693691,
+        "units": 8.539999999999997,
+        "positive_season_ratio": 0.75
+      },
+      "holdout": {
+        "n": 125,
+        "wins": 72,
+        "losses": 53,
+        "win_rate": 0.576,
+        "roi": 0.011840000000000003,
+        "units": 1.4800000000000004,
+        "positive_season_ratio": 0.6666666666666666
+      },
+      "holdout_baseline": {
+        "n": 429,
+        "wins": 237,
+        "losses": 192,
+        "win_rate": 0.5524475524475524,
+        "roi": -0.026107226107226114,
+        "units": -11.200000000000003,
+        "positive_season_ratio": 0.3333333333333333
+      },
+      "holdout_lift": 0.03794722610722612,
+      "full": {
+        "n": 395,
+        "wins": 236,
+        "losses": 159,
+        "win_rate": 0.5974683544303797,
+        "roi": 0.05554430379746833,
+        "units": 21.93999999999999,
+        "positive_season_ratio": 0.7692307692307693
+      },
+      "status": "HOLDOUT_SURVIVOR"
+    },
+    {
+      "outcome": "AWAY",
+      "price_band": "P20_30",
+      "feature": "new__referee__global__referee_prior_home_win_rate",
+      "family": "referee",
+      "op": "<=",
+      "threshold": 0.4461538461538462,
+      "train": {
+        "n": 225,
+        "wins": 67,
+        "losses": 158,
+        "win_rate": 0.29777777777777775,
+        "roi": 0.1752,
+        "units": 39.42,
+        "positive_season_ratio": 0.8333333333333334
+      },
+      "validation": {
+        "n": 103,
+        "wins": 28,
+        "losses": 75,
+        "win_rate": 0.27184466019417475,
+        "roi": 0.07427184466019417,
+        "units": 7.649999999999999,
+        "positive_season_ratio": 0.5
+      },
+      "holdout": {
+        "n": 162,
+        "wins": 49,
+        "losses": 113,
+        "win_rate": 0.30246913580246915,
+        "roi": 0.18469135802469136,
+        "units": 29.92,
+        "positive_season_ratio": 0.6666666666666666
+      },
+      "holdout_baseline": {
+        "n": 624,
+        "wins": 174,
+        "losses": 450,
+        "win_rate": 0.27884615384615385,
+        "roi": 0.08860576923076924,
+        "units": 55.290000000000006,
+        "positive_season_ratio": 0.6666666666666666
+      },
+      "holdout_lift": 0.09608558879392212,
+      "full": {
+        "n": 490,
+        "wins": 144,
+        "losses": 346,
+        "win_rate": 0.2938775510204082,
+        "roi": 0.15712244897959185,
+        "units": 76.99000000000001,
+        "positive_season_ratio": 0.6923076923076923
+      },
+      "status": "HOLDOUT_SURVIVOR"
+    },
+    {
+      "outcome": "AWAY",
+      "price_band": "P25_35",
+      "feature": "new__cross_comp__allcomp_matches_21d__edge",
+      "family": "cross_comp",
+      "op": "<=",
+      "threshold": -1.0,
+      "train": {
+        "n": 184,
+        "wins": 58,
+        "losses": 126,
+        "win_rate": 0.31521739130434784,
+        "roi": 0.06543478260869565,
+        "units": 12.04,
+        "positive_season_ratio": 0.6666666666666666
+      },
+      "validation": {
+        "n": 126,
+        "wins": 41,
+        "losses": 85,
+        "win_rate": 0.3253968253968254,
+        "roi": 0.0696825396825397,
+        "units": 8.780000000000001,
+        "positive_season_ratio": 0.5
+      },
+      "holdout": {
+        "n": 127,
+        "wins": 45,
+        "losses": 82,
+        "win_rate": 0.3543307086614173,
+        "roi": 0.16645669291338586,
+        "units": 21.140000000000004,
+        "positive_season_ratio": 1.0
+      },
+      "holdout_baseline": {
+        "n": 519,
+        "wins": 175,
+        "losses": 344,
+        "win_rate": 0.3371868978805395,
+        "roi": 0.10818882466281311,
+        "units": 56.150000000000006,
+        "positive_season_ratio": 0.6666666666666666
+      },
+      "holdout_lift": 0.058267868250572744,
+      "full": {
+        "n": 437,
+        "wins": 144,
+        "losses": 293,
+        "win_rate": 0.3295194508009153,
+        "roi": 0.09601830663615561,
+        "units": 41.96,
+        "positive_season_ratio": 0.6923076923076923
+      },
+      "status": "HOLDOUT_SURVIVOR"
+    },
+    {
+      "outcome": "HOME",
+      "price_band": "P50_60",
+      "feature": "new__style__style_pass_completed_over_expected_3__opp",
+      "family": "style",
+      "op": "<=",
+      "threshold": -5.54925,
+      "train": {
+        "n": 145,
+        "wins": 90,
+        "losses": 55,
+        "win_rate": 0.6206896551724138,
+        "roi": 0.11062068965517241,
+        "units": 16.04,
+        "positive_season_ratio": 0.8333333333333334
+      },
+      "validation": {
+        "n": 78,
+        "wins": 48,
+        "losses": 30,
+        "win_rate": 0.6153846153846154,
+        "roi": 0.0792307692307692,
+        "units": 6.179999999999998,
+        "positive_season_ratio": 0.75
+      },
+      "holdout": {
+        "n": 59,
+        "wins": 34,
+        "losses": 25,
+        "win_rate": 0.576271186440678,
+        "roi": 0.018305084745762704,
+        "units": 1.0799999999999996,
+        "positive_season_ratio": 0.3333333333333333
+      },
+      "holdout_baseline": {
+        "n": 429,
+        "wins": 237,
+        "losses": 192,
+        "win_rate": 0.5524475524475524,
+        "roi": -0.026107226107226114,
+        "units": -11.200000000000003,
+        "positive_season_ratio": 0.3333333333333333
+      },
+      "holdout_lift": 0.044412310852988815,
+      "full": {
+        "n": 282,
+        "wins": 172,
+        "losses": 110,
+        "win_rate": 0.6099290780141844,
+        "roi": 0.0826241134751773,
+        "units": 23.299999999999997,
+        "positive_season_ratio": 0.6923076923076923
+      },
+      "status": "HOLDOUT_SURVIVOR"
+    },
+    {
+      "outcome": "HOME",
+      "price_band": "P50_60",
+      "feature": "new__style__style_top3_touch_share_3__sel",
+      "family": "style",
+      "op": ">=",
+      "threshold": 0.3622901595125443,
+      "train": {
+        "n": 149,
+        "wins": 91,
+        "losses": 58,
+        "win_rate": 0.610738255033557,
+        "roi": 0.08892617449664429,
+        "units": 13.25,
+        "positive_season_ratio": 0.6666666666666666
+      },
+      "validation": {
+        "n": 133,
+        "wins": 80,
+        "losses": 53,
+        "win_rate": 0.6015037593984962,
+        "roi": 0.06060150375939849,
+        "units": 8.059999999999999,
+        "positive_season_ratio": 0.75
+      },
+      "holdout": {
+        "n": 117,
+        "wins": 67,
+        "losses": 50,
+        "win_rate": 0.5726495726495726,
+        "roi": 0.012991452991452976,
+        "units": 1.5199999999999982,
+        "positive_season_ratio": 0.6666666666666666
+      },
+      "holdout_baseline": {
+        "n": 429,
+        "wins": 237,
+        "losses": 192,
+        "win_rate": 0.5524475524475524,
+        "roi": -0.026107226107226114,
+        "units": -11.200000000000003,
+        "positive_season_ratio": 0.3333333333333333
+      },
+      "holdout_lift": 0.03909867909867909,
+      "full": {
+        "n": 399,
+        "wins": 238,
+        "losses": 161,
+        "win_rate": 0.5964912280701754,
+        "roi": 0.05721804511278194,
+        "units": 22.829999999999995,
+        "positive_season_ratio": 0.6923076923076923
+      },
+      "status": "HOLDOUT_SURVIVOR"
+    },
+    {
+      "outcome": "HOME",
+      "price_band": "P50_60",
+      "feature": "new__referee__global__referee_prior_over25_rate",
+      "family": "referee",
+      "op": "<=",
+      "threshold": 0.5862068965517241,
+      "train": {
+        "n": 422,
+        "wins": 247,
+        "losses": 175,
+        "win_rate": 0.5853080568720379,
+        "roi": 0.042582938388625584,
+        "units": 17.969999999999995,
+        "positive_season_ratio": 0.8333333333333334
+      },
+      "validation": {
+        "n": 277,
+        "wins": 163,
+        "losses": 114,
+        "win_rate": 0.5884476534296029,
+        "roi": 0.041480144404332134,
+        "units": 11.49,
+        "positive_season_ratio": 0.75
+      },
+      "holdout": {
+        "n": 227,
+        "wins": 132,
+        "losses": 95,
+        "win_rate": 0.5814977973568282,
+        "roi": 0.02784140969162995,
+        "units": 6.3199999999999985,
+        "positive_season_ratio": 1.0
+      },
+      "holdout_baseline": {
+        "n": 429,
+        "wins": 237,
+        "losses": 192,
+        "win_rate": 0.5524475524475524,
+        "roi": -0.026107226107226114,
+        "units": -11.200000000000003,
+        "positive_season_ratio": 0.3333333333333333
+      },
+      "holdout_lift": 0.05394863579885606,
+      "full": {
+        "n": 926,
+        "wins": 542,
+        "losses": 384,
+        "win_rate": 0.5853131749460043,
+        "roi": 0.03863930885529157,
+        "units": 35.779999999999994,
+        "positive_season_ratio": 0.8461538461538461
+      },
+      "status": "HOLDOUT_SURVIVOR"
+    },
+    {
+      "outcome": "HOME",
+      "price_band": "P45_55",
+      "feature": "new__style__style_xg_5__opp",
+      "family": "style",
+      "op": ">=",
+      "threshold": 1.606105,
+      "train": {
+        "n": 161,
+        "wins": 89,
+        "losses": 72,
+        "win_rate": 0.5527950310559007,
+        "roi": 0.10124223602484475,
+        "units": 16.300000000000004,
+        "positive_season_ratio": 0.8333333333333334
+      },
+      "validation": {
+        "n": 125,
+        "wins": 68,
+        "losses": 57,
+        "win_rate": 0.544,
+        "roi": 0.059679999999999976,
+        "units": 7.459999999999997,
+        "positive_season_ratio": 0.75
+      },
+      "holdout": {
+        "n": 138,
+        "wins": 73,
+        "losses": 65,
+        "win_rate": 0.5289855072463768,
+        "roi": 0.026376811594202885,
+        "units": 3.639999999999998,
+        "positive_season_ratio": 0.6666666666666666
+      },
+      "holdout_baseline": {
+        "n": 477,
+        "wins": 221,
+        "losses": 256,
+        "win_rate": 0.46331236897274636,
+        "roi": -0.10148846960167715,
+        "units": -48.410000000000004,
+        "positive_season_ratio": 0.0
+      },
+      "holdout_lift": 0.12786528119588003,
+      "full": {
+        "n": 424,
+        "wins": 230,
+        "losses": 194,
+        "win_rate": 0.5424528301886793,
+        "roi": 0.06462264150943395,
+        "units": 27.399999999999995,
+        "positive_season_ratio": 0.7692307692307693
+      },
+      "status": "HOLDOUT_SURVIVOR"
+    },
+    {
+      "outcome": "HOME",
+      "price_band": "P50_60",
+      "feature": "new__style__style_top3_xgi_share_10__sel",
+      "family": "style",
+      "op": ">=",
+      "threshold": 0.7095577991585513,
+      "train": {
+        "n": 281,
+        "wins": 169,
+        "losses": 112,
+        "win_rate": 0.6014234875444839,
+        "roi": 0.07370106761565835,
+        "units": 20.709999999999997,
+        "positive_season_ratio": 0.8333333333333334
+      },
+      "validation": {
+        "n": 139,
+        "wins": 83,
+        "losses": 56,
+        "win_rate": 0.5971223021582733,
+        "roi": 0.056330935251798546,
+        "units": 7.829999999999997,
+        "positive_season_ratio": 0.75
+      },
+      "holdout": {
+        "n": 117,
+        "wins": 67,
+        "losses": 50,
+        "win_rate": 0.5726495726495726,
+        "roi": 0.0023076923076922927,
+        "units": 0.26999999999999824,
+        "positive_season_ratio": 0.6666666666666666
+      },
+      "holdout_baseline": {
+        "n": 429,
+        "wins": 237,
+        "losses": 192,
+        "win_rate": 0.5524475524475524,
+        "roi": -0.026107226107226114,
+        "units": -11.200000000000003,
+        "positive_season_ratio": 0.3333333333333333
+      },
+      "holdout_lift": 0.028414918414918406,
+      "full": {
+        "n": 537,
+        "wins": 319,
+        "losses": 218,
+        "win_rate": 0.5940409683426443,
+        "roi": 0.05364990689013034,
+        "units": 28.80999999999999,
+        "positive_season_ratio": 0.7692307692307693
+      },
+      "status": "HOLDOUT_SURVIVOR"
+    },
+    {
+      "outcome": "HOME",
+      "price_band": "P50_60",
+      "feature": "new__player_manager__manager_prior_gdpg__sel",
+      "family": "player_manager",
+      "op": "<=",
+      "threshold": 0.2631578947368421,
+      "train": {
+        "n": 387,
+        "wins": 225,
+        "losses": 162,
+        "win_rate": 0.5813953488372093,
+        "roi": 0.03790697674418604,
+        "units": 14.669999999999998,
+        "positive_season_ratio": 0.6666666666666666
+      },
+      "validation": {
+        "n": 295,
+        "wins": 175,
+        "losses": 120,
+        "win_rate": 0.5932203389830508,
+        "roi": 0.048847457627118625,
+        "units": 14.409999999999995,
+        "positive_season_ratio": 1.0
+      },
+      "holdout": {
+        "n": 254,
+        "wins": 146,
+        "losses": 108,
+        "win_rate": 0.5748031496062992,
+        "roi": 0.015039370078740151,
+        "units": 3.8199999999999985,
+        "positive_season_ratio": 0.3333333333333333
+      },
+      "holdout_baseline": {
+        "n": 429,
+        "wins": 237,
+        "losses": 192,
+        "win_rate": 0.5524475524475524,
+        "roi": -0.026107226107226114,
+        "units": -11.200000000000003,
+        "positive_season_ratio": 0.3333333333333333
+      },
+      "holdout_lift": 0.041146596185966264,
+      "full": {
+        "n": 936,
+        "wins": 546,
+        "losses": 390,
+        "win_rate": 0.5833333333333334,
+        "roi": 0.03514957264957264,
+        "units": 32.89999999999999,
+        "positive_season_ratio": 0.6923076923076923
+      },
+      "status": "HOLDOUT_SURVIVOR"
+    },
+    {
+      "outcome": "HOME",
+      "price_band": "P50_60",
+      "feature": "new__cross_comp__allcomp_matches_21d__edge",
+      "family": "cross_comp",
+      "op": "<=",
+      "threshold": 0.0,
+      "train": {
+        "n": 416,
+        "wins": 244,
+        "losses": 172,
+        "win_rate": 0.5865384615384616,
+        "roi": 0.04942307692307692,
+        "units": 20.56,
+        "positive_season_ratio": 0.8333333333333334
+      },
+      "validation": {
+        "n": 320,
+        "wins": 188,
+        "losses": 132,
+        "win_rate": 0.5875,
+        "roi": 0.03574999999999999,
+        "units": 11.439999999999998,
+        "positive_season_ratio": 0.75
+      },
+      "holdout": {
+        "n": 318,
+        "wins": 180,
+        "losses": 138,
+        "win_rate": 0.5660377358490566,
+        "roi": 0.0006603773584905352,
+        "units": 0.2099999999999902,
+        "positive_season_ratio": 0.3333333333333333
+      },
+      "holdout_baseline": {
+        "n": 429,
+        "wins": 237,
+        "losses": 192,
+        "win_rate": 0.5524475524475524,
+        "roi": -0.026107226107226114,
+        "units": -11.200000000000003,
+        "positive_season_ratio": 0.3333333333333333
+      },
+      "holdout_lift": 0.02676760346571665,
+      "full": {
+        "n": 1054,
+        "wins": 612,
+        "losses": 442,
+        "win_rate": 0.5806451612903226,
+        "roi": 0.030559772296015173,
+        "units": 32.209999999999994,
+        "positive_season_ratio": 0.6923076923076923
+      },
+      "status": "HOLDOUT_SURVIVOR"
+    },
+    {
+      "outcome": "HOME",
+      "price_band": "P40_50",
+      "feature": "new__player_manager__player_top11_minutes_share5__opp",
+      "family": "player_manager",
+      "op": ">=",
+      "threshold": 0.8562017692452475,
+      "train": {
+        "n": 203,
+        "wins": 102,
+        "losses": 101,
+        "win_rate": 0.5024630541871922,
+        "roi": 0.08507389162561578,
+        "units": 17.270000000000003,
+        "positive_season_ratio": 0.8333333333333334
+      },
+      "validation": {
+        "n": 70,
+        "wins": 34,
+        "losses": 36,
+        "win_rate": 0.4857142857142857,
+        "roi": 0.07314285714285716,
+        "units": 5.120000000000001,
+        "positive_season_ratio": 0.5
+      },
+      "holdout": {
+        "n": 39,
+        "wins": 21,
+        "losses": 18,
+        "win_rate": 0.5384615384615384,
+        "roi": 0.16769230769230767,
+        "units": 6.539999999999999,
+        "positive_season_ratio": 0.6666666666666666
+      },
+      "holdout_baseline": {
+        "n": 477,
+        "wins": 193,
+        "losses": 284,
+        "win_rate": 0.40461215932914046,
+        "roi": -0.13215932914046122,
+        "units": -63.040000000000006,
+        "positive_season_ratio": 0.0
+      },
+      "holdout_lift": 0.2998516368327689,
+      "full": {
+        "n": 312,
+        "wins": 157,
+        "losses": 155,
+        "win_rate": 0.5032051282051282,
+        "roi": 0.09272435897435898,
+        "units": 28.93,
+        "positive_season_ratio": 0.6923076923076923
+      },
+      "status": "HOLDOUT_SURVIVOR"
+    },
+    {
+      "outcome": "HOME",
+      "price_band": "P50_60",
+      "feature": "new__style__style_top3_gplus_share_5__opp",
+      "family": "style",
+      "op": ">=",
+      "threshold": 0.577940707065171,
+      "train": {
+        "n": 162,
+        "wins": 99,
+        "losses": 63,
+        "win_rate": 0.6111111111111112,
+        "roi": 0.08666666666666666,
+        "units": 14.039999999999997,
+        "positive_season_ratio": 0.6666666666666666
+      },
+      "validation": {
+        "n": 68,
+        "wins": 42,
+        "losses": 26,
+        "win_rate": 0.6176470588235294,
+        "roi": 0.07411764705882351,
+        "units": 5.039999999999998,
+        "positive_season_ratio": 0.6666666666666666
+      },
+      "holdout": {
+        "n": 66,
+        "wins": 43,
+        "losses": 23,
+        "win_rate": 0.6515151515151515,
+        "roi": 0.1481818181818182,
+        "units": 9.780000000000001,
+        "positive_season_ratio": 0.6666666666666666
+      },
+      "holdout_baseline": {
+        "n": 429,
+        "wins": 237,
+        "losses": 192,
+        "win_rate": 0.5524475524475524,
+        "roi": -0.026107226107226114,
+        "units": -11.200000000000003,
+        "positive_season_ratio": 0.3333333333333333
+      },
+      "holdout_lift": 0.1742890442890443,
+      "full": {
+        "n": 296,
+        "wins": 184,
+        "losses": 112,
+        "win_rate": 0.6216216216216216,
+        "roi": 0.09749999999999999,
+        "units": 28.859999999999996,
+        "positive_season_ratio": 0.6666666666666666
+      },
+      "status": "HOLDOUT_SURVIVOR"
+    },
+    {
+      "outcome": "HOME",
+      "price_band": "P50_60",
+      "feature": "new__style__style_pass_completed_over_expected_3__sel",
+      "family": "style",
+      "op": ">=",
+      "threshold": -0.7991833333333336,
+      "train": {
+        "n": 302,
+        "wins": 176,
+        "losses": 126,
+        "win_rate": 0.5827814569536424,
+        "roi": 0.036423841059602634,
+        "units": 10.999999999999996,
+        "positive_season_ratio": 0.6666666666666666
+      },
+      "validation": {
+        "n": 277,
+        "wins": 163,
+        "losses": 114,
+        "win_rate": 0.5884476534296029,
+        "roi": 0.03776173285198555,
+        "units": 10.459999999999997,
+        "positive_season_ratio": 0.75
+      },
+      "holdout": {
+        "n": 308,
+        "wins": 175,
+        "losses": 133,
+        "win_rate": 0.5681818181818182,
+        "roi": 0.003798701298701287,
+        "units": 1.1699999999999964,
+        "positive_season_ratio": 0.6666666666666666
+      },
+      "holdout_baseline": {
+        "n": 429,
+        "wins": 237,
+        "losses": 192,
+        "win_rate": 0.5524475524475524,
+        "roi": -0.026107226107226114,
+        "units": -11.200000000000003,
+        "positive_season_ratio": 0.3333333333333333
+      },
+      "holdout_lift": 0.0299059274059274,
+      "full": {
+        "n": 887,
+        "wins": 514,
+        "losses": 373,
+        "win_rate": 0.5794813979706878,
+        "roi": 0.025512965050732802,
+        "units": 22.629999999999995,
+        "positive_season_ratio": 0.6923076923076923
+      },
+      "status": "HOLDOUT_SURVIVOR"
+    },
+    {
+      "outcome": "HOME",
+      "price_band": "P45_55",
+      "feature": "new__player_manager__manager_prior_ppg__sel",
+      "family": "player_manager",
+      "op": "<=",
+      "threshold": 1.2197802197802199,
+      "train": {
+        "n": 138,
+        "wins": 75,
+        "losses": 63,
+        "win_rate": 0.5434782608695652,
+        "roi": 0.06956521739130435,
+        "units": 9.6,
+        "positive_season_ratio": 0.6666666666666666
+      },
+      "validation": {
+        "n": 86,
+        "wins": 46,
+        "losses": 40,
+        "win_rate": 0.5348837209302325,
+        "roi": 0.06523255813953485,
+        "units": 5.609999999999998,
+        "positive_season_ratio": 0.75
+      },
+      "holdout": {
+        "n": 43,
+        "wins": 24,
+        "losses": 19,
+        "win_rate": 0.5581395348837209,
+        "roi": 0.10558139534883716,
+        "units": 4.539999999999998,
+        "positive_season_ratio": 1.0
+      },
+      "holdout_baseline": {
+        "n": 477,
+        "wins": 221,
+        "losses": 256,
+        "win_rate": 0.46331236897274636,
+        "roi": -0.10148846960167715,
+        "units": -48.410000000000004,
+        "positive_season_ratio": 0.0
+      },
+      "holdout_lift": 0.20706986495051433,
+      "full": {
+        "n": 267,
+        "wins": 145,
+        "losses": 122,
+        "win_rate": 0.5430711610486891,
+        "roi": 0.0739700374531835,
+        "units": 19.749999999999993,
+        "positive_season_ratio": 0.7692307692307693
+      },
+      "status": "HOLDOUT_SURVIVOR"
+    },
+    {
+      "outcome": "HOME",
+      "price_band": "P50_60",
+      "feature": "new__goalkeeper_roster__gk_goals_conceded_p96_5__edge",
+      "family": "goalkeeper_roster",
+      "op": ">=",
+      "threshold": 0.5737107775691397,
+      "train": {
+        "n": 109,
+        "wins": 65,
+        "losses": 44,
+        "win_rate": 0.5963302752293578,
+        "roi": 0.06963302752293576,
+        "units": 7.589999999999999,
+        "positive_season_ratio": 0.6666666666666666
+      },
+      "validation": {
+        "n": 74,
+        "wins": 50,
+        "losses": 24,
+        "win_rate": 0.6756756756756757,
+        "roi": 0.19837837837837835,
+        "units": 14.679999999999998,
+        "positive_season_ratio": 0.75
+      },
+      "holdout": {
+        "n": 65,
+        "wins": 42,
+        "losses": 23,
+        "win_rate": 0.6461538461538462,
+        "roi": 0.14599999999999994,
+        "units": 9.489999999999997,
+        "positive_season_ratio": 0.6666666666666666
+      },
+      "holdout_baseline": {
+        "n": 429,
+        "wins": 237,
+        "losses": 192,
+        "win_rate": 0.5524475524475524,
+        "roi": -0.026107226107226114,
+        "units": -11.200000000000003,
+        "positive_season_ratio": 0.3333333333333333
+      },
+      "holdout_lift": 0.17210722610722606,
+      "full": {
+        "n": 248,
+        "wins": 157,
+        "losses": 91,
+        "win_rate": 0.6330645161290323,
+        "roi": 0.12806451612903225,
+        "units": 31.759999999999994,
+        "positive_season_ratio": 0.6923076923076923
+      },
+      "status": "HOLDOUT_SURVIVOR"
+    },
+    {
+      "outcome": "HOME",
+      "price_band": "P50_60",
+      "feature": "new__goalkeeper_roster__gk_goals_minus_xg_p96_5__edge",
+      "family": "goalkeeper_roster",
+      "op": ">=",
+      "threshold": 0.3103867768595041,
+      "train": {
+        "n": 145,
+        "wins": 86,
+        "losses": 59,
+        "win_rate": 0.593103448275862,
+        "roi": 0.057999999999999975,
+        "units": 8.409999999999997,
+        "positive_season_ratio": 0.6666666666666666
+      },
+      "validation": {
+        "n": 104,
+        "wins": 68,
+        "losses": 36,
+        "win_rate": 0.6538461538461539,
+        "roi": 0.16105769230769226,
+        "units": 16.749999999999996,
+        "positive_season_ratio": 0.75
+      },
+      "holdout": {
+        "n": 115,
+        "wins": 69,
+        "losses": 46,
+        "win_rate": 0.6,
+        "roi": 0.05495652173913043,
+        "units": 6.319999999999999,
+        "positive_season_ratio": 0.6666666666666666
+      },
+      "holdout_baseline": {
+        "n": 429,
+        "wins": 237,
+        "losses": 192,
+        "win_rate": 0.5524475524475524,
+        "roi": -0.026107226107226114,
+        "units": -11.200000000000003,
+        "positive_season_ratio": 0.3333333333333333
+      },
+      "holdout_lift": 0.08106374784635655,
+      "full": {
+        "n": 364,
+        "wins": 223,
+        "losses": 141,
+        "win_rate": 0.6126373626373627,
+        "roi": 0.08648351648351647,
+        "units": 31.479999999999997,
+        "positive_season_ratio": 0.6923076923076923
+      },
+      "status": "HOLDOUT_SURVIVOR"
+    },
+    {
+      "outcome": "HOME",
+      "price_band": "P50_60",
+      "feature": "new__style__style_delta3_prev5_top3_touch_share__sel",
+      "family": "style",
+      "op": ">=",
+      "threshold": 0.01041102516407702,
+      "train": {
+        "n": 139,
+        "wins": 82,
+        "losses": 57,
+        "win_rate": 0.5899280575539568,
+        "roi": 0.052805755395683454,
+        "units": 7.34,
+        "positive_season_ratio": 0.6666666666666666
+      },
+      "validation": {
+        "n": 122,
+        "wins": 79,
+        "losses": 43,
+        "win_rate": 0.6475409836065574,
+        "roi": 0.14467213114754096,
+        "units": 17.65,
+        "positive_season_ratio": 0.75
+      },
+      "holdout": {
+        "n": 126,
+        "wins": 73,
+        "losses": 53,
+        "win_rate": 0.5793650793650794,
+        "roi": 0.02412698412698412,
+        "units": 3.0399999999999987,
+        "positive_season_ratio": 0.6666666666666666
+      },
+      "holdout_baseline": {
+        "n": 429,
+        "wins": 237,
+        "losses": 192,
+        "win_rate": 0.5524475524475524,
+        "roi": -0.026107226107226114,
+        "units": -11.200000000000003,
+        "positive_season_ratio": 0.3333333333333333
+      },
+      "holdout_lift": 0.050234210234210236,
+      "full": {
+        "n": 387,
+        "wins": 234,
+        "losses": 153,
+        "win_rate": 0.6046511627906976,
+        "roi": 0.07242894056847543,
+        "units": 28.029999999999994,
+        "positive_season_ratio": 0.6923076923076923
+      },
+      "status": "HOLDOUT_SURVIVOR"
+    },
+    {
+      "outcome": "HOME",
+      "price_band": "P50_60",
+      "feature": "new__salary__salary_median_gc__edge",
+      "family": "salary",
+      "op": "<=",
+      "threshold": 18625.0,
+      "train": {
+        "n": 306,
+        "wins": 181,
+        "losses": 125,
+        "win_rate": 0.5915032679738562,
+        "roi": 0.05013071895424836,
+        "units": 15.339999999999998,
+        "positive_season_ratio": 0.8333333333333334
+      },
+      "validation": {
+        "n": 161,
+        "wins": 95,
+        "losses": 66,
+        "win_rate": 0.5900621118012422,
+        "roi": 0.045714285714285686,
+        "units": 7.359999999999996,
+        "positive_season_ratio": 1.0
+      },
+      "holdout": {
+        "n": 146,
+        "wins": 83,
+        "losses": 63,
+        "win_rate": 0.5684931506849316,
+        "roi": 0.003972602739726022,
+        "units": 0.5799999999999992,
+        "positive_season_ratio": 0.3333333333333333
+      },
+      "holdout_baseline": {
+        "n": 429,
+        "wins": 237,
+        "losses": 192,
+        "win_rate": 0.5524475524475524,
+        "roi": -0.026107226107226114,
+        "units": -11.200000000000003,
+        "positive_season_ratio": 0.3333333333333333
+      },
+      "holdout_lift": 0.030079828846952136,
+      "full": {
+        "n": 613,
+        "wins": 359,
+        "losses": 254,
+        "win_rate": 0.5856443719412724,
+        "roi": 0.03797716150081565,
+        "units": 23.27999999999999,
+        "positive_season_ratio": 0.75
+      },
+      "status": "HOLDOUT_SURVIVOR"
+    },
+    {
+      "outcome": "DRAW",
+      "price_band": "P25_35",
+      "feature": "new__salary__salary_mean_gc__balance",
+      "family": "salary",
+      "op": "<=",
+      "threshold": 24279.595200854706,
+      "train": {
+        "n": 269,
+        "wins": 80,
+        "losses": 189,
+        "win_rate": 0.29739776951672864,
+        "roi": 0.06275092936802974,
+        "units": 16.88,
+        "positive_season_ratio": 0.6666666666666666
+      },
+      "validation": {
+        "n": 84,
+        "wins": 27,
+        "losses": 57,
+        "win_rate": 0.32142857142857145,
+        "roi": 0.14476190476190476,
+        "units": 12.16,
+        "positive_season_ratio": 0.6666666666666666
+      },
+      "holdout": {
+        "n": 47,
+        "wins": 14,
+        "losses": 33,
+        "win_rate": 0.2978723404255319,
+        "roi": 0.08297872340425531,
+        "units": 3.9,
+        "positive_season_ratio": 0.6666666666666666
+      },
+      "holdout_baseline": {
+        "n": 800,
+        "wins": 228,
+        "losses": 572,
+        "win_rate": 0.285,
+        "roi": 0.0285875,
+        "units": 22.869999999999997,
+        "positive_season_ratio": 0.3333333333333333
+      },
+      "holdout_lift": 0.05439122340425531,
+      "full": {
+        "n": 400,
+        "wins": 121,
+        "losses": 279,
+        "win_rate": 0.3025,
+        "roi": 0.08234999999999999,
+        "units": 32.94,
+        "positive_season_ratio": 0.6666666666666666
+      },
+      "status": "HOLDOUT_SURVIVOR"
+    },
+    {
+      "outcome": "HOME",
+      "price_band": "P40_50",
+      "feature": "new__player_manager__manager_prior_ppg__sel",
+      "family": "player_manager",
+      "op": "<=",
+      "threshold": 1.2197802197802199,
+      "train": {
+        "n": 204,
+        "wins": 100,
+        "losses": 104,
+        "win_rate": 0.49019607843137253,
+        "roi": 0.0777941176470588,
+        "units": 15.869999999999997,
+        "positive_season_ratio": 0.6666666666666666
+      },
+      "validation": {
+        "n": 118,
+        "wins": 57,
+        "losses": 61,
+        "win_rate": 0.4830508474576271,
+        "roi": 0.050932203389830476,
+        "units": 6.009999999999996,
+        "positive_season_ratio": 0.75
+      },
+      "holdout": {
+        "n": 63,
+        "wins": 30,
+        "losses": 33,
+        "win_rate": 0.47619047619047616,
+        "roi": 0.036190476190476197,
+        "units": 2.2800000000000002,
+        "positive_season_ratio": 0.6666666666666666
+      },
+      "holdout_baseline": {
+        "n": 477,
+        "wins": 193,
+        "losses": 284,
+        "win_rate": 0.40461215932914046,
+        "roi": -0.13215932914046122,
+        "units": -63.040000000000006,
+        "positive_season_ratio": 0.0
+      },
+      "holdout_lift": 0.1683498053309374,
+      "full": {
+        "n": 385,
+        "wins": 187,
+        "losses": 198,
+        "win_rate": 0.4857142857142857,
+        "roi": 0.06275324675324674,
+        "units": 24.159999999999997,
+        "positive_season_ratio": 0.6923076923076923
+      },
+      "status": "HOLDOUT_SURVIVOR"
+    },
+    {
+      "outcome": "HOME",
+      "price_band": "P50_60",
+      "feature": "new__style__style_pass_completed_over_expected_10__edge",
+      "family": "style",
+      "op": ">=",
+      "threshold": -0.016950000000000465,
+      "train": {
+        "n": 314,
+        "wins": 183,
+        "losses": 131,
+        "win_rate": 0.5828025477707006,
+        "roi": 0.03605095541401273,
+        "units": 11.319999999999997,
+        "positive_season_ratio": 0.6666666666666666
+      },
+      "validation": {
+        "n": 235,
+        "wins": 147,
+        "losses": 88,
+        "win_rate": 0.625531914893617,
+        "roi": 0.10268085106382978,
+        "units": 24.13,
+        "positive_season_ratio": 1.0
+      },
+      "holdout": {
+        "n": 256,
+        "wins": 147,
+        "losses": 109,
+        "win_rate": 0.57421875,
+        "roi": 0.0081640625,
+        "units": 2.09,
+        "positive_season_ratio": 0.3333333333333333
+      },
+      "holdout_baseline": {
+        "n": 429,
+        "wins": 237,
+        "losses": 192,
+        "win_rate": 0.5524475524475524,
+        "roi": -0.026107226107226114,
+        "units": -11.200000000000003,
+        "positive_season_ratio": 0.3333333333333333
+      },
+      "holdout_lift": 0.034271288607226114,
+      "full": {
+        "n": 805,
+        "wins": 477,
+        "losses": 328,
+        "win_rate": 0.5925465838509317,
+        "roi": 0.0466335403726708,
+        "units": 37.53999999999999,
+        "positive_season_ratio": 0.6923076923076923
+      },
+      "status": "HOLDOUT_SURVIVOR"
+    },
+    {
+      "outcome": "HOME",
+      "price_band": "P50_60",
+      "feature": "new__venue__travel_from_prev_match_miles__opp",
+      "family": "venue",
+      "op": "<=",
+      "threshold": 1613.6053895808445,
+      "train": {
+        "n": 408,
+        "wins": 236,
+        "losses": 172,
+        "win_rate": 0.5784313725490197,
+        "roi": 0.029019607843137236,
+        "units": 11.839999999999993,
+        "positive_season_ratio": 0.6666666666666666
+      },
+      "validation": {
+        "n": 353,
+        "wins": 209,
+        "losses": 144,
+        "win_rate": 0.5920679886685553,
+        "roi": 0.04371104815864021,
+        "units": 15.429999999999994,
+        "positive_season_ratio": 0.75
+      },
+      "holdout": {
+        "n": 342,
+        "wins": 196,
+        "losses": 146,
+        "win_rate": 0.5730994152046783,
+        "roi": 0.011959064327485374,
+        "units": 4.089999999999998,
+        "positive_season_ratio": 0.6666666666666666
+      },
+      "holdout_baseline": {
+        "n": 429,
+        "wins": 237,
+        "losses": 192,
+        "win_rate": 0.5524475524475524,
+        "roi": -0.026107226107226114,
+        "units": -11.200000000000003,
+        "positive_season_ratio": 0.3333333333333333
+      },
+      "holdout_lift": 0.03806629043471149,
+      "full": {
+        "n": 1103,
+        "wins": 641,
+        "losses": 462,
+        "win_rate": 0.5811423390752494,
+        "roi": 0.0284315503173164,
+        "units": 31.35999999999999,
+        "positive_season_ratio": 0.6923076923076923
+      },
+      "status": "HOLDOUT_SURVIVOR"
+    },
+    {
+      "outcome": "HOME",
+      "price_band": "P55_70",
+      "feature": "new__style__style_top3_gplus_share_3__opp",
+      "family": "style",
+      "op": ">=",
+      "threshold": 0.5848905005910849,
+      "train": {
+        "n": 146,
+        "wins": 98,
+        "losses": 48,
+        "win_rate": 0.6712328767123288,
+        "roi": 0.06602739726027397,
+        "units": 9.639999999999999,
+        "positive_season_ratio": 0.8333333333333334
+      },
+      "validation": {
+        "n": 66,
+        "wins": 45,
+        "losses": 21,
+        "win_rate": 0.6818181818181818,
+        "roi": 0.09409090909090909,
+        "units": 6.21,
+        "positive_season_ratio": 0.6666666666666666
+      },
+      "holdout": {
+        "n": 59,
+        "wins": 37,
+        "losses": 22,
+        "win_rate": 0.6271186440677966,
+        "roi": 0.002542372881355942,
+        "units": 0.15000000000000058,
+        "positive_season_ratio": 0.3333333333333333
+      },
+      "holdout_baseline": {
+        "n": 358,
+        "wins": 224,
+        "losses": 134,
+        "win_rate": 0.6256983240223464,
+        "roi": 0.002402234636871507,
+        "units": 0.8599999999999994,
+        "positive_season_ratio": 0.6666666666666666
+      },
+      "holdout_lift": 0.00014013824448443502,
+      "full": {
+        "n": 271,
+        "wins": 180,
+        "losses": 91,
+        "win_rate": 0.6642066420664207,
+        "roi": 0.05904059040590406,
+        "units": 16.0,
+        "positive_season_ratio": 0.6666666666666666
+      },
+      "status": "HOLDOUT_SURVIVOR"
+    },
+    {
+      "outcome": "HOME",
+      "price_band": "P50_60",
+      "feature": "new__style__style_delta3_prev5_key_passes__edge",
+      "family": "style",
+      "op": "<=",
+      "threshold": -0.13333333333333464,
+      "train": {
+        "n": 278,
+        "wins": 162,
+        "losses": 116,
+        "win_rate": 0.5827338129496403,
+        "roi": 0.035827338129496386,
+        "units": 9.959999999999996,
+        "positive_season_ratio": 0.6666666666666666
+      },
+      "validation": {
+        "n": 224,
+        "wins": 133,
+        "losses": 91,
+        "win_rate": 0.59375,
+        "roi": 0.05044642857142856,
+        "units": 11.299999999999997,
+        "positive_season_ratio": 0.75
+      },
+      "holdout": {
+        "n": 228,
+        "wins": 133,
+        "losses": 95,
+        "win_rate": 0.5833333333333334,
+        "roi": 0.027149122807017534,
+        "units": 6.189999999999998,
+        "positive_season_ratio": 0.6666666666666666
+      },
+      "holdout_baseline": {
+        "n": 429,
+        "wins": 237,
+        "losses": 192,
+        "win_rate": 0.5524475524475524,
+        "roi": -0.026107226107226114,
+        "units": -11.200000000000003,
+        "positive_season_ratio": 0.3333333333333333
+      },
+      "holdout_lift": 0.05325634891424365,
+      "full": {
+        "n": 730,
+        "wins": 428,
+        "losses": 302,
+        "win_rate": 0.5863013698630137,
+        "roi": 0.03760273972602739,
+        "units": 27.449999999999992,
+        "positive_season_ratio": 0.6923076923076923
+      },
+      "status": "HOLDOUT_SURVIVOR"
+    },
+    {
+      "outcome": "HOME",
+      "price_band": "P50_60",
+      "feature": "new__player_manager__player_top11_minutes_share5__opp",
+      "family": "player_manager",
+      "op": "<=",
+      "threshold": 0.786626596543952,
+      "train": {
+        "n": 168,
+        "wins": 98,
+        "losses": 70,
+        "win_rate": 0.5833333333333334,
+        "roi": 0.040595238095238094,
+        "units": 6.82,
+        "positive_season_ratio": 0.6666666666666666
+      },
+      "validation": {
+        "n": 162,
+        "wins": 97,
+        "losses": 65,
+        "win_rate": 0.5987654320987654,
+        "roi": 0.05259259259259258,
+        "units": 8.519999999999998,
+        "positive_season_ratio": 1.0
+      },
+      "holdout": {
+        "n": 192,
+        "wins": 112,
+        "losses": 80,
+        "win_rate": 0.5833333333333334,
+        "roi": 0.023072916666666648,
+        "units": 4.429999999999996,
+        "positive_season_ratio": 0.6666666666666666
+      },
+      "holdout_baseline": {
+        "n": 429,
+        "wins": 237,
+        "losses": 192,
+        "win_rate": 0.5524475524475524,
+        "roi": -0.026107226107226114,
+        "units": -11.200000000000003,
+        "positive_season_ratio": 0.3333333333333333
+      },
+      "holdout_lift": 0.049180142773892765,
+      "full": {
+        "n": 522,
+        "wins": 307,
+        "losses": 215,
+        "win_rate": 0.5881226053639846,
+        "roi": 0.0378735632183908,
+        "units": 19.769999999999996,
+        "positive_season_ratio": 0.7692307692307693
+      },
+      "status": "HOLDOUT_SURVIVOR"
+    },
+    {
+      "outcome": "HOME",
+      "price_band": "P50_60",
+      "feature": "new__style__style_delta3_prev5_xa__edge",
+      "family": "style",
+      "op": "<=",
+      "threshold": 0.3085266666666664,
+      "train": {
+        "n": 423,
+        "wins": 244,
+        "losses": 179,
+        "win_rate": 0.5768321513002365,
+        "roi": 0.028770685579196213,
+        "units": 12.169999999999998,
+        "positive_season_ratio": 0.6666666666666666
+      },
+      "validation": {
+        "n": 307,
+        "wins": 179,
+        "losses": 128,
+        "win_rate": 0.5830618892508144,
+        "roi": 0.029446254071661217,
+        "units": 9.039999999999994,
+        "positive_season_ratio": 0.75
+      },
+      "holdout": {
+        "n": 328,
+        "wins": 187,
+        "losses": 141,
+        "win_rate": 0.5701219512195121,
+        "roi": 0.004908536585365852,
+        "units": 1.6099999999999994,
+        "positive_season_ratio": 0.6666666666666666
+      },
+      "holdout_baseline": {
+        "n": 429,
+        "wins": 237,
+        "losses": 192,
+        "win_rate": 0.5524475524475524,
+        "roi": -0.026107226107226114,
+        "units": -11.200000000000003,
+        "positive_season_ratio": 0.3333333333333333
+      },
+      "holdout_lift": 0.031015762692591965,
+      "full": {
+        "n": 1058,
+        "wins": 610,
+        "losses": 448,
+        "win_rate": 0.5765595463137996,
+        "roi": 0.021568998109640823,
+        "units": 22.81999999999999,
+        "positive_season_ratio": 0.6923076923076923
+      },
+      "status": "HOLDOUT_SURVIVOR"
+    },
+    {
+      "outcome": "HOME",
+      "price_band": "P55_70",
+      "feature": "new__style__style_gplus_receiving_10__edge",
+      "family": "style",
+      "op": "<=",
+      "threshold": -0.10811017887499991,
+      "train": {
+        "n": 46,
+        "wins": 31,
+        "losses": 15,
+        "win_rate": 0.6739130434782609,
+        "roi": 0.0973913043478261,
+        "units": 4.48,
+        "positive_season_ratio": 0.75
+      },
+      "validation": {
+        "n": 35,
+        "wins": 23,
+        "losses": 12,
+        "win_rate": 0.6571428571428571,
+        "roi": 0.08485714285714285,
+        "units": 2.9699999999999998,
+        "positive_season_ratio": 0.6666666666666666
+      },
+      "holdout": {
+        "n": 40,
+        "wins": 27,
+        "losses": 13,
+        "win_rate": 0.675,
+        "roi": 0.10725,
+        "units": 4.29,
+        "positive_season_ratio": 0.6666666666666666
+      },
+      "holdout_baseline": {
+        "n": 358,
+        "wins": 224,
+        "losses": 134,
+        "win_rate": 0.6256983240223464,
+        "roi": 0.002402234636871507,
+        "units": 0.8599999999999994,
+        "positive_season_ratio": 0.6666666666666666
+      },
+      "holdout_lift": 0.1048477653631285,
+      "full": {
+        "n": 121,
+        "wins": 81,
+        "losses": 40,
+        "win_rate": 0.6694214876033058,
+        "roi": 0.09702479338842976,
+        "units": 11.74,
+        "positive_season_ratio": 0.7
+      },
+      "status": "HOLDOUT_SURVIVOR"
+    },
+    {
+      "outcome": "AWAY",
+      "price_band": "P25_35",
+      "feature": "new__salary__salary_top3_share__sel",
+      "family": "salary",
+      "op": ">=",
+      "threshold": 0.3840044585242675,
+      "train": {
+        "n": 255,
+        "wins": 80,
+        "losses": 175,
+        "win_rate": 0.3137254901960784,
+        "roi": 0.041450980392156875,
+        "units": 10.570000000000004,
+        "positive_season_ratio": 0.8333333333333334
+      },
+      "validation": {
+        "n": 202,
+        "wins": 64,
+        "losses": 138,
+        "win_rate": 0.31683168316831684,
+        "roi": 0.03396039603960397,
+        "units": 6.860000000000001,
+        "positive_season_ratio": 0.6666666666666666
+      },
+      "holdout": {
+        "n": 205,
+        "wins": 72,
+        "losses": 133,
+        "win_rate": 0.35121951219512193,
+        "roi": 0.15224390243902444,
+        "units": 31.210000000000008,
+        "positive_season_ratio": 0.3333333333333333
+      },
+      "holdout_baseline": {
+        "n": 519,
+        "wins": 175,
+        "losses": 344,
+        "win_rate": 0.3371868978805395,
+        "roi": 0.10818882466281311,
+        "units": 56.150000000000006,
+        "positive_season_ratio": 0.6666666666666666
+      },
+      "holdout_lift": 0.04405507777621133,
+      "full": {
+        "n": 662,
+        "wins": 216,
+        "losses": 446,
+        "win_rate": 0.32628398791540786,
+        "roi": 0.07347432024169184,
+        "units": 48.64,
+        "positive_season_ratio": 0.6666666666666666
+      },
+      "status": "HOLDOUT_SURVIVOR"
+    },
+    {
+      "outcome": "HOME",
+      "price_band": "P50_60",
+      "feature": "new__style__style_pass_completed_over_expected_5__opp",
+      "family": "style",
+      "op": "<=",
+      "threshold": 3.18695,
+      "train": {
+        "n": 442,
+        "wins": 255,
+        "losses": 187,
+        "win_rate": 0.5769230769230769,
+        "roi": 0.02769230769230768,
+        "units": 12.239999999999995,
+        "positive_season_ratio": 0.8333333333333334
+      },
+      "validation": {
+        "n": 297,
+        "wins": 178,
+        "losses": 119,
+        "win_rate": 0.5993265993265994,
+        "roi": 0.05868686868686868,
+        "units": 17.43,
+        "positive_season_ratio": 1.0
+      },
+      "holdout": {
+        "n": 253,
+        "wins": 145,
+        "losses": 108,
+        "win_rate": 0.5731225296442688,
+        "roi": 0.007154150197628453,
+        "units": 1.8099999999999987,
+        "positive_season_ratio": 0.6666666666666666
+      },
+      "holdout_baseline": {
+        "n": 429,
+        "wins": 237,
+        "losses": 192,
+        "win_rate": 0.5524475524475524,
+        "roi": -0.026107226107226114,
+        "units": -11.200000000000003,
+        "positive_season_ratio": 0.3333333333333333
+      },
+      "holdout_lift": 0.03326137630485457,
+      "full": {
+        "n": 992,
+        "wins": 578,
+        "losses": 414,
+        "win_rate": 0.5826612903225806,
+        "roi": 0.031733870967741926,
+        "units": 31.47999999999999,
+        "positive_season_ratio": 0.8461538461538461
+      },
+      "status": "HOLDOUT_SURVIVOR"
+    }
+  ],
+  "design": "Fast single-feature screen only. Thresholds from 2013-18; 2019-22 validation required before 2023-25 holdout. Sorted by preholdout score, never holdout ROI."
+}
