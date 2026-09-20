@@ -1,10 +1,10 @@
 {
-  "built_at": "2026-09-19T19:39:29.271936+00:00",
+  "built_at": "2026-09-20T03:34:00.388900+00:00",
   "base_file": "/home/anestishkurti92/mls-predictor-v1/data/processed/mls_match_features_player_enriched.parquet",
   "rows": 9440,
-  "columns": 228,
-  "availability_feature_rows": 853,
-  "valid_reports": 62,
+  "columns": 333,
+  "availability_feature_rows": 900,
+  "valid_reports": 67,
   "rejected_reports": [
     {
       "year": 2024,
@@ -15,6 +15,16 @@
       "reported_status_teams": 8,
       "overlap": 7,
       "quality": 0.25
+    },
+    {
+      "year": 2024,
+      "matchday": 31,
+      "url": "https://www.mlssoccer.com/news/mls-player-status-report-matchday-31",
+      "matches": 14,
+      "match_teams": 28,
+      "reported_status_teams": 12,
+      "overlap": 11,
+      "quality": 0.39285714285714285
     },
     {
       "year": 2025,
@@ -130,6 +140,16 @@
     },
     {
       "year": 2024,
+      "matchday": 9,
+      "url": "https://www.mlssoccer.com/news/mls-player-status-report-matchday-9",
+      "matches": 14,
+      "match_teams": 28,
+      "reported_status_teams": 28,
+      "overlap": 27,
+      "quality": 0.9642857142857143
+    },
+    {
+      "year": 2024,
       "matchday": 10,
       "url": "https://www.mlssoccer.com/news/mls-player-status-report-matchday-10",
       "matches": 14,
@@ -220,6 +240,16 @@
     },
     {
       "year": 2024,
+      "matchday": 20,
+      "url": "https://www.mlssoccer.com/news/mls-player-status-report-matchday-20",
+      "matches": 13,
+      "match_teams": 26,
+      "reported_status_teams": 28,
+      "overlap": 25,
+      "quality": 0.9615384615384616
+    },
+    {
+      "year": 2024,
       "matchday": 21,
       "url": "https://www.mlssoccer.com/news/mls-player-status-report-matchday-21",
       "matches": 14,
@@ -227,6 +257,16 @@
       "reported_status_teams": 26,
       "overlap": 25,
       "quality": 0.8928571428571429
+    },
+    {
+      "year": 2024,
+      "matchday": 22,
+      "url": "https://www.mlssoccer.com/news/mls-player-status-report-matchday-22",
+      "matches": 14,
+      "match_teams": 28,
+      "reported_status_teams": 28,
+      "overlap": 27,
+      "quality": 0.9642857142857143
     },
     {
       "year": 2024,
@@ -297,6 +337,16 @@
       "reported_status_teams": 24,
       "overlap": 23,
       "quality": 0.8214285714285714
+    },
+    {
+      "year": 2024,
+      "matchday": 30,
+      "url": "https://www.mlssoccer.com/news/mls-player-status-report-matchday-30",
+      "matches": 4,
+      "match_teams": 8,
+      "reported_status_teams": 28,
+      "overlap": 7,
+      "quality": 0.875
     },
     {
       "year": 2024,
@@ -670,6 +720,16 @@
     },
     {
       "year": 2025,
+      "matchday": 37,
+      "url": "https://www.mlssoccer.com/news/mls-player-status-report-matchday-37-saturday-september-27-sunday-september-28",
+      "matches": 2,
+      "match_teams": 4,
+      "reported_status_teams": 29,
+      "overlap": 4,
+      "quality": 1.0
+    },
+    {
+      "year": 2025,
       "matchday": 38,
       "url": "https://www.mlssoccer.com/news/mls-player-status-report-matchday-38-saturday-october-4-sunday-october-5",
       "matches": 8,
@@ -689,16 +749,25 @@
       "quality": 0.9375
     }
   ],
-  "team_sides": 1706,
-  "explicit_status_sides": 1595,
-  "explicit_clear_sides": 31,
-  "inferred_clear_sides": 80,
-  "resolved_status_players_with_prior5": 3401,
-  "unresolved_or_no_prior5_status_players": 2950,
+  "team_sides": 1800,
+  "explicit_status_sides": 1683,
+  "explicit_clear_sides": 33,
+  "inferred_clear_sides": 84,
+  "resolved_status_players_with_prior5": 3601,
+  "unresolved_or_no_prior5_status_players": 3117,
   "coverage_seasons": [
     2024,
     2025
   ],
   "output": "/home/anestishkurti92/mls-predictor-v1/data/processed/mls_match_features_availability_enriched.parquet",
+  "reason_specific_impact_features": [
+    "injury",
+    "suspension",
+    "international_duty",
+    "illness",
+    "concussion",
+    "non_injury",
+    "unspecified"
+  ],
   "leakage_note": "Availability is joined only to its official season/matchday report. Missing-player impact uses only each team player rows from its five matches strictly before the target match. Reports failing schedule-team coverage >=75% are rejected. Explicit CLEAR rows are confirmed zero absences; only match teams absent from a validated report are marked inferred_clear."
 }
