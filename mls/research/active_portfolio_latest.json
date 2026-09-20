@@ -1,5 +1,5 @@
 {
-  "built_at": "2026-09-19T22:50:48.712773+00:00",
+  "built_at": "2026-09-20T02:21:42.087857+00:00",
   "status": "SHADOW_RESEARCH_ONLY",
   "methods": [
     "MLS-R01V2",
@@ -7,326 +7,328 @@
     "MLS-R03",
     "MLS-A02",
     "MLS-A03",
-    "MLS-A04",
     "MLS-A05",
     "MLS-A06"
   ],
-  "signal_count": 1455,
-  "unique_matches": 1191,
-  "conflict_match_count": 108,
-  "same_side_consensus_match_count": 119,
+  "watch_only_excluded": [
+    "MLS-A04"
+  ],
+  "signal_count": 1376,
+  "unique_matches": 1142,
+  "conflict_match_count": 82,
+  "same_side_consensus_match_count": 123,
   "all_signals": {
     "full": {
-      "n": 1455,
-      "wins": 693,
-      "losses": 762,
-      "roi": 0.30198625429553266,
-      "units": 439.39
+      "n": 1376,
+      "wins": 639,
+      "losses": 737,
+      "roi": 0.2915697674418604,
+      "units": 401.19999999999993
     },
     "preholdout": {
-      "n": 1052,
-      "wins": 493,
-      "losses": 559,
-      "roi": 0.2851140684410646,
-      "units": 299.94
+      "n": 994,
+      "wins": 451,
+      "losses": 543,
+      "roi": 0.26846076458752516,
+      "units": 266.85
     },
     "holdout": {
-      "n": 403,
-      "wins": 200,
-      "losses": 203,
-      "roi": 0.34602977667493795,
-      "units": 139.45
+      "n": 382,
+      "wins": 188,
+      "losses": 194,
+      "roi": 0.35170157068062824,
+      "units": 134.35
     },
     "yearly": [
       {
         "season": 2013,
-        "n": 104,
-        "wins": 43,
-        "losses": 61,
-        "roi": 0.14605769230769233,
-        "units": 15.190000000000001
+        "n": 97,
+        "wins": 38,
+        "losses": 59,
+        "roi": 0.1156701030927835,
+        "units": 11.219999999999999
       },
       {
         "season": 2014,
-        "n": 115,
-        "wins": 46,
-        "losses": 69,
-        "roi": 0.1585217391304348,
-        "units": 18.23
+        "n": 112,
+        "wins": 44,
+        "losses": 68,
+        "roi": 0.15124999999999997,
+        "units": 16.939999999999998
       },
       {
         "season": 2015,
-        "n": 149,
-        "wins": 68,
-        "losses": 81,
-        "roi": 0.3649664429530201,
-        "units": 54.379999999999995
+        "n": 143,
+        "wins": 63,
+        "losses": 80,
+        "roi": 0.34916083916083923,
+        "units": 49.93000000000001
       },
       {
         "season": 2016,
-        "n": 116,
-        "wins": 58,
-        "losses": 58,
-        "roi": 0.2862068965517241,
-        "units": 33.199999999999996
+        "n": 102,
+        "wins": 47,
+        "losses": 55,
+        "roi": 0.22950980392156858,
+        "units": 23.409999999999997
       },
       {
         "season": 2017,
-        "n": 105,
-        "wins": 49,
-        "losses": 56,
-        "roi": 0.2671428571428571,
-        "units": 28.05
+        "n": 101,
+        "wins": 46,
+        "losses": 55,
+        "roi": 0.2512871287128713,
+        "units": 25.380000000000003
       },
       {
         "season": 2018,
-        "n": 57,
+        "n": 56,
         "wins": 32,
-        "losses": 25,
-        "roi": 0.4096491228070176,
-        "units": 23.35
+        "losses": 24,
+        "roi": 0.4348214285714286,
+        "units": 24.35
       },
       {
         "season": 2019,
-        "n": 98,
-        "wins": 54,
-        "losses": 44,
-        "roi": 0.47826530612244905,
-        "units": 46.870000000000005
+        "n": 90,
+        "wins": 47,
+        "losses": 43,
+        "roi": 0.43500000000000005,
+        "units": 39.150000000000006
       },
       {
         "season": 2020,
-        "n": 74,
-        "wins": 36,
-        "losses": 38,
-        "roi": 0.32270270270270274,
-        "units": 23.880000000000003
+        "n": 67,
+        "wins": 32,
+        "losses": 35,
+        "roi": 0.3328358208955223,
+        "units": 22.299999999999997
       },
       {
         "season": 2021,
-        "n": 120,
-        "wins": 55,
-        "losses": 65,
-        "roi": 0.2515833333333333,
-        "units": 30.19
+        "n": 114,
+        "wins": 51,
+        "losses": 63,
+        "roi": 0.24561403508771926,
+        "units": 27.999999999999996
       },
       {
         "season": 2022,
-        "n": 114,
-        "wins": 52,
-        "losses": 62,
-        "roi": 0.23333333333333334,
-        "units": 26.6
+        "n": 112,
+        "wins": 51,
+        "losses": 61,
+        "roi": 0.2336607142857143,
+        "units": 26.17
       },
       {
         "season": 2023,
-        "n": 140,
-        "wins": 66,
-        "losses": 74,
-        "roi": 0.26242857142857146,
-        "units": 36.74
+        "n": 131,
+        "wins": 60,
+        "losses": 71,
+        "roi": 0.24961832061068703,
+        "units": 32.7
       },
       {
         "season": 2024,
-        "n": 138,
-        "wins": 73,
-        "losses": 65,
-        "roi": 0.4732608695652173,
-        "units": 65.30999999999999
+        "n": 132,
+        "wins": 70,
+        "losses": 62,
+        "roi": 0.49196969696969695,
+        "units": 64.94
       },
       {
         "season": 2025,
-        "n": 125,
-        "wins": 61,
-        "losses": 64,
-        "roi": 0.29919999999999997,
-        "units": 37.4
+        "n": 119,
+        "wins": 58,
+        "losses": 61,
+        "roi": 0.30848739495798316,
+        "units": 36.709999999999994
       }
     ]
   },
   "exclude_opposite_side_conflicts": {
     "full": {
-      "n": 1208,
-      "wins": 584,
-      "losses": 624,
-      "roi": 0.335,
-      "units": 404.68
+      "n": 1189,
+      "wins": 556,
+      "losses": 633,
+      "roi": 0.31467619848612277,
+      "units": 374.15
     },
     "preholdout": {
-      "n": 881,
-      "wins": 419,
-      "losses": 462,
-      "roi": 0.321850170261067,
-      "units": 283.55
+      "n": 878,
+      "wins": 402,
+      "losses": 476,
+      "roi": 0.2972551252847381,
+      "units": 260.99
     },
     "holdout": {
-      "n": 327,
-      "wins": 165,
-      "losses": 162,
-      "roi": 0.3704281345565749,
-      "units": 121.13
+      "n": 311,
+      "wins": 154,
+      "losses": 157,
+      "roi": 0.36385852090032156,
+      "units": 113.16
     },
     "yearly": [
       {
         "season": 2013,
-        "n": 82,
-        "wins": 35,
-        "losses": 47,
-        "roi": 0.2329268292682927,
-        "units": 19.1
+        "n": 84,
+        "wins": 33,
+        "losses": 51,
+        "roi": 0.15500000000000003,
+        "units": 13.020000000000001
       },
       {
         "season": 2014,
         "n": 99,
         "wins": 38,
         "losses": 61,
-        "roi": 0.12161616161616161,
-        "units": 12.04
+        "roi": 0.14717171717171718,
+        "units": 14.57
       },
       {
         "season": 2015,
-        "n": 114,
-        "wins": 53,
-        "losses": 61,
-        "roi": 0.46061403508771925,
-        "units": 52.51
+        "n": 118,
+        "wins": 52,
+        "losses": 66,
+        "roi": 0.4021186440677966,
+        "units": 47.45
       },
       {
         "season": 2016,
-        "n": 95,
-        "wins": 48,
-        "losses": 47,
-        "roi": 0.26157894736842097,
-        "units": 24.849999999999994
+        "n": 91,
+        "wins": 42,
+        "losses": 49,
+        "roi": 0.1898901098901099,
+        "units": 17.28
       },
       {
         "season": 2017,
-        "n": 91,
-        "wins": 44,
-        "losses": 47,
-        "roi": 0.33285714285714285,
-        "units": 30.29
+        "n": 87,
+        "wins": 41,
+        "losses": 46,
+        "roi": 0.3174712643678161,
+        "units": 27.62
       },
       {
         "season": 2018,
-        "n": 51,
-        "wins": 29,
+        "n": 52,
+        "wins": 30,
         "losses": 22,
-        "roi": 0.4360784313725489,
-        "units": 22.239999999999995
+        "roi": 0.468076923076923,
+        "units": 24.339999999999996
       },
       {
         "season": 2019,
-        "n": 87,
-        "wins": 50,
+        "n": 81,
+        "wins": 44,
         "losses": 37,
-        "roi": 0.566551724137931,
-        "units": 49.29
+        "roi": 0.517283950617284,
+        "units": 41.900000000000006
       },
       {
         "season": 2020,
-        "n": 57,
+        "n": 59,
         "wins": 29,
-        "losses": 28,
-        "roi": 0.39421052631578946,
-        "units": 22.47
+        "losses": 30,
+        "roi": 0.37813559322033896,
+        "units": 22.31
       },
       {
         "season": 2021,
-        "n": 104,
-        "wins": 48,
-        "losses": 56,
-        "roi": 0.2794230769230769,
-        "units": 29.059999999999995
+        "n": 105,
+        "wins": 47,
+        "losses": 58,
+        "roi": 0.266,
+        "units": 27.93
       },
       {
         "season": 2022,
-        "n": 101,
-        "wins": 45,
+        "n": 102,
+        "wins": 46,
         "losses": 56,
-        "roi": 0.21485148514851488,
-        "units": 21.700000000000003
+        "roi": 0.24088235294117646,
+        "units": 24.57
       },
       {
         "season": 2023,
-        "n": 113,
-        "wins": 56,
-        "losses": 57,
-        "roi": 0.32380530973451327,
-        "units": 36.589999999999996
+        "n": 107,
+        "wins": 51,
+        "losses": 56,
+        "roi": 0.29607476635514024,
+        "units": 31.680000000000007
       },
       {
         "season": 2024,
-        "n": 109,
-        "wins": 58,
-        "losses": 51,
-        "roi": 0.5030275229357798,
-        "units": 54.83
+        "n": 103,
+        "wins": 55,
+        "losses": 48,
+        "roi": 0.5287378640776699,
+        "units": 54.46
       },
       {
         "season": 2025,
-        "n": 105,
-        "wins": 51,
-        "losses": 54,
-        "roi": 0.28295238095238096,
-        "units": 29.71
+        "n": 101,
+        "wins": 48,
+        "losses": 53,
+        "roi": 0.26752475247524754,
+        "units": 27.020000000000003
       }
     ]
   },
   "conflict_only": {
     "full": {
-      "n": 247,
-      "wins": 109,
-      "losses": 138,
-      "roi": 0.14052631578947367,
-      "units": 34.709999999999994
+      "n": 187,
+      "wins": 83,
+      "losses": 104,
+      "roi": 0.14465240641711227,
+      "units": 27.049999999999997
     },
     "preholdout": {
-      "n": 171,
-      "wins": 74,
-      "losses": 97,
-      "roi": 0.09584795321637425,
-      "units": 16.389999999999997
+      "n": 116,
+      "wins": 49,
+      "losses": 67,
+      "roi": 0.05051724137931034,
+      "units": 5.859999999999999
     },
     "holdout": {
-      "n": 76,
-      "wins": 35,
-      "losses": 41,
-      "roi": 0.24105263157894738,
-      "units": 18.32
+      "n": 71,
+      "wins": 34,
+      "losses": 37,
+      "roi": 0.2984507042253521,
+      "units": 21.189999999999998
     },
     "yearly": [
       {
         "season": 2013,
-        "n": 22,
-        "wins": 8,
-        "losses": 14,
-        "roi": -0.1777272727272727,
-        "units": -3.9099999999999993
+        "n": 13,
+        "wins": 5,
+        "losses": 8,
+        "roi": -0.1384615384615384,
+        "units": -1.7999999999999994
       },
       {
         "season": 2014,
-        "n": 16,
-        "wins": 8,
-        "losses": 8,
-        "roi": 0.38687499999999997,
-        "units": 6.1899999999999995
+        "n": 13,
+        "wins": 6,
+        "losses": 7,
+        "roi": 0.18230769230769225,
+        "units": 2.369999999999999
       },
       {
         "season": 2015,
-        "n": 35,
-        "wins": 15,
-        "losses": 20,
-        "roi": 0.05342857142857141,
-        "units": 1.8699999999999992
+        "n": 25,
+        "wins": 11,
+        "losses": 14,
+        "roi": 0.09919999999999998,
+        "units": 2.4799999999999995
       },
       {
         "season": 2016,
-        "n": 21,
-        "wins": 10,
-        "losses": 11,
-        "roi": 0.3976190476190477,
-        "units": 8.350000000000001
+        "n": 11,
+        "wins": 5,
+        "losses": 6,
+        "roi": 0.5572727272727274,
+        "units": 6.130000000000001
       },
       {
         "season": 2017,
@@ -338,51 +340,51 @@
       },
       {
         "season": 2018,
-        "n": 6,
-        "wins": 3,
-        "losses": 3,
-        "roi": 0.18500000000000003,
-        "units": 1.11
+        "n": 4,
+        "wins": 2,
+        "losses": 2,
+        "roi": 0.0025000000000000022,
+        "units": 0.010000000000000009
       },
       {
         "season": 2019,
-        "n": 11,
-        "wins": 4,
-        "losses": 7,
-        "roi": -0.22,
-        "units": -2.42
+        "n": 9,
+        "wins": 3,
+        "losses": 6,
+        "roi": -0.3055555555555556,
+        "units": -2.75
       },
       {
         "season": 2020,
-        "n": 17,
-        "wins": 7,
-        "losses": 10,
-        "roi": 0.08294117647058821,
-        "units": 1.4099999999999997
+        "n": 8,
+        "wins": 3,
+        "losses": 5,
+        "roi": -0.0012500000000000289,
+        "units": -0.010000000000000231
       },
       {
         "season": 2021,
-        "n": 16,
-        "wins": 7,
-        "losses": 9,
-        "roi": 0.07062500000000001,
-        "units": 1.1300000000000001
+        "n": 9,
+        "wins": 4,
+        "losses": 5,
+        "roi": 0.0077777777777777845,
+        "units": 0.07000000000000006
       },
       {
         "season": 2022,
-        "n": 13,
-        "wins": 7,
-        "losses": 6,
-        "roi": 0.37692307692307697,
-        "units": 4.9
+        "n": 10,
+        "wins": 5,
+        "losses": 5,
+        "roi": 0.15999999999999998,
+        "units": 1.5999999999999996
       },
       {
         "season": 2023,
-        "n": 27,
-        "wins": 10,
-        "losses": 17,
-        "roi": 0.005555555555555536,
-        "units": 0.14999999999999947
+        "n": 24,
+        "wins": 9,
+        "losses": 15,
+        "roi": 0.04249999999999995,
+        "units": 1.0199999999999987
       },
       {
         "season": 2024,
@@ -394,60 +396,60 @@
       },
       {
         "season": 2025,
-        "n": 20,
+        "n": 18,
         "wins": 10,
-        "losses": 10,
-        "roi": 0.3845,
-        "units": 7.69
+        "losses": 8,
+        "roi": 0.5383333333333334,
+        "units": 9.690000000000001
       }
     ]
   },
   "same_side_consensus_signals": {
     "full": {
-      "n": 244,
-      "wins": 156,
-      "losses": 88,
-      "roi": 0.8301229508196721,
-      "units": 202.55
+      "n": 252,
+      "wins": 155,
+      "losses": 97,
+      "roi": 0.7871825396825397,
+      "units": 198.37
     },
     "preholdout": {
-      "n": 170,
-      "wins": 118,
-      "losses": 52,
-      "roi": 1.017235294117647,
-      "units": 172.93
+      "n": 176,
+      "wins": 117,
+      "losses": 59,
+      "roi": 0.9701704545454546,
+      "units": 170.75
     },
     "holdout": {
-      "n": 74,
+      "n": 76,
       "wins": 38,
-      "losses": 36,
-      "roi": 0.40027027027027023,
-      "units": 29.619999999999997
+      "losses": 38,
+      "roi": 0.3634210526315789,
+      "units": 27.619999999999997
     },
     "yearly": [
       {
         "season": 2013,
-        "n": 12,
+        "n": 14,
         "wins": 6,
-        "losses": 6,
-        "roi": 0.7666666666666666,
-        "units": 9.2
+        "losses": 8,
+        "roi": 0.5142857142857142,
+        "units": 7.199999999999999
       },
       {
         "season": 2014,
-        "n": 28,
-        "wins": 14,
+        "n": 30,
+        "wins": 16,
         "losses": 14,
-        "roi": 0.6142857142857142,
-        "units": 17.2
+        "roi": 0.7340000000000001,
+        "units": 22.020000000000003
       },
       {
         "season": 2015,
-        "n": 21,
-        "wins": 16,
-        "losses": 5,
-        "roi": 1.5752380952380955,
-        "units": 33.080000000000005
+        "n": 22,
+        "wins": 14,
+        "losses": 8,
+        "roi": 1.2745454545454544,
+        "units": 28.039999999999996
       },
       {
         "season": 2016,
@@ -475,43 +477,43 @@
       },
       {
         "season": 2019,
-        "n": 21,
-        "wins": 19,
+        "n": 18,
+        "wins": 16,
         "losses": 2,
-        "roi": 1.2819047619047617,
-        "units": 26.919999999999995
+        "roi": 1.2844444444444443,
+        "units": 23.119999999999997
       },
       {
         "season": 2020,
         "n": 18,
         "wins": 14,
         "losses": 4,
-        "roi": 1.1111111111111112,
-        "units": 20.0
+        "roi": 1.1966666666666665,
+        "units": 21.54
       },
       {
         "season": 2021,
-        "n": 16,
+        "n": 18,
         "wins": 10,
-        "losses": 6,
-        "roi": 0.8512500000000001,
-        "units": 13.620000000000001
+        "losses": 8,
+        "roi": 0.6455555555555554,
+        "units": 11.619999999999997
       },
       {
         "season": 2022,
-        "n": 21,
-        "wins": 10,
+        "n": 23,
+        "wins": 12,
         "losses": 11,
-        "roi": 0.34,
-        "units": 7.140000000000001
+        "roi": 0.4973913043478261,
+        "units": 11.44
       },
       {
         "season": 2023,
-        "n": 16,
+        "n": 18,
         "wins": 8,
-        "losses": 8,
-        "roi": 0.47875,
-        "units": 7.66
+        "losses": 10,
+        "roi": 0.3144444444444444,
+        "units": 5.659999999999999
       },
       {
         "season": 2024,
@@ -791,139 +793,8 @@
           "units": 1.2599999999999993
         }
       ],
-      "conflict_signals": 17,
-      "conflict_share": 0.19101123595505617
-    },
-    "MLS-A04": {
-      "full": {
-        "n": 79,
-        "wins": 54,
-        "losses": 25,
-        "roi": 0.4834177215189874,
-        "units": 38.190000000000005
-      },
-      "preholdout": {
-        "n": 58,
-        "wins": 42,
-        "losses": 16,
-        "roi": 0.5705172413793103,
-        "units": 33.089999999999996
-      },
-      "holdout": {
-        "n": 21,
-        "wins": 12,
-        "losses": 9,
-        "roi": 0.24285714285714283,
-        "units": 5.1
-      },
-      "yearly": [
-        {
-          "season": 2013,
-          "n": 7,
-          "wins": 5,
-          "losses": 2,
-          "roi": 0.5671428571428572,
-          "units": 3.97
-        },
-        {
-          "season": 2014,
-          "n": 3,
-          "wins": 2,
-          "losses": 1,
-          "roi": 0.43,
-          "units": 1.29
-        },
-        {
-          "season": 2015,
-          "n": 6,
-          "wins": 5,
-          "losses": 1,
-          "roi": 0.7416666666666667,
-          "units": 4.45
-        },
-        {
-          "season": 2016,
-          "n": 14,
-          "wins": 11,
-          "losses": 3,
-          "roi": 0.6992857142857142,
-          "units": 9.79
-        },
-        {
-          "season": 2017,
-          "n": 4,
-          "wins": 3,
-          "losses": 1,
-          "roi": 0.6675,
-          "units": 2.67
-        },
-        {
-          "season": 2018,
-          "n": 1,
-          "wins": 0,
-          "losses": 1,
-          "roi": -1.0,
-          "units": -1.0
-        },
-        {
-          "season": 2019,
-          "n": 8,
-          "wins": 7,
-          "losses": 1,
-          "roi": 0.9650000000000001,
-          "units": 7.720000000000001
-        },
-        {
-          "season": 2020,
-          "n": 7,
-          "wins": 4,
-          "losses": 3,
-          "roi": 0.22571428571428573,
-          "units": 1.58
-        },
-        {
-          "season": 2021,
-          "n": 6,
-          "wins": 4,
-          "losses": 2,
-          "roi": 0.36499999999999994,
-          "units": 2.1899999999999995
-        },
-        {
-          "season": 2022,
-          "n": 2,
-          "wins": 1,
-          "losses": 1,
-          "roi": 0.21500000000000008,
-          "units": 0.43000000000000016
-        },
-        {
-          "season": 2023,
-          "n": 9,
-          "wins": 6,
-          "losses": 3,
-          "roi": 0.4488888888888888,
-          "units": 4.039999999999999
-        },
-        {
-          "season": 2024,
-          "n": 6,
-          "wins": 3,
-          "losses": 3,
-          "roi": 0.06166666666666661,
-          "units": 0.36999999999999966
-        },
-        {
-          "season": 2025,
-          "n": 6,
-          "wins": 3,
-          "losses": 3,
-          "roi": 0.11499999999999999,
-          "units": 0.69
-        }
-      ],
-      "conflict_signals": 26,
-      "conflict_share": 0.3291139240506329
+      "conflict_signals": 15,
+      "conflict_share": 0.16853932584269662
     },
     "MLS-A05": {
       "full": {
@@ -1053,8 +924,8 @@
           "units": 3.2399999999999984
         }
       ],
-      "conflict_signals": 62,
-      "conflict_share": 0.1054421768707483
+      "conflict_signals": 42,
+      "conflict_share": 0.07142857142857142
     },
     "MLS-A06": {
       "full": {
@@ -1184,8 +1055,8 @@
           "units": 10.3
         }
       ],
-      "conflict_signals": 26,
-      "conflict_share": 0.18181818181818182
+      "conflict_signals": 24,
+      "conflict_share": 0.16783216783216784
     },
     "MLS-R01V2": {
       "full": {
@@ -1577,8 +1448,8 @@
           "units": 6.539999999999999
         }
       ],
-      "conflict_signals": 19,
-      "conflict_share": 0.1743119266055046
+      "conflict_signals": 9,
+      "conflict_share": 0.08256880733944955
     }
   },
   "overlap": [
@@ -1608,12 +1479,6 @@
     },
     {
       "a": "MLS-R01V2",
-      "b": "MLS-A04",
-      "exact_overlap": 2,
-      "pct_smaller": 0.02531645569620253
-    },
-    {
-      "a": "MLS-R01V2",
       "b": "MLS-A05",
       "exact_overlap": 0,
       "pct_smaller": 0.0
@@ -1644,12 +1509,6 @@
     },
     {
       "a": "MLS-R02V2",
-      "b": "MLS-A04",
-      "exact_overlap": 3,
-      "pct_smaller": 0.0379746835443038
-    },
-    {
-      "a": "MLS-R02V2",
       "b": "MLS-A05",
       "exact_overlap": 0,
       "pct_smaller": 0.0
@@ -1674,12 +1533,6 @@
     },
     {
       "a": "MLS-R03",
-      "b": "MLS-A04",
-      "exact_overlap": 0,
-      "pct_smaller": 0.0
-    },
-    {
-      "a": "MLS-R03",
       "b": "MLS-A05",
       "exact_overlap": 35,
       "pct_smaller": 0.3211009174311927
@@ -1698,12 +1551,6 @@
     },
     {
       "a": "MLS-A02",
-      "b": "MLS-A04",
-      "exact_overlap": 0,
-      "pct_smaller": 0.0
-    },
-    {
-      "a": "MLS-A02",
       "b": "MLS-A05",
       "exact_overlap": 0,
       "pct_smaller": 0.0
@@ -1711,12 +1558,6 @@
     {
       "a": "MLS-A02",
       "b": "MLS-A06",
-      "exact_overlap": 0,
-      "pct_smaller": 0.0
-    },
-    {
-      "a": "MLS-A03",
-      "b": "MLS-A04",
       "exact_overlap": 0,
       "pct_smaller": 0.0
     },
@@ -1731,18 +1572,6 @@
       "b": "MLS-A06",
       "exact_overlap": 16,
       "pct_smaller": 0.1797752808988764
-    },
-    {
-      "a": "MLS-A04",
-      "b": "MLS-A05",
-      "exact_overlap": 0,
-      "pct_smaller": 0.0
-    },
-    {
-      "a": "MLS-A04",
-      "b": "MLS-A06",
-      "exact_overlap": 0,
-      "pct_smaller": 0.0
     },
     {
       "a": "MLS-A05",
@@ -1775,37 +1604,6 @@
       "methods": [
         "MLS-A05",
         "MLS-R01V2"
-      ],
-      "outcomes": [
-        "AWAY",
-        "HOME"
-      ],
-      "conflict": true,
-      "same_side_consensus": false
-    },
-    {
-      "match_id": "MLS:20130508:FCDALLAS:PORTLANDTIMB:3691",
-      "season": 2013,
-      "signals": 3,
-      "methods": [
-        "MLS-A04",
-        "MLS-A05",
-        "MLS-R03"
-      ],
-      "outcomes": [
-        "AWAY",
-        "HOME"
-      ],
-      "conflict": true,
-      "same_side_consensus": false
-    },
-    {
-      "match_id": "MLS:20130511:SEATTLESOUND:SANJOSEEARTH:3701",
-      "season": 2013,
-      "signals": 2,
-      "methods": [
-        "MLS-A04",
-        "MLS-A05"
       ],
       "outcomes": [
         "AWAY",
@@ -1860,42 +1658,12 @@
       "same_side_consensus": false
     },
     {
-      "match_id": "MLS:20130727:COLORADORAPI:LAGALAXY:3798",
-      "season": 2013,
-      "signals": 2,
-      "methods": [
-        "MLS-A04",
-        "MLS-A05"
-      ],
-      "outcomes": [
-        "AWAY",
-        "HOME"
-      ],
-      "conflict": true,
-      "same_side_consensus": false
-    },
-    {
       "match_id": "MLS:20130818:SANJOSEEARTH:SPORTINGKANS:3832",
       "season": 2013,
       "signals": 2,
       "methods": [
         "MLS-A05",
         "MLS-R02V2"
-      ],
-      "outcomes": [
-        "AWAY",
-        "HOME"
-      ],
-      "conflict": true,
-      "same_side_consensus": false
-    },
-    {
-      "match_id": "MLS:20131005:COLORADORAPI:SEATTLESOUND:3894",
-      "season": 2013,
-      "signals": 2,
-      "methods": [
-        "MLS-A04",
-        "MLS-A05"
       ],
       "outcomes": [
         "AWAY",
@@ -1927,22 +1695,6 @@
       "methods": [
         "MLS-A05",
         "MLS-R02V2"
-      ],
-      "outcomes": [
-        "AWAY",
-        "HOME"
-      ],
-      "conflict": true,
-      "same_side_consensus": false
-    },
-    {
-      "match_id": "MLS:20140802:COLORADORAPI:REALSALTLAKE:4138",
-      "season": 2014,
-      "signals": 3,
-      "methods": [
-        "MLS-A03",
-        "MLS-A04",
-        "MLS-A06"
       ],
       "outcomes": [
         "AWAY",
@@ -1999,21 +1751,6 @@
       "same_side_consensus": false
     },
     {
-      "match_id": "MLS:20150509:COLUMBUSCREW:SEATTLESOUND:4370",
-      "season": 2015,
-      "signals": 2,
-      "methods": [
-        "MLS-A04",
-        "MLS-A05"
-      ],
-      "outcomes": [
-        "AWAY",
-        "HOME"
-      ],
-      "conflict": true,
-      "same_side_consensus": false
-    },
-    {
       "match_id": "MLS:20150516:CFMONTR\u00c9AL:REALSALTLAKE:4379",
       "season": 2015,
       "signals": 2,
@@ -2060,42 +1797,12 @@
       "same_side_consensus": false
     },
     {
-      "match_id": "MLS:20150718:NEWENGLANDRE:NEWYORKCITYF:4474",
-      "season": 2015,
-      "signals": 2,
-      "methods": [
-        "MLS-A04",
-        "MLS-A05"
-      ],
-      "outcomes": [
-        "AWAY",
-        "HOME"
-      ],
-      "conflict": true,
-      "same_side_consensus": false
-    },
-    {
       "match_id": "MLS:20150725:CFMONTR\u00c9AL:SEATTLESOUND:4483",
       "season": 2015,
       "signals": 2,
       "methods": [
         "MLS-A05",
         "MLS-R01V2"
-      ],
-      "outcomes": [
-        "AWAY",
-        "HOME"
-      ],
-      "conflict": true,
-      "same_side_consensus": false
-    },
-    {
-      "match_id": "MLS:20150801:COLORADORAPI:LAGALAXY:4491",
-      "season": 2015,
-      "signals": 2,
-      "methods": [
-        "MLS-A04",
-        "MLS-A05"
       ],
       "outcomes": [
         "AWAY",
@@ -2212,23 +1919,6 @@
       "same_side_consensus": false
     },
     {
-      "match_id": "MLS:20151018:DCUNITED:CHICAGOFIREF:4606",
-      "season": 2015,
-      "signals": 4,
-      "methods": [
-        "MLS-A03",
-        "MLS-A04",
-        "MLS-A05",
-        "MLS-R03"
-      ],
-      "outcomes": [
-        "AWAY",
-        "HOME"
-      ],
-      "conflict": true,
-      "same_side_consensus": false
-    },
-    {
       "match_id": "MLS:20160417:ORLANDOCITYS:NEWENGLANDRE:4702",
       "season": 2016,
       "signals": 2,
@@ -2244,72 +1934,12 @@
       "same_side_consensus": false
     },
     {
-      "match_id": "MLS:20160515:HOUSTONDYNAM:REALSALTLAKE:4745",
-      "season": 2016,
-      "signals": 2,
-      "methods": [
-        "MLS-A04",
-        "MLS-A05"
-      ],
-      "outcomes": [
-        "AWAY",
-        "HOME"
-      ],
-      "conflict": true,
-      "same_side_consensus": false
-    },
-    {
-      "match_id": "MLS:20160601:PHILADELPHIA:COLUMBUSCREW:4772",
-      "season": 2016,
-      "signals": 2,
-      "methods": [
-        "MLS-A04",
-        "MLS-A05"
-      ],
-      "outcomes": [
-        "AWAY",
-        "HOME"
-      ],
-      "conflict": true,
-      "same_side_consensus": false
-    },
-    {
       "match_id": "MLS:20160709:PHILADELPHIA:DCUNITED:4813",
       "season": 2016,
       "signals": 2,
       "methods": [
         "MLS-A02",
         "MLS-A06"
-      ],
-      "outcomes": [
-        "AWAY",
-        "HOME"
-      ],
-      "conflict": true,
-      "same_side_consensus": false
-    },
-    {
-      "match_id": "MLS:20160710:SPORTINGKANS:NEWYORKCITYF:4819",
-      "season": 2016,
-      "signals": 2,
-      "methods": [
-        "MLS-A04",
-        "MLS-A06"
-      ],
-      "outcomes": [
-        "AWAY",
-        "HOME"
-      ],
-      "conflict": true,
-      "same_side_consensus": false
-    },
-    {
-      "match_id": "MLS:20160731:ORLANDOCITYS:NEWENGLANDRE:4851",
-      "season": 2016,
-      "signals": 2,
-      "methods": [
-        "MLS-A04",
-        "MLS-A05"
       ],
       "outcomes": [
         "AWAY",
@@ -2341,21 +1971,6 @@
         "MLS-A05",
         "MLS-R02V2",
         "MLS-R03"
-      ],
-      "outcomes": [
-        "AWAY",
-        "HOME"
-      ],
-      "conflict": true,
-      "same_side_consensus": false
-    },
-    {
-      "match_id": "MLS:20161002:ORLANDOCITYS:CFMONTR\u00c9AL:4952",
-      "season": 2016,
-      "signals": 2,
-      "methods": [
-        "MLS-A04",
-        "MLS-A05"
       ],
       "outcomes": [
         "AWAY",
@@ -2502,21 +2117,6 @@
       "same_side_consensus": false
     },
     {
-      "match_id": "MLS:20181021:FCDALLAS:SPORTINGKANS:5758",
-      "season": 2018,
-      "signals": 2,
-      "methods": [
-        "MLS-A04",
-        "MLS-A05"
-      ],
-      "outcomes": [
-        "AWAY",
-        "HOME"
-      ],
-      "conflict": true,
-      "same_side_consensus": false
-    },
-    {
       "match_id": "MLS:20190511:NEWENGLANDRE:SANJOSEEARTH:5924",
       "season": 2019,
       "signals": 2,
@@ -2538,21 +2138,6 @@
       "methods": [
         "MLS-A02",
         "MLS-A03"
-      ],
-      "outcomes": [
-        "AWAY",
-        "HOME"
-      ],
-      "conflict": true,
-      "same_side_consensus": false
-    },
-    {
-      "match_id": "MLS:20190706:SPORTINGKANS:CHICAGOFIREF:6020",
-      "season": 2019,
-      "signals": 2,
-      "methods": [
-        "MLS-A04",
-        "MLS-R03"
       ],
       "outcomes": [
         "AWAY",
@@ -2599,67 +2184,6 @@
       "methods": [
         "MLS-A05",
         "MLS-R02V2"
-      ],
-      "outcomes": [
-        "AWAY",
-        "HOME"
-      ],
-      "conflict": true,
-      "same_side_consensus": false
-    },
-    {
-      "match_id": "MLS:20201007:NEWYORKREDBU:INTERMIAMICF:6428",
-      "season": 2020,
-      "signals": 3,
-      "methods": [
-        "MLS-A04",
-        "MLS-A05",
-        "MLS-R03"
-      ],
-      "outcomes": [
-        "AWAY",
-        "HOME"
-      ],
-      "conflict": true,
-      "same_side_consensus": false
-    },
-    {
-      "match_id": "MLS:20201011:LOSANGELESFC:SEATTLESOUND:6438",
-      "season": 2020,
-      "signals": 2,
-      "methods": [
-        "MLS-A04",
-        "MLS-A05"
-      ],
-      "outcomes": [
-        "AWAY",
-        "HOME"
-      ],
-      "conflict": true,
-      "same_side_consensus": false
-    },
-    {
-      "match_id": "MLS:20201014:FCDALLAS:SPORTINGKANS:6446",
-      "season": 2020,
-      "signals": 2,
-      "methods": [
-        "MLS-A04",
-        "MLS-A05"
-      ],
-      "outcomes": [
-        "AWAY",
-        "HOME"
-      ],
-      "conflict": true,
-      "same_side_consensus": false
-    },
-    {
-      "match_id": "MLS:20201018:MINNESOTAUNI:HOUSTONDYNAM:6459",
-      "season": 2020,
-      "signals": 2,
-      "methods": [
-        "MLS-A04",
-        "MLS-R03"
       ],
       "outcomes": [
         "AWAY",
@@ -2744,22 +2268,6 @@
       "same_side_consensus": false
     },
     {
-      "match_id": "MLS:20210807:PORTLANDTIMB:REALSALTLAKE:6769",
-      "season": 2021,
-      "signals": 3,
-      "methods": [
-        "MLS-A04",
-        "MLS-A05",
-        "MLS-R03"
-      ],
-      "outcomes": [
-        "AWAY",
-        "HOME"
-      ],
-      "conflict": true,
-      "same_side_consensus": false
-    },
-    {
       "match_id": "MLS:20210827:CFMONTR\u00c9AL:TORONTOFC:6814",
       "season": 2021,
       "signals": 2,
@@ -2782,36 +2290,6 @@
         "MLS-A03",
         "MLS-A05",
         "MLS-R02V2"
-      ],
-      "outcomes": [
-        "AWAY",
-        "HOME"
-      ],
-      "conflict": true,
-      "same_side_consensus": false
-    },
-    {
-      "match_id": "MLS:20211023:SEATTLESOUND:SPORTINGKANS:6953",
-      "season": 2021,
-      "signals": 2,
-      "methods": [
-        "MLS-A04",
-        "MLS-R03"
-      ],
-      "outcomes": [
-        "AWAY",
-        "HOME"
-      ],
-      "conflict": true,
-      "same_side_consensus": false
-    },
-    {
-      "match_id": "MLS:20211024:AUSTINFC:HOUSTONDYNAM:6955",
-      "season": 2021,
-      "signals": 2,
-      "methods": [
-        "MLS-A04",
-        "MLS-A05"
       ],
       "outcomes": [
         "AWAY",
@@ -2857,22 +2335,6 @@
       "methods": [
         "MLS-A05",
         "MLS-R01V2"
-      ],
-      "outcomes": [
-        "AWAY",
-        "HOME"
-      ],
-      "conflict": true,
-      "same_side_consensus": false
-    },
-    {
-      "match_id": "MLS:20220717:SANJOSEEARTH:HOUSTONDYNAM:7298",
-      "season": 2022,
-      "signals": 3,
-      "methods": [
-        "MLS-A04",
-        "MLS-A05",
-        "MLS-R03"
       ],
       "outcomes": [
         "AWAY",
@@ -3070,22 +2532,6 @@
       "methods": [
         "MLS-A02",
         "MLS-A06"
-      ],
-      "outcomes": [
-        "AWAY",
-        "HOME"
-      ],
-      "conflict": true,
-      "same_side_consensus": false
-    },
-    {
-      "match_id": "MLS:20230930:STLOUISCITYS:SPORTINGKANS:7946",
-      "season": 2023,
-      "signals": 3,
-      "methods": [
-        "MLS-A04",
-        "MLS-A05",
-        "MLS-R03"
       ],
       "outcomes": [
         "AWAY",
@@ -3316,21 +2762,6 @@
       "signals": 2,
       "methods": [
         "MLS-R02V2",
-        "MLS-R03"
-      ],
-      "outcomes": [
-        "AWAY",
-        "HOME"
-      ],
-      "conflict": true,
-      "same_side_consensus": false
-    },
-    {
-      "match_id": "MLS:20250613:PORTLANDTIMB:SANJOSEEARTH:8797",
-      "season": 2025,
-      "signals": 2,
-      "methods": [
-        "MLS-A04",
         "MLS-R03"
       ],
       "outcomes": [
