@@ -1,0 +1,15 @@
+{
+  "built_at": "2026-09-20T03:37:13.017128+00:00",
+  "snapshot_files_seen": 29,
+  "new_observations_inserted": 1,
+  "observation_rows": 276,
+  "event_provider_series": 14,
+  "unique_events": 14,
+  "providers": [
+    "DraftKings"
+  ],
+  "observation_output": "/home/anestishkurti92/mls-predictor-v1/data/processed/mls_market_observations.parquet",
+  "event_history_output": "/home/anestishkurti92/mls-predictor-v1/data/processed/mls_market_event_history.parquet",
+  "definition": "Opening is first captured quote per event/provider. Closing is last captured quote at or before kickoff. Current/latest is retained in observations.",
+  "clv_note": "For a recorded prospective signal, compare its first-bet decimal odds/no-vig probability to the matching provider closing quote. Positive CLV must be evaluated directionally by selection."
+}
