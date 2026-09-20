@@ -322,7 +322,9 @@ def main():
       'methods':{m['id']:{'name':m['name'],'status':m['research_status']} for m in METHODS},
       'rows':rows,'qualifiers':qualifiers,'conflicts':conflicts,'consensus':consensus,
       'portfolio_policy':{'opposite_side_conflict':'TRACK_FOR_RESEARCH_NO_COMBINED_ACTION',
-                          'same_side_consensus':'TAG_AND_TRACK_SEPARATELY',
+                          'same_side_consensus':'TAG_AND_TRACK_SEPARATELY_NO_STAKE_MULTIPLIER',
+                          'staking_policy':'MAX_1_PERCENT_CURRENT_BANKROLL_PER_MATCH',
+                          'max_match_exposure_pct':1.0,
                           'historical_clean_portfolio_roi':.335,
                           'historical_clean_holdout_roi':.3704281345565749},
       'status_counts':{m['id']:{st:sum(1 for r in rows if r['method_id']==m['id'] and r['status']==st)
