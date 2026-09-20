@@ -1,0 +1,38 @@
+{
+  "built_at": "2026-09-20T03:39:16.505536+00:00",
+  "rows": 9440,
+  "columns": 18,
+  "output": "/home/anestishkurti92/mls-predictor-v1/data/processed/mls_venue_features.parquet",
+  "stadia_rows": 56,
+  "stadia_columns": [
+    "stadium_id",
+    "stadium_name",
+    "year_built",
+    "street",
+    "city",
+    "province",
+    "country",
+    "postal_code",
+    "latitude",
+    "longitude",
+    "capacity",
+    "roof",
+    "turf",
+    "field_x",
+    "field_y",
+    "competition"
+  ],
+  "resolved_schema": {
+    "id": "stadium_id",
+    "name": "stadium_name",
+    "capacity": "capacity",
+    "latitude": "latitude",
+    "longitude": "longitude",
+    "surface": "turf"
+  },
+  "matches_with_stadium": 5814,
+  "matches_with_coordinates": 5762,
+  "matches_with_surface": 5762,
+  "leakage_note": "Target stadium identity is a scheduled pregame attribute. Familiarity and travel features use only each team\u2019s completed prior-match venue state.",
+  "surface_note": "Surface is used only if exposed by the ASA stadium entity source; otherwise it remains unknown rather than inferred."
+}

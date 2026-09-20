@@ -1,0 +1,10 @@
+{
+  "built_at": "2026-09-20T03:38:37.138985+00:00",
+  "rows": 9440,
+  "columns": 22,
+  "output": "/home/anestishkurti92/mls-predictor-v1/data/processed/mls_referee_discipline_features.parquet",
+  "explicit_card_matches": 319,
+  "matches_with_referee_card_history": 1703,
+  "complete_lineup_events_used_as_card_observation_gate": 319,
+  "leakage_note": "Referee card history is read before the target match, then updated after it. Zero cards are accepted only for ESPN events with complete 11v11 lineup summaries, avoiding silent parse-failure zeros."
+}
