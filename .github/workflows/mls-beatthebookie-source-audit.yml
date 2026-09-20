@@ -13,42 +13,55 @@ jobs:
     timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
-      - name: Download and inspect published odds-series archive
+      - name: Inspect MLS continuous odds-series schema
         shell: bash
         run: |
           set -Eeuo pipefail
-          TMP=/tmp/appwiza-beatbookie
-          rm -rf "$TMP"; mkdir -p "$TMP"
           python3 - <<'PY'
-          import urllib.request, pathlib, zipfile, gzip, csv, io, re, collections
+          import urllib.request, pathlib, zipfile, gzip, csv, io, collections, re
+          root=pathlib.Path('/tmp/appwiza-beatbookie'); root.mkdir(parents=True,exist_ok=True)
+          out=root/'archive.zip'
           url='https://www.kaggle.com/api/v1/datasets/download/austro/beat-the-bookie-worldwide-football-dataset'
-          root=pathlib.Path('/tmp/appwiza-beatbookie'); out=root/'archive.zip'
-          req=urllib.request.Request(url,headers={'User-Agent':'Mozilla/5.0 AppwizaMLS/1.0'})
-          with urllib.request.urlopen(req,timeout=180) as r, out.open('wb') as f:
-              while True:
-                  b=r.read(1024*1024)
-                  if not b: break
-                  f.write(b)
-          print('download_bytes',out.stat().st_size)
-          with zipfile.ZipFile(out) as z:
-              z.extractall(root/'unzip')
-          known=['Chicago Fire','Columbus Crew','D.C. United','DC United','New England Revolution','New York Red Bulls','NY Red Bulls','Philadelphia Union','Toronto FC','Seattle Sounders','Portland Timbers','Real Salt Lake','Sporting Kansas City','Houston Dynamo','Colorado Rapids','FC Dallas','Los Angeles Galaxy','LA Galaxy','San Jose Earthquakes','Vancouver Whitecaps','Montreal Impact','Orlando City','New York City']
-          for fn in ['odds_series_matches.csv.gz','odds_series_b_matches.csv.gz','closing_odds.csv.gz']:
-              p=root/'unzip'/fn
-              print('\n===',fn,'===')
-              with gzip.open(p,'rt',encoding='utf-8',errors='replace',newline='') as g:
-                  sample=[next(g).rstrip('\n') for _ in range(5)]
-              for line in sample: print('SAMPLE',line[:1000])
-              hits=[]; leagues=collections.Counter(); total=0
-              with gzip.open(p,'rt',encoding='utf-8',errors='replace',newline='') as g:
-                  reader=csv.reader(g)
-                  for row in reader:
+          if not out.exists() or out.stat().st_size < 80_000_000:
+              req=urllib.request.Request(url,headers={'User-Agent':'Mozilla/5.0 AppwizaMLS/1.0'})
+              with urllib.request.urlopen(req,timeout=180) as r, out.open('wb') as f:
+                  while True:
+                      b=r.read(1024*1024)
+                      if not b: break
+                      f.write(b)
+          dest=root/'unzip'
+          if not dest.exists():
+              with zipfile.ZipFile(out) as z: z.extractall(dest)
+
+          for mfn,sfn in [('odds_series_matches.csv.gz','odds_series.csv.gz'),('odds_series_b_matches.csv.gz','odds_series_b.csv.gz')]:
+              print('\n###',mfn,sfn)
+              mls={}
+              with gzip.open(dest/mfn,'rt',encoding='utf-8',errors='replace',newline='') as g:
+                  rd=csv.DictReader(g)
+                  for r in rd:
+                      if (r.get(' league') or r.get('league') or '').strip()=='USA: MLS':
+                          mid=(r.get('match_id') or '').strip()
+                          mls[mid]=r
+              print('MLS_MATCHES',len(mls),'FIRST_IDS',list(mls)[:10])
+
+              with gzip.open(dest/sfn,'rt',encoding='utf-8',errors='replace',newline='') as g:
+                  header=next(g).rstrip('\n')
+                  print('SERIES_HEADER',header[:3000])
+                  for i in range(5):
+                      print('SERIES_SAMPLE',next(g).rstrip('\n')[:3000])
+
+              hits=[]; total=0
+              with gzip.open(dest/sfn,'rt',encoding='utf-8',errors='replace',newline='') as g:
+                  rd=csv.reader(g)
+                  hdr=next(rd)
+                  for row in rd:
                       total+=1
-                      text=' | '.join(row)
-                      if any(k.lower() in text.lower() for k in known) or re.search(r'\bMLS\b|Major League Soccer',text,re.I):
+                      if not row: continue
+                      if row[0].strip() in mls:
                           hits.append(row)
-                          if len(row)>1: leagues[row[1]]+=1
-              print('rows',total,'mls_team_hits',len(hits))
-              print('candidate_leagues',leagues.most_common(30))
-              for row in hits[:40]: print('HITROW',row[:20])
+                          if len(hits)>=8: break
+              print('SERIES_COLUMNS',len(hdr),'HEADER_FIRST',hdr[:30])
+              print('SERIES_ROWS_SCANNED_TO_8_HITS',total,'HITS',len(hits))
+              for row in hits:
+                  print('MLS_SERIES_ROW_LEN',len(row),'ID',row[0],'FIRST40',row[:40])
           PY
