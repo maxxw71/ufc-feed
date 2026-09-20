@@ -1,5 +1,5 @@
 {
-  "built_at": "2026-09-20T09:38:55.311631+00:00",
+  "built_at": "2026-09-20T09:39:46.325887+00:00",
   "base_file": "/home/anestishkurti92/mls-predictor-v1/data/processed/mls_match_features_context_enriched.parquet",
   "rows": 9440,
   "columns": 308,
@@ -39,6 +39,18 @@
     "edge_team_reds5"
   ],
   "complete_lineup_events": 1380,
+  "complete_lineup_events_by_season": {
+    "2022": 465,
+    "2023": 319,
+    "2024": 284,
+    "2025": 312
+  },
+  "lineup_rows_by_season": {
+    "2022": 18341,
+    "2023": 12646,
+    "2024": 11207,
+    "2025": 12389
+  },
   "team_side_rows_with_prior_confirmed_lineup": 4828,
   "output": "/home/anestishkurti92/mls-predictor-v1/data/processed/mls_match_features_confirmed_lineup_enriched.parquet",
   "leakage_note": "Target-match starters/cards are never used as target-match pregame features. Each match reads only confirmed lineups/cards from already completed prior matches, then updates state after feature capture."
