@@ -5,6 +5,7 @@ on:
     branches: [main]
     paths:
       - 'scripts/mls_historical_multibook_odds.py'
+      - 'scripts/mls_dataset_final_audit.py'
       - '.github/workflows/mls-historical-multibook-odds.yml'
   workflow_dispatch:
 
@@ -23,7 +24,7 @@ jobs:
       - uses: actions/checkout@v4
         with: {fetch-depth: 0}
 
-      - name: Deploy historical odds importer
+      - name: Deploy importer and audit scripts
         shell: bash
         run: |
           set -Eeuo pipefail
@@ -31,24 +32,26 @@ jobs:
           HOST=anestishkurti92@127.0.0.1
           D=/home/anestishkurti92/mls-predictor-v1
           cat scripts/mls_historical_multibook_odds.py | ssh -i "$KEY" -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=accept-new "$HOST" "cat > $D/mls_historical_multibook_odds.py"
+          cat scripts/mls_master_feature_merge.py | ssh -i "$KEY" -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=accept-new "$HOST" "cat > $D/mls_master_feature_merge.py"
+          cat scripts/mls_dataset_final_audit.py | ssh -i "$KEY" -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=accept-new "$HOST" "cat > $D/mls_dataset_final_audit.py"
 
-      - name: Run historical multi-book opening/closing movement backfill
+      - name: Build continuous multi-book movement layer
         shell: bash
         run: |
           set -Eeuo pipefail
           KEY=/home/appwiza-runner/.ssh/appwiza_vps
           HOST=anestishkurti92@127.0.0.1
-          D=/home/anestishkurti92/mls-predictor-v1
           ssh -i "$KEY" -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=accept-new "$HOST" 'bash -s' <<'EOF'
           set -Eeuo pipefail
           D=/home/anestishkurti92/mls-predictor-v1
           cd "$D"
-          venv/bin/pip install --quiet openpyxl
-          venv/bin/python -m py_compile mls_historical_multibook_odds.py
-          OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MLS_HIST_ODDS_MODE=public nice -n 12 timeout 170m venv/bin/python mls_historical_multibook_odds.py
+          venv/bin/python -m py_compile mls_historical_multibook_odds.py mls_master_feature_merge.py mls_dataset_final_audit.py
+          OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 nice -n 12 timeout 150m venv/bin/python mls_historical_multibook_odds.py
+          OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 nice -n 12 timeout 20m venv/bin/python mls_master_feature_merge.py
+          OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 nice -n 12 timeout 20m venv/bin/python mls_dataset_final_audit.py
           EOF
 
-      - name: Pull non-secret movement audits
+      - name: Pull final MLS audits
         shell: bash
         run: |
           set -Eeuo pipefail
@@ -57,23 +60,32 @@ jobs:
           mkdir -p mls/odds mls/features
           ssh -i "$KEY" -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=accept-new "$HOST" 'cat /home/anestishkurti92/mls-predictor-v1/reports/historical_multibook_odds_meta.json' > mls/odds/historical_multibook_meta.json
           ssh -i "$KEY" -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=accept-new "$HOST" 'cat /home/anestishkurti92/mls-predictor-v1/reports/historical_multibook_movement_meta.json' > mls/features/historical_multibook_movement_meta.json
-          cat mls/odds/historical_multibook_meta.json
+          ssh -i "$KEY" -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=accept-new "$HOST" 'cat /home/anestishkurti92/mls-predictor-v1/reports/master_feature_meta.json' > mls/features/master_feature_meta.json
+          ssh -i "$KEY" -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=accept-new "$HOST" 'cat /home/anestishkurti92/mls-predictor-v1/reports/dataset_final_audit.json' > mls/features/dataset_final_audit.json
+          echo "=== movement ==="
+          cat mls/features/historical_multibook_movement_meta.json
+          echo "=== final audit ==="
+          cat mls/features/dataset_final_audit.json
 
-      - name: Persist movement audits
+      - name: Persist final MLS movement build
         shell: bash
         run: |
           set -Eeuo pipefail
           cp mls/odds/historical_multibook_meta.json "$RUNNER_TEMP/historical_multibook_meta.json"
           cp mls/features/historical_multibook_movement_meta.json "$RUNNER_TEMP/historical_multibook_movement_meta.json"
+          cp mls/features/master_feature_meta.json "$RUNNER_TEMP/master_feature_meta.json"
+          cp mls/features/dataset_final_audit.json "$RUNNER_TEMP/dataset_final_audit.json"
           git fetch origin main
           git reset --hard origin/main
           mkdir -p mls/odds mls/features
           cp "$RUNNER_TEMP/historical_multibook_meta.json" mls/odds/historical_multibook_meta.json
           cp "$RUNNER_TEMP/historical_multibook_movement_meta.json" mls/features/historical_multibook_movement_meta.json
+          cp "$RUNNER_TEMP/master_feature_meta.json" mls/features/master_feature_meta.json
+          cp "$RUNNER_TEMP/dataset_final_audit.json" mls/features/dataset_final_audit.json
           git config user.name github-actions
           git config user.email github-actions@github.com
-          git add mls/odds/historical_multibook_meta.json mls/features/historical_multibook_movement_meta.json
+          git add mls/odds/historical_multibook_meta.json mls/features/historical_multibook_movement_meta.json mls/features/master_feature_meta.json mls/features/dataset_final_audit.json
           if ! git diff --cached --quiet; then
-            git commit -m 'Publish MLS historical multi-book movement audit'
+            git commit -m 'Publish final MLS multi-book movement build'
             git push origin HEAD:main
           fi
