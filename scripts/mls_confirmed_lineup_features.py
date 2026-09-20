@@ -178,9 +178,15 @@ def main():
 
     added=[c for c in out.columns if c not in base.columns]
     coverage=int(feat.home_confirmed_lineup_prior_games.gt(0).sum()+feat.away_confirmed_lineup_prior_games.gt(0).sum())
+    complete_by_season=(line[line.espn_event_id.isin(complete_ids)]
+                        .drop_duplicates('espn_event_id')
+                        .groupby('season').size().to_dict()) if 'season' in line.columns else {}
+    lineup_rows_by_season=(line.groupby('season').size().to_dict()) if 'season' in line.columns else {}
     meta={
       'built_at':now(),'base_file':str(BASE),'rows':len(out),'columns':len(out.columns),
       'added_columns':len(added),'added':added,'complete_lineup_events':len(complete_ids),
+      'complete_lineup_events_by_season':{str(int(k)):int(v) for k,v in complete_by_season.items()},
+      'lineup_rows_by_season':{str(int(k)):int(v) for k,v in lineup_rows_by_season.items()},
       'team_side_rows_with_prior_confirmed_lineup':coverage,
       'output':str(OUT),
       'leakage_note':'Target-match starters/cards are never used as target-match pregame features. Each match reads only confirmed lineups/cards from already completed prior matches, then updates state after feature capture.'
