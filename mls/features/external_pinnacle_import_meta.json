@@ -1,0 +1,171 @@
+{
+  "built_at": "2026-09-20T10:59:24.354826+00:00",
+  "source_repository": "https://github.com/stephen1-hub/-MLS-Betting-Market-Efficiency-Analysis-2012-2026-",
+  "source_url": "https://raw.githubusercontent.com/stephen1-hub/-MLS-Betting-Market-Efficiency-Analysis-2012-2026-/main/USA.xlsx",
+  "raw_xlsx_bytes": 505989,
+  "source_rows_after_cleaning": 5800,
+  "source_season_rows": {
+    "2012": 338,
+    "2013": 338,
+    "2014": 338,
+    "2015": 357,
+    "2016": 357,
+    "2017": 391,
+    "2018": 408,
+    "2019": 421,
+    "2020": 323,
+    "2021": 472,
+    "2022": 489,
+    "2023": 521,
+    "2024": 522,
+    "2025": 525
+  },
+  "matched_rows": 5786,
+  "matched_season_rows": {
+    "2012": 338,
+    "2013": 334,
+    "2014": 337,
+    "2015": 356,
+    "2016": 356,
+    "2017": 389,
+    "2018": 406,
+    "2019": 421,
+    "2020": 322,
+    "2021": 471,
+    "2022": 489,
+    "2023": 521,
+    "2024": 521,
+    "2025": 525
+  },
+  "unmatched_rows": 1,
+  "ambiguous_rows": 13,
+  "match_rate": 0.9975862068965518,
+  "features_output": "/home/anestishkurti92/mls-predictor-v1/data/processed/mls_external_pinnacle_closing_features.parquet",
+  "normalized_source_output": "/home/anestishkurti92/mls-predictor-v1/data/processed/mls_external_pinnacle_closing_rows.parquet",
+  "unmatched_sample": [
+    {
+      "source_row_id": 464,
+      "season": 2013,
+      "date": "2013-06-02",
+      "home": "Los Angeles Galaxy",
+      "away": "New England Revolution",
+      "reason": "SEASON"
+    }
+  ],
+  "ambiguous_sample": [
+    {
+      "source_row_id": 667,
+      "season": 2013,
+      "date": "2013-11-07",
+      "home": "New York Red Bulls",
+      "away": "Houston Dynamo",
+      "candidates": 0
+    },
+    {
+      "source_row_id": 668,
+      "season": 2013,
+      "date": "2013-11-07",
+      "home": "Sporting Kansas City",
+      "away": "New England Revolution",
+      "candidates": 0
+    },
+    {
+      "source_row_id": 669,
+      "season": 2013,
+      "date": "2013-11-08",
+      "home": "Real Salt Lake",
+      "away": "Los Angeles Galaxy",
+      "candidates": 0
+    },
+    {
+      "source_row_id": 1012,
+      "season": 2014,
+      "date": "2014-12-01",
+      "home": "Seattle Sounders",
+      "away": "Los Angeles Galaxy",
+      "candidates": 0
+    },
+    {
+      "source_row_id": 1357,
+      "season": 2015,
+      "date": "2015-10-30",
+      "home": "Portland Timbers",
+      "away": "Sporting Kansas City",
+      "candidates": 0
+    },
+    {
+      "source_row_id": 1726,
+      "season": 2016,
+      "date": "2016-12-01",
+      "home": "Toronto FC",
+      "away": "CF Montreal",
+      "candidates": 0
+    },
+    {
+      "source_row_id": 2105,
+      "season": 2017,
+      "date": "2017-10-27",
+      "home": "Houston Dynamo",
+      "away": "Sporting Kansas City",
+      "candidates": 0
+    },
+    {
+      "source_row_id": 2117,
+      "season": 2017,
+      "date": "2017-12-01",
+      "home": "Seattle Sounders",
+      "away": "Houston Dynamo",
+      "candidates": 0
+    },
+    {
+      "source_row_id": 2512,
+      "season": 2018,
+      "date": "2018-11-02",
+      "home": "DC United",
+      "away": "Columbus Crew",
+      "candidates": 0
+    },
+    {
+      "source_row_id": 2518,
+      "season": 2018,
+      "date": "2018-11-09",
+      "home": "Seattle Sounders",
+      "away": "Portland Timbers",
+      "candidates": 0
+    },
+    {
+      "source_row_id": 3265,
+      "season": 2020,
+      "date": "2020-11-30",
+      "home": "Columbus Crew",
+      "away": "Nashville SC",
+      "candidates": 0
+    },
+    {
+      "source_row_id": 3739,
+      "season": 2021,
+      "date": "2021-12-01",
+      "home": "New England Revolution",
+      "away": "New York City",
+      "candidates": 0
+    },
+    {
+      "source_row_id": 5269,
+      "season": 2024,
+      "date": "2024-11-24",
+      "home": "Los Angeles FC",
+      "away": "Seattle Sounders",
+      "candidates": 0
+    }
+  ],
+  "import_policy": "Separate external layer only. Existing Appwiza odds columns are not overwritten.",
+  "fields": [
+    "external_pinnacle_close_home_odds",
+    "external_pinnacle_close_draw_odds",
+    "external_pinnacle_close_away_odds",
+    "external_pinnacle_close_home_novig",
+    "external_pinnacle_close_draw_novig",
+    "external_pinnacle_close_away_novig",
+    "external_pinnacle_close_overround"
+  ]
+}
