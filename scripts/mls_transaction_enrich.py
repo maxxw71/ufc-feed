@@ -173,8 +173,8 @@ def main():
             row[f'{side}_transaction_data_available']=available
             for days in [14,30,60,90]:
                 if available and len(z):
-                    lo=g.dt-pd.Timedelta(days=days)
-                    q=z[(z.transaction_date.lt(g.dt))&(z.transaction_date.ge(lo))]
+                    lo=g['dt']-pd.Timedelta(days=days)
+                    q=z[(z.transaction_date.lt(g['dt']))&(z.transaction_date.ge(lo))]
                     nin=int(q.direction.eq('IN').sum());nout=int(q.direction.eq('OUT').sum())
                     high=int(q.transaction_type.isin(['TRANSFER','TRADE','LOAN','SIGNING','FREE_AGENT']).sum())
                 elif available:
@@ -186,9 +186,9 @@ def main():
                 row[f'{side}_transactions_high_activity_{days}d']=high
                 row[f'{side}_transaction_net_{days}d']=(nin-nout) if pd.notna(nin) else np.nan
             if available and len(z):
-                q=z[z.transaction_date.lt(g.dt)]
+                q=z[z.transaction_date.lt(g['dt'])]
                 last=q.transaction_date.max() if len(q) else pd.NaT
-                row[f'{side}_days_since_transaction']=(g.dt-last).total_seconds()/86400 if pd.notna(last) else np.nan
+                row[f'{side}_days_since_transaction']=(g['dt']-last).total_seconds()/86400 if pd.notna(last) else np.nan
             else:row[f'{side}_days_since_transaction']=np.nan
         for days in [14,30,60,90]:
             for kind in ['transactions_in','transactions_out','transactions_high_activity','transaction_net']:
