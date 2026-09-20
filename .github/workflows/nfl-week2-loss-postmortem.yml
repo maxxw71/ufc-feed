@@ -23,8 +23,9 @@ jobs:
         shell: bash
         run: |
           set -Eeuo pipefail
-          python3 -m py_compile scripts/nfl_week2_loss_postmortem.py
-          OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1 nice -n 12 timeout 35m python3 scripts/nfl_week2_loss_postmortem.py
+          PY=/home/anestishkurti92/nfl-predictor-v1/venv/bin/python
+          "$PY" -m py_compile scripts/nfl_week2_loss_postmortem.py
+          OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1 nice -n 12 timeout 35m "$PY" scripts/nfl_week2_loss_postmortem.py
           cat nfl/week2_loss_postmortem/report.txt
 
       - name: Persist postmortem
