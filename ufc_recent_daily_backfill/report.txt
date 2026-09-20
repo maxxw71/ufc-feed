@@ -7,35 +7,33 @@ Rule unchanged:
   >=4 years younger = strong tier
 
 Completed UFC fights in result source (ex Road to UFC): 762
-Unique 2024-current odds fights in daily dataset: 2156
-Fight-level odds+result+DOB matches: 425
-Coverage of completed result fights: 55.8%
-Matched date range: 2024-01-13 to 2026-05-16
+Unique 2024-current odds fights in daily dataset: 571
+Fight-level odds+result+DOB matches: 300
+Coverage of completed result fights: 39.4%
+Matched date range: 2024-01-13 to 2025-09-06
 
 3+ YEAR HYBRID RULE
 ----------------------------------------------------------------------------
-2024           bets=  37 win=  81.08% ROI=   +1.26% P/L=$+23.33 95%CI=[-15.52%, +16.09%]
-2025           bets=  27 win=  85.19% ROI=   +6.26% P/L=$+84.50 95%CI=[-12.52%, +21.52%]
-2026           bets=  16 win=  93.75% ROI=  +23.06% P/L=$+184.50 95%CI=[+4.37%, +34.94%]
-2024-current   bets=  80 win=  85.00% ROI=   +7.31% P/L=$+292.33 95%CI=[-3.48%, +16.93%]
+2024           bets=  37 win=  81.08% ROI=   +1.26% P/L=$+23.33 95%CI=[-15.93%, +16.04%]
+2025           bets=  19 win=  89.47% ROI=  +11.32% P/L=$+107.50 95%CI=[-8.42%, +25.53%]
+2024-current   bets=  56 win=  83.93% ROI=   +4.67% P/L=$+130.83 95%CI=[-7.96%, +15.88%]
 
 4+ YEAR STRONG TIER
 ----------------------------------------------------------------------------
-2024           bets=  30 win=  76.67% ROI=   -4.96% P/L=$-74.40 95%CI=[-24.91%, +12.57%]
-2025           bets=  22 win=  86.36% ROI=   +6.73% P/L=$+74.00 95%CI=[-12.09%, +23.05%]
-2026           bets=  15 win=  93.33% ROI=  +22.20% P/L=$+166.50 95%CI=[+2.33%, +34.93%]
-2024-current   bets=  67 win=  83.58% ROI=   +4.96% P/L=$+166.10 95%CI=[-7.24%, +15.95%]
+2024           bets=  30 win=  76.67% ROI=   -4.96% P/L=$-74.40 95%CI=[-25.00%, +12.80%]
+2025           bets=  18 win=  88.89% ROI=  +11.06% P/L=$+99.50 95%CI=[-9.78%, +26.17%]
+2024-current   bets=  48 win=  81.25% ROI=   +1.05% P/L=$+25.10 95%CI=[-13.65%, +14.14%]
 
 ODDS SNAPSHOT MODES
 ----------------------------------------------------------------------------
-historical_import_fallback: 395 fights
-pre_or_event_snapshot: 30 fights
+historical_import_fallback: 274 fights
+strict_pre_event_snapshot: 26 fights
 
 DATA NOTE
 ----------------------------------------------------------------------------
-For daily snapshots, the latest US-region quote snapshot no later than 36h
-after the event date is used. Older imported rows that were loaded after the
-event use the historical-import fallback. No-vig favorite probability is
-computed from the selected odds pair; if multiple same-time rows exist,
+For recent daily snapshots, only quotes captured before 00:00 UTC on the
+listed event date are eligible. Event-day/in-play snapshots are excluded.
+Rows imported >=3 days after the event may use the historical-import fallback.
+No-vig favorite probability iscomputed from the selected odds pair; if multiple same-time rows exist,
 median no-vig probability is used and the best decimal favorite price is used
 for ROI.
