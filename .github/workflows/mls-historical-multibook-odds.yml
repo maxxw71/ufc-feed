@@ -1,0 +1,81 @@
+name: MLS Historical Multi Book Odds
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/mls_historical_multibook_odds.py'
+      - '.github/workflows/mls-historical-multibook-odds.yml'
+  workflow_dispatch:
+
+concurrency:
+  group: mls-historical-multibook-odds
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  backfill:
+    runs-on: [self-hosted, Linux, X64, appwiza]
+    timeout-minutes: 180
+    steps:
+      - uses: actions/checkout@v4
+        with: {fetch-depth: 0}
+
+      - name: Deploy historical odds importer
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          KEY=/home/appwiza-runner/.ssh/appwiza_vps
+          HOST=anestishkurti92@127.0.0.1
+          D=/home/anestishkurti92/mls-predictor-v1
+          cat scripts/mls_historical_multibook_odds.py | ssh -i "$KEY" -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=accept-new "$HOST" "cat > $D/mls_historical_multibook_odds.py"
+
+      - name: Run licensed historical close backfill
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          KEY=/home/appwiza-runner/.ssh/appwiza_vps
+          HOST=anestishkurti92@127.0.0.1
+          D=/home/anestishkurti92/mls-predictor-v1
+          ssh -i "$KEY" -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=accept-new "$HOST" 'bash -s' <<'EOF'
+          set -Eeuo pipefail
+          D=/home/anestishkurti92/mls-predictor-v1
+          ENV=/home/anestishkurti92/.config/mls-odds.env
+          if [ -f "$ENV" ]; then
+            set -a
+            . "$ENV"
+            set +a
+          fi
+          cd "$D"
+          venv/bin/python -m py_compile mls_historical_multibook_odds.py
+          OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 nice -n 12 timeout 170m venv/bin/python mls_historical_multibook_odds.py
+          EOF
+
+      - name: Pull non-secret coverage audit
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          KEY=/home/appwiza-runner/.ssh/appwiza_vps
+          HOST=anestishkurti92@127.0.0.1
+          mkdir -p mls/odds
+          ssh -i "$KEY" -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=accept-new "$HOST" 'cat /home/anestishkurti92/mls-predictor-v1/reports/historical_multibook_odds_meta.json' > mls/odds/historical_multibook_meta.json
+          cat mls/odds/historical_multibook_meta.json
+
+      - name: Persist coverage audit
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          cp mls/odds/historical_multibook_meta.json "$RUNNER_TEMP/historical_multibook_meta.json"
+          git fetch origin main
+          git reset --hard origin/main
+          mkdir -p mls/odds
+          cp "$RUNNER_TEMP/historical_multibook_meta.json" mls/odds/historical_multibook_meta.json
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git add mls/odds/historical_multibook_meta.json
+          if ! git diff --cached --quiet; then
+            git commit -m 'Publish MLS historical multi-book odds audit'
+            git push origin HEAD:main
+          fi
