@@ -1,0 +1,80 @@
+name: MLS Historical Odds Source Audit
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/mls-historical-odds-source-audit.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  audit:
+    runs-on: [self-hosted, Linux, X64, appwiza]
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - name: Inspect public benchmark and ESPN historical odds
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          KEY=/home/appwiza-runner/.ssh/appwiza_vps
+          HOST=anestishkurti92@127.0.0.1
+          ssh -i "$KEY" -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=accept-new "$HOST" 'bash -s' <<'EOF'
+          set -Eeuo pipefail
+          PY=/home/anestishkurti92/mls-predictor-v1/venv/bin/python
+          "$PY" - <<'PY'
+          import io,json,urllib.request,pandas as pd,re
+          UA={'User-Agent':'Mozilla/5.0 AppwizaMLSHistoricalOddsAudit/1.0'}
+
+          def get(url):
+              req=urllib.request.Request(url,headers=UA)
+              return urllib.request.urlopen(req,timeout=90).read()
+
+          print('=== PUBLIC XLSX SCHEMA AUDIT (DO NOT INGEST) ===')
+          url='https://raw.githubusercontent.com/stephen1-hub/-MLS-Betting-Market-Efficiency-Analysis-2012-2026-/main/USA.xlsx'
+          raw=get(url)
+          df=pd.read_excel(io.BytesIO(raw))
+          cols=list(df.columns)
+          print('rows',len(df),'cols',len(cols))
+          print('columns',json.dumps(cols))
+          print('seasons',df['Season'].min() if 'Season' in df else None,df['Season'].max() if 'Season' in df else None)
+          book_patterns={}
+          for c in cols:
+              m=re.match(r'^([A-Za-z0-9]+?)(C?)(H|D|A)$',str(c))
+              if m:book_patterns.setdefault(m.group(1)+m.group(2),[]).append(str(c))
+          print('1x2_groups',json.dumps(book_patterns,sort_keys=True))
+          close_cols=[c for c in cols if re.search(r'C[HDA]$',str(c))]
+          print('closing_cols',json.dumps(close_cols))
+          for c in close_cols:
+              print('nonnull',c,int(df[c].notna().sum()))
+          print('first_rows',json.dumps(df.head(3).where(pd.notna(df),None).to_dict('records'),default=str)[:12000])
+
+          print('\n=== ESPN HISTORICAL ODDS AUDIT ===')
+          for year in [2013,2019,2021,2023,2025]:
+              url=f'https://site.api.espn.com/apis/site/v2/sports/soccer/usa.1/scoreboard?dates={year}&limit=1000'
+              try:
+                  d=json.loads(get(url))
+              except Exception as e:
+                  print('year',year,'ERROR',type(e).__name__,str(e)[:200]);continue
+              events=d.get('events') or []
+              with_odds=[];providers=set()
+              samples=[]
+              for ev in events:
+                  comp=(ev.get('competitions') or [{}])[0]
+                  odds=comp.get('odds') or []
+                  good=[o for o in odds if isinstance(o,dict)]
+                  if good:
+                      with_odds.append(ev.get('id'))
+                      for o in good:
+                          p=(o.get('provider') or {}).get('displayName') or (o.get('provider') or {}).get('name')
+                          if p:providers.add(str(p))
+                      if len(samples)<3:
+                          teams=[x.get('team',{}).get('displayName') for x in comp.get('competitors') or []]
+                          samples.append({'id':ev.get('id'),'date':ev.get('date'),'teams':teams,'odds':good[:3]})
+              print('year',year,'events',len(events),'events_with_odds',len(with_odds),'providers',sorted(providers))
+              print('samples',json.dumps(samples,default=str)[:16000])
+          PY
+          EOF
