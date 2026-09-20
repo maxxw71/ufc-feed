@@ -15,6 +15,9 @@ MARKET=ROOT/'live/market_snapshots/latest.json'
 OUT=ROOT/'live/shadow';OUT.mkdir(parents=True,exist_ok=True)
 ELO_CURRENT=ROOT/'live/current/elo_current.json'
 
+ACTIVE_METHOD_IDS={'MLS-R01V2','MLS-R02V2','MLS-R03','MLS-A02','MLS-A03','MLS-A05','MLS-A06'}
+WATCH_ONLY_METHOD_IDS={'MLS-A04'}
+
 # Active prospective methods only. Historical IDs are versioned rather than
 # silently changing rule definitions in the immutable forward ledger.
 METHODS=[
@@ -286,6 +289,7 @@ def main():
               'captured_at':market['summary']['captured_at'],'event_id':ev['event_id'],'commence_time':ev['commence_time'],
               'home_team':home,'away_team':away,'selection':selection,'opponent':opponent,'side':m['side'],
               'method_id':m['id'],'method_name':m['name'],'research_status':m['research_status'],
+              'tracking_tier':'ACTIVE_PROSPECTIVE' if m['id'] in ACTIVE_METHOD_IDS else 'WATCH_ONLY',
               'status':'QUALIFIES_SHADOW' if available else ('BLOCKED_STALE_INPUT' if stale_required_input else 'NO_MATCH'),
               'confidence_tier':confidence_tier if available else None,'market_prob':prob,
               'american_price':ev['home_american'] if m['side']=='HOME' else ev['away_american'] if m['side']=='AWAY' else ev['draw_american'],
@@ -294,6 +298,10 @@ def main():
               'features':fx,'history':HISTORY[m['id']],'elo_source_updated_at':elo_updated,'elo_age_days':elo_age,'market_source':ev['source']
             })
     qualifiers=[r for r in rows if r['status']=='QUALIFIES_SHADOW']
+    active_qualifiers=[r for r in qualifiers if r['method_id'] in ACTIVE_METHOD_IDS]
+    watch_qualifiers=[r for r in qualifiers if r['method_id'] in WATCH_ONLY_METHOD_IDS]
+
+    # Research-level overlap/conflicts include watch-only methods for diagnostics.
     event_groups=defaultdict(list)
     for q in qualifiers:event_groups[str(q['event_id'])].append(q)
     conflicts=[]
@@ -308,8 +316,35 @@ def main():
         if len(sels)>1:
             conflicts.append({'event_id':eid,'home_team':grp[0]['home_team'],'away_team':grp[0]['away_team'],
                               'methods':[x['method_id'] for x in grp],'selections':[x['selection'] for x in grp],
-                              'policy':'TRACK_BOTH_SHADOW_ONLY_NO_COMBINED_ACTION'})
-            for x in grp:x['portfolio_conflict']=True
+                              'policy':'TRACK_FOR_RESEARCH'})
+
+    # Portfolio eligibility is determined ONLY from active methods.
+    active_groups=defaultdict(list)
+    for q in active_qualifiers:active_groups[str(q['event_id'])].append(q)
+    portfolio_conflicts=[]
+    portfolio_matches=[]
+    for eid,grp in active_groups.items():
+        sels={str(x['selection']) for x in grp}
+        if len(sels)>1:
+            portfolio_conflicts.append({'event_id':eid,'home_team':grp[0]['home_team'],'away_team':grp[0]['away_team'],
+                                        'methods':[x['method_id'] for x in grp],'selections':[x['selection'] for x in grp],
+                                        'policy':'NO_PORTFOLIO_ACTION'})
+            for x in grp:
+                x['portfolio_conflict']=True
+                x['portfolio_eligible']=False
+        else:
+            for x in grp:
+                x['portfolio_conflict']=False
+                x['portfolio_eligible']=True
+            portfolio_matches.append({
+                'event_id':eid,'home_team':grp[0]['home_team'],'away_team':grp[0]['away_team'],
+                'selection':grp[0]['selection'],'methods':[x['method_id'] for x in grp],
+                'consensus':len(grp)>1,'max_bankroll_exposure_pct':1.0,
+                'staking_policy':'MAX_1_PERCENT_CURRENT_BANKROLL_PER_MATCH'
+            })
+    for q in watch_qualifiers:
+        q['portfolio_eligible']=False
+        q['portfolio_conflict']=False
     payload={
       'built_at':now().isoformat(),'market_captured_at':market['summary']['captured_at'],
       'elo_updated_at':elo_updated,'elo_age_days':elo_age,'shadow_only':True,'official_autopromotions':0,
@@ -319,9 +354,12 @@ def main():
         'MLS-R02':{'status':'LEGACY_REPLACED_BY_R02V2','reason':'Stricter xG rule improved consistency; old ledger entries preserved.'},
         'MLS-A07':{'status':'RESEARCH_ONLY_REDUNDANT','reason':'60-74% exact overlap with R01/R02 family; useful signal absorbed into refinements instead of added separately.'}
       },
-      'methods':{m['id']:{'name':m['name'],'status':m['research_status']} for m in METHODS},
-      'rows':rows,'qualifiers':qualifiers,'conflicts':conflicts,'consensus':consensus,
-      'portfolio_policy':{'opposite_side_conflict':'TRACK_FOR_RESEARCH_NO_COMBINED_ACTION',
+      'active_method_ids':sorted(ACTIVE_METHOD_IDS),'watch_only_method_ids':sorted(WATCH_ONLY_METHOD_IDS),
+      'methods':{m['id']:{'name':m['name'],'status':m['research_status'],
+                          'tracking_tier':'ACTIVE_PROSPECTIVE' if m['id'] in ACTIVE_METHOD_IDS else 'WATCH_ONLY'} for m in METHODS},
+      'rows':rows,'qualifiers':qualifiers,'active_qualifiers':active_qualifiers,'watch_qualifiers':watch_qualifiers,
+      'conflicts':conflicts,'consensus':consensus,'portfolio_conflicts':portfolio_conflicts,'portfolio_matches':portfolio_matches,
+      'portfolio_policy':{'opposite_side_conflict':'ACTIVE_METHOD_CONFLICTS_GET_NO_PORTFOLIO_ACTION',
                           'same_side_consensus':'TAG_AND_TRACK_SEPARATELY_NO_STAKE_MULTIPLIER',
                           'staking_policy':'MAX_1_PERCENT_CURRENT_BANKROLL_PER_MATCH',
                           'max_match_exposure_pct':1.0,
@@ -334,7 +372,9 @@ def main():
     with (OUT/'shadow_observations.jsonl').open('a') as f:f.write(json.dumps(payload,default=str,separators=(',',':'))+'\n')
     print(json.dumps({'built_at':payload['built_at'],'market_captured_at':payload['market_captured_at'],
       'elo_updated_at':elo_updated,'elo_age_days':elo_age,'events':len(events),'method_checks':len(rows),
-      'qualifiers':len(qualifiers),'status_counts':payload['status_counts'],'conflicts':conflicts,'consensus':consensus,
+      'qualifiers':len(qualifiers),'active_qualifiers':len(active_qualifiers),'watch_qualifiers':len(watch_qualifiers),
+      'portfolio_matches':portfolio_matches,'portfolio_conflicts':portfolio_conflicts,
+      'status_counts':payload['status_counts'],'conflicts':conflicts,'consensus':consensus,
       'qualifying':[(r['method_id'],r['selection'],r['opponent'],r['american_price'],r.get('confidence_tier')) for r in qualifiers],
       'retired_methods':payload['retired_methods'],'official_autopromotions':0},indent=2))
 
