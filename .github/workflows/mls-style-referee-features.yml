@@ -1,0 +1,64 @@
+name: MLS Style and Referee Features
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/mls_team_style_features.py'
+      - 'scripts/mls_referee_discipline_enrich.py'
+      - '.github/workflows/mls-style-referee-features.yml'
+  workflow_dispatch:
+
+concurrency:
+  group: mls-research
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: [self-hosted, Linux, X64, appwiza]
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+        with: {fetch-depth: 0}
+      - name: Build style and referee features
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          KEY=/home/appwiza-runner/.ssh/appwiza_vps
+          HOST=anestishkurti92@127.0.0.1
+          SSH="ssh -i $KEY -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=accept-new $HOST"
+          D=/home/anestishkurti92/mls-predictor-v1
+          for f in mls_team_style_features.py mls_referee_discipline_enrich.py; do
+            cat "scripts/$f" | $SSH "cat > $D/$f"
+          done
+          $SSH "cd $D && venv/bin/python -m py_compile mls_team_style_features.py mls_referee_discipline_enrich.py && OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 nice -n 12 timeout 20m venv/bin/python mls_team_style_features.py && timeout 8m venv/bin/python mls_referee_discipline_enrich.py"
+      - name: Pull audits
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          KEY=/home/appwiza-runner/.ssh/appwiza_vps
+          HOST=anestishkurti92@127.0.0.1
+          mkdir -p mls/features
+          ssh -i "$KEY" -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=accept-new "$HOST" 'cat /home/anestishkurti92/mls-predictor-v1/reports/team_style_feature_meta.json' > mls/features/team_style_feature_meta.json
+          ssh -i "$KEY" -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=accept-new "$HOST" 'cat /home/anestishkurti92/mls-predictor-v1/reports/referee_discipline_feature_meta.json' > mls/features/referee_discipline_feature_meta.json
+      - name: Persist audits
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          cp mls/features/team_style_feature_meta.json "$RUNNER_TEMP/team_style.json"
+          cp mls/features/referee_discipline_feature_meta.json "$RUNNER_TEMP/ref_cards.json"
+          git fetch origin main
+          git reset --hard origin/main
+          mkdir -p mls/features
+          cp "$RUNNER_TEMP/team_style.json" mls/features/team_style_feature_meta.json
+          cp "$RUNNER_TEMP/ref_cards.json" mls/features/referee_discipline_feature_meta.json
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git add mls/features/team_style_feature_meta.json mls/features/referee_discipline_feature_meta.json
+          if ! git diff --cached --quiet; then
+            git commit -m 'Publish MLS style and referee feature audits'
+            git push origin HEAD:main
+          fi
