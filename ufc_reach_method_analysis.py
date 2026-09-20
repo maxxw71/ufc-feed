@@ -27,6 +27,12 @@ DIVISIONS = {
     'Light Heavyweight':'Light Heavyweight','Heavyweight':'Heavyweight'
 }
 
+def norm_name(s):
+    s=str(s or '').lower().replace('’',"'").replace('-',' ')
+    s=re.sub(r'\b(jr|sr|ii|iii|iv)\b',' ',s)
+    s=re.sub(r'[^a-z0-9]+',' ',s)
+    return re.sub(r'\s+',' ',s).strip()
+
 def parse_reach(v):
     s=str(v or '').strip()
     if not s or s=='--' or s.lower()=='nan': return np.nan
@@ -80,6 +86,7 @@ def load_fights():
     c['reach_diff']=c.r1-c.r2; c=c[c.reach_diff!=0].copy(); c['reach_gap']=c.reach_diff.abs()
     c['longer_is_p1']=c.reach_diff>0; c['p1_won']=c.result_norm.eq('W')
     c['longer_won']=np.where(c.longer_is_p1,c.p1_won,~c.p1_won)
+    c['p1_norm']=c['player1'].map(norm_name); c['p2_norm']=c['player2'].map(norm_name)
     c['pair_key']=c.apply(lambda r:'|'.join(sorted([r.u1,r.u2])),axis=1)
     return c
 
@@ -92,22 +99,34 @@ def load_odds():
     x['odds_1']=pd.to_numeric(x.odds_1,errors='coerce'); x['odds_2']=pd.to_numeric(x.odds_2,errors='coerce')
     x=x.dropna(subset=['event_date','fighter_1_url','fighter_2_url','odds_1','odds_2'])
     x=x[(x.odds_1>1)&(x.odds_2>1)].copy(); x['u1']=x.fighter_1_url.astype(str).str.strip(); x['u2']=x.fighter_2_url.astype(str).str.strip()
+    x['n1']=x.fighter_1.map(norm_name); x['n2']=x.fighter_2.map(norm_name)
     x['pair_key']=x.apply(lambda r:'|'.join(sorted([r.u1,r.u2])),axis=1); x['region_norm']=x.region.fillna('').astype(str).str.lower()
     rows=[]
     for (date,pair),g in x.groupby(['event_date','pair_key'],sort=False):
         us=g[g.region_norm.eq('us')]
         if not us.empty:g=us
-        cutoff=pd.Timestamp(date,tz='UTC')+pd.Timedelta(hours=36)
-        timely=g[g.adding_date.notna()&(g.adding_date<=cutoff)]
+        cutoff=pd.Timestamp(date,tz='UTC')
+        timely=g[g.adding_date.notna()&(g.adding_date<cutoff)]
         if not timely.empty:
             latest=timely.adding_date.max(); snap=timely[timely.adding_date==latest].copy()
         else:
-            latest=g.adding_date.max() if g.adding_date.notna().any() else pd.NaT; snap=g[g.adding_date==latest].copy() if pd.notna(latest) else g.copy()
-        i1=1/snap.odds_1.astype(float); i2=1/snap.odds_2.astype(float); t=i1+i2
-        nv1=float((i1/t).median()); nv2=1-nv1; r0=snap.iloc[0]
-        if nv1>=nv2: side=1; prob=nv1; best=float(snap.odds_1.max())
-        else: side=2; prob=nv2; best=float(snap.odds_2.max())
-        rows.append({'odds_date':date,'pair_key':pair,'ou1':r0.u1,'ou2':r0.u2,'fav_side':side,'market_prob':prob,'fav_decimal':best})
+            late=g.adding_date.notna()&(g.adding_date>=cutoff+pd.Timedelta(days=3))
+            if late.all() and g.adding_date.notna().any():
+                latest=g.adding_date.max(); snap=g[g.adding_date==latest].copy()
+            else:
+                continue
+        r0=snap.iloc[0]; ref1,ref2=r0.n1,r0.n2
+        direct=snap.n1.eq(ref1)&snap.n2.eq(ref2); reverse=snap.n1.eq(ref2)&snap.n2.eq(ref1)
+        snap=snap[direct|reverse].copy()
+        if snap.empty: continue
+        direct=snap.n1.eq(ref1)&snap.n2.eq(ref2)
+        snap['a1']=np.where(direct,snap.odds_1,snap.odds_2).astype(float)
+        snap['a2']=np.where(direct,snap.odds_2,snap.odds_1).astype(float)
+        i1=1/snap.a1; i2=1/snap.a2; t=i1+i2
+        nv1=float((i1/t).median()); nv2=float((i2/t).median()); z=nv1+nv2; nv1/=z; nv2/=z
+        if nv1>=nv2: side=1; prob=nv1; best=float(snap.a1.max())
+        else: side=2; prob=nv2; best=float(snap.a2.max())
+        rows.append({'odds_date':date,'pair_key':pair,'on1':ref1,'on2':ref2,'fav_side':side,'market_prob':prob,'fav_decimal':best})
     return pd.DataFrame(rows)
 
 def attach(df,odds):
@@ -118,7 +137,12 @@ def attach(df,odds):
         deltas=(g.odds_date-r.event_date.normalize()).dt.days.abs(); idx=deltas.idxmin()
         if deltas.loc[idx]>1:continue
         o=g.loc[idx]
-        fav_is_p1=(int(o.fav_side)==1) if o.ou1==r.u1 else (int(o.fav_side)==2)
+        if o.on1==r.p1_norm and o.on2==r.p2_norm:
+            fav_is_p1=(int(o.fav_side)==1)
+        elif o.on1==r.p2_norm and o.on2==r.p1_norm:
+            fav_is_p1=(int(o.fav_side)==2)
+        else:
+            continue
         rr=r.to_dict(); rr['market_prob']=float(o.market_prob); rr['market_fav_is_p1']=fav_is_p1
         rr['market_fav_longer']=(fav_is_p1 and r.longer_is_p1) or ((not fav_is_p1) and (not r.longer_is_p1))
         rr['market_fav_won']=bool(r.p1_won if fav_is_p1 else (not r.p1_won)); rr['fav_decimal']=float(o.fav_decimal)
