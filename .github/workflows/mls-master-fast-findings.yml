@@ -1,0 +1,51 @@
+name: MLS Master Fast Findings
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/mls_master_fast_findings.py'
+      - '.github/workflows/mls-master-fast-findings.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  research:
+    runs-on: [self-hosted, Linux, X64, appwiza]
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with: {fetch-depth: 0}
+      - name: Deploy and run
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          KEY=/home/appwiza-runner/.ssh/appwiza_vps
+          HOST=anestishkurti92@127.0.0.1
+          D=/home/anestishkurti92/mls-predictor-v1
+          cat scripts/mls_master_fast_findings.py | ssh -i "$KEY" -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=accept-new "$HOST" "cat > $D/mls_master_fast_findings.py"
+          ssh -i "$KEY" -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=accept-new "$HOST" 'bash -s' <<'EOF'
+          set -Eeuo pipefail
+          cd /home/anestishkurti92/mls-predictor-v1
+          venv/bin/python -m py_compile mls_master_fast_findings.py
+          OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1 nice -n 12 timeout 16m venv/bin/python mls_master_fast_findings.py
+          EOF
+      - name: Pull and persist
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          KEY=/home/appwiza-runner/.ssh/appwiza_vps
+          HOST=anestishkurti92@127.0.0.1
+          mkdir -p mls/research
+          ssh -i "$KEY" -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=accept-new "$HOST" 'cat /home/anestishkurti92/mls-predictor-v1/research/master_fast/latest.json' > mls/research/master_fast_findings_latest.json
+          cp mls/research/master_fast_findings_latest.json "$RUNNER_TEMP/master_fast_findings_latest.json"
+          git fetch origin main
+          git reset --hard origin/main
+          mkdir -p mls/research
+          cp "$RUNNER_TEMP/master_fast_findings_latest.json" mls/research/master_fast_findings_latest.json
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git add mls/research/master_fast_findings_latest.json
+          if ! git diff --cached --quiet; then
+            git commit -m 'Publish MLS fast master findings'
+            git push origin HEAD:main
+          fi
