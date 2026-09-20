@@ -1,0 +1,104 @@
+name: NFL Week 2 Loss Postmortem
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/nfl-week2-loss-postmortem.yml'
+      - 'scripts/nfl_week2_loss_postmortem.py'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  postmortem:
+    runs-on: [self-hosted, Linux, X64, appwiza]
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+        with: {fetch-depth: 0}
+
+      - name: Inspect live NFL state and ledger
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          KEY=/home/appwiza-runner/.ssh/appwiza_vps
+          HOST=anestishkurti92@127.0.0.1
+          ssh -i "$KEY" -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=accept-new "$HOST" 'bash -s' <<'EOF'
+          set -Eeuo pipefail
+          python3 - <<'PY'
+          import json,sqlite3
+          from pathlib import Path
+          print('=== PUBLIC NFL STATE ===')
+          p=Path('/srv/appwiza-sports/state/nfl.json')
+          if p.exists():
+              d=json.loads(p.read_text())
+              print('updated_at',d.get('updated_at'))
+              for c in d.get('cards',[]):
+                  txt=' '.join(str(c.get(k,'')) for k in ['selection','fixture','opponent','result','start'])
+                  if '2026-09-20' in str(c.get('start','')) or c.get('result') in {'win','loss','push'}:
+                      print(json.dumps(c,sort_keys=True,default=str))
+          else:
+              print('MISSING',p)
+
+          print('=== NFL LEDGER ===')
+          dbp=Path('/home/anestishkurti92/betting-ledger/assumed_bets.sqlite3')
+          if dbp.exists():
+              db=sqlite3.connect(dbp);db.row_factory=sqlite3.Row
+              cols=[x[1] for x in db.execute("pragma table_info(bets)")]
+              print('columns',cols)
+              rows=db.execute("select * from bets where upper(sport)='NFL' order by coalesce(start,'') desc").fetchall()
+              for r in rows[:50]:
+                  z=dict(r)
+                  if '2026-09-20' in str(z.get('start','')) or z.get('result') in ('win','loss','push'):
+                      print(json.dumps(z,sort_keys=True,default=str))
+          else:
+              print('MISSING',dbp)
+          PY
+          EOF
+
+      - name: Deploy and run postmortem
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          KEY=/home/appwiza-runner/.ssh/appwiza_vps
+          HOST=anestishkurti92@127.0.0.1
+          D=/home/anestishkurti92/nfl-predictor-v1
+          cat scripts/nfl_week2_loss_postmortem.py | ssh -i "$KEY" -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=accept-new "$HOST" "cat > $D/research_v2/nfl_week2_loss_postmortem.py"
+          ssh -i "$KEY" -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=accept-new "$HOST" 'bash -s' <<'EOF'
+          set -Eeuo pipefail
+          cd /home/anestishkurti92/nfl-predictor-v1
+          venv/bin/python -m py_compile research_v2/nfl_week2_loss_postmortem.py
+          OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1 nice -n 12 timeout 35m venv/bin/python research_v2/nfl_week2_loss_postmortem.py
+          EOF
+
+      - name: Pull postmortem artifacts
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          KEY=/home/appwiza-runner/.ssh/appwiza_vps
+          HOST=anestishkurti92@127.0.0.1
+          mkdir -p nfl/week2_loss_postmortem
+          for f in report.txt summary.json candidate_refinements.csv exact_live_picks.json; do
+            ssh -i "$KEY" -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=accept-new "$HOST" "cat /home/anestishkurti92/nfl-predictor-v1/research_v2/week2_loss_postmortem/$f" > "nfl/week2_loss_postmortem/$f"
+          done
+          cat nfl/week2_loss_postmortem/report.txt
+
+      - name: Persist postmortem
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          mkdir -p "$RUNNER_TEMP/nflpost"
+          cp nfl/week2_loss_postmortem/* "$RUNNER_TEMP/nflpost/"
+          git fetch origin main
+          git reset --hard origin/main
+          mkdir -p nfl/week2_loss_postmortem
+          cp "$RUNNER_TEMP"/nflpost/* nfl/week2_loss_postmortem/
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git add nfl/week2_loss_postmortem/
+          if ! git diff --cached --quiet; then
+            git commit -m 'Publish NFL Week 2 loss postmortem'
+            git push origin HEAD:main
+          fi
