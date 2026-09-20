@@ -1,9 +1,9 @@
 {
-  "built_at": "2026-09-20T03:36:46.344090+00:00",
+  "built_at": "2026-09-20T04:23:16.472872+00:00",
   "base_file": "/home/anestishkurti92/mls-predictor-v1/data/processed/mls_match_features_weather_enriched.parquet",
   "output": "/home/anestishkurti92/mls-predictor-v1/data/processed/mls_match_features_master.parquet",
   "rows": 9440,
-  "columns": 580,
+  "columns": 813,
   "base_columns": 323,
   "layers": {
     "availability": {
@@ -63,8 +63,11 @@
       ]
     },
     "game_notes_availability": {
-      "status": "MISSING",
-      "path": "/home/anestishkurti92/mls-predictor-v1/data/processed/mls_game_notes_availability_features.parquet"
+      "status": "MERGED",
+      "path": "/home/anestishkurti92/mls-predictor-v1/data/processed/mls_game_notes_availability_features.parquet",
+      "source_rows": 0,
+      "added_or_refreshed_columns": 0,
+      "collisions_refreshed": []
     },
     "confirmed_lineup": {
       "status": "MERGED_REFRESH",
@@ -128,16 +131,25 @@
       "collisions_refreshed": []
     },
     "team_style": {
-      "status": "MISSING",
-      "path": "/home/anestishkurti92/mls-predictor-v1/data/processed/mls_team_style_features.parquet"
+      "status": "MERGED",
+      "path": "/home/anestishkurti92/mls-predictor-v1/data/processed/mls_team_style_features.parquet",
+      "source_rows": 9440,
+      "added_or_refreshed_columns": 195,
+      "collisions_refreshed": []
     },
     "referee_discipline": {
-      "status": "MISSING",
-      "path": "/home/anestishkurti92/mls-predictor-v1/data/processed/mls_referee_discipline_features.parquet"
+      "status": "MERGED",
+      "path": "/home/anestishkurti92/mls-predictor-v1/data/processed/mls_referee_discipline_features.parquet",
+      "source_rows": 9440,
+      "added_or_refreshed_columns": 21,
+      "collisions_refreshed": []
     },
     "venue": {
-      "status": "MISSING",
-      "path": "/home/anestishkurti92/mls-predictor-v1/data/processed/mls_venue_features.parquet"
+      "status": "MERGED",
+      "path": "/home/anestishkurti92/mls-predictor-v1/data/processed/mls_venue_features.parquet",
+      "source_rows": 9440,
+      "added_or_refreshed_columns": 17,
+      "collisions_refreshed": []
     }
   },
   "coverage": {
@@ -304,11 +316,18 @@
         }
       }
     },
+    "game_notes_availability": {
+      "columns": 0,
+      "rows_any": 0,
+      "rows_all": 0,
+      "mean_non_null": 0.0,
+      "by_season": {}
+    },
     "confirmed_lineup": {
       "columns": 32,
       "rows_any": 9440,
-      "rows_all": 250,
-      "mean_non_null": 0.23574549788135593,
+      "rows_all": 1419,
+      "mean_non_null": 0.24899364406779662,
       "by_season": {
         "1996": {
           "rows": 177,
@@ -453,17 +472,17 @@
         "2024": {
           "rows": 522,
           "any": 522,
-          "all": 79
+          "all": 481
         },
         "2025": {
           "rows": 540,
           "any": 540,
-          "all": 80
+          "all": 538
         },
         "2026": {
           "rows": 357,
           "any": 357,
-          "all": 48
+          "all": 357
         }
       }
     },
@@ -796,8 +815,8 @@
     "transactions": {
       "columns": 52,
       "rows_any": 9440,
-      "rows_all": 2361,
-      "mean_non_null": 0.27894801173402867,
+      "rows_all": 2450,
+      "mean_non_null": 0.28801336375488923,
       "by_season": {
         "1996": {
           "rows": 177,
@@ -947,7 +966,7 @@
         "2025": {
           "rows": 540,
           "any": 540,
-          "all": 0
+          "all": 89
         },
         "2026": {
           "rows": 357,
@@ -956,11 +975,11 @@
         }
       }
     },
-    "base_market_form": {
-      "columns": 58,
+    "team_style": {
+      "columns": 195,
       "rows_any": 9440,
-      "rows_all": 5129,
-      "mean_non_null": 0.8582773232028053,
+      "rows_all": 5617,
+      "mean_non_null": 0.6120730117340287,
       "by_season": {
         "1996": {
           "rows": 177,
@@ -1050,7 +1069,7 @@
         "2013": {
           "rows": 338,
           "any": 338,
-          "all": 327
+          "all": 236
         },
         "2014": {
           "rows": 338,
@@ -1060,7 +1079,7 @@
         "2015": {
           "rows": 357,
           "any": 357,
-          "all": 356
+          "all": 338
         },
         "2016": {
           "rows": 357,
@@ -1070,32 +1089,195 @@
         "2017": {
           "rows": 391,
           "any": 391,
-          "all": 355
+          "all": 372
         },
         "2018": {
           "rows": 408,
           "any": 408,
-          "all": 368
+          "all": 398
         },
         "2019": {
           "rows": 421,
           "any": 421,
-          "all": 383
+          "all": 411
         },
         "2020": {
           "rows": 324,
           "any": 324,
-          "all": 299
+          "all": 306
         },
         "2021": {
           "rows": 472,
           "any": 472,
-          "all": 436
+          "all": 462
         },
         "2022": {
           "rows": 489,
           "any": 489,
-          "all": 454
+          "all": 479
+        },
+        "2023": {
+          "rows": 521,
+          "any": 521,
+          "all": 511
+        },
+        "2024": {
+          "rows": 522,
+          "any": 522,
+          "all": 522
+        },
+        "2025": {
+          "rows": 540,
+          "any": 540,
+          "all": 530
+        },
+        "2026": {
+          "rows": 357,
+          "any": 357,
+          "all": 357
+        }
+      }
+    },
+    "referee_discipline": {
+      "columns": 21,
+      "rows_any": 9440,
+      "rows_all": 1831,
+      "mean_non_null": 0.2323446327683616,
+      "by_season": {
+        "1996": {
+          "rows": 177,
+          "any": 177,
+          "all": 0
+        },
+        "1997": {
+          "rows": 173,
+          "any": 173,
+          "all": 0
+        },
+        "1998": {
+          "rows": 206,
+          "any": 206,
+          "all": 0
+        },
+        "1999": {
+          "rows": 208,
+          "any": 208,
+          "all": 0
+        },
+        "2000": {
+          "rows": 209,
+          "any": 209,
+          "all": 0
+        },
+        "2001": {
+          "rows": 176,
+          "any": 176,
+          "all": 0
+        },
+        "2002": {
+          "rows": 157,
+          "any": 157,
+          "all": 0
+        },
+        "2003": {
+          "rows": 161,
+          "any": 161,
+          "all": 0
+        },
+        "2004": {
+          "rows": 161,
+          "any": 161,
+          "all": 0
+        },
+        "2005": {
+          "rows": 203,
+          "any": 203,
+          "all": 0
+        },
+        "2006": {
+          "rows": 203,
+          "any": 203,
+          "all": 0
+        },
+        "2007": {
+          "rows": 206,
+          "any": 206,
+          "all": 0
+        },
+        "2008": {
+          "rows": 221,
+          "any": 221,
+          "all": 0
+        },
+        "2009": {
+          "rows": 236,
+          "any": 236,
+          "all": 0
+        },
+        "2010": {
+          "rows": 251,
+          "any": 251,
+          "all": 0
+        },
+        "2011": {
+          "rows": 319,
+          "any": 319,
+          "all": 0
+        },
+        "2012": {
+          "rows": 338,
+          "any": 338,
+          "all": 0
+        },
+        "2013": {
+          "rows": 338,
+          "any": 338,
+          "all": 0
+        },
+        "2014": {
+          "rows": 338,
+          "any": 338,
+          "all": 0
+        },
+        "2015": {
+          "rows": 357,
+          "any": 357,
+          "all": 0
+        },
+        "2016": {
+          "rows": 357,
+          "any": 357,
+          "all": 0
+        },
+        "2017": {
+          "rows": 391,
+          "any": 391,
+          "all": 0
+        },
+        "2018": {
+          "rows": 408,
+          "any": 408,
+          "all": 0
+        },
+        "2019": {
+          "rows": 421,
+          "any": 421,
+          "all": 0
+        },
+        "2020": {
+          "rows": 324,
+          "any": 324,
+          "all": 0
+        },
+        "2021": {
+          "rows": 472,
+          "any": 472,
+          "all": 0
+        },
+        "2022": {
+          "rows": 489,
+          "any": 489,
+          "all": 0
         },
         "2023": {
           "rows": 521,
@@ -1105,12 +1287,338 @@
         "2024": {
           "rows": 522,
           "any": 522,
+          "all": 469
+        },
+        "2025": {
+          "rows": 540,
+          "any": 540,
+          "all": 528
+        },
+        "2026": {
+          "rows": 357,
+          "any": 357,
+          "all": 351
+        }
+      }
+    },
+    "venue": {
+      "columns": 17,
+      "rows_any": 9440,
+      "rows_all": 5514,
+      "mean_non_null": 0.6343656530408773,
+      "by_season": {
+        "1996": {
+          "rows": 177,
+          "any": 177,
+          "all": 0
+        },
+        "1997": {
+          "rows": 173,
+          "any": 173,
+          "all": 0
+        },
+        "1998": {
+          "rows": 206,
+          "any": 206,
+          "all": 0
+        },
+        "1999": {
+          "rows": 208,
+          "any": 208,
+          "all": 0
+        },
+        "2000": {
+          "rows": 209,
+          "any": 209,
+          "all": 0
+        },
+        "2001": {
+          "rows": 176,
+          "any": 176,
+          "all": 0
+        },
+        "2002": {
+          "rows": 157,
+          "any": 157,
+          "all": 0
+        },
+        "2003": {
+          "rows": 161,
+          "any": 161,
+          "all": 0
+        },
+        "2004": {
+          "rows": 161,
+          "any": 161,
+          "all": 0
+        },
+        "2005": {
+          "rows": 203,
+          "any": 203,
+          "all": 0
+        },
+        "2006": {
+          "rows": 203,
+          "any": 203,
+          "all": 0
+        },
+        "2007": {
+          "rows": 206,
+          "any": 206,
+          "all": 0
+        },
+        "2008": {
+          "rows": 221,
+          "any": 221,
+          "all": 0
+        },
+        "2009": {
+          "rows": 236,
+          "any": 236,
+          "all": 0
+        },
+        "2010": {
+          "rows": 251,
+          "any": 251,
+          "all": 0
+        },
+        "2011": {
+          "rows": 319,
+          "any": 319,
+          "all": 0
+        },
+        "2012": {
+          "rows": 338,
+          "any": 338,
+          "all": 0
+        },
+        "2013": {
+          "rows": 338,
+          "any": 338,
+          "all": 319
+        },
+        "2014": {
+          "rows": 338,
+          "any": 338,
+          "all": 338
+        },
+        "2015": {
+          "rows": 357,
+          "any": 357,
+          "all": 355
+        },
+        "2016": {
+          "rows": 357,
+          "any": 357,
+          "all": 349
+        },
+        "2017": {
+          "rows": 391,
+          "any": 391,
+          "all": 376
+        },
+        "2018": {
+          "rows": 408,
+          "any": 408,
+          "all": 406
+        },
+        "2019": {
+          "rows": 421,
+          "any": 421,
+          "all": 419
+        },
+        "2020": {
+          "rows": 324,
+          "any": 324,
+          "all": 271
+        },
+        "2021": {
+          "rows": 472,
+          "any": 472,
+          "all": 470
+        },
+        "2022": {
+          "rows": 489,
+          "any": 489,
+          "all": 471
+        },
+        "2023": {
+          "rows": 521,
+          "any": 521,
+          "all": 499
+        },
+        "2024": {
+          "rows": 522,
+          "any": 522,
+          "all": 498
+        },
+        "2025": {
+          "rows": 540,
+          "any": 540,
+          "all": 466
+        },
+        "2026": {
+          "rows": 357,
+          "any": 357,
+          "all": 277
+        }
+      }
+    },
+    "base_market_form": {
+      "columns": 59,
+      "rows_any": 9440,
+      "rows_all": 5092,
+      "mean_non_null": 0.8541134013214592,
+      "by_season": {
+        "1996": {
+          "rows": 177,
+          "any": 177,
+          "all": 0
+        },
+        "1997": {
+          "rows": 173,
+          "any": 173,
+          "all": 0
+        },
+        "1998": {
+          "rows": 206,
+          "any": 206,
+          "all": 0
+        },
+        "1999": {
+          "rows": 208,
+          "any": 208,
+          "all": 0
+        },
+        "2000": {
+          "rows": 209,
+          "any": 209,
+          "all": 0
+        },
+        "2001": {
+          "rows": 176,
+          "any": 176,
+          "all": 0
+        },
+        "2002": {
+          "rows": 157,
+          "any": 157,
+          "all": 0
+        },
+        "2003": {
+          "rows": 161,
+          "any": 161,
+          "all": 0
+        },
+        "2004": {
+          "rows": 161,
+          "any": 161,
+          "all": 0
+        },
+        "2005": {
+          "rows": 203,
+          "any": 203,
+          "all": 0
+        },
+        "2006": {
+          "rows": 203,
+          "any": 203,
+          "all": 0
+        },
+        "2007": {
+          "rows": 206,
+          "any": 206,
+          "all": 0
+        },
+        "2008": {
+          "rows": 221,
+          "any": 221,
+          "all": 0
+        },
+        "2009": {
+          "rows": 236,
+          "any": 236,
+          "all": 0
+        },
+        "2010": {
+          "rows": 251,
+          "any": 251,
+          "all": 0
+        },
+        "2011": {
+          "rows": 319,
+          "any": 319,
+          "all": 0
+        },
+        "2012": {
+          "rows": 338,
+          "any": 338,
+          "all": 0
+        },
+        "2013": {
+          "rows": 338,
+          "any": 338,
+          "all": 318
+        },
+        "2014": {
+          "rows": 338,
+          "any": 338,
+          "all": 338
+        },
+        "2015": {
+          "rows": 357,
+          "any": 357,
+          "all": 355
+        },
+        "2016": {
+          "rows": 357,
+          "any": 357,
+          "all": 349
+        },
+        "2017": {
+          "rows": 391,
+          "any": 391,
+          "all": 343
+        },
+        "2018": {
+          "rows": 408,
+          "any": 408,
+          "all": 367
+        },
+        "2019": {
+          "rows": 421,
+          "any": 421,
+          "all": 382
+        },
+        "2020": {
+          "rows": 324,
+          "any": 324,
+          "all": 298
+        },
+        "2021": {
+          "rows": 472,
+          "any": 472,
+          "all": 435
+        },
+        "2022": {
+          "rows": 489,
+          "any": 489,
+          "all": 453
+        },
+        "2023": {
+          "rows": 521,
+          "any": 521,
+          "all": 482
+        },
+        "2024": {
+          "rows": 522,
+          "any": 522,
           "all": 483
         },
         "2025": {
           "rows": 540,
           "any": 540,
-          "all": 490
+          "all": 489
         },
         "2026": {
           "rows": 357,
@@ -1448,8 +1956,8 @@
     "goalkeeper_roster_referee": {
       "columns": 57,
       "rows_any": 5835,
-      "rows_all": 96,
-      "mean_non_null": 0.5595766428783824,
+      "rows_all": 589,
+      "mean_non_null": 0.5649513083556348,
       "by_season": {
         "1996": {
           "rows": 177,
@@ -1594,12 +2102,12 @@
         "2024": {
           "rows": 522,
           "any": 522,
-          "all": 52
+          "all": 334
         },
         "2025": {
           "rows": 540,
           "any": 540,
-          "all": 44
+          "all": 255
         },
         "2026": {
           "rows": 357,
@@ -1642,11 +2150,6 @@
     "2025": 540,
     "2026": 357
   },
-  "missing_layers": [
-    "game_notes_availability",
-    "team_style",
-    "referee_discipline",
-    "venue"
-  ],
+  "missing_layers": [],
   "leakage_policy": "Master merge is structural only. Each source layer is responsible for strict pregame construction; audit metadata is preserved separately. No missing feature is imputed as zero during merge."
 }
