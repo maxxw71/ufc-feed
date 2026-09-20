@@ -61,6 +61,23 @@ def main():
     combined['priority']=combined.source_dataset.map({'exact_id_ufcstats_mirror':0,'global_mma_backfill':1}).fillna(9)
     combined=combined.sort_values(['fight_key','priority']).drop_duplicates('fight_key',keep='first').drop(columns='priority').sort_values('event_date').reset_index(drop=True)
     combined['year']=combined.event_date.dt.year
+
+    # Data-integrity gate: old event-day/in-play snapshots are forbidden.
+    allowed_modes={'strict_pre_event_snapshot','historical_import_fallback'}
+    bad_mode=combined[~combined.snapshot_mode.astype(str).isin(allowed_modes)]
+    if len(bad_mode):
+        raise RuntimeError('Unsafe UFC snapshot modes in recent master: '+repr(bad_mode[['fight_key','snapshot_mode']].head(20).to_dict('records')))
+    # Recent rows should be based on strict pre-event quotes. Historical-import
+    # fallback is allowed only for source rows that were imported long after event.
+    if combined.fight_key.duplicated().any():
+        raise RuntimeError('Duplicate fight keys remain in UFC recent master')
+    if combined[['market_prob','favorite_decimal_odds']].isna().any().any():
+        raise RuntimeError('Missing market probability/odds in UFC recent master')
+    if ((combined.market_prob<=0)|(combined.market_prob>=1)).any():
+        raise RuntimeError('Invalid market probabilities in UFC recent master')
+    if (combined.favorite_decimal_odds<=1).any():
+        raise RuntimeError('Invalid favorite decimal odds in UFC recent master')
+
     combined.to_csv(OUT/'master_recent_fights.csv',index=False)
 
     hybrid=combined[(combined.market_prob>=.70)&(combined.younger_advantage>=3)].copy()
@@ -88,6 +105,6 @@ def main():
     lines+=['','4+ YEAR STRONG TIER','-'*76]
     for _,r in s4.iterrows():lines.append(f'{r.segment:<14} bets={int(r.bets):4d} win={r.win_rate*100:7.2f}% ROI={r.roi*100:+8.2f}% P/L=${r.profit:+,.2f}')
     (OUT/'report.txt').write_text('\n'.join(lines)+'\n');print((OUT/'report.txt').read_text(),flush=True)
-    (OUT/'summary.json').write_text(json.dumps({'generated_at':datetime.now(timezone.utc).isoformat(),'master_fights':len(combined),'hybrid_3yr':s3.to_dict(orient='records'),'hybrid_4yr':s4.to_dict(orient='records'),'source_breakdown':src.to_dict(orient='records')},indent=2,default=str))
+    (OUT/'summary.json').write_text(json.dumps({'generated_at':datetime.now(timezone.utc).isoformat(),'master_fights':len(combined),'data_integrity_status':'PASS','allowed_snapshot_modes':sorted(allowed_modes),'snapshot_mode_counts':combined.snapshot_mode.value_counts().to_dict(),'hybrid_3yr':s3.to_dict(orient='records'),'hybrid_4yr':s4.to_dict(orient='records'),'source_breakdown':src.to_dict(orient='records')},indent=2,default=str))
 
 if __name__=='__main__':main()
