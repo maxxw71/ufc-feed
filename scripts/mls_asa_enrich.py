@@ -46,9 +46,12 @@ def main():
     xg=pd.concat(xg_frames,ignore_index=True,sort=False) if xg_frames else pd.DataFrame()
     if len(games):games.to_parquet(PROC/'asa_mls_games_2012_present.parquet',index=False)
     if len(xg):xg.to_parquet(PROC/'asa_mls_game_xgoals_2013_present.parquet',index=False)
-    meta={'built_at':now(),'games_rows':len(games),'xg_rows':len(xg),'seasons':season_reports}
+    game_cols=list(games.columns) if len(games) else []
+    venue_like=[x for x in game_cols if any(k in x.lower() for k in ['venue','stadium','field','surface','location'])]
+    meta={'built_at':now(),'games_rows':len(games),'xg_rows':len(xg),'seasons':season_reports,
+          'game_columns':game_cols,'venue_like_columns':venue_like}
     (REPORTS/'asa_coverage.json').write_text(json.dumps(meta,indent=2,default=str))
-    lines=['MLS ASA ADVANCED LAYER','='*90,f'games_rows={len(games):,}',f'xg_rows={len(xg):,}','']
+    lines=['MLS ASA ADVANCED LAYER','='*90,f'games_rows={len(games):,}',f'xg_rows={len(xg):,}',f'venue_like_columns={venue_like}','']
     for r in season_reports:
         lines.append(f"{r['season']}: games={r['games_rows']} xg={r['xg_rows']} games_error={r['games_error']} xg_error={r['xg_error']}")
     (REPORTS/'asa_coverage.txt').write_text('\n'.join(lines)+'\n')
