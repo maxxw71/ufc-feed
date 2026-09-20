@@ -1,0 +1,16 @@
+{
+  "built_at": "2026-09-20T10:34:06.742236+00:00",
+  "status": "CREDENTIAL_REQUIRED",
+  "provider": "The Odds API",
+  "coverage_start": "2020-06-27T03:05:00+00:00",
+  "target_matches": 3199,
+  "base_file": "/home/anestishkurti92/mls-predictor-v1/data/processed/mls_match_features_master.parquet",
+  "output": "/home/anestishkurti92/mls-predictor-v1/data/processed/mls_historical_multibook_closing_odds.parquet",
+  "features_output": "/home/anestishkurti92/mls-predictor-v1/data/processed/mls_historical_multibook_market_features.parquet",
+  "required_env": "THE_ODDS_API_KEY",
+  "optional_env": [
+    "THE_ODDS_API_REGIONS",
+    "THE_ODDS_API_BOOKMAKERS"
+  ],
+  "integrity_note": "No unlicensed public workbook is imported. Missing historical licensed data remains missing."
+}
