@@ -263,7 +263,7 @@ def simulate_match_cap(rows):
         elif uw_start is None:
             uw_start=peak_date or dt
     if uw_start is not None:
-        dt=pd.to_datetime(match_records[-1]['date'])
+        dt=pd.to_datetime(match_records[-1]['date'],utc=True)
         dur=int((dt-uw_start).days)
         if dur>longest_days:
             longest_days=dur; longest_start=uw_start; longest_end=dt; open_uw=True
