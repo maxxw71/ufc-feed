@@ -13,6 +13,7 @@ SH=ROOT/'live/shadow';SH.mkdir(parents=True,exist_ok=True)
 BOARD=SH/'current_shadow_board.json'
 DB=SH/'prospective.sqlite3'
 REPORT=SH/'forward_record.json'
+MARKET_HISTORY=ROOT/'data/processed/mls_market_event_history.parquet'
 ACTIVE_METHOD_IDS={'MLS-R01V2','MLS-R02V2','MLS-R03','MLS-A02','MLS-A03','MLS-A05','MLS-A06'}
 WATCH_ONLY_METHOD_IDS={'MLS-A04'}
 
@@ -65,6 +66,14 @@ def conn():
         db.execute("alter table signals add column portfolio_eligible INTEGER")
     if 'portfolio_conflict' not in cols:
         db.execute("alter table signals add column portfolio_conflict INTEGER")
+    if 'closing_price_decimal' not in cols:
+        db.execute("alter table signals add column closing_price_decimal REAL")
+    if 'closing_market_prob' not in cols:
+        db.execute("alter table signals add column closing_market_prob REAL")
+    if 'price_clv_pct' not in cols:
+        db.execute("alter table signals add column price_clv_pct REAL")
+    if 'market_prob_move' not in cols:
+        db.execute("alter table signals add column market_prob_move REAL")
     # Backfill immutable older signals created before tracking-tier columns existed.
     qmarks=','.join('?' for _ in ACTIVE_METHOD_IDS)
     db.execute(f"update signals set tracking_tier='ACTIVE_PROSPECTIVE' where method_id in ({qmarks})",
@@ -158,13 +167,47 @@ def settle():
         db.commit()
     return settled
 
+def refresh_clv():
+    if not MARKET_HISTORY.exists():return 0
+    h=pd.read_parquet(MARKET_HISTORY).copy()
+    if h.empty:return 0
+    h['event_id']=h.event_id.astype(str)
+    updated=0
+    with conn() as db:
+        rows=db.execute("select * from signals").fetchall()
+        for s in rows:
+            q=h[h.event_id.eq(str(s['event_id']))].copy()
+            if q.empty:continue
+            book=str(s['first_book'] or '')
+            qb=q[q.provider.astype(str).eq(book)]
+            if qb.empty and len(q)==1:qb=q
+            if qb.empty:continue
+            r=qb.sort_values('closing_captured_at').iloc[-1]
+            side=str(s['side'] or '').lower()
+            if side not in {'home','away','draw'}:continue
+            close_dec=pd.to_numeric(pd.Series([r.get(f'closing_{side}_odds')]),errors='coerce').iloc[0]
+            close_prob=pd.to_numeric(pd.Series([r.get(f'closing_{side}_novig_prob')]),errors='coerce').iloc[0]
+            first_dec=s['first_price_decimal'];first_prob=s['first_market_prob']
+            clv=(float(first_dec)/float(close_dec)-1.0) if first_dec is not None and pd.notna(close_dec) and float(close_dec)>0 else None
+            pmove=(float(close_prob)-float(first_prob)) if first_prob is not None and pd.notna(close_prob) else None
+            db.execute("""update signals set closing_price_decimal=?,closing_market_prob=?,price_clv_pct=?,market_prob_move=?
+                          where signal_key=?""",
+                       (None if pd.isna(close_dec) else float(close_dec),
+                        None if pd.isna(close_prob) else float(close_prob),clv,pmove,s['signal_key']))
+            updated+=1
+        db.commit()
+    return updated
+
 def build_report():
+    refresh_clv()
     with conn() as db:
         rows=[dict(r) for r in db.execute('select * from signals order by first_seen_at,signal_key')]
     methods={}
     for r in rows:
-        m=methods.setdefault(r['method_id'],{'signals':0,'pending':0,'settled':0,'wins':0,'losses':0,'units':0.0})
+        m=methods.setdefault(r['method_id'],{'signals':0,'pending':0,'settled':0,'wins':0,'losses':0,'units':0.0,'clv_values':[],'prob_moves':[]})
         m['signals']+=1
+        if r.get('price_clv_pct') is not None:m['clv_values'].append(float(r['price_clv_pct']))
+        if r.get('market_prob_move') is not None:m['prob_moves'].append(float(r['market_prob_move']))
         if r['status']=='pending':m['pending']+=1
         else:
             m['settled']+=1
@@ -174,6 +217,11 @@ def build_report():
     for m in methods.values():
         m['win_rate']=m['wins']/m['settled'] if m['settled'] else None
         m['roi']=m['units']/m['settled'] if m['settled'] else None
+        vals=m.pop('clv_values');moves=m.pop('prob_moves')
+        m['clv_samples']=len(vals)
+        m['avg_price_clv_pct']=sum(vals)/len(vals) if vals else None
+        m['positive_clv_rate']=sum(v>0 for v in vals)/len(vals) if vals else None
+        m['avg_market_prob_move']=sum(moves)/len(moves) if moves else None
     active=[r for r in rows if r.get('tracking_tier')=='ACTIVE_PROSPECTIVE']
     watch=[r for r in rows if r.get('tracking_tier')=='WATCH_ONLY']
     payload={'updated_at':now(),'shadow_only':True,'official_autopromotions':0,
