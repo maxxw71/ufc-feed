@@ -1,0 +1,182 @@
+name: UFC Four Digit Favorite Audit
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/ufc-four-digit-favorite-audit.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  audit:
+    runs-on: [self-hosted, Linux, X64, appwiza]
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with: {fetch-depth: 0}
+      - name: Analyze UFC extreme favorites
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          KEY=/home/appwiza-runner/.ssh/appwiza_vps
+          HOST=anestishkurti92@127.0.0.1
+          ssh -i "$KEY" -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=accept-new "$HOST" 'bash -s' <<'EOF'
+          set -Eeuo pipefail
+          ROOT=/home/anestishkurti92/ufc-predictor-v1
+          cd "$ROOT"
+          mkdir -p research/four_digit_audit
+          venv/bin/python - <<'PY'
+          import json, math, re
+          from pathlib import Path
+          import numpy as np, pandas as pd
+
+          root=Path('/home/anestishkurti92/ufc-predictor-v1')
+          candidates=[
+            root/'feature_expansion/prefight_favorite_features_v6.csv',
+            root/'new_category_discovery/prefight_favorite_features.csv',
+          ]
+          path=next((p for p in candidates if p.exists()),None)
+          if path is None: raise RuntimeError('prefight dataset missing')
+          d=pd.read_csv(path,low_memory=False)
+
+          def pick(names):
+              low={c.lower():c for c in d.columns}
+              for n in names:
+                  if n.lower() in low:return low[n.lower()]
+              return None
+          datec=pick(['event_date','date','fight_date'])
+          favc=pick(['favorite','fav','fighter'])
+          oppc=pick(['opponent','opp'])
+          winc=pick(['won','favorite_won','fav_won','favorite_win','fav_win'])
+          amc=pick(['favorite_american_odds','favorite_moneyline','fav_moneyline','favorite_ml','fav_ml','american_odds'])
+          decc=pick(['fav_decimal','favorite_decimal','decimal_odds'])
+          probc=pick(['market_prob','favorite_market_prob','fav_market_prob','no_vig_prob','favorite_prob'])
+          profitc=pick(['profit100','profit','profit_100'])
+
+          def win_series(s):
+              if s is None:return pd.Series(np.nan,index=d.index)
+              x=d[s]
+              if pd.api.types.is_bool_dtype(x):return x.astype(float)
+              n=pd.to_numeric(x,errors='coerce')
+              if n.notna().mean()>.8:return (n>.5).astype(float)
+              return x.astype(str).str.strip().str.lower().map({'true':1,'false':0,'w':1,'l':0,'win':1,'loss':0,'1':1,'0':0})
+          won=win_series(winc)
+          if amc:
+              american=pd.to_numeric(d[amc],errors='coerce')
+              dec=pd.Series(np.where(american>0,1+american/100,1+100/(-american)),index=d.index,dtype=float)
+          elif decc:
+              dec=pd.to_numeric(d[decc],errors='coerce')
+              american=pd.Series(np.where(dec>=2,(dec-1)*100,-100/(dec-1)),index=d.index,dtype=float)
+          elif probc:
+              p=pd.to_numeric(d[probc],errors='coerce')
+              dec=1/p
+              american=pd.Series(np.where(dec>=2,(dec-1)*100,-100/(dec-1)),index=d.index,dtype=float)
+          else: raise RuntimeError('no odds/probability column')
+          profit=np.where(won.eq(1),dec-1,-1.0)
+          dates=pd.to_datetime(d[datec],errors='coerce',utc=True) if datec else pd.Series(pd.NaT,index=d.index)
+
+          base=pd.DataFrame({
+              'date':dates,'favorite':d[favc].astype(str) if favc else '',
+              'opponent':d[oppc].astype(str) if oppc else '',
+              'won':won,'american':american,'decimal':dec,'profit':profit
+          })
+          base=base[base.won.notna()&base.decimal.gt(1)&base.american.notna()].copy()
+
+          def met(x):
+              if x.empty:return None
+              return {'n':int(len(x)),'wins':int(x.won.sum()),'losses':int(len(x)-x.won.sum()),
+                      'win_rate':float(x.won.mean()),'roi_flat_stake':float(x.profit.mean()),
+                      'units_flat_stake':float(x.profit.sum()),
+                      'avg_american':float(x.american.mean()),'median_american':float(x.american.median())}
+
+          thresholds=[-500,-750,-1000,-1250,-1500,-2000]
+          by_threshold={}
+          for t in thresholds:
+              x=base[base.american.le(t)]
+              by_threshold[str(t)]=met(x)
+
+          bands=[
+              ('-500_to_-749',-749.999,-500),
+              ('-750_to_-999',-999.999,-750),
+              ('-1000_to_-1249',-1249.999,-1000),
+              ('-1250_to_-1499',-1499.999,-1250),
+              ('-1500_to_-1999',-1999.999,-1500),
+              ('-2000_or_shorter',-1e9,-2000),
+          ]
+          by_band={}
+          for name,lo,hi in bands:
+              x=base[base.american.ge(lo)&base.american.le(hi)]
+              by_band[name]=met(x)
+
+          four=base[base.american.le(-1000)].copy()
+          four['year']=four.date.dt.year
+          yearly=[]
+          for y,g in four.groupby('year'):
+              m=met(g)
+              if m:yearly.append({'year':int(y),**m})
+          losses=four[four.won.eq(0)].sort_values('date')
+          loss_rows=[{
+              'date':r.date.date().isoformat() if pd.notna(r.date) else None,
+              'favorite':r.favorite,'opponent':r.opponent,'american':float(r.american),'decimal':float(r.decimal)
+          } for _,r in losses.iterrows()]
+
+          # ROI comparison of removing <= -1000 from the entire favorite sample.
+          allm=met(base)
+          non4=base[base.american.gt(-1000)]
+          non4m=met(non4)
+
+          # Current card / Appwiza state inspection.
+          state_path=Path('/srv/appwiza-sports/state/ufc.json')
+          current={}
+          if state_path.exists():
+              try:
+                  state=json.loads(state_path.read_text())
+                  current={'updated_at':state.get('updated_at'),'top_keys':list(state)[:30]}
+                  for key in ['cards','events','picks','available_selections','history','results']:
+                      v=state.get(key)
+                      if isinstance(v,list):
+                          current[key+'_count']=len(v)
+                          current[key+'_tail']=v[-20:]
+                      elif isinstance(v,dict):
+                          current[key+'_keys']=list(v)[:40]
+              except Exception as e: current={'error':str(e)}
+
+          # Yesterday exact rows in prefight data if already finalized.
+          yesterday=base[(base.date.dt.date.astype(str)=='2026-09-19')].copy()
+          yrows=[{'favorite':r.favorite,'opponent':r.opponent,'won':bool(r.won),'american':float(r.american),'decimal':float(r.decimal),'profit':float(r.profit)} for _,r in yesterday.iterrows()]
+
+          payload={
+              'built_at':pd.Timestamp.now(tz='UTC').isoformat(),
+              'dataset':str(path),'dataset_rows':len(d),'priced_rows':len(base),
+              'schema':{'date':datec,'favorite':favc,'opponent':oppc,'win':winc,'american':amc,'decimal':decc,'prob':probc,'profit':profitc},
+              'all_priced_favorites':allm,'exclude_four_digit_favorites':non4m,
+              'four_digit_favorites_le_minus1000':met(four),
+              'by_threshold':by_threshold,'by_band':by_band,'four_digit_yearly':yearly,
+              'four_digit_losses':loss_rows,'yesterday_prefight_rows':yrows,'current_state':current,
+              'definition':'Four-digit favorite means American odds <= -1000. ROI uses 1 unit risked per bet (flat stake), profit = decimal_odds - 1 on wins and -1 on losses.'
+          }
+          out=root/'research/four_digit_audit/latest.json'
+          out.write_text(json.dumps(payload,indent=2,default=str))
+          print(json.dumps(payload,indent=2,default=str))
+          PY
+          EOF
+      - name: Pull and persist audit
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          KEY=/home/appwiza-runner/.ssh/appwiza_vps
+          HOST=anestishkurti92@127.0.0.1
+          mkdir -p ufc_four_digit_audit
+          ssh -i "$KEY" -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=accept-new "$HOST" 'cat /home/anestishkurti92/ufc-predictor-v1/research/four_digit_audit/latest.json' > ufc_four_digit_audit/latest.json
+          cp ufc_four_digit_audit/latest.json "$RUNNER_TEMP/latest.json"
+          git fetch origin main
+          git reset --hard origin/main
+          mkdir -p ufc_four_digit_audit
+          cp "$RUNNER_TEMP/latest.json" ufc_four_digit_audit/latest.json
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git add ufc_four_digit_audit/latest.json
+          if ! git diff --cached --quiet; then
+            git commit -m 'Publish UFC four-digit favorite audit'
+            git push origin HEAD:main
+          fi
