@@ -1,0 +1,218 @@
+{
+  "built_at": "2026-09-20T06:21:10.313602+00:00",
+  "master_file": "/home/anestishkurti92/mls-predictor-v1/data/processed/mls_match_features_master.parquet",
+  "checks": {
+    "rows": 9440,
+    "columns": 813,
+    "duplicate_match_ids": 0,
+    "missing_match_ids": 0,
+    "season_min": 1996,
+    "season_max": 2026,
+    "infinite_numeric_cells": 0,
+    "constant_or_empty_columns_count": 27,
+    "constant_or_empty_columns": [
+      {
+        "column": "asa_status",
+        "unique_non_null": 1,
+        "non_null": 5835
+      },
+      {
+        "column": "home_availability_report_available",
+        "unique_non_null": 1,
+        "non_null": 900
+      },
+      {
+        "column": "home_availability_illness_missing_top3_xgi_count5",
+        "unique_non_null": 1,
+        "non_null": 900
+      },
+      {
+        "column": "home_availability_concussion_missing_top3_xgi_count5",
+        "unique_non_null": 1,
+        "non_null": 900
+      },
+      {
+        "column": "home_availability_unspecified_weighted_missing_minutes_share5",
+        "unique_non_null": 1,
+        "non_null": 900
+      },
+      {
+        "column": "home_availability_unspecified_weighted_missing_xgi_share5",
+        "unique_non_null": 1,
+        "non_null": 900
+      },
+      {
+        "column": "home_availability_unspecified_weighted_missing_gplus_share5",
+        "unique_non_null": 1,
+        "non_null": 900
+      },
+      {
+        "column": "home_availability_unspecified_missing_top11_minutes_count5",
+        "unique_non_null": 1,
+        "non_null": 900
+      },
+      {
+        "column": "home_availability_unspecified_missing_top3_xgi_count5",
+        "unique_non_null": 1,
+        "non_null": 900
+      },
+      {
+        "column": "away_availability_report_available",
+        "unique_non_null": 1,
+        "non_null": 900
+      },
+      {
+        "column": "away_availability_illness_missing_top3_xgi_count5",
+        "unique_non_null": 1,
+        "non_null": 900
+      },
+      {
+        "column": "away_availability_concussion_missing_top11_minutes_count5",
+        "unique_non_null": 1,
+        "non_null": 900
+      },
+      {
+        "column": "away_availability_concussion_missing_top3_xgi_count5",
+        "unique_non_null": 1,
+        "non_null": 900
+      },
+      {
+        "column": "away_availability_unspecified_weighted_missing_minutes_share5",
+        "unique_non_null": 1,
+        "non_null": 900
+      },
+      {
+        "column": "away_availability_unspecified_weighted_missing_xgi_share5",
+        "unique_non_null": 1,
+        "non_null": 900
+      },
+      {
+        "column": "away_availability_unspecified_weighted_missing_gplus_share5",
+        "unique_non_null": 1,
+        "non_null": 900
+      },
+      {
+        "column": "away_availability_unspecified_missing_top11_minutes_count5",
+        "unique_non_null": 1,
+        "non_null": 900
+      },
+      {
+        "column": "away_availability_unspecified_missing_top3_xgi_count5",
+        "unique_non_null": 1,
+        "non_null": 900
+      },
+      {
+        "column": "edge_home_availability_illness_missing_top3_xgi_count5",
+        "unique_non_null": 1,
+        "non_null": 900
+      },
+      {
+        "column": "edge_home_availability_concussion_missing_top3_xgi_count5",
+        "unique_non_null": 1,
+        "non_null": 900
+      },
+      {
+        "column": "edge_home_availability_unspecified_weighted_missing_minutes_share5",
+        "unique_non_null": 1,
+        "non_null": 900
+      },
+      {
+        "column": "edge_home_availability_unspecified_weighted_missing_xgi_share5",
+        "unique_non_null": 1,
+        "non_null": 900
+      },
+      {
+        "column": "edge_home_availability_unspecified_weighted_missing_gplus_share5",
+        "unique_non_null": 1,
+        "non_null": 900
+      },
+      {
+        "column": "edge_home_availability_unspecified_missing_top11_minutes_count5",
+        "unique_non_null": 1,
+        "non_null": 900
+      },
+      {
+        "column": "edge_home_availability_unspecified_missing_top3_xgi_count5",
+        "unique_non_null": 1,
+        "non_null": 900
+      },
+      {
+        "column": "home_canadian_championship_matches_30d",
+        "unique_non_null": 1,
+        "non_null": 9440
+      },
+      {
+        "column": "away_canadian_championship_matches_30d",
+        "unique_non_null": 1,
+        "non_null": 9440
+      }
+    ],
+    "negative_overround_rows": 0,
+    "invalid_probability_cells": 0,
+    "invalid_decimal_odds_cells": 0,
+    "modern_2013plus_rows": 5835,
+    "modern_2013plus_priced_rows": 5148,
+    "modern_2013plus_priced_share": 0.8822622107969151,
+    "suspicious_leakage_columns": [],
+    "modern_family_coverage": {
+      "xg": {
+        "columns": 30,
+        "rows_any": 5825,
+        "share_any": 0.998286203941731
+      },
+      "player_manager": {
+        "columns": 41,
+        "rows_any": 5835,
+        "share_any": 1.0
+      },
+      "availability": {
+        "columns": 153,
+        "rows_any": 900,
+        "share_any": 0.15424164524421594
+      },
+      "confirmed_lineup": {
+        "columns": 26,
+        "rows_any": 5835,
+        "share_any": 1.0
+      },
+      "salary": {
+        "columns": 36,
+        "rows_any": 5835,
+        "share_any": 1.0
+      },
+      "cross_comp": {
+        "columns": 45,
+        "rows_any": 5835,
+        "share_any": 1.0
+      },
+      "transactions": {
+        "columns": 50,
+        "rows_any": 5835,
+        "share_any": 1.0
+      },
+      "style": {
+        "columns": 195,
+        "rows_any": 5835,
+        "share_any": 1.0
+      },
+      "referee": {
+        "columns": 28,
+        "rows_any": 5835,
+        "share_any": 1.0
+      },
+      "venue": {
+        "columns": 15,
+        "rows_any": 5835,
+        "share_any": 1.0
+      },
+      "weather": {
+        "columns": 15,
+        "rows_any": 5835,
+        "share_any": 1.0
+      }
+    },
+    "critical_pass": true
+  },
+  "status": "PASS",
+  "note": "This audit checks structural integrity and obvious leakage hazards. It does not claim that every feature is predictive or available for every historical season."
+}
