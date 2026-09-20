@@ -50,7 +50,8 @@ def load_exact(path,method):
         'method':method,'season':num(d.season).astype(int),'week':num(d.week).astype(int),
         'game_id':d.game_id.astype(str),'team':d.home_team.replace(ALIASES),
         'opponent':d.away_team.replace(ALIASES),'moneyline':num(d.home_moneyline),
-        'win':num(d.win),'profit_units':num(d.profit),'record_gap':num(d.prior_record_edge),
+        'win':num(d.win),'profit_units':num(d.profit),
+        'record_gap':(num(d.prior_win_pct)-num(d.opponent_prior_win_pct)) if {'prior_win_pct','opponent_prior_win_pct'}.issubset(d.columns) else num(d.edge),
         'run_def_rank':num(d.run_rank if 'run_rank' in d else d.last_rank_def_allowed_rush_epa_per_carry),
     })
     # Preserve confirmed enriched-veto field from the exact frozen historical sample.
@@ -157,6 +158,35 @@ def condition_audit(x,conditions):
             stable.append({'condition':name,'validation':va,'holdout':ho})
     return rows,stable
 
+def current_veto_evaluation(exact):
+    out=[]
+    if not CTX.exists(): return out
+    try: ctx=pd.read_parquet(CTX)
+    except Exception as e: return [{'error':'context_read_failed','detail':str(e)}]
+    team_map={'Ravens':'BAL','Buccaneers':'TB','BAL':'BAL','TB':'TB'}
+    wanted=['opp_last_rank_def_allowed_giveaway_rate','last_rank_def_allowed_giveaway_rate',
+            'staff_change_count','full_staff_overhaul','returning_offense_snap_share','returning_defense_snap_share',
+            'returning_ol_snap_share','returning_skill_snap_share']
+    for r in exact:
+        if r.get('source')!='state': continue
+        key=str(r.get('id') or '').replace('NFL:','')
+        tm=team_map.get(str(r.get('selection') or '').strip())
+        if not key or not tm: continue
+        q=ctx[(ctx.game_id.astype(str)==key)&(ctx.team.astype(str).replace(ALIASES)==tm)]
+        row={'id':'NFL:'+key,'selection':tm}
+        if len(q):
+            z=q.iloc[0]
+            for col in wanted:
+                row[col]=None if col not in q.columns or pd.isna(z.get(col)) else float(z.get(col))
+            v=row.get('opp_last_rank_def_allowed_giveaway_rate')
+            row['m1_enriched_veto_status']='VETO' if v is not None and v<=14.8 else ('PASS' if v is not None else 'UNKNOWN_FAIL_CLOSED')
+            row['m1_enriched_veto_rule']='opp_last_rank_def_allowed_giveaway_rate <= 14.8'
+        else:
+            row['m1_enriched_veto_status']='UNKNOWN_FAIL_CLOSED'
+            row['m1_enriched_veto_rule']='opp_last_rank_def_allowed_giveaway_rate <= 14.8'
+        out.append(row)
+    return out
+
 def main():
     orig=add_preseason(load_exact(ORIG,'original'))
     strict=add_preseason(load_exact(STRICT,'stricter'))
@@ -193,6 +223,7 @@ def main():
     # Add 2026 observed losses to relevant historical records after live-method mapping below.
     picks=live_picks(); exact=live_method_summary(picks)
     archived=current_archived_context()
+    current_veto=current_veto_evaluation(exact)
 
     # Outcome assignment from observed final results.
     observed=[]
@@ -292,7 +323,7 @@ def main():
 
     summary={
       'built_at':pd.Timestamp.now('UTC').isoformat(),'live_picks':exact,'observed_losses':observed,
-      'archived_BAL_TB_context':archived,'historical_variants':results,'prospective_record_update':prospective,
+      'archived_BAL_TB_context':archived,'current_live_veto_evaluation':current_veto,'historical_variants':results,'prospective_record_update':prospective,
       'context_stability_tests':context,'production_findings':production_findings,'recommendations':recommendations
     }
     (OUT/'summary.json').write_text(json.dumps(summary,indent=2,default=str))
@@ -304,6 +335,9 @@ def main():
            'EXACT LIVE PICKS']
     for r in exact:
         lines.append(f"{r.get('selection')} vs {r.get('opponent')} | {r.get('price')} | methods={r.get('methods')} | result={r.get('result')} | source={r.get('source')}")
+    lines += ['','CURRENT CONFIRMED M1 VETO EVALUATION']
+    for r in current_veto:
+        lines.append(f"{r.get('selection')} | {r.get('m1_enriched_veto_status')} | opp giveaway-defense rank={r.get('opp_last_rank_def_allowed_giveaway_rate')} | rule={r.get('m1_enriched_veto_rule')}")
     lines += ['','HISTORICAL VARIANTS']
     for r in cand:
         lines.append(f"{r['variant']}: {r['wins']}-{r['losses']} n={r['n']} win={r['win_pct']:.1%} ROI={r['roi']:+.1%} | hold n={r['holdout_n']} win={r['holdout_win_pct']:.1%} ROI={r['holdout_roi']:+.1%} | 2023-25 n={r['recent3_n']} ROI={r['recent3_roi']:+.1%}")
