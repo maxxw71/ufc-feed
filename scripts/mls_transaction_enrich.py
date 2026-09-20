@@ -23,6 +23,8 @@ UA='Mozilla/5.0 AppwizaMLSTransactions/2.0'
 
 HIST_URLS={y:f'https://www.mlssoccer.com/news/{y}-mls-transactions' for y in range(2021,2025)}
 CURRENT_URL='https://www.mlssoccer.com/league-reports/all-transfers/'
+PARTIAL_2025_URL='https://stats-api.stg.mlssoccer.com/league-reports/all-transfers/'
+PARTIAL_2025_CUTOFF=pd.Timestamp('2025-04-04T23:59:59Z')
 TEAM_SET={canon_team(x) for x in TEAM_INFO}
 ALIASES={
     'Atlanta United':'Atlanta United FC','Chicago Fire':'Chicago Fire FC','DC United':'D.C. United',
@@ -147,6 +149,15 @@ def main():
         (RAW/f'{year}.json').write_text(json.dumps(rows,indent=2,default=str,ensure_ascii=False))
         print(year,'rows',len(rows),'teams',audit['teams'],flush=True)
 
+    # Archived first-party/staging All Transfers snapshot, explicitly updated through Apr 4, 2025.
+    html=fetch_html(PARTIAL_2025_URL)
+    rows,audit=parse_current(2025,PARTIAL_2025_URL,html)
+    if len(rows)<100 or audit['teams']<20:
+        raise RuntimeError(f'2025 partial all-transfers parse insufficient: rows={len(rows)} teams={audit["teams"]}')
+    allrows.extend(rows);source_audit['2025_partial']={'rows':len(rows),**audit,'url':PARTIAL_2025_URL,
+                                                       'coverage_through':'2025-04-04'}
+    (RAW/'2025_partial.json').write_text(json.dumps(rows,indent=2,default=str,ensure_ascii=False))
+
     # Current first-party live table. This is authoritative for 2026 and includes offseason moves dated late 2025.
     html=fetch_html(CURRENT_URL)
     rows,audit=parse_current(2026,CURRENT_URL,html)
@@ -163,13 +174,18 @@ def main():
     if not BASE.exists():raise RuntimeError('MLS base warehouse missing')
     d=pd.read_parquet(BASE).copy();d['dt']=pd.to_datetime(d.date,errors='coerce',utc=True)
     team_tx={t:z.sort_values('transaction_date') for t,z in tx.groupby('team')}
-    source_years={2021,2022,2023,2024,2026}
+    full_source_years={2021,2022,2023,2024,2026}
     rows=[]
     for _,g in d.iterrows():
         row={'match_id':g.match_id};season=int(g.season) if pd.notna(g.season) else None
         for side in ['home','away']:
             team=cteam(g[f'{side}_team']);z=team_tx.get(team,pd.DataFrame())
-            available=int(season in source_years)
+            if season in full_source_years:
+                available=1
+            elif season==2025 and pd.notna(g['dt']) and g['dt']<=PARTIAL_2025_CUTOFF:
+                available=1
+            else:
+                available=0
             row[f'{side}_transaction_data_available']=available
             for days in [14,30,60,90]:
                 if available and len(z):
@@ -197,10 +213,11 @@ def main():
         rows.append(row)
     feat=pd.DataFrame(rows);feat.to_parquet(OUT,index=False)
     meta={'built_at':now(),'transaction_rows':len(tx),'source_audit':source_audit,
-          'coverage_seasons':sorted(source_years),'known_gap_seasons':[2025],
+          'coverage_seasons_full':sorted(full_source_years),'coverage_seasons_partial':{'2025':'through 2025-04-04'},
+          'known_gap_seasons':['2025 after 2025-04-04'],
           'rows':len(feat),'columns':len(feat.columns),'output':str(OUT),
           'leakage_note':'Only official MLS transaction entries dated strictly before each target match are used. Seasons without verified team-attributed source pages remain NaN, never zero.',
-          'source_note':'Historical 2021-24 pages are parsed from direct first-party MLS HTML so team headings are preserved. 2026 uses the live first-party All Transfers report.'}
+          'source_note':'Historical 2021-24 pages are parsed from direct first-party MLS HTML so team headings are preserved. A first-party staging All Transfers snapshot covers 2025 only through Apr 4; later 2025 matches remain unknown. 2026 uses the live first-party All Transfers report.'}
     REPORT.write_text(json.dumps(meta,indent=2,default=str))
     print(json.dumps(meta,indent=2,default=str))
 
