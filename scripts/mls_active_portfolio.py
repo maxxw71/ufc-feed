@@ -16,7 +16,6 @@ METHODS=[
  {'id':'MLS-R03','side':'AWAY','lo':.25,'hi':.35,'rules':[('base__elo_edge','<=',-41.31),('base__edge_last5_xgapg','<',.01113)]},
  {'id':'MLS-A02','side':'HOME','lo':.50,'hi':.60,'rules':[('ctx__edge_gk_save_pct5','<=',-.10148378191856453),('base__sel_last10_ppg','>',1.1)]},
  {'id':'MLS-A03','side':'AWAY','lo':.25,'hi':.35,'rules':[('base__edge_last10_ppg','<=',-.3999999999999999),('base__edge_last10_xgdpg','<',-.13458100000000023)]},
- {'id':'MLS-A04','side':'HOME','lo':.40,'hi':.50,'rules':[('base__edge_last5_xgdpg','<=',-.04208999999999996),('ctx__sel_roster_new_players3','<=',0),('pm__opp_player_weighted_age5','>',28.068592458747545)]},
  {'id':'MLS-A05','side':'AWAY','lo':.25,'hi':.35,'rules':[('ctx__referee_prior_over25_rate','<=',.5348837209302325)]},
  {'id':'MLS-A06','side':'AWAY','lo':.20,'hi':.30,'rules':[('ctx__opp_roster_new_players3','<=',0),('base__edge_last10_xgdpg','<',-.2933600000000003)]},
 ]
@@ -88,7 +87,7 @@ def main():
 
     payload={
       'built_at':pd.Timestamp.now('UTC').isoformat(),'status':'SHADOW_RESEARCH_ONLY',
-      'methods':[m['id'] for m in METHODS],
+      'methods':[m['id'] for m in METHODS],'watch_only_excluded':['MLS-A04'],
       'signal_count':len(allrows),'unique_matches':int(allrows.match_id.nunique()),
       'conflict_match_count':len(conflict_ids),'same_side_consensus_match_count':len(consensus_ids),
       'all_signals':eras(allrows),'exclude_opposite_side_conflicts':eras(clean),
