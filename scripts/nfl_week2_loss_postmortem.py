@@ -58,7 +58,9 @@ def load_exact(path,method):
     })
     # Preserve confirmed enriched-veto field from the exact frozen historical sample.
     for c in ['opp_last_rank_def_allowed_giveaway_rate','last_rank_points_against','last_pre_def_allowed_rush_epa_per_carry',
-              'opp_last_pre_rush_epa_per_carry','last_pre_pass_epa_per_dropback']:
+              'opp_last_pre_rush_epa_per_carry','last_pre_pass_epa_per_dropback',
+              'last_rank_def_allowed_pass_epa_per_dropback','last_rank_def_allowed_sack_or_hit_rate',
+              'last_rank_def_allowed_off_epa_per_play','last_rank_def_allowed_success_rate']:
         if c in d: out[c]=num(d[c])
     return out
 
@@ -251,6 +253,14 @@ def main():
       'M1_enriched_prior_record_ge500':orig_pre_enriched_fc[num(orig_pre_enriched_fc.prior_win_pct).ge(.5)],
       'M2_preseason_prior_record_ge500':strict_pre[num(strict_pre.prior_win_pct).ge(.5)],
       'M2_preseason_prior_record_winning':strict_pre[num(strict_pre.prior_win_pct).gt(.5)],
+      'M1_preseason_pass_def_top20':orig_pre[num(orig_pre.last_rank_def_allowed_pass_epa_per_dropback).le(20)],
+      'M1_preseason_pass_def_top16':orig_pre[num(orig_pre.last_rank_def_allowed_pass_epa_per_dropback).le(16)],
+      'M1_preseason_pass_def_top20_hit_top20':orig_pre[num(orig_pre.last_rank_def_allowed_pass_epa_per_dropback).le(20) & num(orig_pre.last_rank_def_allowed_sack_or_hit_rate).le(20)],
+      'M2_preseason_pass_def_top20':strict_pre[num(strict_pre.last_rank_def_allowed_pass_epa_per_dropback).le(20)],
+      'M2_preseason_pass_def_top16':strict_pre[num(strict_pre.last_rank_def_allowed_pass_epa_per_dropback).le(16)],
+      'M2_preseason_pass_def_top20_hit_top20':strict_pre[num(strict_pre.last_rank_def_allowed_pass_epa_per_dropback).le(20) & num(strict_pre.last_rank_def_allowed_sack_or_hit_rate).le(20)],
+      'M1_ge500_pass_def_top20':orig_pre[num(orig_pre.prior_win_pct).ge(.5) & num(orig_pre.last_rank_def_allowed_pass_epa_per_dropback).le(20)],
+      'M2_ge500_pass_def_top20':strict_pre[num(strict_pre.prior_win_pct).ge(.5) & num(strict_pre.last_rank_def_allowed_pass_epa_per_dropback).le(20)],
     }
 
     results={k:era_metrics(v) for k,v in variants.items()}
@@ -363,6 +373,11 @@ def main():
         recommendations.append('Prior-record >=.500 is a promising natural M1 refinement; it improves holdout ROI and would have excluded both 8-9 Week 2 selections. Keep research/shadow until prospective confirmation.')
     if m2win['n']>=8 and m2win['roi']>results['M2_stricter_preseason_fail_closed']['holdout']['roi']:
         recommendations.append('Prior-record >=.500 is a promising natural M2 refinement; it improves holdout ROI and would have excluded Tampa. Keep research/shadow until prospective confirmation.')
+    m1pass=results['M1_preseason_pass_def_top20']['holdout'];m2pass=results['M2_preseason_pass_def_top20']['holdout']
+    if m1pass['n']>=8 and m1pass['roi']>results['M1_original_preseason_fail_closed']['holdout']['roi']:
+        recommendations.append('Pass-defense top-20 is a promising M1 structural guard: historical holdout improves and both 2026 losses had pass-defense ranks worse than 20. Keep shadow pending prospective confirmation.')
+    if m2pass['n']>=8 and m2pass['roi']>results['M2_stricter_preseason_fail_closed']['holdout']['roi']:
+        recommendations.append('Pass-defense top-20 is a promising M2 structural guard: historical holdout improves and Tampa ranked #22 in pass defense. Keep shadow pending prospective confirmation.')
 
     summary={
       'built_at':pd.Timestamp.now('UTC').isoformat(),'live_picks':exact,'observed_losses':observed,
