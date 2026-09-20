@@ -126,7 +126,7 @@ def save_checkpoint(cp):
 
 def snapshot_url(api_key,date_iso):
     regions=os.getenv('THE_ODDS_API_REGIONS','us,uk,eu')
-    bookmakers=os.getenv('THE_ODDS_API_BOOKMAKERS','').strip()
+    bookmakers=os.getenv('THE_ODDS_API_BOOKMAKERS','pinnacle,draftkings,fanduel,betmgm,williamhill_us,bovada,betrivers,betonlineag,betfair_ex_eu,williamhill').strip()
     q={
       'apiKey':api_key,'markets':'h2h','oddsFormat':'decimal','dateFormat':'iso','date':date_iso
     }
@@ -218,10 +218,12 @@ def main():
           'coverage_start':FIRST_AVAILABLE.isoformat(),'target_matches':len(schedule),
           'target_kickoff_groups':int(schedule.kickoff_utc.nunique()) if len(schedule) else 0,
           'estimated_credits_us_only':int(schedule.kickoff_utc.nunique())*10 if len(schedule) else 0,
-          'estimated_credits_default_3_regions':int(schedule.kickoff_utc.nunique())*30 if len(schedule) else 0,
+          'estimated_credits_default_10_bookmakers':int(schedule.kickoff_utc.nunique())*10 if len(schedule) else 0,
+          'default_bookmakers':['pinnacle','draftkings','fanduel','betmgm','williamhill_us','bovada','betrivers','betonlineag','betfair_ex_eu','williamhill'],
           'base_file':str(base_path),'output':str(OUT),'features_output':str(FEATURES),
           'required_env':'THE_ODDS_API_KEY',
           'optional_env':['THE_ODDS_API_REGIONS','THE_ODDS_API_BOOKMAKERS'],
+          'default_query_mode':'10 named bookmakers across regions; billed as one region-equivalent',
           'integrity_note':'No unlicensed public workbook is imported. Missing historical licensed data remains missing.'
         }
         META.write_text(json.dumps(meta,indent=2))
