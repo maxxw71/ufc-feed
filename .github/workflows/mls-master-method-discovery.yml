@@ -1,0 +1,77 @@
+name: MLS Master Method Discovery
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/mls_master_method_discovery.py'
+      - '.github/workflows/mls-master-method-discovery.yml'
+  workflow_dispatch:
+
+concurrency:
+  group: mls-master-method-discovery
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  research:
+    runs-on: [self-hosted, Linux, X64, appwiza]
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+        with: {fetch-depth: 0}
+
+      - name: Deploy master research script
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          KEY=/home/appwiza-runner/.ssh/appwiza_vps
+          HOST=anestishkurti92@127.0.0.1
+          D=/home/anestishkurti92/mls-predictor-v1
+          cat scripts/mls_master_method_discovery.py | ssh -i "$KEY" -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=accept-new "$HOST" "cat > $D/mls_master_method_discovery.py"
+
+      - name: Run frozen master discovery
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          KEY=/home/appwiza-runner/.ssh/appwiza_vps
+          HOST=anestishkurti92@127.0.0.1
+          D=/home/anestishkurti92/mls-predictor-v1
+          ssh -i "$KEY" -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=accept-new "$HOST" 'bash -s' <<'EOF'
+          set -Eeuo pipefail
+          cd /home/anestishkurti92/mls-predictor-v1
+          venv/bin/python -m py_compile mls_master_method_discovery.py
+          OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1 nice -n 14 timeout 52m venv/bin/python mls_master_method_discovery.py
+          EOF
+
+      - name: Pull research results
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          KEY=/home/appwiza-runner/.ssh/appwiza_vps
+          HOST=anestishkurti92@127.0.0.1
+          mkdir -p mls/research
+          ssh -i "$KEY" -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=accept-new "$HOST" 'cat /home/anestishkurti92/mls-predictor-v1/research/master_discovery/latest.json' > mls/research/master_discovery_latest.json
+          ssh -i "$KEY" -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=accept-new "$HOST" 'cat /home/anestishkurti92/mls-predictor-v1/research/master_discovery/latest.txt' > mls/research/master_discovery_latest.txt
+          cat mls/research/master_discovery_latest.txt
+
+      - name: Persist research results
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          cp mls/research/master_discovery_latest.json "$RUNNER_TEMP/master_discovery_latest.json"
+          cp mls/research/master_discovery_latest.txt "$RUNNER_TEMP/master_discovery_latest.txt"
+          git fetch origin main
+          git reset --hard origin/main
+          mkdir -p mls/research
+          cp "$RUNNER_TEMP/master_discovery_latest.json" mls/research/master_discovery_latest.json
+          cp "$RUNNER_TEMP/master_discovery_latest.txt" mls/research/master_discovery_latest.txt
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git add mls/research/master_discovery_latest.json mls/research/master_discovery_latest.txt
+          if ! git diff --cached --quiet; then
+            git commit -m 'Publish MLS master method discovery'
+            git push origin HEAD:main
+          fi
