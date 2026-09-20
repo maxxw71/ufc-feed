@@ -128,43 +128,75 @@ def parse_image_team(line):
 
 def canada_year(year):
     cache=RAW/f'canadian_championship_{year}.json'
-    if cache.exists():return json.loads(cache.read_text())
+    if cache.exists():
+        cached=json.loads(cache.read_text())
+        # Old zero-row cache is not authoritative; retry source.
+        if cached:return cached
     url=f'https://www.canadasoccer.com/championship/canChamp/{year}/'
     text=fetch(JINA+url)
     md=text.split('Markdown Content:',1)[-1]
-    lines=[re.sub(r'\s+',' ',x).strip() for x in md.splitlines() if x.strip()]
-    rows=[];i=0
-    date_re=re.compile(r'^(\d{1,2})\s+([A-Za-z]{3,9})\s+(\d{4})$')
-    months={m[:3].lower():i for i,m in enumerate(['January','February','March','April','May','June','July','August','September','October','November','December'],1)}
-    while i<len(lines)-1:
-        if 'image:' in lines[i].lower() and 'image:' in lines[i+1].lower():
-            ht,hs=parse_image_team(lines[i]);at,as_=parse_image_team(lines[i+1])
-            dt=None;completed=False
-            for j in range(i+2,min(len(lines),i+10)):
-                m=date_re.match(lines[j])
-                if m:
-                    mon=months.get(m.group(2)[:3].lower())
-                    if mon:
-                        try:dt=pd.Timestamp(datetime(int(m.group(3)),mon,int(m.group(1)),12,tzinfo=timezone.utc))
-                        except Exception:dt=None
-                if re.search(r'\b(Full Time|Final)\b',lines[j],re.I):completed=True
-            if dt is not None and ht and at:
-                rows.append({
-                  'event_id':f'CAN-{year}-{len(rows)+1:03d}','competition':'CANADIAN_CHAMPIONSHIP','source':'Canada Soccer',
-                  'date_time_utc':dt.isoformat(),'home_team':ht,'away_team':at,'home_score':hs,'away_score':as_,
-                  'completed':completed or (hs is not None and as_ is not None),'extra_time':False,'minutes_estimate':90,
-                  'source_url':url,
-                })
-                i+=2;continue
-        i+=1
-    # Keep unique plausible match/date/team combinations.
-    seen=set();clean=[]
+    # Canada Soccer Markdown consistently renders:
+    # Image: Team Team SCORE ... Image: Team Team SCORE ... DD Mon YYYY ... Full Time
+    block_re=re.compile(
+      r'Image:\s*(.+?)\s+(-?\d+)(?:\s*\([^\n]+\))?\s*\n+'
+      r'(?:.*?\n+){0,3}?Image:\s*(.+?)\s+(-?\d+)(?:\s*\([^\n]+\))?\s*\n+'
+      r'(?:.*?\n+){0,5}?(\d{1,2})\s+([A-Za-z]{3,9})\s+(\d{4})\s*\n+'
+      r'(?:.*?\n+){0,3}?Full\s+Time',
+      re.I
+    )
+    months={m[:3].lower():i for i,m in enumerate(
+      ['January','February','March','April','May','June','July','August','September','October','November','December'],1)}
+    def dedupe_name(raw):
+        raw=clean(raw)
+        words=raw.split()
+        for n in range(1,len(words)//2+1):
+            if words[:n]==words[n:2*n] and 2*n==len(words):
+                return ' '.join(words[:n])
+        # common Canada Soccer image alt duplicates exact club name before score
+        half=len(words)//2
+        if len(words)%2==0 and words[:half]==words[half:]:return ' '.join(words[:half])
+        return raw
+    rows=[]
+    for m in block_re.finditer(md):
+        ht=cteam(dedupe_name(m.group(1)));at=cteam(dedupe_name(m.group(3)))
+        mon=months.get(m.group(6)[:3].lower())
+        if not mon:continue
+        try:dt=pd.Timestamp(datetime(int(m.group(7)),mon,int(m.group(5)),12,tzinfo=timezone.utc))
+        except Exception:continue
+        rows.append({
+          'event_id':f'CAN-{year}-{len(rows)+1:03d}','competition':'CANADIAN_CHAMPIONSHIP','source':'Canada Soccer',
+          'date_time_utc':dt.isoformat(),'home_team':ht,'away_team':at,
+          'home_score':float(m.group(2)),'away_score':float(m.group(4)),
+          'completed':True,'extra_time':False,'minutes_estimate':90,'source_url':url,
+        })
+    # Fallback line parser for formats not caught by block regex.
+    if not rows:
+        lines=[re.sub(r'\s+',' ',x).strip() for x in md.splitlines() if x.strip()]
+        for i,line in enumerate(lines):
+            if not line.lower().startswith('image:'):continue
+            for j in range(i+1,min(i+6,len(lines))):
+                if not lines[j].lower().startswith('image:'):continue
+                ht,hs=parse_image_team(line);at,as_=parse_image_team(lines[j])
+                dt=None;full=False
+                for k in range(j+1,min(j+10,len(lines))):
+                    mm=re.match(r'^(\d{1,2})\s+([A-Za-z]{3,9})\s+(\d{4})$',lines[k])
+                    if mm:
+                        mon=months.get(mm.group(2)[:3].lower())
+                        if mon:dt=pd.Timestamp(datetime(int(mm.group(3)),mon,int(mm.group(1)),12,tzinfo=timezone.utc))
+                    if re.search(r'Full\s+Time',lines[k],re.I):full=True
+                if dt is not None and full and ht and at and hs is not None and as_ is not None:
+                    rows.append({'event_id':f'CAN-{year}-{len(rows)+1:03d}','competition':'CANADIAN_CHAMPIONSHIP',
+                                 'source':'Canada Soccer','date_time_utc':dt.isoformat(),'home_team':ht,'away_team':at,
+                                 'home_score':hs,'away_score':as_,'completed':True,'extra_time':False,
+                                 'minutes_estimate':90,'source_url':url})
+                break
+    seen=set();clean_rows=[]
     for r in rows:
         k=(r['date_time_utc'][:10],r['home_team'],r['away_team'])
         if k in seen:continue
-        seen.add(k);clean.append(r)
-    cache.write_text(json.dumps(clean,ensure_ascii=False,separators=(',',':')))
-    return clean
+        seen.add(k);clean_rows.append(r)
+    cache.write_text(json.dumps(clean_rows,ensure_ascii=False,separators=(',',':')))
+    return clean_rows
 
 def build_events():
     rows=[];coverage={}
