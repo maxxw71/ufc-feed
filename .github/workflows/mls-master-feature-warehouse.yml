@@ -6,6 +6,9 @@ on:
     paths:
       - 'scripts/mls_master_feature_merge.py'
       - 'mls/features/**'
+      - 'mls/lineups/feature_meta.json'
+      - 'mls/transactions/feature_meta.json'
+      - 'mls/availability/feature_meta.json'
       - '.github/workflows/mls-master-feature-warehouse.yml'
   workflow_dispatch:
 
