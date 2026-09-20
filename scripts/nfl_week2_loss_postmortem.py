@@ -11,8 +11,8 @@ OUT=REPO/'nfl'/'week2_loss_postmortem'; OUT.mkdir(parents=True,exist_ok=True)
 PRE=REPO/'nfl'/'legacy_preseason_staff_filter_audit'/'espn_preseason_team_seasons.csv'
 ORIG=REPO/'nfl'/'legacy_live_home_opener_exact'/'original_bets.csv'
 STRICT=REPO/'nfl'/'legacy_live_home_opener_exact'/'stricter_bets.csv'
-STATE=Path('/srv/appwiza-sports/state/nfl.json')
-LEDGER=Path('/home/anestishkurti92/betting-ledger/assumed_bets.sqlite3')
+STATE=Path(os.environ.get('NFL_POSTMORTEM_STATE','/tmp/nfl_postmortem_state.json'))
+LEDGER_JSON=Path(os.environ.get('NFL_POSTMORTEM_LEDGER','/tmp/nfl_postmortem_ledger.json'))
 CTX=Path('/home/appwiza-runner/nfl-context-data/derived/team_game_pregame_context_2006_2026.parquet')
 TEAMW=REPO/'nfl'/'weekly_archive'/'2026'/'week_02'/'pregame'/'team_stats.parquet'
 ALIASES={'SD':'LAC','OAK':'LV','STL':'LA','LAR':'LA','WSH':'WAS','JAX':'JAC'}
@@ -93,15 +93,12 @@ def live_picks():
                     'withdrawn':c.get('withdrawn',False)
                 })
         except Exception as e: found.append({'source':'state_error','error':str(e)})
-    if LEDGER.exists():
+    if LEDGER_JSON.exists():
         try:
-            db=sqlite3.connect(LEDGER);db.row_factory=sqlite3.Row
-            cols=[x[1] for x in db.execute('pragma table_info(bets)')]
-            rows=db.execute("select * from bets where upper(sport)='NFL'").fetchall()
-            for r in rows:
-                z=dict(r); start=str(z.get('start',''))
+            for z in json.loads(LEDGER_JSON.read_text()):
+                start=str(z.get('start',''))
                 if '2026-09-20' not in start: continue
-                found.append({'source':'ledger',**{k:z.get(k) for k in cols}})
+                found.append({'source':'ledger',**z})
         except Exception as e: found.append({'source':'ledger_error','error':str(e)})
     # Dedup only exact representations; preserve both state and ledger.
     return found
