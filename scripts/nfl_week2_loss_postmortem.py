@@ -14,7 +14,7 @@ STRICT=REPO/'nfl'/'legacy_live_home_opener_exact'/'stricter_bets.csv'
 STATE=Path(os.environ.get('NFL_POSTMORTEM_STATE','/tmp/nfl_postmortem_state.json'))
 LEDGER_JSON=Path(os.environ.get('NFL_POSTMORTEM_LEDGER','/tmp/nfl_postmortem_ledger.json'))
 CTX=Path('/home/appwiza-runner/nfl-context-data/derived/team_game_pregame_context_2006_2026.parquet')
-TEAMW=REPO/'nfl'/'weekly_archive'/'2026'/'week_02'/'pregame'/'team_stats.parquet'
+TEAMW=REPO/'relay'/'nfl'/'team_weekly_2006_2026.parquet'
 ALIASES={'SD':'LAC','OAK':'LV','STL':'LA','LAR':'LA','WSH':'WAS','JAX':'JAC'}
 SPLITS={'development':(2007,2013),'validation':(2014,2019),'holdout':(2020,2025),'recent3':(2023,2025)}
 
@@ -158,6 +158,22 @@ def condition_audit(x,conditions):
             stable.append({'condition':name,'validation':va,'holdout':ho})
     return rows,stable
 
+def add_current_form(base):
+    if not TEAMW.exists(): return base
+    try: tw=pd.read_parquet(TEAMW)
+    except Exception: return base
+    if not {'season','week','team'}.issubset(tw.columns): return base
+    stats=[x for x in ['rushing_epa','passing_epa','passing_cpoe','rushing_yards','passing_yards'] if x in tw.columns]
+    rows=[]
+    for _,r in base.iterrows():
+        q=tw[(num(tw.season)==int(r.season))&(tw.team.astype(str).replace(ALIASES)==str(r.team))&(num(tw.week)<int(r.week))]
+        rec={'game_id':r.game_id,'team':r.team,'current_prior_games':int(len(q))}
+        for col in stats: rec['current_prior_'+col]=num(q[col]).mean() if len(q) else np.nan
+        rows.append(rec)
+    if not rows:return base
+    pr=pd.DataFrame(rows).drop_duplicates(['game_id','team'])
+    return base.merge(pr,on=['game_id','team'],how='left')
+
 def current_veto_evaluation(exact):
     out=[]
     if not CTX.exists(): return out
@@ -184,6 +200,16 @@ def current_veto_evaluation(exact):
         else:
             row['m1_enriched_veto_status']='UNKNOWN_FAIL_CLOSED'
             row['m1_enriched_veto_rule']='opp_last_rank_def_allowed_giveaway_rate <= 14.8'
+        if TEAMW.exists():
+            try:
+                tw=pd.read_parquet(TEAMW)
+                tq=tw[(num(tw.season)==2026)&(tw.team.astype(str).replace(ALIASES)==tm)&(num(tw.week)<2)]
+                row['current_prior_games']=int(len(tq))
+                for col in ['rushing_epa','passing_epa','passing_cpoe','rushing_yards','passing_yards']:
+                    if col in tq.columns:
+                        row['current_prior_'+col]=None if not len(tq) or pd.isna(num(tq[col]).mean()) else float(num(tq[col]).mean())
+            except Exception as e:
+                row['current_form_error']=str(e)
         out.append(row)
     return out
 
@@ -191,6 +217,7 @@ def main():
     orig=add_preseason(load_exact(ORIG,'original'))
     strict=add_preseason(load_exact(STRICT,'stricter'))
     orig=add_coach_context(orig); strict=add_coach_context(strict)
+    orig=add_current_form(orig); strict=add_current_form(strict)
 
     # Canonical historical slices.
     orig_pre=orig[orig.preseason_pass]
@@ -269,6 +296,10 @@ def main():
             cond['low_offense_continuity_lt65']=num(x.returning_offense_snap_share).lt(.65)
         if 'returning_defense_snap_share' in x:
             cond['low_defense_continuity_lt65']=num(x.returning_defense_snap_share).lt(.65)
+        if 'current_prior_rushing_epa' in x:
+            cond['prior_current_rushing_epa_positive']=num(x.current_prior_games).ge(1) & num(x.current_prior_rushing_epa).gt(0)
+        if 'current_prior_passing_epa' in x:
+            cond['prior_current_passing_epa_negative']=num(x.current_prior_games).ge(1) & num(x.current_prior_passing_epa).lt(0)
         if cond:
             rows,stable=condition_audit(x,cond);context[label]={'tests':rows,'stable':stable}
         else:context[label]={'tests':[],'stable':[]}
