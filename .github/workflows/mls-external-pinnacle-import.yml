@@ -1,0 +1,60 @@
+name: MLS External Pinnacle Import
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/mls_external_pinnacle_import.py'
+      - '.github/workflows/mls-external-pinnacle-import.yml'
+  workflow_dispatch:
+
+concurrency:
+  group: mls-research
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  import:
+    runs-on: [self-hosted, Linux, X64, appwiza]
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Import external Pinnacle closing odds
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          KEY=/home/appwiza-runner/.ssh/appwiza_vps
+          HOST=anestishkurti92@127.0.0.1
+          SSH="ssh -i $KEY -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=accept-new $HOST"
+          D=/home/anestishkurti92/mls-predictor-v1
+          $SSH "cd $D && venv/bin/pip install --quiet openpyxl"
+          cat scripts/mls_external_pinnacle_import.py | $SSH "cat > $D/mls_external_pinnacle_import.py"
+          $SSH "cd $D && venv/bin/python -m py_compile mls_external_pinnacle_import.py && timeout 12m venv/bin/python mls_external_pinnacle_import.py"
+      - name: Pull import audit
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          KEY=/home/appwiza-runner/.ssh/appwiza_vps
+          HOST=anestishkurti92@127.0.0.1
+          mkdir -p mls/features
+          ssh -i "$KEY" -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=accept-new "$HOST" 'cat /home/anestishkurti92/mls-predictor-v1/reports/external_pinnacle_import_meta.json' > mls/features/external_pinnacle_import_meta.json
+      - name: Persist audit
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          cp mls/features/external_pinnacle_import_meta.json "$RUNNER_TEMP/ext_pinnacle_meta.json"
+          git fetch origin main
+          git reset --hard origin/main
+          mkdir -p mls/features
+          cp "$RUNNER_TEMP/ext_pinnacle_meta.json" mls/features/external_pinnacle_import_meta.json
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git add mls/features/external_pinnacle_import_meta.json
+          if ! git diff --cached --quiet; then
+            git commit -m 'Publish MLS external Pinnacle import audit'
+            git push origin HEAD:main
+          fi
