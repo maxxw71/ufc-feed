@@ -96,7 +96,7 @@ def parse_external(data):
     if miss:raise RuntimeError(f'External workbook missing required columns: {miss}; got={list(x.columns)}')
     x=x[required].copy()
     x['Season']=pd.to_numeric(x.Season,errors='coerce').astype('Int64')
-    x['Date']=pd.to_datetime(x.Date,errors='coerce',dayfirst=True)
+    x['Date']=pd.to_datetime(x.Date,errors='coerce',dayfirst=True,utc=True)
     for c in ['HG','AG','PSCH','PSCD','PSCA']:x[c]=pd.to_numeric(x[c],errors='coerce')
     x['HomeCanon']=x.Home.map(cteam);x['AwayCanon']=x.Away.map(cteam)
     x=x[x.Season.notna()&x.Date.notna()&x.HomeCanon.notna()&x.AwayCanon.notna()].copy()
@@ -115,7 +115,7 @@ def main():
     ext.to_parquet(NORMALIZED,index=False)
 
     base=pd.read_parquet(BASE).copy()
-    base['match_day']=pd.to_datetime(base.date,errors='coerce').dt.normalize()
+    base['match_day']=pd.to_datetime(base.date,errors='coerce',utc=True).dt.normalize()
     base['home_canon']=base.home_team.map(cteam);base['away_canon']=base.away_team.map(cteam)
     base['home_score_n']=pd.to_numeric(base.home_score,errors='coerce')
     base['away_score_n']=pd.to_numeric(base.away_score,errors='coerce')
