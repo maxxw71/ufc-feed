@@ -31,7 +31,7 @@ jobs:
           HOST=anestishkurti92@127.0.0.1
           SSH="ssh -i $KEY -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=accept-new $HOST"
           D=/home/anestishkurti92/mls-predictor-v1
-          $SSH "cd $D && venv/bin/pip install --quiet pypdf"
+          $SSH "cd $D && venv/bin/pip install --quiet pypdf pdfplumber"
           cat scripts/mls_game_notes_availability.py | $SSH "cat > $D/mls_game_notes_availability.py"
           cat mls/sources/game_notes_availability_manifest.json | $SSH "cat > $D/game_notes_availability_manifest.json"
           $SSH "cd $D && venv/bin/python -m py_compile mls_game_notes_availability.py && timeout 12m venv/bin/python mls_game_notes_availability.py"
@@ -61,3 +61,5 @@ jobs:
           fi
 
 # full-pdf-fix-trigger 20260920
+
+# pdfplumber-trigger 20260920
