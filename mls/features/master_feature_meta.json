@@ -1,5 +1,5 @@
 {
-  "built_at": "2026-09-20T09:42:24.228588+00:00",
+  "built_at": "2026-09-20T10:34:17.884886+00:00",
   "base_file": "/home/anestishkurti92/mls-predictor-v1/data/processed/mls_match_features_weather_enriched.parquet",
   "output": "/home/anestishkurti92/mls-predictor-v1/data/processed/mls_match_features_master.parquet",
   "rows": 9440,
@@ -149,6 +149,10 @@
       "source_rows": 9440,
       "added_or_refreshed_columns": 17,
       "collisions_refreshed": []
+    },
+    "historical_multibook_odds": {
+      "status": "MISSING",
+      "path": "/home/anestishkurti92/mls-predictor-v1/data/processed/mls_historical_multibook_market_features.parquet"
     }
   },
   "coverage": {
@@ -2143,7 +2147,8 @@
     "2026": 357
   },
   "missing_layers": [
-    "game_notes_availability"
+    "game_notes_availability",
+    "historical_multibook_odds"
   ],
   "leakage_policy": "Master merge is structural only. Each source layer is responsible for strict pregame construction; audit metadata is preserved separately. No missing feature is imputed as zero during merge."
 }
