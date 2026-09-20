@@ -145,6 +145,10 @@ else:
     cache.parent.mkdir(parents=True,exist_ok=True); t.to_csv(cache,index=False)
     progress(25,f'Cached {len(t):,} favorite-side pre-fight rows')
 
+if __import__('os').environ.get('UFC_REBUILD_CACHE_ONLY')=='1':
+    progress(100,f'Cache rebuild complete: {len(t):,} favorite-side pre-fight rows')
+    raise SystemExit(0)
+
 # numeric cleanup
 for c in t.columns:
     if c not in {'event_date','favorite','opponent'}:
