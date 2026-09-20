@@ -36,6 +36,12 @@ DIVISIONS = {
 }
 
 
+def norm_name(s):
+    s=str(s or '').lower().replace('’',"'").replace('-',' ')
+    s=re.sub(r'\b(jr|sr|ii|iii|iv)\b',' ',s)
+    s=re.sub(r'[^a-z0-9]+',' ',s)
+    return re.sub(r'\s+',' ',s).strip()
+
 def parse_height_inches(v):
     s = str(v or '').strip()
     if not s or s == '--' or s.lower() == 'nan':
@@ -105,6 +111,7 @@ def load_fights():
     c['p1_won'] = c['result_norm'].eq('W')
     c['taller_won'] = np.where(c['taller_is_p1'], c['p1_won'], ~c['p1_won'])
     c['shorter_won'] = ~c['taller_won']
+    c['p1_norm']=c['player1'].map(norm_name); c['p2_norm']=c['player2'].map(norm_name)
     c['pair_key'] = c.apply(lambda r: '|'.join(sorted([str(r['player1_url']).strip(), str(r['player2_url']).strip()])),axis=1)
     return c
 
@@ -145,6 +152,7 @@ def load_odds_selected():
     x=x[(x['odds_1']>1)&(x['odds_2']>1)].copy()
     x['u1']=x['fighter_1_url'].astype(str).str.strip()
     x['u2']=x['fighter_2_url'].astype(str).str.strip()
+    x['n1']=x['fighter_1'].map(norm_name); x['n2']=x['fighter_2'].map(norm_name)
     x['pair_key']=x.apply(lambda r:'|'.join(sorted([r['u1'],r['u2']])),axis=1)
     x['region_norm']=x['region'].fillna('').astype(str).str.lower()
 
@@ -153,18 +161,27 @@ def load_odds_selected():
         us=g[g['region_norm'].eq('us')]
         if not us.empty:
             g=us
-        cutoff=pd.Timestamp(date,tz='UTC')+pd.Timedelta(hours=36)
-        timely=g[g['adding_date'].notna() & (g['adding_date']<=cutoff)]
+        cutoff=pd.Timestamp(date,tz='UTC')
+        timely=g[g['adding_date'].notna() & (g['adding_date']<cutoff)]
         if not timely.empty:
             latest=timely['adding_date'].max(); snap=timely[timely['adding_date']==latest].copy()
         else:
-            latest=g['adding_date'].max() if g['adding_date'].notna().any() else pd.NaT
-            snap=g[g['adding_date']==latest].copy() if pd.notna(latest) else g.copy()
-        imp1=1/snap['odds_1'].astype(float); imp2=1/snap['odds_2'].astype(float); total=imp1+imp2
-        nv1=float((imp1/total).median()); nv2=1-nv1
-        r0=snap.iloc[0]
+            late=g['adding_date'].notna() & (g['adding_date']>=cutoff+pd.Timedelta(days=3))
+            if late.all() and g['adding_date'].notna().any():
+                latest=g['adding_date'].max(); snap=g[g['adding_date']==latest].copy()
+            else:
+                continue
+        r0=snap.iloc[0]; ref1,ref2=r0['n1'],r0['n2']
+        direct=snap['n1'].eq(ref1)&snap['n2'].eq(ref2); reverse=snap['n1'].eq(ref2)&snap['n2'].eq(ref1)
+        snap=snap[direct|reverse].copy()
+        if snap.empty: continue
+        direct=snap['n1'].eq(ref1)&snap['n2'].eq(ref2)
+        snap['a1']=np.where(direct,snap['odds_1'],snap['odds_2']).astype(float)
+        snap['a2']=np.where(direct,snap['odds_2'],snap['odds_1']).astype(float)
+        imp1=1/snap['a1']; imp2=1/snap['a2']; total=imp1+imp2
+        nv1=float((imp1/total).median()); nv2=float((imp2/total).median()); z=nv1+nv2; nv1/=z; nv2/=z
         rows.append({
-            'odds_date':date,'pair_key':pair,'ou1':r0['u1'],'ou2':r0['u2'],
+            'odds_date':date,'pair_key':pair,'on1':ref1,'on2':ref2,
             'market_fav_side':1 if nv1>=nv2 else 2,
             'market_prob':max(nv1,nv2),
         })
@@ -184,11 +201,12 @@ def attach_odds(df, odds):
         idx=deltas.idxmin()
         if deltas.loc[idx]>1: continue
         o=g.loc[idx]
-        p1url=str(r['player1_url']).strip()
-        if o['ou1']==p1url:
+        if o['on1']==r['p1_norm'] and o['on2']==r['p2_norm']:
             fav_is_p1=int(o['market_fav_side'])==1
-        else:
+        elif o['on1']==r['p2_norm'] and o['on2']==r['p1_norm']:
             fav_is_p1=int(o['market_fav_side'])==2
+        else:
+            continue
         rr=r.to_dict()
         rr['market_prob']=float(o['market_prob'])
         rr['market_fav_is_p1']=fav_is_p1
