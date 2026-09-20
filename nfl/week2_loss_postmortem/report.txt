@@ -1,0 +1,34 @@
+NFL WEEK 2 2026 LOSS POSTMORTEM
+================================================================================================
+
+Scope: exact live/ledger selections, legacy M-family historical samples, frozen preseason gate,
+confirmed preholdout enriched veto, and pre-specified coaching/continuity checks. No weather.
+
+EXACT LIVE PICKS
+
+HISTORICAL VARIANTS
+M1_original_baseline: 75-16 n=91 win=82.4% ROI=+16.0% | hold n=32 win=81.2% ROI=+14.2% | 2023-25 n=18 ROI=+16.6%
+M1_original_preseason_fail_closed: 59-5 n=64 win=92.2% ROI=+25.2% | hold n=19 win=94.7% ROI=+31.9% | 2023-25 n=11 ROI=+24.8%
+M1_original_preseason_plus_enriched_veto: 46-3 n=49 win=93.9% ROI=+28.4% | hold n=15 win=93.3% ROI=+27.9% | 2023-25 n=8 ROI=+17.0%
+M1_only_preseason: 0-0 n=0 win=nan% ROI=+nan% | hold n=0 win=nan% ROI=+nan% | 2023-25 n=0 ROI=+nan%
+M1_only_preseason_plus_enriched_veto: 0-0 n=0 win=nan% ROI=+nan% | hold n=0 win=nan% ROI=+nan% | 2023-25 n=0 ROI=+nan%
+M2_stricter_baseline: 55-9 n=64 win=85.9% ROI=+17.2% | hold n=23 win=82.6% ROI=+12.4% | 2023-25 n=15 ROI=+6.3%
+M2_stricter_preseason_fail_closed: 45-3 n=48 win=93.8% ROI=+24.3% | hold n=15 win=93.3% ROI=+29.6% | 2023-25 n=9 ROI=+19.7%
+
+PRODUCTION FINDINGS
+CRITICAL ENRICHED_VETO_NOT_ENFORCED: The frozen research confirmed an enriched veto for original/M1, but nfl_public_page._audit_action did not inspect enriched_veto_status/rule. Baltimore archived with enriched_veto_status=UNKNOWN and remained actionable.
+CRITICAL DEEP_AUDIT_FAILS_OPEN: Missing audit row returns Scanner qualified/monitor and remains actionable instead of failing closed.
+INFO NEW_H_SERIES_NOT_RESPONSIBLE: H-series is shadow-only and Week4+/Week7+ gated; Week2 losses came from legacy M-family.
+
+PRE-SPECIFIED CONTEXT STABILITY
+M1_original_preseason:
+  STABLE low_defense_continuity_lt65 | validation risk ROI=+15.1% safe=+30.2% | hold risk=+1.7% safe=+39.9%
+M1_only_preseason:
+  no coaching/continuity condition passed the repeated validation+holdout stability screen
+M2_stricter_preseason:
+  no coaching/continuity condition passed the repeated validation+holdout stability screen
+
+RECOMMENDATIONS
+- Keep M1 family only with the already-confirmed enriched veto AND fail-closed feature availability; do not allow raw scanner-only M1.
+- Keep M2 under the validated preseason>=2 fail-closed gate; continue prospective monitoring rather than deleting after one loss.
+- Change production deep-audit behavior from fail-open to fail-closed: missing required audit/veto features => NO BET.
