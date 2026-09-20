@@ -1,0 +1,48 @@
+name: UFC Raw Odds Semantics Audit
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/ufc-raw-odds-semantics-audit.yml'
+  workflow_dispatch:
+jobs:
+  audit:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.12'}
+      - run: python -m pip install --disable-pip-version-check pandas
+      - name: Inspect raw odds rows
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          curl -L --fail --retry 6 --retry-delay 2 --retry-all-errors             'https://www.kaggle.com/api/v1/kernels/output/download/jerzyszocik/ufc-betting-odds-daily'             -o /tmp/odds.zip ||           curl -L --fail --retry 6 --retry-delay 2 --retry-all-errors             'https://www.kaggle.com/api/v1/datasets/download/binduvr/ufc-betting-odds'             -o /tmp/odds.zip
+          python - <<'PY'
+          import zipfile,pandas as pd,re
+          z=zipfile.ZipFile('/tmp/odds.zip')
+          fn=next(n for n in z.namelist() if n.lower().endswith('.csv'))
+          with z.open(fn) as f:d=pd.read_csv(f,low_memory=False)
+          print('FILE',fn)
+          print('COLUMNS',list(d.columns))
+          wanted=[
+            ('Shara Magomedov','Marc-Andre Barriault'),
+            ('Roman Dolidze','Anthony Hernandez'),
+            ('Iasmin Lucindo','Angela Hill'),
+            ('Brian Ortega','Aljamain Sterling'),
+            ('Shauna Bannon','Sam Hughes'),
+            ('Nassourdine Imavov','Caio Borralho'),
+            ('Viktoriia Dudakova','Jinh Yu Frey'),
+          ]
+          def norm(s):
+              return re.sub(r'[^a-z0-9]+',' ',str(s or '').lower()).strip()
+          f1=d['fighter_1'].map(norm);f2=d['fighter_2'].map(norm)
+          for a,b in wanted:
+              na,nb=norm(a),norm(b)
+              q=d[((f1==na)&(f2==nb))|((f1==nb)&(f2==na))].copy()
+              if 'adding_date' in q:q=q.sort_values('adding_date')
+              cols=[c for c in ['event_date','adding_date','fighter_1','fighter_2','fighter_1_url','fighter_2_url','odds_1','odds_2','source','region','fight_url'] if c in q]
+              print('\n###',a,'vs',b,'rows',len(q))
+              print(q[cols].tail(30).to_string(index=False))
+          PY
