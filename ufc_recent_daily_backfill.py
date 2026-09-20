@@ -125,23 +125,27 @@ def choose_odds_snapshot(odds):
         if not us.empty:
             g = us
 
-        # Daily snapshots: use the latest snapshot no later than 36 hours after the
-        # event date (covers late-night cards crossing UTC). For imported historical
-        # rows added much later, use the latest available row as a fallback.
+        # Strict point-in-time rule: recent daily snapshots must be captured
+        # BEFORE the UTC start of the listed event date. Event-day snapshots can
+        # already be in-play for Asia/Europe cards, so they are not research-safe.
+        # Old rows imported long after the event are static historical imports and
+        # may use the legacy fallback.
         event_date = g['event_date'].iloc[0]
-        cutoff = pd.Timestamp(event_date, tz='UTC') + pd.Timedelta(hours=36)
-        timely = g[g['adding_date'].notna() & (g['adding_date'] <= cutoff)]
+        cutoff = pd.Timestamp(event_date, tz='UTC')
+        timely = g[g['adding_date'].notna() & (g['adding_date'] < cutoff)]
         if not timely.empty:
             latest_time = timely['adding_date'].max()
             snap = timely[timely['adding_date'] == latest_time].copy()
-            snapshot_mode = 'pre_or_event_snapshot'
+            snapshot_mode = 'strict_pre_event_snapshot'
         else:
-            if g['adding_date'].notna().any():
+            late_import = g['adding_date'].notna() & (g['adding_date'] >= cutoff + pd.Timedelta(days=3))
+            if late_import.all() and g['adding_date'].notna().any():
                 latest_time = g['adding_date'].max()
                 snap = g[g['adding_date'] == latest_time].copy()
+                snapshot_mode = 'historical_import_fallback'
             else:
-                snap = g.copy()
-            snapshot_mode = 'historical_import_fallback'
+                # No safely pre-event quote. Missing is preferable to in-play leakage.
+                continue
 
         # IMPORTANT: rows for the same fight may list the fighters in opposite
         # order across books/sources. Align every quote to one canonical orientation
@@ -341,9 +345,10 @@ def main():
         '',
         'DATA NOTE',
         '-'*76,
-        'For daily snapshots, the latest US-region quote snapshot no later than 36h',
-        'after the event date is used. Older imported rows that were loaded after the',
-        'event use the historical-import fallback. No-vig favorite probability is',
+        'For recent daily snapshots, only quotes captured before 00:00 UTC on the',
+        'listed event date are eligible. Event-day/in-play snapshots are excluded.',
+        'Rows imported >=3 days after the event may use the historical-import fallback.',
+        'No-vig favorite probability is'
         'computed from the selected odds pair; if multiple same-time rows exist,',
         'median no-vig probability is used and the best decimal favorite price is used',
         'for ROI.',
