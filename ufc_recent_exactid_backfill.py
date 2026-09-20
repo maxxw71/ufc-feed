@@ -20,6 +20,12 @@ def canon_url(u):
     s=str(u or '').strip().replace('https://','http://')
     return s.rstrip('/')
 
+def norm_name(s):
+    s=str(s or '').lower().replace('’',"'").replace('-',' ')
+    s=re.sub(r'\b(jr|sr|ii|iii|iv)\b',' ',s)
+    s=re.sub(r'[^a-z0-9]+',' ',s)
+    return re.sub(r'\s+',' ',s).strip()
+
 def exact_age(dob,event_date):
     return (pd.Timestamp(event_date)-pd.Timestamp(dob)).days/365.2425
 
@@ -44,6 +50,7 @@ def load_results():
     c['event_date']=pd.to_datetime(c['event_date'],errors='coerce').dt.normalize()
     c=c[(c.event_date>=pd.Timestamp('2024-01-01'))&(c.event_date<=pd.Timestamp('2026-09-11'))].copy()
     c['p1_url']=c['player1_url'].map(canon_url); c['p2_url']=c['player2_url'].map(canon_url)
+    c['p1_norm']=c['player1'].map(norm_name); c['p2_norm']=c['player2'].map(norm_name)
     c['url_pair']=c.apply(lambda r: tuple(sorted((r.p1_url,r.p2_url))),axis=1)
     c=c[c['result'].astype(str).isin(['W','L','D','NC'])].copy()
 
@@ -64,6 +71,7 @@ def load_odds():
     x=x.dropna(subset=['event_date','fighter_1_url','fighter_2_url','odds_1','odds_2'])
     x=x[(x.event_date>=pd.Timestamp('2024-01-01'))&(x.event_date<=pd.Timestamp('2026-09-11'))&(x.odds_1>1)&(x.odds_2>1)].copy()
     x['u1']=x['fighter_1_url'].map(canon_url); x['u2']=x['fighter_2_url'].map(canon_url)
+    x['n1']=x['fighter_1'].map(norm_name); x['n2']=x['fighter_2'].map(norm_name)
     x['url_pair']=x.apply(lambda r:tuple(sorted((r.u1,r.u2))),axis=1)
 
     sel=[]
@@ -80,14 +88,14 @@ def load_odds():
         # Normalize every sportsbook row to the same fighter URL orientation
         # before aggregating. The raw source can reverse fighter_1/fighter_2 across
         # books; aggregating unaligned odds_1/odds_2 creates false favorite sides.
-        r0=snap.iloc[0]; ref1,ref2=r0.u1,r0.u2
-        direct=snap.u1.eq(ref1)&snap.u2.eq(ref2)
-        reverse=snap.u1.eq(ref2)&snap.u2.eq(ref1)
+        r0=snap.iloc[0]; ref1,ref2=r0.n1,r0.n2
+        direct=snap.n1.eq(ref1)&snap.n2.eq(ref2)
+        reverse=snap.n1.eq(ref2)&snap.n2.eq(ref1)
         invalid=~(direct|reverse)
         if invalid.any():
             snap=snap.loc[~invalid].copy()
-            direct=snap.u1.eq(ref1)&snap.u2.eq(ref2)
-            reverse=snap.u1.eq(ref2)&snap.u2.eq(ref1)
+            direct=snap.n1.eq(ref1)&snap.n2.eq(ref2)
+            reverse=snap.n1.eq(ref2)&snap.n2.eq(ref1)
         if snap.empty: continue
         snap['aligned_odds_1']=np.where(direct,snap.odds_1,snap.odds_2).astype(float)
         snap['aligned_odds_2']=np.where(direct,snap.odds_2,snap.odds_1).astype(float)
@@ -95,7 +103,7 @@ def load_odds():
         nv1=float((i1/tot).median()); nv2=float((i2/tot).median()); z=nv1+nv2; nv1/=z; nv2/=z
         if nv1>=nv2: favside=1; mp=nv1; best=float(snap.aligned_odds_1.max())
         else: favside=2; mp=nv2; best=float(snap.aligned_odds_2.max())
-        sel.append({'event_date':ev,'fighter_1':r0.fighter_1,'fighter_2':r0.fighter_2,'u1':r0.u1,'u2':r0.u2,'url_pair':pair,'favorite_side_odds':favside,'market_prob':mp,'favorite_decimal_odds':best,'snapshot_mode':mode,'orientation_reversed_rows':int(reverse.sum()),'orientation_invalid_rows':int(invalid.sum()),'fight_url':r0.get('fight_url'),'source':';'.join(sorted(set(snap.source.dropna().astype(str)))),'region':';'.join(sorted(set(snap.region.dropna().astype(str))))})
+        sel.append({'event_date':ev,'fighter_1':r0.fighter_1,'fighter_2':r0.fighter_2,'n1':r0.n1,'n2':r0.n2,'u1':r0.u1,'u2':r0.u2,'url_pair':pair,'favorite_side_odds':favside,'market_prob':mp,'favorite_decimal_odds':best,'snapshot_mode':mode,'orientation_reversed_rows':int(reverse.sum()),'orientation_invalid_rows':int(invalid.sum()),'fight_url':r0.get('fight_url'),'source':';'.join(sorted(set(snap.source.dropna().astype(str)))),'region':';'.join(sorted(set(snap.region.dropna().astype(str))))})
     return pd.DataFrame(sel)
 
 
@@ -115,9 +123,14 @@ def main():
         d1=dob.get(r.p1_url); d2=dob.get(r.p2_url)
         if d1 is None or d2 is None or pd.isna(d1) or pd.isna(d2):
             reason_counts['missing_dob']=reason_counts.get('missing_dob',0)+1; unmatched.append({**o.to_dict(),'reason':'missing_dob'}); continue
-        direct=(o.u1==r.p1_url and o.u2==r.p2_url); reverse=(o.u1==r.p2_url and o.u2==r.p1_url)
+        # Source odds_1/odds_2 follow fighter_1/fighter_2 NAMES. Recent source
+        # rows can have fighter URLs swapped, so URLs are used only to identify
+        # the unordered fight pair; price orientation is validated by names.
+        direct=(o.n1==r.p1_norm and o.n2==r.p2_norm); reverse=(o.n1==r.p2_norm and o.n2==r.p1_norm)
         if not direct and not reverse:
-            reason_counts['orientation_failed']=reason_counts.get('orientation_failed',0)+1; continue
+            reason_counts['name_orientation_failed']=reason_counts.get('name_orientation_failed',0)+1
+            unmatched.append({**o.to_dict(),'reason':'name_orientation_failed','result_player1':r.player1,'result_player2':r.player2})
+            continue
         fav_is_p1=(int(o.favorite_side_odds)==1) if direct else (int(o.favorite_side_odds)==2)
         age1=exact_age(d1,r.event_date); age2=exact_age(d2,r.event_date)
         fav_age=age1 if fav_is_p1 else age2; dog_age=age2 if fav_is_p1 else age1; younger=dog_age-fav_age
