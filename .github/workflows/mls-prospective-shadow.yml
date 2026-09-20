@@ -29,6 +29,10 @@ jobs:
       - uses: actions/checkout@v4
         with: {fetch-depth: 0}
 
+      - name: Verify MLS method registry
+        shell: bash
+        run: python3 scripts/mls_method_registry_guard.py
+
       - name: Install and run prospective MLS shadow board
         shell: bash
         run: |
