@@ -59,7 +59,7 @@ def simulate(rows,mode):
         match_pnl=float((g.profit*stake).sum())
         total_staked+=stake*len(g)
         bankroll+=match_pnl
-        dt=pd.to_datetime(g.date.iloc[0])
+        dt=pd.to_datetime(g.date.iloc[0],utc=True)
         # one record per signal for count/loss-streak visibility; bankroll after group repeated on last only
         for i,(_,r) in enumerate(g.iterrows()):
             rec.append({
@@ -91,7 +91,7 @@ def simulate(rows,mode):
         for match_id,g in rows.groupby('match_id',sort=False):
             pre=bankroll;stake=100.0 if mode=='flat100' else pre*.01
             bankroll+=float((g.profit*stake).sum())
-            dt=pd.to_datetime(g.date.iloc[0])
+            dt=pd.to_datetime(g.date.iloc[0],utc=True)
             if dt==max_dd_start:
                 target_peak=peak if bankroll<peak else bankroll
             peak=max(peak,bankroll)
@@ -127,7 +127,7 @@ def simulate(rows,mode):
         pre=bankroll
         stake=100.0 if mode=='flat100' else pre*.01
         bankroll+=float((g.profit*stake).sum())
-        dt=pd.to_datetime(g.date.iloc[0])
+        dt=pd.to_datetime(g.date.iloc[0],utc=True)
         if bankroll>=peak:
             if underwater_start is not None:
                 dur=int((dt-underwater_start).days)
@@ -141,7 +141,7 @@ def simulate(rows,mode):
         elif underwater_start is None:
             underwater_start=peak_date or dt
     if underwater_start is not None:
-        dt=pd.to_datetime(rows.date.iloc[-1])
+        dt=pd.to_datetime(rows.date.iloc[-1],utc=True)
         dur=int((dt-underwater_start).days)
         if dur>longest_underwater_days:
             longest_underwater_days=dur
@@ -152,7 +152,7 @@ def simulate(rows,mode):
     # Losing streak with dates.
     cur=0;best=0;cur_start=None;best_start=None;best_end=None
     for _,r in rows.iterrows():
-        dt=pd.to_datetime(r.date)
+        dt=pd.to_datetime(r.date,utc=True)
         if float(r.profit)<0:
             if cur==0: cur_start=dt
             cur+=1
@@ -212,7 +212,7 @@ def simulate_match_cap(rows):
                     raise RuntimeError(f'inconsistent same-match profits for {match_id}: {profits}')
             pnl=stake*base
             bankroll+=pnl
-            dt=pd.to_datetime(g.date.iloc[0])
+            dt=pd.to_datetime(g.date.iloc[0],utc=True)
             methods=sorted(g.method_id.astype(str).tolist())
             match_records.append({
                 'date':dt.date().isoformat(),'match_id':str(match_id),'methods':methods,
@@ -238,7 +238,7 @@ def simulate_match_cap(rows):
     if max_dd_start is not None:
         bankroll2=10000.0; peak2=bankroll2; target=None; trough_seen=False
         for r in match_records:
-            dt=pd.to_datetime(r['date'])
+            dt=pd.to_datetime(r['date'],utc=True)
             pre=bankroll2; stake=pre*.01; bankroll2+=stake*float(r['unit_profit'])
             if dt==max_dd_start:
                 target=peak2 if bankroll2<peak2 else bankroll2
@@ -251,7 +251,7 @@ def simulate_match_cap(rows):
     bankroll2=10000.0; peak2=bankroll2; peak_date=None; uw_start=None
     longest_days=0; longest_start=None; longest_end=None; open_uw=False
     for r in match_records:
-        dt=pd.to_datetime(r['date'])
+        dt=pd.to_datetime(r['date'],utc=True)
         pre=bankroll2; stake=pre*.01; bankroll2+=stake*float(r['unit_profit'])
         if bankroll2>=peak2:
             if uw_start is not None:
@@ -272,7 +272,7 @@ def simulate_match_cap(rows):
     cur=best=0;cur_start=None;best_start=None;best_end=None
     wins=losses=0
     for r in match_records:
-        p=float(r['unit_profit']);dt=pd.to_datetime(r['date'])
+        p=float(r['unit_profit']);dt=pd.to_datetime(r['date'],utc=True)
         if p>0:wins+=1
         elif p<0:losses+=1
         if p<0:
