@@ -23,6 +23,7 @@ def fetch_day(day):
     return json.loads(payload[p:])
 
 def parse_quote(o):
+    if not isinstance(o,dict):return None
     ml=o.get('moneyline') or {}
     def get(side):
         z=(ml.get(side) or {}).get('close') or {}
