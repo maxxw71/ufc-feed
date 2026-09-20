@@ -127,7 +127,7 @@ def main():
                 team=canon_team(g[f'{side}_team'])
                 st=by_game_team.get((gid,team))
                 if st:
-                    hist[team].append({'game_id':gid,'dt':g.dt,**st})
+                    hist[team].append({'game_id':gid,'dt':g['dt'],**st})
 
     feat=pd.DataFrame(rows);feat.to_parquet(OUT,index=False)
     meta={
