@@ -1,0 +1,51 @@
+MLS MASTER METHOD DISCOVERY
+====================================================================================================
+master=9,440 x 1,034 | selection_rows=14,775 | engineered_candidates=1,307
+long tested singles=86,850 pairs=737
+strong new candidates=3 | watch candidates=23
+
+STRONG LONG-HISTORY CANDIDATES (preholdout order)
+1. HOME P50_60 | new__goalkeeper_roster__gk_save_pct5__edge <= -0.124636 | pre ROI +24.3% n=176 | hold +16.3% n=87 | full +21.7% n=263
+2. HOME P25_35 | new__style__style_pass_completed_over_expected_5__opp <= 1.37771 | pre ROI +19.6% n=167 | hold +27.7% n=47 | full +21.4% n=214
+3. HOME ALL | new__style__style_delta3_prev5_xg__edge >= 0.55782 + new__goalkeeper_roster__gk_goals_minus_xg_p96_5__sel >= 0.0029398 | hold +6.5% n=156 | full +16.9% n=543
+
+VALIDATED VETOES ON CURRENT ACTIVE METHODS
+MLS-R01V2 | veto risk when new__style__style_xgi_5__edge >= 0.6944 | hold safe +40.5% n=24 vs base +36.4%
+MLS-R01V2 | veto risk when new__venue__travel_from_prev_match_miles__sel <= 186.563 | hold safe +50.5% n=33 vs base +36.4%
+MLS-R01V2 | veto risk when new__player_manager__player_top11_minutes_share5__edge >= -0.00569193 | hold safe +41.5% n=21 vs base +36.4%
+MLS-R01V2 | veto risk when new__player_manager__player_minutes_entropy5__edge <= -0.0570046 | hold safe +48.9% n=36 vs base +36.4%
+MLS-R01V2 | veto risk when new__goalkeeper_roster__roster_departed_minutes_share_prev5__opp >= 0.10352 | hold safe +47.4% n=20 vs base +36.4%
+MLS-R01V2 | veto risk when new__player_manager__player_active_players5__edge <= -2 | hold safe +43.5% n=33 vs base +36.4%
+MLS-R02V2 | veto risk when new__style__style_delta3_prev5_gplus_raw__edge <= 0.0686105 | hold safe +22.7% n=33 vs base +19.1%
+MLS-R02V2 | veto risk when new__cross_comp__allcomp_matches_14d__opp <= 1 | hold safe +30.3% n=31 vs base +19.1%
+MLS-R02V2 | veto risk when new__style__style_delta3_prev5_gplus_raw__sel <= 0.129973 | hold safe +52.9% n=25 vs base +19.1%
+MLS-R02V2 | veto risk when new__style__style_xg_10__edge >= 0.347796 | hold safe +35.1% n=27 vs base +19.1%
+MLS-R02V2 | veto risk when new__style__style_top3_xgi_share_10__sel <= 0.654495 | hold safe +25.7% n=34 vs base +19.1%
+MLS-R02V2 | veto risk when new__style__style_xgi_10__edge >= 0.395222 | hold safe +40.3% n=26 vs base +19.1%
+MLS-R03 | veto risk when new__style__style_top3_touch_share_10__opp <= 0.346044 | hold safe +67.2% n=24 vs base +45.9%
+MLS-R03 | veto risk when new__style__style_pass_attempts_10__opp <= 462.395 | hold safe +70.8% n=23 vs base +45.9%
+MLS-R03 | veto risk when new__weather__global__weather_wind_mph <= 5.4 | hold safe +48.4% n=23 vs base +45.9%
+MLS-R03 | veto risk when new__style__style_xa_5__sel >= 1.0124 | hold safe +49.7% n=20 vs base +45.9%
+MLS-R03 | veto risk when new__style__style_delta3_prev5_active_players__edge >= 0.323333 | hold safe +86.8% n=22 vs base +45.9%
+MLS-R03 | veto risk when new__player_manager__player_minutes_entropy5__edge >= -0.0163561 | hold safe +66.0% n=22 vs base +45.9%
+MLS-R03 | veto risk when new__player_manager__player_minutes_entropy5__opp <= 2.7952 | hold safe +51.7% n=27 vs base +45.9%
+MLS-A02 | veto risk when new__style__style_key_passes_5__edge <= 1 | hold safe +22.1% n=23 vs base +15.2%
+MLS-A02 | veto risk when new__style__style_top3_touch_share_3__edge >= 0.0061335 | hold safe +21.2% n=38 vs base +15.2%
+MLS-A02 | veto risk when new__weather__global__weather_wind_mph <= 6.7 | hold safe +22.0% n=25 vs base +15.2%
+MLS-A02 | veto risk when new__style__style_key_passes_3__edge <= 0.333333 | hold safe +17.7% n=33 vs base +15.2%
+MLS-A03 | veto risk when new__player_manager__player_top3_xgi_share5__edge <= -0.0777559 | hold safe +76.7% n=31 vs base +65.9%
+MLS-A03 | veto risk when new__style__style_delta3_prev5_xa__sel <= -0.102959 | hold safe +79.9% n=21 vs base +65.9%
+MLS-A03 | veto risk when new__style__style_top3_gplus_share_10__edge >= 0.0159428 | hold safe +86.7% n=20 vs base +65.9%
+MLS-A05 | veto risk when new__style__style_delta3_prev5_xg__edge <= 0.0533133 | hold safe +37.8% n=57 vs base +24.0%
+MLS-A05 | veto risk when new__style__style_delta3_prev5_pass_attempts__opp >= 40.3067 | hold safe +31.7% n=67 vs base +24.0%
+MLS-A05 | veto risk when new__style__style_xa_3__opp >= 0.822067 | hold safe +32.8% n=56 vs base +24.0%
+MLS-A06 | veto risk when new__weather__global__weather_wind_direction_deg <= 181 | hold safe +75.0% n=32 vs base +65.3%
+MLS-A06 | veto risk when new__style__style_xg_3__sel <= 1.16222 | hold safe +80.4% n=33 vs base +65.3%
+MLS-A06 | veto risk when new__style__style_key_passes_3__sel <= 8 | hold safe +106.9% n=31 vs base +65.3%
+MLS-A06 | veto risk when new__style__style_delta3_prev5_xgi__sel <= 0.05004 | hold safe +121.9% n=29 vs base +65.3%
+MLS-A06 | veto risk when new__style__style_delta3_prev5_xg__sel <= -0.00798 | hold safe +100.7% n=32 vs base +65.3%
+
+RECENT-ONLY WATCH COUNTS
+availability: 37 watch / 40 frozen
+confirmed_lineup: 24 watch / 40 frozen
+transactions: 5 watch / 40 frozen
