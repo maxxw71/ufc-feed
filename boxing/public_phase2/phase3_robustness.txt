@@ -1,41 +1,41 @@
 BOXING PHASE-3 ROBUSTNESS
 ==============================================================================================================
-Grid: 240 | stable across 2021-23 and 2024-26: 80
+Grid: 240 | stable across 2021-23 and 2024-26: 77
 
-AGE_HEIGHT: stable 17/80 | positive both periods 23 | best n=38 win=81.57894736842105 ROI=15.423025173559973
-AGE_LONG: stable 24/60 | positive both periods 32 | best n=20 win=90.0 ROI=29.09558908129253
-AGE_WORLD: stable 11/20 | positive both periods 16 | best n=31 win=83.87096774193549 ROI=17.833409615781306
-FORM_LONG: stable 16/30 | positive both periods 19 | best n=22 win=95.45454545454545 ROI=45.13770421209228
-FORM_REACH: stable 7/40 | positive both periods 12 | best n=21 win=80.95238095238095 ROI=17.26219198211496
-FORM_TITLE: stable 5/10 | positive both periods 5 | best n=71 win=78.87323943661971 ROI=9.81119767714109
+AGE_HEIGHT: stable 16/80 | positive both periods 21 | best n=21 win=85.71428571428571 ROI=22.045242205083458
+AGE_LONG: stable 24/60 | positive both periods 32 | best n=22 win=90.9090909090909 ROI=29.962079211936018
+AGE_WORLD: stable 11/20 | positive both periods 16 | best n=30 win=86.66666666666667 ROI=21.76118993630735
+FORM_LONG: stable 17/30 | positive both periods 19 | best n=34 win=88.23529411764706 ROI=27.635261226715205
+FORM_REACH: stable 6/40 | positive both periods 14 | best n=16 win=81.25 ROI=16.676915898130595
+FORM_TITLE: stable 3/10 | positive both periods 4 | best n=43 win=74.4186046511628 ROI=11.853529216139295
 
 TOP STABLE RULES
 --------------------------------------------------------------------------------------------------------------
-FORM_LONG {'price': 1.3, 'form': 1, 'rounds': 8} | n=22 21-1 ROI=+45.14% | dev=+40.24% later=+50.03%
-FORM_LONG {'price': 1.3, 'form': 1, 'rounds': 10} | n=22 21-1 ROI=+45.14% | dev=+40.24% later=+50.03%
-FORM_LONG {'price': 1.35, 'form': 1, 'rounds': 8} | n=21 20-1 ROI=+45.84% | dev=+40.24% later=+52.00%
-FORM_LONG {'price': 1.35, 'form': 1, 'rounds': 10} | n=21 20-1 ROI=+45.84% | dev=+40.24% later=+52.00%
-FORM_LONG {'price': 1.25, 'form': 1, 'rounds': 8} | n=33 30-3 ROI=+31.50% | dev=+28.09% later=+34.71%
-FORM_LONG {'price': 1.25, 'form': 1, 'rounds': 10} | n=32 29-3 ROI=+31.64% | dev=+28.16% later=+34.71%
-FORM_LONG {'price': 1.4, 'form': 1, 'rounds': 8} | n=19 18-1 ROI=+46.84% | dev=+40.63% later=+53.74%
-FORM_LONG {'price': 1.4, 'form': 1, 'rounds': 10} | n=19 18-1 ROI=+46.84% | dev=+40.63% later=+53.74%
-FORM_LONG {'price': 1.2, 'form': 1, 'rounds': 8} | n=41 36-5 ROI=+23.59% | dev=+20.78% later=+26.27%
-FORM_LONG {'price': 1.2, 'form': 1, 'rounds': 10} | n=40 35-5 ROI=+23.51% | dev=+20.45% later=+26.27%
-FORM_LONG {'price': 1.3, 'form': 1, 'rounds': 12} | n=17 16-1 ROI=+41.98% | dev=+35.18% later=+49.63%
-FORM_LONG {'price': 1.2, 'form': 2, 'rounds': 8} | n=17 16-1 ROI=+29.91% | dev=+38.95% later=+23.59%
-FORM_LONG {'price': 1.2, 'form': 2, 'rounds': 10} | n=17 16-1 ROI=+29.91% | dev=+38.95% later=+23.59%
-FORM_LONG {'price': 1.35, 'form': 1, 'rounds': 12} | n=16 15-1 ROI=+42.71% | dev=+35.18% later=+52.39%
+FORM_LONG {'price': 1.25, 'form': 1, 'rounds': 8} | n=34 30-4 ROI=+27.64% | dev=+20.56% later=+34.71%
+FORM_LONG {'price': 1.3, 'form': 1, 'rounds': 8} | n=23 21-2 ROI=+38.83% | dev=+28.56% later=+50.03%
+FORM_LONG {'price': 1.3, 'form': 1, 'rounds': 10} | n=23 21-2 ROI=+38.83% | dev=+28.56% later=+50.03%
+FORM_LONG {'price': 1.25, 'form': 1, 'rounds': 10} | n=33 29-4 ROI=+27.65% | dev=+20.15% later=+34.71%
+FORM_LONG {'price': 1.35, 'form': 1, 'rounds': 8} | n=22 20-2 ROI=+39.21% | dev=+28.56% later=+52.00%
+FORM_LONG {'price': 1.35, 'form': 1, 'rounds': 10} | n=22 20-2 ROI=+39.21% | dev=+28.56% later=+52.00%
+AGE_LONG {'price': 1.2, 'age': 5, 'rounds': 8} | n=22 20-2 ROI=+29.96% | dev=+39.58% later=+24.47%
+FORM_LONG {'price': 1.2, 'form': 2, 'rounds': 8} | n=16 15-1 ROI=+30.50% | dev=+38.95% later=+23.93%
+FORM_LONG {'price': 1.2, 'form': 2, 'rounds': 10} | n=16 15-1 ROI=+30.50% | dev=+38.95% later=+23.93%
+FORM_LONG {'price': 1.2, 'form': 1, 'rounds': 8} | n=41 35-6 ROI=+20.65% | dev=+15.03% later=+26.56%
+AGE_LONG {'price': 1.2, 'age': 4, 'rounds': 8} | n=31 27-4 ROI=+22.41% | dev=+19.14% later=+25.47%
+AGE_LONG {'price': 1.2, 'age': 5, 'rounds': 10} | n=21 19-2 ROI=+30.10% | dev=+41.37% later=+24.47%
+FORM_LONG {'price': 1.2, 'form': 1, 'rounds': 10} | n=40 34-6 ROI=+20.50% | dev=+14.43% later=+26.56%
+AGE_WORLD {'price': 1.2, 'age': 5, 'world': True} | n=30 26-4 ROI=+21.76% | dev=+23.75% later=+19.78%
+AGE_LONG {'price': 1.2, 'age': 3, 'rounds': 8} | n=43 36-7 ROI=+20.19% | dev=+8.86% later=+29.16%
+FORM_LONG {'price': 1.4, 'form': 1, 'rounds': 8} | n=20 18-2 ROI=+39.50% | dev=+27.85% later=+53.74%
+FORM_LONG {'price': 1.4, 'form': 1, 'rounds': 10} | n=20 18-2 ROI=+39.50% | dev=+27.85% later=+53.74%
 AGE_LONG {'price': 1.2, 'age': 6, 'rounds': 8} | n=20 18-2 ROI=+29.10% | dev=+39.58% later=+22.11%
+AGE_WORLD {'price': 1.2, 'age': 4, 'world': True} | n=38 32-6 ROI=+16.64% | dev=+11.83% later=+21.46%
+AGE_LONG {'price': 1.2, 'age': 4, 'rounds': 10} | n=29 25-4 ROI=+21.71% | dev=+17.08% later=+25.47%
+AGE_LONG {'price': 1.2, 'age': 3, 'rounds': 10} | n=41 34-7 ROI=+19.59% | dev=+6.09% later=+29.16%
+AGE_LONG {'price': 1.25, 'age': 5, 'rounds': 8} | n=19 17-2 ROI=+31.21% | dev=+42.09% later=+24.86%
 AGE_LONG {'price': 1.2, 'age': 6, 'rounds': 10} | n=19 17-2 ROI=+29.20% | dev=+41.37% later=+22.11%
-FORM_TITLE {'price': 1.2, 'form': 1, 'title': True} | n=71 56-15 ROI=+9.81% | dev=+8.18% later=+10.81%
-FORM_LONG {'price': 1.25, 'form': 1, 'rounds': 12} | n=23 20-3 ROI=+27.22% | dev=+21.96% later=+32.04%
-AGE_LONG {'price': 1.2, 'age': 5, 'rounds': 8} | n=23 20-3 ROI=+24.31% | dev=+39.58% later=+16.17%
-AGE_LONG {'price': 1.2, 'age': 4, 'rounds': 8} | n=31 26-5 ROI=+18.52% | dev=+19.14% later=+17.94%
-AGE_WORLD {'price': 1.2, 'age': 5, 'world': True} | n=31 26-5 ROI=+17.83% | dev=+23.75% later=+12.29%
-AGE_LONG {'price': 1.2, 'age': 3, 'rounds': 8} | n=42 34-8 ROI=+16.10% | dev=+8.86% later=+22.08%
-AGE_LONG {'price': 1.2, 'age': 5, 'rounds': 10} | n=22 19-3 ROI=+24.19% | dev=+41.37% later=+16.17%
-AGE_HEIGHT {'price': 1.2, 'age': 3, 'height': 2} | n=38 31-7 ROI=+15.42% | dev=+18.91% later=+11.94%
-AGE_WORLD {'price': 1.2, 'age': 4, 'world': True} | n=38 31-7 ROI=+13.47% | dev=+11.83% later=+15.12%
+AGE_WORLD {'price': 1.2, 'age': 3, 'world': True} | n=60 48-12 ROI=+13.73% | dev=+0.17% later=+24.82%
+FORM_LONG {'price': 1.3, 'form': 1, 'rounds': 12} | n=18 16-2 ROI=+34.09% | dev=+21.66% later=+49.63%
 
 DEVELOPMENT-ONLY SELECTION
 --------------------------------------------------------------------------------------------------------------
