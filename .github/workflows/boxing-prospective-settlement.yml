@@ -32,15 +32,23 @@ jobs:
           fetch-depth: 0
       - name: Settle only verified pre-event snapshots
         run: python3 boxing/research/audit_prospective_odds.py
-      - name: Persist prospective coverage
+      - name: Persist prospective coverage on latest main
+        shell: bash
         run: |
+          set -Eeuo pipefail
+          mkdir -p /tmp/boxing-prospective-settlement
+          cp boxing/prospective_odds/coverage.json /tmp/boxing-prospective-settlement/coverage.json
+          cp boxing/prospective_odds/settled_bouts.json /tmp/boxing-prospective-settlement/settled_bouts.json
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git fetch origin main
+          git reset --hard origin/main
+          cp /tmp/boxing-prospective-settlement/coverage.json boxing/prospective_odds/coverage.json
+          cp /tmp/boxing-prospective-settlement/settled_bouts.json boxing/prospective_odds/settled_bouts.json
           git add boxing/prospective_odds/coverage.json boxing/prospective_odds/settled_bouts.json
           if git diff --cached --quiet; then
             echo 'No prospective settlement changes.'
           else
             git commit -m 'Audit prospective boxing odds settlement'
-            git pull --rebase origin main
-            git push
+            git push origin HEAD:main
           fi
