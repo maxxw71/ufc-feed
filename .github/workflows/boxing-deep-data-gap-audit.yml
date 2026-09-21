@@ -68,6 +68,18 @@ jobs:
                           if k not in wexamples:wexamples[k]=str(v)[:300]
           out['wiki_context_field_counts']=wk.most_common(120)
           out['wiki_context_examples']=wexamples
+          if 'wiki_bout_context' in tables:
+              out['wiki_context_samples']=[]
+              for r in d.execute("select bout_date,fighters_json,fields_json,matching_bout_ids_json,quality from wiki_bout_context order by bout_date desc limit 8"):
+                  try:
+                      out['wiki_context_samples'].append({
+                          'bout_date':r['bout_date'],
+                          'fighters':json.loads(r['fighters_json']),
+                          'fields':json.loads(r['fields_json']),
+                          'matching_bout_ids':json.loads(r['matching_bout_ids_json']),
+                          'quality':r['quality']
+                      })
+                  except Exception:pass
           # Commission report kinds/statuses only; no raw docs.
           if 'commission_reports' in tables:
               cols=out['commission_reports']['columns']
