@@ -48,6 +48,28 @@ def record_matches(history, date, s):
     expected=tuple(int(x or 0) for x in m.groups())
     return expected==tuple(s['career_observed_'+x] for x in ('wins','losses','draws')) and sum(expected)==len(rows)
 
+
+def explicit_opponent_strength(row):
+    """Parse a source-stated opponent pre-fight record when explicitly present."""
+    try:data=json.loads(row.get('data') or '{}')
+    except Exception:return None
+    candidates=[
+        data.get('opponent_record_at_bout'),
+        data.get("opponent's pre-fight record"),
+        data.get("opponent's record"),
+        data.get('opp record'),
+    ]
+    for value in candidates:
+        if isinstance(value,dict):
+            try:w=int(value.get('wins',0));l=int(value.get('losses',0))
+            except Exception:continue
+        else:
+            m=re.search(r'(\d+)\s*[–−-]\s*(\d+)(?:\s*[–−-]\s*(\d+))?',str(value or ''))
+            if not m:continue
+            w,l=int(m.group(1)),int(m.group(2))
+        if w+l>=5:return w/(w+l)
+    return None
+
 def bout_context(r):
     try:data=json.loads(r.get('data') or '{}')
     except Exception:data={}
@@ -80,12 +102,19 @@ def main():
             targets[r['date']].add(fid)
             if links.get(r['source_id']):targets[r['date']].add(links[r['source_id']])
     elo=elo_before(events,targets)
-    strength={}
+    strength={};strength_source=collections.Counter()
     for fid,history in histories.items():
         for r in history:
             opp=links.get(r['source_id']); s=summary(histories.get(opp,[]),r['date'])
             n=s['career_observed_wins']+s['career_observed_losses']
-            if n>=5:strength[r['source_id']]=s['career_observed_wins']/n
+            if n>=5:
+                strength[r['source_id']]=s['career_observed_wins']/n
+                strength_source['verified_linked_history']+=1
+            else:
+                x=explicit_opponent_strength(r)
+                if x is not None:
+                    strength[r['source_id']]=x
+                    strength_source['source_stated_prefight_record']+=1
     quotes=collections.defaultdict(list)
     for r in d.execute('select * from priced_bout_research where feature_bout_id is not null'):quotes[r['feature_bout_id']].append(dict(r))
     years=collections.defaultdict(collections.Counter); total=0;source_rows=collections.Counter()
@@ -115,10 +144,11 @@ def main():
                 f.write(json.dumps(row,ensure_ascii=False)+'\n');total+=1;source_rows[r['source']]+=1
                 y=years[date[:4]];y['fighter_bout_rows']+=1;y['reciprocal_pair_rows']+=row['canonical_verified_pair'];y['price_linked_rows']+=bool(matched)
                 y['both_record_totals_match']+=bool(sides['opponent'] and all(sides[x]['record_totals_match'] for x in ('fighter','opponent')))
-    report={'built_at':stamp,'rows':total,'career_sources':dict(source_rows),'verified_graph_bouts':len(events),'identity_links':len(links),'years':dict(sorted(years.items())),
+    report={'built_at':stamp,'rows':total,'career_sources':dict(source_rows),'verified_graph_bouts':len(events),'identity_links':len(links),'opponent_strength_sources':dict(strength_source),'years':dict(sorted(years.items())),
             'validated_price_rows':0,'limitations':['Career rows preserve source provenance; secondary observed histories are not relabeled as Wikipedia.',
             'Source observations are not a census of all boxing fights.','Own Elo: 1500 initial, K32, reciprocal graph only; all same-day updates batched.',
             'Record totals agreement is an internal audit, not independent full-career certification.',
+            'Opponent strength prefers linked point-in-time histories; explicit source-stated opponent pre-fight records are a secondary fallback.',
             'Biography age uses available birth date; height/reach are static adult proxies when available; stance/nationality remain exploratory.',
             'Title/location/scheduled-round context comes from record rows but only pre-fight-knowable flags are exposed.',
             'All quotes have unverified timing/settlement. No validated ROI or live eligibility.',
