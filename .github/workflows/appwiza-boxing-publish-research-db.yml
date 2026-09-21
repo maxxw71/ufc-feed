@@ -1,0 +1,135 @@
+name: Appwiza publish boxing research database
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/appwiza-boxing-publish-research-db.yml'
+  workflow_run:
+    workflows:
+      - Appwiza boxing punch expansion
+      - Appwiza boxing secondary punch expansion
+      - Appwiza boxing live integration
+    types: [completed]
+    branches: [main]
+
+concurrency:
+  group: appwiza-boxing-public-research-export
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+  actions: write
+
+jobs:
+  publish:
+    if: github.repository == 'maxxw71/ufc-feed' && (github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success')
+    runs-on: [self-hosted, Linux, X64, appwiza]
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - name: Publish sanitized current boxing research DB
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -Eeuo pipefail
+          ROOT=/home/anestishkurti92/boxing-research
+          LIVE=$ROOT/boxing.sqlite3
+          OUTDIR=/srv/appwiza-sports/public/downloads/boxing
+          test -f "$LIVE"; test -d "$OUTDIR"
+          [ "$(systemctl is-active boxing-archive.service 2>/dev/null || true)" != active ] || { echo 'boxing archive service active; refusing export'; exit 2; }
+          available=$(df -Pk "$ROOT" | awk 'NR==2 {print $4}')
+          [ "$available" -ge 2097152 ] || { echo 'Less than 2 GiB free; refusing export'; exit 3; }
+          exec 6>"$ROOT/archive-drain.lock"; flock -n 6 || { echo 'archive lock busy'; exit 4; }
+          exec 7>"$ROOT/data-enrichment.lock"; flock -n 7 || { echo 'enrichment lock busy'; exit 5; }
+          exec 9>"$ROOT/continuation.lock"; flock -n 9 || { echo 'continuation lock busy'; exit 6; }
+
+          TMP=$(mktemp -d "$OUTDIR/.boxing-export.XXXXXX")
+          trap 'rm -rf "$TMP"' EXIT
+          python3 - "$LIVE" "$TMP/boxing_research.sqlite3" "$TMP/TABLE_COUNTS.json" <<'PY'
+          import sqlite3,sys,json,os,datetime
+          live_path,out_path,count_path=sys.argv[1:4]
+          whitelist=[
+            'bouts','enriched_pre_bout','fight_punch_totals','fighters',
+            'historical_punch_observations','normalized_fighters','odds',
+            'opponent_links','pre_bout_features','priced_bout_research',
+            'published_fight_punch_totals','punch_reports',
+            'reported_historical_odds','reviewed_chart_rounds',
+            'reviewed_round_charts','round_punches',
+            'secondary_round_punches','wiki_bout_context'
+          ]
+          src=sqlite3.connect(f'file:{live_path}?mode=ro',uri=True,timeout=60)
+          have={r[0] for r in src.execute("select name from sqlite_master where type='table'")}
+          missing=[t for t in whitelist if t not in have]
+          if missing:raise SystemExit('Missing required public tables: '+repr(missing))
+          if os.path.exists(out_path):os.unlink(out_path)
+          dst=sqlite3.connect(out_path,timeout=120)
+          dst.execute('PRAGMA journal_mode=OFF');dst.execute('PRAGMA synchronous=OFF')
+          dst.execute('ATTACH DATABASE ? AS live',(live_path,))
+          for t in whitelist:
+              row=src.execute("select sql from sqlite_master where type='table' and name=?",(t,)).fetchone()
+              if not row or not row[0]:raise RuntimeError('No CREATE SQL for '+t)
+              dst.execute(row[0])
+              q='"'+t.replace('"','""')+'"'
+              dst.execute(f'INSERT INTO main.{q} SELECT * FROM live.{q}')
+              dst.commit()
+          indexes=src.execute("""select name,sql,tbl_name from sqlite_master
+                                 where type='index' and sql is not null order by name""").fetchall()
+          for name,sql,tbl in indexes:
+              if tbl in whitelist:
+                  try:dst.execute(sql)
+                  except sqlite3.OperationalError as e:
+                      print('INDEX_SKIP',name,e)
+          dst.commit()
+          check=dst.execute('PRAGMA integrity_check').fetchone()[0]
+          if check!='ok':raise RuntimeError('integrity_check='+str(check))
+          counts={t:dst.execute('select count(*) from "'+t.replace('"','""')+'"').fetchone()[0] for t in whitelist}
+          punch={k:counts[k] for k in ['punch_reports','round_punches','fight_punch_totals','historical_punch_observations']}
+          meta={
+            'generated_at':datetime.datetime.now(datetime.timezone.utc).isoformat(),
+            'source':'sanitized live boxing research database',
+            'tables':counts,'punch_counts':punch,
+            'policy':'Only the established 18-table public whitelist is exported. Raw captures, queues, failures, caches, source_rows and other internal tables are excluded.'
+          }
+          open(count_path,'w').write(json.dumps(meta,indent=2))
+          dst.close();src.close()
+          print(json.dumps(meta,sort_keys=True))
+          PY
+
+          cat > "$TMP/DOWNLOAD_NOTES.txt" <<'EOF'
+          Appwiza boxing research database.
+          Sanitized public research subset rebuilt from the current live database.
+          Raw captures, queues, caches, failures and internal collection tables are excluded.
+          Historical odds timing/settlement remain unverified unless explicitly marked otherwise.
+          EOF
+
+          python3 - "$TMP" <<'PY'
+          import zipfile,sys,os
+          root=sys.argv[1];out=os.path.join(root,'research-database.zip')
+          with zipfile.ZipFile(out,'w',zipfile.ZIP_DEFLATED,compresslevel=6) as z:
+              for name in ['boxing_research.sqlite3','TABLE_COUNTS.json','DOWNLOAD_NOTES.txt']:
+                  z.write(os.path.join(root,name),arcname=name)
+          print('ZIP_BYTES',os.path.getsize(out))
+          PY
+          python3 - "$TMP/research-database.zip" <<'PY'
+          import zipfile,sys
+          with zipfile.ZipFile(sys.argv[1]) as z:
+              bad=z.testzip()
+              if bad:raise SystemExit('zip CRC failure: '+bad)
+              print('ZIP_OK',[(i.filename,i.file_size) for i in z.infolist()])
+          PY
+          chmod 0644 "$TMP/research-database.zip"
+          mv -f "$TMP/research-database.zip" "$OUTDIR/research-database.zip.new"
+          sync
+          mv -f "$OUTDIR/research-database.zip.new" "$OUTDIR/research-database.zip"
+          echo "PUBLISHED $(stat -c '%s %y' "$OUTDIR/research-database.zip")"
+
+          curl --fail-with-body -sS -X POST \
+            -H "Authorization: Bearer $GH_TOKEN" \
+            -H "Accept: application/vnd.github+json" \
+            -H "X-GitHub-Api-Version: 2022-11-28" \
+            "https://api.github.com/repos/$GITHUB_REPOSITORY/actions/workflows/boxing-public-phase2.yml/dispatches" \
+            -d '{"ref":"main"}'
+          echo 'DISPATCHED boxing-public-phase2.yml'
