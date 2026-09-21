@@ -12,7 +12,7 @@ from __future__ import annotations
 import datetime as dt, hashlib, io, json, re, time, urllib.request, urllib.error
 from pathlib import Path
 from bs4 import BeautifulSoup
-from pypdf import PdfReader
+import pdfplumber
 
 ROOT=Path(__file__).resolve().parents[1]
 OUT=ROOT/'rankings'
@@ -26,6 +26,7 @@ DIVISIONS=[
  'super flyweight','flyweight','light flyweight','minimumweight'
 ]
 DIV_LOOKUP={re.sub(r'[^a-z]','',x):x for x in DIVISIONS}
+DIV_LOOKUP.update({'minimum':'minimumweight','strawweight':'minimumweight','miniflyweight':'minimumweight'})
 MONTHS={m.upper():i for i,m in enumerate(
  ['January','February','March','April','May','June','July','August','September','October','November','December'],1)}
 QUALIFIERS=[
@@ -96,11 +97,17 @@ def fetch_pdf(year,month):
     return None,None
 
 def extract_pdf(raw):
-    reader=PdfReader(io.BytesIO(raw))
-    # Default extraction preserves WBA's logical reading order. Layout mode
-    # merges three weight-class columns into single lines and is unsafe here.
-    pages=[p.extract_text() or '' for p in reader.pages]
-    return pages
+    # WBA pages are laid out as three independent ranking columns. Extract each
+    # third separately so a division header can never be associated with ranks
+    # from a neighboring column.
+    blocks=[]
+    with pdfplumber.open(io.BytesIO(raw)) as pdf:
+        for page in pdf.pages:
+            w,h=page.width,page.height
+            for x0,x1 in ((0,w/3),(w/3,2*w/3),(2*w/3,w)):
+                txt=page.crop((x0,0,x1,h)).extract_text(x_tolerance=2,y_tolerance=2) or ''
+                if txt.strip():blocks.append(txt)
+    return blocks
 
 def parse(raw,year,month):
     pages=extract_pdf(raw)
