@@ -74,12 +74,90 @@ def bout_context(r):
     try:data=json.loads(r.get('data') or '{}')
     except Exception:data={}
     notes=' '.join(str(data.get(k,'') or '') for k in ('notes','note','note(s)','more')).strip()
-    low=notes.casefold();terminal,scheduled=rounds_value(r.get('rounds'))
-    title=bool(re.search(r'\btitle\b|\bchampionship\b',low));world_orgs=sorted(set(re.findall(r'\b(?:wba|wbc|ibf|wbo)\b',low)))
-    return {'location':r.get('venue') or data.get('location') or data.get('venue and location') or '',
-            'scheduled_rounds':scheduled,'title_bout':title,'vacant_title':bool(title and 'vacant' in low),
-            'major_world_title_orgs':world_orgs,'professional_debut':bool('professional debut' in low),
-            'context_source':f"{r.get('source','career')} record row; only pre-fight-knowable context flags exposed"}
+    low=notes.casefold()
+    terminal,scheduled=rounds_value(r.get('rounds'))
+    location=r.get('venue') or data.get('location') or data.get('venue and location') or data.get('venue') or ''
+    loc_parts=[x.strip() for x in str(location).split(',') if x.strip()]
+    country=loc_parts[-1] if loc_parts else ''
+    country_norm={
+      'u.s.':'USA','u.s.a.':'USA','united states':'USA','united states of america':'USA',
+      'england':'United Kingdom','scotland':'United Kingdom','wales':'United Kingdom',
+      'northern ireland':'United Kingdom'
+    }.get(country.casefold(),country)
+
+    title=bool(re.search(r'\btitle\b|\bchampionship\b',low))
+    org_patterns={
+      'WBA':r'\bwba\b|world boxing association',
+      'WBC':r'\bwbc\b|world boxing council',
+      'IBF':r'\bibf\b|international boxing federation',
+      'WBO':r'\bwbo\b|world boxing organization',
+      'IBO':r'\bibo\b|international boxing organization',
+      'THE_RING':r'\bthe ring\b|\bring magazine\b',
+      'EBU':r'\bebu\b|european boxing union',
+      'BBBofC':r'\bbbofc\b|british boxing board',
+      'NABF':r'\bnabf\b|north american boxing federation',
+      'NABO':r'\bnabo\b',
+      'OPBF':r'\bopbf\b|oriental and pacific boxing federation',
+      'COMMONWEALTH':r'\bcommonwealth\b',
+    }
+    title_orgs=sorted(k for k,p in org_patterns.items() if re.search(p,low))
+    major=[x for x in title_orgs if x in {'WBA','WBC','IBF','WBO'}]
+
+    regional_words=r'\binternational\b|\binter[- ]continental\b|\bcontinental\b|\bsilver\b|\bnabo\b|\bnabf\b|\bopbf\b|\beuropean\b|\bcommonwealth\b|\bbritish\b|\bpan pacific\b|\blatino\b|\bregional\b'
+    regional=bool(re.search(regional_words,low))
+    if title and major and not regional:
+        title_tier='major_world'
+    elif title and regional:
+        title_tier='regional_or_secondary'
+    elif title:
+        title_tier='other_title'
+    else:
+        title_tier='none'
+
+    divisions=[
+      ('super middleweight',('super middleweight','super-middleweight')),
+      ('light heavyweight',('light heavyweight','light-heavyweight')),
+      ('super welterweight',('super welterweight','super-welterweight','light middleweight','light-middleweight','junior middleweight')),
+      ('super lightweight',('super lightweight','super-lightweight','light welterweight','light-welterweight','junior welterweight')),
+      ('super featherweight',('super featherweight','super-featherweight','junior lightweight')),
+      ('super bantamweight',('super bantamweight','super-bantamweight','junior featherweight')),
+      ('super flyweight',('super flyweight','super-flyweight','junior bantamweight')),
+      ('light flyweight',('light flyweight','light-flyweight','junior flyweight')),
+      ('minimumweight',('minimumweight','mini flyweight','strawweight')),
+      ('bridgerweight',('bridgerweight',)),
+      ('cruiserweight',('cruiserweight',)),
+      ('heavyweight',('heavyweight',)),
+      ('middleweight',('middleweight',)),
+      ('welterweight',('welterweight',)),
+      ('lightweight',('lightweight',)),
+      ('featherweight',('featherweight',)),
+      ('bantamweight',('bantamweight',)),
+      ('flyweight',('flyweight',)),
+    ]
+    context_text=' '.join(str(data.get(k,'') or '') for k in ('division','weight class','weight','notes','note','note(s)','more')).casefold()
+    division=None
+    for canonical,aliases in divisions:
+        if any(re.search(r'(?<![a-z])'+re.escape(a)+r'(?![a-z])',context_text) for a in aliases):
+            division=canonical;break
+
+    return {
+      'location':location,
+      'location_country_raw':country_norm,
+      'scheduled_rounds':scheduled,
+      'scheduled_rounds_explicit':scheduled is not None,
+      'title_bout':title,
+      'vacant_title':bool(title and 'vacant' in low),
+      'title_organizations':title_orgs,
+      'major_world_title_orgs':major,
+      'title_tier':title_tier,
+      'division_from_record_text':division,
+      'professional_debut':bool('professional debut' in low),
+      'context_source':f"{r.get('source','career')} record row; only pre-fight-knowable context flags exposed",
+      'outcome_parse':{'terminal_round':terminal,'method_family':
+          'stoppage' if str(r.get('method') or '').upper() in {'KO','TKO','RTD'}
+          else 'decision' if str(r.get('method') or '').upper() in {'UD','SD','MD','PTS','TD'}
+          else 'other'}
+    }
 
 def main():
     stamp=dt.datetime.now(dt.timezone.utc).strftime('%Y%m%dT%H%M%SZ')
