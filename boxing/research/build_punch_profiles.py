@@ -22,6 +22,7 @@ import statistics
 import unicodedata
 from collections import defaultdict
 from pathlib import Path
+from urllib.parse import urlsplit
 
 CATEGORIES=("total","jab","power")
 
@@ -57,6 +58,33 @@ def tables(db):
     return {r[0] for r in db.execute("select name from sqlite_master where type='table'")}
 
 
+def report_id(url):
+    m=re.search(r'(?:^|/)round-stats/(\d+)(?:/|$)',urlsplit(str(url or '')).path)
+    return m.group(1) if m else str(url or '')
+
+def title_pair(title):
+    s=re.sub(r'\s+',' ',str(title or '')).strip()
+    m=re.match(r'^(.+?)\s+(UD|SD|MD|KO|TKO|RTD|DQ|PTS|TD|DRAW|NC)\s+(\d{1,2})\s+(.+?)$',s,re.I)
+    return (m.group(1).strip(),m.group(4).strip()) if m else None
+
+def _name_core(value):
+    x=norm_name(value)
+    return re.sub(r'(?:jr|sr|ii|iii|iv)$','',x)
+
+def resolve_title_identities(labels,title):
+    pair=title_pair(title)
+    if not pair:return {}
+    out={}
+    for label in labels:
+        lk=_name_core(label)
+        candidates=[full for full in pair if lk and _name_core(full).endswith(lk)]
+        if len(candidates)==1:
+            out[label]=candidates[0]
+    if len(out)==2 and len({norm_name(x) for x in out.values()})==2:
+        return out
+    return {}
+
+
 def load_reports(db):
     t=tables(db)
     if not {'punch_reports','round_punches'}<=t:
@@ -66,25 +94,40 @@ def load_reports(db):
     if 'fight_punch_totals' in t:
         for row in db.execute("select report_url,fighter_label,category,landed,body_landed,thrown from fight_punch_totals"):
             total_lookup[(row[0],row[1],row[2])]={'landed':row[3],'body_landed':row[4],'thrown':row[5]}
+    grouped=defaultdict(list)
+    for row in report_rows:
+        grouped[report_id(row[0])].append(row)
+    host_priority={'beta.compuboxdata.com':0,'app2.compuboxdata.com':1,'api2.compuboxdata.com':2}
     out=[]
-    for url,bout_date,title,status in report_rows:
-        rows=db.execute("select fighter_label,round,category,landed,thrown from round_punches where report_url=? order by round,category,fighter_label",(url,)).fetchall()
-        fighters=sorted({r[0] for r in rows if r[2]=='total' and norm_name(r[0])})
-        if len(fighters)!=2:continue
-        by=defaultdict(dict)
-        for fighter,rnd,cat,landed,thrown in rows:
-            if fighter in fighters and cat in CATEGORIES:
-                by[fighter][(int(rnd),cat)]=(int(landed),int(thrown))
-        common=sorted(set(r for r,c in by[fighters[0]] if c=='total') & set(r for r,c in by[fighters[1]] if c=='total'))
-        if not common:continue
-        out.append({'url':url,'date':bout_date,'title':title or '', 'fighters':fighters,'by':by,'rounds':common,'totals':total_lookup})
+    for rid,variants in sorted(grouped.items(),key=lambda kv:(kv[1][0][1],kv[0])):
+        variants=sorted(variants,key=lambda r:(host_priority.get(urlsplit(r[0]).hostname,9),r[0]))
+        chosen=None
+        for url,bout_date,title,status in variants:
+            rows=db.execute("select fighter_label,round,category,landed,thrown from round_punches where report_url=? order by round,category,fighter_label",(url,)).fetchall()
+            fighters=sorted({r[0] for r in rows if r[2]=='total' and norm_name(r[0])})
+            if len(fighters)!=2:continue
+            by=defaultdict(dict)
+            for fighter,rnd,cat,landed,thrown in rows:
+                if fighter in fighters and cat in CATEGORIES:
+                    by[fighter][(int(rnd),cat)]=(int(landed),int(thrown))
+            common=sorted(set(r for r,cat in by[fighters[0]] if cat=='total') & set(r for r,cat in by[fighters[1]] if cat=='total'))
+            if not common:continue
+            identities=resolve_title_identities(fighters,title or '')
+            chosen={'url':url,'report_id':rid,'date':bout_date,'title':title or '',
+                    'fighters':fighters,'identity_map':identities,'by':by,'rounds':common,
+                    'totals':total_lookup,'variant_count':len(variants)}
+            break
+        if chosen:out.append(chosen)
     return out
-
 
 def summarize_side(report,fighter,opponent):
     by=report['by'];rounds=report['rounds']
-    result={'report_url':report['url'],'bout_date':report['date'],'report_title':report['title'],
-            'fighter_label':fighter,'fighter_key':norm_name(fighter),'opponent_label':opponent,'opponent_key':norm_name(opponent),
+    full=report.get('identity_map',{}).get(fighter)
+    opp_full=report.get('identity_map',{}).get(opponent)
+    result={'report_url':report['url'],'report_id':report.get('report_id'),'bout_date':report['date'],'report_title':report['title'],
+            'fighter_label':fighter,'fighter_full_name':full,'fighter_key':norm_name(full) if full else None,
+            'opponent_label':opponent,'opponent_full_name':opp_full,'opponent_key':norm_name(opp_full) if opp_full else None,
+            'identity_quality':'report_title_full_name_suffix_match' if full and opp_full else 'unresolved_report_label',
             'rounds_observed':len(rounds)}
     for cat in CATEGORIES:
         f=[by[fighter].get((r,cat)) for r in rounds]
@@ -138,9 +181,13 @@ def pre_fight_profiles(observations):
         # Freeze same-day state: every snapshot is created before any side from this report is added.
         pending=[]
         for row in fight_rows:
+            if not row.get('fighter_key'):
+                continue
             h=history[row['fighter_key']]
             snap={'bout_date':date,'report_url':url,'fighter_key':row['fighter_key'],'fighter_label':row['fighter_label'],
-                  'opponent_key':row['opponent_key'],'opponent_label':row['opponent_label'],
+                  'fighter_full_name':row.get('fighter_full_name'),'opponent_key':row.get('opponent_key'),
+                  'opponent_label':row['opponent_label'],'opponent_full_name':row.get('opponent_full_name'),
+                  'identity_quality':row.get('identity_quality'),
                   'prior_punch_fights':len(h),'prior_punch_rounds':sum(x['rounds_observed'] for x in h)}
             for cat in CATEGORIES:
                 for metric in ('landed_per_round','thrown_per_round','accuracy_pct','avoidance_pct','net_landed_per_round','round_edge_rate','landed_diff_slope','late_vs_early_net_delta'):
@@ -169,6 +216,9 @@ def main():
         for row in snaps:f.write(json.dumps(row,sort_keys=True)+'\n')
     coverage={
         'parsed_reports_with_two_sides':len(reports),
+        'unique_report_ids':len({r.get('report_id') for r in reports}),
+        'resolved_full_identity_reports':sum(len(r.get('identity_map',{}))==2 for r in reports),
+        'duplicate_source_variants_collapsed':sum(max(0,int(r.get('variant_count',1))-1) for r in reports),
         'fighter_fight_observations':len(obs),
         'prefight_snapshots':len(snaps),
         'fighters_with_any_prior_punch_fight':len({r['fighter_key'] for r in snaps if r['prior_punch_fights']>0}),
