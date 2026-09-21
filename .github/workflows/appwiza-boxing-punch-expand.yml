@@ -8,6 +8,7 @@ on:
       - '.github/workflows/appwiza-boxing-punch-expand.yml'
       - 'boxing/collectors/punch_collect.py'
       - 'boxing/research/discover_archived_compubox_links.py'
+      - 'boxing/research/import_archived_compubox_rounds.py'
 
 permissions:
   contents: read
@@ -31,6 +32,8 @@ jobs:
           mv "$ROOT/punch_collect.py.new" "$ROOT/punch_collect.py"
           cp "$GITHUB_WORKSPACE/boxing/research/discover_archived_compubox_links.py" "$ROOT/discover_archived_compubox_links.py.new"
           mv "$ROOT/discover_archived_compubox_links.py.new" "$ROOT/discover_archived_compubox_links.py"
+          cp "$GITHUB_WORKSPACE/boxing/research/import_archived_compubox_rounds.py" "$ROOT/import_archived_compubox_rounds.py.new"
+          mv "$ROOT/import_archived_compubox_rounds.py.new" "$ROOT/import_archived_compubox_rounds.py"
           [ "$(systemctl is-active boxing-archive.service 2>/dev/null || true)" != active ] || { echo 'boxing-archive.service is active; refusing concurrent write'; exit 2; }
           available=$(df -Pk . | awk 'NR==2 {print $4}')
           [ "$available" -ge 2097152 ] || { echo 'Less than 2 GiB free; refusing collection'; exit 3; }
@@ -53,6 +56,7 @@ jobs:
           if [ -f external_evidence_collect.py ]; then
             nice -n 15 venv/bin/python -u external_evidence_collect.py --pages 500 | tee EXTERNAL_EVIDENCE_PUNCH_EXPAND.latest.log
           fi
+          nice -n 15 venv/bin/python -u import_archived_compubox_rounds.py --apply | tee ARCHIVED_COMPUBOX_IMPORT.latest.log
           nice -n 15 venv/bin/python -u punch_collect.py | tee PUNCH_EXPAND.latest.log
           venv/bin/python - <<'PY'
           import sqlite3,json,datetime
