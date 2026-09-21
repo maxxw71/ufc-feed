@@ -1,0 +1,56 @@
+name: Boxing deep data gap audit
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/boxing-deep-data-gap-audit.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  audit:
+    runs-on: [self-hosted, Linux, X64, appwiza]
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - name: Audit live boxing feature coverage
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import sqlite3,json,collections
+          p='/home/anestishkurti92/boxing-research/boxing.sqlite3'
+          d=sqlite3.connect(f'file:{p}?mode=ro',uri=True,timeout=30);d.row_factory=sqlite3.Row
+          tables={r[0] for r in d.execute("select name from sqlite_master where type='table'")}
+          wanted=['bouts','fighters','normalized_fighters','priced_bout_research','commission_reports','wiki_bout_context','pre_bout_features','enriched_pre_bout']
+          out={}
+          for t in wanted:
+              if t not in tables:continue
+              cols=[r[1] for r in d.execute(f'pragma table_info("{t}")')]
+              count=d.execute(f'select count(*) from "{t}"').fetchone()[0]
+              nonnull={}
+              for c in cols:
+                  q='"'+c.replace('"','""')+'"'
+                  try:
+                      n=d.execute(f'select count(*) from "{t}" where {q} is not null and trim(cast({q} as text))<>""').fetchone()[0]
+                      nonnull[c]=n
+                  except Exception:pass
+              out[t]={'rows':count,'columns':cols,'nonnull':nonnull}
+          # top JSON keys from career bout data, which often hide useful context.
+          keys=collections.Counter()
+          for r in d.execute("select data from bouts where data is not null limit 50000"):
+              try:
+                  x=json.loads(r[0])
+                  if isinstance(x,dict):keys.update(x.keys())
+              except Exception:pass
+          out['bout_json_keys']=keys.most_common(120)
+          # Commission report kinds/statuses only; no raw docs.
+          if 'commission_reports' in tables:
+              cols=out['commission_reports']['columns']
+              for c in ['kind','type','status','commission','state','jurisdiction','source']:
+                  if c in cols:
+                      out['commission_reports'][c+'_counts']=[list(x) for x in d.execute(f'select "{c}",count(*) from commission_reports group by 1 order by 2 desc limit 30')]
+          print(json.dumps(out,ensure_ascii=False))
+          PY
