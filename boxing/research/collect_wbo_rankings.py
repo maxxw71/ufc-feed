@@ -30,6 +30,12 @@ ALIASES={
  'super welterweight':'junior middleweight','super lightweight':'junior welterweight',
  'super featherweight':'junior lightweight','super bantamweight':'junior featherweight',
  'super flyweight':'junior bantamweight','light flyweight':'junior flyweight',
+ 'jr middleweight':'junior middleweight','jr welterweight':'junior welterweight',
+ 'jr lightweight':'junior lightweight','jr featherweight':'junior featherweight',
+ 'jr bantamweight':'junior bantamweight','jr flyweight':'junior flyweight',
+ 'jr. middleweight':'junior middleweight','jr. welterweight':'junior welterweight',
+ 'jr. lightweight':'junior lightweight','jr. featherweight':'junior featherweight',
+ 'jr. bantamweight':'junior bantamweight','jr. flyweight':'junior flyweight',
  'strawweight':'minimumweight'
 }
 DIVMAP={re.sub(r'[^a-z]','',x):x for x in DIVISIONS}
