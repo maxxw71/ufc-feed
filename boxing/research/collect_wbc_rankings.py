@@ -19,7 +19,7 @@ DIVS=[
  ('bridgerweight',['BRIDGERWEIGHT']),
  ('cruiserweight',['CRUISERWEIGHT']),
  ('light heavyweight',['LIGHT HEAVYWEIGHT','LT. HEAVYWEIGHT','LT HEAVYWEIGHT']),
- ('super middleweight',['SUPER MIDDLEWEIGHT','SUPER-MIDDLEWEIGHT']),
+ ('super middleweight',['SUPER MIDDLEWEIGHT','SUPERMIDDLEWEIGHT','SUPER-MIDDLEWEIGHT']),
  ('middleweight',['MIDDLEWEIGHT']),
  ('super welterweight',['SUPER WELTERWEIGHT','SUPERWELTERWEIGHT','SUPER-WELTERWEIGHT']),
  ('welterweight',['WELTERWEIGHT']),
@@ -43,9 +43,13 @@ def urls(y,month):
     # WBC file layout changed over time; finite documented filename variants.
     names=[
       f'WBC_RATINGS_{month}_{y}.pdf',
+      f'_WBC_RATINGS_{month}_{y}.pdf',
       f'WBC_RATINGS_{month}_%20{y}.pdf',
+      f'_WBC_RATINGS_{month}_%20{y}.pdf',
       f'WBC_RATINGS_{month}%20_{y}.pdf',
+      f'_WBC_RATINGS_{month}%20_{y}.pdf',
       f'WBC_RATINGS_{month}_%20{y}_.pdf',
+      f'_WBC_RATINGS_{month}_%20{y}_.pdf',
     ]
     bases=[
       f'https://wbcboxing.com/mailing/{y}/ratings_pdf/',
