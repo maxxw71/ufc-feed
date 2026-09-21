@@ -1,0 +1,45 @@
+name: Appwiza boxing public export audit
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/appwiza-boxing-public-export-audit.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  audit:
+    if: github.repository == 'maxxw71/ufc-feed' && github.ref == 'refs/heads/main'
+    runs-on: [self-hosted, Linux, X64, appwiza]
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - name: Compare public and live boxing schemas
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          LIVE=/home/anestishkurti92/boxing-research/boxing.sqlite3
+          ZIP=/srv/appwiza-sports/public/downloads/boxing/research-database.zip
+          test -f "$LIVE"; test -f "$ZIP"
+          TMP=$(mktemp -d)
+          trap 'rm -rf "$TMP"' EXIT
+          unzip -qq "$ZIP" -d "$TMP"
+          PUB=$(find "$TMP" -maxdepth 1 -name '*.sqlite3' | head -1)
+          python3 - "$PUB" "$LIVE" <<'PY'
+          import sqlite3,sys,json,os
+          def snap(p):
+              d=sqlite3.connect(f'file:{p}?mode=ro',uri=True,timeout=15)
+              tables=[r[0] for r in d.execute("select name from sqlite_master where type='table' order by name")]
+              return {
+                'path':p,'bytes':os.path.getsize(p),'tables':tables,
+                'counts':{t:d.execute('select count(*) from "'+t.replace('"','""')+'"').fetchone()[0] for t in tables}
+              }
+          pub,live=map(snap,sys.argv[1:3])
+          print('PUBLIC='+json.dumps(pub,sort_keys=True))
+          print('LIVE='+json.dumps(live,sort_keys=True))
+          print('PUBLIC_ONLY='+json.dumps(sorted(set(pub['tables'])-set(live['tables']))))
+          print('LIVE_ONLY='+json.dumps(sorted(set(live['tables'])-set(pub['tables']))))
+          PY
