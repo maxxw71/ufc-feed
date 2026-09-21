@@ -7,7 +7,7 @@ on the first day of the FOLLOWING month, preventing same-month publication
 timing leakage when exact publication timestamp is unknown.
 """
 from __future__ import annotations
-import datetime as dt, hashlib, io, json, re, urllib.request
+import datetime as dt, hashlib, io, json, re, time, urllib.error, urllib.request
 from pathlib import Path
 from pypdf import PdfReader
 
@@ -60,14 +60,28 @@ def urls(y,month):
 
 def fetch_pdf(y,month):
     for url in urls(y,month):
-      try:
-        req=urllib.request.Request(url,headers={'User-Agent':UA,'Accept':'application/pdf'})
-        with urllib.request.urlopen(req,timeout=25) as r:
-          data=r.read(12_000_001)
-          final=r.geturl()
-        if data.startswith(b'%PDF') and 20_000<len(data)<=12_000_000:
-          return final,data
-      except Exception: pass
+      last=None
+      for attempt in range(3):
+        try:
+          req=urllib.request.Request(url,headers={
+            'User-Agent':UA,
+            'Accept':'application/pdf,*/*;q=0.8',
+            'Referer':'https://wbcboxing.com/',
+            'Accept-Language':'en-US,en;q=0.8',
+          })
+          with urllib.request.urlopen(req,timeout=30) as r:
+            data=r.read(12_000_001)
+            final=r.geturl()
+          if data.lstrip().startswith(b'%PDF') and 20_000<len(data)<=12_000_000:
+            return final,data
+          break
+        except urllib.error.HTTPError as e:
+          last=e
+          if e.code not in {408,425,429,500,502,503,504,520,521,522,523,524}:
+            break
+        except urllib.error.URLError as e:
+          last=e
+        if attempt<2: time.sleep(1.0*(2**attempt))
     return None,None
 
 def clean_line(x):
