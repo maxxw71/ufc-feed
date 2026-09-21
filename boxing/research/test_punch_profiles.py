@@ -61,5 +61,24 @@ class PunchProfileIntegrityTests(unittest.TestCase):
         self.assertIsNone(one['body_landed'])
         self.assertIsNone(one['body_landed_share_pct'])
 
+
+    def test_verified_archive_full_labels_resolve(self):
+        d=self.db()
+        self.add_report(
+            d,
+            'https://web.archive.org/web/1/http://compuboxonline.com/a',
+            '2009-09-19',
+            'Floyd Mayweather Jr. vs Juan Manuel Marquez archived CompuBox',
+            'Floyd Mayweather Jr.','Juan Manuel Marquez'
+        )
+        reports=load_reports(d)
+        self.assertEqual(1,len(reports))
+        obs=fight_observations(reports)
+        self.assertEqual(
+            {'floydmayweatherjr','juanmanuelmarquez'},
+            {r['fighter_key'] for r in obs}
+        )
+        self.assertTrue(all(r['identity_quality']=='report_title_full_name_suffix_match' for r in obs))
+
 if __name__=='__main__':
     unittest.main()
