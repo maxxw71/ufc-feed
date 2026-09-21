@@ -197,6 +197,7 @@ def main():
           'champion_rows':len(usablec),'posting_date_source':posting_url,
           'superseded_same_post_date_documents':len({x['safe_effective_date'] for x in raw_usable})-len(latest_doc_by_date),
           'quarantined_conflicting_rank_slots':len(conflicts),
+          'conflicting_rank_slot_sample':conflicts[:30],
           'policy':'Official WBA monthly PDFs only. If multiple rating months share one official posting date, only the later rating month is retained. Conflicting rank slots are quarantined. No month-end backdating.'}
     (OUT/'wba_monthly_rankings_meta.json').write_text(json.dumps(meta,indent=2,ensure_ascii=False))
     print(json.dumps({k:meta[k] for k in ['parsed_documents','usable_documents','ranking_rows','champion_rows','posting_date_source']},indent=2))
