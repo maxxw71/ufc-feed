@@ -94,14 +94,40 @@ def stats(hist, date, opponent_id=None, links=None, histories=None, strength_by_
     return out
 
 
+ALLOWED_CAREER_SOURCES=('wikipedia','champinon','wba_consensus')
+
+def explicit_opponent_strength(row):
+    try:data=json.loads(row.get('data') or '{}')
+    except Exception:return None
+    candidates=[
+        data.get('opponent_record_at_bout'),
+        data.get("opponent's pre-fight record"),
+        data.get("opponent's record"),
+        data.get('opp record'),
+    ]
+    for value in candidates:
+        if isinstance(value,dict):
+            try:w=int(value.get('wins',0));l=int(value.get('losses',0))
+            except Exception:continue
+        else:
+            m=re.search(r'(\d+)\s*[–−-]\s*(\d+)(?:\s*[–−-]\s*(\d+))?',str(value or ''))
+            if not m:continue
+            w,l=int(m.group(1)),int(m.group(2))
+        if w+l>=5:return w/(w+l)
+    return None
+
 def main():
     db = sqlite3.connect(ROOT / 'boxing.sqlite3', timeout=120)
     db.row_factory = sqlite3.Row
     db.execute('BEGIN')
     histories = collections.defaultdict(list)
-    for row in db.execute("SELECT * FROM bouts WHERE source='wikipedia' AND status='FINISHED' ORDER BY date,source_id"):
+    marks=','.join('?'*len(ALLOWED_CAREER_SOURCES))
+    for row in db.execute(f"SELECT * FROM bouts WHERE source in ({marks}) AND status='FINISHED' ORDER BY date,source_id",ALLOWED_CAREER_SOURCES):
         histories[row['url']].append(dict(row))
     links = {r['bout_id']: r['opponent_id'] for r in db.execute("SELECT * FROM opponent_links WHERE evidence='reciprocal_result_confirmed'")}
+    if db.execute("select 1 from sqlite_master where type='table' and name='opponent_links_v2'").fetchone():
+        for r in db.execute("select bout_id,opponent_id from opponent_links_v2 where evidence='reciprocal_result_observed_alias'"):
+            links.setdefault(r['bout_id'],r['opponent_id'])
     db.commit()
     # Prefix totals freeze each past opponent at the earlier meeting's date.
     # Reuse them rather than reconstructing that record for every later bout.
@@ -121,6 +147,10 @@ def main():
                 pos = bisect.bisect_left(dates, row['date'])
                 if wins[pos] + losses[pos] >= 5:
                     strength_by_id[row['source_id']] = wins[pos] / (wins[pos] + losses[pos])
+                    continue
+            x=explicit_opponent_strength(row)
+            if x is not None:
+                strength_by_id[row['source_id']]=x
     db.execute('''CREATE TABLE IF NOT EXISTS enriched_pre_bout(
         source_id TEXT PRIMARY KEY,bout_date TEXT,fighter_id TEXT,opponent_id TEXT,
         features_json TEXT,input_bout_ids_json TEXT,built_at TEXT)''')
@@ -153,7 +183,9 @@ def main():
     db.execute('INSERT INTO enriched_pre_bout SELECT * FROM next_enriched')
     db.commit()
     report = {'built_at': stamp, 'per_fighter_fields': len(stats([], '2026-01-01', None, {}, {})),
-              'years': dict(sorted(years.items())), 'notes': ['Source observations overlap; not unique fights.', 'No current profile snapshots used.', 'Missing rounds stay unknown.', 'Both-five-prior is coverage, not research eligibility.']}
+              'career_sources': list(ALLOWED_CAREER_SOURCES), 'identity_links_used': len(links),
+              'opponent_strength_rows': len(strength_by_id),
+              'years': dict(sorted(years.items())), 'notes': ['Source observations overlap; not unique fights.', 'No current profile snapshots used.', 'Missing rounds stay unknown.', 'Both-five-prior is coverage, not research eligibility.', 'Opponent strength uses linked point-in-time histories first and source-stated pre-fight records second.']}
     (ROOT / 'ENRICHED_COVERAGE.json').write_text(json.dumps(report, indent=2))
     print(json.dumps(report, indent=2))
 
