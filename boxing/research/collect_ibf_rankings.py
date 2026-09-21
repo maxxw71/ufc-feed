@@ -135,8 +135,19 @@ def main():
                          'rating_month_raw':item.get('rating_month'),'published_date':posted.isoformat(),
                          'safe_effective_date':safe,'ranking_rows':len(ranks),'champions':len(champs),'source_url':url})
 
-    # Exact duplicates collapse. If the API ever exposes conflicting names for
-    # one body/date/division/rank, quarantine that slot instead of choosing.
+    # Historical migrations sometimes bulk-published several nominal rating
+    # months on one WordPress date. With no intraday ordering, retain only the
+    # latest nominal rating period for each publication date so old snapshots
+    # are never treated as simultaneously current.
+    latest_period={}
+    for r in allr+allc:
+        key=r['safe_effective_date'];per=(int(r.get('rating_year') or 0),int(r.get('rating_month') or 0))
+        if per>latest_period.get(key,(0,0)):latest_period[key]=per
+    allr=[r for r in allr if (int(r.get('rating_year') or 0),int(r.get('rating_month') or 0))==latest_period[r['safe_effective_date']]]
+    allc=[r for r in allc if (int(r.get('rating_year') or 0),int(r.get('rating_month') or 0))==latest_period[r['safe_effective_date']]]
+
+    # Exact duplicates collapse. Any residual body/date/division/rank conflict
+    # is quarantined instead of choosing a contender arbitrarily.
     grouped={}
     for r in allr:grouped.setdefault((r['safe_effective_date'],r['division'],r['rank']),[]).append(r)
     clean_rows=[];conflicts=[]
@@ -165,7 +176,8 @@ def main():
       'date_min':min((r['safe_effective_date'] for r in ranks),default=None),
       'date_max':max((r['safe_effective_date'] for r in ranks),default=None),
       'quarantined_conflicting_rank_slots':len(conflicts),'conflicting_rank_slot_sample':conflicts[:30],
-      'policy':'Official IBF public ratings API only. Safe effective date is one day after official post_date. Empty rank slots remain missing; nothing is inferred.'
+      'same_post_date_periods_collapsed':len({d['safe_effective_date'] for d in docs}),
+      'policy':'Official IBF public ratings API only. Safe effective date is one day after official post_date. If historical months share a publication date, only the latest nominal period is retained. Empty rank slots remain missing; nothing is inferred.'
     }
     (OUT/'ibf_monthly_rankings_meta.json').write_text(json.dumps(meta,indent=2,ensure_ascii=False))
     print(json.dumps({k:meta[k] for k in ['weight_classes_requested','division_period_documents','ranking_rows','champion_rows','years','rating_periods','date_min','date_max','quarantined_conflicting_rank_slots']},indent=2))
