@@ -54,6 +54,30 @@ def parse_champinon(name):
     if bm:
         try:born=dateparse(bm.group(1)).date().isoformat()
         except Exception:born=None
+
+    # Champinon exposes useful current profile fields in visible page text.
+    # Preserve them as static/current proxies only; never backdate them.
+    profile={}
+    patterns={
+      'Nationality':r'Nationality:\s*([^\n]+)',
+      'Division':r'Division:\s*([^\n]+)',
+      'Weight':r'Weight:\s*([^\n]+)',
+      'Height':r'Height:\s*([^\n]+)',
+      'Reach':r'Reach:\s*([^\n]+)',
+      'Stance':r'Stance:\s*([^\n]+)',
+      'Birth place':r'Birth place:\s*([^\n]+)',
+      'Residence':r'Residence:\s*([^\n]+)',
+      'Alias':r'Alias:\s*([^\n]+)',
+      'BoxRec ID':r'BoxRec ID:\s*([^\n]+)',
+    }
+    for key,pat in patterns.items():
+        m=re.search(pat,text,re.I)
+        if m:
+            v=re.sub(r'\s+',' ',m.group(1)).strip()
+            if v and v.lower() not in {'n/a','unknown','--'}: profile[key]=v
+    if 'Weight' not in profile and 'Division' in profile:
+        profile['Weight']=profile['Division']
+
     rows=[];seen=set()
     for table in soup.find_all('table'):
         trs=table.find_all('tr')
@@ -110,7 +134,7 @@ def parse_champinon(name):
     if stated_total is not None and w+l+d+nc!=stated_total:
         raise ValueError(f'career total mismatch parsed={w+l+d+nc} stated={stated_total}')
     complete=bool(stated_total is not None and (stated_record is None or (w,l,d)==stated_record))
-    return {'title':title,'url':url,'born':born,'profile':{},'rows':rows,
+    return {'title':title,'url':url,'born':born,'profile':profile,'rows':rows,
             'stated_total':stated_total,'stated_record':stated_record,
             'career_complete':complete,'parsed_record':(w,l,d),'no_contests':nc}
 
