@@ -18,4 +18,16 @@ class ProspectiveOdds(unittest.TestCase):
         fd=[r for r in rows if r['bookmaker']=='FanDuel' and r['selection']=='Alpha'][0]
         self.assertAlmostEqual(fd['decimal_price'],1.5)
 
+
+    def test_non_heading_date_label(self):
+        html='''<a class="date-tab">September 26th Boxing Odds</a><div><table class="odds-table"><thead><tr><th></th><th data-b="1">FanDuel</th></tr></thead><tbody>
+        <tr><th>19:00 <a href="/fighters/a">Alpha</a></th><td class="but-sg" data-li="[1,1,11]"><span id="oID11">-150</span></td></tr>
+        <tr><th>UTC <a href="/fighters/b">Beta</a></th><td class="but-sg" data-li="[1,2,11]"><span id="oID12">+130</span></td></tr>
+        </tbody></table></div>'''
+        now=dt.datetime(2026,9,21,12,tzinfo=dt.timezone.utc)
+        rows=parse_home(html,now)
+        self.assertEqual({r['event_date'] for r in rows},{'2026-09-26'})
+        self.assertEqual({r['event_start_utc'] for r in rows},{'2026-09-26T19:00:00Z'})
+        self.assertEqual({r['timing_quality'] for r in rows},{'verified_pre_event_time'})
+
 if __name__=='__main__':unittest.main()
