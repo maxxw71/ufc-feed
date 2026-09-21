@@ -210,6 +210,7 @@ def main():
                     sides[label]={'id':who,'record_totals_match':record_matches(h,date,s),'summary':s,'extended':ex,
                         'age_from_biography':age(p.get('born'),date),'height_cm_static_proxy':p.get('height_cm'),'reach_cm_static_proxy':p.get('reach_cm'),
                         'stance_static_proxy':p.get('stance'),'nationality_static_proxy':p.get('nationality'),
+                        'weight_class_static_proxy':p.get('weight_class_snapshot'),
                         'physical_proxy_quality':'identity-linked current biography snapshot when available; height/reach treated as stable adult proxies; stance/nationality exploratory only',
                         'elo':rating,'elo_prior_verified_bouts':n,'last8_wins':sum(x['winner']=='BOXER A' for x in prior[-8:]),'last8_sample':len(prior[-8:]),
                         'input_bout_ids':[x['source_id'] for x in prior]}
