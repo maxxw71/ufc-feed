@@ -10,7 +10,7 @@ inferred from WBA method text or row order. A career is accepted only when:
 - at least one archived priced matchup matches exact date + opponent.
 """
 from __future__ import annotations
-import argparse,collections,datetime as dt,json,re,sqlite3,time,unicodedata,urllib.request
+import argparse,collections,datetime as dt,json,re,sqlite3,time,unicodedata,urllib.parse,urllib.request
 from bs4 import BeautifulSoup
 from pathlib import Path
 from backfill_priced_careers import DB,OUT,nk,priced_missing,match_evidence
@@ -57,6 +57,13 @@ def parse_wba(name,wba_id):
         if not m:continue
         date=cells[3];opp=cells[1].strip()
         if not opp:continue
+        opp_url=None
+        opp_cell=tr.find_all(['th','td'],recursive=False)[1]
+        a=opp_cell.find('a',href=True) if opp_cell else None
+        if a:
+            candidate=urllib.parse.urljoin(url,a.get('href'))
+            if re.search(r'/wba-boxer-profile/?\?id=\d+',candidate,re.I):
+                opp_url=candidate.split('#')[0].rstrip('/')+'/'
         method_round=cells[0]
         mm=re.search(r'\b(KO|TKO|UD|SD|MD|PTS|RTD|DQ|TD|NC)\b',method_round,re.I)
         method=mm.group(1).upper() if mm else ''
@@ -65,6 +72,7 @@ def parse_wba(name,wba_id):
                      'division':cells[2] if len(cells)>2 else '',
                      'raw':{'method_round':method_round,'opponent':opp,'division':cells[2] if len(cells)>2 else '',
                             'date':date,'country':cells[4] if len(cells)>4 else '',
+                            'opponent_source_url':opp_url,
                             'source':'wba_profile'}})
     # Exact completeness gate: partial recent-fight WBA lists are rejected.
     if len(rows)!=sum(record):raise ValueError(f'partial WBA fight list {len(rows)}/{sum(record)}')
