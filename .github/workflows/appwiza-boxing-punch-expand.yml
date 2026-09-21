@@ -7,6 +7,7 @@ on:
     paths:
       - '.github/workflows/appwiza-boxing-punch-expand.yml'
       - 'boxing/collectors/punch_collect.py'
+      - 'boxing/research/discover_archived_compubox_links.py'
 
 permissions:
   contents: read
@@ -28,6 +29,8 @@ jobs:
           test -f boxing.sqlite3
           cp "$GITHUB_WORKSPACE/boxing/collectors/punch_collect.py" "$ROOT/punch_collect.py.new"
           mv "$ROOT/punch_collect.py.new" "$ROOT/punch_collect.py"
+          cp "$GITHUB_WORKSPACE/boxing/research/discover_archived_compubox_links.py" "$ROOT/discover_archived_compubox_links.py.new"
+          mv "$ROOT/discover_archived_compubox_links.py.new" "$ROOT/discover_archived_compubox_links.py"
           [ "$(systemctl is-active boxing-archive.service 2>/dev/null || true)" != active ] || { echo 'boxing-archive.service is active; refusing concurrent write'; exit 2; }
           available=$(df -Pk . | awk 'NR==2 {print $4}')
           [ "$available" -ge 2097152 ] || { echo 'Less than 2 GiB free; refusing collection'; exit 3; }
@@ -46,8 +49,9 @@ jobs:
           if 'punch_reports' in tabs:
               print('STATUS_BEFORE',list(d.execute('select status,count(*) from punch_reports group by status order by status')))
           PY
+          nice -n 15 venv/bin/python -u discover_archived_compubox_links.py --limit 500 | tee ARCHIVED_COMPUBOX_DISCOVERY.latest.log
           if [ -f external_evidence_collect.py ]; then
-            nice -n 15 venv/bin/python -u external_evidence_collect.py --pages 300 | tee EXTERNAL_EVIDENCE_PUNCH_EXPAND.latest.log
+            nice -n 15 venv/bin/python -u external_evidence_collect.py --pages 500 | tee EXTERNAL_EVIDENCE_PUNCH_EXPAND.latest.log
           fi
           nice -n 15 venv/bin/python -u punch_collect.py | tee PUNCH_EXPAND.latest.log
           venv/bin/python - <<'PY'
