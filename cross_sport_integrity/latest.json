@@ -1,0 +1,236 @@
+{
+  "built_at": "2026-09-21T06:46:00.390079+00:00",
+  "status": "FAIL",
+  "hard_failures": [
+    {
+      "name": "NFL canonical_future_tracker_exact",
+      "ok": false,
+      "detail": "canonical=[] tracker=['2026_03_LV_NO']",
+      "hard": true
+    }
+  ],
+  "warnings": [],
+  "checks": [
+    {
+      "name": "sports_surface_inventory",
+      "ok": true,
+      "detail": "public_dirs=['boxing', 'downloads', 'nfl', 'ufc']; state_files=['downloads', 'nfl', 'ufc']",
+      "hard": false
+    },
+    {
+      "name": "NFL canonical_public_current_exact",
+      "ok": true,
+      "detail": "canonical=[] public=[]",
+      "hard": true
+    },
+    {
+      "name": "NFL canonical_state_ids_exact",
+      "ok": true,
+      "detail": "canonical=[] state=[]",
+      "hard": true
+    },
+    {
+      "name": "NFL rejected_not_canonical",
+      "ok": true,
+      "detail": "overlap=[]",
+      "hard": true
+    },
+    {
+      "name": "NFL canonical_future_tracker_exact",
+      "ok": false,
+      "detail": "canonical=[] tracker=['2026_03_LV_NO']",
+      "hard": true
+    },
+    {
+      "name": "NFL common_production_guard_installed",
+      "ok": true,
+      "detail": "",
+      "hard": true
+    },
+    {
+      "name": "NFL canonical_surface_installed",
+      "ok": true,
+      "detail": "",
+      "hard": true
+    },
+    {
+      "name": "NFL render_isolation_installed",
+      "ok": true,
+      "detail": "",
+      "hard": true
+    },
+    {
+      "name": "NFL m_record_fail_closed",
+      "ok": true,
+      "detail": "",
+      "hard": true
+    },
+    {
+      "name": "NFL page_missing_audit_fails_closed",
+      "ok": true,
+      "detail": "NFL public deep-audit must never treat a missing row as scanner-qualified/monitor",
+      "hard": true
+    },
+    {
+      "name": "NFL page_missing_preseason_fails_closed",
+      "ok": true,
+      "detail": "missing deep-audit preseason status must be no-bet",
+      "hard": true
+    },
+    {
+      "name": "UFC canonical_public_current_exact",
+      "ok": true,
+      "detail": "canonical=['UFC:ufc-332:deivesonfigueiredo:paytontalbott', 'UFC:ufc-fight-night-september-26-2026:robertbryczek:rodolfovieira', 'UFC:ufc-fight-night-september-26-2026:vanessademopoulos:yazminjauregui'] public=['UFC:ufc-332:deivesonfigueiredo:paytontalbott', 'UFC:ufc-fight-night-september-26-2026:robertbryczek:rodolfovieira', 'UFC:ufc-fight-night-september-26-2026:vanessademopoulos:yazminjauregui']",
+      "hard": true
+    },
+    {
+      "name": "UFC canonical_state_ids_exact",
+      "ok": true,
+      "detail": "canonical=['UFC:ufc-332:deivesonfigueiredo:paytontalbott', 'UFC:ufc-fight-night-september-26-2026:robertbryczek:rodolfovieira', 'UFC:ufc-fight-night-september-26-2026:vanessademopoulos:yazminjauregui'] state=['UFC:ufc-332:deivesonfigueiredo:paytontalbott', 'UFC:ufc-fight-night-september-26-2026:robertbryczek:rodolfovieira', 'UFC:ufc-fight-night-september-26-2026:vanessademopoulos:yazminjauregui']",
+      "hard": true
+    },
+    {
+      "name": "UFC methods_exact:UFC:ufc-332:deivesonfigueiredo:paytontalbott",
+      "ok": true,
+      "detail": "canonical=['U1', 'U7', 'U8'] state=['U1', 'U7', 'U8']",
+      "hard": true
+    },
+    {
+      "name": "UFC methods_exact:UFC:ufc-fight-night-september-26-2026:robertbryczek:rodolfovieira",
+      "ok": true,
+      "detail": "canonical=['U5'] state=['U5']",
+      "hard": true
+    },
+    {
+      "name": "UFC methods_exact:UFC:ufc-fight-night-september-26-2026:vanessademopoulos:yazminjauregui",
+      "ok": true,
+      "detail": "canonical=['U1', 'U2', 'U4', 'U8'] state=['U1', 'U2', 'U4', 'U8']",
+      "hard": true
+    },
+    {
+      "name": "UFC canonical_future_tracker_exact",
+      "ok": true,
+      "detail": "canonical=['UFC:ufc-332:deivesonfigueiredo:paytontalbott', 'UFC:ufc-fight-night-september-26-2026:robertbryczek:rodolfovieira', 'UFC:ufc-fight-night-september-26-2026:vanessademopoulos:yazminjauregui'] tracker=['UFC:ufc-332:deivesonfigueiredo:paytontalbott', 'UFC:ufc-fight-night-september-26-2026:robertbryczek:rodolfovieira', 'UFC:ufc-fight-night-september-26-2026:vanessademopoulos:yazminjauregui']",
+      "hard": true
+    },
+    {
+      "name": "UFC extreme_no_bet_absent_from_canonical",
+      "ok": true,
+      "detail": "overlap=[]",
+      "hard": true
+    },
+    {
+      "name": "UFC extreme_no_bet_absent_from_state",
+      "ok": true,
+      "detail": "overlap=[]",
+      "hard": true
+    },
+    {
+      "name": "UFC extreme_no_bet_absent_from_tracker",
+      "ok": true,
+      "detail": "overlap=[]",
+      "hard": true
+    },
+    {
+      "name": "UFC no_live_price_at_or_below_minus2000",
+      "ok": true,
+      "detail": "bad=[]",
+      "hard": true
+    },
+    {
+      "name": "UFC canonical_surface_installed",
+      "ok": true,
+      "detail": "",
+      "hard": true
+    },
+    {
+      "name": "UFC extreme_price_gate_installed",
+      "ok": true,
+      "detail": "",
+      "hard": true
+    },
+    {
+      "name": "UFC render_isolation_installed",
+      "ok": true,
+      "detail": "",
+      "hard": true
+    },
+    {
+      "name": "MLS shadow_only",
+      "ok": true,
+      "detail": "shadow_only=True official_autopromotions=0",
+      "hard": true
+    },
+    {
+      "name": "MLS forward_record_no_autopromotion",
+      "ok": true,
+      "detail": "official_autopromotions=0",
+      "hard": true
+    },
+    {
+      "name": "MLS no_future_tracker_bets",
+      "ok": true,
+      "detail": "pending=0",
+      "hard": true
+    },
+    {
+      "name": "MLS no_live_public_bets_while_shadow_only",
+      "ok": true,
+      "detail": "active_cards=0",
+      "hard": true
+    },
+    {
+      "name": "BOXING registry_research_only",
+      "ok": true,
+      "detail": "status=research_watchlist",
+      "hard": true
+    },
+    {
+      "name": "BOXING no_live_methods",
+      "ok": true,
+      "detail": "live=[]",
+      "hard": true
+    },
+    {
+      "name": "BOXING no_future_tracker_bets",
+      "ok": true,
+      "detail": "pending=0",
+      "hard": true
+    },
+    {
+      "name": "BOXING no_live_public_bets_while_research_only",
+      "ok": true,
+      "detail": "active_cards=0",
+      "hard": true
+    },
+    {
+      "name": "no_unknown_future_pending_sports",
+      "ok": true,
+      "detail": "unknown={}",
+      "hard": true
+    }
+  ],
+  "inventory": {
+    "public_dirs": [
+      "boxing",
+      "downloads",
+      "nfl",
+      "ufc"
+    ],
+    "state_files": [
+      "downloads",
+      "nfl",
+      "ufc"
+    ],
+    "future_pending_by_sport": {
+      "UFC": 3,
+      "NFL": 1
+    }
+  },
+  "contract": {
+    "NFL": "LIVE_CANONICAL_ONLY",
+    "UFC": "LIVE_CANONICAL_ONLY_WITH_MINUS2000_NO_BET",
+    "MLS": "SHADOW_ONLY_NO_OFFICIAL_BETS",
+    "BOXING": "RESEARCH_ONLY_NO_OFFICIAL_BETS"
+  }
+}

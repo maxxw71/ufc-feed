@@ -1,0 +1,51 @@
+CROSS-SPORT APPROVAL INTEGRITY
+========================================================================================
+built_at: 2026-09-21T06:46:00.390079+00:00
+status: FAIL
+
+CONTRACT
+NFL: LIVE_CANONICAL_ONLY
+UFC: LIVE_CANONICAL_ONLY_WITH_MINUS2000_NO_BET
+MLS: SHADOW_ONLY_NO_OFFICIAL_BETS
+BOXING: RESEARCH_ONLY_NO_OFFICIAL_BETS
+
+HARD FAILURES
+- NFL canonical_future_tracker_exact: canonical=[] tracker=['2026_03_LV_NO']
+
+WARNINGS
+- none
+
+ALL CHECKS
+[PASS] sports_surface_inventory :: public_dirs=['boxing', 'downloads', 'nfl', 'ufc']; state_files=['downloads', 'nfl', 'ufc']
+[PASS] NFL canonical_public_current_exact :: canonical=[] public=[]
+[PASS] NFL canonical_state_ids_exact :: canonical=[] state=[]
+[PASS] NFL rejected_not_canonical :: overlap=[]
+[FAIL] NFL canonical_future_tracker_exact :: canonical=[] tracker=['2026_03_LV_NO']
+[PASS] NFL common_production_guard_installed :: 
+[PASS] NFL canonical_surface_installed :: 
+[PASS] NFL render_isolation_installed :: 
+[PASS] NFL m_record_fail_closed :: 
+[PASS] NFL page_missing_audit_fails_closed :: NFL public deep-audit must never treat a missing row as scanner-qualified/monitor
+[PASS] NFL page_missing_preseason_fails_closed :: missing deep-audit preseason status must be no-bet
+[PASS] UFC canonical_public_current_exact :: canonical=['UFC:ufc-332:deivesonfigueiredo:paytontalbott', 'UFC:ufc-fight-night-september-26-2026:robertbryczek:rodolfovieira', 'UFC:ufc-fight-night-september-26-2026:vanessademopoulos:yazminjauregui'] public=['UFC:ufc-332:deivesonfigueiredo:paytontalbott', 'UFC:ufc-fight-night-september-26-2026:robertbryczek:rodolfovieira', 'UFC:ufc-fight-night-september-26-2026:vanessademopoulos:yazminjauregui']
+[PASS] UFC canonical_state_ids_exact :: canonical=['UFC:ufc-332:deivesonfigueiredo:paytontalbott', 'UFC:ufc-fight-night-september-26-2026:robertbryczek:rodolfovieira', 'UFC:ufc-fight-night-september-26-2026:vanessademopoulos:yazminjauregui'] state=['UFC:ufc-332:deivesonfigueiredo:paytontalbott', 'UFC:ufc-fight-night-september-26-2026:robertbryczek:rodolfovieira', 'UFC:ufc-fight-night-september-26-2026:vanessademopoulos:yazminjauregui']
+[PASS] UFC methods_exact:UFC:ufc-332:deivesonfigueiredo:paytontalbott :: canonical=['U1', 'U7', 'U8'] state=['U1', 'U7', 'U8']
+[PASS] UFC methods_exact:UFC:ufc-fight-night-september-26-2026:robertbryczek:rodolfovieira :: canonical=['U5'] state=['U5']
+[PASS] UFC methods_exact:UFC:ufc-fight-night-september-26-2026:vanessademopoulos:yazminjauregui :: canonical=['U1', 'U2', 'U4', 'U8'] state=['U1', 'U2', 'U4', 'U8']
+[PASS] UFC canonical_future_tracker_exact :: canonical=['UFC:ufc-332:deivesonfigueiredo:paytontalbott', 'UFC:ufc-fight-night-september-26-2026:robertbryczek:rodolfovieira', 'UFC:ufc-fight-night-september-26-2026:vanessademopoulos:yazminjauregui'] tracker=['UFC:ufc-332:deivesonfigueiredo:paytontalbott', 'UFC:ufc-fight-night-september-26-2026:robertbryczek:rodolfovieira', 'UFC:ufc-fight-night-september-26-2026:vanessademopoulos:yazminjauregui']
+[PASS] UFC extreme_no_bet_absent_from_canonical :: overlap=[]
+[PASS] UFC extreme_no_bet_absent_from_state :: overlap=[]
+[PASS] UFC extreme_no_bet_absent_from_tracker :: overlap=[]
+[PASS] UFC no_live_price_at_or_below_minus2000 :: bad=[]
+[PASS] UFC canonical_surface_installed :: 
+[PASS] UFC extreme_price_gate_installed :: 
+[PASS] UFC render_isolation_installed :: 
+[PASS] MLS shadow_only :: shadow_only=True official_autopromotions=0
+[PASS] MLS forward_record_no_autopromotion :: official_autopromotions=0
+[PASS] MLS no_future_tracker_bets :: pending=0
+[PASS] MLS no_live_public_bets_while_shadow_only :: active_cards=0
+[PASS] BOXING registry_research_only :: status=research_watchlist
+[PASS] BOXING no_live_methods :: live=[]
+[PASS] BOXING no_future_tracker_bets :: pending=0
+[PASS] BOXING no_live_public_bets_while_research_only :: active_cards=0
+[PASS] no_unknown_future_pending_sports :: unknown={}
