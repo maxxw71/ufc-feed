@@ -22,7 +22,7 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-      - run: python -m pip install --disable-pip-version-check pypdf beautifulsoup4 lxml
+      - run: python -m pip install --disable-pip-version-check pdfplumber beautifulsoup4 lxml
       - name: Collect official WBA rankings
         run: python boxing/research/collect_wba_rankings.py
       - name: Persist official WBA archive
