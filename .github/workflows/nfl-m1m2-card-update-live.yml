@@ -1,0 +1,62 @@
+name: NFL M1 M2 Card Definition Update Live
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/nfl-m1m2-card-update-live.yml'
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: [self-hosted, Linux, X64, appwiza]
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - name: Update live M1 M2 definitions and refresh
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          KEY=/home/appwiza-runner/.ssh/appwiza_vps
+          HOST=anestishkurti92@127.0.0.1
+
+          ssh -i "$KEY" -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=accept-new "$HOST" 'bash -s' <<'EOF'
+          set -Eeuo pipefail
+          ROOT=/home/anestishkurti92/nfl-predictor-v1
+          R="$ROOT/research_v2"
+          P="$R/nfl_email_design.py"
+          TS=$(date -u +%Y%m%dT%H%M%SZ)
+          cp -a "$P" "/home/anestishkurti92/.nfl_email_design.pre-m-record-$TS.py"
+
+          "$ROOT/venv/bin/python" - <<'PY'
+          from pathlib import Path
+          p=Path('/home/anestishkurti92/nfl-predictor-v1/research_v2/nfl_email_design.py')
+          s=p.read_text()
+
+          old1="'original':('M1','Home opener · Run defense + preseason gate','92.2%','59 / 64','+25.2%','Archived opening prices · validated preseason refinement','Previous-season run defense in the top 10, a better regular-season record than the opponent, and at least 2 preseason wins when the league held a preseason.'),"
+          new1="'original':('M1','Home opener · Run defense + .500 record + preseason gate','93.1%','54 / 58','+24.6%','Archived opening prices · validated prior-record + preseason refinement','Previous-season run defense in the top 10, prior-season home record at least .500, a better regular-season record than the opponent, and at least 2 preseason wins when the league held a preseason.'),"
+          old2="'stricter':('M2','Home opener · Larger record edge + preseason gate','93.8%','45 / 48','+24.3%','Archived opening prices · validated preseason refinement','All M1 conditions, plus a winning-percentage advantage greater than 12.5 percentage points.'),"
+          new2="'stricter':('M2','Home opener · .500 record + larger edge + preseason gate','95.7%','44 / 46','+25.9%','Archived opening prices · validated prior-record + preseason refinement','All M1 conditions, including prior-season home record at least .500, plus a winning-percentage advantage greater than 12.5 percentage points.'),"
+          if old1 not in s or old2 not in s:
+              raise RuntimeError('M1/M2 live definition anchors changed; refusing partial patch')
+          s=s.replace(old1,new1,1).replace(old2,new2,1)
+
+          oldrow="rows=[f\"First non-neutral regular-season home game · Week {r['week']}\",f\"Previous-season run defense: #{r['rank']:g} of 32 (required: top 10)\",f\"Previous-season records: {name(r['home'])} {h['wins']}–{h['losses']}–{h['ties']} vs {name(r['away'])} {a['wins']}–{a['losses']}–{a['ties']}\",f\"Winning-percentage advantage: {r['record_gap_pp']:.2f} points (required: {'>12.5' if rule=='stricter' else '>0'})\",pre_check]"
+          newrow="rows=[f\"First non-neutral regular-season home game · Week {r['week']}\",f\"Previous-season run defense: #{r['rank']:g} of 32 (required: top 10)\",f\"Previous-season records: {name(r['home'])} {h['wins']}–{h['losses']}–{h['ties']} vs {name(r['away'])} {a['wins']}–{a['losses']}–{a['ties']}\",f\"Prior-season home winning percentage: {h['pct']:.3f} (required: ≥.500)\",f\"Winning-percentage advantage: {r['record_gap_pp']:.2f} points (required: {'>12.5' if rule=='stricter' else '>0'})\",pre_check]"
+          if oldrow not in s:
+              raise RuntimeError('M1/M2 check-row anchor changed; refusing partial patch')
+          s=s.replace(oldrow,newrow,1)
+          p.write_text(s)
+          PY
+
+          "$ROOT/venv/bin/python" -m py_compile "$P"
+          grep -q "93.1%" "$P"
+          grep -q "95.7%" "$P"
+          grep -q "required: ≥.500" "$P"
+
+          cd "$R"
+          "$ROOT/venv/bin/python" nfl_home_opener_scanner.py --manual
+
+          echo 'NFL_M1M2_CARD_DEFINITIONS=PASS'
+          grep -nE "original.*M1|stricter.*M2|Prior-season home winning percentage" "$P" | head -6
+          EOF
