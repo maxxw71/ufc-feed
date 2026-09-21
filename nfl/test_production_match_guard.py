@@ -96,6 +96,8 @@ def main():
     m1["selected_team"] = "LAC"
     m1["rules"] = ["original"]
     m1["home_record"] = {"wins": 9, "losses": 8, "ties": 0, "pct": 9/17}
+    m1["m1_enriched_veto_status"] = "PASS"
+    m1["opp_last_rank_def_allowed_giveaway_rate"] = 20.0
     m1["odds"]["market_side"] = "home"
     m1["odds"]["market_team"] = "LAC"
     m1["odds"]["moneyline"] = 130
@@ -108,12 +110,54 @@ def main():
     m1_500["selected_team"] = "LAC"
     m1_500["rules"] = ["M1"]
     m1_500["home_record"] = {"wins": 8, "losses": 8, "ties": 1, "pct": .5}
+    m1_500["m1_enriched_veto_status"] = "PASS"
+    m1_500["opp_last_rank_def_allowed_giveaway_rate"] = 20.0
     m1_500["odds"]["market_side"] = "home"
     m1_500["odds"]["market_team"] = "LAC"
     m1_500["odds"]["moneyline"] = 130
     m1_500["odds"]["raw"]["items"][0]["homeTeamOdds"]["current"]["moneyLine"]["american"] = 130
     approved, reasons = why(m1_500)
     assert approved and not reasons
+
+    missing_m1_enriched = good()
+    missing_m1_enriched["selection_side"] = "home"
+    missing_m1_enriched["selected_team"] = "LAC"
+    missing_m1_enriched["rules"] = ["original"]
+    missing_m1_enriched["home_record"] = {"wins": 9, "losses": 8, "ties": 0, "pct": 9/17}
+    missing_m1_enriched["odds"]["market_side"] = "home"
+    missing_m1_enriched["odds"]["market_team"] = "LAC"
+    missing_m1_enriched["odds"]["moneyline"] = 130
+    missing_m1_enriched["odds"]["raw"]["items"][0]["homeTeamOdds"]["current"]["moneyLine"]["american"] = 130
+    approved, reasons = why(missing_m1_enriched)
+    assert not approved and "missing_m1_enriched_veto_status" in reasons
+
+    vetoed_m1 = good()
+    vetoed_m1["selection_side"] = "home"
+    vetoed_m1["selected_team"] = "LAC"
+    vetoed_m1["rules"] = ["M1"]
+    vetoed_m1["home_record"] = {"wins": 9, "losses": 8, "ties": 0, "pct": 9/17}
+    vetoed_m1["m1_enriched_veto_status"] = "VETO"
+    vetoed_m1["opp_last_rank_def_allowed_giveaway_rate"] = 10.0
+    vetoed_m1["odds"]["market_side"] = "home"
+    vetoed_m1["odds"]["market_team"] = "LAC"
+    vetoed_m1["odds"]["moneyline"] = 130
+    vetoed_m1["odds"]["raw"]["items"][0]["homeTeamOdds"]["current"]["moneyLine"]["american"] = 130
+    approved, reasons = why(vetoed_m1)
+    assert not approved and "m1_enriched_veto_not_pass" in reasons and "m1_enriched_veto_triggered" in reasons
+
+    both = good()
+    both["selection_side"] = "home"
+    both["selected_team"] = "LAC"
+    both["rules"] = ["original","stricter"]
+    both["home_record"] = {"wins": 9, "losses": 8, "ties": 0, "pct": 9/17}
+    both["odds"]["market_side"] = "home"
+    both["odds"]["market_team"] = "LAC"
+    both["odds"]["moneyline"] = 130
+    both["odds"]["raw"]["items"][0]["homeTeamOdds"]["current"]["moneyLine"]["american"] = 130
+    approved, reasons = why(both)
+    assert approved and not reasons
+    assert approved[0]["rules"] == ["stricter"]
+    assert approved[0]["method_suppressions"][0]["method"] == "M1"
 
     losing_record = good()
     losing_record["selection_side"] = "home"
