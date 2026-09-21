@@ -5,6 +5,7 @@ on:
   workflow_run:
     workflows:
       - Boxing prospective odds snapshots
+      - Appwiza boxing live integration
     types: [completed]
     branches: [main]
   push:
