@@ -97,7 +97,9 @@ def fetch_pdf(year,month):
 
 def extract_pdf(raw):
     reader=PdfReader(io.BytesIO(raw))
-    pages=[p.extract_text(extraction_mode='layout') or p.extract_text() or '' for p in reader.pages]
+    # Default extraction preserves WBA's logical reading order. Layout mode
+    # merges three weight-class columns into single lines and is unsafe here.
+    pages=[p.extract_text() or '' for p in reader.pages]
     return pages
 
 def parse(raw,year,month):
