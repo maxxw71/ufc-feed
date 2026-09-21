@@ -44,6 +44,8 @@ def urls(y,month):
     names=[
       f'WBC_RATINGS_{month}_{y}.pdf',
       f'_WBC_RATINGS_{month}_{y}.pdf',
+      f'WBC_RATINGS_{month}_{y}_.pdf',
+      f'_WBC_RATINGS_{month}_{y}_.pdf',
       f'WBC_RATINGS_{month}_%20{y}.pdf',
       f'_WBC_RATINGS_{month}_%20{y}.pdf',
       f'WBC_RATINGS_{month}%20_{y}.pdf',
@@ -51,6 +53,8 @@ def urls(y,month):
       f'WBC_RATINGS_{month}_%20{y}_.pdf',
       f'_WBC_RATINGS_{month}_%20{y}_.pdf',
     ]
+    if y==2024 and month=='DECEMBER':
+      names.insert(0,'WBC_RATINGS_CONVENTION_HAMBURG_GERMANY_2024_.pdf')
     bases=[
       f'https://wbcboxing.com/mailing/{y}/ratings_pdf/',
       f'https://wbcboxing.com/mailing/{y}/',
