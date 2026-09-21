@@ -22,6 +22,8 @@ NY = ZoneInfo("America/New_York")
 MAX_ODDS_AGE_SECONDS = 15 * 60
 MAX_KICKOFF_DRIFT_SECONDS = 90
 MIN_KICKOFF_LEAD_SECONDS = 5 * 60
+M_FAMILY_RULE_IDS = {"original", "stricter", "M1", "M2"}
+M_FAMILY_MIN_PRIOR_SEASON_PCT = 0.500
 GAME_ID_RE = re.compile(r"^(?P<season>\d{4})_(?P<week>\d{2})_(?P<away>[A-Z0-9]{2,3})_(?P<home>[A-Z0-9]{2,3})$")
 ODDS_PATH_RE = re.compile(r"/events/(?P<event>\d+)/competitions/(?P<competition>\d+)/odds/?$")
 TEAM_REF_RE = re.compile(r"/teams/(?P<team>\d+)(?:\?|$)")
@@ -341,6 +343,20 @@ def filter_records(records: Iterable[dict[str, Any]], schedule: Any, now: dateti
         rules = record.get("rules")
         if not isinstance(rules, list) or not rules or any(not isinstance(rule, str) or not rule.strip() for rule in rules):
             reasons.append("missing_or_invalid_rules")
+        else:
+            normalized_rules={str(rule).strip() for rule in rules}
+            if normalized_rules & M_FAMILY_RULE_IDS:
+                # M1/M2 are home-opener favorite methods. A relative record edge
+                # against an even worse opponent is not sufficient: the selected
+                # home team must itself have been at least .500 the prior season.
+                if side != "home" or selected_team != home:
+                    reasons.append("m_family_requires_home_selection")
+                home_record=record.get("home_record")
+                home_pct=_number(home_record.get("pct")) if isinstance(home_record,dict) else None
+                if home_pct is None:
+                    reasons.append("missing_prior_season_home_record")
+                elif home_pct < M_FAMILY_MIN_PRIOR_SEASON_PCT:
+                    reasons.append("prior_season_home_record_below_500")
 
         odds = record.get("odds")
         if not isinstance(odds, dict):
