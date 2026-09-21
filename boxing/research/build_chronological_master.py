@@ -74,9 +74,16 @@ def explicit_opponent_strength(row):
 def bout_context(r):
     try:data=json.loads(r.get('data') or '{}')
     except Exception:data={}
-    notes=' '.join(str(data.get(k,'') or '') for k in ('notes','note','note(s)','more')).strip()
+    notes=' '.join(str(data.get(k,'') or '') for k in ('notes','note','note(s)','more','titles')).strip()
     low=notes.casefold()
     terminal,scheduled=rounds_value(r.get('rounds'))
+    # Prefer an explicit scheduled-round field from the source when present.
+    explicit_sched=None
+    m=re.search(r'\d{1,2}',str(r.get('scheduled_rounds') or data.get('scheduled_rounds') or ''))
+    if m:
+        v=int(m.group())
+        if 1<=v<=15:explicit_sched=v
+    if explicit_sched is not None:scheduled=explicit_sched
     location=r.get('venue') or data.get('location') or data.get('venue and location') or data.get('venue') or ''
     loc_parts=[x.strip() for x in str(location).split(',') if x.strip()]
     country=loc_parts[-1] if loc_parts else ''
@@ -86,7 +93,7 @@ def bout_context(r):
       'northern ireland':'United Kingdom'
     }.get(country.casefold(),country)
 
-    title=bool(re.search(r'\btitle\b|\bchampionship\b',low))
+    title=bool(re.search(r'\btitle\b|\bchampionship\b',low) or data.get('titles'))
     org_patterns={
       'WBA':r'\bwba\b|world boxing association',
       'WBC':r'\bwbc\b|world boxing council',
@@ -135,7 +142,7 @@ def bout_context(r):
       ('bantamweight',('bantamweight',)),
       ('flyweight',('flyweight',)),
     ]
-    context_text=' '.join(str(data.get(k,'') or '') for k in ('division','weight class','weight','notes','note','note(s)','more')).casefold()
+    context_text=' '.join([str(r.get('division') or ''),str(data.get('weight_class') or ''),str(data.get('division') or ''),str(data.get('weight class') or ''),str(data.get('weight') or ''),str(data.get('notes') or ''),str(data.get('note') or ''),str(data.get('note(s)') or ''),str(data.get('more') or '')]).casefold()
     division=None
     for canonical,aliases in divisions:
         if any(re.search(r'(?<![a-z])'+re.escape(a)+r'(?![a-z])',context_text) for a in aliases):
@@ -145,7 +152,8 @@ def bout_context(r):
       'location':location,
       'location_country_raw':country_norm,
       'scheduled_rounds':scheduled,
-      'scheduled_rounds_explicit':scheduled is not None,
+      'scheduled_rounds_explicit':explicit_sched is not None,
+      'scheduled_rounds_source':'structured_source_field' if explicit_sched is not None else ('record_round_parse' if scheduled is not None else None),
       'title_bout':title,
       'vacant_title':bool(title and 'vacant' in low),
       'title_organizations':title_orgs,
