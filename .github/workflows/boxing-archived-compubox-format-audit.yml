@@ -1,0 +1,30 @@
+name: Boxing Archived CompuBox Format Audit
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'boxing/research/audit_archived_compubox_formats.py'
+      - '.github/workflows/boxing-archived-compubox-format-audit.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  audit:
+    runs-on: [self-hosted, Linux, X64, appwiza]
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Classify archived CompuBox parser gaps
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          ROOT=/home/anestishkurti92/boxing-research
+          cp "$GITHUB_WORKSPACE/boxing/research/import_archived_compubox_rounds.py" "$ROOT/import_archived_compubox_rounds.py.new"
+          mv "$ROOT/import_archived_compubox_rounds.py.new" "$ROOT/import_archived_compubox_rounds.py"
+          cp "$GITHUB_WORKSPACE/boxing/research/audit_archived_compubox_formats.py" "$ROOT/audit_archived_compubox_formats.py.new"
+          mv "$ROOT/audit_archived_compubox_formats.py.new" "$ROOT/audit_archived_compubox_formats.py"
+          cd "$ROOT"
+          venv/bin/python audit_archived_compubox_formats.py
