@@ -18,6 +18,18 @@ from dateutil.parser import parse as dateparse
 from backfill_priced_careers import DB,OUT,nk,priced_missing,match_evidence
 
 UA='Mozilla/5.0 AppwizaBoxingSecondaryCareer/1.1'
+CHAMPINON_INDEX=Path(__file__).resolve().parents[1]/'supplemental_careers'/'champinon_profile_index.json'
+
+def indexed_url(name):
+    if not CHAMPINON_INDEX.exists():return None
+    try:
+        data=json.loads(CHAMPINON_INDEX.read_text())
+        rows=(data.get('index') or {}).get(nk(name),[])
+        if len(rows)==1:return rows[0].get('url')
+    except Exception:
+        pass
+    return None
+
 
 def slug(name):
     s=unicodedata.normalize('NFKD',str(name or '')).encode('ascii','ignore').decode().lower()
@@ -61,7 +73,7 @@ def parse_stated_record(text):
     return (int(m.group(1)),int(m.group(2)),int(m.group(3) or 0))
 
 def parse_champinon(name):
-    url=f'https://champinon.info/boxing/{slug(name)}/'
+    url=indexed_url(name) or f'https://champinon.info/boxing/{slug(name)}/'
     soup=BeautifulSoup(get(url),'lxml')
     h1=soup.find('h1');title=h1.get_text(' ',strip=True) if h1 else ''
     if nk(title)!=nk(name):raise ValueError(f'identity heading mismatch: {title!r}')
@@ -184,7 +196,7 @@ def main():
             if not matches:raise ValueError('no exact priced date+opponent evidence match')
             found={'requested_name':item['name'],'verified_title':page['title'],'source':'champinon','source_url':page['url'],
                    'born':page['born'],'profile':page['profile'],'career_rows':page['rows'],'matched_price_evidence':matches,
-                   'priced_bouts':item['priced_bouts'],'bookmakers':item['bookmakers'],'discovery':'deterministic_champinon_slug',
+                   'priced_bouts':item['priced_bouts'],'bookmakers':item['bookmakers'],'discovery':'explicit_champinon_directory_link' if indexed_url(item['name']) else 'deterministic_champinon_slug',
                    'career_complete':page['career_complete'],'stated_total':page['stated_total'],
                    'stated_record':list(page['stated_record']) if page['stated_record'] is not None else None,
                    'quality':'secondary_public_complete_career_exact_priced_match_verified',
