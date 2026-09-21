@@ -1,7 +1,7 @@
 """Versioned research master; no changes to collection, live rules, or email."""
 import collections, datetime as dt, hashlib, json, math, re, sqlite3
 from pathlib import Path
-from features import summary, age
+from features import summary, age, namekey
 from enrich_history import stats, rounds_value
 ROOT=Path(__file__).resolve().parent
 ALLOWED_CAREER_SOURCES=('wikipedia','champinon','wba_consensus')
