@@ -7,6 +7,12 @@ on:
         description: 'Maximum missing fighters to attempt this run per source'
         required: false
         default: '60'
+  workflow_run:
+    workflows:
+      - Boxing WBA Profile Identity Index
+      - Boxing Champinon Profile Index
+    types: [completed]
+    branches: [main]
   push:
     paths:
       - '.github/workflows/boxing-priced-career-backfill.yml'
@@ -27,6 +33,7 @@ permissions:
 
 jobs:
   backfill:
+    if: github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success'
     runs-on: ubuntu-latest
     timeout-minutes: 35
     steps:
