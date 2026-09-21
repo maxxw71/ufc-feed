@@ -151,7 +151,7 @@ def summarize_side(report,fighter,opponent):
             result[f'{cat}_first3_net_landed']=result[f'{cat}_last3_net_landed']=result[f'{cat}_late_vs_early_net_delta']=None
     ft=report['totals'].get((report['url'],fighter,'total'))
     result['body_landed']=ft.get('body_landed') if ft else None
-    result['body_landed_share_pct']=pct(div(result['body_landed'],ft.get('landed'))) if ft and ft.get('landed') else None
+    result['body_landed_share_pct']=pct(div(result['body_landed'],ft.get('landed'))) if ft and ft.get('landed') and result['body_landed'] is not None else None
     result['source_quality']='observed_round_table'
     result['round_edge_note']='punch-count edge only; not a judge score or inferred 10-9 round'
     result['avoidance_note']='100 - opponent connect%; proxy only, not literal evasion tracking'
