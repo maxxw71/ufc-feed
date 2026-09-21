@@ -30,6 +30,8 @@ jobs:
           cd "$ROOT"
           test -x venv/bin/python
           test -f boxing.sqlite3
+          cp "$GITHUB_WORKSPACE/boxing/research/round_archive.py" "$ROOT/round_archive.py.new"
+          mv "$ROOT/round_archive.py.new" "$ROOT/round_archive.py"
           test -f round_archive.py
           [ "$(systemctl is-active boxing-archive.service 2>/dev/null || true)" != active ] || { echo 'boxing archive service active; refusing concurrent write'; exit 2; }
           available=$(df -Pk . | awk 'NR==2 {print $4}')
@@ -44,7 +46,7 @@ jobs:
           def n(t):return d.execute(f'select count(*) from {t}').fetchone()[0] if t in tabs else 0
           print('BEFORE',json.dumps({t:n(t) for t in ['round_evidence_pages','secondary_round_punches','secondary_fight_punch_totals']}))
           PY
-          nice -n 15 venv/bin/python -u round_archive.py --pages 120 | tee ROUND_ARCHIVE_EXPAND.latest.log
+          nice -n 15 venv/bin/python -u round_archive.py --pages 240 | tee ROUND_ARCHIVE_EXPAND.latest.log
           venv/bin/python - <<'PY'
           import sqlite3,json,datetime
           d=sqlite3.connect('boxing.sqlite3')
