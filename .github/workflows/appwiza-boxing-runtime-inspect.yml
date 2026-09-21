@@ -38,6 +38,26 @@ jobs:
             echo "----- $f -----"
             sed -n '1,260p' "$f"
           done
+          echo '=== PUBLIC ZIP SCHEMA ==='
+          TMPD=$(mktemp -d)
+          if unzip -qq /srv/appwiza-sports/public/downloads/boxing/research-database.zip -d "$TMPD" 2>/dev/null; then
+            cat "$TMPD/TABLE_COUNTS.json" 2>/dev/null || true
+            PUBDB=$(find "$TMPD" -maxdepth 1 -name '*.sqlite3' | head -1)
+            [ -n "$PUBDB" ] && python3 - "$PUBDB" <<'PY'
+import sqlite3,sys,json
+p=sys.argv[1];d=sqlite3.connect(f'file:{p}?mode=ro',uri=True)
+tables=[r[0] for r in d.execute("select name from sqlite_master where type='table' order by name")]
+print(json.dumps({'tables':tables,'counts':{t:d.execute(f'select count(*) from "{t}"').fetchone()[0] for t in tables}},sort_keys=True))
+PY
+          fi
+          rm -rf "$TMPD"
+          echo '=== LIVE TABLE COUNTS ==='
+          python3 - <<'PY'
+import sqlite3,json
+p='/home/anestishkurti92/boxing-research/boxing.sqlite3';d=sqlite3.connect(f'file:{p}?mode=ro',uri=True)
+tables=[r[0] for r in d.execute("select name from sqlite_master where type='table' order by name")]
+print(json.dumps({'tables':tables,'counts':{t:d.execute(f'select count(*) from "{t}"').fetchone()[0] for t in tables}},sort_keys=True))
+PY
           echo '=== PUNCH COUNTS ==='
           python3 - <<'PY'
           import os,sqlite3,glob
