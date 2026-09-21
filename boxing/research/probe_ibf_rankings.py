@@ -26,6 +26,17 @@ def main():
       'scripts':[s.get('src') for s in soup.find_all('script',src=True)],
       'ajax_tokens':sorted(set(x.rstrip('",\'<>);') for x in re.findall(r'https?://\\S+|admin-ajax\\.php|wp-json\\S*',html,re.I)))[:100]
     }
+    out['rest_sample_ratings']={}
+    for endpoint in [
+        BASE+'/wp-json/wp/v2/ratings?per_page=1&orderby=date&order=desc',
+        BASE+'/wp-json/wp/v2/ratings?per_page=1&orderby=date&order=asc',
+        BASE+'/wp-content/themes/base-blocks-theme-master/js/ratings-filter.js?ver=1.0.0',
+    ]:
+        try:
+            final,body,ct=get(endpoint)
+            out['rest_sample_ratings'][endpoint]={'final':final,'body':body[:30000],'content_type':ct}
+        except Exception as e:
+            out['rest_sample_ratings'][endpoint]={'error':repr(e)}
     links={}
     for page in range(1,9):
         url=BASE+'/org/ibf/'+('' if page==1 else f'page/{page}/')
