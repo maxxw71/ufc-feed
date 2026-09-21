@@ -30,12 +30,15 @@ ALIASES={
  'super welterweight':'junior middleweight','super lightweight':'junior welterweight',
  'super featherweight':'junior lightweight','super bantamweight':'junior featherweight',
  'super flyweight':'junior bantamweight','light flyweight':'junior flyweight',
+ 'jr heavyweight':'cruiserweight','jr. heavyweight':'cruiserweight',
+ 'lt heavyweight':'light heavyweight','lt. heavyweight':'light heavyweight',
  'jr middleweight':'junior middleweight','jr welterweight':'junior welterweight',
  'jr lightweight':'junior lightweight','jr featherweight':'junior featherweight',
  'jr bantamweight':'junior bantamweight','jr flyweight':'junior flyweight',
  'jr. middleweight':'junior middleweight','jr. welterweight':'junior welterweight',
  'jr. lightweight':'junior lightweight','jr. featherweight':'junior featherweight',
  'jr. bantamweight':'junior bantamweight','jr. flyweight':'junior flyweight',
+ 'mini flyweight':'minimumweight','mini-flyweight':'minimumweight',
  'strawweight':'minimumweight'
 }
 DIVMAP={re.sub(r'[^a-z]','',x):x for x in DIVISIONS}
@@ -141,35 +144,55 @@ def rating_period(source_url,article_url):
 def parse_pdf(raw,post_date,source_url,article_url):
     pdf=PdfReader(io.BytesIO(raw))
     rating_year,rating_month=rating_period(source_url,article_url)
-    lines=[]
+    ranks=[];champs=[]
     for p in pdf.pages:
-        lines.extend(re.sub(r'\s+',' ',x).strip() for x in (p.extract_text() or '').splitlines() if re.sub(r'\s+',' ',x).strip())
-    div=None;ranks=[];champs=[]
-    for line in lines:
-        d=division(line)
-        if d:
-            div=d;continue
-        if not div:continue
-        cm=re.match(r'^(?:(Interim|Super)\s+)?Champion\s*:\s*(.+)$',line,re.I)
-        if cm:
-            name=clean_name(cm.group(2))
-            if name and len(name)<=90:
-                champs.append({'division':div,'status':((cm.group(1)+' ') if cm.group(1) else '')+'Champion',
-                               'name':name,'safe_effective_date':post_date.isoformat(),
-                               'rating_year':rating_year,'rating_month':rating_month,
-                               'source_url':source_url,'article_url':article_url})
+        lines=[re.sub(r'\s+',' ',x).strip() for x in (p.extract_text() or '').splitlines() if re.sub(r'\s+',' ',x).strip()]
+        # WBO explanation PDFs are effectively one weight class per page. Never
+        # carry a division across a page boundary: a missed header must create
+        # missing data, not misattribute the next page's ranks.
+        div=None
+        for line in lines[:80]:
+            d=division(line)
+            if d:
+                div=d
+                break
+        if not div:
             continue
-        rm=re.match(r'^(\d{1,2})\s*[-–.]\s*(.+)$',line)
-        if rm and 1<=int(rm.group(1))<=15:
-            name=clean_name(rm.group(2))
-            if name and not re.match(r'^(removed|vacant|not rated)\b',name,re.I):
-                ranks.append({'division':div,'rank':int(rm.group(1)),'name':name,
-                              'safe_effective_date':post_date.isoformat(),
-                              'rating_year':rating_year,'rating_month':rating_month,
-                              'source_url':source_url,'article_url':article_url})
+
+        seen_ranks=set()
+        ranking_started=False
+        for line in lines:
+            d=division(line)
+            if d:
+                div=d
+                continue
+            cm=re.match(r'^(?:(Interim|Super)\s+)?Champion\s*:\s*(.+)$',line,re.I)
+            if cm and not ranking_started:
+                name=clean_name(cm.group(2))
+                if name and len(name)<=90:
+                    champs.append({'division':div,'status':((cm.group(1)+' ') if cm.group(1) else '')+'Champion',
+                                   'name':name,'safe_effective_date':post_date.isoformat(),
+                                   'rating_year':rating_year,'rating_month':rating_month,
+                                   'source_url':source_url,'article_url':article_url})
+                continue
+            rm=re.match(r'^(\d{1,2})\s*[-–.]\s*(.+)$',line)
+            if rm and 1<=int(rm.group(1))<=15:
+                rank=int(rm.group(1))
+                # Only the first occurrence of a rank on the page belongs to the
+                # ranking table. Later numbered explanation bullets are ignored.
+                if rank in seen_ranks:
+                    continue
+                name=clean_name(rm.group(2))
+                if name and not re.match(r'^(removed|vacant|not rated)\b',name,re.I):
+                    ranks.append({'division':div,'rank':rank,'name':name,
+                                  'safe_effective_date':post_date.isoformat(),
+                                  'rating_year':rating_year,'rating_month':rating_month,
+                                  'source_url':source_url,'article_url':article_url})
+                    seen_ranks.add(rank);ranking_started=True
+
     distinct=len({x['division'] for x in ranks})
-    # WBO has 17 male divisions; allow older docs with a few missing but reject
-    # explanations that are not a full rankings document.
+    # WBO has 17 male divisions. Require broad coverage, but allow a few
+    # genuinely empty/missing divisions in older documents.
     if len(ranks)<180 or distinct<13:
         raise ValueError(f'incomplete WBO parse rows={len(ranks)} divisions={distinct}')
     return ranks,champs,len(pdf.pages)
