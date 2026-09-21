@@ -1,6 +1,6 @@
 {
   "status": "EXPLORATORY_DYNAMIC_FACTORS",
-  "eligible_bouts": 689,
+  "eligible_bouts": 673,
   "rules_tested": 272,
   "targets": [
     {
@@ -624,31 +624,31 @@
         "stopwin": 2
       },
       "metrics": {
-        "bets": 48,
-        "wins": 38,
+        "bets": 47,
+        "wins": 37,
         "losses": 10,
-        "win_pct": 79.16666666666667,
-        "wilson95_lower_pct": 65.74082647864653,
-        "profit_median_units": 5.428685832341787,
-        "roi_median_pct": 11.309762150712055,
-        "profit_best_units": 7.46451538386791,
-        "roi_best_pct": 15.55107371639148,
-        "avg_market_prob": 0.687331706680308,
-        "avg_book_count": 4.395833333333333
+        "win_pct": 78.72340425531915,
+        "wilson95_lower_pct": 65.09569794902073,
+        "profit_median_units": 4.753010156666111,
+        "roi_median_pct": 10.112787567374705,
+        "profit_best_units": 6.72377464312717,
+        "roi_best_pct": 14.305903496015254,
+        "avg_market_prob": 0.6901219166169867,
+        "avg_book_count": 4.382978723404255
       },
       "periods": {
         "2021_2023": {
-          "bets": 23,
-          "wins": 17,
+          "bets": 22,
+          "wins": 16,
           "losses": 6,
-          "win_pct": 73.91304347826087,
-          "wilson95_lower_pct": 53.52960945624944,
-          "profit_median_units": 1.258545439767893,
-          "roi_median_pct": 5.471936694643013,
-          "profit_best_units": 1.9617141641014062,
-          "roi_best_pct": 8.5291920178322,
-          "avg_market_prob": 0.6842211400620604,
-          "avg_book_count": 4.913043478260869
+          "win_pct": 72.72727272727273,
+          "wilson95_lower_pct": 51.84787630099803,
+          "profit_median_units": 0.5828697640922174,
+          "roi_median_pct": 2.649408018600988,
+          "profit_best_units": 1.2209734233606655,
+          "roi_best_pct": 5.549879197093934,
+          "avg_market_prob": 0.6900406537168627,
+          "avg_book_count": 4.909090909090909
         },
         "2024_2026": {
           "bets": 25,
@@ -712,106 +712,6 @@
           "roi_best_pct": 3.9508510022656895,
           "avg_market_prob": 0.6774605721851747,
           "avg_book_count": 3.4545454545454546
-        }
-      }
-    },
-    {
-      "rule": "SCHEDULE_STRENGTH__pmin1.2__pmax1.8__strength0.05",
-      "definition": {
-        "family": "SCHEDULE_STRENGTH",
-        "pmin": 1.2,
-        "pmax": 1.8,
-        "strength": 0.05
-      },
-      "metrics": {
-        "bets": 52,
-        "wins": 40,
-        "losses": 12,
-        "win_pct": 76.92307692307692,
-        "wilson95_lower_pct": 63.865957088870275,
-        "profit_median_units": 5.9694521955052675,
-        "roi_median_pct": 11.479715760587053,
-        "profit_best_units": 7.857749639640508,
-        "roi_best_pct": 15.11105699930867,
-        "avg_market_prob": 0.6648707085863704,
-        "avg_book_count": 4.326923076923077
-      },
-      "periods": {
-        "2021_2023": {
-          "bets": 25,
-          "wins": 18,
-          "losses": 7,
-          "win_pct": 72.0,
-          "wilson95_lower_pct": 52.4230281034417,
-          "profit_median_units": 1.4266413356478074,
-          "roi_median_pct": 5.7065653425912295,
-          "profit_best_units": 2.3978845381472853,
-          "roi_best_pct": 9.591538152589141,
-          "avg_market_prob": 0.661503592356867,
-          "avg_book_count": 4.84
-        },
-        "2024_2026": {
-          "bets": 27,
-          "wins": 22,
-          "losses": 5,
-          "win_pct": 81.48148148148148,
-          "wilson95_lower_pct": 63.30094349480825,
-          "profit_median_units": 4.54281085985746,
-          "roi_median_pct": 16.825225406879483,
-          "profit_best_units": 5.4598651014932225,
-          "roi_best_pct": 20.221722598123048,
-          "avg_market_prob": 0.6679884087988737,
-          "avg_book_count": 3.8518518518518516
-        }
-      }
-    },
-    {
-      "rule": "SCHEDULE_STRENGTH__pmin1.2__pmax1.8__strength0.1",
-      "definition": {
-        "family": "SCHEDULE_STRENGTH",
-        "pmin": 1.2,
-        "pmax": 1.8,
-        "strength": 0.1
-      },
-      "metrics": {
-        "bets": 31,
-        "wins": 25,
-        "losses": 6,
-        "win_pct": 80.64516129032258,
-        "wilson95_lower_pct": 63.71939644454012,
-        "profit_median_units": 5.014733401476146,
-        "roi_median_pct": 16.17655935960047,
-        "profit_best_units": 6.207017202296269,
-        "roi_best_pct": 20.022636136439576,
-        "avg_market_prob": 0.6764466828107397,
-        "avg_book_count": 4.290322580645161
-      },
-      "periods": {
-        "2021_2023": {
-          "bets": 18,
-          "wins": 13,
-          "losses": 5,
-          "win_pct": 72.22222222222223,
-          "wilson95_lower_pct": 49.12692245380548,
-          "profit_median_units": 0.9425493781110761,
-          "roi_median_pct": 5.2363854339504226,
-          "profit_best_units": 1.5464519735071738,
-          "roi_best_pct": 8.591399852817633,
-          "avg_market_prob": 0.6714439328202328,
-          "avg_book_count": 4.833333333333333
-        },
-        "2024_2026": {
-          "bets": 13,
-          "wins": 12,
-          "losses": 1,
-          "win_pct": 92.3076923076923,
-          "wilson95_lower_pct": 66.68546607175266,
-          "profit_median_units": 4.07218402336507,
-          "roi_median_pct": 31.324492487423615,
-          "profit_best_units": 4.660565228789095,
-          "roi_best_pct": 35.85050175991611,
-          "avg_market_prob": 0.6833735674129803,
-          "avg_book_count": 3.5384615384615383
         }
       }
     },
@@ -965,57 +865,6 @@
           "roi_best_pct": 15.054048132062315,
           "avg_market_prob": 0.6262813893444779,
           "avg_book_count": 3.8
-        }
-      }
-    },
-    {
-      "rule": "POWER_VULN__pmin1.3__pmax2.0__stoploss1__stopwin2",
-      "definition": {
-        "family": "POWER_VULN",
-        "pmin": 1.3,
-        "pmax": 2.0,
-        "stoploss": 1,
-        "stopwin": 2
-      },
-      "metrics": {
-        "bets": 29,
-        "wins": 21,
-        "losses": 8,
-        "win_pct": 72.41379310344827,
-        "wilson95_lower_pct": 54.28252365556403,
-        "profit_median_units": 3.964472802633477,
-        "roi_median_pct": 13.67059587114992,
-        "profit_best_units": 5.136981806334333,
-        "roi_best_pct": 17.713730366670116,
-        "avg_market_prob": 0.6204239407375546,
-        "avg_book_count": 4.344827586206897
-      },
-      "periods": {
-        "2021_2023": {
-          "bets": 15,
-          "wins": 10,
-          "losses": 5,
-          "win_pct": 66.66666666666667,
-          "wilson95_lower_pct": 41.713125151212985,
-          "profit_median_units": 0.6231372454651138,
-          "roi_median_pct": 4.154248303100759,
-          "profit_best_units": 1.0951917975790397,
-          "roi_best_pct": 7.301278650526931,
-          "avg_market_prob": 0.6241793868948247,
-          "avg_book_count": 4.866666666666666
-        },
-        "2024_2026": {
-          "bets": 14,
-          "wins": 11,
-          "losses": 3,
-          "win_pct": 78.57142857142857,
-          "wilson95_lower_pct": 52.410276226791716,
-          "profit_median_units": 3.341335557168363,
-          "roi_median_pct": 23.86668255120259,
-          "profit_best_units": 4.041790008755294,
-          "roi_best_pct": 28.86992863396639,
-          "avg_market_prob": 0.6164002484261937,
-          "avg_book_count": 3.7857142857142856
         }
       }
     },
@@ -1287,17 +1136,17 @@
         "WIN_STREAK": {
           "rule": "WIN_STREAK__pmin1.2__pmax1.8__streak2",
           "validation": {
-            "bets": 40,
+            "bets": 39,
             "wins": 29,
-            "losses": 11,
-            "win_pct": 72.5,
-            "wilson95_lower_pct": 57.16474916687543,
-            "profit_median_units": 1.3915827593385024,
-            "roi_median_pct": 3.4789568983462558,
-            "profit_best_units": 2.8899374982082953,
-            "roi_best_pct": 7.224843745520738,
-            "avg_market_prob": 0.6718370560045045,
-            "avg_book_count": 4.8
+            "losses": 10,
+            "win_pct": 74.35897435897436,
+            "wilson95_lower_pct": 58.9180432321585,
+            "profit_median_units": 2.3915827593385024,
+            "roi_median_pct": 6.13226348548334,
+            "profit_best_units": 3.8899374982082953,
+            "roi_best_pct": 9.974198713354603,
+            "avg_market_prob": 0.6730235220413352,
+            "avg_book_count": 4.846153846153846
           }
         }
       },
@@ -1561,49 +1410,49 @@
       "year": 2025,
       "best_rule_from_earlier_years": "DECISION_EDGE__pmin1.15__pmax1.5__dec1__oppdecloss1",
       "best_rule_test": {
-        "bets": 26,
-        "wins": 17,
-        "losses": 9,
-        "win_pct": 65.38461538461539,
-        "wilson95_lower_pct": 46.220229009632995,
-        "profit_median_units": -4.445227368687372,
-        "roi_median_pct": -17.09702834110528,
-        "profit_best_units": -3.788890192391643,
-        "roi_best_pct": -14.572654586121702,
-        "avg_market_prob": 0.753291398977692,
-        "avg_book_count": 3.9615384615384617
+        "bets": 24,
+        "wins": 16,
+        "losses": 8,
+        "win_pct": 66.66666666666667,
+        "wilson95_lower_pct": 46.70595949408046,
+        "profit_median_units": -3.611894035354039,
+        "roi_median_pct": -15.04955848064183,
+        "profit_best_units": -3.038890192391643,
+        "roi_best_pct": -12.66204246829851,
+        "avg_market_prob": 0.7499164566375457,
+        "avg_book_count": 3.9166666666666665
       },
       "family_choices": {
         "DECISION_EDGE": {
           "rule": "DECISION_EDGE__pmin1.15__pmax1.5__dec1__oppdecloss1",
           "validation": {
-            "bets": 47,
-            "wins": 38,
+            "bets": 46,
+            "wins": 37,
             "losses": 9,
-            "win_pct": 80.85106382978724,
-            "wilson95_lower_pct": 67.4557199356223,
-            "profit_median_units": 1.742879158488736,
-            "roi_median_pct": 3.7082535286994385,
-            "profit_best_units": 3.0237537598079696,
-            "roi_best_pct": 6.433518637889296,
-            "avg_market_prob": 0.747149452490257,
-            "avg_book_count": 4.23404255319149
+            "win_pct": 80.43478260869566,
+            "wilson95_lower_pct": 66.8284622588308,
+            "profit_median_units": 1.5206569362665137,
+            "roi_median_pct": 3.305775948405464,
+            "profit_best_units": 2.738039474093684,
+            "roi_best_pct": 5.952259726290618,
+            "avg_market_prob": 0.7465529152849489,
+            "avg_book_count": 4.217391304347826
           }
         },
         "ACTIVITY_LAYOFF": {
           "rule": "ACTIVITY_LAYOFF__pmin1.15__pmax1.5__opprest180__favrest270",
           "validation": {
-            "bets": 35,
-            "wins": 29,
+            "bets": 34,
+            "wins": 28,
             "losses": 6,
-            "win_pct": 82.85714285714286,
-            "wilson95_lower_pct": 67.31739236041119,
-            "profit_median_units": 1.5417282125338865,
-            "roi_median_pct": 4.404937750096818,
-            "profit_best_units": 2.5926698427842583,
-            "roi_best_pct": 7.407628122240737,
-            "avg_market_prob": 0.7587690782934788,
-            "avg_book_count": 4.742857142857143
+            "win_pct": 82.3529411764706,
+            "wilson95_lower_pct": 66.48593225994784,
+            "profit_median_units": 1.3195059903116642,
+            "roi_median_pct": 3.880899971504894,
+            "profit_best_units": 2.3069555570699727,
+            "roi_best_pct": 6.785163403146978,
+            "avg_market_prob": 0.7583037522452158,
+            "avg_book_count": 4.735294117647059
           }
         },
         "AGING_OPP": {
@@ -1654,6 +1503,22 @@
             "avg_book_count": 4.68
           }
         },
+        "SCHEDULE_STRENGTH": {
+          "rule": "SCHEDULE_STRENGTH__pmin1.2__pmax1.8__strength0.15",
+          "validation": {
+            "bets": 12,
+            "wins": 10,
+            "losses": 2,
+            "win_pct": 83.33333333333333,
+            "wilson95_lower_pct": 55.196364261532736,
+            "profit_median_units": 2.819983101877809,
+            "roi_median_pct": 23.499859182315074,
+            "profit_best_units": 3.0710765117260075,
+            "roi_best_pct": 25.592304264383397,
+            "avg_market_prob": 0.6494172642635998,
+            "avg_book_count": 4.166666666666667
+          }
+        },
         "STOPLOSS": {
           "rule": "STOPLOSS__pmin1.2__pmax1.8__stoploss1",
           "validation": {
@@ -1685,76 +1550,60 @@
             "avg_market_prob": 0.6736709597010677,
             "avg_book_count": 4.785714285714286
           }
-        },
-        "POWER_VULN": {
-          "rule": "POWER_VULN__pmin1.2__pmax1.8__stoploss1__stopwin2",
-          "validation": {
-            "bets": 14,
-            "wins": 10,
-            "losses": 4,
-            "win_pct": 71.42857142857143,
-            "wilson95_lower_pct": 45.35045882751561,
-            "profit_median_units": 0.298963578131757,
-            "roi_median_pct": 2.13545412951255,
-            "profit_best_units": 0.709883732849506,
-            "roi_best_pct": 5.070598091782186,
-            "avg_market_prob": 0.6933467200463205,
-            "avg_book_count": 4.714285714285714
-          }
         }
       },
       "consensus": {
         "2": {
-          "bets": 40,
-          "wins": 29,
+          "bets": 36,
+          "wins": 25,
           "losses": 11,
-          "win_pct": 72.5,
-          "wilson95_lower_pct": 57.16474916687543,
-          "profit_median_units": -1.3043690426592909,
-          "roi_median_pct": -3.260922606648227,
-          "profit_best_units": -0.18540072608340208,
-          "roi_best_pct": -0.4635018152085052,
-          "avg_market_prob": 0.7127184597687675,
-          "avg_book_count": 3.925
+          "win_pct": 69.44444444444444,
+          "wilson95_lower_pct": 53.143421320916275,
+          "profit_median_units": -2.6208520983633843,
+          "roi_median_pct": -7.280144717676068,
+          "profit_best_units": -1.7156672680520717,
+          "roi_best_pct": -4.765742411255754,
+          "avg_market_prob": 0.7120676649871486,
+          "avg_book_count": 3.9722222222222223
         },
         "3": {
-          "bets": 22,
-          "wins": 14,
+          "bets": 24,
+          "wins": 16,
           "losses": 8,
-          "win_pct": 63.63636363636363,
-          "wilson95_lower_pct": 42.95134934371804,
-          "profit_median_units": -3.6605867661800113,
-          "roi_median_pct": -16.639030755363688,
-          "profit_best_units": -3.195298066701275,
-          "roi_best_pct": -14.52408212136943,
-          "avg_market_prob": 0.7212912073485799,
-          "avg_book_count": 3.8636363636363638
+          "win_pct": 66.66666666666667,
+          "wilson95_lower_pct": 46.70595949408046,
+          "profit_median_units": -3.0522918353044353,
+          "roi_median_pct": -12.717882647101815,
+          "profit_best_units": -2.4619647333679415,
+          "roi_best_pct": -10.25818638903309,
+          "avg_market_prob": 0.7253382430711272,
+          "avg_book_count": 3.9166666666666665
         },
         "4": {
-          "bets": 10,
-          "wins": 7,
-          "losses": 3,
-          "win_pct": 70.0,
-          "wilson95_lower_pct": 39.67732199795652,
-          "profit_median_units": -1.125913319334372,
-          "roi_median_pct": -11.25913319334372,
-          "profit_best_units": -0.7941391941391946,
-          "roi_best_pct": -7.941391941391946,
-          "avg_market_prob": 0.7453155326547246,
-          "avg_book_count": 3.8
+          "bets": 8,
+          "wins": 6,
+          "losses": 2,
+          "win_pct": 75.0,
+          "wilson95_lower_pct": 40.926987910258916,
+          "profit_median_units": -0.375913319334372,
+          "roi_median_pct": -4.69891649167965,
+          "profit_best_units": -0.10183150183150236,
+          "roi_best_pct": -1.2728937728937795,
+          "avg_market_prob": 0.7509688055178865,
+          "avg_book_count": 3.875
         },
         "5": {
-          "bets": 3,
-          "wins": 3,
+          "bets": 4,
+          "wins": 4,
           "losses": 0,
           "win_pct": 100.0,
-          "wilson95_lower_pct": 43.84939195509822,
-          "profit_median_units": 0.8785714285714286,
-          "roi_median_pct": 29.28571428571429,
-          "profit_best_units": 1.0190476190476188,
-          "roi_best_pct": 33.968253968253954,
-          "avg_market_prob": 0.7321193299454168,
-          "avg_book_count": 3.3333333333333335
+          "wilson95_lower_pct": 51.009997959600085,
+          "profit_median_units": 1.1387065637065636,
+          "roi_median_pct": 28.46766409266409,
+          "profit_best_units": 1.3047619047619043,
+          "roi_best_pct": 32.619047619047606,
+          "avg_market_prob": 0.7362109644846346,
+          "avg_book_count": 3.5
         }
       }
     },
@@ -1794,33 +1643,49 @@
         "SCHEDULE_STRENGTH": {
           "rule": "SCHEDULE_STRENGTH__pmin1.15__pmax1.5__strength0.05",
           "validation": {
-            "bets": 16,
-            "wins": 14,
-            "losses": 2,
-            "win_pct": 87.5,
-            "wilson95_lower_pct": 63.976668563251714,
-            "profit_median_units": 1.9772738022883554,
-            "roi_median_pct": 12.35796126430222,
-            "profit_best_units": 2.46018981018981,
-            "roi_best_pct": 15.376186313686313,
-            "avg_market_prob": 0.7471470842903936,
-            "avg_book_count": 4.125
+            "bets": 45,
+            "wins": 36,
+            "losses": 9,
+            "win_pct": 80.0,
+            "wilson95_lower_pct": 66.17674868607057,
+            "profit_median_units": 0.6200487974205109,
+            "roi_median_pct": 1.377886216490024,
+            "profit_best_units": 1.695267172362816,
+            "roi_best_pct": 3.76726038302848,
+            "avg_market_prob": 0.7540577640169432,
+            "avg_book_count": 4.2
           }
         },
         "DECISION_EDGE": {
           "rule": "DECISION_EDGE__pmin1.2__pmax1.6__dec1__oppdecloss1",
           "validation": {
-            "bets": 65,
-            "wins": 49,
-            "losses": 16,
-            "win_pct": 75.38461538461539,
-            "wilson95_lower_pct": 63.693986008351736,
-            "profit_median_units": 0.6802488705479461,
-            "roi_median_pct": 1.0465367239199173,
-            "profit_best_units": 2.416606175810891,
-            "roi_best_pct": 3.7178556550936785,
-            "avg_market_prob": 0.7120251270270248,
-            "avg_book_count": 4.230769230769231
+            "bets": 63,
+            "wins": 48,
+            "losses": 15,
+            "win_pct": 76.19047619047619,
+            "wilson95_lower_pct": 64.36410519607182,
+            "profit_median_units": 1.4580266483257238,
+            "roi_median_pct": 2.3143280132154347,
+            "profit_best_units": 3.1308918900966054,
+            "roi_best_pct": 4.969669666820008,
+            "avg_market_prob": 0.7099036659118462,
+            "avg_book_count": 4.222222222222222
+          }
+        },
+        "WIN_STREAK": {
+          "rule": "WIN_STREAK__pmin1.2__pmax1.6__streak5",
+          "validation": {
+            "bets": 81,
+            "wins": 60,
+            "losses": 21,
+            "win_pct": 74.07407407407408,
+            "wilson95_lower_pct": 63.595445945254006,
+            "profit_median_units": 0.0047173210602635685,
+            "roi_median_pct": 0.00582385316081922,
+            "profit_best_units": 2.2316542870550964,
+            "roi_best_pct": 2.755128749450736,
+            "avg_market_prob": 0.7093865125049685,
+            "avg_book_count": 4.444444444444445
           }
         },
         "OPP_LAYOFF": {
@@ -1918,76 +1783,60 @@
             "avg_market_prob": 0.6286923036549061,
             "avg_book_count": 4.472972972972973
           }
-        },
-        "TWELVE_ROUND_EXP": {
-          "rule": "TWELVE_ROUND_EXP__pmin1.3__pmax2.0__twelve3",
-          "validation": {
-            "bets": 33,
-            "wins": 22,
-            "losses": 11,
-            "win_pct": 66.66666666666667,
-            "wilson95_lower_pct": 49.607581799949976,
-            "profit_median_units": 0.14916476566303705,
-            "roi_median_pct": 0.45201444140314256,
-            "profit_best_units": 1.163111718832251,
-            "roi_best_pct": 3.5245809661583363,
-            "avg_market_prob": 0.6417356093108362,
-            "avg_book_count": 4.606060606060606
-          }
         }
       },
       "consensus": {
         "2": {
-          "bets": 22,
-          "wins": 16,
-          "losses": 6,
-          "win_pct": 72.72727272727273,
-          "wilson95_lower_pct": 51.84787630099803,
-          "profit_median_units": 1.19041899980024,
-          "roi_median_pct": 5.410995453637454,
-          "profit_best_units": 2.5179745982034305,
-          "roi_best_pct": 11.445339082742866,
-          "avg_market_prob": 0.6607530128545795,
-          "avg_book_count": 3.6818181818181817
+          "bets": 19,
+          "wins": 14,
+          "losses": 5,
+          "win_pct": 73.6842105263158,
+          "wilson95_lower_pct": 51.20803155892935,
+          "profit_median_units": 0.6344242698924667,
+          "roi_median_pct": 3.339075104697193,
+          "profit_best_units": 1.5975566253716642,
+          "roi_best_pct": 8.408192765114022,
+          "avg_market_prob": 0.6725818794067738,
+          "avg_book_count": 3.6315789473684212
         },
         "3": {
-          "bets": 13,
-          "wins": 11,
+          "bets": 12,
+          "wins": 10,
           "losses": 2,
-          "win_pct": 84.61538461538461,
-          "wilson95_lower_pct": 57.764829491368985,
-          "profit_median_units": 2.4274484971272203,
-          "roi_median_pct": 18.672680747132464,
-          "profit_best_units": 3.326630526859359,
-          "roi_best_pct": 25.58946559122584,
-          "avg_market_prob": 0.6660142037922743,
-          "avg_book_count": 3.4615384615384617
+          "win_pct": 83.33333333333333,
+          "wilson95_lower_pct": 55.196364261532736,
+          "profit_median_units": 1.7860011287061675,
+          "roi_median_pct": 14.883342739218063,
+          "profit_best_units": 2.6599638601926925,
+          "roi_best_pct": 22.16636550160577,
+          "avg_market_prob": 0.6731621751889875,
+          "avg_book_count": 3.4166666666666665
         },
         "4": {
-          "bets": 9,
-          "wins": 7,
-          "losses": 2,
-          "win_pct": 77.77777777777777,
-          "wilson95_lower_pct": 45.25833436728054,
-          "profit_median_units": 0.6490582918699406,
-          "roi_median_pct": 7.211758798554895,
-          "profit_best_units": 1.3439465441753766,
-          "roi_best_pct": 14.932739379726407,
-          "avg_market_prob": 0.6662587157552782,
-          "avg_book_count": 3.6666666666666665
-        },
-        "5": {
-          "bets": 1,
-          "wins": 1,
+          "bets": 5,
+          "wins": 5,
           "losses": 0,
           "win_pct": 100.0,
-          "wilson95_lower_pct": 20.654329147389294,
-          "profit_median_units": 0.23529411764705888,
-          "roi_median_pct": 23.529411764705888,
-          "profit_best_units": 0.2857142857142856,
-          "roi_best_pct": 28.57142857142856,
-          "avg_market_prob": 0.7594501718213058,
+          "wilson95_lower_pct": 56.5508505247919,
+          "profit_median_units": 1.8345857852617078,
+          "roi_median_pct": 36.69171570523416,
+          "profit_best_units": 2.280284043441938,
+          "roi_best_pct": 45.60568086883876,
+          "avg_market_prob": 0.6967323791525291,
           "avg_book_count": 3.0
+        },
+        "5": {
+          "bets": 4,
+          "wins": 4,
+          "losses": 0,
+          "win_pct": 100.0,
+          "wilson95_lower_pct": 51.009997959600085,
+          "profit_median_units": 1.246150411112048,
+          "roi_median_pct": 31.1537602778012,
+          "profit_best_units": 1.6136173767752713,
+          "roi_best_pct": 40.34043441938178,
+          "avg_market_prob": 0.7218957626410698,
+          "avg_book_count": 3.25
         }
       }
     }

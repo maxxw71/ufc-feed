@@ -7,16 +7,16 @@
     "sensitivity_price": "best displayed decimal across clean books"
   },
   "coverage": {
-    "canonical_consensus_bouts": 689,
+    "canonical_consensus_bouts": 673,
     "years": {
-      "2021": 65,
-      "2022": 120,
-      "2023": 155,
-      "2024": 155,
-      "2025": 135,
+      "2021": 64,
+      "2022": 117,
+      "2023": 152,
+      "2024": 151,
+      "2025": 130,
       "2026": 59
     },
-    "average_books": 4.477503628447025
+    "average_books": 4.485884101040119
   },
   "rules_tested": 207,
   "outer_walk_forward": [
@@ -342,19 +342,19 @@
           }
         },
         "POWER_CHIN": {
-          "rule": "POWER_CHIN__price1.2__ko0.4__stoploss1",
+          "rule": "POWER_CHIN__price1.2__ko0.3__stoploss1",
           "validation": {
-            "bets": 18,
-            "wins": 13,
-            "losses": 5,
-            "win_pct": 72.22222222222223,
-            "wilson95_lower_pct": 49.12692245380548,
-            "profit_median_units": 0.6316403027522155,
-            "roi_median_pct": 3.509112793067864,
-            "profit_best_units": 1.1110799050983098,
-            "roi_best_pct": 6.172666139435055,
-            "avg_market_prob": 0.6854288540796356,
-            "avg_book_count": 4.777777777777778
+            "bets": 20,
+            "wins": 14,
+            "losses": 6,
+            "win_pct": 70.0,
+            "wilson95_lower_pct": 48.102322377102055,
+            "profit_median_units": 0.05717221764583247,
+            "roi_median_pct": 0.28586108822916234,
+            "profit_best_units": 0.5555243495427542,
+            "roi_best_pct": 2.777621747713771,
+            "avg_market_prob": 0.6865441437202896,
+            "avg_book_count": 4.65
           }
         }
       },
@@ -520,6 +520,56 @@
     }
   ],
   "target_screen": [
+    {
+      "rule": "AGE_FORM__price1.2__younger3__form1",
+      "definition": {
+        "family": "AGE_FORM",
+        "price": 1.2,
+        "younger": 3,
+        "form": 1
+      },
+      "metrics": {
+        "bets": 58,
+        "wins": 47,
+        "losses": 11,
+        "win_pct": 81.03448275862068,
+        "wilson95_lower_pct": 69.14738161458368,
+        "profit_median_units": 6.38375335261834,
+        "roi_median_pct": 11.006471297617828,
+        "profit_best_units": 8.392479138028996,
+        "roi_best_pct": 14.469791617291373,
+        "avg_market_prob": 0.6946391935525184,
+        "avg_book_count": 4.362068965517241
+      },
+      "periods": {
+        "2021_2023": {
+          "bets": 27,
+          "wins": 22,
+          "losses": 5,
+          "win_pct": 81.48148148148148,
+          "wilson95_lower_pct": 63.30094349480825,
+          "profit_median_units": 2.773926875259369,
+          "roi_median_pct": 10.273803241701366,
+          "profit_best_units": 3.6535159372559196,
+          "roi_best_pct": 13.531540508355258,
+          "avg_market_prob": 0.7005039116099226,
+          "avg_book_count": 4.703703703703703
+        },
+        "2024_2026": {
+          "bets": 31,
+          "wins": 25,
+          "losses": 6,
+          "win_pct": 80.64516129032258,
+          "wilson95_lower_pct": 63.71939644454012,
+          "profit_median_units": 3.609826477358972,
+          "roi_median_pct": 11.644601539867653,
+          "profit_best_units": 4.7389632007730755,
+          "roi_best_pct": 15.28697806700992,
+          "avg_market_prob": 0.6895312133089726,
+          "avg_book_count": 4.064516129032258
+        }
+      }
+    },
     {
       "rule": "AGE_POWER__price1.2__younger3__ko0.5",
       "definition": {
