@@ -12,7 +12,7 @@ class RankingArchiveIntegrityTests(unittest.TestCase):
         self.assertTrue(p.exists(),str(p))
         return json.loads(p.read_text())
 
-    def validate_rows(self,rows,body):
+    def validate_rows(self,rows,body,max_rank):
         self.assertGreater(len(rows),100)
         slots=set()
         for r in rows:
@@ -22,7 +22,7 @@ class RankingArchiveIntegrityTests(unittest.TestCase):
             self.assertLessEqual(len(name),100)
             self.assertFalse(re.fullmatch(r'[\d .-]+',name))
             rank=int(r['rank'])
-            self.assertGreaterEqual(rank,1);self.assertLessEqual(rank,15)
+            self.assertGreaterEqual(rank,1);self.assertLessEqual(rank,max_rank)
             eff=r.get('safe_effective_date')
             self.assertIsNotNone(eff)
             dt.date.fromisoformat(eff)
@@ -36,17 +36,24 @@ class RankingArchiveIntegrityTests(unittest.TestCase):
 
     def test_wba_rankings(self):
         rows=self.load('wba_monthly_rankings.json')
-        self.validate_rows(rows,'WBA')
+        self.validate_rows(rows,'WBA',15)
         meta=self.load('wba_monthly_rankings_meta.json')
         self.assertEqual(len(rows),meta['ranking_rows'])
         self.assertGreaterEqual(meta['usable_documents'],50)
 
     def test_wbc_rankings(self):
         rows=self.load('wbc_monthly_rankings.json')
-        self.validate_rows(rows,'WBC')
+        self.validate_rows(rows,'WBC',40)
         meta=self.load('wbc_monthly_rankings_meta.json')
         self.assertEqual(len(rows),meta['ranking_rows'])
         self.assertGreaterEqual(meta['parsed_documents'],10)
+
+    def test_wbo_rankings(self):
+        rows=self.load('wbo_monthly_rankings.json')
+        self.validate_rows(rows,'WBO',15)
+        meta=self.load('wbo_monthly_rankings_meta.json')
+        self.assertEqual(len(rows),meta['ranking_rows'])
+        self.assertGreaterEqual(meta['parsed_documents'],20)
 
 if __name__=='__main__':
     unittest.main()
