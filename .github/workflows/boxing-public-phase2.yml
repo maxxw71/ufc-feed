@@ -6,6 +6,7 @@ on:
       - '.github/workflows/boxing-public-phase2.yml'
       - 'boxing/research/**'
       - 'boxing/supplemental_careers/**'
+      - 'boxing/profile_supplements/**'
   workflow_dispatch:
 
 concurrency:
@@ -58,6 +59,7 @@ jobs:
         run: |
           cp boxing/research/*.py /tmp/boxing-research/
           if [ -d boxing/supplemental_careers ]; then cp -R boxing/supplemental_careers /tmp/supplemental_careers; fi
+          if [ -d boxing/profile_supplements ]; then cp -R boxing/profile_supplements /tmp/profile_supplements; fi
           if [ -d boxing/rankings ]; then cp -R boxing/rankings /tmp/boxing-research/rankings; fi
       - name: Build chronological master and run research passes
         run: |
@@ -75,6 +77,7 @@ jobs:
           PY
           python build_punch_profiles.py --db boxing.sqlite3 --out punch_profiles
           python apply_supplemental_careers.py
+          python apply_profile_supplements.py
           python - <<'PY'
           import sqlite3,subprocess,sys
           db=sqlite3.connect('boxing.sqlite3')
@@ -119,7 +122,7 @@ jobs:
                   else: shutil.copy2(src,out/name)
           punch=root/'punch_profiles'/'coverage.json'
           if punch.exists():shutil.copy2(punch,out/'punch_profile_coverage.json')
-          for name in ['IDENTITY_LINKS_V2.json','PRICE_MATCH_COVERAGE.json','SUPPLEMENT_APPLY_REPORT.json','PROFILE_GAP_AUDIT.json']:
+          for name in ['IDENTITY_LINKS_V2.json','PRICE_MATCH_COVERAGE.json','SUPPLEMENT_APPLY_REPORT.json','PROFILE_SUPPLEMENT_APPLY_REPORT.json','PROFILE_GAP_AUDIT.json']:
               src=root/name
               if src.exists():shutil.copy2(src,out/name)
           PY
@@ -130,6 +133,7 @@ jobs:
           if [ -f /tmp/boxing_phase2_missing.json ]; then cp /tmp/boxing_phase2_missing.json boxing/public_phase2/status.json; fi
           if [ -f /tmp/boxing-research/punch_profiles/coverage.json ]; then cp /tmp/boxing-research/punch_profiles/coverage.json boxing/public_phase2/punch_profile_coverage.json; fi
           if [ -f /tmp/boxing-research/SUPPLEMENT_APPLY_REPORT.json ]; then cp /tmp/boxing-research/SUPPLEMENT_APPLY_REPORT.json boxing/public_phase2/SUPPLEMENT_APPLY_REPORT.json; fi
+          if [ -f /tmp/boxing-research/PROFILE_SUPPLEMENT_APPLY_REPORT.json ]; then cp /tmp/boxing-research/PROFILE_SUPPLEMENT_APPLY_REPORT.json boxing/public_phase2/PROFILE_SUPPLEMENT_APPLY_REPORT.json; fi
           if [ -f /tmp/boxing-research/PROFILE_GAP_AUDIT.json ]; then cp /tmp/boxing-research/PROFILE_GAP_AUDIT.json boxing/public_phase2/PROFILE_GAP_AUDIT.json; fi
       - name: Upload research artifact
         if: always()
