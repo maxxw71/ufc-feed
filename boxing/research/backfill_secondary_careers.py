@@ -34,6 +34,12 @@ def clean_opponent(text):
     s=re.sub(r'\s*\(\s*\d+\s*[-–−]\s*\d+(?:\s*[-–−]\s*\d+)?\s*\).*?$','',s).strip()
     return s
 
+def opponent_record(text):
+    s=str(text or '')
+    m=re.search(r'\(\s*(\d+)\s*[-–−]\s*(\d+)(?:\s*[-–−]\s*(\d+))?\s*\)',s)
+    if not m:return None
+    return {'wins':int(m.group(1)),'losses':int(m.group(2)),'draws':int(m.group(3) or 0),'raw':m.group(0)}
+
 def parse_stated_record(text):
     # Prefer the explicit "record is W-L-D" sentence. Some pages omit draws.
     m=re.search(r"\brecord\s+is\s+(\d+)\s*[-–−]\s*(\d+)(?:\s*[-–−]\s*(\d+))?\b",text,re.I)
@@ -89,6 +95,7 @@ def parse_champinon(name):
                 header=hs;start=i+1;break
         if not header:continue
         di,oi,ri=header.index('date'),header.index('opponent'),header.index('result')
+        ni=header.index('notes') if 'notes' in header else None
         for tr in trs[start:]:
             cells=tr.find_all(['th','td'],recursive=False)
             if max(di,oi,ri)>=len(cells):continue
@@ -98,7 +105,13 @@ def parse_champinon(name):
             else:
                 try:date=dateparse(rawdate,dayfirst=False,fuzzy=True).date().isoformat()
                 except Exception:continue
-            opponent=clean_opponent(cells[oi].get_text(' ',strip=True))
+            opp_text=cells[oi].get_text(' ',strip=True)
+            opponent=clean_opponent(opp_text)
+            opp_record=opponent_record(opp_text)
+            opp_link=cells[oi].find('a',href=True)
+            opp_href=opp_link.get('href') if opp_link else None
+            if opp_href and opp_href.startswith('/'): opp_href='https://champinon.info'+opp_href
+            notes_text=re.sub(r'\s+',' ',cells[ni].get_text(' ',strip=True)).strip() if ni is not None and ni<len(cells) else ''
             result_text=re.sub(r'\s+',' ',cells[ri].get_text(' ',strip=True)).strip()
             low=result_text.casefold()
             if re.search(r'\bwin\b',low):result='win'
@@ -113,7 +126,9 @@ def parse_champinon(name):
             seen.add(key)
             rows.append({'date':date,'result':result,'opponent':opponent,'type':method,
                          'round_time':'','location':'','record':'',
-                         'raw':{'date':rawdate,'opponent':opponent,'result':result_text,'source':'champinon'}})
+                         'raw':{'date':rawdate,'opponent':opponent,'result':result_text,'notes':notes_text,
+                                'opponent_record_at_bout':opp_record,'opponent_source_url':opp_href,
+                                'source':'champinon'}})
     rows.sort(key=lambda r:r['date'])
     if stated_total is not None and len(rows)!=stated_total:
         raise ValueError(f'incomplete career table {len(rows)}/{stated_total}')
