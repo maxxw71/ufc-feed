@@ -46,6 +46,28 @@ jobs:
                   if isinstance(x,dict):keys.update(x.keys())
               except Exception:pass
           out['bout_json_keys']=keys.most_common(120)
+          # Coverage of structured weight rows by source/year.
+          out['weight_lb_by_source']=[list(x) for x in d.execute(
+              """select source,count(*) from bouts
+                 where json_extract(data,'$.weight_lb') is not null
+                 group by source order by count(*) desc""")]
+          out['weight_lb_by_year']=[list(x) for x in d.execute(
+              """select substr(date,1,4),count(*) from bouts
+                 where json_extract(data,'$.weight_lb') is not null
+                 group by 1 order by 1""")]
+          # Summarize keys already extracted from wiki bout context.
+          wk=collections.Counter();wexamples={}
+          if 'wiki_bout_context' in tables:
+              for r in d.execute("select fields_json from wiki_bout_context"):
+                  try:x=json.loads(r[0])
+                  except Exception:continue
+                  if not isinstance(x,dict):continue
+                  for k,v in x.items():
+                      if v not in (None,'',[],{}):
+                          wk[k]+=1
+                          if k not in wexamples:wexamples[k]=str(v)[:300]
+          out['wiki_context_field_counts']=wk.most_common(120)
+          out['wiki_context_examples']=wexamples
           # Commission report kinds/statuses only; no raw docs.
           if 'commission_reports' in tables:
               cols=out['commission_reports']['columns']
