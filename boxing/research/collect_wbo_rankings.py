@@ -36,11 +36,21 @@ DIVMAP={re.sub(r'[^a-z]','',x):x for x in DIVISIONS}
 DIVMAP.update({re.sub(r'[^a-z]','',k):v for k,v in ALIASES.items()})
 
 def get(url,limit=15_000_000):
-    req=urllib.request.Request(url,headers={'User-Agent':UA,'Accept-Language':'en-US,en;q=0.8'})
-    with urllib.request.urlopen(req,timeout=45) as r:
-        data=r.read(limit+1);final=r.geturl()
-    if len(data)>limit:raise ValueError('response too large')
-    return final,data
+    last=None
+    for attempt in range(4):
+        try:
+            req=urllib.request.Request(url,headers={'User-Agent':UA,'Accept-Language':'en-US,en;q=0.8'})
+            with urllib.request.urlopen(req,timeout=45) as r:
+                data=r.read(limit+1);final=r.geturl()
+            if len(data)>limit:raise ValueError('response too large')
+            return final,data
+        except urllib.error.HTTPError as e:
+            last=e
+            if e.code not in {408,425,429,500,502,503,504,520,521,522,523,524}:raise
+        except urllib.error.URLError as e:
+            last=e
+        if attempt<3:time.sleep(1.5*(2**attempt))
+    raise last
 
 def article_links():
     links=set()
@@ -54,8 +64,14 @@ def article_links():
             p=urllib.parse.urlsplit(href).path.rstrip('/')
             if not p.startswith('/explanations/') or p in {'/explanations'}:continue
             if '/page/' in p:continue
-            links.add(href.split('#')[0])
-    return sorted(links)
+            clean=href.split('#')[0]
+            # Avoid hammering old posts we will discard anyway.
+            years=[int(x) for x in re.findall(r'20\d{2}',urllib.parse.urlsplit(clean).path)]
+            if years and max(years)<2021:continue
+            links.add(clean)
+    # Most recent URLs first where possible; a small delay below further
+    # reduces 503/rate-limit pressure.
+    return sorted(links,reverse=True)
 
 def parse_post_date(soup,raw_text):
     vals=[]
@@ -169,7 +185,7 @@ def main():
                          'pages':pages,'ranking_rows':len(ranks),'champions':len(champs)})
         except Exception as e:
             docs.append({'article_url':article,'status':'fetch_review','error':str(e)[:300]})
-        time.sleep(.05)
+        time.sleep(.25)
     # Deduplicate same publication+division+rank/name in case archive pages link twice.
     uniqr={}
     for r in allr:uniqr[(r['safe_effective_date'],r['division'],r['rank'],r['name'])]=r
