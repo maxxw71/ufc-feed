@@ -2,6 +2,13 @@ name: Appwiza boxing live integration
 
 on:
   workflow_dispatch:
+  workflow_run:
+    workflows:
+      - Boxing self-hosted career retry
+      - Boxing secondary career recovery
+      - Boxing priced career backfill
+    types: [completed]
+    branches: [main]
   push:
     branches: [main]
     paths:
@@ -20,7 +27,7 @@ permissions:
 
 jobs:
   integrate:
-    if: github.repository == 'maxxw71/ufc-feed' && github.ref == 'refs/heads/main'
+    if: github.repository == 'maxxw71/ufc-feed' && (github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success')
     runs-on: [self-hosted, Linux, X64, appwiza]
     timeout-minutes: 20
     steps:
