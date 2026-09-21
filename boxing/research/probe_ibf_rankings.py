@@ -24,7 +24,7 @@ def main():
                 'selects':[{'name':s.get('name'),'options':[(o.get('value'),o.get_text(' ',strip=True)) for o in s.find_all('option')]} for s in f.find_all('select')]}
                for f in soup.find_all('form')],
       'scripts':[s.get('src') for s in soup.find_all('script',src=True)],
-      'ajax_tokens':sorted(set(re.findall(r"https?://[^\\"'\\s]+|admin-ajax\\.php|wp-json[^\\"'\\s]*",html,re.I)))[:100]
+      'ajax_tokens':sorted(set(x.rstrip('",\'<>);') for x in re.findall(r'https?://\\S+|admin-ajax\\.php|wp-json\\S*',html,re.I)))[:100]
     }
     links={}
     for page in range(1,9):
