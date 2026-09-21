@@ -22,7 +22,7 @@ jobs:
         run: |
           set -e
           R=/home/anestishkurti92/boxing-research
-          for f in external_evidence_collect.py historical_punch.py alternative_sources.py import_reviewed_evidence.py import_reviewed_round_charts.py export_round_archive.py; do
+          for f in external_evidence_collect.py historical_punch.py alternative_sources.py import_reviewed_evidence.py import_reviewed_round_charts.py export_round_archive.py reviewed_historical_evidence.json; do
             echo "===== $f ====="
             sed -n '1,260p' "$R/$f" 2>/dev/null || true
           done
