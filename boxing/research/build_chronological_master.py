@@ -3,6 +3,7 @@ import collections, datetime as dt, hashlib, json, math, re, sqlite3
 from pathlib import Path
 from features import summary, age, namekey
 from enrich_history import stats, rounds_value
+from build_punch_profiles import weighted as punch_weighted, norm_name as punch_namekey
 ROOT=Path(__file__).resolve().parent
 ALLOWED_CAREER_SOURCES=('wikipedia','champinon','wba_consensus')
 
@@ -159,6 +160,41 @@ def bout_context(r):
           else 'other'}
     }
 
+def load_punch_history():
+    path=ROOT/'punch_profiles'/'fight_punch_observations.jsonl'
+    hist=collections.defaultdict(list)
+    if not path.exists():
+        return hist
+    for line in path.read_text().splitlines():
+        if not line.strip():continue
+        try:r=json.loads(line)
+        except Exception:continue
+        if r.get('identity_quality')!='report_title_full_name_suffix_match':continue
+        key=r.get('fighter_key')
+        date=r.get('bout_date')
+        if not key or not date:continue
+        try:dt.date.fromisoformat(date)
+        except Exception:continue
+        hist[key].append(r)
+    for key in hist:
+        hist[key].sort(key=lambda r:(r['bout_date'],r.get('report_id') or r.get('report_url') or ''))
+    return hist
+
+def punch_before(hist,name,date):
+    key=punch_namekey(name or '')
+    rows=[r for r in hist.get(key,[]) if r.get('bout_date') and r['bout_date']<date]
+    if not rows:return None
+    out={'prior_punch_fights':len(rows),'prior_punch_rounds':sum(int(r.get('rounds_observed') or 0) for r in rows),
+         'latest_prior_punch_date':rows[-1]['bout_date'],'identity_quality':'exact_full_name_from_compubox_report_title'}
+    for cat in ('total','jab','power'):
+        for metric in ('landed_per_round','thrown_per_round','accuracy_pct','avoidance_pct','net_landed_per_round','round_edge_rate','landed_diff_slope','late_vs_early_net_delta'):
+            field=f'{cat}_{metric}'
+            out['career_'+field]=punch_weighted(rows,field)
+            out['last3_'+field]=punch_weighted(rows,field,limit=3)
+    out['career_body_landed_share_pct']=punch_weighted(rows,'body_landed_share_pct')
+    out['last3_body_landed_share_pct']=punch_weighted(rows,'body_landed_share_pct',limit=3)
+    return out
+
 def load_wbc_rankings():
     candidates=[ROOT/'rankings',ROOT.parent/'rankings']
     rfile=next((p/'wbc_monthly_rankings.json' for p in candidates if (p/'wbc_monthly_rankings.json').exists()),None)
@@ -205,6 +241,7 @@ def main():
     links=load_links(d)
     profiles={r['source_id']:dict(r) for r in d.execute('select * from normalized_fighters')}
     wbc_ranks,wbc_champs=load_wbc_rankings()
+    punch_history=load_punch_history()
     events=canonical_events(histories,links); eventkeys={k for k,s in events}
     targets=collections.defaultdict(set)
     for fid,history in histories.items():
@@ -245,6 +282,7 @@ def main():
                         'weight_class_static_proxy':p.get('weight_class_snapshot'),
                         'physical_proxy_quality':'identity-linked current biography snapshot when available; height/reach treated as stable adult proxies; stance/nationality exploratory only',
                         'elo':rating,'elo_prior_verified_bouts':n,'last8_wins':sum(x['winner']=='BOXER A' for x in prior[-8:]),'last8_sample':len(prior[-8:]),
+                        'prior_punch':punch_before(punch_history,p.get('name') or (r['boxer_a'] if label=='fighter' else r['boxer_b']),date),
                         'input_bout_ids':[x['source_id'] for x in prior]}
                     _wr=wbc_before(wbc_ranks, sides[label].get('id') and p.get('name') or (r['boxer_a'] if label=='fighter' else r['boxer_b']), date)
                     _wc=wbc_before(wbc_champs, sides[label].get('id') and p.get('name') or (r['boxer_a'] if label=='fighter' else r['boxer_b']), date)
@@ -259,12 +297,20 @@ def main():
                      **sides,'canonical_verified_pair':bool(pair and (date,*pair) in eventkeys),'context':bout_context(r),
                      'wbc_rank_gap':(sides['opponent']['wbc_rank']-sides['fighter']['wbc_rank']) if sides.get('fighter') and sides.get('opponent') and sides['fighter'].get('wbc_rank') is not None and sides['opponent'].get('wbc_rank') is not None else None,
                      'outcome':{'result':r['winner'],'method':r['method'],'rounds':r['rounds']},'quotes':matched,'validated_price_eligible':False,
-                     'historically_verified_physical_stats':False,'historically_linked_prior_punch_stats':None}
+                     'historically_verified_physical_stats':False,
+                     'historically_linked_prior_punch_stats':{
+                         'fighter':sides['fighter'].get('prior_punch') if sides.get('fighter') else None,
+                         'opponent':sides['opponent'].get('prior_punch') if sides.get('opponent') else None
+                     } if (sides.get('fighter') and sides['fighter'].get('prior_punch')) or (sides.get('opponent') and sides['opponent'].get('prior_punch')) else None}
                 f.write(json.dumps(row,ensure_ascii=False)+'\n');total+=1;source_rows[r['source']]+=1
                 y=years[date[:4]];y['fighter_bout_rows']+=1;y['reciprocal_pair_rows']+=row['canonical_verified_pair'];y['price_linked_rows']+=bool(matched)
                 y['both_record_totals_match']+=bool(sides['opponent'] and all(sides[x]['record_totals_match'] for x in ('fighter','opponent')))
+                y['fighter_has_prior_punch']+=bool(sides.get('fighter') and sides['fighter'].get('prior_punch'))
+                y['both_have_prior_punch']+=bool(sides.get('fighter') and sides.get('opponent') and sides['fighter'].get('prior_punch') and sides['opponent'].get('prior_punch'))
     report={'built_at':stamp,'rows':total,'career_sources':dict(source_rows),'verified_graph_bouts':len(events),'identity_links':len(links),'opponent_strength_sources':dict(strength_source),
-            'wbc_ranking_names_loaded':len(wbc_ranks),'wbc_champion_names_loaded':len(wbc_champs),'years':dict(sorted(years.items())),
+            'wbc_ranking_names_loaded':len(wbc_ranks),'wbc_champion_names_loaded':len(wbc_champs),
+            'punch_identity_fighters_loaded':len(punch_history),'punch_observations_loaded':sum(len(v) for v in punch_history.values()),
+            'years':dict(sorted(years.items())),
             'validated_price_rows':0,'limitations':['Career rows preserve source provenance; secondary observed histories are not relabeled as Wikipedia.',
             'Source observations are not a census of all boxing fights.','Own Elo: 1500 initial, K32, reciprocal graph only; all same-day updates batched.',
             'Record totals agreement is an internal audit, not independent full-career certification.',
@@ -273,7 +319,7 @@ def main():
             'Title/location/scheduled-round context comes from record rows but only pre-fight-knowable flags are exposed.',
             'WBC ranking fields are used only from official monthly PDFs after their conservative safe effective date; missing remains unknown, never inferred unranked.',
             'All quotes have unverified timing/settlement. No validated ROI or live eligibility.',
-            'Prior punch features unavailable until identity, date and coverage gates pass.']}
+            'Prior punch features require exact full-name identity from CompuBox report titles and only earlier report dates; missing remains unknown.']}
     (outdir/'coverage.json').write_text(json.dumps(report,indent=2));(ROOT/'LATEST_CHRONOLOGICAL_MASTER.txt').write_text(str(outdir)+'\n')
     print(json.dumps({'run':str(outdir),'rows':total,'career_sources':dict(source_rows),'verified_graph_bouts':len(events),'identity_links':len(links),'years':report['years']}))
 if __name__=='__main__':main()
