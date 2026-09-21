@@ -3,7 +3,7 @@
 import io,json,urllib.request
 import pdfplumber
 
-URL='https://www.wbaboxing.com/wba-ranking-pdf/2021/WBA-Official-Ratings-February-2021.pdf'
+URL='https://www.wbaboxing.com/wba-ranking-pdf/2023/WBA-Official-Ratings-November-2023.pdf'
 req=urllib.request.Request(URL,headers={'User-Agent':'Mozilla/5.0 AppwizaWBAProbe/1.0'})
 with urllib.request.urlopen(req,timeout=45) as r:raw=r.read()
 out={'url':URL,'bytes':len(raw),'pages':[]}
