@@ -1,5 +1,5 @@
 {
-  "built_at": "20260921T131500Z",
+  "built_at": "20260921T140912Z",
   "rows": 117901,
   "career_sources": {
     "wikipedia": 112581,
@@ -13,8 +13,12 @@
   },
   "wbc_ranking_names_loaded": 1135,
   "wbc_champion_names_loaded": 46,
-  "wba_ranking_names_loaded": 1172,
+  "wba_ranking_names_loaded": 1173,
   "wba_champion_names_loaded": 114,
+  "wbo_ranking_names_loaded": 1372,
+  "wbo_champion_names_loaded": 68,
+  "ibf_ranking_names_loaded": 2429,
+  "ibf_champion_names_loaded": 227,
   "punch_identity_fighters_loaded": 23,
   "punch_observations_loaded": 24,
   "years": {
@@ -326,6 +330,8 @@
     "Title/location/scheduled-round context comes from record rows but only pre-fight-knowable flags are exposed.",
     "WBC ranking fields are used only from official monthly PDFs after their conservative safe effective date; missing remains unknown, never inferred unranked.",
     "WBA ranking fields are kept separate from WBC and are usable only on/after the official WBA posting date; missing remains unknown.",
+    "WBO ranking fields are kept separate and usable only on/after the official WBO article publication date; missing remains unknown.",
+    "IBF ranking fields are kept separate and usable only after the official IBF API post date; missing/vacant rank slots remain unknown.",
     "All quotes have unverified timing/settlement. No validated ROI or live eligibility.",
     "Prior punch features require exact full-name identity from CompuBox report titles and only earlier report dates; missing remains unknown."
   ]
