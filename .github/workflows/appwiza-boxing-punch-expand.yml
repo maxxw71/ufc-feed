@@ -17,7 +17,7 @@ jobs:
   expand:
     if: github.repository == 'maxxw71/ufc-feed' && github.ref == 'refs/heads/main'
     runs-on: [self-hosted, Linux, X64, appwiza]
-    timeout-minutes: 25
+    timeout-minutes: 35
     steps:
       - uses: actions/checkout@v4
       - name: Expand verified punch reports safely
@@ -52,10 +52,16 @@ jobs:
           if 'punch_reports' in tabs:
               print('STATUS_BEFORE',list(d.execute('select status,count(*) from punch_reports group by status order by status')))
           PY
-          nice -n 15 venv/bin/python -u discover_archived_compubox_links.py --limit 500 | tee ARCHIVED_COMPUBOX_DISCOVERY.latest.log
-          if [ -f external_evidence_collect.py ]; then
-            nice -n 15 venv/bin/python -u external_evidence_collect.py --pages 500 | tee EXTERNAL_EVIDENCE_PUNCH_EXPAND.latest.log
-          fi
+          : > ARCHIVED_COMPUBOX_DISCOVERY.latest.log
+          : > EXTERNAL_EVIDENCE_PUNCH_EXPAND.latest.log
+          for pass in 1 2 3; do
+            echo "=== archive discovery pass $pass ===" | tee -a ARCHIVED_COMPUBOX_DISCOVERY.latest.log
+            nice -n 15 venv/bin/python -u discover_archived_compubox_links.py --limit 500 | tee -a ARCHIVED_COMPUBOX_DISCOVERY.latest.log
+            if [ -f external_evidence_collect.py ]; then
+              echo "=== evidence collection pass $pass ===" | tee -a EXTERNAL_EVIDENCE_PUNCH_EXPAND.latest.log
+              nice -n 15 venv/bin/python -u external_evidence_collect.py --pages 400 | tee -a EXTERNAL_EVIDENCE_PUNCH_EXPAND.latest.log
+            fi
+          done
           nice -n 15 venv/bin/python -u import_archived_compubox_rounds.py --apply | tee ARCHIVED_COMPUBOX_IMPORT.latest.log
           nice -n 15 venv/bin/python -u punch_collect.py | tee PUNCH_EXPAND.latest.log
           venv/bin/python - <<'PY'
