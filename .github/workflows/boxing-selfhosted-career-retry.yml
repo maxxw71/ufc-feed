@@ -30,7 +30,7 @@ jobs:
         run: |
           set -Eeuo pipefail
           cd "$GITHUB_WORKSPACE"
-          python3 boxing/research/retry_failed_secondary_careers.py --limit 50
+          PYTHONPATH="$GITHUB_WORKSPACE/boxing/research:$GITHUB_WORKSPACE/boxing/collectors"             /home/anestishkurti92/boxing-research/venv/bin/python             boxing/research/retry_failed_secondary_careers.py --limit 50
       - name: Persist recovered careers
         shell: bash
         run: |
