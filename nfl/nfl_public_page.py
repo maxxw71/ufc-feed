@@ -137,21 +137,23 @@ def _row_for_card(card, amap):
     return None
 
 def _audit_action(row):
-    if not row:return ('monitor','Scanner qualified','No fresh deep-audit row is attached yet.')
+    # Public actionability is fail-closed. A missing deep-audit row or required
+    # refinement value is a NO BET, never a scanner-qualified/monitor fallback.
+    if not row:return ('veto','NO BET','Missing fresh deep-audit row; fail closed.')
     status=str(row.get('target_status','')).upper()
     if status!='UPCOMING':
         return ('stale','Not actionable','Authoritative schedule says this row is completed, stale, or needs identity review.')
     preseason=_bool(row.get('preseason_policy_pass'))
+    if preseason is None:
+        return ('veto','NO BET','Required preseason refinement is missing; fail closed.')
     if preseason is False:
         return ('veto','NO BET','Refined veto: selected team did not reach the validated 2+ preseason-win requirement.')
     games=_i(row.get('current_games_available')) or 0
     wins=_i(row.get('current_wins')) or 0
     margin=_f(row.get('current_point_margin_avg'))
-    if preseason is True and games and wins>0 and margin is not None and margin>0:
+    if games and wins>0 and margin is not None and margin>0:
         return ('keep','KEEP','Passes the refined preseason gate and current-season evidence is directionally supportive.')
-    if preseason is True:
-        return ('keep','KEEP','Passes the refined preseason gate; early-season results remain context, not a mature rolling signal.')
-    return ('monitor','Monitor','Fresh context is available, but no validated refinement changes the scanner qualification.')
+    return ('keep','KEEP','Passes the required fail-closed refinement; early-season results remain context, not a mature rolling signal.')
 
 def _coach_text(row):
     hc=row.get('live_coachq_head_coach') or row.get('head_coach') or '—'
@@ -206,8 +208,8 @@ def _history_table(past, ledger):
 
 def _method_key():
     live=[
-        ('M1','Home opener · Run defense + preseason gate','Top-10 prior-season run defense, better prior-season record than the opponent, and at least 2 preseason wins when a preseason exists.'),
-        ('M2','Home opener · Larger record edge','All M1 conditions plus a prior-season winning-percentage advantage greater than 12.5 percentage points.'),
+        ('M1','Home opener · Run defense + enriched fail-closed gate','Top-10 prior-season run defense, prior-season record at least .500, 2+ preseason wins, and the validated enriched M1 veto must be available and pass. Missing enriched data = no bet.'),
+        ('M2','Home opener · .500 record + larger edge','Prior-season record at least .500, top-10 prior run defense, 2+ preseason wins, and a winning-percentage advantage greater than 12.5 points. M2 is independent of the M1 enriched veto.'),
         ('M3','Week 1 · Defense + offense filter','Week 1 home opener with prior-season pass defense top 10, sack/QB-hit rank top 16, and offense rank 24 or better.'),
         ('M4','Late season · Away favorite','Week 11+ away favorite with a large pass-defense edge, strong OL continuity and a validated price/protection/rest gate.'),
     ]
