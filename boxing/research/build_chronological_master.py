@@ -216,6 +216,27 @@ def load_wbc_rankings():
         for k in x:x[k].sort(key=lambda r:r.get('safe_effective_date') or '')
     return ranks,champs
 
+def load_wba_rankings():
+    candidates=[ROOT/'rankings',ROOT.parent/'rankings']
+    rfile=next((p/'wba_monthly_rankings.json' for p in candidates if (p/'wba_monthly_rankings.json').exists()),None)
+    cfile=next((p/'wba_monthly_champions.json' for p in candidates if (p/'wba_monthly_champions.json').exists()),None)
+    ranks=collections.defaultdict(list);champs=collections.defaultdict(list)
+    if rfile:
+        try:
+            for r in json.loads(rfile.read_text()):
+                key=namekey(r.get('name') or '')
+                if key:ranks[key].append(r)
+        except Exception:pass
+    if cfile:
+        try:
+            for r in json.loads(cfile.read_text()):
+                key=namekey(r.get('name') or '')
+                if key:champs[key].append(r)
+        except Exception:pass
+    for x in (ranks,champs):
+        for k in x:x[k].sort(key=lambda r:r.get('safe_effective_date') or '')
+    return ranks,champs
+
 def wbc_before(index,name,date,max_age_days=75):
     rows=index.get(namekey(name or ''),[])
     eligible=[r for r in rows if (r.get('safe_effective_date') or '')<=date]
@@ -241,6 +262,7 @@ def main():
     links=load_links(d)
     profiles={r['source_id']:dict(r) for r in d.execute('select * from normalized_fighters')}
     wbc_ranks,wbc_champs=load_wbc_rankings()
+    wba_ranks,wba_champs=load_wba_rankings()
     punch_history=load_punch_history()
     events=canonical_events(histories,links); eventkeys={k for k,s in events}
     targets=collections.defaultdict(set)
@@ -291,11 +313,20 @@ def main():
                     sides[label]['wbc_rank_source_month']=f"{_wr.get('rating_year')}-{int(_wr.get('rating_month')):02d}" if _wr else None
                     sides[label]['wbc_champion_status']=_wc.get('status') if _wc else None
                     sides[label]['wbc_ranking_quality']='official_monthly_pdf_safe_effective_date' if (_wr or _wc) else None
+                    _bar=wbc_before(wba_ranks, sides[label].get('id') and p.get('name') or (r['boxer_a'] if label=='fighter' else r['boxer_b']), date, max_age_days=95)
+                    _bac=wbc_before(wba_champs, sides[label].get('id') and p.get('name') or (r['boxer_a'] if label=='fighter' else r['boxer_b']), date, max_age_days=95)
+                    sides[label]['wba_rank']=_bar.get('rank') if _bar else None
+                    sides[label]['wba_rank_division']=_bar.get('division') if _bar else None
+                    sides[label]['wba_rank_source_month']=f"{int(_bar.get('year'))}-{int(_bar.get('month')):02d}" if _bar else None
+                    sides[label]['wba_rank_safe_effective_date']=_bar.get('safe_effective_date') if _bar else None
+                    sides[label]['wba_champion_status']=_bac.get('title') if _bac else None
+                    sides[label]['wba_ranking_quality']='official_monthly_pdf_official_posting_date' if (_bar or _bac) else None
                     assert not s['latest_input_bout_date'] or s['latest_input_bout_date']<date
                 matched=[q for q in quotes[r['source_id']] if q['event_date']==date]
                 row={'source_id':r['source_id'],'career_source':r['source'],'bout_date':date,'fighter_name':r['boxer_a'],'opponent_name':r['boxer_b'],
                      **sides,'canonical_verified_pair':bool(pair and (date,*pair) in eventkeys),'context':bout_context(r),
                      'wbc_rank_gap':(sides['opponent']['wbc_rank']-sides['fighter']['wbc_rank']) if sides.get('fighter') and sides.get('opponent') and sides['fighter'].get('wbc_rank') is not None and sides['opponent'].get('wbc_rank') is not None else None,
+                     'wba_rank_gap':(sides['opponent']['wba_rank']-sides['fighter']['wba_rank']) if sides.get('fighter') and sides.get('opponent') and sides['fighter'].get('wba_rank') is not None and sides['opponent'].get('wba_rank') is not None else None,
                      'outcome':{'result':r['winner'],'method':r['method'],'rounds':r['rounds']},'quotes':matched,'validated_price_eligible':False,
                      'historically_verified_physical_stats':False,
                      'historically_linked_prior_punch_stats':{
@@ -309,6 +340,7 @@ def main():
                 y['both_have_prior_punch']+=bool(sides.get('fighter') and sides.get('opponent') and sides['fighter'].get('prior_punch') and sides['opponent'].get('prior_punch'))
     report={'built_at':stamp,'rows':total,'career_sources':dict(source_rows),'verified_graph_bouts':len(events),'identity_links':len(links),'opponent_strength_sources':dict(strength_source),
             'wbc_ranking_names_loaded':len(wbc_ranks),'wbc_champion_names_loaded':len(wbc_champs),
+            'wba_ranking_names_loaded':len(wba_ranks),'wba_champion_names_loaded':len(wba_champs),
             'punch_identity_fighters_loaded':len(punch_history),'punch_observations_loaded':sum(len(v) for v in punch_history.values()),
             'years':dict(sorted(years.items())),
             'validated_price_rows':0,'limitations':['Career rows preserve source provenance; secondary observed histories are not relabeled as Wikipedia.',
@@ -318,6 +350,7 @@ def main():
             'Biography age uses available birth date; height/reach are static adult proxies when available; stance/nationality remain exploratory.',
             'Title/location/scheduled-round context comes from record rows but only pre-fight-knowable flags are exposed.',
             'WBC ranking fields are used only from official monthly PDFs after their conservative safe effective date; missing remains unknown, never inferred unranked.',
+            'WBA ranking fields are kept separate from WBC and are usable only on/after the official WBA posting date; missing remains unknown.',
             'All quotes have unverified timing/settlement. No validated ROI or live eligibility.',
             'Prior punch features require exact full-name identity from CompuBox report titles and only earlier report dates; missing remains unknown.']}
     (outdir/'coverage.json').write_text(json.dumps(report,indent=2));(ROOT/'LATEST_CHRONOLOGICAL_MASTER.txt').write_text(str(outdir)+'\n')
