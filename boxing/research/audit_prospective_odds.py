@@ -81,11 +81,16 @@ def main():
     for (date,bid,names),qs in sorted(groups.items()):
         try:event_date=dt.date.fromisoformat(date)
         except Exception:continue
+        sportsbook_qs=[q for q in qs if q.get('market_class')=='sportsbook']
+        prediction_qs=[q for q in qs if q.get('market_class')=='prediction_market']
         record={'event_date':date,'bout_id':bid,'participants':list(names),
                 'first_snapshot':min(q['_fetched_at'] for q in qs if q.get('_fetched_at')),
                 'last_snapshot':max(q['_fetched_at'] for q in qs if q.get('_fetched_at')),
                 'verified_quote_rows':len(qs),
-                'sportsbooks':sorted({q.get('bookmaker') for q in qs if q.get('market_class')=='sportsbook' and q.get('bookmaker')}),
+                'verified_sportsbook_quote_rows':len(sportsbook_qs),
+                'verified_prediction_market_quote_rows':len(prediction_qs),
+                'market_classes':sorted({q.get('market_class') for q in qs if q.get('market_class')}),
+                'sportsbooks':sorted({q.get('bookmaker') for q in sportsbook_qs if q.get('bookmaker')}),
                 'selections':sorted({q.get('selection') for q in qs if q.get('selection')})}
         if event_date>=now.date():
             pending.append(record);continue
@@ -100,15 +105,22 @@ def main():
         'snapshot_records':len(snaps),
         'raw_quote_observations':len(quotes),
         'verified_pre_event_quote_observations':len(eligible),
+        'verified_pre_event_sportsbook_quote_observations':sum(q.get('market_class')=='sportsbook' for q in eligible),
+        'verified_pre_event_prediction_market_quote_observations':sum(q.get('market_class')=='prediction_market' for q in eligible),
         'verification_pct':round(100*len(eligible)/len(quotes),2) if quotes else None,
         'unique_verified_bouts':len(groups),
+        'unique_verified_sportsbook_bouts':sum(any(q.get('market_class')=='sportsbook' for q in qs) for qs in groups.values()),
+        'unique_prediction_market_only_bouts':sum(not any(q.get('market_class')=='sportsbook' for q in qs) for qs in groups.values()),
         'unique_sportsbooks':sorted({q.get('bookmaker') for q in eligible if q.get('market_class')=='sportsbook' and q.get('bookmaker')}),
         'settled_verified_bouts':len(settled),
+        'settled_verified_sportsbook_bouts':sum(x.get('verified_sportsbook_quote_rows',0)>0 for x in settled),
         'past_unresolved_bouts':len(unresolved),
+        'past_unresolved_sportsbook_bouts':sum(x.get('verified_sportsbook_quote_rows',0)>0 for x in unresolved),
         'future_or_today_bouts':len(pending),
+        'future_or_today_sportsbook_bouts':sum(x.get('verified_sportsbook_quote_rows',0)>0 for x in pending),
         'date_min':min((q.get('event_date') for q in eligible if q.get('event_date')),default=None),
         'date_max':max((q.get('event_date') for q in eligible if q.get('event_date')),default=None),
-        'policy':'Only originally timestamped pre-event quotes are eligible; results require exact date+pair and unanimous matching finished source rows.'
+        'policy':'Only originally timestamped pre-event quotes are eligible; results require exact date+pair and unanimous matching finished source rows. Sportsbook and prediction-market observations are reported separately; only sportsbook rows are candidates for sportsbook ROI validation.'
     }
     (ODDS/'coverage.json').write_text(json.dumps(coverage,indent=2,ensure_ascii=False))
     (ODDS/'settled_bouts.json').write_text(json.dumps({'generated_at':now.isoformat(),'settled':settled,'past_unresolved':unresolved},indent=2,ensure_ascii=False))
