@@ -26,7 +26,10 @@ jobs:
           test -f "$LIVE"; test -f "$ZIP"
           TMP=$(mktemp -d)
           trap 'rm -rf "$TMP"' EXIT
-          unzip -qq "$ZIP" -d "$TMP"
+          python3 - "$ZIP" "$TMP" <<'PY'
+          import zipfile,sys
+          with zipfile.ZipFile(sys.argv[1]) as z:z.extractall(sys.argv[2])
+          PY
           PUB=$(find "$TMP" -maxdepth 1 -name '*.sqlite3' | head -1)
           python3 - "$PUB" "$LIVE" <<'PY'
           import sqlite3,sys,json,os
