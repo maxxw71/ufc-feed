@@ -26,7 +26,7 @@ DIVISIONS=[
  'super flyweight','flyweight','light flyweight','minimumweight'
 ]
 DIV_LOOKUP={re.sub(r'[^a-z]','',x):x for x in DIVISIONS}
-DIV_LOOKUP.update({'minimum':'minimumweight','strawweight':'minimumweight','miniflyweight':'minimumweight'})
+DIV_LOOKUP.update({'minimum':'minimumweight','strawweight':'minimumweight','miniflyweight':'minimumweight','supercruiserweight':'bridgerweight'})
 MONTHS={m.upper():i for i,m in enumerate(
  ['January','February','March','April','May','June','July','August','September','October','November','December'],1)}
 QUALIFIERS=[
