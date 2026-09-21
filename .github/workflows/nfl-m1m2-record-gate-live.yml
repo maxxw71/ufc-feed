@@ -1,0 +1,77 @@
+name: NFL M1 M2 Prior Record Gate Live
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'nfl/production_match_guard.py'
+      - 'nfl/test_production_match_guard.py'
+      - '.github/workflows/nfl-m1m2-record-gate-live.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    runs-on: [self-hosted, Linux, X64, appwiza]
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Validate guard regression tests
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          cd nfl
+          python3 test_production_match_guard.py
+          python3 -m py_compile production_match_guard.py
+
+      - name: Install guard through owner SSH and refresh NFL
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          KEY=/home/appwiza-runner/.ssh/appwiza_vps
+          HOST=anestishkurti92@127.0.0.1
+          ROOT=/home/anestishkurti92/nfl-predictor-v1
+          R2="$ROOT/research_v2"
+
+          scp -i "$KEY" -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=accept-new             nfl/production_match_guard.py "$HOST":/home/anestishkurti92/.nfl_m_record_guard.py
+          scp -i "$KEY" -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=accept-new             nfl/test_production_match_guard.py "$HOST":/home/anestishkurti92/.nfl_m_record_guard_test.py
+
+          ssh -i "$KEY" -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=accept-new "$HOST" 'bash -s' <<'EOF'
+          set -Eeuo pipefail
+          ROOT=/home/anestishkurti92/nfl-predictor-v1
+          R2="$ROOT/research_v2"
+          LIVE="$R2/production_match_guard.py"
+          TS=$(date -u +%Y%m%dT%H%M%SZ)
+          mkdir -p "$ROOT/backups"
+          [ ! -f "$LIVE" ] || cp -a "$LIVE" "$ROOT/backups/production_match_guard.pre-m-record-$TS.py"
+
+          install -m 0644 /home/anestishkurti92/.nfl_m_record_guard.py "$LIVE"
+          python3 -m py_compile "$LIVE"
+          PYTHONPATH="$R2" python3 /home/anestishkurti92/.nfl_m_record_guard_test.py
+
+          grep -q 'M_FAMILY_MIN_PRIOR_SEASON_PCT = 0.500' "$LIVE"
+          grep -q 'prior_season_home_record_below_500' "$LIVE"
+          grep -q 'missing_prior_season_home_record' "$LIVE"
+
+          cd "$R2"
+          "$ROOT/venv/bin/python" nfl_home_opener_scanner.py --manual
+
+          python3 - <<'PY'
+          from pathlib import Path
+          import json
+          p=Path('home_opener_email_state/production_match_rejections.json')
+          if p.exists():
+              d=json.loads(p.read_text())
+              print('approved_count',d.get('approved_count'))
+              for x in d.get('rejections',[]):
+                  reasons=set(x.get('reasons') or [])
+                  if {'prior_season_home_record_below_500','missing_prior_season_home_record'} & reasons:
+                      print('M_RECORD_REJECTION',x.get('game_id'),sorted(reasons))
+          print('LIVE_M1M2_PRIOR_RECORD_GATE=PASS')
+          PY
+
+          rm -f /home/anestishkurti92/.nfl_m_record_guard.py /home/anestishkurti92/.nfl_m_record_guard_test.py
+          EOF
