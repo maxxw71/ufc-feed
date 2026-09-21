@@ -1,0 +1,148 @@
+name: Cross Sport Approval Integrity
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '*/15 * * * *'
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/cross_sport_approval_audit.py'
+      - 'nfl/production_match_guard.py'
+      - 'nfl/test_production_match_guard.py'
+      - 'nfl/nfl_public_page.py'
+      - 'scripts/patch_nfl_canonical_surfaces.py'
+      - 'scripts/patch_ufc_canonical_surfaces.py'
+      - 'scripts/mls_method_registry_guard.py'
+      - 'boxing/methods.json'
+      - '.github/workflows/cross-sport-approval-integrity.yml'
+
+concurrency:
+  group: cross-sport-approval-integrity
+  cancel-in-progress: true
+
+permissions:
+  contents: write
+
+jobs:
+  audit:
+    if: github.repository == 'maxxw71/ufc-feed'
+    runs-on: [self-hosted, Linux, X64, appwiza]
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+        with: {fetch-depth: 0}
+
+      - name: Static contract checks
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          python3 -m py_compile scripts/cross_sport_approval_audit.py nfl/production_match_guard.py nfl/test_production_match_guard.py nfl/nfl_public_page.py
+          (cd nfl && python3 test_production_match_guard.py)
+          python3 scripts/mls_method_registry_guard.py
+          python3 - <<'PY'
+          import json
+          b=json.load(open('boxing/methods.json'))
+          assert b['status']=='research_watchlist'
+          assert not [m for m in b['methods'] if str(m.get('tracking_status','')).lower() in {'live','production','official'}]
+          print('BOXING research-only registry PASS')
+          PY
+
+      - name: Deploy current NFL guard/page code before audit
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          KEY=/home/appwiza-runner/.ssh/appwiza_vps
+          HOST=anestishkurti92@127.0.0.1
+          scp -i "$KEY" -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=accept-new             nfl/production_match_guard.py "$HOST":/home/anestishkurti92/.cross_sport_production_match_guard.py
+          scp -i "$KEY" -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=accept-new             nfl/nfl_public_page.py "$HOST":/home/anestishkurti92/.cross_sport_nfl_public_page.py
+          ssh -i "$KEY" -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=accept-new "$HOST" 'bash -s' <<'EOF'
+          set -Eeuo pipefail
+          R=/home/anestishkurti92/nfl-predictor-v1/research_v2
+          install -m 0644 /home/anestishkurti92/.cross_sport_production_match_guard.py "$R/production_match_guard.py"
+          install -m 0644 /home/anestishkurti92/.cross_sport_nfl_public_page.py "$R/nfl_public_page.py"
+          python3 -m py_compile "$R/production_match_guard.py" "$R/nfl_public_page.py"
+          rm -f /home/anestishkurti92/.cross_sport_production_match_guard.py /home/anestishkurti92/.cross_sport_nfl_public_page.py
+          EOF
+
+      - name: Refresh NFL through guarded boundary
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          KEY=/home/appwiza-runner/.ssh/appwiza_vps
+          HOST=anestishkurti92@127.0.0.1
+          ssh -i "$KEY" -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=accept-new "$HOST" 'bash -s' <<'EOF'
+          set -Eeuo pipefail
+          export HOME=/home/anestishkurti92
+          R=/home/anestishkurti92/nfl-predictor-v1/research_v2
+          cd "$R"
+          /home/anestishkurti92/nfl-predictor-v1/venv/bin/python nfl_home_opener_scanner.py --manual
+          EOF
+
+      - name: Run server-side cross-sport audit
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          KEY=/home/appwiza-runner/.ssh/appwiza_vps
+          HOST=anestishkurti92@127.0.0.1
+          scp -i "$KEY" -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=accept-new             scripts/cross_sport_approval_audit.py "$HOST":/home/anestishkurti92/.cross_sport_approval_audit.py
+          mkdir -p cross_sport_integrity
+          ssh -i "$KEY" -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=accept-new "$HOST"             'python3 /home/anestishkurti92/.cross_sport_approval_audit.py; rm -f /home/anestishkurti92/.cross_sport_approval_audit.py'             > cross_sport_integrity/latest.json
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          d=json.loads(Path('cross_sport_integrity/latest.json').read_text())
+          lines=[
+            'CROSS-SPORT APPROVAL INTEGRITY',
+            '='*88,
+            f"built_at: {d['built_at']}",
+            f"status: {d['status']}",
+            '',
+            'CONTRACT',
+          ]
+          for k,v in d['contract'].items(): lines.append(f'{k}: {v}')
+          lines+=['','HARD FAILURES']
+          if d['hard_failures']:
+              for x in d['hard_failures']: lines.append(f"- {x['name']}: {x.get('detail','')}")
+          else: lines.append('- none')
+          lines+=['','WARNINGS']
+          if d['warnings']:
+              for x in d['warnings']: lines.append(f"- {x['name']}: {x.get('detail','')}")
+          else: lines.append('- none')
+          lines+=['','ALL CHECKS']
+          for x in d['checks']:
+              lines.append(f"[{'PASS' if x['ok'] else 'FAIL'}] {x['name']} :: {x.get('detail','')}")
+          Path('cross_sport_integrity/latest.txt').write_text('\n'.join(lines)+'\n')
+          print('\n'.join(lines))
+          PY
+
+      - name: Persist audit result
+        if: always()
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          cp cross_sport_integrity/latest.json "$RUNNER_TEMP/cross_sport_latest.json"
+          cp cross_sport_integrity/latest.txt "$RUNNER_TEMP/cross_sport_latest.txt"
+          git fetch origin main
+          git reset --hard origin/main
+          mkdir -p cross_sport_integrity
+          cp "$RUNNER_TEMP/cross_sport_latest.json" cross_sport_integrity/latest.json
+          cp "$RUNNER_TEMP/cross_sport_latest.txt" cross_sport_integrity/latest.txt
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git add cross_sport_integrity/latest.json cross_sport_integrity/latest.txt
+          if ! git diff --cached --quiet; then
+            git commit -m 'Publish cross-sport approval integrity audit'
+            git push origin HEAD:main
+          fi
+
+      - name: Fail closed on any hard discrepancy
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import json
+          d=json.load(open('cross_sport_integrity/latest.json'))
+          if d['status']!='PASS':
+              raise SystemExit('Cross-sport approval integrity FAIL')
+          print('CROSS-SPORT APPROVAL INTEGRITY PASS')
+          PY
