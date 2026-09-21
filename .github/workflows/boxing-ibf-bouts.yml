@@ -1,0 +1,47 @@
+name: Boxing IBF Official Bout Archive
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'boxing/research/collect_ibf_bouts.py'
+      - '.github/workflows/boxing-ibf-bouts.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  collect:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Collect official IBF bout evidence
+        run: python boxing/research/collect_ibf_bouts.py
+      - name: Persist IBF bout archive
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          mkdir -p /tmp/ibf-bouts
+          cp boxing/official_bouts/ibf_bouts.json /tmp/ibf-bouts/ibf_bouts.json
+          cp boxing/official_bouts/ibf_bouts_meta.json /tmp/ibf-bouts/ibf_bouts_meta.json
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git fetch origin main
+          git reset --hard origin/main
+          mkdir -p boxing/official_bouts
+          cp /tmp/ibf-bouts/ibf_bouts.json boxing/official_bouts/ibf_bouts.json
+          cp /tmp/ibf-bouts/ibf_bouts_meta.json boxing/official_bouts/ibf_bouts_meta.json
+          git add boxing/official_bouts/ibf_bouts.json boxing/official_bouts/ibf_bouts_meta.json
+          if git diff --cached --quiet; then
+            echo 'No IBF bout archive changes.'
+          else
+            git commit -m 'Update official IBF bout evidence archive'
+            git push origin HEAD:main
+          fi
