@@ -89,6 +89,55 @@ def main():
     approved, reasons = why(wrong_team)
     assert not approved and "selected_team_mismatch" in reasons
 
+    # M1/M2 regression: being better than a terrible opponent is not enough.
+    # The selected home team must have finished the prior season at least .500.
+    m1 = good()
+    m1["selection_side"] = "home"
+    m1["selected_team"] = "LAC"
+    m1["rules"] = ["original"]
+    m1["home_record"] = {"wins": 9, "losses": 8, "ties": 0, "pct": 9/17}
+    m1["odds"]["market_side"] = "home"
+    m1["odds"]["market_team"] = "LAC"
+    m1["odds"]["moneyline"] = 130
+    m1["odds"]["raw"]["items"][0]["homeTeamOdds"]["current"]["moneyLine"]["american"] = 130
+    approved, reasons = why(m1)
+    assert approved and not reasons
+
+    m1_500 = good()
+    m1_500["selection_side"] = "home"
+    m1_500["selected_team"] = "LAC"
+    m1_500["rules"] = ["M1"]
+    m1_500["home_record"] = {"wins": 8, "losses": 8, "ties": 1, "pct": .5}
+    m1_500["odds"]["market_side"] = "home"
+    m1_500["odds"]["market_team"] = "LAC"
+    m1_500["odds"]["moneyline"] = 130
+    m1_500["odds"]["raw"]["items"][0]["homeTeamOdds"]["current"]["moneyLine"]["american"] = 130
+    approved, reasons = why(m1_500)
+    assert approved and not reasons
+
+    losing_record = good()
+    losing_record["selection_side"] = "home"
+    losing_record["selected_team"] = "LAC"
+    losing_record["rules"] = ["original", "stricter"]
+    losing_record["home_record"] = {"wins": 8, "losses": 9, "ties": 0, "pct": 8/17}
+    losing_record["odds"]["market_side"] = "home"
+    losing_record["odds"]["market_team"] = "LAC"
+    losing_record["odds"]["moneyline"] = 130
+    losing_record["odds"]["raw"]["items"][0]["homeTeamOdds"]["current"]["moneyLine"]["american"] = 130
+    approved, reasons = why(losing_record)
+    assert not approved and "prior_season_home_record_below_500" in reasons
+
+    missing_prior_record = good()
+    missing_prior_record["selection_side"] = "home"
+    missing_prior_record["selected_team"] = "LAC"
+    missing_prior_record["rules"] = ["M2"]
+    missing_prior_record["odds"]["market_side"] = "home"
+    missing_prior_record["odds"]["market_team"] = "LAC"
+    missing_prior_record["odds"]["moneyline"] = 130
+    missing_prior_record["odds"]["raw"]["items"][0]["homeTeamOdds"]["current"]["moneyLine"]["american"] = 130
+    approved, reasons = why(missing_prior_record)
+    assert not approved and "missing_prior_season_home_record" in reasons
+
     # Odds must be for the exact selected side/team, not merely the same fixture.
     wrong_odds_side = good()
     wrong_odds_side["odds"]["market_side"] = "home"
