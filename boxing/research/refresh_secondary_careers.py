@@ -27,6 +27,7 @@ def main():
                 raise ValueError(f'priced evidence reconciliation {len(matches)}/{len(evidence)}')
             y=dict(x)
             y.update({'verified_title':page['title'],'source_url':page['url'],'born':page['born'] or x.get('born'),
+                      'profile':page.get('profile') or x.get('profile') or {},
                       'career_rows':page['rows'],'career_complete':page['career_complete'],
                       'stated_total':page['stated_total'],
                       'stated_record':list(page['stated_record']) if page['stated_record'] is not None else None,
