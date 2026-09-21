@@ -12,6 +12,8 @@ on:
       - '.github/workflows/boxing-priced-career-backfill.yml'
       - 'boxing/research/backfill_priced_careers.py'
       - 'boxing/research/backfill_secondary_careers.py'
+      - 'boxing/profile_supplements/wba_profile_index.json'
+      - 'boxing/research/backfill_wba_consensus_careers.py'
       - 'boxing/research/refresh_secondary_careers.py'
       - 'boxing/research/test_priced_career_backfill.py'
 
@@ -59,6 +61,10 @@ jobs:
         env:
           LIMIT: ${{ inputs.limit || '60' }}
         run: python boxing/research/backfill_secondary_careers.py --limit "$LIMIT"
+      - name: Backfill priced fighters from official WBA career consensus
+        env:
+          LIMIT: ${{ inputs.limit || '60' }}
+        run: python boxing/research/backfill_wba_consensus_careers.py --limit "$LIMIT"
       - name: Remove temporary research database
         run: rm -f boxing/research/boxing.sqlite3
       - name: Merge generated career outputs onto latest main and publish
