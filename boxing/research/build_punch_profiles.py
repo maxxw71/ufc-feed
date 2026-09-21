@@ -72,6 +72,13 @@ def _name_core(value):
     return re.sub(r'(?:jr|sr|ii|iii|iv)$','',x)
 
 def resolve_title_identities(labels,title):
+    # Strict archived importer writes canonical full names directly into
+    # fighter_label and tags the report title. Those labels were already
+    # resolved against one verified local bout, so do not downgrade them back
+    # to surname-only identities here.
+    if str(title or '').endswith(' archived CompuBox') and len(labels)==2:
+        if all(len(re.findall(r"[A-Za-zÀ-ÿ0-9'-]+",str(x)))>=2 for x in labels):
+            return {x:x for x in labels}
     pair=title_pair(title)
     if not pair:return {}
     out={}
