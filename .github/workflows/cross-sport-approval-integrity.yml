@@ -8,6 +8,7 @@ on:
     branches: [main]
     paths:
       - 'scripts/cross_sport_approval_audit.py'
+      - 'scripts/nfl_sync_tracker_canonical.py'
       - 'nfl/production_match_guard.py'
       - 'nfl/test_production_match_guard.py'
       - 'nfl/nfl_public_page.py'
@@ -78,6 +79,15 @@ jobs:
           cd "$R"
           /home/anestishkurti92/nfl-predictor-v1/venv/bin/python nfl_home_opener_scanner.py --manual
           EOF
+
+      - name: Synchronize NFL tracker current-approval status
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          KEY=/home/appwiza-runner/.ssh/appwiza_vps
+          HOST=anestishkurti92@127.0.0.1
+          scp -i "$KEY" -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=accept-new             scripts/nfl_sync_tracker_canonical.py "$HOST":/home/anestishkurti92/.nfl_sync_tracker_canonical.py
+          ssh -i "$KEY" -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=accept-new "$HOST"             'python3 /home/anestishkurti92/.nfl_sync_tracker_canonical.py; rm -f /home/anestishkurti92/.nfl_sync_tracker_canonical.py'
 
       - name: Run server-side cross-sport audit
         shell: bash
