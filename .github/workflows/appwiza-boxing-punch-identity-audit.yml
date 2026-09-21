@@ -1,0 +1,25 @@
+name: Appwiza boxing punch identity audit
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/appwiza-boxing-punch-identity-audit.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  audit:
+    runs-on: [self-hosted, Linux, X64, appwiza]
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Print parsed CompuBox identity headers
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import sqlite3,json
+          p='/home/anestishkurti92/boxing-research/boxing.sqlite3'
+          d=sqlite3.connect(f'file:{p}?mode=ro',uri=True)
+          rows=[dict(zip(['url','date','title'],r)) for r in d.execute("select url,bout_date,title from punch_reports where status='parsed' order by bout_date,url")]
+          print(json.dumps(rows,indent=2))
+          PY
