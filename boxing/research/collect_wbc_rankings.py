@@ -101,60 +101,73 @@ def boxer_name(text):
     s=clean_line(s)
     return s if len(s)>=3 else None
 
+def ranked_boxer_name(text):
+    """Extract the boxer from a WBC contender cell.
+
+    Official rows carry nationality in parentheses immediately after the boxer.
+    Requiring that marker prevents right-column notes/footer prose from being
+    mistaken for contender names.
+    """
+    s=clean_line(text)
+    m=re.match(r'^(.+?)\s+\(([^()]{2,45})\)(?:\s+.*)?$',s)
+    if not m:return None
+    name=clean_line(m.group(1))
+    if not name or ':' in name or len(name)>80:return None
+    if re.search(r'\b(?:champion|contender|available|required|program|affiliated|federation|rating|www)\b',name,re.I):
+        return None
+    return name if re.search(r'[A-Za-zÀ-ÿ]{2}',name) else None
+
 def parse(text,y,m,url):
-    """Parse text while preserving layout columns when available."""
+    """Parse WBC layout text using only the left contender column."""
     raw_lines=[str(x).replace('\xa0',' ').rstrip() for x in text.splitlines() if clean_line(x)]
-    rows=[];champions=[];division=None;in_contenders=False;i=0
-    while i<len(raw_lines):
-      raw=raw_lines[i]
+    rows=[];champions=[];division=None;in_contenders=False
+    for raw in raw_lines:
       line=clean_line(raw)
       dh=div_header(line)
       if dh:
-        division=dh;in_contenders=False;i+=1;continue
-      if division:
-        cm=re.match(r'^(?:(INTERIM)\s+)?CHAMPION\s*:\s*(.+)$',line,re.I)
-        if cm:
-          name=boxer_name(cm.group(2))
-          if name:
-            champions.append({
-              'organization':'WBC','rating_year':y,'rating_month':m,
-              'division':division,
-              'status':'interim_champion' if cm.group(1) else 'champion',
-              'name':name,'source_url':url
-            })
-        u=line.upper()
-        if u.startswith('CONTENDERS') or re.match(r'^(?:RANK|NO\.?)(?:\s|$)',u):
-          in_contenders=True;i+=1;continue
-        if in_contenders:
-          rank=None;name_text=None
-          cols=[clean_line(x) for x in re.split(r'\s{2,}',raw.strip()) if clean_line(x)]
-          if cols:
-            m0=re.match(r'^(\d{1,2})[.)-]?\s*(.*)$',cols[0])
-            if m0 and 1<=int(m0.group(1))<=40:
-              rank=int(m0.group(1))
-              tail=clean_line(m0.group(2))
-              name_text=tail or (cols[1] if len(cols)>1 else None)
-          if rank is None:
-            rm=re.match(r'^(\d{1,2})[.)-]?\s+(.+)$',line)
-            if rm and 1<=int(rm.group(1))<=40:
-              rank=int(rm.group(1));name_text=rm.group(2)
-          if rank is None and re.fullmatch(r'\d{1,2}',line) and i+1<len(raw_lines):
-            candidate=int(line)
-            if 1<=candidate<=40:
-              rank=candidate
-              nxt=raw_lines[i+1]
-              ncols=[clean_line(x) for x in re.split(r'\s{2,}',nxt.strip()) if clean_line(x)]
-              name_text=ncols[0] if ncols else clean_line(nxt)
-              i+=1
-          if rank is not None and name_text:
-            name=boxer_name(name_text)
-            if name and not re.match(r'^(?:RANK|NO\.?|NAME|COUNTRY|RECORD)$',name,re.I):
-              rows.append({
-                'organization':'WBC','rating_year':y,'rating_month':m,
-                'division':division,'rank':rank,'name':name,'source_url':url
-              })
-      i+=1
+        division=dh;in_contenders=False;continue
+      if not division:continue
+      cm=re.match(r'^(?:(INTERIM)\s+)?CHAMPION\s*:\s*(.+)$',line,re.I)
+      if cm:
+        name=boxer_name(cm.group(2))
+        if name:
+          champions.append({'organization':'WBC','rating_year':y,'rating_month':m,'division':division,'status':'interim_champion' if cm.group(1) else 'champion','name':name,'source_url':url})
+        continue
+      if line.upper().startswith('CONTENDERS'):
+        in_contenders=True;continue
+      if not in_contenders:continue
+      # WBC layout pages contain a left contender table and explanatory text
+      # on the right. Split only on a large visual-column gap and never parse
+      # the right side as a fighter.
+      left=re.split(r'\s{3,}',raw.strip(),maxsplit=1)[0].strip()
+      rm=re.match(r'^(\d{1,2})[.)-]?\s+(.+)$',left)
+      if not rm:continue
+      rank=int(rm.group(1))
+      if not 1<=rank<=40:continue
+      name=ranked_boxer_name(rm.group(2))
+      if not name:continue
+      rows.append({'organization':'WBC','rating_year':y,'rating_month':m,'division':division,'rank':rank,'name':name,'source_url':url})
     return rows,champions
+
+def validate_rows(rows):
+    """Reject partial/misaligned documents even when raw row count looks large."""
+    by={}
+    for r in rows:
+        key=(r['division'],r['rank'])
+        if key in by and by[key]!=r['name']:
+            return False,'conflicting duplicate rank'
+        by[key]=r['name']
+    divisions={}
+    for (division,rank),name in by.items():
+        divisions.setdefault(division,set()).add(rank)
+    if len(divisions)<14:
+        return False,f'too few divisions {len(divisions)}'
+    thin={d:len(rs) for d,rs in divisions.items() if len(rs)<20 or 1 not in rs}
+    if thin:
+        return False,'thin divisions '+json.dumps(thin,sort_keys=True)
+    if len(by)<500:
+        return False,f'too few unique rows {len(by)}'
+    return True,None
 
 def extract_document(data,y,m,url):
     reader=PdfReader(io.BytesIO(data))
@@ -185,13 +198,15 @@ def main():
           # 18 divisions x up to 40 contenders means a healthy PDF is normally
           # several hundred rows. Keep a conservative floor so partial parses
           # never enter research features.
-          status='parsed' if len(rows)>=100 else 'parse_review'
+          valid,integrity_error=validate_rows(rows)
+          status='parsed' if valid else 'parse_review'
           effective=next_month(y,m).isoformat()
           docs.append({
             'year':y,'month':m,'month_name':month,'status':status,
             'source_url':url,'bytes':len(data),
             'sha256':hashlib.sha256(data).hexdigest(),'pages':len(reader.pages),
             'extract_mode':mode,'ranking_rows':len(rows),'champions':len(cs),
+            'integrity_error':integrity_error,
             'safe_effective_date':effective
           })
           for r in rows:
