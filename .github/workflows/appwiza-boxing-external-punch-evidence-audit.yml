@@ -23,13 +23,30 @@ jobs:
           import sqlite3,json,collections
           p='/home/anestishkurti92/boxing-research/boxing.sqlite3'
           d=sqlite3.connect(f'file:{p}?mode=ro',uri=True);d.row_factory=sqlite3.Row
-          q={r['url']:dict(r) for r in d.execute("select * from external_evidence_queue where kind='punch'")}
+          def cols(table):
+              return [r[1] for r in d.execute(f"pragma table_info({table})")]
+          qcols=cols('external_evidence_queue'); scols=cols('source_rows')
+          print('QUEUE_SCHEMA='+json.dumps(qcols));print('SOURCE_ROWS_SCHEMA='+json.dumps(scols))
+          qurl=next((x for x in ('url','source_url') if x in qcols),qcols[0])
+          qkind=next((x for x in ('kind','source_kind','type') if x in qcols),None)
+          qu='SELECT * FROM external_evidence_queue'+(" WHERE "+qkind+"='punch'" if qkind else '')
+          q={str(r[qurl]):dict(r) for r in d.execute(qu)}
+          surl=next((x for x in ('url','source_url') if x in scols),None)
+          sdata=next((x for x in ('data','payload','json') if x in scols),None)
+          ssource=next((x for x in ('source','source_name') if x in scols),None)
+          skind=next((x for x in ('kind','source_kind','type') if x in scols),None)
+          if not surl or not sdata:raise RuntimeError('source_rows URL/data columns unresolved')
+          clauses=[]
+          if ssource:clauses.append(ssource+"='external_evidence'")
+          if skind:clauses.append(skind+"='punch'")
+          sql='SELECT * FROM source_rows'+((' WHERE '+' AND '.join(clauses)) if clauses else '')+' ORDER BY '+surl
           rows=[]
-          for r in d.execute("select url,data from source_rows where source='external_evidence' and kind='punch' order by url"):
-              try:x=json.loads(r['data'])
+          for r in d.execute(sql):
+              try:x=json.loads(r[sdata])
               except Exception:continue
+              url=str(r[surl])
               rows.append({
-                'url':r['url'],'status':q.get(r['url'],{}).get('status'),
+                'url':url,'status':q.get(url,{}).get('status'),
                 'title':x.get('title'),'table_count':len(x.get('tables') or []),
                 'table_shapes':[[len(t),max([len(rr) for rr in t] or [0])] for t in (x.get('tables') or [])],
                 'stat_links':x.get('stat_links') or [],
@@ -37,10 +54,10 @@ jobs:
                 'table_preview':[(t or [])[:8] for t in (x.get('tables') or [])[:4]]
               })
           failed_hosts=collections.Counter()
-          for r in d.execute("select url from external_evidence_queue where kind='punch' and status='failed'"):
-              from urllib.parse import urlsplit
-              failed_hosts[urlsplit(r['url']).hostname or '']+=1
+          from urllib.parse import urlsplit
+          for url,r in q.items():
+              if r.get('status')=='failed':failed_hosts[urlsplit(url).hostname or '']+=1
           print('CAPTURED='+json.dumps(rows,ensure_ascii=False))
           print('FAILED_HOSTS='+json.dumps(failed_hosts.most_common()))
-          print('QUEUE_STATUS='+json.dumps(list(d.execute("select status,count(*) from external_evidence_queue where kind='punch' group by status order by status"))))
+          print('QUEUE_STATUS='+json.dumps(collections.Counter(r.get('status') for r in q.values()).most_common()))
           PY
