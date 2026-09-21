@@ -7,6 +7,11 @@ on:
       - 'boxing/research/backfill_wba_profiles.py'
       - '.github/workflows/boxing-wba-profile-backfill.yml'
   workflow_dispatch:
+  workflow_run:
+    workflows:
+      - Boxing WBA Profile Identity Index
+    types: [completed]
+    branches: [main]
 
 concurrency:
   group: boxing-wba-profile-backfill
@@ -17,8 +22,9 @@ permissions:
 
 jobs:
   enrich:
+    if: github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success'
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
         with:
@@ -28,16 +34,24 @@ jobs:
           python-version: '3.12'
       - run: python -m pip install --disable-pip-version-check beautifulsoup4 lxml
       - name: Crawl explicitly linked official WBA profiles
-        run: python boxing/research/backfill_wba_profiles.py --limit 900 --sleep 0.18
-      - name: Persist verified WBA profile supplements
+        run: python boxing/research/backfill_wba_profiles.py --limit 500 --sleep 0.08
+      - name: Persist verified WBA profile supplements on latest main
+        shell: bash
         run: |
+          set -Eeuo pipefail
+          mkdir -p /tmp/wba-profile-enrichment
+          cp boxing/profile_supplements/verified_profiles.jsonl /tmp/wba-profile-enrichment/verified_profiles.jsonl
+          cp boxing/profile_supplements/wba_profile_backfill_report.json /tmp/wba-profile-enrichment/wba_profile_backfill_report.json
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git fetch origin main
+          git reset --hard origin/main
+          cp /tmp/wba-profile-enrichment/verified_profiles.jsonl boxing/profile_supplements/verified_profiles.jsonl
+          cp /tmp/wba-profile-enrichment/wba_profile_backfill_report.json boxing/profile_supplements/wba_profile_backfill_report.json
           git add boxing/profile_supplements/verified_profiles.jsonl boxing/profile_supplements/wba_profile_backfill_report.json
           if git diff --cached --quiet; then
             echo 'No new WBA profile supplements.'
           else
             git commit -m 'Expand verified boxer profiles from official WBA graph'
-            git pull --rebase origin main
-            git push
+            git push origin HEAD:main
           fi
