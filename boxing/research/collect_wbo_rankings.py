@@ -119,8 +119,22 @@ def division(line):
     key=re.sub(r'[^a-z]','',line.lower())
     return DIVMAP.get(key)
 
+def rating_period(source_url,article_url):
+    text=' '.join([urllib.parse.urlsplit(source_url).path,urllib.parse.urlsplit(article_url).path])
+    m=re.search(r'(?<!\d)(\d{2})(0[1-9]|1[0-2])(?:[-_. ]|$)',text)
+    if m:
+        return 2000+int(m.group(1)),int(m.group(2))
+    months={m.lower():i for i,m in enumerate(['january','february','march','april','may','june','july','august','september','october','november','december'],1)}
+    low=text.lower()
+    ym=re.search(r'(20\d{2})',low)
+    if ym:
+        for name,num in months.items():
+            if name in low:return int(ym.group(1)),num
+    return 0,0
+
 def parse_pdf(raw,post_date,source_url,article_url):
     pdf=PdfReader(io.BytesIO(raw))
+    rating_year,rating_month=rating_period(source_url,article_url)
     lines=[]
     for p in pdf.pages:
         lines.extend(re.sub(r'\s+',' ',x).strip() for x in (p.extract_text() or '').splitlines() if re.sub(r'\s+',' ',x).strip())
@@ -136,6 +150,7 @@ def parse_pdf(raw,post_date,source_url,article_url):
             if name and len(name)<=90:
                 champs.append({'division':div,'status':((cm.group(1)+' ') if cm.group(1) else '')+'Champion',
                                'name':name,'safe_effective_date':post_date.isoformat(),
+                               'rating_year':rating_year,'rating_month':rating_month,
                                'source_url':source_url,'article_url':article_url})
             continue
         rm=re.match(r'^(\d{1,2})\s*[-–.]\s*(.+)$',line)
@@ -144,6 +159,7 @@ def parse_pdf(raw,post_date,source_url,article_url):
             if name and not re.match(r'^(removed|vacant|not rated)\b',name,re.I):
                 ranks.append({'division':div,'rank':int(rm.group(1)),'name':name,
                               'safe_effective_date':post_date.isoformat(),
+                              'rating_year':rating_year,'rating_month':rating_month,
                               'source_url':source_url,'article_url':article_url})
     distinct=len({x['division'] for x in ranks})
     # WBO has 17 male divisions; allow older docs with a few missing but reject
@@ -186,12 +202,27 @@ def main():
         except Exception as e:
             docs.append({'article_url':article,'status':'fetch_review','error':str(e)[:300]})
         time.sleep(.25)
-    # Deduplicate same publication+division+rank/name in case archive pages link twice.
-    uniqr={}
-    for r in allr:uniqr[(r['safe_effective_date'],r['division'],r['rank'],r['name'])]=r
+    # If multiple official ranking documents share one article-publication date,
+    # retain only the later nominal ranking period. This avoids treating two
+    # competing snapshots as simultaneously current when intraday ordering is unknown.
+    latest_period={}
+    for r in allr+allc:
+        key=r['safe_effective_date'];period=(int(r.get('rating_year') or 0),int(r.get('rating_month') or 0))
+        if period>latest_period.get(key,(0,0)):latest_period[key]=period
+    filtered=[r for r in allr if (int(r.get('rating_year') or 0),int(r.get('rating_month') or 0))==latest_period.get(r['safe_effective_date'],(0,0))]
+    filteredc=[r for r in allc if (int(r.get('rating_year') or 0),int(r.get('rating_month') or 0))==latest_period.get(r['safe_effective_date'],(0,0))]
+
+    grouped={}
+    for r in filtered:grouped.setdefault((r['safe_effective_date'],r['division'],int(r['rank'])),[]).append(r)
+    ranks=[];conflicts=[]
+    for key,group in grouped.items():
+        names={re.sub(r'[^a-z0-9]+','',str(x.get('name') or '').lower()) for x in group}
+        if len(names)>1:conflicts.append({'slot':key,'rows':group})
+        else:ranks.append(sorted(group,key=lambda x:(x.get('source_url') or '',x.get('name') or ''))[-1])
+
     uniqc={}
-    for r in allc:uniqc[(r['safe_effective_date'],r['division'],r['status'],r['name'])]=r
-    ranks=list(uniqr.values());champs=list(uniqc.values())
+    for r in filteredc:uniqc[(r['safe_effective_date'],r['division'],r['status'],r['name'])]=r
+    champs=list(uniqc.values())
     ranks.sort(key=lambda x:(x['safe_effective_date'],x['division'],x['rank']))
     champs.sort(key=lambda x:(x['safe_effective_date'],x['division'],x['status']))
     (OUT/'wbo_monthly_rankings.json').write_text(json.dumps(ranks,indent=2,ensure_ascii=False))
@@ -199,7 +230,8 @@ def main():
     meta={'built_at':dt.datetime.now(dt.timezone.utc).isoformat(),'documents':docs,
           'parsed_documents':sum(d.get('status')=='parsed' for d in docs),
           'ranking_rows':len(ranks),'champion_rows':len(champs),
-          'safe_date_policy':'Official WBO article publication date; never backdated to the nominal ranking period.',
+          'quarantined_conflicting_rank_slots':len(conflicts),
+          'safe_date_policy':'Official WBO article publication date; if multiple rating periods share one publication date, only the later nominal period is retained; conflicting slots are quarantined.',
           'archive_url':BASE+'/explanations/'}
     (OUT/'wbo_monthly_rankings_meta.json').write_text(json.dumps(meta,indent=2,ensure_ascii=False))
     print(json.dumps({k:meta[k] for k in ['parsed_documents','ranking_rows','champion_rows','archive_url']},indent=2))
