@@ -18,7 +18,7 @@ permissions:
 jobs:
   index:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 18
     steps:
       - uses: actions/checkout@v4
         with:
@@ -28,16 +28,21 @@ jobs:
           python-version: '3.12'
       - run: python -m pip install --disable-pip-version-check beautifulsoup4 lxml
       - name: Build explicit-link WBA profile index
-        run: python boxing/research/index_wba_profiles.py --limit 1500 --sleep 0.12
-      - name: Persist WBA identity index
+        run: python boxing/research/index_wba_profiles.py --seed-limit 500 --sleep 0.08
+      - name: Persist WBA identity index on latest main
+        shell: bash
         run: |
+          set -Eeuo pipefail
+          cp boxing/profile_supplements/wba_profile_index.json /tmp/wba_profile_index.json
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git fetch origin main
+          git reset --hard origin/main
+          cp /tmp/wba_profile_index.json boxing/profile_supplements/wba_profile_index.json
           git add boxing/profile_supplements/wba_profile_index.json
           if git diff --cached --quiet; then
             echo 'No WBA identity-index changes.'
           else
             git commit -m 'Update official WBA boxer identity index'
-            git pull --rebase origin main
-            git push
+            git push origin HEAD:main
           fi
