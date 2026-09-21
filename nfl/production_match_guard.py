@@ -23,7 +23,10 @@ MAX_ODDS_AGE_SECONDS = 15 * 60
 MAX_KICKOFF_DRIFT_SECONDS = 90
 MIN_KICKOFF_LEAD_SECONDS = 5 * 60
 M_FAMILY_RULE_IDS = {"original", "stricter", "M1", "M2"}
+M1_RULE_IDS = {"original", "M1"}
+M2_RULE_IDS = {"stricter", "M2"}
 M_FAMILY_MIN_PRIOR_SEASON_PCT = 0.500
+M1_ENRICHED_PASS_STATUS = "PASS"
 GAME_ID_RE = re.compile(r"^(?P<season>\d{4})_(?P<week>\d{2})_(?P<away>[A-Z0-9]{2,3})_(?P<home>[A-Z0-9]{2,3})$")
 ODDS_PATH_RE = re.compile(r"/events/(?P<event>\d+)/competitions/(?P<competition>\d+)/odds/?$")
 TEAM_REF_RE = re.compile(r"/teams/(?P<team>\d+)(?:\?|$)")
@@ -345,6 +348,37 @@ def filter_records(records: Iterable[dict[str, Any]], schedule: Any, now: dateti
             reasons.append("missing_or_invalid_rules")
         else:
             normalized_rules={str(rule).strip() for rule in rules}
+
+            # M1/original has a separately validated enriched veto. Production must
+            # fail closed when that feature is absent/unknown. If the same matchup
+            # also independently satisfies M2/stricter, suppress only M1 rather
+            # than discarding the valid M2 signal.
+            if normalized_rules & M1_RULE_IDS:
+                m1_status=_text(record.get("m1_enriched_veto_status")).upper()
+                m1_value=_number(record.get("opp_last_rank_def_allowed_giveaway_rate"))
+                m1_pass=(m1_status==M1_ENRICHED_PASS_STATUS and m1_value is not None and m1_value>14.8)
+                if not m1_pass:
+                    if normalized_rules & M2_RULE_IDS:
+                        record=dict(record)
+                        record["rules"]=[r for r in rules if str(r).strip() not in M1_RULE_IDS]
+                        record["method_suppressions"]=list(record.get("method_suppressions") or [])+[{
+                            "method":"M1",
+                            "reason":"m1_enriched_veto_missing_or_failed",
+                            "status":m1_status or None,
+                            "opp_last_rank_def_allowed_giveaway_rate":m1_value,
+                        }]
+                        rules=record["rules"]
+                        normalized_rules={str(rule).strip() for rule in rules}
+                    else:
+                        if not m1_status:
+                            reasons.append("missing_m1_enriched_veto_status")
+                        elif m1_status!=M1_ENRICHED_PASS_STATUS:
+                            reasons.append("m1_enriched_veto_not_pass")
+                        if m1_value is None:
+                            reasons.append("missing_m1_enriched_veto_feature")
+                        elif m1_value<=14.8:
+                            reasons.append("m1_enriched_veto_triggered")
+
             if normalized_rules & M_FAMILY_RULE_IDS:
                 # M1/M2 are home-opener favorite methods. A relative record edge
                 # against an even worse opponent is not sufficient: the selected
