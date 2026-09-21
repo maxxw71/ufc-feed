@@ -49,5 +49,17 @@ class PunchProfileIntegrityTests(unittest.TestCase):
         self.assertEqual([],pre_fight_profiles(obs))
 
 
+
+    def test_missing_body_count_stays_null(self):
+        d=self.db()
+        self.add_report(d,'https://web.archive.org/web/1/http://compuboxonline.com/a','2026-01-01','ALPHA ONE UD 1 BRAVO TWO','ONE','TWO')
+        d.execute("insert into fight_punch_totals values(?,?,?,?,?,?)",
+                  ('https://web.archive.org/web/1/http://compuboxonline.com/a','ONE','total',5,None,10))
+        reports=load_reports(d)
+        obs=fight_observations(reports)
+        one=next(r for r in obs if r['fighter_label']=='ONE')
+        self.assertIsNone(one['body_landed'])
+        self.assertIsNone(one['body_landed_share_pct'])
+
 if __name__=='__main__':
     unittest.main()
