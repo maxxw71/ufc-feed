@@ -55,6 +55,68 @@ def discover(rows,fighter_names,existing):
         else:no_recip+=1
     return additions,{'ambiguous':ambiguous,'no_candidate':no_candidate,'no_reciprocal_match':no_recip}
 
+
+def ibf_bridge(rows,fighter_names,existing,ibf_rows):
+    """Bridge an unresolved career opponent using exact official IBF bout evidence.
+
+    Candidate career identities must already exist locally. IBF evidence only
+    confirms date/pair/result; it never creates a standalone career identity.
+    """
+    histories=collections.defaultdict(list);aliases=collections.defaultdict(set)
+    for r in rows:
+        histories[r['url']].append(r)
+        if r.get('boxer_a'):aliases[r['url']].add(namekey(r['boxer_a']))
+    for fid,name in fighter_names.items():
+        if fid in histories and name:aliases[fid].add(namekey(name))
+    alias_index=collections.defaultdict(set)
+    for fid,nameset in aliases.items():
+        for n in nameset:
+            if n:alias_index[n].add(fid)
+
+    by_date=collections.defaultdict(list)
+    for x in ibf_rows or []:
+        date=str(x.get('date') or '')
+        a=namekey(x.get('fighter_a'));b=namekey(x.get('fighter_b'))
+        if not date or not a or not b or a==b:continue
+        if x.get('winner_side') not in {'A','B','DRAW'}:continue
+        by_date[date].append(x)
+
+    additions={};ambiguous=0;checked=0
+    for r in rows:
+        bid=r['source_id']
+        if bid in existing:continue
+        target=namekey(r.get('boxer_b'))
+        candidates=[x for x in alias_index.get(target,set()) if x!=r['url']]
+        if not candidates:continue
+        own=aliases[r['url']]
+        passed=[]
+        for cand in candidates:
+            ca=aliases[cand]
+            ok=False
+            for x in by_date.get(r['date'],[]):
+                checked+=1
+                oa=namekey(x.get('fighter_a'));ob=namekey(x.get('fighter_b'))
+                pair_ok=(oa in own and ob in ca) or (ob in own and oa in ca)
+                if not pair_ok:continue
+                ow=x.get('winner_side')
+                if r.get('winner')=='DRAW':
+                    result_ok=(ow=='DRAW')
+                elif r.get('winner')=='BOXER A':
+                    wk=namekey(x.get('fighter_a') if ow=='A' else x.get('fighter_b')) if ow in {'A','B'} else ''
+                    result_ok=wk in own
+                elif r.get('winner')=='BOXER B':
+                    wk=namekey(x.get('fighter_a') if ow=='A' else x.get('fighter_b')) if ow in {'A','B'} else ''
+                    result_ok=wk in ca
+                else:
+                    result_ok=False
+                if result_ok:
+                    ok=True;break
+            if ok:passed.append(cand)
+        passed=sorted(set(passed))
+        if len(passed)==1:additions[bid]=passed[0]
+        elif len(passed)>1:ambiguous+=1
+    return additions,{'ibf_bridge_links':len(additions),'ibf_bridge_ambiguous':ambiguous,'ibf_rows_loaded':len(ibf_rows or []),'ibf_rows_checked':checked}
+
 def main():
     con=sqlite3.connect(DB);con.row_factory=sqlite3.Row
     marks=','.join('?'*len(ALLOWED_SOURCES))
@@ -77,6 +139,15 @@ def main():
 
     seed={**existing,**direct}
     additions,diag=discover(rows,names,seed)
+
+    ibf_file=ROOT.parent/'official_bouts'/'ibf_bouts.json'
+    ibf_rows=[]
+    if ibf_file.exists():
+        try:ibf_rows=json.loads(ibf_file.read_text())
+        except Exception:ibf_rows=[]
+    bridge_seed={**seed,**additions}
+    ibf_additions,ibf_diag=ibf_bridge(rows,names,bridge_seed,ibf_rows)
+
     con.execute('''create table if not exists opponent_links_v2(
         bout_id text primary key, opponent_id text not null, evidence text not null,
         built_at text not null)''')
@@ -84,10 +155,13 @@ def main():
     stamp=__import__('datetime').datetime.now(__import__('datetime').timezone.utc).isoformat()
     con.executemany('insert into opponent_links_v2 values(?,?,?,?)',[(bid,opp,'direct_source_profile_url',stamp) for bid,opp in direct.items()])
     con.executemany('insert into opponent_links_v2 values(?,?,?,?)',[(bid,opp,'reciprocal_result_observed_alias',stamp) for bid,opp in additions.items()])
+    con.executemany('insert into opponent_links_v2 values(?,?,?,?)',[(bid,opp,'ibf_official_exact_date_pair_result',stamp) for bid,opp in ibf_additions.items()])
     con.commit()
-    report={'existing_verified_links':len(existing),'new_direct_source_url_links':len(direct),'new_verified_alias_links':len(additions),'combined_links':len(existing)+len(direct)+len(additions),
-            'sources':list(ALLOWED_SOURCES),'diagnostics':diag,
-            'method':'direct exact opponent profile URL when available; otherwise exact observed alias + same-date reciprocal row + reciprocal outcome; unique candidate only',
-            'limitations':['Does not guess unresolved identities.','Does not use fuzzy edit distance.','Cannot recover opponents whose career/profile identity is absent from the database.']}
+    combined=len(existing)+len(direct)+len(additions)+len(ibf_additions)
+    report={'existing_verified_links':len(existing),'new_direct_source_url_links':len(direct),'new_verified_alias_links':len(additions),
+            'new_ibf_official_bridge_links':len(ibf_additions),'combined_links':combined,
+            'sources':list(ALLOWED_SOURCES),'diagnostics':{**diag,**ibf_diag},
+            'method':'direct exact opponent profile URL; else exact observed alias + same-date reciprocal row + reciprocal outcome; else existing unique career candidate + exact official IBF date/pair/result confirmation',
+            'limitations':['Does not guess unresolved identities.','Does not use fuzzy edit distance.','IBF evidence never creates a standalone career identity.','Cannot recover opponents whose career/profile identity is absent from the database.']}
     (ROOT/'IDENTITY_LINKS_V2.json').write_text(json.dumps(report,indent=2));print(json.dumps(report,indent=2))
 if __name__=='__main__':main()
