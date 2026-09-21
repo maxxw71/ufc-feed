@@ -120,6 +120,12 @@ def reconcile(evidence):
         unique=[]
         for _,v in vals:
             if v not in unique:unique.append(v)
+        # DOB is too easy to misread from generic biography text. Require
+        # agreement from two independent exact-identity sources before filling it.
+        if field=='born':
+            if len({src for src,_ in vals})>=2 and len(unique)==1:out[field]=unique[0]
+            elif len(vals)>1:conflicts[field]=vals
+            continue
         if field in {'height_cm','reach_cm'} and len(unique)>1:
             nums=[float(v) for v in unique]
             if max(nums)-min(nums)<=2.0:out[field]=round(sum(nums)/len(nums),2)
@@ -158,8 +164,13 @@ def main():
             except Exception as exc:
                 failures.append({'name':name,'source':parser.__name__,'error':str(exc)[:180]})
             time.sleep(.25)
-        fields,conflicts=reconcile(evidence)
         needed=set(x.get('missing') or [])
+        # Drop unrelated fields before reconciliation/provenance storage. This
+        # prevents an unused field from an otherwise useful source from being
+        # mistaken for verified evidence later.
+        evidence=[{**e,'fields':{k:v for k,v in e.get('fields',{}).items() if k in needed}} for e in evidence]
+        evidence=[e for e in evidence if e['fields']]
+        fields,conflicts=reconcile(evidence)
         fields={k:v for k,v in fields.items() if k in needed}
         if fields:
             item={
