@@ -46,7 +46,7 @@ def main():
         h=cm(profile.get('Height',''));reach=cm(profile.get('Reach',''))
         h=h if h is not None and 120<=h<=250 else None;reach=reach if reach is not None and 120<=reach<=270 else None
         con.execute('INSERT OR REPLACE INTO normalized_fighters(source_id,name,born,height_cm,reach_cm,stance,nationality,weight_class_snapshot,source_url,quality) VALUES(?,?,?,?,?,?,?,?,?,?)',
-                    (url,name,born,h,reach,stance_value(profile.get('Stance')),profile.get('Nationality'),profile.get('Weight'),url,quality))
+                    (url,name,born,h,reach,stance_value(profile.get('Stance')),profile.get('Nationality'),profile.get('Division') or profile.get('Weight'),url,quality))
         by_key={}
         for i,r in enumerate(x.get('career_rows') or []):
             ident=url+'#supp-'+str(i)+'-'+r['date'];raw=r.get('raw') or {}
