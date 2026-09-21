@@ -266,6 +266,27 @@ def load_wbo_rankings():
         for k in x:x[k].sort(key=lambda r:r.get('safe_effective_date') or '')
     return ranks,champs
 
+def load_ibf_rankings():
+    candidates=[ROOT/'rankings',ROOT.parent/'rankings']
+    rfile=next((p/'ibf_monthly_rankings.json' for p in candidates if (p/'ibf_monthly_rankings.json').exists()),None)
+    cfile=next((p/'ibf_monthly_champions.json' for p in candidates if (p/'ibf_monthly_champions.json').exists()),None)
+    ranks=collections.defaultdict(list);champs=collections.defaultdict(list)
+    if rfile:
+        try:
+            for r in json.loads(rfile.read_text()):
+                key=namekey(r.get('name') or '')
+                if key and r.get('safe_effective_date'):ranks[key].append(r)
+        except Exception:pass
+    if cfile:
+        try:
+            for r in json.loads(cfile.read_text()):
+                key=namekey(r.get('name') or '')
+                if key and r.get('safe_effective_date'):champs[key].append(r)
+        except Exception:pass
+    for x in (ranks,champs):
+        for k in x:x[k].sort(key=lambda r:r.get('safe_effective_date') or '')
+    return ranks,champs
+
 def wbc_before(index,name,date,max_age_days=75):
     rows=index.get(namekey(name or ''),[])
     eligible=[r for r in rows if (r.get('safe_effective_date') or '')<=date]
@@ -293,6 +314,7 @@ def main():
     wbc_ranks,wbc_champs=load_wbc_rankings()
     wba_ranks,wba_champs=load_wba_rankings()
     wbo_ranks,wbo_champs=load_wbo_rankings()
+    ibf_ranks,ibf_champs=load_ibf_rankings()
     punch_history=load_punch_history()
     events=canonical_events(histories,links); eventkeys={k for k,s in events}
     targets=collections.defaultdict(set)
@@ -358,6 +380,13 @@ def main():
                     sides[label]['wbo_rank_safe_effective_date']=_bor.get('safe_effective_date') if _bor else None
                     sides[label]['wbo_champion_status']=_boc.get('status') if _boc else None
                     sides[label]['wbo_ranking_quality']='official_wbo_pdf_official_article_publication_date' if (_bor or _boc) else None
+                    _ibr=wbc_before(ibf_ranks, sides[label].get('id') and p.get('name') or (r['boxer_a'] if label=='fighter' else r['boxer_b']), date, max_age_days=95)
+                    _ibc=wbc_before(ibf_champs, sides[label].get('id') and p.get('name') or (r['boxer_a'] if label=='fighter' else r['boxer_b']), date, max_age_days=95)
+                    sides[label]['ibf_rank']=_ibr.get('rank') if _ibr else None
+                    sides[label]['ibf_rank_division']=_ibr.get('division') if _ibr else None
+                    sides[label]['ibf_rank_safe_effective_date']=_ibr.get('safe_effective_date') if _ibr else None
+                    sides[label]['ibf_champion_status']=_ibc.get('status') if _ibc else None
+                    sides[label]['ibf_ranking_quality']='official_ibf_api_post_date_plus_one_day' if (_ibr or _ibc) else None
                     assert not s['latest_input_bout_date'] or s['latest_input_bout_date']<date
                 matched=[q for q in quotes[r['source_id']] if q['event_date']==date]
                 row={'source_id':r['source_id'],'career_source':r['source'],'bout_date':date,'fighter_name':r['boxer_a'],'opponent_name':r['boxer_b'],
@@ -365,6 +394,7 @@ def main():
                      'wbc_rank_gap':(sides['opponent']['wbc_rank']-sides['fighter']['wbc_rank']) if sides.get('fighter') and sides.get('opponent') and sides['fighter'].get('wbc_rank') is not None and sides['opponent'].get('wbc_rank') is not None else None,
                      'wba_rank_gap':(sides['opponent']['wba_rank']-sides['fighter']['wba_rank']) if sides.get('fighter') and sides.get('opponent') and sides['fighter'].get('wba_rank') is not None and sides['opponent'].get('wba_rank') is not None else None,
                      'wbo_rank_gap':(sides['opponent']['wbo_rank']-sides['fighter']['wbo_rank']) if sides.get('fighter') and sides.get('opponent') and sides['fighter'].get('wbo_rank') is not None and sides['opponent'].get('wbo_rank') is not None else None,
+                     'ibf_rank_gap':(sides['opponent']['ibf_rank']-sides['fighter']['ibf_rank']) if sides.get('fighter') and sides.get('opponent') and sides['fighter'].get('ibf_rank') is not None and sides['opponent'].get('ibf_rank') is not None else None,
                      'outcome':{'result':r['winner'],'method':r['method'],'rounds':r['rounds']},'quotes':matched,'validated_price_eligible':False,
                      'historically_verified_physical_stats':False,
                      'historically_linked_prior_punch_stats':{
@@ -380,6 +410,7 @@ def main():
             'wbc_ranking_names_loaded':len(wbc_ranks),'wbc_champion_names_loaded':len(wbc_champs),
             'wba_ranking_names_loaded':len(wba_ranks),'wba_champion_names_loaded':len(wba_champs),
             'wbo_ranking_names_loaded':len(wbo_ranks),'wbo_champion_names_loaded':len(wbo_champs),
+            'ibf_ranking_names_loaded':len(ibf_ranks),'ibf_champion_names_loaded':len(ibf_champs),
             'punch_identity_fighters_loaded':len(punch_history),'punch_observations_loaded':sum(len(v) for v in punch_history.values()),
             'years':dict(sorted(years.items())),
             'validated_price_rows':0,'limitations':['Career rows preserve source provenance; secondary observed histories are not relabeled as Wikipedia.',
@@ -391,6 +422,7 @@ def main():
             'WBC ranking fields are used only from official monthly PDFs after their conservative safe effective date; missing remains unknown, never inferred unranked.',
             'WBA ranking fields are kept separate from WBC and are usable only on/after the official WBA posting date; missing remains unknown.',
             'WBO ranking fields are kept separate and usable only on/after the official WBO article publication date; missing remains unknown.',
+            'IBF ranking fields are kept separate and usable only after the official IBF API post date; missing/vacant rank slots remain unknown.',
             'All quotes have unverified timing/settlement. No validated ROI or live eligibility.',
             'Prior punch features require exact full-name identity from CompuBox report titles and only earlier report dates; missing remains unknown.']}
     (outdir/'coverage.json').write_text(json.dumps(report,indent=2));(ROOT/'LATEST_CHRONOLOGICAL_MASTER.txt').write_text(str(outdir)+'\n')
