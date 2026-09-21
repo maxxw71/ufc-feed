@@ -37,10 +37,10 @@ jobs:
           R2="$ROOT/research_v2"
           SCANNER="$R2/nfl_home_opener_scanner.py"
           EMAIL="$R2/nfl_email_design.py"
-          cp "$SCANNER" /tmp/nfl_home_opener_scanner.integrity.py
-          cp "$EMAIL" /tmp/nfl_email_design.integrity.py
-          python3 nfl/patch_live_scanner_match_guard.py /tmp/nfl_home_opener_scanner.integrity.py
-          python3 - /tmp/nfl_email_design.integrity.py <<'PY'
+          cp "$SCANNER" /home/anestishkurti92/.nfl_deploy_scanner.py
+          cp "$EMAIL" /home/anestishkurti92/.nfl_deploy_email.py
+          python3 nfl/patch_live_scanner_match_guard.py /home/anestishkurti92/.nfl_deploy_scanner.py
+          python3 - /home/anestishkurti92/.nfl_deploy_email.py <<'PY'
           from pathlib import Path
           import sys
           p=Path(sys.argv[1]);text=p.read_text()
@@ -50,10 +50,10 @@ jobs:
           elif "raise ValueError('Unvalidated NFL selection identity')" not in text:raise RuntimeError('email identity anchor missing')
           p.write_text(text)
           PY
-          python3 -m py_compile /tmp/nfl_home_opener_scanner.integrity.py /tmp/nfl_email_design.integrity.py nfl/production_match_guard.py
+          python3 -m py_compile /home/anestishkurti92/.nfl_deploy_scanner.py /home/anestishkurti92/.nfl_deploy_email.py nfl/production_match_guard.py
           python3 - <<'PY'
           from pathlib import Path
-          s=Path('/tmp/nfl_home_opener_scanner.integrity.py').read_text()
+          s=Path('/home/anestishkurti92/.nfl_deploy_scanner.py').read_text()
           gate=s.index('match_guard.filter_records(raw_production_records,G,now)')
           assert s.index("atomic(S/(stamp+'.json')",gate)>gate
           assert s.index('sports_publish.publish_nfl(records,now,nfl_email_design)',gate)>gate
@@ -63,7 +63,7 @@ jobs:
           assert "selection_side='home',selected_team=x.home_team" in s
           assert "market_side':side,'market_team':selected" in s
           assert 'invalidate any pre-validation cached envelope' in s
-          e=Path('/tmp/nfl_email_design.integrity.py').read_text()
+          e=Path('/home/anestishkurti92/.nfl_deploy_email.py').read_text()
           assert "raise ValueError('Unvalidated NFL selection identity')" in e
           print('NFL site/email/bet-ledger common guarded boundary: PASS')
           PY
@@ -88,10 +88,10 @@ jobs:
             echo "local_patch_validation=PASS"
           } > "$REPORT"
 
-          scp -i "$KEY" -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=accept-new             nfl/production_match_guard.py "$HOST":/tmp/production_match_guard.py
-          scp -i "$KEY" -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=accept-new             /tmp/nfl_home_opener_scanner.integrity.py "$HOST":/tmp/nfl_home_opener_scanner.integrity.py
-          scp -i "$KEY" -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=accept-new             /tmp/nfl_email_design.integrity.py "$HOST":/tmp/nfl_email_design.integrity.py
-          scp -i "$KEY" -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=accept-new             nfl/test_production_match_guard.py "$HOST":/tmp/test_production_match_guard.py
+          scp -i "$KEY" -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=accept-new             nfl/production_match_guard.py "$HOST":/home/anestishkurti92/.nfl_deploy_production_match_guard.py
+          scp -i "$KEY" -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=accept-new             /home/anestishkurti92/.nfl_deploy_scanner.py "$HOST":/home/anestishkurti92/.nfl_deploy_scanner.py
+          scp -i "$KEY" -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=accept-new             /home/anestishkurti92/.nfl_deploy_email.py "$HOST":/home/anestishkurti92/.nfl_deploy_email.py
+          scp -i "$KEY" -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=accept-new             nfl/test_production_match_guard.py "$HOST":/home/anestishkurti92/.nfl_deploy_test_guard.py
 
           ssh -i "$KEY" -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=accept-new "$HOST" 'bash -s' <<'EOF'
           set -Eeuo pipefail
@@ -105,12 +105,12 @@ jobs:
           cp -a "$SCANNER" "$EMAIL" "$BACKUP/"
           [ ! -f "$R2/production_match_guard.py" ] || cp -a "$R2/production_match_guard.py" "$BACKUP/production_match_guard.py.previous"
 
-          install -m 0644 /tmp/production_match_guard.py "$R2/production_match_guard.py"
-          install -m 0644 /tmp/nfl_home_opener_scanner.integrity.py "$SCANNER"
-          install -m 0644 /tmp/nfl_email_design.integrity.py "$EMAIL"
+          install -m 0644 /home/anestishkurti92/.nfl_deploy_production_match_guard.py "$R2/production_match_guard.py"
+          install -m 0644 /home/anestishkurti92/.nfl_deploy_scanner.py "$SCANNER"
+          install -m 0644 /home/anestishkurti92/.nfl_deploy_email.py "$EMAIL"
 
           python3 -m py_compile "$R2/production_match_guard.py" "$SCANNER" "$EMAIL"
-          PYTHONPATH="$R2" python3 /tmp/test_production_match_guard.py
+          PYTHONPATH="$R2" python3 /home/anestishkurti92/.nfl_deploy_test_guard.py
           grep -q 'M_FAMILY_MIN_PRIOR_SEASON_PCT = 0.500' "$R2/production_match_guard.py"
           grep -q 'prior_season_home_record_below_500' "$R2/production_match_guard.py"
           grep -q 'match_guard.filter_records(raw_production_records,G,now)' "$SCANNER"
@@ -120,6 +120,7 @@ jobs:
 
           echo "LIVE_M1M2_PRIOR_RECORD_GATE=PASS"
           echo "backup=$BACKUP"
+          rm -f /home/anestishkurti92/.nfl_deploy_production_match_guard.py /home/anestishkurti92/.nfl_deploy_scanner.py /home/anestishkurti92/.nfl_deploy_email.py /home/anestishkurti92/.nfl_deploy_test_guard.py
           EOF
 
           echo 'deployment_status=PASS' >> "$REPORT"
