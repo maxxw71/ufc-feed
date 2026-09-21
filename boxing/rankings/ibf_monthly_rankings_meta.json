@@ -1,788 +1,2109 @@
 {
-  "built_at": "2026-09-21T13:56:02.923940+00:00",
-  "rest_type": "ratings",
-  "org_term_id": 6,
-  "posts_scanned": 100,
-  "parsed_division_posts": 0,
-  "review_posts": 100,
-  "ranking_rows": 0,
-  "champion_rows": 0,
-  "years": [],
-  "rating_periods": 0,
-  "quarantined_conflicting_rank_slots": 0,
-  "review_sample": [
-    {
-      "id": 69568,
-      "link": "https://www.ibf-usba-boxing.com/ratings/ibf-heavyweightover200lbs-male-12-2005/",
-      "title": "IBF: HEAVYWEIGHT (OVER 200 LBS) &#8211; male &#8211; 12/2005",
-      "error": "title_not_ibf_rating"
-    },
-    {
-      "id": 69569,
-      "link": "https://www.ibf-usba-boxing.com/ratings/ibf-cruiserweight200lbs-male-12-2005/",
-      "title": "IBF: CRUISERWEIGHT (200 LBS) &#8211; male &#8211; 12/2005",
-      "error": "title_not_ibf_rating"
-    },
-    {
-      "id": 69570,
-      "link": "https://www.ibf-usba-boxing.com/ratings/ibf-lt-heavyweight175lbs-male-12-2005/",
-      "title": "IBF: LT. HEAVYWEIGHT (175 LBS) &#8211; male &#8211; 12/2005",
-      "error": "title_not_ibf_rating"
-    },
-    {
-      "id": 69571,
-      "link": "https://www.ibf-usba-boxing.com/ratings/ibf-s-middleweight168lbs-male-12-2005/",
-      "title": "IBF: S. MIDDLEWEIGHT &#8211; 12/2005",
-      "error": {
-        "reason": "insufficient_rank_rows",
-        "count": 0,
-        "text_sample": []
-      }
-    },
-    {
-      "id": 69572,
-      "link": "https://www.ibf-usba-boxing.com/ratings/ibf-middleweight160lbs-male-12-2005/",
-      "title": "IBF: MIDDLEWEIGHT &#8211; 12/2005",
-      "error": {
-        "reason": "insufficient_rank_rows",
-        "count": 0,
-        "text_sample": []
-      }
-    },
-    {
-      "id": 69573,
-      "link": "https://www.ibf-usba-boxing.com/ratings/ibf-jr-middleweight154lbs-male-12-2005/",
-      "title": "IBF: JR. MIDDLEWEIGHT &#8211; 12/2005",
-      "error": {
-        "reason": "insufficient_rank_rows",
-        "count": 0,
-        "text_sample": []
-      }
-    },
-    {
-      "id": 69574,
-      "link": "https://www.ibf-usba-boxing.com/ratings/ibf-welterweight147lbs-male-12-2005/",
-      "title": "IBF: WELTERWEIGHT (147 LBS) &#8211; male &#8211; 12/2005",
-      "error": "title_not_ibf_rating"
-    },
-    {
-      "id": 69575,
-      "link": "https://www.ibf-usba-boxing.com/ratings/ibf-jr-welterweight140lbs-male-12-2005/",
-      "title": "IBF: JR. WELTERWEIGHT (140 LBS) &#8211; male &#8211; 12/2005",
-      "error": "title_not_ibf_rating"
-    },
-    {
-      "id": 69576,
-      "link": "https://www.ibf-usba-boxing.com/ratings/ibf-lightweight135lbs-male-12-2005/",
-      "title": "IBF: LIGHTWEIGHT &#8211; 12/2005",
-      "error": {
-        "reason": "insufficient_rank_rows",
-        "count": 0,
-        "text_sample": []
-      }
-    },
-    {
-      "id": 69577,
-      "link": "https://www.ibf-usba-boxing.com/ratings/ibf-jr-lightweight130lbs-male-12-2005/",
-      "title": "IBF: JR. LIGHTWEIGHT (130 LBS) &#8211; male &#8211; 12/2005",
-      "error": "title_not_ibf_rating"
-    },
-    {
-      "id": 69578,
-      "link": "https://www.ibf-usba-boxing.com/ratings/ibf-featherweight126lbs-male-12-2005/",
-      "title": "IBF: FEATHERWEIGHT &#8211; 12/2005",
-      "error": {
-        "reason": "insufficient_rank_rows",
-        "count": 0,
-        "text_sample": []
-      }
-    },
-    {
-      "id": 69579,
-      "link": "https://www.ibf-usba-boxing.com/ratings/ibf-jr-featherweight122lbs-male-12-2005/",
-      "title": "IBF: JR. FEATHERWEIGHT (122 LBS) &#8211; male &#8211; 12/2005",
-      "error": "title_not_ibf_rating"
-    },
-    {
-      "id": 69580,
-      "link": "https://www.ibf-usba-boxing.com/ratings/ibf-bantamweight118lbs-male-12-2005/",
-      "title": "IBF: BANTAMWEIGHT &#8211; 12/2005",
-      "error": {
-        "reason": "insufficient_rank_rows",
-        "count": 0,
-        "text_sample": []
-      }
-    },
-    {
-      "id": 69581,
-      "link": "https://www.ibf-usba-boxing.com/ratings/ibf-jr-bantamweight115lbs-male-12-2005/",
-      "title": "IBF: JR. BANTAMWEIGHT &#8211; 12/2005",
-      "error": {
-        "reason": "insufficient_rank_rows",
-        "count": 0,
-        "text_sample": []
-      }
-    },
-    {
-      "id": 69582,
-      "link": "https://www.ibf-usba-boxing.com/ratings/ibf-flyweight112lbs-male-12-2005/",
-      "title": "IBF: FLYWEIGHT &#8211; 12/2005",
-      "error": {
-        "reason": "insufficient_rank_rows",
-        "count": 0,
-        "text_sample": []
-      }
-    },
-    {
-      "id": 69583,
-      "link": "https://www.ibf-usba-boxing.com/ratings/ibf-jr-flyweight108lbs-male-12-2005/",
-      "title": "IBF: JR. FLYWEIGHT &#8211; 12/2005",
-      "error": {
-        "reason": "insufficient_rank_rows",
-        "count": 0,
-        "text_sample": []
-      }
-    },
-    {
-      "id": 69584,
-      "link": "https://www.ibf-usba-boxing.com/ratings/ibf-miniflyweight105lbs-male-12-2005/",
-      "title": "IBF: MINI FLYWEIGHT &#8211; 12/2005",
-      "error": {
-        "reason": "insufficient_rank_rows",
-        "count": 0,
-        "text_sample": []
-      }
-    },
-    {
-      "id": 69597,
-      "link": "https://www.ibf-usba-boxing.com/ratings/ibf-heavyweightover200lbs-male-1-2006/",
-      "title": "IBF: HEAVYWEIGHT &#8211; 01/2006",
-      "error": {
-        "reason": "insufficient_rank_rows",
-        "count": 0,
-        "text_sample": []
-      }
-    },
-    {
-      "id": 69598,
-      "link": "https://www.ibf-usba-boxing.com/ratings/ibf-cruiserweight200lbs-male-1-2006/",
-      "title": "IBF: CRUISERWEIGHT (200 LBS) &#8211; male &#8211; 1/2006",
-      "error": "title_not_ibf_rating"
-    },
-    {
-      "id": 69599,
-      "link": "https://www.ibf-usba-boxing.com/ratings/ibf-lt-heavyweight175lbs-male-1-2006/",
-      "title": "IBF: LT. HEAVYWEIGHT (175 LBS) &#8211; male &#8211; 1/2006",
-      "error": "title_not_ibf_rating"
-    },
-    {
-      "id": 69600,
-      "link": "https://www.ibf-usba-boxing.com/ratings/ibf-s-middleweight168lbs-male-1-2006/",
-      "title": "IBF: S. MIDDLEWEIGHT &#8211; 01/2006",
-      "error": {
-        "reason": "insufficient_rank_rows",
-        "count": 0,
-        "text_sample": []
-      }
-    },
-    {
-      "id": 69601,
-      "link": "https://www.ibf-usba-boxing.com/ratings/ibf-middleweight160lbs-male-1-2006/",
-      "title": "IBF: MIDDLEWEIGHT &#8211; 01/2006",
-      "error": {
-        "reason": "insufficient_rank_rows",
-        "count": 0,
-        "text_sample": []
-      }
-    },
-    {
-      "id": 69602,
-      "link": "https://www.ibf-usba-boxing.com/ratings/ibf-jr-middleweight154lbs-male-1-2006/",
-      "title": "IBF: JR. MIDDLEWEIGHT &#8211; 01/2006",
-      "error": {
-        "reason": "insufficient_rank_rows",
-        "count": 0,
-        "text_sample": []
-      }
-    },
-    {
-      "id": 69603,
-      "link": "https://www.ibf-usba-boxing.com/ratings/ibf-welterweight147lbs-male-1-2006/",
-      "title": "IBF: WELTERWEIGHT (147 LBS) &#8211; male &#8211; 1/2006",
-      "error": "title_not_ibf_rating"
-    },
-    {
-      "id": 69604,
-      "link": "https://www.ibf-usba-boxing.com/ratings/ibf-jr-welterweight140lbs-male-1-2006/",
-      "title": "IBF: JR. WELTERWEIGHT (140 LBS) &#8211; male &#8211; 1/2006",
-      "error": "title_not_ibf_rating"
-    },
-    {
-      "id": 69605,
-      "link": "https://www.ibf-usba-boxing.com/ratings/ibf-lightweight135lbs-male-1-2006/",
-      "title": "IBF: LIGHTWEIGHT (135 LBS) &#8211; male &#8211; 1/2006",
-      "error": "title_not_ibf_rating"
-    },
-    {
-      "id": 69606,
-      "link": "https://www.ibf-usba-boxing.com/ratings/ibf-jr-lightweight130lbs-male-1-2006/",
-      "title": "IBF: JR. LIGHTWEIGHT (130 LBS) &#8211; male &#8211; 1/2006",
-      "error": "title_not_ibf_rating"
-    },
-    {
-      "id": 69607,
-      "link": "https://www.ibf-usba-boxing.com/ratings/ibf-featherweight126lbs-male-1-2006/",
-      "title": "IBF: FEATHERWEIGHT &#8211; 01/2006",
-      "error": {
-        "reason": "insufficient_rank_rows",
-        "count": 0,
-        "text_sample": []
-      }
-    },
-    {
-      "id": 69608,
-      "link": "https://www.ibf-usba-boxing.com/ratings/ibf-jr-featherweight122lbs-male-1-2006/",
-      "title": "IBF: JR. FEATHERWEIGHT (122 LBS) &#8211; male &#8211; 1/2006",
-      "error": "title_not_ibf_rating"
-    },
-    {
-      "id": 69609,
-      "link": "https://www.ibf-usba-boxing.com/ratings/ibf-bantamweight118lbs-male-1-2006/",
-      "title": "IBF: BANTAMWEIGHT (118 LBS) &#8211; male &#8211; 1/2006",
-      "error": "title_not_ibf_rating"
-    },
-    {
-      "id": 69610,
-      "link": "https://www.ibf-usba-boxing.com/ratings/ibf-jr-bantamweight115lbs-male-1-2006/",
-      "title": "IBF: JR. BANTAMWEIGHT (115 LBS) &#8211; male &#8211; 1/2006",
-      "error": "title_not_ibf_rating"
-    },
-    {
-      "id": 69611,
-      "link": "https://www.ibf-usba-boxing.com/ratings/ibf-flyweight112lbs-male-1-2006/",
-      "title": "IBF: FLYWEIGHT (112 LBS) &#8211; male &#8211; 1/2006",
-      "error": "title_not_ibf_rating"
-    },
-    {
-      "id": 69612,
-      "link": "https://www.ibf-usba-boxing.com/ratings/ibf-jr-flyweight108lbs-male-1-2006/",
-      "title": "IBF: JR. FLYWEIGHT (108 LBS) &#8211; male &#8211; 1/2006",
-      "error": "title_not_ibf_rating"
-    },
-    {
-      "id": 69613,
-      "link": "https://www.ibf-usba-boxing.com/ratings/ibf-miniflyweight105lbs-male-1-2006/",
-      "title": "IBF: MINI FLYWEIGHT (105 LBS) &#8211; male &#8211; 1/2006",
-      "error": "title_not_ibf_rating"
-    },
-    {
-      "id": 69626,
-      "link": "https://www.ibf-usba-boxing.com/ratings/ibf-heavyweightover200lbs-male-2-2006/",
-      "title": "IBF: HEAVYWEIGHT &#8211; 02/2006",
-      "error": {
-        "reason": "insufficient_rank_rows",
-        "count": 0,
-        "text_sample": []
-      }
-    },
-    {
-      "id": 69627,
-      "link": "https://www.ibf-usba-boxing.com/ratings/ibf-cruiserweight200lbs-male-2-2006/",
-      "title": "IBF: CRUISERWEIGHT (200 LBS) &#8211; male &#8211; 2/2006",
-      "error": "title_not_ibf_rating"
-    },
-    {
-      "id": 69628,
-      "link": "https://www.ibf-usba-boxing.com/ratings/ibf-lt-heavyweight175lbs-male-2-2006/",
-      "title": "IBF: LT. HEAVYWEIGHT (175 LBS) &#8211; male &#8211; 2/2006",
-      "error": "title_not_ibf_rating"
-    },
-    {
-      "id": 69629,
-      "link": "https://www.ibf-usba-boxing.com/ratings/ibf-s-middleweight168lbs-male-2-2006/",
-      "title": "IBF: S. MIDDLEWEIGHT &#8211; 02/2006",
-      "error": {
-        "reason": "insufficient_rank_rows",
-        "count": 0,
-        "text_sample": []
-      }
-    },
-    {
-      "id": 69630,
-      "link": "https://www.ibf-usba-boxing.com/ratings/ibf-middleweight160lbs-male-2-2006/",
-      "title": "IBF: MIDDLEWEIGHT (160 LBS) &#8211; male &#8211; 2/2006",
-      "error": "title_not_ibf_rating"
-    },
-    {
-      "id": 69631,
-      "link": "https://www.ibf-usba-boxing.com/ratings/ibf-jr-middleweight154lbs-male-2-2006/",
-      "title": "IBF: JR. MIDDLEWEIGHT (154 LBS) &#8211; male &#8211; 2/2006",
-      "error": "title_not_ibf_rating"
-    },
-    {
-      "id": 69632,
-      "link": "https://www.ibf-usba-boxing.com/ratings/ibf-welterweight147lbs-male-2-2006/",
-      "title": "IBF: WELTERWEIGHT &#8211; 02/2006",
-      "error": {
-        "reason": "insufficient_rank_rows",
-        "count": 0,
-        "text_sample": []
-      }
-    },
-    {
-      "id": 69633,
-      "link": "https://www.ibf-usba-boxing.com/ratings/ibf-jr-welterweight140lbs-male-2-2006/",
-      "title": "IBF: JR. WELTERWEIGHT &#8211; 02/2006",
-      "error": {
-        "reason": "insufficient_rank_rows",
-        "count": 0,
-        "text_sample": []
-      }
-    },
-    {
-      "id": 69634,
-      "link": "https://www.ibf-usba-boxing.com/ratings/ibf-lightweight135lbs-male-2-2006/",
-      "title": "IBF: LIGHTWEIGHT (135 LBS) &#8211; male &#8211; 2/2006",
-      "error": "title_not_ibf_rating"
-    },
-    {
-      "id": 69635,
-      "link": "https://www.ibf-usba-boxing.com/ratings/ibf-jr-lightweight130lbs-male-2-2006/",
-      "title": "IBF: JR. LIGHTWEIGHT &#8211; 02/2006",
-      "error": {
-        "reason": "insufficient_rank_rows",
-        "count": 0,
-        "text_sample": []
-      }
-    },
-    {
-      "id": 69636,
-      "link": "https://www.ibf-usba-boxing.com/ratings/ibf-featherweight126lbs-male-2-2006/",
-      "title": "IBF: FEATHERWEIGHT &#8211; 02/2006",
-      "error": {
-        "reason": "insufficient_rank_rows",
-        "count": 0,
-        "text_sample": []
-      }
-    },
-    {
-      "id": 69637,
-      "link": "https://www.ibf-usba-boxing.com/ratings/ibf-jr-featherweight122lbs-male-2-2006/",
-      "title": "IBF: JR. FEATHERWEIGHT (122 LBS) &#8211; male &#8211; 2/2006",
-      "error": "title_not_ibf_rating"
-    },
-    {
-      "id": 69638,
-      "link": "https://www.ibf-usba-boxing.com/ratings/ibf-bantamweight118lbs-male-2-2006/",
-      "title": "IBF: BANTAMWEIGHT &#8211; 02/2006",
-      "error": {
-        "reason": "insufficient_rank_rows",
-        "count": 0,
-        "text_sample": []
-      }
-    },
-    {
-      "id": 69639,
-      "link": "https://www.ibf-usba-boxing.com/ratings/ibf-jr-bantamweight115lbs-male-2-2006/",
-      "title": "IBF: JR. BANTAMWEIGHT (115 LBS) &#8211; male &#8211; 2/2006",
-      "error": "title_not_ibf_rating"
-    },
-    {
-      "id": 69640,
-      "link": "https://www.ibf-usba-boxing.com/ratings/ibf-flyweight112lbs-male-2-2006/",
-      "title": "IBF: FLYWEIGHT &#8211; 02/2006",
-      "error": {
-        "reason": "insufficient_rank_rows",
-        "count": 0,
-        "text_sample": []
-      }
-    },
-    {
-      "id": 69641,
-      "link": "https://www.ibf-usba-boxing.com/ratings/ibf-jr-flyweight108lbs-male-2-2006/",
-      "title": "IBF: JR. FLYWEIGHT &#8211; 02/2006",
-      "error": {
-        "reason": "insufficient_rank_rows",
-        "count": 0,
-        "text_sample": []
-      }
-    },
-    {
-      "id": 69642,
-      "link": "https://www.ibf-usba-boxing.com/ratings/ibf-miniflyweight105lbs-male-2-2006/",
-      "title": "IBF: MINI FLYWEIGHT (105 LBS) &#8211; male &#8211; 2/2006",
-      "error": "title_not_ibf_rating"
-    },
-    {
-      "id": 69655,
-      "link": "https://www.ibf-usba-boxing.com/ratings/ibf-heavyweightover200lbs-male-3-2006/",
-      "title": "IBF: HEAVYWEIGHT (OVER 200 LBS) &#8211; male &#8211; 3/2006",
-      "error": "title_not_ibf_rating"
-    },
-    {
-      "id": 69656,
-      "link": "https://www.ibf-usba-boxing.com/ratings/ibf-cruiserweight200lbs-male-3-2006/",
-      "title": "IBF: CRUISERWEIGHT (200 LBS) &#8211; male &#8211; 3/2006",
-      "error": "title_not_ibf_rating"
-    },
-    {
-      "id": 69657,
-      "link": "https://www.ibf-usba-boxing.com/ratings/ibf-lt-heavyweight175lbs-male-3-2006/",
-      "title": "IBF: LT. HEAVYWEIGHT (175 LBS) &#8211; male &#8211; 3/2006",
-      "error": "title_not_ibf_rating"
-    },
-    {
-      "id": 69658,
-      "link": "https://www.ibf-usba-boxing.com/ratings/ibf-s-middleweight168lbs-male-3-2006/",
-      "title": "IBF: S. MIDDLEWEIGHT &#8211; 03/2006",
-      "error": {
-        "reason": "insufficient_rank_rows",
-        "count": 0,
-        "text_sample": []
-      }
-    },
-    {
-      "id": 69659,
-      "link": "https://www.ibf-usba-boxing.com/ratings/ibf-middleweight160lbs-male-3-2006/",
-      "title": "IBF: MIDDLEWEIGHT (160 LBS) &#8211; male &#8211; 3/2006",
-      "error": "title_not_ibf_rating"
-    },
-    {
-      "id": 69660,
-      "link": "https://www.ibf-usba-boxing.com/ratings/ibf-jr-middleweight154lbs-male-3-2006/",
-      "title": "IBF: JR. MIDDLEWEIGHT (154 LBS) &#8211; male &#8211; 3/2006",
-      "error": "title_not_ibf_rating"
-    },
-    {
-      "id": 69661,
-      "link": "https://www.ibf-usba-boxing.com/ratings/ibf-welterweight147lbs-male-3-2006/",
-      "title": "IBF: WELTERWEIGHT (147 LBS) &#8211; male &#8211; 3/2006",
-      "error": "title_not_ibf_rating"
-    },
-    {
-      "id": 69662,
-      "link": "https://www.ibf-usba-boxing.com/ratings/ibf-jr-welterweight140lbs-male-3-2006/",
-      "title": "IBF: JR. WELTERWEIGHT (140 LBS) &#8211; male &#8211; 3/2006",
-      "error": "title_not_ibf_rating"
-    },
-    {
-      "id": 69663,
-      "link": "https://www.ibf-usba-boxing.com/ratings/ibf-lightweight135lbs-male-3-2006/",
-      "title": "IBF: LIGHTWEIGHT (135 LBS) &#8211; male &#8211; 3/2006",
-      "error": "title_not_ibf_rating"
-    },
-    {
-      "id": 69664,
-      "link": "https://www.ibf-usba-boxing.com/ratings/ibf-jr-lightweight130lbs-male-3-2006/",
-      "title": "IBF: JR. LIGHTWEIGHT (130 LBS) &#8211; male &#8211; 3/2006",
-      "error": "title_not_ibf_rating"
-    },
-    {
-      "id": 69665,
-      "link": "https://www.ibf-usba-boxing.com/ratings/ibf-featherweight126lbs-male-3-2006/",
-      "title": "IBF: FEATHERWEIGHT &#8211; 03/2006",
-      "error": {
-        "reason": "insufficient_rank_rows",
-        "count": 0,
-        "text_sample": []
-      }
-    },
-    {
-      "id": 69666,
-      "link": "https://www.ibf-usba-boxing.com/ratings/ibf-jr-featherweight122lbs-male-3-2006/",
-      "title": "IBF: JR. FEATHERWEIGHT (122 LBS) &#8211; male &#8211; 3/2006",
-      "error": "title_not_ibf_rating"
-    },
-    {
-      "id": 69667,
-      "link": "https://www.ibf-usba-boxing.com/ratings/ibf-bantamweight118lbs-male-3-2006/",
-      "title": "IBF: BANTAMWEIGHT (118 LBS) &#8211; male &#8211; 3/2006",
-      "error": "title_not_ibf_rating"
-    },
-    {
-      "id": 69668,
-      "link": "https://www.ibf-usba-boxing.com/ratings/ibf-jr-bantamweight115lbs-male-3-2006/",
-      "title": "IBF: JR. BANTAMWEIGHT (115 LBS) &#8211; male &#8211; 3/2006",
-      "error": "title_not_ibf_rating"
-    },
-    {
-      "id": 69669,
-      "link": "https://www.ibf-usba-boxing.com/ratings/ibf-flyweight112lbs-male-3-2006/",
-      "title": "IBF: FLYWEIGHT (112 LBS) &#8211; male &#8211; 3/2006",
-      "error": "title_not_ibf_rating"
-    },
-    {
-      "id": 69670,
-      "link": "https://www.ibf-usba-boxing.com/ratings/ibf-jr-flyweight108lbs-male-3-2006/",
-      "title": "IBF: JR. FLYWEIGHT &#8211; 03/2006",
-      "error": {
-        "reason": "insufficient_rank_rows",
-        "count": 0,
-        "text_sample": []
-      }
-    },
-    {
-      "id": 69671,
-      "link": "https://www.ibf-usba-boxing.com/ratings/ibf-miniflyweight105lbs-male-3-2006/",
-      "title": "IBF: MINI FLYWEIGHT (105 LBS) &#8211; male &#8211; 3/2006",
-      "error": "title_not_ibf_rating"
-    },
-    {
-      "id": 69684,
-      "link": "https://www.ibf-usba-boxing.com/ratings/ibf-heavyweightover200lbs-male-4-2006/",
-      "title": "IBF: HEAVYWEIGHT (OVER 200 LBS) &#8211; male &#8211; 4/2006",
-      "error": "title_not_ibf_rating"
-    },
-    {
-      "id": 69685,
-      "link": "https://www.ibf-usba-boxing.com/ratings/ibf-cruiserweight200lbs-male-4-2006/",
-      "title": "IBF: CRUISERWEIGHT &#8211; 04/2006",
-      "error": {
-        "reason": "insufficient_rank_rows",
-        "count": 0,
-        "text_sample": []
-      }
-    },
-    {
-      "id": 69686,
-      "link": "https://www.ibf-usba-boxing.com/ratings/ibf-lt-heavyweight175lbs-male-4-2006/",
-      "title": "IBF: LT. HEAVYWEIGHT (175 LBS) &#8211; male &#8211; 4/2006",
-      "error": "title_not_ibf_rating"
-    },
-    {
-      "id": 69687,
-      "link": "https://www.ibf-usba-boxing.com/ratings/ibf-s-middleweight168lbs-male-4-2006/",
-      "title": "IBF: S. MIDDLEWEIGHT &#8211; 04/2006",
-      "error": {
-        "reason": "insufficient_rank_rows",
-        "count": 0,
-        "text_sample": []
-      }
-    },
-    {
-      "id": 69688,
-      "link": "https://www.ibf-usba-boxing.com/ratings/ibf-middleweight160lbs-male-4-2006/",
-      "title": "IBF: MIDDLEWEIGHT (160 LBS) &#8211; male &#8211; 4/2006",
-      "error": "title_not_ibf_rating"
-    },
-    {
-      "id": 69689,
-      "link": "https://www.ibf-usba-boxing.com/ratings/ibf-jr-middleweight154lbs-male-4-2006/",
-      "title": "IBF: JR. MIDDLEWEIGHT (154 LBS) &#8211; male &#8211; 4/2006",
-      "error": "title_not_ibf_rating"
-    },
-    {
-      "id": 69690,
-      "link": "https://www.ibf-usba-boxing.com/ratings/ibf-welterweight147lbs-male-4-2006/",
-      "title": "IBF: WELTERWEIGHT (147 LBS) &#8211; male &#8211; 4/2006",
-      "error": "title_not_ibf_rating"
-    },
-    {
-      "id": 69691,
-      "link": "https://www.ibf-usba-boxing.com/ratings/ibf-jr-welterweight140lbs-male-4-2006/",
-      "title": "IBF: JR. WELTERWEIGHT &#8211; 04/2006",
-      "error": {
-        "reason": "insufficient_rank_rows",
-        "count": 0,
-        "text_sample": []
-      }
-    },
-    {
-      "id": 69692,
-      "link": "https://www.ibf-usba-boxing.com/ratings/ibf-lightweight135lbs-male-4-2006/",
-      "title": "IBF: LIGHTWEIGHT (135 LBS) &#8211; male &#8211; 4/2006",
-      "error": "title_not_ibf_rating"
-    },
-    {
-      "id": 69693,
-      "link": "https://www.ibf-usba-boxing.com/ratings/ibf-jr-lightweight130lbs-male-4-2006/",
-      "title": "IBF: JR. LIGHTWEIGHT &#8211; 04/2006",
-      "error": {
-        "reason": "insufficient_rank_rows",
-        "count": 0,
-        "text_sample": []
-      }
-    },
-    {
-      "id": 69694,
-      "link": "https://www.ibf-usba-boxing.com/ratings/ibf-featherweight126lbs-male-4-2006/",
-      "title": "IBF: FEATHERWEIGHT &#8211; 04/2006",
-      "error": {
-        "reason": "insufficient_rank_rows",
-        "count": 0,
-        "text_sample": []
-      }
-    },
-    {
-      "id": 69695,
-      "link": "https://www.ibf-usba-boxing.com/ratings/ibf-jr-featherweight122lbs-male-4-2006/",
-      "title": "IBF: JR. FEATHERWEIGHT &#8211; 04/2006",
-      "error": {
-        "reason": "insufficient_rank_rows",
-        "count": 0,
-        "text_sample": []
-      }
-    },
-    {
-      "id": 69696,
-      "link": "https://www.ibf-usba-boxing.com/ratings/ibf-bantamweight118lbs-male-4-2006/",
-      "title": "IBF: BANTAMWEIGHT (118 LBS) &#8211; male &#8211; 4/2006",
-      "error": "title_not_ibf_rating"
-    },
-    {
-      "id": 69697,
-      "link": "https://www.ibf-usba-boxing.com/ratings/ibf-jr-bantamweight115lbs-male-4-2006/",
-      "title": "IBF: JR. BANTAMWEIGHT (115 LBS) &#8211; male &#8211; 4/2006",
-      "error": "title_not_ibf_rating"
-    },
-    {
-      "id": 69698,
-      "link": "https://www.ibf-usba-boxing.com/ratings/ibf-flyweight112lbs-male-4-2006/",
-      "title": "IBF: FLYWEIGHT (112 LBS) &#8211; male &#8211; 4/2006",
-      "error": "title_not_ibf_rating"
-    },
-    {
-      "id": 69699,
-      "link": "https://www.ibf-usba-boxing.com/ratings/ibf-jr-flyweight108lbs-male-4-2006/",
-      "title": "IBF: JR. FLYWEIGHT &#8211; 04/2006",
-      "error": {
-        "reason": "insufficient_rank_rows",
-        "count": 0,
-        "text_sample": []
-      }
-    },
-    {
-      "id": 69700,
-      "link": "https://www.ibf-usba-boxing.com/ratings/ibf-miniflyweight105lbs-male-4-2006/",
-      "title": "IBF: MINI FLYWEIGHT &#8211; 04/2006",
-      "error": {
-        "reason": "insufficient_rank_rows",
-        "count": 0,
-        "text_sample": []
-      }
-    },
-    {
-      "id": 69713,
-      "link": "https://www.ibf-usba-boxing.com/ratings/ibf-heavyweightover200lbs-male-5-2006/",
-      "title": "IBF: HEAVYWEIGHT &#8211; 05/2006",
-      "error": {
-        "reason": "insufficient_rank_rows",
-        "count": 0,
-        "text_sample": []
-      }
-    },
-    {
-      "id": 69714,
-      "link": "https://www.ibf-usba-boxing.com/ratings/ibf-cruiserweight200lbs-male-5-2006/",
-      "title": "IBF: CRUISERWEIGHT (200 LBS) &#8211; male &#8211; 5/2006",
-      "error": "title_not_ibf_rating"
-    },
-    {
-      "id": 69715,
-      "link": "https://www.ibf-usba-boxing.com/ratings/ibf-lt-heavyweight175lbs-male-5-2006/",
-      "title": "IBF: LT. HEAVYWEIGHT (175 LBS) &#8211; male &#8211; 5/2006",
-      "error": "title_not_ibf_rating"
-    },
-    {
-      "id": 69716,
-      "link": "https://www.ibf-usba-boxing.com/ratings/ibf-s-middleweight168lbs-male-5-2006/",
-      "title": "IBF: S. MIDDLEWEIGHT &#8211; 05/2006",
-      "error": {
-        "reason": "insufficient_rank_rows",
-        "count": 0,
-        "text_sample": []
-      }
-    },
-    {
-      "id": 69717,
-      "link": "https://www.ibf-usba-boxing.com/ratings/ibf-middleweight160lbs-male-5-2006/",
-      "title": "IBF: MIDDLEWEIGHT (160 LBS) &#8211; male &#8211; 5/2006",
-      "error": "title_not_ibf_rating"
-    },
-    {
-      "id": 69718,
-      "link": "https://www.ibf-usba-boxing.com/ratings/ibf-jr-middleweight154lbs-male-5-2006/",
-      "title": "IBF: JR. MIDDLEWEIGHT (154 LBS) &#8211; male &#8211; 5/2006",
-      "error": "title_not_ibf_rating"
-    },
-    {
-      "id": 69719,
-      "link": "https://www.ibf-usba-boxing.com/ratings/ibf-welterweight147lbs-male-5-2006/",
-      "title": "IBF: WELTERWEIGHT &#8211; 05/2006",
-      "error": {
-        "reason": "insufficient_rank_rows",
-        "count": 0,
-        "text_sample": []
-      }
-    },
-    {
-      "id": 69720,
-      "link": "https://www.ibf-usba-boxing.com/ratings/ibf-jr-welterweight140lbs-male-5-2006/",
-      "title": "IBF: JR. WELTERWEIGHT (140 LBS) &#8211; male &#8211; 5/2006",
-      "error": "title_not_ibf_rating"
-    },
-    {
-      "id": 69721,
-      "link": "https://www.ibf-usba-boxing.com/ratings/ibf-lightweight135lbs-male-5-2006/",
-      "title": "IBF: LIGHTWEIGHT (135 LBS) &#8211; male &#8211; 5/2006",
-      "error": "title_not_ibf_rating"
-    },
-    {
-      "id": 69722,
-      "link": "https://www.ibf-usba-boxing.com/ratings/ibf-jr-lightweight130lbs-male-5-2006/",
-      "title": "IBF: JR. LIGHTWEIGHT &#8211; 05/2006",
-      "error": {
-        "reason": "insufficient_rank_rows",
-        "count": 0,
-        "text_sample": []
-      }
-    },
-    {
-      "id": 69723,
-      "link": "https://www.ibf-usba-boxing.com/ratings/ibf-featherweight126lbs-male-5-2006/",
-      "title": "IBF: FEATHERWEIGHT &#8211; 05/2006",
-      "error": {
-        "reason": "insufficient_rank_rows",
-        "count": 0,
-        "text_sample": []
-      }
-    },
-    {
-      "id": 69724,
-      "link": "https://www.ibf-usba-boxing.com/ratings/ibf-jr-featherweight122lbs-male-5-2006/",
-      "title": "IBF: JR. FEATHERWEIGHT &#8211; 05/2006",
-      "error": {
-        "reason": "insufficient_rank_rows",
-        "count": 0,
-        "text_sample": []
-      }
-    },
-    {
-      "id": 69725,
-      "link": "https://www.ibf-usba-boxing.com/ratings/ibf-bantamweight118lbs-male-5-2006/",
-      "title": "IBF: BANTAMWEIGHT &#8211; 05/2006",
-      "error": {
-        "reason": "insufficient_rank_rows",
-        "count": 0,
-        "text_sample": []
-      }
-    },
-    {
-      "id": 69726,
-      "link": "https://www.ibf-usba-boxing.com/ratings/ibf-jr-bantamweight115lbs-male-5-2006/",
-      "title": "IBF: JR. BANTAMWEIGHT &#8211; 05/2006",
-      "error": {
-        "reason": "insufficient_rank_rows",
-        "count": 0,
-        "text_sample": []
-      }
-    },
-    {
-      "id": 69727,
-      "link": "https://www.ibf-usba-boxing.com/ratings/ibf-flyweight112lbs-male-5-2006/",
-      "title": "IBF: FLYWEIGHT (112 LBS) &#8211; male &#8211; 5/2006",
-      "error": "title_not_ibf_rating"
+  "built_at": "2026-09-21T14:01:58.984218+00:00",
+  "weight_classes_requested": 17,
+  "api_failures": [],
+  "division_period_documents": 4193,
+  "ranking_rows": 59778,
+  "champion_rows": 3846,
+  "years": [
+    2005,
+    2006,
+    2007,
+    2008,
+    2009,
+    2010,
+    2011,
+    2012,
+    2013,
+    2014,
+    2015,
+    2016,
+    2017,
+    2018,
+    2019,
+    2020,
+    2021,
+    2022,
+    2023,
+    2024,
+    2025,
+    2026
+  ],
+  "rating_periods": 248,
+  "date_min": "2005-12-02",
+  "date_max": "2026-09-09",
+  "quarantined_conflicting_rank_slots": 193,
+  "conflicting_rank_slot_sample": [
+    {
+      "slot": [
+        "2023-09-01",
+        "cruiserweight",
+        5
+      ],
+      "rows": [
+        {
+          "division": "cruiserweight",
+          "rank": 5,
+          "name": "Jordan Thompson",
+          "country": "United Kingdom (GBR)",
+          "rating_year": 2023,
+          "rating_month": 7,
+          "published_date": "2023-08-31",
+          "safe_effective_date": "2023-09-01",
+          "source_url": "https://www.ibf-usba-boxing.com/wp-json/ratings/v1/filter?weight=cruiserweight&org=ibf&ppp=-1",
+          "source_kind": "official_ibf_ratings_api"
+        },
+        {
+          "division": "cruiserweight",
+          "rank": 5,
+          "name": "Yuniel Dorticos",
+          "country": "Cuba (CUB)",
+          "rating_year": 2023,
+          "rating_month": 6,
+          "published_date": "2023-08-31",
+          "safe_effective_date": "2023-09-01",
+          "source_url": "https://www.ibf-usba-boxing.com/wp-json/ratings/v1/filter?weight=cruiserweight&org=ibf&ppp=-1",
+          "source_kind": "official_ibf_ratings_api"
+        },
+        {
+          "division": "cruiserweight",
+          "rank": 5,
+          "name": "Yuniel Dorticos",
+          "country": "Cuba (CUB)",
+          "rating_year": 2023,
+          "rating_month": 5,
+          "published_date": "2023-08-31",
+          "safe_effective_date": "2023-09-01",
+          "source_url": "https://www.ibf-usba-boxing.com/wp-json/ratings/v1/filter?weight=cruiserweight&org=ibf&ppp=-1",
+          "source_kind": "official_ibf_ratings_api"
+        },
+        {
+          "division": "cruiserweight",
+          "rank": 5,
+          "name": "Yuniel Dorticos",
+          "country": "Cuba (CUB)",
+          "rating_year": 2023,
+          "rating_month": 4,
+          "published_date": "2023-08-31",
+          "safe_effective_date": "2023-09-01",
+          "source_url": "https://www.ibf-usba-boxing.com/wp-json/ratings/v1/filter?weight=cruiserweight&org=ibf&ppp=-1",
+          "source_kind": "official_ibf_ratings_api"
+        },
+        {
+          "division": "cruiserweight",
+          "rank": 5,
+          "name": "Yuniel Dorticos",
+          "country": "Cuba (CUB)",
+          "rating_year": 2023,
+          "rating_month": 3,
+          "published_date": "2023-08-31",
+          "safe_effective_date": "2023-09-01",
+          "source_url": "https://www.ibf-usba-boxing.com/wp-json/ratings/v1/filter?weight=cruiserweight&org=ibf&ppp=-1",
+          "source_kind": "official_ibf_ratings_api"
+        }
+      ]
+    },
+    {
+      "slot": [
+        "2023-09-01",
+        "cruiserweight",
+        6
+      ],
+      "rows": [
+        {
+          "division": "cruiserweight",
+          "rank": 6,
+          "name": "Yuniel Dorticos",
+          "country": "Cuba (CUB)",
+          "rating_year": 2023,
+          "rating_month": 7,
+          "published_date": "2023-08-31",
+          "safe_effective_date": "2023-09-01",
+          "source_url": "https://www.ibf-usba-boxing.com/wp-json/ratings/v1/filter?weight=cruiserweight&org=ibf&ppp=-1",
+          "source_kind": "official_ibf_ratings_api"
+        },
+        {
+          "division": "cruiserweight",
+          "rank": 6,
+          "name": "Jordan Thompson",
+          "country": "United Kingdom (GBR)",
+          "rating_year": 2023,
+          "rating_month": 6,
+          "published_date": "2023-08-31",
+          "safe_effective_date": "2023-09-01",
+          "source_url": "https://www.ibf-usba-boxing.com/wp-json/ratings/v1/filter?weight=cruiserweight&org=ibf&ppp=-1",
+          "source_kind": "official_ibf_ratings_api"
+        },
+        {
+          "division": "cruiserweight",
+          "rank": 6,
+          "name": "Jordan Thompson",
+          "country": "United Kingdom (GBR)",
+          "rating_year": 2023,
+          "rating_month": 5,
+          "published_date": "2023-08-31",
+          "safe_effective_date": "2023-09-01",
+          "source_url": "https://www.ibf-usba-boxing.com/wp-json/ratings/v1/filter?weight=cruiserweight&org=ibf&ppp=-1",
+          "source_kind": "official_ibf_ratings_api"
+        },
+        {
+          "division": "cruiserweight",
+          "rank": 6,
+          "name": "Andrew Tabiti",
+          "country": "United States (USA)",
+          "rating_year": 2023,
+          "rating_month": 4,
+          "published_date": "2023-08-31",
+          "safe_effective_date": "2023-09-01",
+          "source_url": "https://www.ibf-usba-boxing.com/wp-json/ratings/v1/filter?weight=cruiserweight&org=ibf&ppp=-1",
+          "source_kind": "official_ibf_ratings_api"
+        },
+        {
+          "division": "cruiserweight",
+          "rank": 6,
+          "name": "Andrew Tabiti",
+          "country": "United States (USA)",
+          "rating_year": 2023,
+          "rating_month": 3,
+          "published_date": "2023-08-31",
+          "safe_effective_date": "2023-09-01",
+          "source_url": "https://www.ibf-usba-boxing.com/wp-json/ratings/v1/filter?weight=cruiserweight&org=ibf&ppp=-1",
+          "source_kind": "official_ibf_ratings_api"
+        }
+      ]
+    },
+    {
+      "slot": [
+        "2023-09-01",
+        "cruiserweight",
+        8
+      ],
+      "rows": [
+        {
+          "division": "cruiserweight",
+          "rank": 8,
+          "name": "Michal Cieslak",
+          "country": "Poland (POL)",
+          "rating_year": 2023,
+          "rating_month": 7,
+          "published_date": "2023-08-31",
+          "safe_effective_date": "2023-09-01",
+          "source_url": "https://www.ibf-usba-boxing.com/wp-json/ratings/v1/filter?weight=cruiserweight&org=ibf&ppp=-1",
+          "source_kind": "official_ibf_ratings_api"
+        },
+        {
+          "division": "cruiserweight",
+          "rank": 8,
+          "name": "Michal Cieslak",
+          "country": "Poland (POL)",
+          "rating_year": 2023,
+          "rating_month": 6,
+          "published_date": "2023-08-31",
+          "safe_effective_date": "2023-09-01",
+          "source_url": "https://www.ibf-usba-boxing.com/wp-json/ratings/v1/filter?weight=cruiserweight&org=ibf&ppp=-1",
+          "source_kind": "official_ibf_ratings_api"
+        },
+        {
+          "division": "cruiserweight",
+          "rank": 8,
+          "name": "Michal Cieslak",
+          "country": "Poland (POL)",
+          "rating_year": 2023,
+          "rating_month": 5,
+          "published_date": "2023-08-31",
+          "safe_effective_date": "2023-09-01",
+          "source_url": "https://www.ibf-usba-boxing.com/wp-json/ratings/v1/filter?weight=cruiserweight&org=ibf&ppp=-1",
+          "source_kind": "official_ibf_ratings_api"
+        },
+        {
+          "division": "cruiserweight",
+          "rank": 8,
+          "name": "Jordan Thompson",
+          "country": "United Kingdom (GBR)",
+          "rating_year": 2023,
+          "rating_month": 4,
+          "published_date": "2023-08-31",
+          "safe_effective_date": "2023-09-01",
+          "source_url": "https://www.ibf-usba-boxing.com/wp-json/ratings/v1/filter?weight=cruiserweight&org=ibf&ppp=-1",
+          "source_kind": "official_ibf_ratings_api"
+        },
+        {
+          "division": "cruiserweight",
+          "rank": 8,
+          "name": "Luca D'Ortenzi",
+          "country": "Italy (ITA)",
+          "rating_year": 2023,
+          "rating_month": 3,
+          "published_date": "2023-08-31",
+          "safe_effective_date": "2023-09-01",
+          "source_url": "https://www.ibf-usba-boxing.com/wp-json/ratings/v1/filter?weight=cruiserweight&org=ibf&ppp=-1",
+          "source_kind": "official_ibf_ratings_api"
+        }
+      ]
+    },
+    {
+      "slot": [
+        "2023-09-01",
+        "cruiserweight",
+        9
+      ],
+      "rows": [
+        {
+          "division": "cruiserweight",
+          "rank": 9,
+          "name": "Ryan Rozicki",
+          "country": "Canada (CAN)",
+          "rating_year": 2023,
+          "rating_month": 7,
+          "published_date": "2023-08-31",
+          "safe_effective_date": "2023-09-01",
+          "source_url": "https://www.ibf-usba-boxing.com/wp-json/ratings/v1/filter?weight=cruiserweight&org=ibf&ppp=-1",
+          "source_kind": "official_ibf_ratings_api"
+        },
+        {
+          "division": "cruiserweight",
+          "rank": 9,
+          "name": "Ryan Rozicki",
+          "country": "Canada (CAN)",
+          "rating_year": 2023,
+          "rating_month": 6,
+          "published_date": "2023-08-31",
+          "safe_effective_date": "2023-09-01",
+          "source_url": "https://www.ibf-usba-boxing.com/wp-json/ratings/v1/filter?weight=cruiserweight&org=ibf&ppp=-1",
+          "source_kind": "official_ibf_ratings_api"
+        },
+        {
+          "division": "cruiserweight",
+          "rank": 9,
+          "name": "Ryan Rozicki",
+          "country": "Canada (CAN)",
+          "rating_year": 2023,
+          "rating_month": 5,
+          "published_date": "2023-08-31",
+          "safe_effective_date": "2023-09-01",
+          "source_url": "https://www.ibf-usba-boxing.com/wp-json/ratings/v1/filter?weight=cruiserweight&org=ibf&ppp=-1",
+          "source_kind": "official_ibf_ratings_api"
+        },
+        {
+          "division": "cruiserweight",
+          "rank": 9,
+          "name": "Ryan Rozicki",
+          "country": "Canada (CAN)",
+          "rating_year": 2023,
+          "rating_month": 4,
+          "published_date": "2023-08-31",
+          "safe_effective_date": "2023-09-01",
+          "source_url": "https://www.ibf-usba-boxing.com/wp-json/ratings/v1/filter?weight=cruiserweight&org=ibf&ppp=-1",
+          "source_kind": "official_ibf_ratings_api"
+        },
+        {
+          "division": "cruiserweight",
+          "rank": 9,
+          "name": "Sergey Kovalev",
+          "country": "Russian Federation (RUS)",
+          "rating_year": 2023,
+          "rating_month": 3,
+          "published_date": "2023-08-31",
+          "safe_effective_date": "2023-09-01",
+          "source_url": "https://www.ibf-usba-boxing.com/wp-json/ratings/v1/filter?weight=cruiserweight&org=ibf&ppp=-1",
+          "source_kind": "official_ibf_ratings_api"
+        }
+      ]
+    },
+    {
+      "slot": [
+        "2023-09-01",
+        "cruiserweight",
+        10
+      ],
+      "rows": [
+        {
+          "division": "cruiserweight",
+          "rank": 10,
+          "name": "Armend Xhoxhaj",
+          "country": "Germany (GER)",
+          "rating_year": 2023,
+          "rating_month": 7,
+          "published_date": "2023-08-31",
+          "safe_effective_date": "2023-09-01",
+          "source_url": "https://www.ibf-usba-boxing.com/wp-json/ratings/v1/filter?weight=cruiserweight&org=ibf&ppp=-1",
+          "source_kind": "official_ibf_ratings_api"
+        },
+        {
+          "division": "cruiserweight",
+          "rank": 10,
+          "name": "Armend Xhoxhaj",
+          "country": "Germany (GER)",
+          "rating_year": 2023,
+          "rating_month": 6,
+          "published_date": "2023-08-31",
+          "safe_effective_date": "2023-09-01",
+          "source_url": "https://www.ibf-usba-boxing.com/wp-json/ratings/v1/filter?weight=cruiserweight&org=ibf&ppp=-1",
+          "source_kind": "official_ibf_ratings_api"
+        },
+        {
+          "division": "cruiserweight",
+          "rank": 10,
+          "name": "Armend Xhoxhaj",
+          "country": "Germany (GER)",
+          "rating_year": 2023,
+          "rating_month": 5,
+          "published_date": "2023-08-31",
+          "safe_effective_date": "2023-09-01",
+          "source_url": "https://www.ibf-usba-boxing.com/wp-json/ratings/v1/filter?weight=cruiserweight&org=ibf&ppp=-1",
+          "source_kind": "official_ibf_ratings_api"
+        },
+        {
+          "division": "cruiserweight",
+          "rank": 10,
+          "name": "Michal Cieslak",
+          "country": "Poland (POL)",
+          "rating_year": 2023,
+          "rating_month": 4,
+          "published_date": "2023-08-31",
+          "safe_effective_date": "2023-09-01",
+          "source_url": "https://www.ibf-usba-boxing.com/wp-json/ratings/v1/filter?weight=cruiserweight&org=ibf&ppp=-1",
+          "source_kind": "official_ibf_ratings_api"
+        },
+        {
+          "division": "cruiserweight",
+          "rank": 10,
+          "name": "Ryan Rozicki",
+          "country": "Canada (CAN)",
+          "rating_year": 2023,
+          "rating_month": 3,
+          "published_date": "2023-08-31",
+          "safe_effective_date": "2023-09-01",
+          "source_url": "https://www.ibf-usba-boxing.com/wp-json/ratings/v1/filter?weight=cruiserweight&org=ibf&ppp=-1",
+          "source_kind": "official_ibf_ratings_api"
+        }
+      ]
+    },
+    {
+      "slot": [
+        "2023-09-01",
+        "cruiserweight",
+        11
+      ],
+      "rows": [
+        {
+          "division": "cruiserweight",
+          "rank": 11,
+          "name": "Roman Fress",
+          "country": "Kazakhstan (KAZ)",
+          "rating_year": 2023,
+          "rating_month": 7,
+          "published_date": "2023-08-31",
+          "safe_effective_date": "2023-09-01",
+          "source_url": "https://www.ibf-usba-boxing.com/wp-json/ratings/v1/filter?weight=cruiserweight&org=ibf&ppp=-1",
+          "source_kind": "official_ibf_ratings_api"
+        },
+        {
+          "division": "cruiserweight",
+          "rank": 11,
+          "name": "Fabio Turchi",
+          "country": "Italy (ITA)",
+          "rating_year": 2023,
+          "rating_month": 6,
+          "published_date": "2023-08-31",
+          "safe_effective_date": "2023-09-01",
+          "source_url": "https://www.ibf-usba-boxing.com/wp-json/ratings/v1/filter?weight=cruiserweight&org=ibf&ppp=-1",
+          "source_kind": "official_ibf_ratings_api"
+        },
+        {
+          "division": "cruiserweight",
+          "rank": 11,
+          "name": "Fabio Turchi",
+          "country": "Italy (ITA)",
+          "rating_year": 2023,
+          "rating_month": 5,
+          "published_date": "2023-08-31",
+          "safe_effective_date": "2023-09-01",
+          "source_url": "https://www.ibf-usba-boxing.com/wp-json/ratings/v1/filter?weight=cruiserweight&org=ibf&ppp=-1",
+          "source_kind": "official_ibf_ratings_api"
+        },
+        {
+          "division": "cruiserweight",
+          "rank": 11,
+          "name": "Armend Xhoxhaj",
+          "country": "Germany (GER)",
+          "rating_year": 2023,
+          "rating_month": 4,
+          "published_date": "2023-08-31",
+          "safe_effective_date": "2023-09-01",
+          "source_url": "https://www.ibf-usba-boxing.com/wp-json/ratings/v1/filter?weight=cruiserweight&org=ibf&ppp=-1",
+          "source_kind": "official_ibf_ratings_api"
+        },
+        {
+          "division": "cruiserweight",
+          "rank": 11,
+          "name": "Armend Xhoxhaj",
+          "country": "Germany (GER)",
+          "rating_year": 2023,
+          "rating_month": 3,
+          "published_date": "2023-08-31",
+          "safe_effective_date": "2023-09-01",
+          "source_url": "https://www.ibf-usba-boxing.com/wp-json/ratings/v1/filter?weight=cruiserweight&org=ibf&ppp=-1",
+          "source_kind": "official_ibf_ratings_api"
+        }
+      ]
+    },
+    {
+      "slot": [
+        "2023-09-01",
+        "cruiserweight",
+        12
+      ],
+      "rows": [
+        {
+          "division": "cruiserweight",
+          "rank": 12,
+          "name": "Rolly Lambert Fogum",
+          "country": "Cameroon (CMR)",
+          "rating_year": 2023,
+          "rating_month": 7,
+          "published_date": "2023-08-31",
+          "safe_effective_date": "2023-09-01",
+          "source_url": "https://www.ibf-usba-boxing.com/wp-json/ratings/v1/filter?weight=cruiserweight&org=ibf&ppp=-1",
+          "source_kind": "official_ibf_ratings_api"
+        },
+        {
+          "division": "cruiserweight",
+          "rank": 12,
+          "name": "Rolly Lambert Fogum",
+          "country": "Cameroon (CMR)",
+          "rating_year": 2023,
+          "rating_month": 6,
+          "published_date": "2023-08-31",
+          "safe_effective_date": "2023-09-01",
+          "source_url": "https://www.ibf-usba-boxing.com/wp-json/ratings/v1/filter?weight=cruiserweight&org=ibf&ppp=-1",
+          "source_kind": "official_ibf_ratings_api"
+        },
+        {
+          "division": "cruiserweight",
+          "rank": 12,
+          "name": "Rolly Lambert Fogum",
+          "country": "Cameroon (CMR)",
+          "rating_year": 2023,
+          "rating_month": 5,
+          "published_date": "2023-08-31",
+          "safe_effective_date": "2023-09-01",
+          "source_url": "https://www.ibf-usba-boxing.com/wp-json/ratings/v1/filter?weight=cruiserweight&org=ibf&ppp=-1",
+          "source_kind": "official_ibf_ratings_api"
+        },
+        {
+          "division": "cruiserweight",
+          "rank": 12,
+          "name": "Rolly Lambert Fogum",
+          "country": "Cameroon (CMR)",
+          "rating_year": 2023,
+          "rating_month": 4,
+          "published_date": "2023-08-31",
+          "safe_effective_date": "2023-09-01",
+          "source_url": "https://www.ibf-usba-boxing.com/wp-json/ratings/v1/filter?weight=cruiserweight&org=ibf&ppp=-1",
+          "source_kind": "official_ibf_ratings_api"
+        },
+        {
+          "division": "cruiserweight",
+          "rank": 12,
+          "name": "Jordan Thompson",
+          "country": "United Kingdom (GBR)",
+          "rating_year": 2023,
+          "rating_month": 3,
+          "published_date": "2023-08-31",
+          "safe_effective_date": "2023-09-01",
+          "source_url": "https://www.ibf-usba-boxing.com/wp-json/ratings/v1/filter?weight=cruiserweight&org=ibf&ppp=-1",
+          "source_kind": "official_ibf_ratings_api"
+        }
+      ]
+    },
+    {
+      "slot": [
+        "2023-09-01",
+        "cruiserweight",
+        13
+      ],
+      "rows": [
+        {
+          "division": "cruiserweight",
+          "rank": 13,
+          "name": "Leon Harth",
+          "country": "Germany (GER)",
+          "rating_year": 2023,
+          "rating_month": 7,
+          "published_date": "2023-08-31",
+          "safe_effective_date": "2023-09-01",
+          "source_url": "https://www.ibf-usba-boxing.com/wp-json/ratings/v1/filter?weight=cruiserweight&org=ibf&ppp=-1",
+          "source_kind": "official_ibf_ratings_api"
+        },
+        {
+          "division": "cruiserweight",
+          "rank": 13,
+          "name": "Leon Harth",
+          "country": "Germany (GER)",
+          "rating_year": 2023,
+          "rating_month": 6,
+          "published_date": "2023-08-31",
+          "safe_effective_date": "2023-09-01",
+          "source_url": "https://www.ibf-usba-boxing.com/wp-json/ratings/v1/filter?weight=cruiserweight&org=ibf&ppp=-1",
+          "source_kind": "official_ibf_ratings_api"
+        },
+        {
+          "division": "cruiserweight",
+          "rank": 13,
+          "name": "Leon Harth",
+          "country": "Germany (GER)",
+          "rating_year": 2023,
+          "rating_month": 5,
+          "published_date": "2023-08-31",
+          "safe_effective_date": "2023-09-01",
+          "source_url": "https://www.ibf-usba-boxing.com/wp-json/ratings/v1/filter?weight=cruiserweight&org=ibf&ppp=-1",
+          "source_kind": "official_ibf_ratings_api"
+        },
+        {
+          "division": "cruiserweight",
+          "rank": 13,
+          "name": "Fabio Turchi",
+          "country": "Italy (ITA)",
+          "rating_year": 2023,
+          "rating_month": 4,
+          "published_date": "2023-08-31",
+          "safe_effective_date": "2023-09-01",
+          "source_url": "https://www.ibf-usba-boxing.com/wp-json/ratings/v1/filter?weight=cruiserweight&org=ibf&ppp=-1",
+          "source_kind": "official_ibf_ratings_api"
+        },
+        {
+          "division": "cruiserweight",
+          "rank": 13,
+          "name": "Fabio Turchi",
+          "country": "Italy (ITA)",
+          "rating_year": 2023,
+          "rating_month": 3,
+          "published_date": "2023-08-31",
+          "safe_effective_date": "2023-09-01",
+          "source_url": "https://www.ibf-usba-boxing.com/wp-json/ratings/v1/filter?weight=cruiserweight&org=ibf&ppp=-1",
+          "source_kind": "official_ibf_ratings_api"
+        }
+      ]
+    },
+    {
+      "slot": [
+        "2023-09-01",
+        "cruiserweight",
+        14
+      ],
+      "rows": [
+        {
+          "division": "cruiserweight",
+          "rank": 14,
+          "name": "Isaac Chamberlain",
+          "country": "United Kingdom (GBR)",
+          "rating_year": 2023,
+          "rating_month": 7,
+          "published_date": "2023-08-31",
+          "safe_effective_date": "2023-09-01",
+          "source_url": "https://www.ibf-usba-boxing.com/wp-json/ratings/v1/filter?weight=cruiserweight&org=ibf&ppp=-1",
+          "source_kind": "official_ibf_ratings_api"
+        },
+        {
+          "division": "cruiserweight",
+          "rank": 14,
+          "name": "Isaac Chamberlain",
+          "country": "United Kingdom (GBR)",
+          "rating_year": 2023,
+          "rating_month": 6,
+          "published_date": "2023-08-31",
+          "safe_effective_date": "2023-09-01",
+          "source_url": "https://www.ibf-usba-boxing.com/wp-json/ratings/v1/filter?weight=cruiserweight&org=ibf&ppp=-1",
+          "source_kind": "official_ibf_ratings_api"
+        },
+        {
+          "division": "cruiserweight",
+          "rank": 14,
+          "name": "Andrew Tabiti",
+          "country": "United States (USA)",
+          "rating_year": 2023,
+          "rating_month": 5,
+          "published_date": "2023-08-31",
+          "safe_effective_date": "2023-09-01",
+          "source_url": "https://www.ibf-usba-boxing.com/wp-json/ratings/v1/filter?weight=cruiserweight&org=ibf&ppp=-1",
+          "source_kind": "official_ibf_ratings_api"
+        },
+        {
+          "division": "cruiserweight",
+          "rank": 14,
+          "name": "Tommy McCarthy",
+          "country": "Ireland (IRL)",
+          "rating_year": 2023,
+          "rating_month": 4,
+          "published_date": "2023-08-31",
+          "safe_effective_date": "2023-09-01",
+          "source_url": "https://www.ibf-usba-boxing.com/wp-json/ratings/v1/filter?weight=cruiserweight&org=ibf&ppp=-1",
+          "source_kind": "official_ibf_ratings_api"
+        },
+        {
+          "division": "cruiserweight",
+          "rank": 14,
+          "name": "Tommy McCarthy",
+          "country": "Ireland (IRL)",
+          "rating_year": 2023,
+          "rating_month": 3,
+          "published_date": "2023-08-31",
+          "safe_effective_date": "2023-09-01",
+          "source_url": "https://www.ibf-usba-boxing.com/wp-json/ratings/v1/filter?weight=cruiserweight&org=ibf&ppp=-1",
+          "source_kind": "official_ibf_ratings_api"
+        }
+      ]
+    },
+    {
+      "slot": [
+        "2023-09-01",
+        "cruiserweight",
+        15
+      ],
+      "rows": [
+        {
+          "division": "cruiserweight",
+          "rank": 15,
+          "name": "Andrew Tabiti",
+          "country": "United States (USA)",
+          "rating_year": 2023,
+          "rating_month": 7,
+          "published_date": "2023-08-31",
+          "safe_effective_date": "2023-09-01",
+          "source_url": "https://www.ibf-usba-boxing.com/wp-json/ratings/v1/filter?weight=cruiserweight&org=ibf&ppp=-1",
+          "source_kind": "official_ibf_ratings_api"
+        },
+        {
+          "division": "cruiserweight",
+          "rank": 15,
+          "name": "Andrew Tabiti",
+          "country": "United States (USA)",
+          "rating_year": 2023,
+          "rating_month": 6,
+          "published_date": "2023-08-31",
+          "safe_effective_date": "2023-09-01",
+          "source_url": "https://www.ibf-usba-boxing.com/wp-json/ratings/v1/filter?weight=cruiserweight&org=ibf&ppp=-1",
+          "source_kind": "official_ibf_ratings_api"
+        },
+        {
+          "division": "cruiserweight",
+          "rank": 15,
+          "name": "Tommy McCarthy",
+          "country": "Ireland (IRL)",
+          "rating_year": 2023,
+          "rating_month": 5,
+          "published_date": "2023-08-31",
+          "safe_effective_date": "2023-09-01",
+          "source_url": "https://www.ibf-usba-boxing.com/wp-json/ratings/v1/filter?weight=cruiserweight&org=ibf&ppp=-1",
+          "source_kind": "official_ibf_ratings_api"
+        },
+        {
+          "division": "cruiserweight",
+          "rank": 15,
+          "name": "Leon Harth",
+          "country": "Germany (GER)",
+          "rating_year": 2023,
+          "rating_month": 4,
+          "published_date": "2023-08-31",
+          "safe_effective_date": "2023-09-01",
+          "source_url": "https://www.ibf-usba-boxing.com/wp-json/ratings/v1/filter?weight=cruiserweight&org=ibf&ppp=-1",
+          "source_kind": "official_ibf_ratings_api"
+        },
+        {
+          "division": "cruiserweight",
+          "rank": 15,
+          "name": "Rolly Lambert Fogum",
+          "country": "Cameroon (CMR)",
+          "rating_year": 2023,
+          "rating_month": 3,
+          "published_date": "2023-08-31",
+          "safe_effective_date": "2023-09-01",
+          "source_url": "https://www.ibf-usba-boxing.com/wp-json/ratings/v1/filter?weight=cruiserweight&org=ibf&ppp=-1",
+          "source_kind": "official_ibf_ratings_api"
+        }
+      ]
+    },
+    {
+      "slot": [
+        "2023-09-01",
+        "light heavyweight",
+        3
+      ],
+      "rows": [
+        {
+          "division": "light heavyweight",
+          "rank": 3,
+          "name": "Joshua Buatsi",
+          "country": "Ghana (GHA)",
+          "rating_year": 2023,
+          "rating_month": 7,
+          "published_date": "2023-08-31",
+          "safe_effective_date": "2023-09-01",
+          "source_url": "https://www.ibf-usba-boxing.com/wp-json/ratings/v1/filter?weight=light-heavyweight&org=ibf&ppp=-1",
+          "source_kind": "official_ibf_ratings_api"
+        },
+        {
+          "division": "light heavyweight",
+          "rank": 3,
+          "name": "Joshua Buatsi",
+          "country": "Ghana (GHA)",
+          "rating_year": 2023,
+          "rating_month": 6,
+          "published_date": "2023-08-31",
+          "safe_effective_date": "2023-09-01",
+          "source_url": "https://www.ibf-usba-boxing.com/wp-json/ratings/v1/filter?weight=light-heavyweight&org=ibf&ppp=-1",
+          "source_kind": "official_ibf_ratings_api"
+        },
+        {
+          "division": "light heavyweight",
+          "rank": 3,
+          "name": "Joshua Buatsi",
+          "country": "Ghana (GHA)",
+          "rating_year": 2023,
+          "rating_month": 5,
+          "published_date": "2023-08-31",
+          "safe_effective_date": "2023-09-01",
+          "source_url": "https://www.ibf-usba-boxing.com/wp-json/ratings/v1/filter?weight=light-heavyweight&org=ibf&ppp=-1",
+          "source_kind": "official_ibf_ratings_api"
+        },
+        {
+          "division": "light heavyweight",
+          "rank": 3,
+          "name": "Callum Smith",
+          "country": "United Kingdom (GBR)",
+          "rating_year": 2023,
+          "rating_month": 4,
+          "published_date": "2023-08-31",
+          "safe_effective_date": "2023-09-01",
+          "source_url": "https://www.ibf-usba-boxing.com/wp-json/ratings/v1/filter?weight=light-heavyweight&org=ibf&ppp=-1",
+          "source_kind": "official_ibf_ratings_api"
+        },
+        {
+          "division": "light heavyweight",
+          "rank": 3,
+          "name": "Joseph Smith Jr",
+          "country": "United States (USA)",
+          "rating_year": 2023,
+          "rating_month": 3,
+          "published_date": "2023-08-31",
+          "safe_effective_date": "2023-09-01",
+          "source_url": "https://www.ibf-usba-boxing.com/wp-json/ratings/v1/filter?weight=light-heavyweight&org=ibf&ppp=-1",
+          "source_kind": "official_ibf_ratings_api"
+        }
+      ]
+    },
+    {
+      "slot": [
+        "2023-09-01",
+        "light heavyweight",
+        4
+      ],
+      "rows": [
+        {
+          "division": "light heavyweight",
+          "rank": 4,
+          "name": "Callum Smith",
+          "country": "United Kingdom (GBR)",
+          "rating_year": 2023,
+          "rating_month": 7,
+          "published_date": "2023-08-31",
+          "safe_effective_date": "2023-09-01",
+          "source_url": "https://www.ibf-usba-boxing.com/wp-json/ratings/v1/filter?weight=light-heavyweight&org=ibf&ppp=-1",
+          "source_kind": "official_ibf_ratings_api"
+        },
+        {
+          "division": "light heavyweight",
+          "rank": 4,
+          "name": "Callum Smith",
+          "country": "United Kingdom (GBR)",
+          "rating_year": 2023,
+          "rating_month": 6,
+          "published_date": "2023-08-31",
+          "safe_effective_date": "2023-09-01",
+          "source_url": "https://www.ibf-usba-boxing.com/wp-json/ratings/v1/filter?weight=light-heavyweight&org=ibf&ppp=-1",
+          "source_kind": "official_ibf_ratings_api"
+        },
+        {
+          "division": "light heavyweight",
+          "rank": 4,
+          "name": "Callum Smith",
+          "country": "United Kingdom (GBR)",
+          "rating_year": 2023,
+          "rating_month": 5,
+          "published_date": "2023-08-31",
+          "safe_effective_date": "2023-09-01",
+          "source_url": "https://www.ibf-usba-boxing.com/wp-json/ratings/v1/filter?weight=light-heavyweight&org=ibf&ppp=-1",
+          "source_kind": "official_ibf_ratings_api"
+        },
+        {
+          "division": "light heavyweight",
+          "rank": 4,
+          "name": "Joshua Buatsi",
+          "country": "Ghana (GHA)",
+          "rating_year": 2023,
+          "rating_month": 4,
+          "published_date": "2023-08-31",
+          "safe_effective_date": "2023-09-01",
+          "source_url": "https://www.ibf-usba-boxing.com/wp-json/ratings/v1/filter?weight=light-heavyweight&org=ibf&ppp=-1",
+          "source_kind": "official_ibf_ratings_api"
+        },
+        {
+          "division": "light heavyweight",
+          "rank": 4,
+          "name": "Pawel Stepien",
+          "country": "Poland (POL)",
+          "rating_year": 2023,
+          "rating_month": 3,
+          "published_date": "2023-08-31",
+          "safe_effective_date": "2023-09-01",
+          "source_url": "https://www.ibf-usba-boxing.com/wp-json/ratings/v1/filter?weight=light-heavyweight&org=ibf&ppp=-1",
+          "source_kind": "official_ibf_ratings_api"
+        }
+      ]
+    },
+    {
+      "slot": [
+        "2023-09-01",
+        "light heavyweight",
+        5
+      ],
+      "rows": [
+        {
+          "division": "light heavyweight",
+          "rank": 5,
+          "name": "Dan Azeez",
+          "country": "United Kingdom (GBR)",
+          "rating_year": 2023,
+          "rating_month": 7,
+          "published_date": "2023-08-31",
+          "safe_effective_date": "2023-09-01",
+          "source_url": "https://www.ibf-usba-boxing.com/wp-json/ratings/v1/filter?weight=light-heavyweight&org=ibf&ppp=-1",
+          "source_kind": "official_ibf_ratings_api"
+        },
+        {
+          "division": "light heavyweight",
+          "rank": 5,
+          "name": "Dan Azeez",
+          "country": "United Kingdom (GBR)",
+          "rating_year": 2023,
+          "rating_month": 6,
+          "published_date": "2023-08-31",
+          "safe_effective_date": "2023-09-01",
+          "source_url": "https://www.ibf-usba-boxing.com/wp-json/ratings/v1/filter?weight=light-heavyweight&org=ibf&ppp=-1",
+          "source_kind": "official_ibf_ratings_api"
+        },
+        {
+          "division": "light heavyweight",
+          "rank": 5,
+          "name": "Dan Azeez",
+          "country": "United Kingdom (GBR)",
+          "rating_year": 2023,
+          "rating_month": 5,
+          "published_date": "2023-08-31",
+          "safe_effective_date": "2023-09-01",
+          "source_url": "https://www.ibf-usba-boxing.com/wp-json/ratings/v1/filter?weight=light-heavyweight&org=ibf&ppp=-1",
+          "source_kind": "official_ibf_ratings_api"
+        },
+        {
+          "division": "light heavyweight",
+          "rank": 5,
+          "name": "Dan Azeez",
+          "country": "United Kingdom (GBR)",
+          "rating_year": 2023,
+          "rating_month": 4,
+          "published_date": "2023-08-31",
+          "safe_effective_date": "2023-09-01",
+          "source_url": "https://www.ibf-usba-boxing.com/wp-json/ratings/v1/filter?weight=light-heavyweight&org=ibf&ppp=-1",
+          "source_kind": "official_ibf_ratings_api"
+        },
+        {
+          "division": "light heavyweight",
+          "rank": 5,
+          "name": "Callum Smith",
+          "country": "United Kingdom (GBR)",
+          "rating_year": 2023,
+          "rating_month": 3,
+          "published_date": "2023-08-31",
+          "safe_effective_date": "2023-09-01",
+          "source_url": "https://www.ibf-usba-boxing.com/wp-json/ratings/v1/filter?weight=light-heavyweight&org=ibf&ppp=-1",
+          "source_kind": "official_ibf_ratings_api"
+        }
+      ]
+    },
+    {
+      "slot": [
+        "2023-09-01",
+        "light heavyweight",
+        6
+      ],
+      "rows": [
+        {
+          "division": "light heavyweight",
+          "rank": 6,
+          "name": "Ali Ismailov",
+          "country": "Russian Federation (RUS)",
+          "rating_year": 2023,
+          "rating_month": 7,
+          "published_date": "2023-08-31",
+          "safe_effective_date": "2023-09-01",
+          "source_url": "https://www.ibf-usba-boxing.com/wp-json/ratings/v1/filter?weight=light-heavyweight&org=ibf&ppp=-1",
+          "source_kind": "official_ibf_ratings_api"
+        },
+        {
+          "division": "light heavyweight",
+          "rank": 6,
+          "name": "Ali Ismailov",
+          "country": "Russian Federation (RUS)",
+          "rating_year": 2023,
+          "rating_month": 6,
+          "published_date": "2023-08-31",
+          "safe_effective_date": "2023-09-01",
+          "source_url": "https://www.ibf-usba-boxing.com/wp-json/ratings/v1/filter?weight=light-heavyweight&org=ibf&ppp=-1",
+          "source_kind": "official_ibf_ratings_api"
+        },
+        {
+          "division": "light heavyweight",
+          "rank": 6,
+          "name": "Ali Ismailov",
+          "country": "Russian Federation (RUS)",
+          "rating_year": 2023,
+          "rating_month": 5,
+          "published_date": "2023-08-31",
+          "safe_effective_date": "2023-09-01",
+          "source_url": "https://www.ibf-usba-boxing.com/wp-json/ratings/v1/filter?weight=light-heavyweight&org=ibf&ppp=-1",
+          "source_kind": "official_ibf_ratings_api"
+        },
+        {
+          "division": "light heavyweight",
+          "rank": 6,
+          "name": "Ali Ismailov",
+          "country": "Russian Federation (RUS)",
+          "rating_year": 2023,
+          "rating_month": 4,
+          "published_date": "2023-08-31",
+          "safe_effective_date": "2023-09-01",
+          "source_url": "https://www.ibf-usba-boxing.com/wp-json/ratings/v1/filter?weight=light-heavyweight&org=ibf&ppp=-1",
+          "source_kind": "official_ibf_ratings_api"
+        },
+        {
+          "division": "light heavyweight",
+          "rank": 6,
+          "name": "Dan Azeez",
+          "country": "United Kingdom (GBR)",
+          "rating_year": 2023,
+          "rating_month": 3,
+          "published_date": "2023-08-31",
+          "safe_effective_date": "2023-09-01",
+          "source_url": "https://www.ibf-usba-boxing.com/wp-json/ratings/v1/filter?weight=light-heavyweight&org=ibf&ppp=-1",
+          "source_kind": "official_ibf_ratings_api"
+        }
+      ]
+    },
+    {
+      "slot": [
+        "2023-09-01",
+        "light heavyweight",
+        7
+      ],
+      "rows": [
+        {
+          "division": "light heavyweight",
+          "rank": 7,
+          "name": "Jerome Pampellone",
+          "country": "New Zealand (NZL)",
+          "rating_year": 2023,
+          "rating_month": 7,
+          "published_date": "2023-08-31",
+          "safe_effective_date": "2023-09-01",
+          "source_url": "https://www.ibf-usba-boxing.com/wp-json/ratings/v1/filter?weight=light-heavyweight&org=ibf&ppp=-1",
+          "source_kind": "official_ibf_ratings_api"
+        },
+        {
+          "division": "light heavyweight",
+          "rank": 7,
+          "name": "Jerome Pampellone",
+          "country": "New Zealand (NZL)",
+          "rating_year": 2023,
+          "rating_month": 6,
+          "published_date": "2023-08-31",
+          "safe_effective_date": "2023-09-01",
+          "source_url": "https://www.ibf-usba-boxing.com/wp-json/ratings/v1/filter?weight=light-heavyweight&org=ibf&ppp=-1",
+          "source_kind": "official_ibf_ratings_api"
+        },
+        {
+          "division": "light heavyweight",
+          "rank": 7,
+          "name": "Jerome Pampellone",
+          "country": "New Zealand (NZL)",
+          "rating_year": 2023,
+          "rating_month": 5,
+          "published_date": "2023-08-31",
+          "safe_effective_date": "2023-09-01",
+          "source_url": "https://www.ibf-usba-boxing.com/wp-json/ratings/v1/filter?weight=light-heavyweight&org=ibf&ppp=-1",
+          "source_kind": "official_ibf_ratings_api"
+        },
+        {
+          "division": "light heavyweight",
+          "rank": 7,
+          "name": "Jerome Pampellone",
+          "country": "New Zealand (NZL)",
+          "rating_year": 2023,
+          "rating_month": 4,
+          "published_date": "2023-08-31",
+          "safe_effective_date": "2023-09-01",
+          "source_url": "https://www.ibf-usba-boxing.com/wp-json/ratings/v1/filter?weight=light-heavyweight&org=ibf&ppp=-1",
+          "source_kind": "official_ibf_ratings_api"
+        },
+        {
+          "division": "light heavyweight",
+          "rank": 7,
+          "name": "Ali Ismailov",
+          "country": "Russian Federation (RUS)",
+          "rating_year": 2023,
+          "rating_month": 3,
+          "published_date": "2023-08-31",
+          "safe_effective_date": "2023-09-01",
+          "source_url": "https://www.ibf-usba-boxing.com/wp-json/ratings/v1/filter?weight=light-heavyweight&org=ibf&ppp=-1",
+          "source_kind": "official_ibf_ratings_api"
+        }
+      ]
+    },
+    {
+      "slot": [
+        "2023-09-01",
+        "light heavyweight",
+        8
+      ],
+      "rows": [
+        {
+          "division": "light heavyweight",
+          "rank": 8,
+          "name": "Anthony Yarde",
+          "country": "England (ENG)",
+          "rating_year": 2023,
+          "rating_month": 7,
+          "published_date": "2023-08-31",
+          "safe_effective_date": "2023-09-01",
+          "source_url": "https://www.ibf-usba-boxing.com/wp-json/ratings/v1/filter?weight=light-heavyweight&org=ibf&ppp=-1",
+          "source_kind": "official_ibf_ratings_api"
+        },
+        {
+          "division": "light heavyweight",
+          "rank": 8,
+          "name": "Anthony Yarde",
+          "country": "England (ENG)",
+          "rating_year": 2023,
+          "rating_month": 6,
+          "published_date": "2023-08-31",
+          "safe_effective_date": "2023-09-01",
+          "source_url": "https://www.ibf-usba-boxing.com/wp-json/ratings/v1/filter?weight=light-heavyweight&org=ibf&ppp=-1",
+          "source_kind": "official_ibf_ratings_api"
+        },
+        {
+          "division": "light heavyweight",
+          "rank": 8,
+          "name": "Joseph Smith Jr",
+          "country": "United States (USA)",
+          "rating_year": 2023,
+          "rating_month": 5,
+          "published_date": "2023-08-31",
+          "safe_effective_date": "2023-09-01",
+          "source_url": "https://www.ibf-usba-boxing.com/wp-json/ratings/v1/filter?weight=light-heavyweight&org=ibf&ppp=-1",
+          "source_kind": "official_ibf_ratings_api"
+        },
+        {
+          "division": "light heavyweight",
+          "rank": 8,
+          "name": "Joseph Smith Jr",
+          "country": "United States (USA)",
+          "rating_year": 2023,
+          "rating_month": 4,
+          "published_date": "2023-08-31",
+          "safe_effective_date": "2023-09-01",
+          "source_url": "https://www.ibf-usba-boxing.com/wp-json/ratings/v1/filter?weight=light-heavyweight&org=ibf&ppp=-1",
+          "source_kind": "official_ibf_ratings_api"
+        },
+        {
+          "division": "light heavyweight",
+          "rank": 8,
+          "name": "Jerome Pampellone",
+          "country": "New Zealand (NZL)",
+          "rating_year": 2023,
+          "rating_month": 3,
+          "published_date": "2023-08-31",
+          "safe_effective_date": "2023-09-01",
+          "source_url": "https://www.ibf-usba-boxing.com/wp-json/ratings/v1/filter?weight=light-heavyweight&org=ibf&ppp=-1",
+          "source_kind": "official_ibf_ratings_api"
+        }
+      ]
+    },
+    {
+      "slot": [
+        "2023-09-01",
+        "light heavyweight",
+        9
+      ],
+      "rows": [
+        {
+          "division": "light heavyweight",
+          "rank": 9,
+          "name": "Jean Pascal",
+          "country": "Canada (CAN)",
+          "rating_year": 2023,
+          "rating_month": 7,
+          "published_date": "2023-08-31",
+          "safe_effective_date": "2023-09-01",
+          "source_url": "https://www.ibf-usba-boxing.com/wp-json/ratings/v1/filter?weight=light-heavyweight&org=ibf&ppp=-1",
+          "source_kind": "official_ibf_ratings_api"
+        },
+        {
+          "division": "light heavyweight",
+          "rank": 9,
+          "name": "Jean Pascal",
+          "country": "Canada (CAN)",
+          "rating_year": 2023,
+          "rating_month": 6,
+          "published_date": "2023-08-31",
+          "safe_effective_date": "2023-09-01",
+          "source_url": "https://www.ibf-usba-boxing.com/wp-json/ratings/v1/filter?weight=light-heavyweight&org=ibf&ppp=-1",
+          "source_kind": "official_ibf_ratings_api"
+        },
+        {
+          "division": "light heavyweight",
+          "rank": 9,
+          "name": "Anthony Yarde",
+          "country": "England (ENG)",
+          "rating_year": 2023,
+          "rating_month": 5,
+          "published_date": "2023-08-31",
+          "safe_effective_date": "2023-09-01",
+          "source_url": "https://www.ibf-usba-boxing.com/wp-json/ratings/v1/filter?weight=light-heavyweight&org=ibf&ppp=-1",
+          "source_kind": "official_ibf_ratings_api"
+        },
+        {
+          "division": "light heavyweight",
+          "rank": 9,
+          "name": "Anthony Yarde",
+          "country": "England (ENG)",
+          "rating_year": 2023,
+          "rating_month": 4,
+          "published_date": "2023-08-31",
+          "safe_effective_date": "2023-09-01",
+          "source_url": "https://www.ibf-usba-boxing.com/wp-json/ratings/v1/filter?weight=light-heavyweight&org=ibf&ppp=-1",
+          "source_kind": "official_ibf_ratings_api"
+        },
+        {
+          "division": "light heavyweight",
+          "rank": 9,
+          "name": "Anthony Yarde",
+          "country": "England (ENG)",
+          "rating_year": 2023,
+          "rating_month": 3,
+          "published_date": "2023-08-31",
+          "safe_effective_date": "2023-09-01",
+          "source_url": "https://www.ibf-usba-boxing.com/wp-json/ratings/v1/filter?weight=light-heavyweight&org=ibf&ppp=-1",
+          "source_kind": "official_ibf_ratings_api"
+        }
+      ]
+    },
+    {
+      "slot": [
+        "2023-09-01",
+        "light heavyweight",
+        10
+      ],
+      "rows": [
+        {
+          "division": "light heavyweight",
+          "rank": 10,
+          "name": "Conor Wallace",
+          "country": "Australia (AUS)",
+          "rating_year": 2023,
+          "rating_month": 7,
+          "published_date": "2023-08-31",
+          "safe_effective_date": "2023-09-01",
+          "source_url": "https://www.ibf-usba-boxing.com/wp-json/ratings/v1/filter?weight=light-heavyweight&org=ibf&ppp=-1",
+          "source_kind": "official_ibf_ratings_api"
+        },
+        {
+          "division": "light heavyweight",
+          "rank": 10,
+          "name": "Lyndon Arthur",
+          "country": "Germany (GER)",
+          "rating_year": 2023,
+          "rating_month": 6,
+          "published_date": "2023-08-31",
+          "safe_effective_date": "2023-09-01",
+          "source_url": "https://www.ibf-usba-boxing.com/wp-json/ratings/v1/filter?weight=light-heavyweight&org=ibf&ppp=-1",
+          "source_kind": "official_ibf_ratings_api"
+        },
+        {
+          "division": "light heavyweight",
+          "rank": 10,
+          "name": "Jean Pascal",
+          "country": "Canada (CAN)",
+          "rating_year": 2023,
+          "rating_month": 5,
+          "published_date": "2023-08-31",
+          "safe_effective_date": "2023-09-01",
+          "source_url": "https://www.ibf-usba-boxing.com/wp-json/ratings/v1/filter?weight=light-heavyweight&org=ibf&ppp=-1",
+          "source_kind": "official_ibf_ratings_api"
+        },
+        {
+          "division": "light heavyweight",
+          "rank": 10,
+          "name": "Jean Pascal",
+          "country": "Canada (CAN)",
+          "rating_year": 2023,
+          "rating_month": 4,
+          "published_date": "2023-08-31",
+          "safe_effective_date": "2023-09-01",
+          "source_url": "https://www.ibf-usba-boxing.com/wp-json/ratings/v1/filter?weight=light-heavyweight&org=ibf&ppp=-1",
+          "source_kind": "official_ibf_ratings_api"
+        },
+        {
+          "division": "light heavyweight",
+          "rank": 10,
+          "name": "Jean Pascal",
+          "country": "Canada (CAN)",
+          "rating_year": 2023,
+          "rating_month": 3,
+          "published_date": "2023-08-31",
+          "safe_effective_date": "2023-09-01",
+          "source_url": "https://www.ibf-usba-boxing.com/wp-json/ratings/v1/filter?weight=light-heavyweight&org=ibf&ppp=-1",
+          "source_kind": "official_ibf_ratings_api"
+        }
+      ]
+    },
+    {
+      "slot": [
+        "2023-09-01",
+        "light heavyweight",
+        11
+      ],
+      "rows": [
+        {
+          "division": "light heavyweight",
+          "rank": 11,
+          "name": "Lyndon Arthur",
+          "country": "Germany (GER)",
+          "rating_year": 2023,
+          "rating_month": 7,
+          "published_date": "2023-08-31",
+          "safe_effective_date": "2023-09-01",
+          "source_url": "https://www.ibf-usba-boxing.com/wp-json/ratings/v1/filter?weight=light-heavyweight&org=ibf&ppp=-1",
+          "source_kind": "official_ibf_ratings_api"
+        },
+        {
+          "division": "light heavyweight",
+          "rank": 11,
+          "name": "Richard Rivera",
+          "country": "United States (USA)",
+          "rating_year": 2023,
+          "rating_month": 6,
+          "published_date": "2023-08-31",
+          "safe_effective_date": "2023-09-01",
+          "source_url": "https://www.ibf-usba-boxing.com/wp-json/ratings/v1/filter?weight=light-heavyweight&org=ibf&ppp=-1",
+          "source_kind": "official_ibf_ratings_api"
+        },
+        {
+          "division": "light heavyweight",
+          "rank": 11,
+          "name": "Lyndon Arthur",
+          "country": "Germany (GER)",
+          "rating_year": 2023,
+          "rating_month": 5,
+          "published_date": "2023-08-31",
+          "safe_effective_date": "2023-09-01",
+          "source_url": "https://www.ibf-usba-boxing.com/wp-json/ratings/v1/filter?weight=light-heavyweight&org=ibf&ppp=-1",
+          "source_kind": "official_ibf_ratings_api"
+        },
+        {
+          "division": "light heavyweight",
+          "rank": 11,
+          "name": "Lyndon Arthur",
+          "country": "Germany (GER)",
+          "rating_year": 2023,
+          "rating_month": 4,
+          "published_date": "2023-08-31",
+          "safe_effective_date": "2023-09-01",
+          "source_url": "https://www.ibf-usba-boxing.com/wp-json/ratings/v1/filter?weight=light-heavyweight&org=ibf&ppp=-1",
+          "source_kind": "official_ibf_ratings_api"
+        },
+        {
+          "division": "light heavyweight",
+          "rank": 11,
+          "name": "Lyndon Arthur",
+          "country": "Germany (GER)",
+          "rating_year": 2023,
+          "rating_month": 3,
+          "published_date": "2023-08-31",
+          "safe_effective_date": "2023-09-01",
+          "source_url": "https://www.ibf-usba-boxing.com/wp-json/ratings/v1/filter?weight=light-heavyweight&org=ibf&ppp=-1",
+          "source_kind": "official_ibf_ratings_api"
+        }
+      ]
+    },
+    {
+      "slot": [
+        "2023-09-01",
+        "light heavyweight",
+        12
+      ],
+      "rows": [
+        {
+          "division": "light heavyweight",
+          "rank": 12,
+          "name": "Richard Rivera",
+          "country": "United States (USA)",
+          "rating_year": 2023,
+          "rating_month": 7,
+          "published_date": "2023-08-31",
+          "safe_effective_date": "2023-09-01",
+          "source_url": "https://www.ibf-usba-boxing.com/wp-json/ratings/v1/filter?weight=light-heavyweight&org=ibf&ppp=-1",
+          "source_kind": "official_ibf_ratings_api"
+        },
+        {
+          "division": "light heavyweight",
+          "rank": 12,
+          "name": "Malik Zinad",
+          "country": "Libyan Arab Jamahiriya (LBY)",
+          "rating_year": 2023,
+          "rating_month": 6,
+          "published_date": "2023-08-31",
+          "safe_effective_date": "2023-09-01",
+          "source_url": "https://www.ibf-usba-boxing.com/wp-json/ratings/v1/filter?weight=light-heavyweight&org=ibf&ppp=-1",
+          "source_kind": "official_ibf_ratings_api"
+        },
+        {
+          "division": "light heavyweight",
+          "rank": 12,
+          "name": "Richard Rivera",
+          "country": "United States (USA)",
+          "rating_year": 2023,
+          "rating_month": 5,
+          "published_date": "2023-08-31",
+          "safe_effective_date": "2023-09-01",
+          "source_url": "https://www.ibf-usba-boxing.com/wp-json/ratings/v1/filter?weight=light-heavyweight&org=ibf&ppp=-1",
+          "source_kind": "official_ibf_ratings_api"
+        },
+        {
+          "division": "light heavyweight",
+          "rank": 12,
+          "name": "Richard Rivera",
+          "country": "United States (USA)",
+          "rating_year": 2023,
+          "rating_month": 4,
+          "published_date": "2023-08-31",
+          "safe_effective_date": "2023-09-01",
+          "source_url": "https://www.ibf-usba-boxing.com/wp-json/ratings/v1/filter?weight=light-heavyweight&org=ibf&ppp=-1",
+          "source_kind": "official_ibf_ratings_api"
+        },
+        {
+          "division": "light heavyweight",
+          "rank": 12,
+          "name": "Richard Rivera",
+          "country": "United States (USA)",
+          "rating_year": 2023,
+          "rating_month": 3,
+          "published_date": "2023-08-31",
+          "safe_effective_date": "2023-09-01",
+          "source_url": "https://www.ibf-usba-boxing.com/wp-json/ratings/v1/filter?weight=light-heavyweight&org=ibf&ppp=-1",
+          "source_kind": "official_ibf_ratings_api"
+        }
+      ]
+    },
+    {
+      "slot": [
+        "2023-09-01",
+        "light heavyweight",
+        13
+      ],
+      "rows": [
+        {
+          "division": "light heavyweight",
+          "rank": 13,
+          "name": "Malik Zinad",
+          "country": "Libyan Arab Jamahiriya (LBY)",
+          "rating_year": 2023,
+          "rating_month": 7,
+          "published_date": "2023-08-31",
+          "safe_effective_date": "2023-09-01",
+          "source_url": "https://www.ibf-usba-boxing.com/wp-json/ratings/v1/filter?weight=light-heavyweight&org=ibf&ppp=-1",
+          "source_kind": "official_ibf_ratings_api"
+        },
+        {
+          "division": "light heavyweight",
+          "rank": 13,
+          "name": "Conor Wallace",
+          "country": "Australia (AUS)",
+          "rating_year": 2023,
+          "rating_month": 6,
+          "published_date": "2023-08-31",
+          "safe_effective_date": "2023-09-01",
+          "source_url": "https://www.ibf-usba-boxing.com/wp-json/ratings/v1/filter?weight=light-heavyweight&org=ibf&ppp=-1",
+          "source_kind": "official_ibf_ratings_api"
+        },
+        {
+          "division": "light heavyweight",
+          "rank": 13,
+          "name": "Malik Zinad",
+          "country": "Libyan Arab Jamahiriya (LBY)",
+          "rating_year": 2023,
+          "rating_month": 5,
+          "published_date": "2023-08-31",
+          "safe_effective_date": "2023-09-01",
+          "source_url": "https://www.ibf-usba-boxing.com/wp-json/ratings/v1/filter?weight=light-heavyweight&org=ibf&ppp=-1",
+          "source_kind": "official_ibf_ratings_api"
+        },
+        {
+          "division": "light heavyweight",
+          "rank": 13,
+          "name": "Pawel Stepien",
+          "country": "Poland (POL)",
+          "rating_year": 2023,
+          "rating_month": 4,
+          "published_date": "2023-08-31",
+          "safe_effective_date": "2023-09-01",
+          "source_url": "https://www.ibf-usba-boxing.com/wp-json/ratings/v1/filter?weight=light-heavyweight&org=ibf&ppp=-1",
+          "source_kind": "official_ibf_ratings_api"
+        },
+        {
+          "division": "light heavyweight",
+          "rank": 13,
+          "name": "Joshua Buatsi",
+          "country": "Ghana (GHA)",
+          "rating_year": 2023,
+          "rating_month": 3,
+          "published_date": "2023-08-31",
+          "safe_effective_date": "2023-09-01",
+          "source_url": "https://www.ibf-usba-boxing.com/wp-json/ratings/v1/filter?weight=light-heavyweight&org=ibf&ppp=-1",
+          "source_kind": "official_ibf_ratings_api"
+        }
+      ]
+    },
+    {
+      "slot": [
+        "2023-09-01",
+        "light heavyweight",
+        14
+      ],
+      "rows": [
+        {
+          "division": "light heavyweight",
+          "rank": 14,
+          "name": "Luca Antonio Cinqueoncie",
+          "country": "Italy (ITA)",
+          "rating_year": 2023,
+          "rating_month": 7,
+          "published_date": "2023-08-31",
+          "safe_effective_date": "2023-09-01",
+          "source_url": "https://www.ibf-usba-boxing.com/wp-json/ratings/v1/filter?weight=light-heavyweight&org=ibf&ppp=-1",
+          "source_kind": "official_ibf_ratings_api"
+        },
+        {
+          "division": "light heavyweight",
+          "rank": 14,
+          "name": "Pedraig McCrory",
+          "country": "Ireland (IRL)",
+          "rating_year": 2023,
+          "rating_month": 6,
+          "published_date": "2023-08-31",
+          "safe_effective_date": "2023-09-01",
+          "source_url": "https://www.ibf-usba-boxing.com/wp-json/ratings/v1/filter?weight=light-heavyweight&org=ibf&ppp=-1",
+          "source_kind": "official_ibf_ratings_api"
+        },
+        {
+          "division": "light heavyweight",
+          "rank": 14,
+          "name": "Conor Wallace",
+          "country": "Australia (AUS)",
+          "rating_year": 2023,
+          "rating_month": 5,
+          "published_date": "2023-08-31",
+          "safe_effective_date": "2023-09-01",
+          "source_url": "https://www.ibf-usba-boxing.com/wp-json/ratings/v1/filter?weight=light-heavyweight&org=ibf&ppp=-1",
+          "source_kind": "official_ibf_ratings_api"
+        },
+        {
+          "division": "light heavyweight",
+          "rank": 14,
+          "name": "Conor Wallace",
+          "country": "Australia (AUS)",
+          "rating_year": 2023,
+          "rating_month": 4,
+          "published_date": "2023-08-31",
+          "safe_effective_date": "2023-09-01",
+          "source_url": "https://www.ibf-usba-boxing.com/wp-json/ratings/v1/filter?weight=light-heavyweight&org=ibf&ppp=-1",
+          "source_kind": "official_ibf_ratings_api"
+        },
+        {
+          "division": "light heavyweight",
+          "rank": 14,
+          "name": "Conor Wallace",
+          "country": "Australia (AUS)",
+          "rating_year": 2023,
+          "rating_month": 3,
+          "published_date": "2023-08-31",
+          "safe_effective_date": "2023-09-01",
+          "source_url": "https://www.ibf-usba-boxing.com/wp-json/ratings/v1/filter?weight=light-heavyweight&org=ibf&ppp=-1",
+          "source_kind": "official_ibf_ratings_api"
+        }
+      ]
+    },
+    {
+      "slot": [
+        "2023-09-01",
+        "light heavyweight",
+        15
+      ],
+      "rows": [
+        {
+          "division": "light heavyweight",
+          "rank": 15,
+          "name": "Ahmed Elbiali",
+          "country": "Egypt (EGY)",
+          "rating_year": 2023,
+          "rating_month": 7,
+          "published_date": "2023-08-31",
+          "safe_effective_date": "2023-09-01",
+          "source_url": "https://www.ibf-usba-boxing.com/wp-json/ratings/v1/filter?weight=light-heavyweight&org=ibf&ppp=-1",
+          "source_kind": "official_ibf_ratings_api"
+        },
+        {
+          "division": "light heavyweight",
+          "rank": 15,
+          "name": "Joseph Smith Jr",
+          "country": "United States (USA)",
+          "rating_year": 2023,
+          "rating_month": 6,
+          "published_date": "2023-08-31",
+          "safe_effective_date": "2023-09-01",
+          "source_url": "https://www.ibf-usba-boxing.com/wp-json/ratings/v1/filter?weight=light-heavyweight&org=ibf&ppp=-1",
+          "source_kind": "official_ibf_ratings_api"
+        },
+        {
+          "division": "light heavyweight",
+          "rank": 15,
+          "name": "Pedraig McCrory",
+          "country": "Ireland (IRL)",
+          "rating_year": 2023,
+          "rating_month": 5,
+          "published_date": "2023-08-31",
+          "safe_effective_date": "2023-09-01",
+          "source_url": "https://www.ibf-usba-boxing.com/wp-json/ratings/v1/filter?weight=light-heavyweight&org=ibf&ppp=-1",
+          "source_kind": "official_ibf_ratings_api"
+        },
+        {
+          "division": "light heavyweight",
+          "rank": 15,
+          "name": "Pedraig McCrory",
+          "country": "Ireland (IRL)",
+          "rating_year": 2023,
+          "rating_month": 4,
+          "published_date": "2023-08-31",
+          "safe_effective_date": "2023-09-01",
+          "source_url": "https://www.ibf-usba-boxing.com/wp-json/ratings/v1/filter?weight=light-heavyweight&org=ibf&ppp=-1",
+          "source_kind": "official_ibf_ratings_api"
+        },
+        {
+          "division": "light heavyweight",
+          "rank": 15,
+          "name": "Pedraig McCrory",
+          "country": "Ireland (IRL)",
+          "rating_year": 2023,
+          "rating_month": 3,
+          "published_date": "2023-08-31",
+          "safe_effective_date": "2023-09-01",
+          "source_url": "https://www.ibf-usba-boxing.com/wp-json/ratings/v1/filter?weight=light-heavyweight&org=ibf&ppp=-1",
+          "source_kind": "official_ibf_ratings_api"
+        }
+      ]
+    },
+    {
+      "slot": [
+        "2023-09-01",
+        "super middleweight",
+        3
+      ],
+      "rows": [
+        {
+          "division": "super middleweight",
+          "rank": 3,
+          "name": "Erik Bazinyan",
+          "country": "Canada (CAN)",
+          "rating_year": 2023,
+          "rating_month": 7,
+          "published_date": "2023-08-31",
+          "safe_effective_date": "2023-09-01",
+          "source_url": "https://www.ibf-usba-boxing.com/wp-json/ratings/v1/filter?weight=super-middleweight&org=ibf&ppp=-1",
+          "source_kind": "official_ibf_ratings_api"
+        },
+        {
+          "division": "super middleweight",
+          "rank": 3,
+          "name": "Erik Bazinyan",
+          "country": "Canada (CAN)",
+          "rating_year": 2023,
+          "rating_month": 6,
+          "published_date": "2023-08-31",
+          "safe_effective_date": "2023-09-01",
+          "source_url": "https://www.ibf-usba-boxing.com/wp-json/ratings/v1/filter?weight=super-middleweight&org=ibf&ppp=-1",
+          "source_kind": "official_ibf_ratings_api"
+        },
+        {
+          "division": "super middleweight",
+          "rank": 3,
+          "name": "Erik Bazinyan",
+          "country": "Canada (CAN)",
+          "rating_year": 2023,
+          "rating_month": 5,
+          "published_date": "2023-08-31",
+          "safe_effective_date": "2023-09-01",
+          "source_url": "https://www.ibf-usba-boxing.com/wp-json/ratings/v1/filter?weight=super-middleweight&org=ibf&ppp=-1",
+          "source_kind": "official_ibf_ratings_api"
+        },
+        {
+          "division": "super middleweight",
+          "rank": 3,
+          "name": "Edgar Berlanga",
+          "country": "United States (USA)",
+          "rating_year": 2023,
+          "rating_month": 4,
+          "published_date": "2023-08-31",
+          "safe_effective_date": "2023-09-01",
+          "source_url": "https://www.ibf-usba-boxing.com/wp-json/ratings/v1/filter?weight=super-middleweight&org=ibf&ppp=-1",
+          "source_kind": "official_ibf_ratings_api"
+        },
+        {
+          "division": "super middleweight",
+          "rank": 3,
+          "name": "Edgar Berlanga",
+          "country": "United States (USA)",
+          "rating_year": 2023,
+          "rating_month": 3,
+          "published_date": "2023-08-31",
+          "safe_effective_date": "2023-09-01",
+          "source_url": "https://www.ibf-usba-boxing.com/wp-json/ratings/v1/filter?weight=super-middleweight&org=ibf&ppp=-1",
+          "source_kind": "official_ibf_ratings_api"
+        }
+      ]
+    },
+    {
+      "slot": [
+        "2023-09-01",
+        "super middleweight",
+        4
+      ],
+      "rows": [
+        {
+          "division": "super middleweight",
+          "rank": 4,
+          "name": "Christian Mbilli",
+          "country": "France (FRA)",
+          "rating_year": 2023,
+          "rating_month": 7,
+          "published_date": "2023-08-31",
+          "safe_effective_date": "2023-09-01",
+          "source_url": "https://www.ibf-usba-boxing.com/wp-json/ratings/v1/filter?weight=super-middleweight&org=ibf&ppp=-1",
+          "source_kind": "official_ibf_ratings_api"
+        },
+        {
+          "division": "super middleweight",
+          "rank": 4,
+          "name": "Christian Mbilli",
+          "country": "France (FRA)",
+          "rating_year": 2023,
+          "rating_month": 6,
+          "published_date": "2023-08-31",
+          "safe_effective_date": "2023-09-01",
+          "source_url": "https://www.ibf-usba-boxing.com/wp-json/ratings/v1/filter?weight=super-middleweight&org=ibf&ppp=-1",
+          "source_kind": "official_ibf_ratings_api"
+        },
+        {
+          "division": "super middleweight",
+          "rank": 4,
+          "name": "Christian Mbilli",
+          "country": "France (FRA)",
+          "rating_year": 2023,
+          "rating_month": 5,
+          "published_date": "2023-08-31",
+          "safe_effective_date": "2023-09-01",
+          "source_url": "https://www.ibf-usba-boxing.com/wp-json/ratings/v1/filter?weight=super-middleweight&org=ibf&ppp=-1",
+          "source_kind": "official_ibf_ratings_api"
+        },
+        {
+          "division": "super middleweight",
+          "rank": 4,
+          "name": "Aslambek Idigov",
+          "country": "Russian Federation (RUS)",
+          "rating_year": 2023,
+          "rating_month": 4,
+          "published_date": "2023-08-31",
+          "safe_effective_date": "2023-09-01",
+          "source_url": "https://www.ibf-usba-boxing.com/wp-json/ratings/v1/filter?weight=super-middleweight&org=ibf&ppp=-1",
+          "source_kind": "official_ibf_ratings_api"
+        },
+        {
+          "division": "super middleweight",
+          "rank": 4,
+          "name": "Aslambek Idigov",
+          "country": "Russian Federation (RUS)",
+          "rating_year": 2023,
+          "rating_month": 3,
+          "published_date": "2023-08-31",
+          "safe_effective_date": "2023-09-01",
+          "source_url": "https://www.ibf-usba-boxing.com/wp-json/ratings/v1/filter?weight=super-middleweight&org=ibf&ppp=-1",
+          "source_kind": "official_ibf_ratings_api"
+        }
+      ]
+    },
+    {
+      "slot": [
+        "2023-09-01",
+        "super middleweight",
+        5
+      ],
+      "rows": [
+        {
+          "division": "super middleweight",
+          "rank": 5,
+          "name": "Diego Pacheco",
+          "country": "United States (USA)",
+          "rating_year": 2023,
+          "rating_month": 7,
+          "published_date": "2023-08-31",
+          "safe_effective_date": "2023-09-01",
+          "source_url": "https://www.ibf-usba-boxing.com/wp-json/ratings/v1/filter?weight=super-middleweight&org=ibf&ppp=-1",
+          "source_kind": "official_ibf_ratings_api"
+        },
+        {
+          "division": "super middleweight",
+          "rank": 5,
+          "name": "Diego Pacheco",
+          "country": "United States (USA)",
+          "rating_year": 2023,
+          "rating_month": 6,
+          "published_date": "2023-08-31",
+          "safe_effective_date": "2023-09-01",
+          "source_url": "https://www.ibf-usba-boxing.com/wp-json/ratings/v1/filter?weight=super-middleweight&org=ibf&ppp=-1",
+          "source_kind": "official_ibf_ratings_api"
+        },
+        {
+          "division": "super middleweight",
+          "rank": 5,
+          "name": "Ali Akhmedov",
+          "country": "Kazakhstan (KAZ)",
+          "rating_year": 2023,
+          "rating_month": 5,
+          "published_date": "2023-08-31",
+          "safe_effective_date": "2023-09-01",
+          "source_url": "https://www.ibf-usba-boxing.com/wp-json/ratings/v1/filter?weight=super-middleweight&org=ibf&ppp=-1",
+          "source_kind": "official_ibf_ratings_api"
+        },
+        {
+          "division": "super middleweight",
+          "rank": 5,
+          "name": "Ali Akhmedov",
+          "country": "Kazakhstan (KAZ)",
+          "rating_year": 2023,
+          "rating_month": 4,
+          "published_date": "2023-08-31",
+          "safe_effective_date": "2023-09-01",
+          "source_url": "https://www.ibf-usba-boxing.com/wp-json/ratings/v1/filter?weight=super-middleweight&org=ibf&ppp=-1",
+          "source_kind": "official_ibf_ratings_api"
+        },
+        {
+          "division": "super middleweight",
+          "rank": 5,
+          "name": "Ali Akhmedov",
+          "country": "Kazakhstan (KAZ)",
+          "rating_year": 2023,
+          "rating_month": 3,
+          "published_date": "2023-08-31",
+          "safe_effective_date": "2023-09-01",
+          "source_url": "https://www.ibf-usba-boxing.com/wp-json/ratings/v1/filter?weight=super-middleweight&org=ibf&ppp=-1",
+          "source_kind": "official_ibf_ratings_api"
+        }
+      ]
+    },
+    {
+      "slot": [
+        "2023-09-01",
+        "super middleweight",
+        6
+      ],
+      "rows": [
+        {
+          "division": "super middleweight",
+          "rank": 6,
+          "name": "Edgar Berlanga",
+          "country": "United States (USA)",
+          "rating_year": 2023,
+          "rating_month": 7,
+          "published_date": "2023-08-31",
+          "safe_effective_date": "2023-09-01",
+          "source_url": "https://www.ibf-usba-boxing.com/wp-json/ratings/v1/filter?weight=super-middleweight&org=ibf&ppp=-1",
+          "source_kind": "official_ibf_ratings_api"
+        },
+        {
+          "division": "super middleweight",
+          "rank": 6,
+          "name": "Edgar Berlanga",
+          "country": "United States (USA)",
+          "rating_year": 2023,
+          "rating_month": 6,
+          "published_date": "2023-08-31",
+          "safe_effective_date": "2023-09-01",
+          "source_url": "https://www.ibf-usba-boxing.com/wp-json/ratings/v1/filter?weight=super-middleweight&org=ibf&ppp=-1",
+          "source_kind": "official_ibf_ratings_api"
+        },
+        {
+          "division": "super middleweight",
+          "rank": 6,
+          "name": "Diego Pacheco",
+          "country": "United States (USA)",
+          "rating_year": 2023,
+          "rating_month": 5,
+          "published_date": "2023-08-31",
+          "safe_effective_date": "2023-09-01",
+          "source_url": "https://www.ibf-usba-boxing.com/wp-json/ratings/v1/filter?weight=super-middleweight&org=ibf&ppp=-1",
+          "source_kind": "official_ibf_ratings_api"
+        },
+        {
+          "division": "super middleweight",
+          "rank": 6,
+          "name": "Petro Ivanov",
+          "country": "Ukraine (UKR)",
+          "rating_year": 2023,
+          "rating_month": 4,
+          "published_date": "2023-08-31",
+          "safe_effective_date": "2023-09-01",
+          "source_url": "https://www.ibf-usba-boxing.com/wp-json/ratings/v1/filter?weight=super-middleweight&org=ibf&ppp=-1",
+          "source_kind": "official_ibf_ratings_api"
+        },
+        {
+          "division": "super middleweight",
+          "rank": 6,
+          "name": "Petro Ivanov",
+          "country": "Ukraine (UKR)",
+          "rating_year": 2023,
+          "rating_month": 3,
+          "published_date": "2023-08-31",
+          "safe_effective_date": "2023-09-01",
+          "source_url": "https://www.ibf-usba-boxing.com/wp-json/ratings/v1/filter?weight=super-middleweight&org=ibf&ppp=-1",
+          "source_kind": "official_ibf_ratings_api"
+        }
+      ]
+    },
+    {
+      "slot": [
+        "2023-09-01",
+        "super middleweight",
+        7
+      ],
+      "rows": [
+        {
+          "division": "super middleweight",
+          "rank": 7,
+          "name": "Petro Ivanov",
+          "country": "Ukraine (UKR)",
+          "rating_year": 2023,
+          "rating_month": 7,
+          "published_date": "2023-08-31",
+          "safe_effective_date": "2023-09-01",
+          "source_url": "https://www.ibf-usba-boxing.com/wp-json/ratings/v1/filter?weight=super-middleweight&org=ibf&ppp=-1",
+          "source_kind": "official_ibf_ratings_api"
+        },
+        {
+          "division": "super middleweight",
+          "rank": 7,
+          "name": "Petro Ivanov",
+          "country": "Ukraine (UKR)",
+          "rating_year": 2023,
+          "rating_month": 6,
+          "published_date": "2023-08-31",
+          "safe_effective_date": "2023-09-01",
+          "source_url": "https://www.ibf-usba-boxing.com/wp-json/ratings/v1/filter?weight=super-middleweight&org=ibf&ppp=-1",
+          "source_kind": "official_ibf_ratings_api"
+        },
+        {
+          "division": "super middleweight",
+          "rank": 7,
+          "name": "Petro Ivanov",
+          "country": "Ukraine (UKR)",
+          "rating_year": 2023,
+          "rating_month": 5,
+          "published_date": "2023-08-31",
+          "safe_effective_date": "2023-09-01",
+          "source_url": "https://www.ibf-usba-boxing.com/wp-json/ratings/v1/filter?weight=super-middleweight&org=ibf&ppp=-1",
+          "source_kind": "official_ibf_ratings_api"
+        },
+        {
+          "division": "super middleweight",
+          "rank": 7,
+          "name": "Mark Heffron",
+          "country": "England (ENG)",
+          "rating_year": 2023,
+          "rating_month": 4,
+          "published_date": "2023-08-31",
+          "safe_effective_date": "2023-09-01",
+          "source_url": "https://www.ibf-usba-boxing.com/wp-json/ratings/v1/filter?weight=super-middleweight&org=ibf&ppp=-1",
+          "source_kind": "official_ibf_ratings_api"
+        },
+        {
+          "division": "super middleweight",
+          "rank": 7,
+          "name": "Mark Heffron",
+          "country": "England (ENG)",
+          "rating_year": 2023,
+          "rating_month": 3,
+          "published_date": "2023-08-31",
+          "safe_effective_date": "2023-09-01",
+          "source_url": "https://www.ibf-usba-boxing.com/wp-json/ratings/v1/filter?weight=super-middleweight&org=ibf&ppp=-1",
+          "source_kind": "official_ibf_ratings_api"
+        }
+      ]
+    },
+    {
+      "slot": [
+        "2023-09-01",
+        "super middleweight",
+        8
+      ],
+      "rows": [
+        {
+          "division": "super middleweight",
+          "rank": 8,
+          "name": "Kevin Lele Sadjo",
+          "country": "United Kingdom (GBR)",
+          "rating_year": 2023,
+          "rating_month": 7,
+          "published_date": "2023-08-31",
+          "safe_effective_date": "2023-09-01",
+          "source_url": "https://www.ibf-usba-boxing.com/wp-json/ratings/v1/filter?weight=super-middleweight&org=ibf&ppp=-1",
+          "source_kind": "official_ibf_ratings_api"
+        },
+        {
+          "division": "super middleweight",
+          "rank": 8,
+          "name": "Mark Heffron",
+          "country": "England (ENG)",
+          "rating_year": 2023,
+          "rating_month": 6,
+          "published_date": "2023-08-31",
+          "safe_effective_date": "2023-09-01",
+          "source_url": "https://www.ibf-usba-boxing.com/wp-json/ratings/v1/filter?weight=super-middleweight&org=ibf&ppp=-1",
+          "source_kind": "official_ibf_ratings_api"
+        },
+        {
+          "division": "super middleweight",
+          "rank": 8,
+          "name": "Mark Heffron",
+          "country": "England (ENG)",
+          "rating_year": 2023,
+          "rating_month": 5,
+          "published_date": "2023-08-31",
+          "safe_effective_date": "2023-09-01",
+          "source_url": "https://www.ibf-usba-boxing.com/wp-json/ratings/v1/filter?weight=super-middleweight&org=ibf&ppp=-1",
+          "source_kind": "official_ibf_ratings_api"
+        },
+        {
+          "division": "super middleweight",
+          "rank": 8,
+          "name": "Erik Bazinyan",
+          "country": "Canada (CAN)",
+          "rating_year": 2023,
+          "rating_month": 4,
+          "published_date": "2023-08-31",
+          "safe_effective_date": "2023-09-01",
+          "source_url": "https://www.ibf-usba-boxing.com/wp-json/ratings/v1/filter?weight=super-middleweight&org=ibf&ppp=-1",
+          "source_kind": "official_ibf_ratings_api"
+        },
+        {
+          "division": "super middleweight",
+          "rank": 8,
+          "name": "Erik Bazinyan",
+          "country": "Canada (CAN)",
+          "rating_year": 2023,
+          "rating_month": 3,
+          "published_date": "2023-08-31",
+          "safe_effective_date": "2023-09-01",
+          "source_url": "https://www.ibf-usba-boxing.com/wp-json/ratings/v1/filter?weight=super-middleweight&org=ibf&ppp=-1",
+          "source_kind": "official_ibf_ratings_api"
+        }
+      ]
+    },
+    {
+      "slot": [
+        "2023-09-01",
+        "super middleweight",
+        9
+      ],
+      "rows": [
+        {
+          "division": "super middleweight",
+          "rank": 9,
+          "name": "Rohan Murdock",
+          "country": "Australia (AUS)",
+          "rating_year": 2023,
+          "rating_month": 7,
+          "published_date": "2023-08-31",
+          "safe_effective_date": "2023-09-01",
+          "source_url": "https://www.ibf-usba-boxing.com/wp-json/ratings/v1/filter?weight=super-middleweight&org=ibf&ppp=-1",
+          "source_kind": "official_ibf_ratings_api"
+        },
+        {
+          "division": "super middleweight",
+          "rank": 9,
+          "name": "Ali Akhmedov",
+          "country": "Kazakhstan (KAZ)",
+          "rating_year": 2023,
+          "rating_month": 6,
+          "published_date": "2023-08-31",
+          "safe_effective_date": "2023-09-01",
+          "source_url": "https://www.ibf-usba-boxing.com/wp-json/ratings/v1/filter?weight=super-middleweight&org=ibf&ppp=-1",
+          "source_kind": "official_ibf_ratings_api"
+        },
+        {
+          "division": "super middleweight",
+          "rank": 9,
+          "name": "Aslambek Idigov",
+          "country": "Russian Federation (RUS)",
+          "rating_year": 2023,
+          "rating_month": 5,
+          "published_date": "2023-08-31",
+          "safe_effective_date": "2023-09-01",
+          "source_url": "https://www.ibf-usba-boxing.com/wp-json/ratings/v1/filter?weight=super-middleweight&org=ibf&ppp=-1",
+          "source_kind": "official_ibf_ratings_api"
+        },
+        {
+          "division": "super middleweight",
+          "rank": 9,
+          "name": "Christian Mbilli",
+          "country": "France (FRA)",
+          "rating_year": 2023,
+          "rating_month": 4,
+          "published_date": "2023-08-31",
+          "safe_effective_date": "2023-09-01",
+          "source_url": "https://www.ibf-usba-boxing.com/wp-json/ratings/v1/filter?weight=super-middleweight&org=ibf&ppp=-1",
+          "source_kind": "official_ibf_ratings_api"
+        },
+        {
+          "division": "super middleweight",
+          "rank": 9,
+          "name": "Christian Mbilli",
+          "country": "France (FRA)",
+          "rating_year": 2023,
+          "rating_month": 3,
+          "published_date": "2023-08-31",
+          "safe_effective_date": "2023-09-01",
+          "source_url": "https://www.ibf-usba-boxing.com/wp-json/ratings/v1/filter?weight=super-middleweight&org=ibf&ppp=-1",
+          "source_kind": "official_ibf_ratings_api"
+        }
+      ]
     }
   ],
-  "policy": "Official IBF REST ratings posts only. Safe effective date is the day after the official WordPress publication date; vacant/missing ranks are never inferred."
+  "policy": "Official IBF public ratings API only. Safe effective date is one day after official post_date. Empty rank slots remain missing; nothing is inferred."
 }
