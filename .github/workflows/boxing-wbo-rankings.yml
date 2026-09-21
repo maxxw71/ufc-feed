@@ -19,11 +19,13 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
       - name: Prepare parser dependencies
-        run: |
-          /home/anestishkurti92/boxing-research/venv/bin/python -m pip install --disable-pip-version-check -q pypdf beautifulsoup4 lxml
+        run: python -m pip install --disable-pip-version-check -q pypdf beautifulsoup4 lxml
       - name: Collect official WBO historical rankings
-        run: /home/anestishkurti92/boxing-research/venv/bin/python boxing/research/collect_wbo_rankings.py
+        run: python boxing/research/collect_wbo_rankings.py
       - name: Persist official WBO archive
         run: |
           git config user.name 'github-actions[bot]'
