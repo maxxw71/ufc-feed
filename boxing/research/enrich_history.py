@@ -126,7 +126,7 @@ def main():
         histories[row['url']].append(dict(row))
     links = {r['bout_id']: r['opponent_id'] for r in db.execute("SELECT * FROM opponent_links WHERE evidence='reciprocal_result_confirmed'")}
     if db.execute("select 1 from sqlite_master where type='table' and name='opponent_links_v2'").fetchone():
-        for r in db.execute("select bout_id,opponent_id from opponent_links_v2 where evidence='reciprocal_result_observed_alias'"):
+        for r in db.execute("select bout_id,opponent_id from opponent_links_v2"):
             links.setdefault(r['bout_id'],r['opponent_id'])
     db.commit()
     # Prefix totals freeze each past opponent at the earlier meeting's date.
