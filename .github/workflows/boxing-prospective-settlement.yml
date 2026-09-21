@@ -1,0 +1,45 @@
+name: Boxing prospective odds settlement
+
+on:
+  workflow_dispatch:
+  workflow_run:
+    workflows:
+      - Boxing prospective odds snapshots
+    types: [completed]
+    branches: [main]
+  push:
+    branches: [main]
+    paths:
+      - 'boxing/research/audit_prospective_odds.py'
+      - '.github/workflows/boxing-prospective-settlement.yml'
+
+concurrency:
+  group: boxing-prospective-settlement
+  cancel-in-progress: true
+
+permissions:
+  contents: write
+
+jobs:
+  settle:
+    if: github.repository == 'maxxw71/ufc-feed' && (github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success')
+    runs-on: [self-hosted, Linux, X64, appwiza]
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Settle only verified pre-event snapshots
+        run: python3 boxing/research/audit_prospective_odds.py
+      - name: Persist prospective coverage
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add boxing/prospective_odds/coverage.json boxing/prospective_odds/settled_bouts.json
+          if git diff --cached --quiet; then
+            echo 'No prospective settlement changes.'
+          else
+            git commit -m 'Audit prospective boxing odds settlement'
+            git pull --rebase origin main
+            git push
+          fi
