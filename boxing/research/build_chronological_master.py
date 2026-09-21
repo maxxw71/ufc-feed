@@ -159,6 +159,37 @@ def bout_context(r):
           else 'other'}
     }
 
+def load_wbc_rankings():
+    candidates=[ROOT/'rankings',ROOT.parent/'rankings']
+    rfile=next((p/'wbc_monthly_rankings.json' for p in candidates if (p/'wbc_monthly_rankings.json').exists()),None)
+    cfile=next((p/'wbc_monthly_champions.json' for p in candidates if (p/'wbc_monthly_champions.json').exists()),None)
+    ranks=collections.defaultdict(list);champs=collections.defaultdict(list)
+    if rfile:
+        try:
+            for r in json.loads(rfile.read_text()):
+                key=namekey(r.get('name') or '')
+                if key:ranks[key].append(r)
+        except Exception:pass
+    if cfile:
+        try:
+            for r in json.loads(cfile.read_text()):
+                key=namekey(r.get('name') or '')
+                if key:champs[key].append(r)
+        except Exception:pass
+    for x in (ranks,champs):
+        for k in x:x[k].sort(key=lambda r:r.get('safe_effective_date') or '')
+    return ranks,champs
+
+def wbc_before(index,name,date,max_age_days=75):
+    rows=index.get(namekey(name or ''),[])
+    eligible=[r for r in rows if (r.get('safe_effective_date') or '')<=date]
+    if not eligible:return None
+    r=eligible[-1]
+    try:
+        age=(dt.date.fromisoformat(date)-dt.date.fromisoformat(r['safe_effective_date'])).days
+    except Exception:return None
+    return r if 0<=age<=max_age_days else None
+
 def main():
     stamp=dt.datetime.now(dt.timezone.utc).strftime('%Y%m%dT%H%M%SZ')
     outdir=ROOT/'research_runs'/stamp;outdir.mkdir(parents=True)
@@ -173,6 +204,7 @@ def main():
         histories[r['url']].append(r)
     links=load_links(d)
     profiles={r['source_id']:dict(r) for r in d.execute('select * from normalized_fighters')}
+    wbc_ranks,wbc_champs=load_wbc_rankings()
     events=canonical_events(histories,links); eventkeys={k for k,s in events}
     targets=collections.defaultdict(set)
     for fid,history in histories.items():
@@ -214,22 +246,32 @@ def main():
                         'physical_proxy_quality':'identity-linked current biography snapshot when available; height/reach treated as stable adult proxies; stance/nationality exploratory only',
                         'elo':rating,'elo_prior_verified_bouts':n,'last8_wins':sum(x['winner']=='BOXER A' for x in prior[-8:]),'last8_sample':len(prior[-8:]),
                         'input_bout_ids':[x['source_id'] for x in prior]}
+                    _wr=wbc_before(wbc_ranks, sides[label].get('id') and p.get('name') or (r['boxer_a'] if label=='fighter' else r['boxer_b']), date)
+                    _wc=wbc_before(wbc_champs, sides[label].get('id') and p.get('name') or (r['boxer_a'] if label=='fighter' else r['boxer_b']), date)
+                    sides[label]['wbc_rank']=_wr.get('rank') if _wr else None
+                    sides[label]['wbc_rank_division']=_wr.get('division') if _wr else None
+                    sides[label]['wbc_rank_source_month']=f"{_wr.get('rating_year')}-{int(_wr.get('rating_month')):02d}" if _wr else None
+                    sides[label]['wbc_champion_status']=_wc.get('status') if _wc else None
+                    sides[label]['wbc_ranking_quality']='official_monthly_pdf_safe_effective_date' if (_wr or _wc) else None
                     assert not s['latest_input_bout_date'] or s['latest_input_bout_date']<date
                 matched=[q for q in quotes[r['source_id']] if q['event_date']==date]
                 row={'source_id':r['source_id'],'career_source':r['source'],'bout_date':date,'fighter_name':r['boxer_a'],'opponent_name':r['boxer_b'],
                      **sides,'canonical_verified_pair':bool(pair and (date,*pair) in eventkeys),'context':bout_context(r),
+                     'wbc_rank_gap':(sides['opponent']['wbc_rank']-sides['fighter']['wbc_rank']) if sides.get('fighter') and sides.get('opponent') and sides['fighter'].get('wbc_rank') is not None and sides['opponent'].get('wbc_rank') is not None else None,
                      'outcome':{'result':r['winner'],'method':r['method'],'rounds':r['rounds']},'quotes':matched,'validated_price_eligible':False,
                      'historically_verified_physical_stats':False,'historically_linked_prior_punch_stats':None}
                 f.write(json.dumps(row,ensure_ascii=False)+'\n');total+=1;source_rows[r['source']]+=1
                 y=years[date[:4]];y['fighter_bout_rows']+=1;y['reciprocal_pair_rows']+=row['canonical_verified_pair'];y['price_linked_rows']+=bool(matched)
                 y['both_record_totals_match']+=bool(sides['opponent'] and all(sides[x]['record_totals_match'] for x in ('fighter','opponent')))
-    report={'built_at':stamp,'rows':total,'career_sources':dict(source_rows),'verified_graph_bouts':len(events),'identity_links':len(links),'opponent_strength_sources':dict(strength_source),'years':dict(sorted(years.items())),
+    report={'built_at':stamp,'rows':total,'career_sources':dict(source_rows),'verified_graph_bouts':len(events),'identity_links':len(links),'opponent_strength_sources':dict(strength_source),
+            'wbc_ranking_names_loaded':len(wbc_ranks),'wbc_champion_names_loaded':len(wbc_champs),'years':dict(sorted(years.items())),
             'validated_price_rows':0,'limitations':['Career rows preserve source provenance; secondary observed histories are not relabeled as Wikipedia.',
             'Source observations are not a census of all boxing fights.','Own Elo: 1500 initial, K32, reciprocal graph only; all same-day updates batched.',
             'Record totals agreement is an internal audit, not independent full-career certification.',
             'Opponent strength prefers linked point-in-time histories; explicit source-stated opponent pre-fight records are a secondary fallback.',
             'Biography age uses available birth date; height/reach are static adult proxies when available; stance/nationality remain exploratory.',
             'Title/location/scheduled-round context comes from record rows but only pre-fight-knowable flags are exposed.',
+            'WBC ranking fields are used only from official monthly PDFs after their conservative safe effective date; missing remains unknown, never inferred unranked.',
             'All quotes have unverified timing/settlement. No validated ROI or live eligibility.',
             'Prior punch features unavailable until identity, date and coverage gates pass.']}
     (outdir/'coverage.json').write_text(json.dumps(report,indent=2));(ROOT/'LATEST_CHRONOLOGICAL_MASTER.txt').write_text(str(outdir)+'\n')
