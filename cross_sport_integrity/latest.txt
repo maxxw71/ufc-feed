@@ -1,7 +1,7 @@
 CROSS-SPORT APPROVAL INTEGRITY
 ========================================================================================
-built_at: 2026-09-21T06:46:00.390079+00:00
-status: FAIL
+built_at: 2026-09-21T06:48:08.313933+00:00
+status: PASS
 
 CONTRACT
 NFL: LIVE_CANONICAL_ONLY
@@ -10,7 +10,7 @@ MLS: SHADOW_ONLY_NO_OFFICIAL_BETS
 BOXING: RESEARCH_ONLY_NO_OFFICIAL_BETS
 
 HARD FAILURES
-- NFL canonical_future_tracker_exact: canonical=[] tracker=['2026_03_LV_NO']
+- none
 
 WARNINGS
 - none
@@ -20,7 +20,7 @@ ALL CHECKS
 [PASS] NFL canonical_public_current_exact :: canonical=[] public=[]
 [PASS] NFL canonical_state_ids_exact :: canonical=[] state=[]
 [PASS] NFL rejected_not_canonical :: overlap=[]
-[FAIL] NFL canonical_future_tracker_exact :: canonical=[] tracker=['2026_03_LV_NO']
+[PASS] NFL canonical_future_tracker_exact :: canonical=[] tracker=[]
 [PASS] NFL common_production_guard_installed :: 
 [PASS] NFL canonical_surface_installed :: 
 [PASS] NFL render_isolation_installed :: 

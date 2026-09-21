@@ -1,14 +1,7 @@
 {
-  "built_at": "2026-09-21T06:46:00.390079+00:00",
-  "status": "FAIL",
-  "hard_failures": [
-    {
-      "name": "NFL canonical_future_tracker_exact",
-      "ok": false,
-      "detail": "canonical=[] tracker=['2026_03_LV_NO']",
-      "hard": true
-    }
-  ],
+  "built_at": "2026-09-21T06:48:08.313933+00:00",
+  "status": "PASS",
+  "hard_failures": [],
   "warnings": [],
   "checks": [
     {
@@ -37,8 +30,8 @@
     },
     {
       "name": "NFL canonical_future_tracker_exact",
-      "ok": false,
-      "detail": "canonical=[] tracker=['2026_03_LV_NO']",
+      "ok": true,
+      "detail": "canonical=[] tracker=[]",
       "hard": true
     },
     {
@@ -223,8 +216,7 @@
       "ufc"
     ],
     "future_pending_by_sport": {
-      "UFC": 3,
-      "NFL": 1
+      "UFC": 3
     }
   },
   "contract": {
