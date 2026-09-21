@@ -6,6 +6,7 @@ on:
     branches: [main]
     paths:
       - '.github/workflows/appwiza-boxing-punch-expand.yml'
+      - 'boxing/collectors/punch_collect.py'
 
 permissions:
   contents: read
@@ -25,6 +26,8 @@ jobs:
           cd "$ROOT"
           test -x venv/bin/python
           test -f boxing.sqlite3
+          cp "$GITHUB_WORKSPACE/boxing/collectors/punch_collect.py" "$ROOT/punch_collect.py.new"
+          mv "$ROOT/punch_collect.py.new" "$ROOT/punch_collect.py"
           [ "$(systemctl is-active boxing-archive.service 2>/dev/null || true)" != active ] || { echo 'boxing-archive.service is active; refusing concurrent write'; exit 2; }
           available=$(df -Pk . | awk 'NR==2 {print $4}')
           [ "$available" -ge 2097152 ] || { echo 'Less than 2 GiB free; refusing collection'; exit 3; }
