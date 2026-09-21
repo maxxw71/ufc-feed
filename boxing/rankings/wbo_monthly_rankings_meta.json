@@ -1,5 +1,5 @@
 {
-  "built_at": "2026-09-21T13:37:35.724779+00:00",
+  "built_at": "2026-09-21T14:15:04.548263+00:00",
   "documents": [
     {
       "article_url": "https://wboboxing.com/explanations/wbo-ranking-explanations/",
@@ -14,23 +14,47 @@
     },
     {
       "article_url": "https://wboboxing.com/explanations/wbo-ranking-explanations-september-2025/",
-      "status": "fetch_review",
-      "error": "HTTP Error 503: Service Unavailable"
+      "published_date": "2026-01-17",
+      "status": "parsed",
+      "source_url": "https://wboboxing.com/wp-content/uploads/2026/01/2509-Explanations-September-2025-1.pdf",
+      "bytes": 454686,
+      "sha256": "0770958d24057fe4daa5ff44a8a306545a779a3d6dc8af7f8a8ad71d8a178489",
+      "pages": 17,
+      "ranking_rows": 270,
+      "champions": 18
     },
     {
       "article_url": "https://wboboxing.com/explanations/wbo-ranking-explanations-september-19th-to-october-18th-2025/",
-      "status": "fetch_review",
-      "error": "HTTP Error 503: Service Unavailable"
+      "published_date": "2026-01-17",
+      "status": "parsed",
+      "source_url": "https://wboboxing.com/wp-content/uploads/2026/01/2510-Explanations-October-2025-.pdf",
+      "bytes": 454757,
+      "sha256": "10d4ff54df006a545ceb918fa83954ea9bf79636f505e2cc0e349159af634ac0",
+      "pages": 17,
+      "ranking_rows": 270,
+      "champions": 18
     },
     {
       "article_url": "https://wboboxing.com/explanations/wbo-ranking-december-2025/",
-      "status": "fetch_review",
-      "error": "HTTP Error 503: Service Unavailable"
+      "published_date": "2026-01-17",
+      "status": "parsed",
+      "source_url": "https://wboboxing.com/wp-content/uploads/2026/01/2512-Explanations-December-2025-1.pdf",
+      "bytes": 447608,
+      "sha256": "5b4584e5fc6d249bc2979d36998260fbc9de3acc3bcc4b2b2a9a413adace8768",
+      "pages": 17,
+      "ranking_rows": 266,
+      "champions": 17
     },
     {
       "article_url": "https://wboboxing.com/explanations/wbo-ranking-as-of-october-15-2023/",
-      "status": "fetch_review",
-      "error": "HTTP Error 503: Service Unavailable"
+      "published_date": "2023-12-15",
+      "status": "parsed",
+      "source_url": "https://www.wboboxing.com/wp-content/uploads/2023/12/2310-Explanations-Explanations-2023-II-Dianas-M1-iMac.locals-conflicted-copy-2023-12-11-1.pdf",
+      "bytes": 469158,
+      "sha256": "a29812f86e49f8914cbc874e816404de0b6144863e6ecdd6c69f7c05b1fa02a5",
+      "pages": 17,
+      "ranking_rows": 264,
+      "champions": 18
     },
     {
       "article_url": "https://wboboxing.com/explanations/wbo-ranking-as-of-january-15-2024/",
@@ -554,9 +578,10 @@
       "champions": 17
     }
   ],
-  "parsed_documents": 47,
-  "ranking_rows": 12399,
-  "champion_rows": 848,
-  "safe_date_policy": "Official WBO article publication date; never backdated to the nominal ranking period.",
+  "parsed_documents": 51,
+  "ranking_rows": 7622,
+  "champion_rows": 866,
+  "quarantined_conflicting_rank_slots": 2446,
+  "safe_date_policy": "Official WBO article publication date; if multiple rating periods share one publication date, only the later nominal period is retained; conflicting slots are quarantined.",
   "archive_url": "https://wboboxing.com/explanations/"
 }
