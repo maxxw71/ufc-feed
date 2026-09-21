@@ -1,0 +1,41 @@
+name: Boxing Champinon Profile Index
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'boxing/research/index_champinon_profiles.py'
+      - '.github/workflows/boxing-champinon-profile-index.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  index:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install --disable-pip-version-check beautifulsoup4 lxml
+      - name: Build Champinon fighter URL index
+        run: python boxing/research/index_champinon_profiles.py
+      - name: Persist Champinon profile index
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add boxing/supplemental_careers/champinon_profile_index.json
+          if git diff --cached --quiet; then
+            echo 'No Champinon index changes.'
+          else
+            git commit -m 'Update Champinon boxer profile index'
+            git pull --rebase origin main
+            git push origin HEAD:main
+          fi
