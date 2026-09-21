@@ -17,6 +17,7 @@ from backfill_priced_careers import DB,OUT,nk,priced_missing,match_evidence
 
 UA='Mozilla/5.0 AppwizaBoxingWBAConsensus/1.0'
 # IDs confirmed from official WBA profile URLs during the gap audit.
+WBA_INDEX=Path(__file__).resolve().parents[1]/'profile_supplements'/'wba_profile_index.json'
 WBA_IDS={
  'Vaida Masiokaite':11929,'Boris Crighton':15366,'Gemma Ruegg':13141,
  'Rhys Edwards':17687,'Xolisani Ndongeni':3551,'Israel Duffus':5491,
@@ -120,7 +121,33 @@ def main():
             except Exception:pass
     missing={nk(x['name']):x for x in priced_missing(con) if nk(x['name']) not in done}
     idx=result_index(con);accepted=[];failed=[]
-    candidates=[(name,wid,missing.get(nk(name))) for name,wid in WBA_IDS.items() if missing.get(nk(name))]
+
+    # Build exact unique WBA identity candidates from the explicit-link graph.
+    dynamic={}
+    if WBA_INDEX.exists():
+        try:
+            data=json.loads(WBA_INDEX.read_text())
+            for key,entries in (data.get('index') or {}).items():
+                if key not in missing or len(entries)!=1:continue
+                e=entries[0]
+                dynamic[key]=(e.get('name') or missing[key]['name'],int(e['profile_id']))
+        except Exception as e:
+            print('WBA_INDEX_READ_ERROR',str(e)[:200],flush=True)
+
+    combined={}
+    for name,wid in WBA_IDS.items():
+        key=nk(name)
+        if key in missing:combined[key]=(name,wid)
+    for key,value in dynamic.items():
+        combined.setdefault(key,value)
+
+    # Highest priced-bout value first, then quote rows, then name.
+    candidates=[]
+    for key,(name,wid) in combined.items():
+        item=missing.get(key)
+        if not item:continue
+        candidates.append((name,wid,item))
+    candidates.sort(key=lambda x:(-int(x[2].get('priced_bouts') or 0),-int(x[2].get('quote_rows') or 0),x[0]))
     candidates=candidates[:args.limit]
     for i,(name,wid,item) in enumerate(candidates,1):
         try:
@@ -139,7 +166,9 @@ def main():
         except Exception as e:
             failed.append({'name':name,'wba_id':wid,'priced_bouts':item['priced_bouts'],'error':str(e)[:500]});print(i,name,'NO_MATCH',str(e)[:180],flush=True)
         time.sleep(.2)
-    report={'attempted':len(candidates),'accepted':len(accepted),'failed':len(failed),'accepted_items':accepted,'failed_items':failed,'source':'wba_consensus'}
+    report={'attempted':len(candidates),'accepted':len(accepted),'failed':len(failed),
+            'dynamic_index_candidates':len(dynamic),'combined_candidates':len(combined),
+            'accepted_items':accepted,'failed_items':failed,'source':'wba_consensus'}
     (OUT.parent/'latest_wba_consensus_report.json').write_text(json.dumps(report,indent=2,ensure_ascii=False))
     print(json.dumps(report,indent=2,ensure_ascii=False))
 if __name__=='__main__':main()
