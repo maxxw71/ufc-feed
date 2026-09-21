@@ -31,7 +31,7 @@ jobs:
           qkind=next((x for x in ('kind','source_kind','type') if x in qcols),None)
           qu='SELECT * FROM external_evidence_queue'+(" WHERE "+qkind+"='punch'" if qkind else '')
           q={str(r[qurl]):dict(r) for r in d.execute(qu)}
-          surl=next((x for x in ('url','source_url') if x in scols),None)
+          surl=next((x for x in ('url','source_url','source_id') if x in scols),None)
           sdata=next((x for x in ('data','payload','json') if x in scols),None)
           ssource=next((x for x in ('source','source_name') if x in scols),None)
           skind=next((x for x in ('kind','source_kind','type') if x in scols),None)
