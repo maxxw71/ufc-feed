@@ -19,8 +19,8 @@ class ArchivedCompuboxTests(unittest.TestCase):
     def db(self):
         d=sqlite3.connect(':memory:')
         d.row_factory=sqlite3.Row
-        d.execute('create table bouts(date text,status text,boxer_a text,boxer_b text,source text,source_id text)')
-        d.execute("insert into bouts values('2009-09-19','FINISHED','Floyd Mayweather Jr','Juan Manuel Marquez','test','1')")
+        d.execute('create table bouts(date text,status text,boxer_a text,boxer_b text,source text,source_id text,method text,rounds text)')
+        d.execute("insert into bouts values('2009-09-19','FINISHED','Floyd Mayweather Jr','Juan Manuel Marquez','test','1','UD','12')")
         return d
 
     def test_strict_full_round_accept(self):
