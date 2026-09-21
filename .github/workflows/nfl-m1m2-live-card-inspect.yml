@@ -1,0 +1,24 @@
+name: NFL M1 M2 Live Card Inspect
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/nfl-m1m2-live-card-inspect.yml'
+  workflow_dispatch:
+
+jobs:
+  inspect:
+    runs-on: [self-hosted, Linux, X64, appwiza]
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Inspect live M1 M2 definitions
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          R=/home/anestishkurti92/nfl-predictor-v1/research_v2
+          echo '=== scanner hits ==='
+          grep -nE "92\.2%|93\.8%|59 / 64|45 / 48|better regular-season record|All M1 conditions|Winning-percentage advantage" "$R/nfl_home_opener_scanner.py" || true
+          echo '=== email-design hits ==='
+          grep -nE "92\.2%|93\.8%|59 / 64|45 / 48|better regular-season record|All M1 conditions|Winning-percentage advantage" "$R/nfl_email_design.py" || true
