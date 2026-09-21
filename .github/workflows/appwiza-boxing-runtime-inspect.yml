@@ -30,6 +30,14 @@ jobs:
           ls -lah /home/anestishkurti92/boxing-research 2>/dev/null | head -100 || true
           echo '=== SQLITE FILES ==='
           find /home/anestishkurti92/boxing-research -maxdepth 2 -type f -name '*.sqlite3' -printf '%p %s bytes\n' 2>/dev/null | head -30 || true
+          echo '=== PUBLIC BOXING FILES ==='
+          find /srv/appwiza-sports/public -maxdepth 5 -type f \( -iname '*boxing*' -o -iname '*research*' -o -iname '*.zip' \) -printf '%p %s bytes %TY-%Tm-%Td %TH:%TM:%TS\n' 2>/dev/null | head -120 || true
+          echo '=== ARCHIVE/EXPORT SCRIPTS ==='
+          for f in /home/anestishkurti92/boxing-research/*archive*.sh /home/anestishkurti92/boxing-research/*export*.sh /home/anestishkurti92/boxing-research/finish_data_batch.sh; do
+            [ -f "$f" ] || continue
+            echo "----- $f -----"
+            sed -n '1,260p' "$f"
+          done
           echo '=== PUNCH COUNTS ==='
           python3 - <<'PY'
           import os,sqlite3,glob
