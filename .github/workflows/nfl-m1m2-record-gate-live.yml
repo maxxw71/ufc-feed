@@ -33,8 +33,6 @@ jobs:
           set -Eeuo pipefail
           KEY=/home/appwiza-runner/.ssh/appwiza_vps
           HOST=anestishkurti92@127.0.0.1
-          ROOT=/home/anestishkurti92/nfl-predictor-v1
-          R2="$ROOT/research_v2"
 
           scp -i "$KEY" -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=accept-new             nfl/production_match_guard.py "$HOST":/home/anestishkurti92/.nfl_m_record_guard.py
           scp -i "$KEY" -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=accept-new             nfl/test_production_match_guard.py "$HOST":/home/anestishkurti92/.nfl_m_record_guard_test.py
@@ -45,8 +43,10 @@ jobs:
           R2="$ROOT/research_v2"
           LIVE="$R2/production_match_guard.py"
           TS=$(date -u +%Y%m%dT%H%M%SZ)
-          mkdir -p "$ROOT/backups"
-          [ ! -f "$LIVE" ] || cp -a "$LIVE" "$ROOT/backups/production_match_guard.pre-m-record-$TS.py"
+
+          if [ -f "$LIVE" ]; then
+            cp -a "$LIVE" "/home/anestishkurti92/.production_match_guard.pre-m-record-$TS.py"
+          fi
 
           install -m 0644 /home/anestishkurti92/.nfl_m_record_guard.py "$LIVE"
           python3 -m py_compile "$LIVE"
