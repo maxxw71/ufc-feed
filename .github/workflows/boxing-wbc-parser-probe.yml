@@ -1,0 +1,43 @@
+name: Boxing WBC parser probe
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/boxing-wbc-parser-probe.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.12'}
+      - run: python -m pip install --disable-pip-version-check pypdf pdfplumber
+      - name: Inspect official WBC PDF extraction
+        shell: bash
+        run: |
+          python - <<'PY'
+          import io,urllib.request
+          from pypdf import PdfReader
+          import pdfplumber
+          url='https://wbcboxing.com/mailing/2025/ratings_pdf/WBC_RATINGS_MARCH_2025.pdf'
+          req=urllib.request.Request(url,headers={'User-Agent':'Mozilla/5.0','Referer':'https://wbcboxing.com/','Accept':'application/pdf'})
+          data=urllib.request.urlopen(req,timeout=30).read()
+          p=PdfReader(io.BytesIO(data)).pages[1]
+          print('=== PYPDF LAYOUT PAGE 2 ===')
+          print(p.extract_text(extraction_mode='layout'))
+          print('=== PDFPLUMBER TABLES PAGE 2 ===')
+          with pdfplumber.open(io.BytesIO(data)) as pdf:
+              page=pdf.pages[1]
+              tabs=page.extract_tables()
+              print('TABLE_COUNT',len(tabs))
+              for ti,t in enumerate(tabs[:8]):
+                  print('TABLE',ti,'ROWS',len(t))
+                  for row in t[:15]: print(repr(row))
+          PY
