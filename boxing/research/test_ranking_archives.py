@@ -55,5 +55,13 @@ class RankingArchiveIntegrityTests(unittest.TestCase):
         self.assertEqual(len(rows),meta['ranking_rows'])
         self.assertGreaterEqual(meta['parsed_documents'],20)
 
+    def test_ibf_rankings(self):
+        rows=self.load('ibf_monthly_rankings.json')
+        self.validate_rows(rows,'IBF',15)
+        meta=self.load('ibf_monthly_rankings_meta.json')
+        self.assertEqual(len(rows),meta['ranking_rows'])
+        self.assertGreaterEqual(meta['rating_periods'],100)
+        self.assertEqual(meta.get('quarantined_conflicting_rank_slots'),0)
+
 if __name__=='__main__':
     unittest.main()
