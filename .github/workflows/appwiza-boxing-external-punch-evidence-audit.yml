@@ -1,0 +1,46 @@
+name: Appwiza boxing external punch evidence audit
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/appwiza-boxing-external-punch-evidence-audit.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  audit:
+    runs-on: [self-hosted, Linux, X64, appwiza]
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Audit captured historical punch evidence
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import sqlite3,json,collections
+          p='/home/anestishkurti92/boxing-research/boxing.sqlite3'
+          d=sqlite3.connect(f'file:{p}?mode=ro',uri=True);d.row_factory=sqlite3.Row
+          q={r['url']:dict(r) for r in d.execute("select * from external_evidence_queue where kind='punch'")}
+          rows=[]
+          for r in d.execute("select url,data from source_rows where source='external_evidence' and kind='punch' order by url"):
+              try:x=json.loads(r['data'])
+              except Exception:continue
+              rows.append({
+                'url':r['url'],'status':q.get(r['url'],{}).get('status'),
+                'title':x.get('title'),'table_count':len(x.get('tables') or []),
+                'table_shapes':[[len(t),max([len(rr) for rr in t] or [0])] for t in (x.get('tables') or [])],
+                'stat_links':x.get('stat_links') or [],
+                'paragraphs':(x.get('relevant_paragraphs') or [])[:12],
+                'table_preview':[(t or [])[:8] for t in (x.get('tables') or [])[:4]]
+              })
+          failed_hosts=collections.Counter()
+          for r in d.execute("select url from external_evidence_queue where kind='punch' and status='failed'"):
+              from urllib.parse import urlsplit
+              failed_hosts[urlsplit(r['url']).hostname or '']+=1
+          print('CAPTURED='+json.dumps(rows,ensure_ascii=False))
+          print('FAILED_HOSTS='+json.dumps(failed_hosts.most_common()))
+          print('QUEUE_STATUS='+json.dumps(list(d.execute("select status,count(*) from external_evidence_queue where kind='punch' group by status order by status"))))
+          PY
