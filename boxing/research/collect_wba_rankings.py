@@ -157,14 +157,40 @@ def main():
             except Exception as e:
                 docs.append({'year':year,'month':month,'status':'parse_review','source_url':final,'bytes':len(raw),
                              'sha256':sha,'error':str(e),'safe_effective_date':posted.get((year,month))})
-    usable=[x for x in allr if x.get('safe_effective_date')]
-    usablec=[x for x in allc if x.get('safe_effective_date')]
+    raw_usable=[x for x in allr if x.get('safe_effective_date')]
+    raw_usablec=[x for x in allc if x.get('safe_effective_date')]
+
+    # Multiple nominal rating months can occasionally share one official posting
+    # date. Without an intraday timestamp, only the later rating month is kept for
+    # that date so a bout never sees two competing snapshots as simultaneously current.
+    latest_doc_by_date={}
+    for x in raw_usable+raw_usablec:
+        key=x['safe_effective_date'];ym=(int(x.get('year') or 0),int(x.get('month') or 0))
+        if ym>latest_doc_by_date.get(key,(0,0)):latest_doc_by_date[key]=ym
+    usable=[x for x in raw_usable if (int(x.get('year') or 0),int(x.get('month') or 0))==latest_doc_by_date[x['safe_effective_date']]]
+    usablec=[x for x in raw_usablec if (int(x.get('year') or 0),int(x.get('month') or 0))==latest_doc_by_date[x['safe_effective_date']]]
+
+    # Quarantine any residual conflicting numerical slot rather than choosing a
+    # contender arbitrarily. Exact duplicate rows collapse to one.
+    grouped={}
+    for x in usable:grouped.setdefault((x['safe_effective_date'],x['division'],int(x['rank'])),[]).append(x)
+    clean=[];conflicts=[]
+    for key,group in grouped.items():
+        names={re.sub(r'[^a-z0-9]+','',str(x.get('name') or '').lower()) for x in group}
+        if len(names)>1:
+            conflicts.append({'slot':key,'rows':group})
+        else:
+            clean.append(sorted(group,key=lambda x:(x.get('source_url') or '',x.get('name') or ''))[-1])
+    usable=sorted(clean,key=lambda x:(x['safe_effective_date'],x['division'],int(x['rank'])))
+
     (OUT/'wba_monthly_rankings.json').write_text(json.dumps(usable,indent=2,ensure_ascii=False))
     (OUT/'wba_monthly_champions.json').write_text(json.dumps(usablec,indent=2,ensure_ascii=False))
     meta={'built_at':dt.datetime.now(dt.timezone.utc).isoformat(),'documents':docs,'parsed_documents':sum(d['status'].startswith('parsed') for d in docs),
           'usable_documents':sum(d['status']=='parsed' for d in docs),'ranking_rows':len(usable),
           'champion_rows':len(usablec),'posting_date_source':posting_url,
-          'policy':'Official WBA monthly PDFs only. Ranking is usable only on/after the official WBA ranking-movements posting date; no month-end backdating.'}
+          'superseded_same_post_date_documents':len({x['safe_effective_date'] for x in raw_usable})-len(latest_doc_by_date),
+          'quarantined_conflicting_rank_slots':len(conflicts),
+          'policy':'Official WBA monthly PDFs only. If multiple rating months share one official posting date, only the later rating month is retained. Conflicting rank slots are quarantined. No month-end backdating.'}
     (OUT/'wba_monthly_rankings_meta.json').write_text(json.dumps(meta,indent=2,ensure_ascii=False))
     print(json.dumps({k:meta[k] for k in ['parsed_documents','usable_documents','ranking_rows','champion_rows','posting_date_source']},indent=2))
 
