@@ -1,0 +1,39 @@
+name: Boxing IBF Historical Rankings Archive
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'boxing/research/collect_ibf_rankings.py'
+      - '.github/workflows/boxing-ibf-rankings.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  collect:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install --disable-pip-version-check beautifulsoup4 lxml
+      - name: Collect official IBF rankings
+        run: python boxing/research/collect_ibf_rankings.py
+      - name: Persist official IBF archive
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add boxing/rankings/ibf_monthly_rankings.json boxing/rankings/ibf_monthly_champions.json boxing/rankings/ibf_monthly_rankings_meta.json
+          if git diff --cached --quiet; then
+            echo 'No IBF archive changes.'
+          else
+            git commit -m 'Update official IBF historical ranking archive'
+            git pull --rebase origin main
+            git push
+          fi
