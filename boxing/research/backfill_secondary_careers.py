@@ -12,7 +12,7 @@ Wikipedia. Running fighter records are reconstructed chronologically from the
 explicit W/L/D rows only; future results never enter an earlier row.
 """
 from __future__ import annotations
-import argparse,datetime as dt,json,re,sqlite3,time,unicodedata,urllib.request
+import argparse,datetime as dt,json,re,sqlite3,time,unicodedata,urllib.error,urllib.request
 from bs4 import BeautifulSoup
 from dateutil.parser import parse as dateparse
 from backfill_priced_careers import DB,OUT,nk,priced_missing,match_evidence
@@ -24,9 +24,23 @@ def slug(name):
     s=re.sub(r"\bjr\.?$",'jr',s).strip()
     return re.sub(r'[^a-z0-9]+','-',s).strip('-')
 
-def get(url,timeout=35):
+def get(url,timeout=35,retries=4):
     req=urllib.request.Request(url,headers={'User-Agent':UA,'Accept-Language':'en-US,en;q=0.8'})
-    with urllib.request.urlopen(req,timeout=timeout) as r:return r.read()
+    last=None
+    for attempt in range(retries):
+        try:
+            with urllib.request.urlopen(req,timeout=timeout) as r:return r.read()
+        except urllib.error.HTTPError as e:
+            last=e
+            # Cloudflare/origin and ordinary server failures are transient.
+            # Identity/404 failures are deterministic and should not be retried.
+            if e.code not in {408,425,429,500,502,503,504,520,521,522,523,524}:
+                raise
+        except urllib.error.URLError as e:
+            last=e
+        if attempt+1<retries:
+            time.sleep(1.5*(2**attempt))
+    raise last
 
 def clean_opponent(text):
     s=re.sub(r'\s+',' ',str(text or '')).strip()
