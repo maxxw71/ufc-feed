@@ -1,0 +1,30 @@
+name: Boxing Archived CompuBox PDF Probe
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'boxing/research/probe_archived_compubox_pdfs.py'
+      - '.github/workflows/boxing-archived-compubox-pdf-probe.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  probe:
+    runs-on: [self-hosted, Linux, X64, appwiza]
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - name: Probe explicitly linked historical CompuBox PDFs
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          ROOT=/home/anestishkurti92/boxing-research
+          test -x "$ROOT/venv/bin/python"
+          cp "$GITHUB_WORKSPACE/boxing/research/probe_archived_compubox_pdfs.py" "$ROOT/probe_archived_compubox_pdfs.py.new"
+          mv "$ROOT/probe_archived_compubox_pdfs.py.new" "$ROOT/probe_archived_compubox_pdfs.py"
+          cd "$ROOT"
+          venv/bin/python -m pip install -q pypdf
+          venv/bin/python probe_archived_compubox_pdfs.py
