@@ -61,17 +61,33 @@ def main():
     rows=[dict(r) for r in con.execute(f"select * from bouts where source in ({marks}) and status='FINISHED' and date is not null order by date,source_id",ALLOWED_SOURCES)]
     names={r['source_id']:r['name'] for r in con.execute(f"select source_id,name from fighters where source in ({marks})",ALLOWED_SOURCES)}
     existing={r['bout_id']:r['opponent_id'] for r in con.execute("select bout_id,opponent_id from opponent_links where evidence='reciprocal_result_confirmed'")}
-    additions,diag=discover(rows,names,existing)
+
+    # Secondary-source rows can carry a direct hyperlink to the opponent's exact
+    # profile page. If that URL is itself a verified fighter identity in our DB,
+    # it is stronger evidence than any name match and does not require fuzzy logic.
+    known_ids=set(names)
+    direct={}
+    for r in rows:
+        if r['source_id'] in existing:continue
+        try:data=json.loads(r.get('data') or '{}')
+        except Exception:continue
+        target=str(data.get('opponent_source_url') or '').strip().rstrip('/')+'/'
+        if target and target!='/' and target in known_ids and target!=r['url']:
+            direct[r['source_id']]=target
+
+    seed={**existing,**direct}
+    additions,diag=discover(rows,names,seed)
     con.execute('''create table if not exists opponent_links_v2(
         bout_id text primary key, opponent_id text not null, evidence text not null,
         built_at text not null)''')
     con.execute('delete from opponent_links_v2')
     stamp=__import__('datetime').datetime.now(__import__('datetime').timezone.utc).isoformat()
+    con.executemany('insert into opponent_links_v2 values(?,?,?,?)',[(bid,opp,'direct_source_profile_url',stamp) for bid,opp in direct.items()])
     con.executemany('insert into opponent_links_v2 values(?,?,?,?)',[(bid,opp,'reciprocal_result_observed_alias',stamp) for bid,opp in additions.items()])
     con.commit()
-    report={'existing_verified_links':len(existing),'new_verified_alias_links':len(additions),'combined_links':len(existing)+len(additions),
+    report={'existing_verified_links':len(existing),'new_direct_source_url_links':len(direct),'new_verified_alias_links':len(additions),'combined_links':len(existing)+len(direct)+len(additions),
             'sources':list(ALLOWED_SOURCES),'diagnostics':diag,
-            'method':'exact observed alias + same-date reciprocal row + reciprocal outcome; unique candidate only',
-            'limitations':['Does not guess unresolved identities.','Does not use fuzzy edit distance.','Cannot recover opponents whose career page is absent from the database.']}
+            'method':'direct exact opponent profile URL when available; otherwise exact observed alias + same-date reciprocal row + reciprocal outcome; unique candidate only',
+            'limitations':['Does not guess unresolved identities.','Does not use fuzzy edit distance.','Cannot recover opponents whose career/profile identity is absent from the database.']}
     (ROOT/'IDENTITY_LINKS_V2.json').write_text(json.dumps(report,indent=2));print(json.dumps(report,indent=2))
 if __name__=='__main__':main()
