@@ -22,6 +22,9 @@ def likely(url):
     s=str(url or '')
     if not s.startswith(('https://web.archive.org/','http://web.archive.org/')):
         return False
+    low=s.lower()
+    if '/screenshot/' in low or '/mailto:' in low or 'mailto:' in low:
+        return False
     # only archived CompuBox-owned pages
     if 'compuboxonline.com' not in s.lower():
         return False
