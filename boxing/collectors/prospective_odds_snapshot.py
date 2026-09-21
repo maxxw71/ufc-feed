@@ -32,14 +32,19 @@ def infer_event_date(label,now):
     return cand.isoformat()
 
 def heading_for(table):
-    node=table
-    for _ in range(30):
-        node=node.find_previous()
-        if node is None:break
-        if getattr(node,'name',None) in ('h1','h2','h3','h4','h5'):
-            text=node.get_text(' ',strip=True)
-            if re.search(r'Boxing Odds|\b(?:January|February|March|April|May|June|July|August|September|October|November|December)\b',text,re.I):
-                return text
+    # PBO date labels are not consistently rendered as h1-h5 elements.
+    # Walk backward through nearby DOM nodes and accept only short explicit
+    # calendar labels such as "September 26th Boxing Odds".
+    date_pat=re.compile(r'\b(?:January|February|March|April|May|June|July|August|September|October|November|December)\s+\d{1,2}(?:st|nd|rd|th)?\b',re.I)
+    seen=set()
+    for node in table.find_all_previous(limit=220):
+        if id(node) in seen:continue
+        seen.add(id(node))
+        if not hasattr(node,'get_text'):continue
+        text=re.sub(r'\s+',' ',node.get_text(' ',strip=True)).strip()
+        if not text or len(text)>90:continue
+        if date_pat.search(text) and ('Boxing Odds' in text or getattr(node,'name',None) in ('a','h1','h2','h3','h4','h5','div','span')):
+            return text
     return ''
 
 def start_utc(event_date,clock):
