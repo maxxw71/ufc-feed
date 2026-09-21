@@ -54,7 +54,11 @@ def ledger_rows():
     db.close();return rows
 
 ledger=ledger_rows()
-future_pending=[r for r in ledger if r.get('result')=='pending' and dt(r.get('start')) and dt(r.get('start'))>NOW]
+def payload_obj(r):
+    try:return json.loads(r.get('payload') or '{}')
+    except Exception:return {}
+
+future_pending=[r for r in ledger if r.get('result')=='pending' and dt(r.get('start')) and dt(r.get('start'))>NOW and not payload_obj(r).get('withdrawn')]
 pending_by_sport={}
 for r in future_pending:pending_by_sport.setdefault(str(r.get('sport') or '').upper(),[]).append(r)
 
