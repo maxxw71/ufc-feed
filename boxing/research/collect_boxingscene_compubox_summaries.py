@@ -131,31 +131,46 @@ def article_title(soup,url=None):
         title=slug.replace('-',' ')
     return title
 
-def resolve_bout(title,date,bydate,allitems):
+def resolve_bouts(title,date,bydate,allitems):
+    """Resolve one or more exact local bouts mentioned in a CompuBox title.
+
+    Multi-fight legacy articles are allowed only when every matched participant
+    pair has one unique bout in the relevant date window. Rematches remain
+    ambiguous and are rejected pair-by-pair.
+    """
     tnorm=norm(title)
     def title_matches(item):
         sa,sb=surname(item['fighter_a']),surname(item['fighter_b'])
         return bool(sa and sb and sa!=sb and sa in tnorm and sb in tnorm)
 
-    # First choice: publication date window.
     if date:
         matches=[]
         for offset in range(-3,4):
             d=(date+dt.timedelta(days=offset)).isoformat()
             for item in bydate.get(d,{}).values():
                 if title_matches(item):matches.append(item)
-        uniq={(x['date'],tuple(sorted([norm(x['fighter_a']),norm(x['fighter_b'])]))):x for x in matches}
-        if len(uniq)==1:
-            return next(iter(uniq.values())),'publication_date_window'
+        # Group by participant pair. A pair is accepted only if one dated bout
+        # exists in the window; multiple distinct pairs in one title are fine.
+        bypair=defaultdict(dict)
+        for x in matches:
+            pair=tuple(sorted([norm(x['fighter_a']),norm(x['fighter_b'])]))
+            bypair[pair][x['date']]=x
+        resolved=[next(iter(d.values())) for d in bypair.values() if len(d)==1]
+        if resolved:
+            return sorted(resolved,key=lambda x:(x['date'],norm(x['fighter_a']),norm(x['fighter_b']))),'publication_date_window'
 
-    # Safe fallback for migrated pages with missing/incorrect article metadata:
-    # accept only when the exact pair implied by the title occurs once in the
-    # entire local finished-bout archive. Rematches and multi-fight titles fail.
+    # Migrated pages may have missing/incorrect publication metadata. Group all
+    # title-implied archive matches by participant pair and accept only pairs
+    # that occurred exactly once historically. A rematch pair is withheld.
     matches=[x for x in allitems if title_matches(x)]
-    uniq={(x['date'],tuple(sorted([norm(x['fighter_a']),norm(x['fighter_b'])]))):x for x in matches}
-    if len(uniq)==1:
-        return next(iter(uniq.values())),'unique_historical_pair_from_title'
-    return None,None
+    bypair=defaultdict(dict)
+    for x in matches:
+        pair=tuple(sorted([norm(x['fighter_a']),norm(x['fighter_b'])]))
+        bypair[pair][x['date']]=x
+    resolved=[next(iter(d.values())) for d in bypair.values() if len(d)==1]
+    if resolved:
+        return sorted(resolved,key=lambda x:(x['date'],norm(x['fighter_a']),norm(x['fighter_b']))),'unique_historical_pair_from_title'
+    return [],None
 
 def text_content(soup):
     for tag in soup(['script','style','nav','footer','header']):tag.decompose()
@@ -280,33 +295,38 @@ def main():
     for i,url in enumerate(urls,1):
         try:
             final,raw=fetch(url);soup=BeautifulSoup(raw,'lxml')
-            title=article_title(soup,final);pd=pub_date(soup);bout,resolution=resolve_bout(title,pd,bydate,allitems)
-            if not bout:
+            title=article_title(soup,final);pd=pub_date(soup);bouts,resolution=resolve_bouts(title,pd,bydate,allitems)
+            if not bouts:
                 diag['unresolved_article_bout']+=1
                 if pd is None:diag['article_date_missing']+=1
                 if len(unresolved_sample)<60:
                     unresolved_sample.append({'url':final,'title':title,'article_date':pd.isoformat() if pd else None})
                 continue
-            diag['resolved_'+resolution]+=1
+            diag['resolved_'+resolution]+=len(bouts)
+            if len(bouts)>1:diag['multi_bout_articles_resolved']+=1
             text=text_content(soup)
-            stats=parse_explicit_stats(text,bout['fighter_a'],bout['fighter_b'])
-            added=0
-            for fighter,opponent in [(bout['fighter_a'],bout['fighter_b']),(bout['fighter_b'],bout['fighter_a'])]:
-                st=stats.get(fighter) or {}
-                if st.get('_invalid_conflict'):continue
-                numeric={k:v for k,v in st.items() if isinstance(v,(int,float)) and not isinstance(v,bool)}
-                if not numeric:continue
-                rec={'source_url':final,'article_title':title,'article_date':pd.isoformat() if pd else None,'identity_resolution':resolution,
-                     'bout_date':bout['date'],'fighter':fighter,'opponent':opponent,
-                     'rounds_observed':rounds_num(bout.get('rounds')),
-                     **{k:numeric.get(k) for k in (
-                       'total_landed','total_thrown','jab_landed','jab_thrown','power_landed','power_thrown',
-                       'total_landed_per_round','total_thrown_per_round',
-                       'jab_landed_per_round','jab_thrown_per_round',
-                       'power_landed_per_round','power_thrown_per_round')},
-                     'quality':'compubox_authored_boxingscene_explicit_numeric_summary_exact_date_pair'}
-                rows.append(rec);added+=1
-            diag['matched_articles_with_numeric_rows' if added else 'matched_articles_no_safe_numeric_pattern']+=1
+            article_added=0
+            for bout in bouts:
+                stats=parse_explicit_stats(text,bout['fighter_a'],bout['fighter_b'])
+                bout_added=0
+                for fighter,opponent in [(bout['fighter_a'],bout['fighter_b']),(bout['fighter_b'],bout['fighter_a'])]:
+                    st=stats.get(fighter) or {}
+                    if st.get('_invalid_conflict'):continue
+                    numeric={k:v for k,v in st.items() if isinstance(v,(int,float)) and not isinstance(v,bool)}
+                    if not numeric:continue
+                    rec={'source_url':final,'article_title':title,'article_date':pd.isoformat() if pd else None,'identity_resolution':resolution,
+                         'bout_date':bout['date'],'fighter':fighter,'opponent':opponent,
+                         'rounds_observed':rounds_num(bout.get('rounds')),
+                         **{k:numeric.get(k) for k in (
+                           'total_landed','total_thrown','jab_landed','jab_thrown','power_landed','power_thrown',
+                           'total_landed_per_round','total_thrown_per_round',
+                           'jab_landed_per_round','jab_thrown_per_round',
+                           'power_landed_per_round','power_thrown_per_round')},
+                         'quality':'compubox_authored_boxingscene_explicit_numeric_summary_exact_date_pair'}
+                    rows.append(rec);bout_added+=1;article_added+=1
+                if bout_added:diag['matched_bouts_with_numeric_rows']+=1
+                else:diag['matched_bouts_no_safe_numeric_pattern']+=1
+            diag['matched_articles_with_numeric_rows' if article_added else 'matched_articles_no_safe_numeric_pattern']+=1
             if i%25==0:print('PROGRESS',i,'ROWS',len(rows),dict(diag),flush=True)
         except Exception as e:
             fail.append({'url':url,'error':str(e)[:220]});diag['fetch_or_parse_failure']+=1
