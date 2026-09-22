@@ -377,10 +377,10 @@ def parse_explicit_stats(text,a,b):
     # "Juarez averaged 47 punches thrown per round and landed 18%"
     # "Concepcion landed 37% of the 39 total punches he threw per round"
     for f,p in [(a,pa),(b,pb)]:
-        rx=re.compile(p+r'.{0,120}?(?:averag(?:ed|ing)|avg\.?d?)\s+(?:just\s+)?(\d+(?:\.\d+)?)\s+(?:total\s+)?punches?\s+thrown\s+per\s+round.{0,90}?(?:landed|landing)\s+(\d+(?:\.\d+)?)%',re.I)
+        rx=re.compile(p+r'[^.!?]{0,120}?(?:averag(?:ed|ing)|avg\.?d?)\s+(?:just\s+)?(\d+(?:\.\d+)?)\s+(?:total\s+)?punches?\s+thrown\s+per\s+round[^.!?]{0,90}?(?:landed|landing)\s+(\d+(?:\.\d+)?)%',re.I)
         for m in rx.finditer(txt):
             setv(f,'total_thrown_per_round',m.group(1));setv(f,'total_accuracy_pct',m.group(2))
-        rx=re.compile(p+r'.{0,100}?(?:landed|landing)\s+(\d+(?:\.\d+)?)%\s+of\s+(?:the\s+)?(\d+(?:\.\d+)?)\s+(?:total\s+)?punches?\s+(?:he|she)\s+threw\s+per\s+round',re.I)
+        rx=re.compile(p+r'[^.!?]{0,100}?(?:landed|landing)\s+(\d+(?:\.\d+)?)%\s+of\s+(?:the\s+)?(\d+(?:\.\d+)?)\s+(?:total\s+)?punches?\s+(?:he|she)\s+threw\s+per\s+round',re.I)
         for m in rx.finditer(txt):
             setv(f,'total_accuracy_pct',m.group(1));setv(f,'total_thrown_per_round',m.group(2))
 
