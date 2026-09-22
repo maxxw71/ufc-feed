@@ -550,6 +550,18 @@ def parse_prefight_baselines(text,a,b):
             am=re.search(r'landed\s+(\d+(?:\.\d+)?)%\s+of\s+(?:his|her)\s+power\s+(?:punches|shots)',seg,re.I)
             if am:setv(f,'power_accuracy_pct',am.group(1))
 
+        # In an explicitly historical-review article, the numeric history
+        # window can be declared in one sentence and the fighter's historical
+        # accuracy in the immediately following sentence. Only allow this after
+        # an explicit history_window_fights value has already been established
+        # for that fighter.
+        if out[f].get('history_window_fights') is not None:
+            rx=re.compile(
+                p+r'[^.!?]{0,520}?landed\s+(\d+(?:\.\d+)?)%\s+of\s+'
+                r'(?:his|her)\s+power\s+(?:punches|shots)',re.I)
+            for m in rx.finditer(txt):
+                setv(f,'power_accuracy_pct',m.group(1))
+
         # "Hopkins ... avg'd just 37.8 thrown and 12.9 landed in his 14 fights..."
         rx=re.compile(
             p+r'[^.!?]{0,160}?(?:avg\.?d?|averaged)\s+(?:just\s+)?(\d+(?:\.\d+)?)\s+thrown'
