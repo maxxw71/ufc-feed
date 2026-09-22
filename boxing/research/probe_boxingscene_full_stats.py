@@ -20,6 +20,32 @@ def fetch(url,limit=6_000_000):
         if len(raw)>limit:raise ValueError('too large')
         return r.geturl(),raw,r.headers.get('content-type')
 
+
+def archive_candidates(url,limit=6):
+    q=urllib.parse.urlencode({
+      'url':url,'output':'json','fl':'timestamp,original,statuscode,mimetype,digest',
+      'filter':['statuscode:200','mimetype:text/html'],'collapse':'digest'
+    },doseq=True)
+    api='https://web.archive.org/cdx/search/cdx?'+q
+    req=urllib.request.Request(api,headers={'User-Agent':UA})
+    with urllib.request.urlopen(req,timeout=40) as r:
+        data=json.loads(r.read(2_000_000).decode('utf-8','replace'))
+    rows=data[1:] if data and isinstance(data[0],list) else []
+    rows=sorted(rows,key=lambda x:x[0])
+    return [f'https://web.archive.org/web/{x[0]}/{x[1]}' for x in rows[:limit]]
+
+def fetch_with_archive(url):
+    try:
+        return fetch(url),None
+    except Exception as first:
+        errs=[repr(first)]
+    for archived in archive_candidates(url):
+        try:
+            return fetch(archived),archived
+        except Exception as e:
+            errs.append(repr(e))
+    raise RuntimeError('current+archive fetch failed: '+' | '.join(errs[:6]))
+
 def table_rows(soup):
     out=[]
     for ti,t in enumerate(soup.find_all('table')):
@@ -37,10 +63,10 @@ def main():
     for x in targets:
         url=x['url'];item={'url':url,'label':x.get('label'),'article_urls':x.get('article_urls')}
         try:
-            final,raw,ct=fetch(url);soup=BeautifulSoup(raw,'lxml')
+            (final,raw,ct),archive_url=fetch_with_archive(url);soup=BeautifulSoup(raw,'lxml')
             text=re.sub(r'\s+',' ',' '.join(soup.stripped_strings)).strip()
             item.update({
-              'final':final,'content_type':ct,'bytes':len(raw),
+              'final':final,'archive_url':archive_url,'content_type':ct,'bytes':len(raw),
               'title':soup.title.get_text(' ',strip=True) if soup.title else None,
               'h1':[re.sub(r'\s+',' ',h.get_text(' ',strip=True)).strip() for h in soup.find_all('h1')][:6],
               'tables':table_rows(soup),
