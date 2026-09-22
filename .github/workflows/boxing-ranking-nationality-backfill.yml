@@ -1,0 +1,46 @@
+name: Boxing Ranking Nationality Backfill
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'boxing/research/backfill_ranking_nationalities.py'
+      - '.github/workflows/boxing-ranking-nationality-backfill.yml'
+      - 'boxing/rankings/wba_monthly_rankings.json'
+      - 'boxing/rankings/ibf_monthly_rankings.json'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  enrich:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install --disable-pip-version-check pycountry
+      - name: Fill nationality from official ranking consensus
+        run: python boxing/research/backfill_ranking_nationalities.py
+      - name: Persist nationality supplements on latest main
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          mkdir -p /tmp/boxing-nationality
+          cp boxing/profile_supplements/verified_profiles.jsonl /tmp/boxing-nationality/verified_profiles.jsonl
+          cp boxing/profile_supplements/ranking_nationality_backfill_report.json /tmp/boxing-nationality/report.json
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git fetch origin main
+          git reset --hard origin/main
+          cp /tmp/boxing-nationality/verified_profiles.jsonl boxing/profile_supplements/verified_profiles.jsonl
+          cp /tmp/boxing-nationality/report.json boxing/profile_supplements/ranking_nationality_backfill_report.json
+          git add boxing/profile_supplements/verified_profiles.jsonl boxing/profile_supplements/ranking_nationality_backfill_report.json
+          if git diff --cached --quiet; then
+            echo 'No ranking-nationality changes.'
+          else
+            git commit -m 'Expand boxer nationalities from official rankings'
+            git push origin HEAD:main
+          fi
