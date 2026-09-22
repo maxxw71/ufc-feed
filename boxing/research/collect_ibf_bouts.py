@@ -33,7 +33,14 @@ def norm(s):
 
 def participant(raw):
     s=re.sub(r'\s+',' ',str(raw or '')).strip()
-    m=re.match(r'^(.*?)\s*\(([A-Z]{2,4})\)\s*
+    m=re.match(r'^(.*?)\s*\(([A-Z]{2,4})\)\s*$',s)
+    if m:
+        return m.group(1).strip(),m.group(2).upper()
+    return s,None
+
+def person(raw):
+    return participant(raw)[0]
+
 def surname(s):
     toks=re.findall(r"[A-Za-zÀ-ÿ0-9'-]+",str(s or ''))
     while toks and toks[-1].lower().rstrip('.') in {'jr','sr','ii','iii','iv'}:toks.pop()
