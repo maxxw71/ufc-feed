@@ -1,7 +1,7 @@
 import datetime as dt
 import unittest
 
-from collect_boxingscene_compubox_summaries import resolve_bouts
+from collect_boxingscene_compubox_summaries import resolve_bouts,parse_explicit_stats
 
 class BoxingSceneCompuBoxResolutionTests(unittest.TestCase):
     def test_multi_fight_title_resolves_two_unique_pairs(self):
@@ -36,6 +36,24 @@ class BoxingSceneCompuBoxResolutionTests(unittest.TestCase):
         bouts,quality=resolve_bouts('Pacquiao-Bradley CompuBox Historical Review',None,{},items)
         self.assertEqual([],bouts)
         self.assertIsNone(quality)
+
+    def test_khan_malignaggi_jab_counts(self):
+        text="Amir Khan threw 369 jabs and landed 151 for a 41% margin. Paulie Malignaggi only threw 280 jabs and could only land 20% or 57."
+        out=parse_explicit_stats(text,'Amir Khan','Paulie Malignaggi')
+        self.assertEqual(out['Amir Khan']['jab_thrown'],369)
+        self.assertEqual(out['Amir Khan']['jab_landed'],151)
+        self.assertEqual(out['Paulie Malignaggi']['jab_thrown'],280)
+        self.assertEqual(out['Paulie Malignaggi']['jab_landed'],57)
+
+    def test_explicit_accuracy_and_per_round_activity(self):
+        text=("Bernabe Concepcion landed 37% of the 39 total punches he threw per round and 47% of his power shots. "
+              "Mario Santiago averaged 79 punches thrown per round and landed 20%.")
+        out=parse_explicit_stats(text,'Bernabe Concepcion','Mario Santiago')
+        self.assertEqual(out['Bernabe Concepcion']['total_accuracy_pct'],37.0)
+        self.assertEqual(out['Bernabe Concepcion']['total_thrown_per_round'],39.0)
+        self.assertEqual(out['Bernabe Concepcion']['power_accuracy_pct'],47.0)
+        self.assertEqual(out['Mario Santiago']['total_thrown_per_round'],79.0)
+        self.assertEqual(out['Mario Santiago']['total_accuracy_pct'],20.0)
 
 if __name__=='__main__':
     unittest.main()
