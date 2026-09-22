@@ -24,6 +24,7 @@ DB=ROOT/'research'/'boxing.sqlite3'
 OUTDIR=ROOT/'punch_supplements';OUTDIR.mkdir(parents=True,exist_ok=True)
 OUT=OUTDIR/'boxingscene_compubox_summaries.jsonl'
 REPORT=OUTDIR/'boxingscene_compubox_summary_report.json'
+SEEDS=ROOT/'research'/'boxingscene_compubox_seed_urls.json'
 START='https://www.boxingscene.com/author/COMPUBOX'
 UA='Mozilla/5.0 AppwizaBoxingCompuBoxSummary/1.0'
 
@@ -70,6 +71,13 @@ def pub_date(soup):
 
 def crawl_articles(max_index_pages=25,max_articles=500):
     queue=deque([START]);seen_pages=set();articles=[];seen_articles=set()
+    if SEEDS.exists():
+        try:
+            for url in json.loads(SEEDS.read_text()).get('urls',[]):
+                if url not in seen_articles:
+                    seen_articles.add(url);articles.append(url)
+        except Exception as e:
+            print('SEED_READ_FAIL',str(e),flush=True)
     while queue and len(seen_pages)<max_index_pages and len(articles)<max_articles:
         url=queue.popleft()
         if url in seen_pages:continue
@@ -163,8 +171,8 @@ def parse_explicit_stats(text,a,b):
 
     def setv(f,key,val):
         if val is None:return
-        val=int(val)
-        if key in out[f] and out[f][key]!=val:
+        val=float(val) if ('_per_round' in key or '_pct' in key) else int(val)
+        if key in out[f] and abs(float(out[f][key])-float(val))>1e-9:
             out[f]['_conflict']=True
         else:out[f][key]=val
 
@@ -198,12 +206,52 @@ def parse_explicit_stats(text,a,b):
             for key,v1,v2 in [('total_landed',m.group(1),m.group(2)),('jab_landed',m.group(3),m.group(4)),('power_landed',m.group(5),m.group(6))]:
                 setv(f1,key,v1);setv(f2,key,v2)
 
-    # "Thurman had a 168-100 edge in power punches landed"
+    # "Thurman had a 168-100 edge in power punches/shots landed"
     for f1,f2,p1 in [(a,b,pa),(b,a,pb)]:
-        for cat,key in [('total punches','total_landed'),('jabs','jab_landed'),('power punches','power_landed')]:
-            rx=re.compile(p1+r'.{0,100}?(\d+)\s*[-–]\s*(\d+)\s+(?:edge|advantage).{0,40}?'+re.escape(cat)+r'.{0,20}?landed',re.I)
+        for cat_pat,key in [
+            (r'total\s+punches?', 'total_landed'),
+            (r'jabs?', 'jab_landed'),
+            (r'power\s+(?:punches|shots)', 'power_landed')
+        ]:
+            rx=re.compile(p1+r'.{0,120}?(\d+)\s*[-–]\s*(\d+)\s+(?:edge|advantage).{0,50}?'+cat_pat+r'.{0,25}?landed',re.I)
             for m in rx.finditer(txt):
                 setv(f1,key,m.group(1));setv(f2,key,m.group(2))
+
+    # "Figueroa landed an avg. of 40 of 79 punches per round- Arakawa landed 23 of 98 per round"
+    for f1,f2,p1,p2 in [(a,b,pa,pb),(b,a,pb,pa)]:
+        rx=re.compile(
+            p1+r'.{0,80}?landed\s+(?:an?\s+)?(?:avg\.?|average)?\s*(?:of\s+)?'
+            r'(\d+(?:\.\d+)?)\s+of\s+(\d+(?:\.\d+)?)\s+(?:total\s+)?punches?\s+per\s+round'
+            r'.{0,120}?'+p2+r'.{0,50}?landed\s+(\d+(?:\.\d+)?)\s+of\s+(\d+(?:\.\d+)?)\s+per\s+round',re.I)
+        for m in rx.finditer(txt):
+            setv(f1,'total_landed_per_round',m.group(1));setv(f1,'total_thrown_per_round',m.group(2))
+            setv(f2,'total_landed_per_round',m.group(3));setv(f2,'total_thrown_per_round',m.group(4))
+
+    # "Jacobs landed 17 of 53 per round."
+    for f,p in [(a,pa),(b,pb)]:
+        rx=re.compile(p+r'.{0,80}?landed\s+(\d+(?:\.\d+)?)\s+of\s+(\d+(?:\.\d+)?)\s+(?:total\s+)?(?:punches?\s+)?per\s+round',re.I)
+        for m in rx.finditer(txt):
+            setv(f,'total_landed_per_round',m.group(1));setv(f,'total_thrown_per_round',m.group(2))
+
+    # "Hopkins averaged 41 punches thrown per round, landing 9 per round"
+    for f,p in [(a,pa),(b,pb)]:
+        rx=re.compile(p+r'.{0,100}?(?:averaged|avg[.]?d?)\s+(\d+(?:\.\d+)?)\s+(?:total\s+)?punches?\s+thrown\s+per\s+round.{0,80}?(?:landing|landed)\s+(\d+(?:\.\d+)?)\s+per\s+round',re.I)
+        for m in rx.finditer(txt):
+            setv(f,'total_thrown_per_round',m.group(1));setv(f,'total_landed_per_round',m.group(2))
+
+    # Single-fighter explicit category totals, e.g. "Golovkin ... landing 53 of 108 jabs and 52 of 97 power shots."
+    for f,p in [(a,pa),(b,pb)]:
+        rx=re.compile(p+r'.{0,160}?(?:landed|landing)\s+(\d+)\s+of\s+(\d+)\s+jabs?.{0,80}?(\d+)\s+of\s+(\d+)\s+power\s+(?:punches|shots)',re.I)
+        for m in rx.finditer(txt):
+            setv(f,'jab_landed',m.group(1));setv(f,'jab_thrown',m.group(2))
+            setv(f,'power_landed',m.group(3));setv(f,'power_thrown',m.group(4))
+
+    # "Murata ... out-land N'Dam 95-80 overall and 71-56 power"
+    for f1,f2,p1,p2 in [(a,b,pa,pb),(b,a,pb,pa)]:
+        rx=re.compile(p1+r'.{0,160}?out[- ]?land(?:ed)?\s+'+p2+r'\s+(\d+)\s*[-–]\s*(\d+)\s+(?:overall|total).{0,70}?(\d+)\s*[-–]\s*(\d+)\s+power',re.I)
+        for m in rx.finditer(txt):
+            setv(f1,'total_landed',m.group(1));setv(f2,'total_landed',m.group(2))
+            setv(f1,'power_landed',m.group(3));setv(f2,'power_landed',m.group(4))
 
     for f in (a,b):
         if out[f].pop('_conflict',False):out[f]={'_invalid_conflict':True}
@@ -242,13 +290,16 @@ def main():
             for fighter,opponent in [(bout['fighter_a'],bout['fighter_b']),(bout['fighter_b'],bout['fighter_a'])]:
                 st=stats.get(fighter) or {}
                 if st.get('_invalid_conflict'):continue
-                numeric={k:v for k,v in st.items() if isinstance(v,int)}
+                numeric={k:v for k,v in st.items() if isinstance(v,(int,float)) and not isinstance(v,bool)}
                 if not numeric:continue
                 rec={'source_url':final,'article_title':title,'article_date':pd.isoformat() if pd else None,'identity_resolution':resolution,
                      'bout_date':bout['date'],'fighter':fighter,'opponent':opponent,
                      'rounds_observed':rounds_num(bout.get('rounds')),
                      **{k:numeric.get(k) for k in (
-                       'total_landed','total_thrown','jab_landed','jab_thrown','power_landed','power_thrown')},
+                       'total_landed','total_thrown','jab_landed','jab_thrown','power_landed','power_thrown',
+                       'total_landed_per_round','total_thrown_per_round',
+                       'jab_landed_per_round','jab_thrown_per_round',
+                       'power_landed_per_round','power_thrown_per_round')},
                      'quality':'compubox_authored_boxingscene_explicit_numeric_summary_exact_date_pair'}
                 rows.append(rec);added+=1
             diag['matched_articles_with_numeric_rows' if added else 'matched_articles_no_safe_numeric_pattern']+=1
