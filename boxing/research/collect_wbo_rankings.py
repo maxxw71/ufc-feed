@@ -183,7 +183,13 @@ def parse_pdf(raw,post_date,source_url,article_url):
                 if rank in seen_ranks:
                     continue
                 name=clean_name(rm.group(2))
-                if name and not re.match(r'^(removed|vacant|not rated)\b',name,re.I):
+                bad_sentence=(
+                    len(name)>100
+                    or bool(re.match(r'^\d+[).]\s*',name))
+                    or bool(re.search(r'\b(?:won|lost|defeated|bout against|round bout|on [A-Z][a-z]{2}\.)\b',name,re.I))
+                    or name.count('.')>=3
+                )
+                if name and not bad_sentence and not re.match(r'^(removed|vacant|not rated)\b',name,re.I):
                     ranks.append({'division':div,'rank':rank,'name':name,
                                   'safe_effective_date':post_date.isoformat(),
                                   'rating_year':rating_year,'rating_month':rating_month,
