@@ -10,10 +10,17 @@ on:
       - 'boxing/rankings/ibf_monthly_rankings.json'
       - 'boxing/official_bouts/ibf_bouts.json'
   workflow_dispatch:
+  workflow_run:
+    workflows:
+      - Boxing IBF Official Bout Archive
+      - Boxing WBC Monthly Rankings Archive
+    types: [completed]
+    branches: [main]
 permissions:
   contents: write
 jobs:
   enrich:
+    if: github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success'
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
