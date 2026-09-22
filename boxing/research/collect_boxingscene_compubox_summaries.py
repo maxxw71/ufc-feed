@@ -248,6 +248,7 @@ def parse_explicit_stats(text,a,b):
         val=float(val) if ('_per_round' in key or '_pct' in key) else int(val)
         if key in out[f] and abs(float(out[f][key])-float(val))>1e-9:
             out[f]['_conflict']=True
+            out[f].setdefault('_conflict_details',[]).append({'field':key,'old':out[f][key],'new':val})
         else:out[f][key]=val
 
     # "Martinez landed 226 of 593 total punches ... to 161 of 413 ... for Dzinziruk"
@@ -378,7 +379,9 @@ def parse_explicit_stats(text,a,b):
             setv(f1,'power_landed',m.group(3));setv(f2,'power_landed',m.group(4))
 
     for f in (a,b):
-        if out[f].pop('_conflict',False):out[f]={'_invalid_conflict':True}
+        if out[f].pop('_conflict',False):
+            details=out[f].get('_conflict_details',[])
+            out[f]={'_invalid_conflict':True,'_conflict_details':details}
         # arithmetic sanity when enough fields exist
         if all(k in out[f] for k in ('total_landed','jab_landed','power_landed')):
             if out[f]['jab_landed']+out[f]['power_landed']!=out[f]['total_landed']:
