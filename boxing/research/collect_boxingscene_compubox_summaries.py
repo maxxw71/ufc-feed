@@ -23,6 +23,7 @@ ROOT=Path(__file__).resolve().parents[1]
 DB=ROOT/'research'/'boxing.sqlite3'
 OUTDIR=ROOT/'punch_supplements';OUTDIR.mkdir(parents=True,exist_ok=True)
 OUT=OUTDIR/'boxingscene_compubox_summaries.jsonl'
+PREFIGHT_OUT=OUTDIR/'boxingscene_compubox_prefight_baselines.jsonl'
 REPORT=OUTDIR/'boxingscene_compubox_summary_report.json'
 SEEDS=ROOT/'research'/'boxingscene_compubox_seed_urls.json'
 START='https://www.boxingscene.com/author/COMPUBOX'
@@ -434,6 +435,53 @@ def parse_explicit_stats(text,a,b):
             setv(f1,'total_landed',m.group(1));setv(f2,'total_landed',m.group(2))
             setv(f1,'power_landed',m.group(3));setv(f2,'power_landed',m.group(4))
 
+
+    # "Sturm landed an avg. of 8 punches per round."
+    for f,p in [(a,pa),(b,pb)]:
+        rx=re.compile(p+r'[^.!?]{0,90}?landed\s+(?:an?\s+)?(?:avg\.?|average)\s+(?:of\s+)?(\d+(?:\.\d+)?)\s+(?:total\s+)?punches?\s+per\s+round',re.I)
+        for m in rx.finditer(txt):setv(f,'total_landed_per_round',m.group(1))
+
+        # "Zab landed 59% of his power shots - but averaged just 6 landed/11 thrown per round."
+        rx=re.compile(
+            p+r'[^.!?]{0,90}?landed\s+(\d+(?:\.\d+)?)%\s+of\s+(?:his|her)\s+power\s+(?:punches|shots)'
+            r'[^.!?]{0,100}?averaged\s+(?:just\s+)?(\d+(?:\.\d+)?)\s+landed\s*/\s*(\d+(?:\.\d+)?)\s+thrown\s+per\s+round',re.I)
+        for m in rx.finditer(txt):
+            setv(f,'power_accuracy_pct',m.group(1));setv(f,'power_landed_per_round',m.group(2));setv(f,'power_thrown_per_round',m.group(3))
+
+        # "Khan ... with his jab (5 of 28 per round)"
+        rx=re.compile(p+r'[^.!?]{0,120}?\bjab\b[^.!?]{0,60}?\(\s*(\d+(?:\.\d+)?)\s+of\s+(\d+(?:\.\d+)?)\s+per\s+round\s*\)',re.I)
+        for m in rx.finditer(txt):
+            setv(f,'jab_landed_per_round',m.group(1));setv(f,'jab_thrown_per_round',m.group(2))
+
+        # "... averaging just 33 punches thrown per frame"
+        rx=re.compile(p+r'[^.!?]{0,120}?(?:averaging|averaged)\s+(?:just\s+)?(\d+(?:\.\d+)?)\s+punches?\s+thrown\s+per\s+(?:frame|round)',re.I)
+        for m in rx.finditer(txt):setv(f,'total_thrown_per_round',m.group(1))
+
+        # "Crawford landed 50% of his non-jabs"
+        rx=re.compile(p+r'[^.!?]{0,100}?landed\s+(\d+(?:\.\d+)?)%\s+of\s+(?:his|her)\s+non[- ]jabs',re.I)
+        for m in rx.finditer(txt):setv(f,'power_accuracy_pct',m.group(1))
+
+        # "Wilder averaged 8.6 power shots thrown per round (4 landed) vs. Washington"
+        rx=re.compile(
+            p+r'[^.!?]{0,120}?(?:averaged|avg\.?d?)\s+(?:just\s+)?(\d+(?:\.\d+)?)\s+power\s+(?:shots|punches)\s+thrown\s+per\s+round'
+            r'\s*\(\s*(\d+(?:\.\d+)?)\s+landed\s*\)',re.I)
+        for m in rx.finditer(txt):
+            setv(f,'power_thrown_per_round',m.group(1));setv(f,'power_landed_per_round',m.group(2))
+
+        # "Ramirez's pressure (67 thrown per round) and power punching (19 of 45 per round)"
+        rx=re.compile(p+r"['’]s\s+pressure\s*\(\s*(\d+(?:\.\d+)?)\s+thrown\s+per\s+round\s*\)",re.I)
+        for m in rx.finditer(txt):setv(f,'total_thrown_per_round',m.group(1))
+        rx=re.compile(p+r"[^.!?]{0,120}?power\s+punching\s*\(\s*(\d+(?:\.\d+)?)\s+of\s+(\d+(?:\.\d+)?)\s+per\s+round\s*\)",re.I)
+        for m in rx.finditer(txt):
+            setv(f,'power_landed_per_round',m.group(1));setv(f,'power_thrown_per_round',m.group(2))
+
+        # "controlled the fight with his jab, landing an average of 9 of 29 thrown per round"
+        rx=re.compile(
+            p+r'[^.!?]{0,120}?\bjab\b[^.!?]{0,100}?landing\s+(?:an?\s+)?average\s+of\s+'
+            r'(\d+(?:\.\d+)?)\s+of\s+(\d+(?:\.\d+)?)\s+thrown\s+per\s+round',re.I)
+        for m in rx.finditer(txt):
+            setv(f,'jab_landed_per_round',m.group(1));setv(f,'jab_thrown_per_round',m.group(2))
+
     for f in (a,b):
         if out[f].pop('_conflict',False):
             details=out[f].get('_conflict_details',[])
@@ -445,6 +493,83 @@ def parse_explicit_stats(text,a,b):
         for cat in ('total','jab','power'):
             l=out[f].get(cat+'_landed');t=out[f].get(cat+'_thrown')
             if l is not None and t is not None and not (0<=l<=t):out[f]={'_invalid_conflict':True}
+    return out
+
+
+def is_historical_review(title,text):
+    head=(str(title or '')+' '+str(text or '')[:2200]).casefold()
+    return bool(
+        re.search(r'\bhistorical\s+(?:review|look|punch\s+stats?)\b',head)
+        or re.search(r'\blast\s+\d+\s+fights?\b',head)
+        or re.search(r'\bprevious\s+\d+\s+fights?\b',head)
+        or re.search(r'\bin\s+(?:his|her)\s+\d+\s+fights?\b',head)
+    )
+
+def parse_prefight_baselines(text,a,b):
+    """Parse only explicitly historical aggregate windows.
+
+    These metrics describe prior fights and are attached directly to the target
+    bout as pre-fight-known context; they are never inserted as current-fight
+    punch observations.
+    """
+    txt=unicodedata.normalize('NFKD',str(text or '')).encode('ascii','ignore').decode()
+    out={a:{},b:{}}
+
+    def setv(f,key,val):
+        if val is None:return
+        v=float(val)
+        if key in out[f] and abs(float(out[f][key])-v)>1e-9:
+            out[f]['_conflict']=True
+        else:out[f][key]=v
+
+    for f in (a,b):
+        p=fighter_patterns(f)
+        # "Charlo (last 5 fights) averaged just 13.6 landed/43.1 thrown"
+        rx=re.compile(
+            p+r'\s*\(\s*last\s+(\d+)\s+fights?\s*\)[^.!?]{0,90}?'
+            r'(?:averaged|avg\.?d?)\s+(?:just\s+)?(\d+(?:\.\d+)?)\s+landed\s*/\s*(\d+(?:\.\d+)?)\s+thrown',re.I)
+        for m in rx.finditer(txt):
+            setv(f,'history_window_fights',m.group(1))
+            setv(f,'total_landed_per_round',m.group(2))
+            setv(f,'total_thrown_per_round',m.group(3))
+
+        # Historical-window sentence-local jabs / power rates and accuracy.
+        for m in re.finditer(p+r'\s*\(\s*last\s+(\d+)\s+fights?\s*\)([^.!?]{0,360})',txt,re.I):
+            setv(f,'history_window_fights',m.group(1));seg=m.group(2)
+            jm=re.search(r'landed\s+(\d+(?:\.\d+)?)\s+jabs?\s+per\s+round',seg,re.I)
+            if jm:setv(f,'jab_landed_per_round',jm.group(1))
+            pm=re.search(r'(?:just\s+)?(\d+(?:\.\d+)?)\s+power\s+(?:punches|shots)\s+per\s+round(?:\s*\((\d+(?:\.\d+)?)%\))?',seg,re.I)
+            if pm:
+                setv(f,'power_landed_per_round',pm.group(1))
+                if pm.group(2):setv(f,'power_accuracy_pct',pm.group(2))
+
+        # "Garcia (last 12 fights) ... landed 40.3% of his power punches"
+        rx=re.compile(p+r'\s*\(\s*last\s+(\d+)\s+fights?\s*\)([^.!?]{0,300})',re.I)
+        for m in rx.finditer(txt):
+            setv(f,'history_window_fights',m.group(1));seg=m.group(2)
+            am=re.search(r'landed\s+(\d+(?:\.\d+)?)%\s+of\s+(?:his|her)\s+power\s+(?:punches|shots)',seg,re.I)
+            if am:setv(f,'power_accuracy_pct',am.group(1))
+
+        # "Hopkins ... avg'd just 37.8 thrown and 12.9 landed in his 14 fights..."
+        rx=re.compile(
+            p+r'[^.!?]{0,160}?(?:avg\.?d?|averaged)\s+(?:just\s+)?(\d+(?:\.\d+)?)\s+thrown'
+            r'\s+and\s+(\d+(?:\.\d+)?)\s+landed\s+in\s+(?:his|her)\s+(\d+)\s+fights?',re.I)
+        for m in rx.finditer(txt):
+            setv(f,'total_thrown_per_round',m.group(1))
+            setv(f,'total_landed_per_round',m.group(2))
+            setv(f,'history_window_fights',m.group(3))
+
+        # "Rios' last 7 opponents landed 40.8% ... while Rios landed 38.5%"
+        rx=re.compile(
+            p+r"['’]s\s+last\s+(\d+)\s+opponents?[^.!?]{0,120}?landed\s+(\d+(?:\.\d+)?)%\s+of\s+(?:their\s+)?power\s+(?:punches|shots)"
+            r'[^.!?]{0,100}?'+p+r'\s+landed\s+(\d+(?:\.\d+)?)%',re.I)
+        for m in rx.finditer(txt):
+            setv(f,'history_window_fights',m.group(1))
+            setv(f,'opponent_power_accuracy_pct',m.group(2))
+            setv(f,'power_accuracy_pct',m.group(3))
+
+        if out[f].pop('_conflict',False):
+            out[f]={'_invalid_conflict':True}
     return out
 
 def rounds_num(v):
@@ -501,7 +626,7 @@ def main():
     ap=argparse.ArgumentParser();ap.add_argument('--articles',type=int,default=400);args=ap.parse_args()
     if not DB.exists():raise SystemExit('missing boxing.sqlite3')
     bydate,allitems=local_bouts();urls=crawl_articles(max_articles=args.articles)
-    rows=[];diag=defaultdict(int);fail=[];unresolved_sample=[];no_numeric_sample=[];full_stat_targets={}
+    rows=[];prefight_rows=[];diag=defaultdict(int);fail=[];unresolved_sample=[];no_numeric_sample=[];full_stat_targets={}
     for i,url in enumerate(urls,1):
         try:
             final,raw=fetch(url);soup=BeautifulSoup(raw,'lxml')
@@ -528,8 +653,30 @@ def main():
             text=raw_text
             article_added=0
             article_bout_labels=[]
+            historical_mode=is_historical_review(title,text)
             for bout in bouts:
                 article_bout_labels.append({'date':bout['date'],'fighter_a':bout['fighter_a'],'fighter_b':bout['fighter_b']})
+                if historical_mode:
+                    histstats=parse_prefight_baselines(text,bout['fighter_a'],bout['fighter_b'])
+                    hist_added=0
+                    for fighter,opponent in [(bout['fighter_a'],bout['fighter_b']),(bout['fighter_b'],bout['fighter_a'])]:
+                        st=histstats.get(fighter) or {}
+                        if st.get('_invalid_conflict'):continue
+                        numeric={k:v for k,v in st.items() if isinstance(v,(int,float)) and not isinstance(v,bool)}
+                        if not numeric:continue
+                        aliases=[fighter]
+                        prefight_rows.append({
+                          'source_url':final,'article_title':title,'article_date':pd.isoformat() if pd else None,
+                          'target_bout_date':bout['date'],'fighter':fighter,'fighter_aliases':aliases,'opponent':opponent,
+                          **numeric,
+                          'quality':'compubox_authored_boxingscene_explicit_historical_prefight_aggregate',
+                          'timing_evidence':'historical_window_text_explicitly_excludes_current_bout'
+                        })
+                        hist_added+=1
+                    if hist_added:
+                        diag['prefight_historical_baseline_rows']+=hist_added
+                        diag['prefight_historical_baseline_bouts']+=1
+                    continue
                 stats=parse_explicit_stats(text,bout['fighter_a'],bout['fighter_b'])
                 bout_added=0
                 for fighter,opponent in [(bout['fighter_a'],bout['fighter_b']),(bout['fighter_b'],bout['fighter_a'])]:
@@ -565,9 +712,12 @@ def main():
     diag['alias_dedup_conflicts_quarantined']=len(dedupe_conflicts)
     with OUT.open('w',encoding='utf-8') as fh:
         for r in rows:fh.write(json.dumps(r,ensure_ascii=False)+'\n')
+    with PREFIGHT_OUT.open('w',encoding='utf-8') as fh:
+        for r in prefight_rows:fh.write(json.dumps(r,ensure_ascii=False)+'\n')
     report={
       'generated_at':dt.datetime.now(dt.timezone.utc).isoformat(),
-      'articles_discovered':len(urls),'summary_rows':len(rows),
+      'articles_discovered':len(urls),'summary_rows':len(rows),'prefight_historical_baseline_rows':len(prefight_rows),
+      'prefight_historical_baseline_bouts':len({(r['target_bout_date'],tuple(sorted([norm(r['fighter']),norm(r['opponent'])]))) for r in prefight_rows}),
       'distinct_bouts':len({(r['bout_date'],tuple(sorted([norm(r['fighter']),norm(r['opponent'])]))) for r in rows}),
       'date_min':min((r['bout_date'] for r in rows),default=None),
       'date_max':max((r['bout_date'] for r in rows),default=None),
@@ -575,7 +725,7 @@ def main():
       'explicit_full_stat_targets':list(full_stat_targets.values()),
       'explicit_full_stat_target_count':len(full_stat_targets),
       'matched_no_numeric_sample':no_numeric_sample,'alias_dedup_conflicts_sample':dedupe_conflicts[:40],'failures_sample':fail[:80],
-      'policy':'CompuBox-authored BoxingScene articles only; unique local date+pair; explicit numeric patterns only; separate summary tier from full round reports.'
+      'policy':'CompuBox-authored BoxingScene articles only; unique local date+pair; explicit numeric patterns only. Post-fight summaries are separate from full round reports. Historical-review/last-N-fights aggregates are excluded from current-fight observations and stored only as direct pre-fight baseline features.'
     }
     REPORT.write_text(json.dumps(report,indent=2,ensure_ascii=False))
     print(json.dumps(report,indent=2,ensure_ascii=False))
