@@ -1,13 +1,88 @@
 {
   "attempted": 60,
-  "accepted": 0,
-  "failed": 60,
-  "accepted_items": [],
+  "accepted": 9,
+  "failed": 51,
+  "accepted_items": [
+    {
+      "name": "Steven Butler",
+      "rows": 45,
+      "matched": 4,
+      "priced_bouts": 6
+    },
+    {
+      "name": "Liam Wilson",
+      "rows": 21,
+      "matched": 2,
+      "priced_bouts": 4
+    },
+    {
+      "name": "Karen Chukhadzhian",
+      "rows": 30,
+      "matched": 2,
+      "priced_bouts": 4
+    },
+    {
+      "name": "Manuel Gallegos",
+      "rows": 27,
+      "matched": 1,
+      "priced_bouts": 4
+    },
+    {
+      "name": "Nathaniel Gallimore",
+      "rows": 31,
+      "matched": 1,
+      "priced_bouts": 3
+    },
+    {
+      "name": "Giovanni Cabrera",
+      "rows": 25,
+      "matched": 1,
+      "priced_bouts": 3
+    },
+    {
+      "name": "Jonathan Rodriguez",
+      "rows": 22,
+      "matched": 1,
+      "priced_bouts": 3
+    },
+    {
+      "name": "Ali Akhmedov",
+      "rows": 28,
+      "matched": 2,
+      "priced_bouts": 3
+    },
+    {
+      "name": "Jon Fernandez",
+      "rows": 32,
+      "matched": 2,
+      "priced_bouts": 3
+    }
+  ],
   "failed_items": [
+    {
+      "name": "Chris Jenkins",
+      "priced_bouts": 5,
+      "error": "HTTP Error 404: Not Found"
+    },
+    {
+      "name": "Eduardo Baez",
+      "priced_bouts": 5,
+      "error": "HTTP Error 404: Not Found"
+    },
+    {
+      "name": "Gemma Ruegg",
+      "priced_bouts": 5,
+      "error": "HTTP Error 404: Not Found"
+    },
     {
       "name": "Vaida Masiokaite",
       "priced_bouts": 5,
-      "error": "HTTP Error 522: <none>"
+      "error": "HTTP Error 404: Not Found"
+    },
+    {
+      "name": "Joseph Adorno",
+      "priced_bouts": 4,
+      "error": "no exact priced date+opponent evidence match"
     },
     {
       "name": "Boris Crighton",
@@ -15,12 +90,22 @@
       "error": "HTTP Error 404: Not Found"
     },
     {
-      "name": "Gemma Ruegg",
+      "name": "Xolisani Ndongeni",
+      "priced_bouts": 4,
+      "error": "HTTP Error 404: Not Found"
+    },
+    {
+      "name": "Mickey Ellison",
       "priced_bouts": 4,
       "error": "HTTP Error 404: Not Found"
     },
     {
       "name": "Dan Garber",
+      "priced_bouts": 4,
+      "error": "HTTP Error 404: Not Found"
+    },
+    {
+      "name": "Stevi Levy",
       "priced_bouts": 4,
       "error": "HTTP Error 404: Not Found"
     },
@@ -35,12 +120,22 @@
       "error": "HTTP Error 404: Not Found"
     },
     {
-      "name": "Chris Jenkins",
+      "name": "River Wilson Bent",
       "priced_bouts": 3,
       "error": "HTTP Error 404: Not Found"
     },
     {
-      "name": "River Wilson Bent",
+      "name": "Erik Robles Ayala",
+      "priced_bouts": 3,
+      "error": "identity heading mismatch: 'Erik Robles'"
+    },
+    {
+      "name": "Jose Sanmartin",
+      "priced_bouts": 3,
+      "error": "incomplete career table 48/47"
+    },
+    {
+      "name": "Quinton Randall",
       "priced_bouts": 3,
       "error": "HTTP Error 404: Not Found"
     },
@@ -50,7 +145,7 @@
       "error": "HTTP Error 404: Not Found"
     },
     {
-      "name": "Xolisani Ndongeni",
+      "name": "Jeremia Nakathila",
       "priced_bouts": 3,
       "error": "HTTP Error 404: Not Found"
     },
@@ -70,7 +165,12 @@
       "error": "HTTP Error 404: Not Found"
     },
     {
-      "name": "Mickey Ellison",
+      "name": "Maria Micheo Santizo",
+      "priced_bouts": 3,
+      "error": "HTTP Error 404: Not Found"
+    },
+    {
+      "name": "Williams Andres Herrera",
       "priced_bouts": 3,
       "error": "HTTP Error 404: Not Found"
     },
@@ -78,6 +178,31 @@
       "name": "Bec Connolly",
       "priced_bouts": 3,
       "error": "HTTP Error 404: Not Found"
+    },
+    {
+      "name": "Kane Gardner",
+      "priced_bouts": 3,
+      "error": "HTTP Error 404: Not Found"
+    },
+    {
+      "name": "Peter Kramer",
+      "priced_bouts": 3,
+      "error": "HTTP Error 404: Not Found"
+    },
+    {
+      "name": "Romero Duno",
+      "priced_bouts": 3,
+      "error": "HTTP Error 404: Not Found"
+    },
+    {
+      "name": "Alex Martin",
+      "priced_bouts": 3,
+      "error": "HTTP Error 404: Not Found"
+    },
+    {
+      "name": "Alexander Espinoza",
+      "priced_bouts": 3,
+      "error": "incomplete career table 38/37"
     },
     {
       "name": "Diego Alberto Ruiz",
@@ -95,6 +220,11 @@
       "error": "HTTP Error 404: Not Found"
     },
     {
+      "name": "Ales Makovec",
+      "priced_bouts": 3,
+      "error": "HTTP Error 404: Not Found"
+    },
+    {
       "name": "Alvaro Terrero",
       "priced_bouts": 3,
       "error": "HTTP Error 404: Not Found"
@@ -105,9 +235,49 @@
       "error": "HTTP Error 404: Not Found"
     },
     {
+      "name": "Jino Rodrigo",
+      "priced_bouts": 3,
+      "error": "HTTP Error 404: Not Found"
+    },
+    {
+      "name": "Jordan Ellison",
+      "priced_bouts": 3,
+      "error": "HTTP Error 404: Not Found"
+    },
+    {
+      "name": "Jose Macias Enriquez",
+      "priced_bouts": 3,
+      "error": "HTTP Error 404: Not Found"
+    },
+    {
+      "name": "Karla Ramos Zamora",
+      "priced_bouts": 3,
+      "error": "identity heading mismatch: 'Karla Zamora'"
+    },
+    {
+      "name": "Keith Hunter",
+      "priced_bouts": 3,
+      "error": "HTTP Error 404: Not Found"
+    },
+    {
       "name": "Kevin Nicolas Espindola",
       "priced_bouts": 3,
       "error": "HTTP Error 404: Not Found"
+    },
+    {
+      "name": "Laura Belen Valdebenito",
+      "priced_bouts": 3,
+      "error": "HTTP Error 404: Not Found"
+    },
+    {
+      "name": "Ryan Kelly",
+      "priced_bouts": 3,
+      "error": "HTTP Error 404: Not Found"
+    },
+    {
+      "name": "Bryan Acosta",
+      "priced_bouts": 3,
+      "error": "no exact priced date+opponent evidence match"
     },
     {
       "name": "Jordan Grant",
@@ -125,7 +295,17 @@
       "error": "HTTP Error 404: Not Found"
     },
     {
+      "name": "Marcin Siwy",
+      "priced_bouts": 3,
+      "error": "HTTP Error 404: Not Found"
+    },
+    {
       "name": "Cesar Juarez",
+      "priced_bouts": 3,
+      "error": "HTTP Error 404: Not Found"
+    },
+    {
+      "name": "Colby Madison",
       "priced_bouts": 3,
       "error": "HTTP Error 404: Not Found"
     },
@@ -133,178 +313,8 @@
       "name": "Reuquen Cona Facundo Arce",
       "priced_bouts": 3,
       "error": "HTTP Error 404: Not Found"
-    },
-    {
-      "name": "Juan Carlos Rubio",
-      "priced_bouts": 2,
-      "error": "HTTP Error 404: Not Found"
-    },
-    {
-      "name": "Samuel Antwi",
-      "priced_bouts": 2,
-      "error": "HTTP Error 404: Not Found"
-    },
-    {
-      "name": "Shaun Cooper",
-      "priced_bouts": 2,
-      "error": "HTTP Error 404: Not Found"
-    },
-    {
-      "name": "Dan Karpency",
-      "priced_bouts": 2,
-      "error": "HTTP Error 404: Not Found"
-    },
-    {
-      "name": "Erik Robles Ayala",
-      "priced_bouts": 2,
-      "error": "identity heading mismatch: 'Erik Robles'"
-    },
-    {
-      "name": "Jose Sanmartin",
-      "priced_bouts": 2,
-      "error": "incomplete career table 48/47"
-    },
-    {
-      "name": "Lloyd Germain",
-      "priced_bouts": 2,
-      "error": "HTTP Error 404: Not Found"
-    },
-    {
-      "name": "Reyes Sanchez",
-      "priced_bouts": 2,
-      "error": "HTTP Error 404: Not Found"
-    },
-    {
-      "name": "Williams Andres Herrera",
-      "priced_bouts": 2,
-      "error": "HTTP Error 404: Not Found"
-    },
-    {
-      "name": "Carlos Sanchez",
-      "priced_bouts": 2,
-      "error": "HTTP Error 404: Not Found"
-    },
-    {
-      "name": "Danny Ball",
-      "priced_bouts": 2,
-      "error": "HTTP Error 404: Not Found"
-    },
-    {
-      "name": "Dominik Musil",
-      "priced_bouts": 2,
-      "error": "HTTP Error 404: Not Found"
-    },
-    {
-      "name": "Jose Zaragoza",
-      "priced_bouts": 2,
-      "error": "HTTP Error 404: Not Found"
-    },
-    {
-      "name": "Kane Gardner",
-      "priced_bouts": 2,
-      "error": "HTTP Error 404: Not Found"
-    },
-    {
-      "name": "Lila Dos Santos Furtado",
-      "priced_bouts": 2,
-      "error": "HTTP Error 404: Not Found"
-    },
-    {
-      "name": "Linus Udofia",
-      "priced_bouts": 2,
-      "error": "HTTP Error 404: Not Found"
-    },
-    {
-      "name": "Luis Hernandez Ramos",
-      "priced_bouts": 2,
-      "error": "HTTP Error 404: Not Found"
-    },
-    {
-      "name": "Miranda Reyes",
-      "priced_bouts": 2,
-      "error": "HTTP Error 404: Not Found"
-    },
-    {
-      "name": "Quinton Randall",
-      "priced_bouts": 2,
-      "error": "HTTP Error 404: Not Found"
-    },
-    {
-      "name": "Ve Shawn Owens",
-      "priced_bouts": 2,
-      "error": "HTTP Error 404: Not Found"
-    },
-    {
-      "name": "Chris Healey",
-      "priced_bouts": 2,
-      "error": "HTTP Error 404: Not Found"
-    },
-    {
-      "name": "Jesus Ramirez Rubio",
-      "priced_bouts": 2,
-      "error": "HTTP Error 404: Not Found"
-    },
-    {
-      "name": "Kaisee Benjamin",
-      "priced_bouts": 2,
-      "error": "HTTP Error 404: Not Found"
-    },
-    {
-      "name": "Levi Giles",
-      "priced_bouts": 2,
-      "error": "HTTP Error 404: Not Found"
-    },
-    {
-      "name": "Owen Cooper",
-      "priced_bouts": 2,
-      "error": "HTTP Error 404: Not Found"
-    },
-    {
-      "name": "Przemyslaw Runowski",
-      "priced_bouts": 2,
-      "error": "HTTP Error 404: Not Found"
-    },
-    {
-      "name": "Ricardo Quiroz",
-      "priced_bouts": 2,
-      "error": "HTTP Error 404: Not Found"
-    },
-    {
-      "name": "Segolene Lefebvre",
-      "priced_bouts": 2,
-      "error": "HTTP Error 404: Not Found"
-    },
-    {
-      "name": "Alejandro Guerrero",
-      "priced_bouts": 2,
-      "error": "HTTP Error 404: Not Found"
-    },
-    {
-      "name": "Alexander Espinoza",
-      "priced_bouts": 2,
-      "error": "incomplete career table 38/37"
-    },
-    {
-      "name": "Angel Antonio Contreras",
-      "priced_bouts": 2,
-      "error": "HTTP Error 404: Not Found"
-    },
-    {
-      "name": "Chris Namus",
-      "priced_bouts": 2,
-      "error": "HTTP Error 404: Not Found"
-    },
-    {
-      "name": "Craig Lewis",
-      "priced_bouts": 2,
-      "error": "HTTP Error 404: Not Found"
-    },
-    {
-      "name": "David Jamieson",
-      "priced_bouts": 2,
-      "error": "HTTP Error 404: Not Found"
     }
   ],
-  "total_supplemental_fighters": 218,
+  "total_supplemental_fighters": 230,
   "source": "champinon"
 }
