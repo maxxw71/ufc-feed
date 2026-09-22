@@ -121,11 +121,15 @@ def local_bouts():
     con.close()
     return bydate,list(allitems.values())
 
-def article_title(soup):
+def article_title(soup,url=None):
     h=soup.find('h1')
-    if h:return re.sub(r'\s+',' ',h.get_text(' ',strip=True)).strip()
-    if soup.title:return re.sub(r'\s+',' ',soup.title.get_text(' ',strip=True)).strip()
-    return ''
+    title=re.sub(r'\s+',' ',h.get_text(' ',strip=True)).strip() if h else ''
+    if (not title or title.casefold() in {'boxing news','boxingscene','boxing scene'}) and soup.title:
+        title=re.sub(r'\s+',' ',soup.title.get_text(' ',strip=True)).strip()
+    if (not title or title.casefold().startswith('boxing news')) and url:
+        slug=urllib.parse.unquote(urllib.parse.urlsplit(url).path.rstrip('/').split('/')[-1])
+        title=slug.replace('-',' ')
+    return title
 
 def resolve_bout(title,date,bydate,allitems):
     tnorm=norm(title)
@@ -276,7 +280,7 @@ def main():
     for i,url in enumerate(urls,1):
         try:
             final,raw=fetch(url);soup=BeautifulSoup(raw,'lxml')
-            title=article_title(soup);pd=pub_date(soup);bout,resolution=resolve_bout(title,pd,bydate,allitems)
+            title=article_title(soup,final);pd=pub_date(soup);bout,resolution=resolve_bout(title,pd,bydate,allitems)
             if not bout:
                 diag['unresolved_article_bout']+=1
                 if pd is None:diag['article_date_missing']+=1
