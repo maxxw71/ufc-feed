@@ -75,15 +75,16 @@ def parse_wba(name,wba_id):
                             'date':date,'country':cells[4] if len(cells)>4 else '',
                             'opponent_source_url':opp_url,
                             'source':'wba_profile'}})
-    # Exact completeness gate: partial recent-fight WBA lists are rejected.
-    if len(rows)!=sum(record):raise ValueError(f'partial WBA fight list {len(rows)}/{sum(record)}')
-    if len({(r['date'],nk(r['opponent'])) for r in rows})!=len(rows):raise ValueError('duplicate date/opponent rows')
+    if len({(r['date'],nk(r['opponent'])) for r in rows})!=len(rows):raise ValueError('duplicate WBA date/opponent rows')
     rows.sort(key=lambda r:r['date'])
-    return {'title':title,'url':url,'stated_record':record,'rows':rows}
+    return {'title':title,'url':url,'stated_record':record,'rows':rows,
+            'wba_rows_complete':len(rows)==sum(record),'wba_row_count':len(rows)}
 
 def result_index(con):
     idx=collections.defaultdict(set)
-    for r in con.execute("SELECT source,date,boxer_a,boxer_b,winner FROM bouts WHERE status='FINISHED' AND date IS NOT NULL"):
+    # Independent career observations only. Do not use WBA-derived supplemental
+    # rows to validate a WBA reconstruction.
+    for r in con.execute("SELECT source,date,boxer_a,boxer_b,winner FROM bouts WHERE status='FINISHED' AND date IS NOT NULL AND source IN ('wikipedia','champinon')"):
         a=nk(r['boxer_a']);b=nk(r['boxer_b'])
         if not a or not b:continue
         w=r['winner']
@@ -95,20 +96,99 @@ def result_index(con):
         idx[(r['date'],*sorted((a,b)))].add(winner)
     return idx
 
-def resolve_career(name,page,idx):
-    me=nk(name);w=l=d=0;resolved=[]
+def observed_target_rows(con,name):
+    me=nk(name);by=collections.defaultdict(list)
+    for r in con.execute("""SELECT source,source_id,date,boxer_a,boxer_b,winner,method,rounds,venue,data
+                            FROM bouts
+                            WHERE status='FINISHED' AND date IS NOT NULL
+                              AND source IN ('wikipedia','champinon')"""):
+        a=nk(r['boxer_a']);b=nk(r['boxer_b'])
+        if me not in {a,b}:continue
+        if a==me:
+            opp=r['boxer_b']
+            if r['winner']=='BOXER A':result='win'
+            elif r['winner']=='BOXER B':result='loss'
+            elif r['winner']=='DRAW':result='draw'
+            elif r['winner']=='NO CONTEST':result='nc'
+            else:continue
+        else:
+            opp=r['boxer_a']
+            if r['winner']=='BOXER B':result='win'
+            elif r['winner']=='BOXER A':result='loss'
+            elif r['winner']=='DRAW':result='draw'
+            elif r['winner']=='NO CONTEST':result='nc'
+            else:continue
+        key=(r['date'],nk(opp))
+        by[key].append({'date':r['date'],'opponent':opp,'result':result,
+                        'type':r['method'] or '','round_time':r['rounds'] or '',
+                        'location':r['venue'] or '',
+                        'raw':{'source':'independent_observed_career_graph',
+                               'evidence_source':r['source'],'evidence_source_id':r['source_id']}})
+    out={};conflicts=[]
+    for key,items in by.items():
+        results={x['result'] for x in items}
+        if len(results)!=1:
+            conflicts.append({'key':key,'results':sorted(results)});continue
+        # Prefer the most informative method/location row deterministically.
+        items.sort(key=lambda x:(bool(x.get('type')),bool(x.get('location')),x['raw']['evidence_source']),reverse=True)
+        out[key]=items[0]
+    return out,conflicts
+
+def resolve_career(name,page,idx,con):
+    me=nk(name)
+    observed,obs_conflicts=observed_target_rows(con,name)
+    if obs_conflicts:
+        raise ValueError(f'independent observed career conflicts: {obs_conflicts[:3]}')
+
+    resolved={}
+    # Every WBA-listed bout must have an independently resolved outcome.
     for r in page['rows']:
-        opp=nk(r['opponent']);outcomes=idx.get((r['date'],*sorted((me,opp))),set())
-        if len(outcomes)!=1:raise ValueError(f'unresolved/conflicting result {r["date"]} {r["opponent"]}: {sorted(outcomes)}')
+        opp=nk(r['opponent']);key=(r['date'],opp)
+        outcomes=idx.get((r['date'],*sorted((me,opp))),set())
+        if len(outcomes)!=1:
+            raise ValueError(f'unresolved/conflicting WBA row {r["date"]} {r["opponent"]}: {sorted(outcomes)}')
         outcome=next(iter(outcomes))
-        if outcome==me:result='win';w+=1
-        elif outcome==opp:result='loss';l+=1
-        elif outcome=='DRAW':result='draw';d+=1
-        else:raise ValueError(f'non-WLD result {r["date"]} {r["opponent"]}: {outcome}')
-        rr=dict(r);rr['result']=result;rr['record']=f'{w}-{l}-{d}';rr['raw']=dict(rr['raw']);rr['raw']['record']=rr['record'];rr['raw']['resolved_outcome']=result
-        resolved.append(rr)
-    if (w,l,d)!=page['stated_record']:raise ValueError(f'reconstructed record {(w,l,d)} != stated {page["stated_record"]}')
-    return resolved
+        if outcome==me:result='win'
+        elif outcome==opp:result='loss'
+        elif outcome=='DRAW':result='draw'
+        elif outcome=='NO CONTEST':result='nc'
+        else:raise ValueError(f'unknown outcome {r["date"]} {r["opponent"]}: {outcome}')
+        rr=dict(r);rr['result']=result
+        rr['raw']=dict(rr.get('raw') or {})
+        rr['raw']['resolved_outcome']=result
+        rr['raw']['resolution_source']='independent_exact_date_pair_consensus'
+        resolved[key]=rr
+
+    # Add independently observed bouts absent from the WBA page. This is the
+    # only permitted way to repair a partial WBA fight list.
+    for key,row in observed.items():
+        if key in resolved:
+            if resolved[key]['result']!=row['result']:
+                raise ValueError(f'WBA/observed result conflict {key}')
+            continue
+        resolved[key]=row
+
+    rows=sorted(resolved.values(),key=lambda r:(r['date'],nk(r['opponent'])))
+    stated=page['stated_record'];expected=sum(stated)
+    if len(rows)!=expected:
+        raise ValueError(f'reconstructed career coverage {len(rows)}/{expected} (WBA listed {page["wba_row_count"]})')
+
+    w=l=d=nc=0
+    for r in rows:
+        if r['result']=='win':w+=1
+        elif r['result']=='loss':l+=1
+        elif r['result']=='draw':d+=1
+        elif r['result']=='nc':nc+=1
+        r['record']=f'{w}-{l}-{d}'
+        r.setdefault('raw',{})['record']=r['record']
+    if (w,l,d)!=stated:
+        raise ValueError(f'reconstructed record {(w,l,d)} != stated {stated}; nc={nc}')
+    if w+l+d+nc!=expected:
+        raise ValueError(f'reconstructed total {w+l+d+nc} != stated total {expected}')
+    return rows,{'wba_rows':page['wba_row_count'],'independent_union_rows':len(rows),
+                 'reconstructed_missing_wba_rows':len(rows)-page['wba_row_count'],
+                 'stated_record':list(stated)}
+
 
 def main():
     ap=argparse.ArgumentParser();ap.add_argument('--limit',type=int,default=100);args=ap.parse_args()
@@ -151,18 +231,19 @@ def main():
     candidates=candidates[:args.limit]
     for i,(name,wid,item) in enumerate(candidates,1):
         try:
-            page=parse_wba(name,wid);rows=resolve_career(name,page,idx)
+            page=parse_wba(name,wid);rows,recon=resolve_career(name,page,idx,con)
             evidence=match_evidence({'rows':rows},item['evidence'])
             if not evidence:raise ValueError('no exact priced date+opponent evidence match')
             found={'requested_name':name,'verified_title':page['title'],'source':'wba_consensus','source_url':page['url'],
                    'born':'','profile':{},'career_rows':rows,'matched_price_evidence':evidence,
                    'priced_bouts':item['priced_bouts'],'bookmakers':item['bookmakers'],
                    'career_complete':True,'stated_record':list(page['stated_record']),
-                   'quality':'official_wba_complete_list_plus_independent_exact_result_consensus',
-                   'verification':'WBA exact identity + complete row count + every exact date/pair independently resolved + reconstructed W-L-D equals WBA record + priced evidence match',
+                   'wba_reconstruction':recon,
+                   'quality':'official_wba_identity_record_plus_independent_complete_career_reconstruction',
+                   'verification':'WBA exact identity + stated W-L-D/total + every WBA-listed row independently resolved + independent observed rows fill any WBA omissions + exact reconstructed total/W-L-D + priced evidence match',
                    'collected_at':dt.datetime.now(dt.timezone.utc).isoformat()}
             with OUT.open('a',encoding='utf-8') as f:f.write(json.dumps(found,ensure_ascii=False)+'\n')
-            accepted.append({'name':name,'rows':len(rows),'priced_bouts':item['priced_bouts']});print(i,name,'OK',len(rows),flush=True)
+            accepted.append({'name':name,'rows':len(rows),'priced_bouts':item['priced_bouts'],'reconstruction':recon});print(i,name,'OK',len(rows),recon,flush=True)
         except Exception as e:
             failed.append({'name':name,'wba_id':wid,'priced_bouts':item['priced_bouts'],'error':str(e)[:500]});print(i,name,'NO_MATCH',str(e)[:180],flush=True)
         time.sleep(.2)
