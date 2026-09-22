@@ -12,7 +12,7 @@ Acceptance:
 - height/reach must pass plausible adult-boxer ranges.
 """
 from __future__ import annotations
-import argparse,datetime as dt,json,os,re,time,unicodedata,urllib.request
+import argparse,datetime as dt,json,os,re,sqlite3,time,unicodedata,urllib.request
 from pathlib import Path
 from bs4 import BeautifulSoup
 
@@ -21,6 +21,7 @@ AUDIT=ROOT/'public_phase2'/'PROFILE_GAP_AUDIT.json'
 INDEX=ROOT/'profile_supplements'/'wba_profile_index.json'
 OUT=ROOT/'profile_supplements'/'verified_profiles.jsonl'
 REPORT=ROOT/'profile_supplements'/'wba_profile_backfill_report.json'
+DB=ROOT/'research'/'boxing.sqlite3'
 UA='Mozilla/5.0 AppwizaBoxingWBAProfile/1.1'
 
 def nk(s):
@@ -80,6 +81,51 @@ def parse_profile(url,raw):
     if n and 2<=len(n)<=80:data['nationality']=n
     return name,data
 
+def known_profiles():
+    out={}
+    if not DB.exists():return out
+    con=sqlite3.connect(f'file:{DB}?mode=ro',uri=True);con.row_factory=sqlite3.Row
+    try:
+        for r in con.execute("select source_id,name,born,height_cm,nationality from normalized_fighters"):
+            out[r['source_id']]={'name':r['name'],'born':r['born'],'height_cm':r['height_cm'],'nationality':r['nationality']}
+    finally:
+        con.close()
+    return out
+
+def ncountry(s):
+    return re.sub(r'[^a-z]','',str(s or '').casefold())
+
+def resolve_ambiguous(target,entries,known,args):
+    """Return one exact WBA profile only under strict independent-field agreement."""
+    base=known.get(target['target_source_id']) or {}
+    checked=[]
+    for entry in entries:
+        try:
+            final,raw=fetch(entry['url'])
+            name,data=parse_profile(final,raw)
+            if nk(name)!=nk(target['name']):continue
+            checked.append((entry,final,data))
+        except Exception:
+            continue
+        time.sleep(max(0,args.sleep))
+    if not checked:return None,None
+
+    born=str(base.get('born') or '').strip()
+    if born:
+        hits=[x for x in checked if x[2].get('born')==born]
+        if len(hits)==1:return hits[0],'existing_dob_exact_match'
+
+    h=base.get('height_cm')
+    nat=ncountry(base.get('nationality'))
+    if h is not None and nat:
+        hits=[]
+        for x in checked:
+            wh=x[2].get('height_cm');wn=ncountry(x[2].get('nationality'))
+            if wh is not None and abs(float(wh)-float(h))<=1.0 and wn and wn==nat:
+                hits.append(x)
+        if len(hits)==1:return hits[0],'existing_height_and_nationality_match'
+    return None,None
+
 def main():
     ap=argparse.ArgumentParser()
     ap.add_argument('--limit',type=int,default=500)
@@ -108,20 +154,33 @@ def main():
 
     candidates=[]
     ambiguous=0
+    ambiguous_resolved=0
+    known=known_profiles()
     for key,t in targets.items():
         rows=idx.get(key,[])
-        if len(rows)==1:candidates.append((t,rows[0]))
-        elif len(rows)>1:ambiguous+=1
+        if len(rows)==1:
+            candidates.append((t,rows[0],'unique_exact_name'))
+        elif len(rows)>1:
+            ambiguous+=1
+            resolved,why=resolve_ambiguous(t,rows,known,args)
+            if resolved:
+                entry,final,data=resolved
+                # Preserve prefetched data so the main loop need not fetch again.
+                entry=dict(entry);entry['_prefetched_url']=final;entry['_prefetched_data']=data
+                candidates.append((t,entry,why));ambiguous_resolved+=1
     # prioritize fighters missing reach, then height, then appearance order already
     # encoded by PROFILE_GAP_AUDIT.
     candidates.sort(key=lambda x:(0 if 'reach_cm' in x[0]['missing'] else 1,0 if 'height_cm' in x[0]['missing'] else 1,x[0]['name']))
     candidates=candidates[:args.limit]
 
     found=[];fail=[];counts={'born':0,'height_cm':0,'reach_cm':0,'nationality':0};fetched=0
-    for t,entry in candidates:
+    for t,entry,resolution in candidates:
         try:
-            final,raw=fetch(entry['url']);fetched+=1
-            name,data=parse_profile(final,raw)
+            if entry.get('_prefetched_data') is not None:
+                final=entry.get('_prefetched_url') or entry['url'];data=entry['_prefetched_data'];name=t['name']
+            else:
+                final,raw=fetch(entry['url']);fetched+=1
+                name,data=parse_profile(final,raw)
             if nk(name)!=nk(t['name']):raise ValueError(f'identity mismatch: {name!r}')
             add={k:v for k,v in data.items() if k in t['missing']}
             if not add:
@@ -134,7 +193,7 @@ def main():
                     time.sleep(max(0,args.sleep));continue
                 fields.update(actual);cur['fields']=fields
                 ev=list(cur.get('evidence') or [])
-                ev.append({'source':'wba_official_profile','url':final,'profile_id':entry['profile_id'],'fields':actual})
+                ev.append({'source':'wba_official_profile','url':final,'profile_id':entry['profile_id'],'identity_resolution':resolution,'fields':actual})
                 cur['evidence']=ev;cur['quality']='public_profile_exact_identity_missing_fields_only'
                 existing[t['target_source_id']]=cur
             else:
@@ -142,7 +201,7 @@ def main():
                 existing[t['target_source_id']]={
                   'target_source_id':t['target_source_id'],'name':t['name'],'career_source':t['career_source'],
                   'fields':actual,
-                  'evidence':[{'source':'wba_official_profile','url':final,'profile_id':entry['profile_id'],'fields':actual}],
+                  'evidence':[{'source':'wba_official_profile','url':final,'profile_id':entry['profile_id'],'identity_resolution':resolution,'fields':actual}],
                   'conflicts':{},'quality':'official_wba_structured_profile_exact_identity_missing_fields_only',
                   'collected_at':dt.datetime.now(dt.timezone.utc).isoformat()
                 }
@@ -163,12 +222,12 @@ def main():
       'target_fighters':len(targets),'exact_unique_index_candidates':len(candidates),
       'ambiguous_index_targets':ambiguous,'profiles_fetched':fetched,
       'profiles_updated':len(found),'new_field_counts':counts,
-      'found':found,'failures':fail,
+      'ambiguous_index_targets_resolved':ambiguous_resolved,'known_profile_rows_loaded':len(known),'found':found,'failures':fail,
       'policy':'Official WBA explicit-link identity index; exact profile title; strict missing-fields-only enrichment; no existing values overwritten.'
     }
     REPORT.write_text(json.dumps(report,indent=2,ensure_ascii=False))
     print(json.dumps({k:report[k] for k in [
-      'target_fighters','exact_unique_index_candidates','ambiguous_index_targets',
+      'target_fighters','exact_unique_index_candidates','ambiguous_index_targets','ambiguous_index_targets_resolved','known_profile_rows_loaded',
       'profiles_fetched','profiles_updated','new_field_counts'
     ]},indent=2))
 
