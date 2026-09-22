@@ -100,7 +100,7 @@ def crawl_articles(max_index_pages=25,max_articles=500):
 def local_bouts():
     import sqlite3
     con=sqlite3.connect(f'file:{DB}?mode=ro',uri=True);con.row_factory=sqlite3.Row
-    bydate=defaultdict(dict)
+    bydate=defaultdict(dict);allitems={}
     for r in con.execute("""select date,boxer_a,boxer_b,rounds,source,source_id
                             from bouts where status='FINISHED' and date is not null"""):
         a,b=str(r['boxer_a'] or '').strip(),str(r['boxer_b'] or '').strip()
@@ -109,8 +109,9 @@ def local_bouts():
         key=(r['date'],pair)
         bydate[r['date']].setdefault(pair,{'date':r['date'],'fighter_a':a,'fighter_b':b,'rounds':r['rounds'],'sources':[]})
         bydate[r['date']][pair]['sources'].append((r['source'],r['source_id']))
+        allitems.setdefault(key,bydate[r['date']][pair])
     con.close()
-    return bydate
+    return bydate,list(allitems.values())
 
 def article_title(soup):
     h=soup.find('h1')
@@ -118,19 +119,31 @@ def article_title(soup):
     if soup.title:return re.sub(r'\s+',' ',soup.title.get_text(' ',strip=True)).strip()
     return ''
 
-def resolve_bout(title,date,bydate):
-    if not date:return None
+def resolve_bout(title,date,bydate,allitems):
     tnorm=norm(title)
-    matches=[]
-    for offset in range(-2,3):
-        d=(date+dt.timedelta(days=offset)).isoformat()
-        for item in bydate.get(d,{}).values():
-            sa,sb=surname(item['fighter_a']),surname(item['fighter_b'])
-            if not sa or not sb or sa==sb:continue
-            if sa in tnorm and sb in tnorm:matches.append(item)
-    # collapse identical date/pair sources
+    def title_matches(item):
+        sa,sb=surname(item['fighter_a']),surname(item['fighter_b'])
+        return bool(sa and sb and sa!=sb and sa in tnorm and sb in tnorm)
+
+    # First choice: publication date window.
+    if date:
+        matches=[]
+        for offset in range(-3,4):
+            d=(date+dt.timedelta(days=offset)).isoformat()
+            for item in bydate.get(d,{}).values():
+                if title_matches(item):matches.append(item)
+        uniq={(x['date'],tuple(sorted([norm(x['fighter_a']),norm(x['fighter_b'])]))):x for x in matches}
+        if len(uniq)==1:
+            return next(iter(uniq.values())),'publication_date_window'
+
+    # Safe fallback for migrated pages with missing/incorrect article metadata:
+    # accept only when the exact pair implied by the title occurs once in the
+    # entire local finished-bout archive. Rematches and multi-fight titles fail.
+    matches=[x for x in allitems if title_matches(x)]
     uniq={(x['date'],tuple(sorted([norm(x['fighter_a']),norm(x['fighter_b'])]))):x for x in matches}
-    return next(iter(uniq.values())) if len(uniq)==1 else None
+    if len(uniq)==1:
+        return next(iter(uniq.values())),'unique_historical_pair_from_title'
+    return None,None
 
 def text_content(soup):
     for tag in soup(['script','style','nav','footer','header']):tag.decompose()
@@ -210,14 +223,17 @@ def rounds_num(v):
 def main():
     ap=argparse.ArgumentParser();ap.add_argument('--articles',type=int,default=400);args=ap.parse_args()
     if not DB.exists():raise SystemExit('missing boxing.sqlite3')
-    bydate=local_bouts();urls=crawl_articles(max_articles=args.articles)
+    bydate,allitems=local_bouts();urls=crawl_articles(max_articles=args.articles)
     rows=[];diag=defaultdict(int);fail=[]
     for i,url in enumerate(urls,1):
         try:
             final,raw=fetch(url);soup=BeautifulSoup(raw,'lxml')
-            title=article_title(soup);pd=pub_date(soup);bout=resolve_bout(title,pd,bydate)
+            title=article_title(soup);pd=pub_date(soup);bout,resolution=resolve_bout(title,pd,bydate,allitems)
             if not bout:
-                diag['unresolved_article_bout']+=1;continue
+                diag['unresolved_article_bout']+=1
+                if pd is None:diag['article_date_missing']+=1
+                continue
+            diag['resolved_'+resolution]+=1
             text=text_content(soup)
             stats=parse_explicit_stats(text,bout['fighter_a'],bout['fighter_b'])
             added=0
@@ -226,7 +242,7 @@ def main():
                 if st.get('_invalid_conflict'):continue
                 numeric={k:v for k,v in st.items() if isinstance(v,int)}
                 if not numeric:continue
-                rec={'source_url':final,'article_title':title,'article_date':pd.isoformat(),
+                rec={'source_url':final,'article_title':title,'article_date':pd.isoformat() if pd else None,'identity_resolution':resolution,
                      'bout_date':bout['date'],'fighter':fighter,'opponent':opponent,
                      'rounds_observed':rounds_num(bout.get('rounds')),
                      **{k:numeric.get(k) for k in (
