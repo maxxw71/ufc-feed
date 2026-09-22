@@ -192,8 +192,45 @@ def resolve_bouts(title,date,bydate,allitems,text_hint=''):
     return [],None
 
 def text_content(soup):
-    for tag in soup(['script','style','nav','footer','header']):tag.decompose()
-    return re.sub(r'\s+',' ',' '.join(soup.stripped_strings)).strip()
+    # Extract the article body only. Never let sidebar/top-story/current-feed
+    # text participate in historical fighter identity or stat parsing.
+    selectors=[
+      '[itemprop="articleBody"]','article .article-body','article .content',
+      '.article-body','.article-content','.entry-content','article'
+    ]
+    root=None
+    for sel in selectors:
+        root=soup.select_one(sel)
+        if root:break
+    if root is None:
+        root=soup.find('main')
+    if root is None:
+        return ''
+    # Work on a detached parse so caller's soup is not mutated.
+    body=BeautifulSoup(str(root),'lxml')
+    for tag in body(['script','style','nav','footer','header','aside']):tag.decompose()
+    return re.sub(r'\s+',' ',' '.join(body.stripped_strings)).strip()
+
+def is_compubox_article(soup,url,title):
+    # Explicit authorship/source gate. Discovery pages contain unrelated
+    # current-story links, so URL/title alone are insufficient.
+    signals=[]
+    for sel in [
+      'meta[name="author"]','meta[property="article:author"]',
+      '[rel="author"]','.author','.byline','a[href*="/author/"]'
+    ]:
+        for tag in soup.select(sel):
+            val=(tag.get('content') or tag.get_text(' ',strip=True) or '')
+            if val:signals.append(val)
+    # Historical migrated CompuBox articles often preserve "By CompuBox" in
+    # their article body even when author metadata is absent.
+    body=text_content(soup)
+    lead=(title+' '+body[:700]).casefold()
+    if any('compubox' in str(x).casefold() for x in signals):return True
+    if re.search(r'\bby\s+compubox\b',lead,re.I):return True
+    # Seeded legacy stat pages with CompuBox in title are accepted only when the
+    # body also contains CompuBox, preventing generic modern articles.
+    return ('compubox' in str(title).casefold() and 'compubox' in body[:1200].casefold())
 
 def fighter_patterns(name):
     vals=[re.escape(name),re.escape(surname(name))]
@@ -315,7 +352,13 @@ def main():
         try:
             final,raw=fetch(url);soup=BeautifulSoup(raw,'lxml')
             title=article_title(soup,final);pd=pub_date(soup)
+            if not is_compubox_article(soup,final,title):
+                diag['rejected_non_compubox_article']+=1
+                continue
             raw_text=text_content(BeautifulSoup(raw,'lxml'))
+            if not raw_text:
+                diag['article_body_missing']+=1
+                continue
             bouts,resolution=resolve_bouts(title,pd,bydate,allitems,raw_text)
             if not bouts:
                 diag['unresolved_article_bout']+=1
