@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-22T13:15:45.914436+00:00",
+  "generated_at": "2026-09-22T13:21:42.978685+00:00",
   "articles_discovered": 84,
   "summary_rows": 25,
   "prefight_historical_baseline_rows": 3,
@@ -10,14 +10,17 @@
   "diagnostics": {
     "resolved_publication_date_window": 28,
     "multi_bout_articles_resolved": 11,
-    "matched_bouts_no_safe_numeric_pattern": 12,
-    "matched_articles_no_safe_numeric_pattern": 15,
+    "matched_bouts_no_safe_numeric_pattern": 11,
+    "matched_articles_no_safe_numeric_pattern": 13,
     "resolved_publication_date_body_pair": 15,
     "matched_bouts_with_numeric_rows": 22,
     "matched_articles_with_numeric_rows": 17,
     "unresolved_article_bout": 2,
     "prefight_historical_baseline_rows": 3,
     "prefight_historical_baseline_bouts": 2,
+    "prefight_direct_target_rows": 0,
+    "prefight_future_only_rows": 3,
+    "matched_articles_with_prefight_baselines_only": 2,
     "rejected_non_compubox_article": 50,
     "alias_dedup_conflicts_quarantined": 0
   },
@@ -290,19 +293,6 @@
       "text_sample": "Manny Pacquiao landed more punches in 10 of 12 rounds and landed the harder punches all fight. Timothy Bradley was the busier fighter, averaging 70 punches thrown per round. Nearly half of Pacquiao's punch output (landed/thrown) occurred in the last minute of each round. Bradley nearly doubled Manny's output in the first minute of each round. Is it possible the fighter's output in that first minute created the illusion in the eyes of judges Duane Ford & C.J. Ross that Pac had to play catchup the last 2 minutes of each round?"
     },
     {
-      "url": "https://www.boxingscene.com/articles/danny-garcia-vs-brandon-rios-compubox-historical-review",
-      "title": "Danny Garcia vs. Brandon Rios - CompuBox Historical Review",
-      "article_date": "2018-02-18",
-      "bouts": [
-        {
-          "date": "2018-02-17",
-          "fighter_a": "Danny García",
-          "fighter_b": "Brandon Ríos"
-        }
-      ],
-      "text_sample": "Danny Garcia (last 12 fights) threw and landed slightly below the weight class average for total punches against a who's who of opponents. Garcia landed 40.3% of his power punches., while opponents landed 37.6% of their power shots. Garcia landed just 3 jabs per round (16.6%)."
-    },
-    {
       "url": "https://www.boxingscene.com/articles/bernard-hopkins-joe-smith-compubox-historical-review",
       "title": "Bernard Hopkins-Joe Smith - CompuBox Historical Review",
       "article_date": "2016-12-18",
@@ -327,19 +317,6 @@
         }
       ],
       "text_sample": "Both Manny Pacquiao and Brandon Rios throw and land well above the weight class averages for total punches and power punches. 73% of Rios' thrown punches are power shots and 61% of Pacquiao's are power shots. Rios landed 21 power shots per round, Manny 20 per round - #2 and #3 behind Leo Santa Cruz, who landed 29 per round against much softer opposition than Pacquiao and Rios. Rios' opponents landed 41% of their power shots. Pacquiao's opponents landed 33% of their power shots."
-    },
-    {
-      "url": "https://www.boxingscene.com/articles/jermall-charlo-vs-hugo-centeno-compubox-historical-review",
-      "title": "Jermall Charlo vs. Hugo Centeno - CompuBox Historical Review",
-      "article_date": "2018-04-22",
-      "bouts": [
-        {
-          "date": "2018-04-21",
-          "fighter_a": "Jermall Charlo",
-          "fighter_b": "Hugo Centeno Jr."
-        }
-      ],
-      "text_sample": "The selective Jermall Charlo (last 5 fights) averaged just 13.6 landed/43.1 thrown. He landed 5.9 jabs per round, but just 7.7 power shots per round (40.5%). Charlo opponents landed just 7.6 punches per round and just 4.8 power shots per round- more than half the middle. avg. Centeno (last 6 fights), isn't busy either and not nearly as accurate as Charlo. Centeno did land 6 jabs per round, but only 7.4 power shots per round (opponents landed 9.4 power shots per round)."
     },
     {
       "url": "https://www.boxingscene.com/articles/compubox-pacquiao-mosley-weight-class-graphic-view",
@@ -370,5 +347,5 @@
   ],
   "alias_dedup_conflicts_sample": [],
   "failures_sample": [],
-  "policy": "CompuBox-authored BoxingScene articles only; unique local date+pair; explicit numeric patterns only. Post-fight summaries are separate from full round reports. Historical-review/last-N-fights aggregates are excluded from current-fight observations and stored only as direct pre-fight baseline features."
+  "policy": "CompuBox-authored BoxingScene articles only; unique local date+pair; explicit numeric patterns only. Articles published before the resolved target bout are pre-fight context and never current-fight observations. Historical-review/last-N-fights aggregates published on/after the target bout are available only for later bouts after publication. Post-fight summaries remain separate from full round reports."
 }
