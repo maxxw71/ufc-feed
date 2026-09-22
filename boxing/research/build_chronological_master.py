@@ -242,12 +242,14 @@ def load_punch_summary_history():
         if not line.strip():continue
         try:r=json.loads(line)
         except Exception:continue
-        key=punch_namekey(r.get('fighter') or '')
+        aliases=r.get('fighter_aliases') or [r.get('fighter')]
+        keys=sorted({punch_namekey(x or '') for x in aliases if punch_namekey(x or '')})
         date=r.get('bout_date')
-        if not key or not date:continue
+        if not keys or not date:continue
         try:dt.date.fromisoformat(date)
         except Exception:continue
-        hist[key].append(r)
+        for key in keys:
+            hist[key].append(r)
     for key in hist:
         hist[key].sort(key=lambda r:(r['bout_date'],r.get('source_url') or ''))
     return hist
