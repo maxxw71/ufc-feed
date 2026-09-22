@@ -1,0 +1,48 @@
+name: Boxing WBC Reach Backfill
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'boxing/research/backfill_wbc_reach.py'
+      - '.github/workflows/boxing-wbc-reach-backfill.yml'
+      - 'boxing/public_phase2/PROFILE_GAP_AUDIT.json'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  enrich:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install --disable-pip-version-check beautifulsoup4 lxml
+      - name: Fill strict-sample reach from official WBC statistics pages
+        run: python boxing/research/backfill_wbc_reach.py --limit 180 --min-appearances 2 --sleep 0.08
+      - name: Persist WBC reach supplements on latest main
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          mkdir -p /tmp/wbc-reach
+          cp boxing/profile_supplements/verified_profiles.jsonl /tmp/wbc-reach/verified_profiles.jsonl
+          cp boxing/profile_supplements/wbc_reach_backfill_report.json /tmp/wbc-reach/report.json
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git fetch origin main
+          git reset --hard origin/main
+          cp /tmp/wbc-reach/verified_profiles.jsonl boxing/profile_supplements/verified_profiles.jsonl
+          cp /tmp/wbc-reach/report.json boxing/profile_supplements/wbc_reach_backfill_report.json
+          git add boxing/profile_supplements/verified_profiles.jsonl boxing/profile_supplements/wbc_reach_backfill_report.json
+          if git diff --cached --quiet; then
+            echo 'No WBC reach changes.'
+          else
+            git commit -m 'Expand boxer reach from official WBC statistics'
+            git push origin HEAD:main
+          fi
