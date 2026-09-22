@@ -394,7 +394,7 @@ def parse_explicit_stats(text,a,b):
         rx=re.compile(p+r'.{0,110}?landed\s+(\d+(?:\.\d+)?)%\s+of\s+(?:his|her|the)\s+(\d+)\s+(?:total\s+)?punches',re.I)
         for m in rx.finditer(txt):
             setv(f,'total_accuracy_pct',m.group(1));setv(f,'total_thrown',m.group(2))
-        rx=re.compile(p+r'.{0,100}?landed\s+(\d+(?:\.\d+)?)%\s+of\s+(?:his|her)\s+power\s+(?:punches|shots)',re.I)
+        rx=re.compile(p+r'[^.!?]{0,100}?(?:landed|landing)\s+(\d+(?:\.\d+)?)%\s+of\s+(?:his|her)\s+power\s+(?:punches|shots)',re.I)
         for m in rx.finditer(txt):setv(f,'power_accuracy_pct',m.group(1))
         rx=re.compile(p+r'[^.!?]{0,180}?\band\s+(\d+(?:\.\d+)?)%\s+of\s+(?:his|her)\s+power\s+(?:punches|shots)',re.I)
         for m in rx.finditer(txt):setv(f,'power_accuracy_pct',m.group(1))
