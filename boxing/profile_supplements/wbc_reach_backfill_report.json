@@ -1,15 +1,9 @@
 {
-  "generated_at": "2026-09-22T02:20:20.066200+00:00",
+  "generated_at": "2026-09-22T02:23:58.683249+00:00",
   "targets_attempted": 151,
-  "pages_fetched": 119,
+  "pages_fetched": 120,
   "profiles_updated": 0,
   "found": [],
-  "failures_sample": [
-    {
-      "name": "Lauren Price",
-      "url": "https://wbcboxing.com/en/lauren-price-from-olympic-champion-to-unified-welterweight-queen/",
-      "error": "<urlopen error [Errno 104] Connection reset by peer>"
-    }
-  ],
-  "policy": "Official WBC pages only; exact name in structured Age/Record/Height/Reach block; unique plausible reach; existing reach never overwritten."
+  "failures_sample": [],
+  "policy": "Official WBC pages only; exact fighter name plus either structured Age/Record/Height/Reach block or explicit fighter-local reach-in-inches prose; unique plausible reach; existing reach never overwritten."
 }
