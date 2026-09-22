@@ -348,7 +348,7 @@ def parse_explicit_stats(text,a,b):
 
     # "Jacobs landed 17 of 53 per round."
     for f,p in [(a,pa),(b,pb)]:
-        rx=re.compile(p+r'.{0,80}?landed\s+(\d+(?:\.\d+)?)\s+of\s+(\d+(?:\.\d+)?)\s+(?:total\s+)?(?:punches?\s+)?per\s+round',re.I)
+        rx=re.compile(p+r'[^.!?]{0,80}?landed\s+(\d+(?:\.\d+)?)\s+of\s+(\d+(?:\.\d+)?)\s+(?:total\s+)?(?:punches?\s+)?per\s+round',re.I)
         for m in rx.finditer(txt):
             setv(f,'total_landed_per_round',m.group(1));setv(f,'total_thrown_per_round',m.group(2))
 
@@ -358,9 +358,13 @@ def parse_explicit_stats(text,a,b):
         for m in rx.finditer(txt):
             setv(f,'total_thrown_per_round',m.group(1))
 
+        rx=re.compile(p+r'[^.!?]{0,100}?(?:averaged|averaging|avg\.?d?)\s+(?:just\s+)?(\d+(?:\.\d+)?)\s+(?:total\s+)?(?:punches?\s+)?(?:thrown\s+)?per\s+round\s*\(\s*(\d+(?:\.\d+)?)\s+landed\s*\)',re.I)
+        for m in rx.finditer(txt):
+            setv(f,'total_thrown_per_round',m.group(1));setv(f,'total_landed_per_round',m.group(2))
+
     # "Hopkins averaged 41 punches thrown per round, landing 9 per round"
     for f,p in [(a,pa),(b,pb)]:
-        rx=re.compile(p+r'.{0,100}?(?:averaged|avg[.]?d?)\s+(\d+(?:\.\d+)?)\s+(?:total\s+)?punches?\s+thrown\s+per\s+round.{0,80}?(?:landing|landed)\s+(\d+(?:\.\d+)?)\s+per\s+round',re.I)
+        rx=re.compile(p+r'[^.!?]{0,100}?(?:averaged|avg[.]?d?)\s+(\d+(?:\.\d+)?)\s+(?:total\s+)?punches?\s+thrown\s+per\s+round[^.!?]{0,80}?(?:landing|landed)\s+(\d+(?:\.\d+)?)\s+per\s+round',re.I)
         for m in rx.finditer(txt):
             setv(f,'total_thrown_per_round',m.group(1));setv(f,'total_landed_per_round',m.group(2))
 
@@ -391,7 +395,7 @@ def parse_explicit_stats(text,a,b):
     # Explicit accuracy statements. Percentages stay percentages; rounded
     # percentage statements are never inverted to invent landed totals.
     for f,p in [(a,pa),(b,pb)]:
-        rx=re.compile(p+r'.{0,110}?landed\s+(\d+(?:\.\d+)?)%\s+of\s+(?:his|her|the)\s+(\d+)\s+(?:total\s+)?punches',re.I)
+        rx=re.compile(p+r'[^.!?]{0,110}?landed\s+(\d+(?:\.\d+)?)%\s+of\s+(?:his|her|the)\s+(\d+)\s+(?:total\s+)?punches',re.I)
         for m in rx.finditer(txt):
             setv(f,'total_accuracy_pct',m.group(1));setv(f,'total_thrown',m.group(2))
         rx=re.compile(p+r'[^.!?]{0,100}?(?:landed|landing)\s+(\d+(?:\.\d+)?)%\s+of\s+(?:his|her)\s+power\s+(?:punches|shots)',re.I)
@@ -403,7 +407,7 @@ def parse_explicit_stats(text,a,b):
 
     # "Linares landed an average of 10 of 36 jabs per round"
     for f,p in [(a,pa),(b,pb)]:
-        rx=re.compile(p+r'.{0,100}?landed\s+(?:an?\s+)?(?:average|avg\.?)\s+of\s+(\d+(?:\.\d+)?)\s+of\s+(\d+(?:\.\d+)?)\s+jabs?\s+per\s+round',re.I)
+        rx=re.compile(p+r'[^.!?]{0,100}?landed\s+(?:an?\s+)?(?:average|avg\.?)\s+of\s+(\d+(?:\.\d+)?)\s+of\s+(\d+(?:\.\d+)?)\s+jabs?\s+per\s+round',re.I)
         for m in rx.finditer(txt):
             setv(f,'jab_landed_per_round',m.group(1));setv(f,'jab_thrown_per_round',m.group(2))
 
@@ -446,6 +450,52 @@ def parse_explicit_stats(text,a,b):
 def rounds_num(v):
     m=re.search(r'(\d{1,2})',str(v or ''))
     return int(m.group(1)) if m and 1<=int(m.group(1))<=15 else None
+
+def dedupe_summary_rows(rows):
+    """Collapse spelling/suffix aliases for the same dated fighter/opponent side.
+
+    Grouping is date + source article + fighter surname + opponent surname.
+    Metrics are merged only when duplicate variants agree. Any numeric conflict
+    quarantines the entire side observation.
+    """
+    metric_fields=[
+      'total_landed','total_thrown','jab_landed','jab_thrown','power_landed','power_thrown',
+      'total_landed_per_round','total_thrown_per_round',
+      'jab_landed_per_round','jab_thrown_per_round',
+      'power_landed_per_round','power_thrown_per_round',
+      'total_accuracy_pct','jab_accuracy_pct','power_accuracy_pct'
+    ]
+    groups=defaultdict(list)
+    for r in rows:
+        fs=surname(r.get('fighter'));os=surname(r.get('opponent'))
+        if not fs or not os or fs==os:continue
+        groups[(r.get('source_url'),r.get('bout_date'),fs,os)].append(r)
+    out=[];conflicts=[]
+    for key,items in groups.items():
+        base=dict(items[0])
+        aliases=sorted({str(x.get('fighter') or '').strip() for x in items if x.get('fighter')})
+        opp_aliases=sorted({str(x.get('opponent') or '').strip() for x in items if x.get('opponent')})
+        bad=[]
+        for field in metric_fields:
+            vals={float(x[field]) for x in items if x.get(field) is not None}
+            if len(vals)>1:
+                bad.append({'field':field,'values':sorted(vals)})
+            elif len(vals)==1:
+                v=next(iter(vals))
+                base[field]=int(v) if field in {'total_landed','total_thrown','jab_landed','jab_thrown','power_landed','power_thrown'} and float(v).is_integer() else v
+        if bad:
+            conflicts.append({'key':key,'fighter_aliases':aliases,'opponent_aliases':opp_aliases,'conflicts':bad})
+            continue
+        # Prefer the most descriptive observed name, but retain every alias and
+        # let the master index this row under each alias.
+        base['fighter']=max(aliases,key=lambda x:(len(x),x))
+        base['opponent']=max(opp_aliases,key=lambda x:(len(x),x))
+        base['fighter_aliases']=aliases
+        base['opponent_aliases']=opp_aliases
+        base['alias_dedup_quality']='same_article_date_and_surname_side_numeric_agreement'
+        out.append(base)
+    out.sort(key=lambda r:(r.get('bout_date') or '',surname(r.get('fighter')),r.get('source_url') or ''))
+    return out,conflicts
 
 def main():
     ap=argparse.ArgumentParser();ap.add_argument('--articles',type=int,default=400);args=ap.parse_args()
@@ -511,12 +561,8 @@ def main():
             fail.append({'url':url,'error':str(e)[:220]});diag['fetch_or_parse_failure']+=1
         time.sleep(.12)
 
-    # exact duplicate observations collapse
-    uniq={}
-    for r in rows:
-        key=(r['source_url'],r['bout_date'],norm(r['fighter']))
-        uniq[key]=r
-    rows=sorted(uniq.values(),key=lambda r:(r['bout_date'],norm(r['fighter']),r['source_url']))
+    rows,dedupe_conflicts=dedupe_summary_rows(rows)
+    diag['alias_dedup_conflicts_quarantined']=len(dedupe_conflicts)
     with OUT.open('w',encoding='utf-8') as fh:
         for r in rows:fh.write(json.dumps(r,ensure_ascii=False)+'\n')
     report={
@@ -528,7 +574,7 @@ def main():
       'diagnostics':dict(diag),'unresolved_sample':unresolved_sample,
       'explicit_full_stat_targets':list(full_stat_targets.values()),
       'explicit_full_stat_target_count':len(full_stat_targets),
-      'matched_no_numeric_sample':no_numeric_sample,'failures_sample':fail[:80],
+      'matched_no_numeric_sample':no_numeric_sample,'alias_dedup_conflicts_sample':dedupe_conflicts[:40],'failures_sample':fail[:80],
       'policy':'CompuBox-authored BoxingScene articles only; unique local date+pair; explicit numeric patterns only; separate summary tier from full round reports.'
     }
     REPORT.write_text(json.dumps(report,indent=2,ensure_ascii=False))
