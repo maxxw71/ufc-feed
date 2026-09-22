@@ -71,6 +71,37 @@ def explicit_opponent_strength(row):
         if w+l>=5:return w/(w+l)
     return None
 
+def load_ibf_bout_context():
+    path=ROOT.parent/'official_bouts'/'ibf_bouts.json'
+    out={};conflicts=set()
+    if not path.exists():return out
+    try:rows=json.loads(path.read_text())
+    except Exception:return out
+    grouped=collections.defaultdict(list)
+    for r in rows:
+        date=str(r.get('date') or '')
+        a=namekey(r.get('fighter_a') or '');b=namekey(r.get('fighter_b') or '')
+        if not date or not a or not b or a==b:continue
+        key=(date,*sorted((a,b)))
+        grouped[key].append(r)
+    for key,items in grouped.items():
+        sigs={
+          (str(x.get('weight_class') or ''),str(x.get('organization') or ''),
+           str(x.get('bout_type') or ''),str(x.get('location') or ''),
+           str(x.get('promoter') or ''))
+          for x in items
+        }
+        if len(sigs)!=1:
+            conflicts.add(key);continue
+        w,o,t,loc,prom=next(iter(sigs))
+        out[key]={
+          'weight_class':w or None,'organization':o or None,'bout_type':t or None,
+          'location':loc or None,'promoter':prom or None,
+          'title_or_eliminator_flag':bool(re.search(r'championship|defense|unification|eliminator|mandatory|vacant',t,re.I)),
+          'source':'official_ibf_bout_api'
+        }
+    return out
+
 def bout_context(r):
     try:data=json.loads(r.get('data') or '{}')
     except Exception:data={}
@@ -315,6 +346,7 @@ def main():
     wba_ranks,wba_champs=load_wba_rankings()
     wbo_ranks,wbo_champs=load_wbo_rankings()
     ibf_ranks,ibf_champs=load_ibf_rankings()
+    ibf_bout_context=load_ibf_bout_context()
     punch_history=load_punch_history()
     events=canonical_events(histories,links); eventkeys={k for k,s in events}
     targets=collections.defaultdict(set)
@@ -389,8 +421,10 @@ def main():
                     sides[label]['ibf_ranking_quality']='official_ibf_api_post_date_plus_one_day' if (_ibr or _ibc) else None
                     assert not s['latest_input_bout_date'] or s['latest_input_bout_date']<date
                 matched=[q for q in quotes[r['source_id']] if q['event_date']==date]
+                _ibf_ctx=ibf_bout_context.get((date,*sorted((namekey(r['boxer_a']),namekey(r['boxer_b'])))))
                 row={'source_id':r['source_id'],'career_source':r['source'],'bout_date':date,'fighter_name':r['boxer_a'],'opponent_name':r['boxer_b'],
                      **sides,'canonical_verified_pair':bool(pair and (date,*pair) in eventkeys),'context':bout_context(r),
+                     'ibf_official_bout_context':_ibf_ctx,
                      'wbc_rank_gap':(sides['opponent']['wbc_rank']-sides['fighter']['wbc_rank']) if sides.get('fighter') and sides.get('opponent') and sides['fighter'].get('wbc_rank') is not None and sides['opponent'].get('wbc_rank') is not None else None,
                      'wba_rank_gap':(sides['opponent']['wba_rank']-sides['fighter']['wba_rank']) if sides.get('fighter') and sides.get('opponent') and sides['fighter'].get('wba_rank') is not None and sides['opponent'].get('wba_rank') is not None else None,
                      'wbo_rank_gap':(sides['opponent']['wbo_rank']-sides['fighter']['wbo_rank']) if sides.get('fighter') and sides.get('opponent') and sides['fighter'].get('wbo_rank') is not None and sides['opponent'].get('wbo_rank') is not None else None,
@@ -406,11 +440,13 @@ def main():
                 y['both_record_totals_match']+=bool(sides['opponent'] and all(sides[x]['record_totals_match'] for x in ('fighter','opponent')))
                 y['fighter_has_prior_punch']+=bool(sides.get('fighter') and sides['fighter'].get('prior_punch'))
                 y['both_have_prior_punch']+=bool(sides.get('fighter') and sides.get('opponent') and sides['fighter'].get('prior_punch') and sides['opponent'].get('prior_punch'))
+                y['ibf_official_context_rows']+=bool(_ibf_ctx)
     report={'built_at':stamp,'rows':total,'career_sources':dict(source_rows),'verified_graph_bouts':len(events),'identity_links':len(links),'opponent_strength_sources':dict(strength_source),
             'wbc_ranking_names_loaded':len(wbc_ranks),'wbc_champion_names_loaded':len(wbc_champs),
             'wba_ranking_names_loaded':len(wba_ranks),'wba_champion_names_loaded':len(wba_champs),
             'wbo_ranking_names_loaded':len(wbo_ranks),'wbo_champion_names_loaded':len(wbo_champs),
             'ibf_ranking_names_loaded':len(ibf_ranks),'ibf_champion_names_loaded':len(ibf_champs),
+            'ibf_official_bout_contexts_loaded':len(ibf_bout_context),
             'punch_identity_fighters_loaded':len(punch_history),'punch_observations_loaded':sum(len(v) for v in punch_history.values()),
             'years':dict(sorted(years.items())),
             'validated_price_rows':0,'limitations':['Career rows preserve source provenance; secondary observed histories are not relabeled as Wikipedia.',
@@ -423,6 +459,7 @@ def main():
             'WBA ranking fields are kept separate from WBC and are usable only on/after the official WBA posting date; missing remains unknown.',
             'WBO ranking fields are kept separate and usable only on/after the official WBO article publication date; missing remains unknown.',
             'IBF ranking fields are kept separate and usable only after the official IBF API post date; missing/vacant rank slots remain unknown.',
+            'IBF official bout type/location/promoter context is attached only on an exact date+participant-pair match and never uses the stored result field as a feature.',
             'All quotes have unverified timing/settlement. No validated ROI or live eligibility.',
             'Prior punch features require exact full-name identity from CompuBox report titles and only earlier report dates; missing remains unknown.']}
     (outdir/'coverage.json').write_text(json.dumps(report,indent=2));(ROOT/'LATEST_CHRONOLOGICAL_MASTER.txt').write_text(str(outdir)+'\n')
