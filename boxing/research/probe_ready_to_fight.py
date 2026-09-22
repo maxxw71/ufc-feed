@@ -48,7 +48,7 @@ def main():
                 if 'json' in typ.lower() or '__NEXT_DATA__' in str(s.get('id')) or '__NUXT__' in txt[:200] or '"punch' in txt.lower():
                     payloads.append({'id':s.get('id'),'type':typ,'text':txt[:50000]})
             item['embedded_payloads']=payloads[:20]
-            pats=re.findall(r'["\\']((?:https?://[^"\\']+|/[^"\\']+)(?:api|graphql|fight|stat|analytics)[^"\\']*)["\\']',html,re.I)
+            pats=re.findall(r"""["']((?:https?://[^"']+|/[^"']+)(?:api|graphql|fight|stat|analytics)[^"']*)["']""",html,re.I)
             item['endpoint_candidates']=list(dict.fromkeys(pats))[:200]
             text=re.sub(r'\s+',' ',' '.join(soup.stripped_strings)).strip()
             marker='Statistics of punches'
