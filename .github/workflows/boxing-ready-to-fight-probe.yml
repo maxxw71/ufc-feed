@@ -1,0 +1,25 @@
+name: Boxing Ready To Fight Structure Probe
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'boxing/research/probe_ready_to_fight.py'
+      - '.github/workflows/boxing-ready-to-fight-probe.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install --disable-pip-version-check beautifulsoup4 lxml
+      - name: Probe public Ready To Fight fight pages
+        run: python boxing/research/probe_ready_to_fight.py
