@@ -7,7 +7,7 @@ on the first day of the FOLLOWING month, preventing same-month publication
 timing leakage when exact publication timestamp is unknown.
 """
 from __future__ import annotations
-import datetime as dt, hashlib, io, json, re, time, urllib.error, urllib.request
+import datetime as dt, hashlib, io, json, re, subprocess, time, urllib.error, urllib.request
 from pathlib import Path
 from pypdf import PdfReader
 
@@ -53,8 +53,20 @@ def urls(y,month):
       f'WBC_RATINGS_{month}_%20{y}_.pdf',
       f'_WBC_RATINGS_{month}_%20{y}_.pdf',
     ]
-    if y==2024 and month=='DECEMBER':
-      names.insert(0,'WBC_RATINGS_CONVENTION_HAMBURG_GERMANY_2024_.pdf')
+    if y==2024:
+      observed={
+        'JANUARY':['WBC_RATINGS_JANUARY__2024.pdf'],
+        'FEBRUARY':['WBC_RATINGS_FEBRUARY_2024.pdf'],
+        'APRIL':['WBC_RATINGS_APRIL_2024_.pdf'],
+        'MAY':['WBC_RATINGS_MAY_2024.pdf'],
+        'JUNE':['_WBC_RATINGS_JUNE_2024.pdf'],
+        'JULY':['WBC_RATINGS_JULY_2024.pdf'],
+        'AUGUST':['WBC_RATINGS_AUGUST_2024.pdf'],
+        'SEPTEMBER':['WBC_RATINGS_SEPTEMBER_2024_.pdf'],
+        'OCTOBER':['WBC_RATINGS_OCTOBER_2024.pdf'],
+        'DECEMBER':['WBC_RATINGS_CONVENTION_HAMBURG_GERMANY_2024_.pdf'],
+      }
+      names=(observed.get(month,[])+names)
     bases=[
       f'https://wbcboxing.com/mailing/{y}/ratings_pdf/',
       f'https://wbcboxing.com/mailing/{y}/',
@@ -62,6 +74,20 @@ def urls(y,month):
     for b in bases:
       for n in names:
         yield b+n
+
+def _curl_pdf(url):
+    try:
+      p=subprocess.run([
+        'curl','-4','--http1.1','-L','--compressed','--fail','--silent','--show-error',
+        '--connect-timeout','15','--max-time','60','--retry','2','--retry-delay','2',
+        '-A',UA,'-e','https://wbcboxing.com/',url
+      ],capture_output=True,timeout=70)
+      data=p.stdout if p.returncode==0 else b''
+      if data.lstrip().startswith(b'%PDF') and 20_000<len(data)<=12_000_000:
+        return url,data
+    except Exception:
+      pass
+    return None,None
 
 def fetch_pdf(y,month):
     for url in urls(y,month):
@@ -80,12 +106,17 @@ def fetch_pdf(y,month):
             return final,data
           break
         except urllib.error.HTTPError as e:
-          if e.code not in {408,425,429,500,502,503,504,520,521,522,523,524}:
+          if e.code not in {403,408,425,429,500,502,503,504,520,521,522,523,524}:
             break
         except urllib.error.URLError:
           pass
         if attempt<2:
           time.sleep(1.0*(2**attempt))
+      # WBC/Cloudflare has intermittently rejected Python's urllib while the
+      # exact official PDF remains publicly reachable. Use curl only for the
+      # same finite official URL candidate; never enumerate IDs or directories.
+      final,data=_curl_pdf(url)
+      if data:return final,data
     return None,None
 
 def clean_line(x):
