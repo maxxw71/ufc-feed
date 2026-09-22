@@ -139,7 +139,21 @@ def boxer_name(text):
 def ranked_boxer(text):
     """Extract boxer + official WBC country label from a contender cell."""
     s=clean_line(text)
-    m=re.match(r'^(.+?)\s+\(([^()]{2,45})\)(?:\s+.*)?
+    m=re.match(r'^(.+?)\s+\(([^()]{2,45})\)(?:\s+.*)?$',s)
+    if not m:
+        return None
+    name=clean_line(m.group(1))
+    country=clean_line(m.group(2))
+    if not name or ':' in name or len(name)>80:
+        return None
+    if re.search(r'\b(?:champion|contender|available|required|program|affiliated|federation|rating|www)\b',name,re.I):
+        return None
+    if not re.search(r'[A-Za-zÀ-ÿ]{2}',name):
+        return None
+    if not country or len(country)>45:
+        return None
+    return name,country
+
 def parse(text,y,m,url):
     """Parse WBC layout text using only the left contender column."""
     raw_lines=[str(x).replace('\xa0',' ').rstrip() for x in text.splitlines() if clean_line(x)]
