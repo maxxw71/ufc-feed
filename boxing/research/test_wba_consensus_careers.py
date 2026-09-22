@@ -32,6 +32,23 @@ class WBAConsensusCareerTests(unittest.TestCase):
         self.assertEqual(['win','loss'],[r['result'] for r in rows])
         self.assertEqual(1,recon['reconstructed_missing_wba_rows'])
 
+    def test_ibf_row_can_complete_partial_wba_career(self):
+        d=self.db()
+        d.execute("insert into bouts values(?,?,?,?,?,?,?,?,?,?,?)",
+                  ('wikipedia','b1','2024-01-01','Opponent One','Alpha Boxer','BOXER B','UD','6','X','FINISHED','{}'))
+        ibf=[{'date':'2024-02-01','fighter_a':'Alpha Boxer','fighter_b':'Opponent Two','winner_side':'B',
+              'method':'KO','round':2,'location':'Y','source_index':7}]
+        idx=result_index(d,ibf)
+        page={
+          'stated_record':(1,1,0),
+          'rows':[{'date':'2024-01-01','opponent':'Opponent One','type':'UD','round_time':'6','location':'X','raw':{}}],
+          'wba_row_count':1,'wba_rows_complete':False
+        }
+        rows,recon=resolve_career('Alpha Boxer',page,idx,d,ibf)
+        self.assertEqual(2,len(rows))
+        self.assertEqual(['win','loss'],[r['result'] for r in rows])
+        self.assertEqual(1,recon['reconstructed_missing_wba_rows'])
+
     def test_conflicting_independent_result_rejected(self):
         d=self.db()
         d.execute("insert into bouts values(?,?,?,?,?,?,?,?,?,?,?)",
