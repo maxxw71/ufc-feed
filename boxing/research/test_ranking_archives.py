@@ -54,6 +54,7 @@ class RankingArchiveIntegrityTests(unittest.TestCase):
         meta=self.load('wbo_monthly_rankings_meta.json')
         self.assertEqual(len(rows),meta['ranking_rows'])
         self.assertGreaterEqual(meta['parsed_documents'],20)
+        self.assertEqual(meta.get('quarantined_conflicting_rank_slots'),0)
 
     def test_ibf_rankings(self):
         rows=self.load('ibf_monthly_rankings.json')
