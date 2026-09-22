@@ -1,0 +1,52 @@
+name: Boxing Wayback CompuBox PDF Capture Probe
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/boxing-wayback-compubox-pdf-cdx.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install --disable-pip-version-check pypdf
+      - name: Resolve exact PDF through Wayback CDX
+        shell: bash
+        run: |
+          python - <<'PY'
+          import io,json,urllib.parse,urllib.request
+          from pypdf import PdfReader
+          original='http://www.compuboxonline.com/featured_stats/V_Klitschko_KO_10_Arreola.pdf'
+          cdx='https://web.archive.org/cdx/search/cdx?'+urllib.parse.urlencode({
+              'url':original,'output':'json','filter':['statuscode:200','mimetype:application/pdf'],
+              'fl':'timestamp,original,statuscode,mimetype,digest','collapse':'digest'
+          },doseq=True)
+          out={'original':original,'cdx_url':cdx,'captures':[]}
+          try:
+              req=urllib.request.Request(cdx,headers={'User-Agent':'Mozilla/5.0 AppwizaCompuBoxCDX/1.0'})
+              with urllib.request.urlopen(req,timeout=45) as r:
+                  rows=json.loads(r.read().decode('utf-8','replace'))
+              out['cdx_rows']=rows
+              for row in rows[1:11]:
+                  ts,orig,status,mime,digest=row
+                  snap=f'https://web.archive.org/web/{ts}id_/{orig}'
+                  item={'timestamp':ts,'snapshot':snap,'digest':digest}
+                  try:
+                      req=urllib.request.Request(snap,headers={'User-Agent':'Mozilla/5.0 AppwizaCompuBoxCDX/1.0'})
+                      with urllib.request.urlopen(req,timeout=60) as r:raw=r.read(12_000_001)
+                      item['bytes']=len(raw);item['is_pdf']=raw.lstrip().startswith(b'%PDF')
+                      if item['is_pdf']:
+                          pdf=PdfReader(io.BytesIO(raw));text='\n'.join((p.extract_text() or '') for p in pdf.pages)
+                          item['pages']=len(pdf.pages);item['text_sample']=text[:30000]
+                  except Exception as e:item['error']=repr(e)
+                  out['captures'].append(item)
+          except Exception as e:out['cdx_error']=repr(e)
+          print(json.dumps(out,indent=2,ensure_ascii=False))
+          PY
