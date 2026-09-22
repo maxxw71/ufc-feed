@@ -49,6 +49,7 @@ jobs:
           set -Eeuo pipefail
           mkdir -p /tmp/compubox-summary-out
           cp boxing/punch_supplements/boxingscene_compubox_summaries.jsonl /tmp/compubox-summary-out/summaries.jsonl
+          cp boxing/punch_supplements/boxingscene_compubox_prefight_baselines.jsonl /tmp/compubox-summary-out/prefight_baselines.jsonl
           cp boxing/punch_supplements/boxingscene_compubox_summary_report.json /tmp/compubox-summary-out/report.json
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
@@ -56,8 +57,9 @@ jobs:
           git reset --hard origin/main
           mkdir -p boxing/punch_supplements
           cp /tmp/compubox-summary-out/summaries.jsonl boxing/punch_supplements/boxingscene_compubox_summaries.jsonl
+          cp /tmp/compubox-summary-out/prefight_baselines.jsonl boxing/punch_supplements/boxingscene_compubox_prefight_baselines.jsonl
           cp /tmp/compubox-summary-out/report.json boxing/punch_supplements/boxingscene_compubox_summary_report.json
-          git add boxing/punch_supplements/boxingscene_compubox_summaries.jsonl boxing/punch_supplements/boxingscene_compubox_summary_report.json
+          git add boxing/punch_supplements/boxingscene_compubox_summaries.jsonl boxing/punch_supplements/boxingscene_compubox_prefight_baselines.jsonl boxing/punch_supplements/boxingscene_compubox_summary_report.json
           if git diff --cached --quiet; then
             echo 'No CompuBox summary changes.'
           else
