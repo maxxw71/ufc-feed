@@ -2,7 +2,7 @@ from bs4 import BeautifulSoup
 import datetime as dt
 import unittest
 
-from collect_boxingscene_compubox_summaries import resolve_bouts,parse_explicit_stats,text_content,dedupe_summary_rows
+from collect_boxingscene_compubox_summaries import resolve_bouts,parse_explicit_stats,text_content,dedupe_summary_rows,is_historical_review,parse_prefight_baselines
 
 class BoxingSceneCompuBoxResolutionTests(unittest.TestCase):
     def test_multi_fight_title_resolves_two_unique_pairs(self):
@@ -89,6 +89,33 @@ class BoxingSceneCompuBoxResolutionTests(unittest.TestCase):
         out,conf=dedupe_summary_rows(rows)
         self.assertEqual([],out)
         self.assertEqual(1,len(conf))
+
+    def test_historical_review_parsed_as_prefight_baseline(self):
+        text=("Danny Garcia (last 12 fights) threw and landed slightly below the weight class average. "
+              "Garcia landed 40.3% of his power punches. "
+              "Brandon Rios' last 7 opponents landed 40.8% of their power shots, while Brandon Rios landed 38.5%.")
+        self.assertTrue(is_historical_review('Danny Garcia vs. Brandon Rios - CompuBox Historical Review',text))
+        out=parse_prefight_baselines(text,'Danny Garcia','Brandon Rios')
+        self.assertEqual(out['Danny Garcia']['history_window_fights'],12.0)
+        self.assertEqual(out['Danny Garcia']['power_accuracy_pct'],40.3)
+        self.assertEqual(out['Brandon Rios']['history_window_fights'],7.0)
+        self.assertEqual(out['Brandon Rios']['opponent_power_accuracy_pct'],40.8)
+        self.assertEqual(out['Brandon Rios']['power_accuracy_pct'],38.5)
+
+    def test_safe_postfight_patterns(self):
+        text=("Amir Khan controlled most of the fight with his jab (5 of 28 per round), "
+              "but Julio Diaz gave away rounds, averaging just 33 punches thrown per frame. "
+              "Terence Crawford landed 50% of his non-jabs in the fight. "
+              "Jose Ramirez's pressure (67 thrown per round) and power punching (19 of 45 per round) was the difference.")
+        out=parse_explicit_stats(text,'Amir Khan','Julio Diaz')
+        self.assertEqual(out['Amir Khan']['jab_landed_per_round'],5.0)
+        self.assertEqual(out['Amir Khan']['jab_thrown_per_round'],28.0)
+        self.assertEqual(out['Julio Diaz']['total_thrown_per_round'],33.0)
+        out2=parse_explicit_stats(text,'Terence Crawford','Jose Ramirez')
+        self.assertEqual(out2['Terence Crawford']['power_accuracy_pct'],50.0)
+        self.assertEqual(out2['Jose Ramirez']['total_thrown_per_round'],67.0)
+        self.assertEqual(out2['Jose Ramirez']['power_landed_per_round'],19.0)
+        self.assertEqual(out2['Jose Ramirez']['power_thrown_per_round'],45.0)
 
 if __name__=='__main__':
     unittest.main()
