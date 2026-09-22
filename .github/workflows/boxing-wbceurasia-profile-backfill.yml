@@ -1,0 +1,47 @@
+name: Boxing WBC Eurasia Profile Backfill
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'boxing/research/backfill_wbceurasia_profiles.py'
+      - '.github/workflows/boxing-wbceurasia-profile-backfill.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  enrich:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install --disable-pip-version-check beautifulsoup4 lxml pycountry
+      - name: Backfill exact WBC Eurasia profile fields
+        run: python boxing/research/backfill_wbceurasia_profiles.py --limit 300 --min-appearances 1 --sleep 0.08
+      - name: Persist verified WBC Eurasia profile supplements
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          mkdir -p /tmp/wbceurasia-profile
+          cp boxing/profile_supplements/verified_profiles.jsonl /tmp/wbceurasia-profile/verified_profiles.jsonl
+          cp boxing/profile_supplements/wbceurasia_profile_backfill_report.json /tmp/wbceurasia-profile/report.json
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git fetch origin main
+          git reset --hard origin/main
+          cp /tmp/wbceurasia-profile/verified_profiles.jsonl boxing/profile_supplements/verified_profiles.jsonl
+          cp /tmp/wbceurasia-profile/report.json boxing/profile_supplements/wbceurasia_profile_backfill_report.json
+          git add boxing/profile_supplements/verified_profiles.jsonl boxing/profile_supplements/wbceurasia_profile_backfill_report.json
+          if git diff --cached --quiet; then
+            echo 'No WBC Eurasia profile changes.'
+          else
+            git commit -m 'Expand boxer profiles from WBC Eurasia'
+            git push origin HEAD:main
+          fi
