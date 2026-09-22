@@ -49,6 +49,7 @@ class BoxingSceneCompuBoxResolutionTests(unittest.TestCase):
         text=("Bernabe Concepcion landed 37% of the 39 total punches he threw per round and 47% of his power shots. "
               "Mario Santiago averaged 79 punches thrown per round and landed 20%.")
         out=parse_explicit_stats(text,'Bernabe Concepcion','Mario Santiago')
+        self.assertIn('total_accuracy_pct',out['Bernabe Concepcion'],out)
         self.assertEqual(out['Bernabe Concepcion']['total_accuracy_pct'],37.0)
         self.assertEqual(out['Bernabe Concepcion']['total_thrown_per_round'],39.0)
         self.assertEqual(out['Bernabe Concepcion']['power_accuracy_pct'],47.0)
