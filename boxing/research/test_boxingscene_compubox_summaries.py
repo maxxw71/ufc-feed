@@ -2,7 +2,7 @@ from bs4 import BeautifulSoup
 import datetime as dt
 import unittest
 
-from collect_boxingscene_compubox_summaries import resolve_bouts,parse_explicit_stats,text_content
+from collect_boxingscene_compubox_summaries import resolve_bouts,parse_explicit_stats,text_content,dedupe_summary_rows
 
 class BoxingSceneCompuBoxResolutionTests(unittest.TestCase):
     def test_multi_fight_title_resolves_two_unique_pairs(self):
@@ -64,6 +64,31 @@ class BoxingSceneCompuBoxResolutionTests(unittest.TestCase):
         out=parse_explicit_stats(txt,'Matthew Macklin','Felix Sturm')
         self.assertEqual(out['Matthew Macklin']['total_thrown_per_round'],92.0)
         self.assertEqual(out['Felix Sturm']['power_accuracy_pct'],45.0)
+
+    def test_jacobs_arias_sentence_isolation(self):
+        text=("Daniel Jacobs landed 44% of his power shots vs. Luis Arias, who averaged just 29 thrown per round (8 landed). "
+              "Jacobs landed 17 of 53 per round.")
+        out=parse_explicit_stats(text,'Daniel Jacobs','Luis Arias')
+        self.assertEqual(out['Daniel Jacobs']['total_landed_per_round'],17.0)
+        self.assertEqual(out['Daniel Jacobs']['total_thrown_per_round'],53.0)
+        self.assertEqual(out['Luis Arias']['total_landed_per_round'],8.0)
+        self.assertEqual(out['Luis Arias']['total_thrown_per_round'],29.0)
+
+    def test_alias_rows_collapse_when_metrics_agree(self):
+        base={'source_url':'u','bout_date':'2013-03-30','opponent':'Nobuhiro Ishida',
+              'rounds_observed':3,'jab_landed':53,'jab_thrown':108,'power_landed':52,'power_thrown':97}
+        rows=[dict(base,fighter='Gennady Golovkin'),dict(base,fighter='Gennadiy Golovkin')]
+        out,conf=dedupe_summary_rows(rows)
+        self.assertEqual(1,len(out))
+        self.assertEqual([],conf)
+        self.assertEqual({'Gennady Golovkin','Gennadiy Golovkin'},set(out[0]['fighter_aliases']))
+
+    def test_alias_metric_conflict_quarantined(self):
+        base={'source_url':'u','bout_date':'2013-03-30','opponent':'Nobuhiro Ishida','rounds_observed':3}
+        rows=[dict(base,fighter='Gennady Golovkin',jab_landed=53),dict(base,fighter='Gennadiy Golovkin',jab_landed=54)]
+        out,conf=dedupe_summary_rows(rows)
+        self.assertEqual([],out)
+        self.assertEqual(1,len(conf))
 
 if __name__=='__main__':
     unittest.main()
