@@ -16,6 +16,18 @@ class BoxingSceneCompuBoxResolutionTests(unittest.TestCase):
         self.assertEqual(2,len(bouts))
         self.assertEqual('publication_date_window',quality)
 
+    def test_dated_body_pair_resolves_one_sided_title(self):
+        bydate={
+          '2011-11-26':{
+            ('saulalvarez','kermitcintron'):{'date':'2011-11-26','fighter_a':'Saul Alvarez','fighter_b':'Kermit Cintron','rounds':'5'}
+          }
+        }
+        items=list(bydate['2011-11-26'].values())
+        body="Canelo Alvarez pressed forward against Kermit Cintron throughout the fight and CompuBox recorded the action."
+        bouts,quality=resolve_bouts('CompuBox Stats: Canelo Ends Cintron With Big Numbers',dt.date(2011,11,27),bydate,items,body)
+        self.assertEqual(1,len(bouts))
+        self.assertEqual('publication_date_body_pair',quality)
+
     def test_rematch_pair_without_safe_date_stays_ambiguous(self):
         items=[
           {'date':'2012-06-09','fighter_a':'Manny Pacquiao','fighter_b':'Timothy Bradley','rounds':'12'},
