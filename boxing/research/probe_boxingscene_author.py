@@ -37,4 +37,22 @@ for s in soup.find_all('script'):
         out['payloads'].append({'id':s.get('id'),'type':s.get('type'),'text':txt[:60000]})
 pats=re.findall(r"""["']((?:https?://[^"']+|/[^"']+)(?:api|graphql|author|article|load|page)[^"']*)["']""",html,re.I)
 out['endpoint_candidates']=list(dict.fromkeys(pats))[:300]
+
+out['author_chunk_probe']=[]
+for src in out['scripts']:
+    if '/authors/' not in urllib.parse.unquote(src):continue
+    try:
+        _,js,_=get(src,3_000_000)
+        strings=[]
+        for m in re.finditer(r'.{0,260}(?:fetch\(|axios|/api/|graphql|author|loadMore|load_more|cursor|offset|pageSize|page=).{0,700}',js,re.I):
+            val=m.group(0)
+            if val not in strings:strings.append(val)
+        literals=re.findall(r'''["']([^"']{1,500})["']''',js)
+        interesting=[x for x in literals if re.search(r'api|author|article|cursor|offset|page|limit|load',x,re.I)]
+        out['author_chunk_probe'].append({
+          'url':src,'bytes':len(js),'context_matches':strings[:120],
+          'interesting_literals':list(dict.fromkeys(interesting))[:250]
+        })
+    except Exception as e:
+        out['author_chunk_probe'].append({'url':src,'error':repr(e)})
 print(json.dumps(out,indent=2,ensure_ascii=False))
