@@ -131,37 +131,56 @@ def article_title(soup,url=None):
         title=slug.replace('-',' ')
     return title
 
-def resolve_bouts(title,date,bydate,allitems):
-    """Resolve one or more exact local bouts mentioned in a CompuBox title.
+def resolve_bouts(title,date,bydate,allitems,text_hint=''):
+    """Resolve one or more exact local bouts mentioned in a CompuBox article.
 
-    Multi-fight legacy articles are allowed only when every matched participant
-    pair has one unique bout in the relevant date window. Rematches remain
-    ambiguous and are rejected pair-by-pair.
+    Priority:
+    1) both surnames in title + exact publication-date window;
+    2) when publication date exists, both surnames occur close together in the
+       article body and the date-window pair is unique;
+    3) title-implied historical pair only when that pair occurred once ever.
+
+    Body matching is never used without a publication date.
     """
     tnorm=norm(title)
+    body_ascii=unicodedata.normalize('NFKD',str(text_hint or '')).encode('ascii','ignore').decode().casefold()
+    body_ascii=re.sub(r'\s+',' ',body_ascii)[:7000]
+
     def title_matches(item):
         sa,sb=surname(item['fighter_a']),surname(item['fighter_b'])
         return bool(sa and sb and sa!=sb and sa in tnorm and sb in tnorm)
 
+    def body_pair_near(item):
+        sa,sb=surname(item['fighter_a']),surname(item['fighter_b'])
+        if not sa or not sb or sa==sb:return False
+        # Require literal surname tokens, not normalized substring matches.
+        pa=re.compile(r'(?<![a-z0-9])'+re.escape(sa)+r'(?![a-z0-9])',re.I)
+        pb=re.compile(r'(?<![a-z0-9])'+re.escape(sb)+r'(?![a-z0-9])',re.I)
+        apos=[m.start() for m in pa.finditer(body_ascii)]
+        bpos=[m.start() for m in pb.finditer(body_ascii)]
+        return any(abs(a-b)<=260 for a in apos for b in bpos)
+
     if date:
-        matches=[]
+        window=[]
         for offset in range(-3,4):
             d=(date+dt.timedelta(days=offset)).isoformat()
-            for item in bydate.get(d,{}).values():
-                if title_matches(item):matches.append(item)
-        # Group by participant pair. A pair is accepted only if one dated bout
-        # exists in the window; multiple distinct pairs in one title are fine.
-        bypair=defaultdict(dict)
-        for x in matches:
-            pair=tuple(sorted([norm(x['fighter_a']),norm(x['fighter_b'])]))
-            bypair[pair][x['date']]=x
-        resolved=[next(iter(d.values())) for d in bypair.values() if len(d)==1]
-        if resolved:
-            return sorted(resolved,key=lambda x:(x['date'],norm(x['fighter_a']),norm(x['fighter_b']))),'publication_date_window'
+            window.extend(bydate.get(d,{}).values())
 
-    # Migrated pages may have missing/incorrect publication metadata. Group all
-    # title-implied archive matches by participant pair and accept only pairs
-    # that occurred exactly once historically. A rematch pair is withheld.
+        def unique_by_pair(matches):
+            bypair=defaultdict(dict)
+            for x in matches:
+                pair=tuple(sorted([norm(x['fighter_a']),norm(x['fighter_b'])]))
+                bypair[pair][x['date']]=x
+            return [next(iter(d.values())) for d in bypair.values() if len(d)==1]
+
+        title_resolved=unique_by_pair([x for x in window if title_matches(x)])
+        if title_resolved:
+            return sorted(title_resolved,key=lambda x:(x['date'],norm(x['fighter_a']),norm(x['fighter_b']))),'publication_date_window'
+
+        body_resolved=unique_by_pair([x for x in window if body_pair_near(x)])
+        if body_resolved:
+            return sorted(body_resolved,key=lambda x:(x['date'],norm(x['fighter_a']),norm(x['fighter_b']))),'publication_date_body_pair'
+
     matches=[x for x in allitems if title_matches(x)]
     bypair=defaultdict(dict)
     for x in matches:
@@ -295,7 +314,9 @@ def main():
     for i,url in enumerate(urls,1):
         try:
             final,raw=fetch(url);soup=BeautifulSoup(raw,'lxml')
-            title=article_title(soup,final);pd=pub_date(soup);bouts,resolution=resolve_bouts(title,pd,bydate,allitems)
+            title=article_title(soup,final);pd=pub_date(soup)
+            raw_text=text_content(BeautifulSoup(raw,'lxml'))
+            bouts,resolution=resolve_bouts(title,pd,bydate,allitems,raw_text)
             if not bouts:
                 diag['unresolved_article_bout']+=1
                 if pd is None:diag['article_date_missing']+=1
@@ -304,7 +325,7 @@ def main():
                 continue
             diag['resolved_'+resolution]+=len(bouts)
             if len(bouts)>1:diag['multi_bout_articles_resolved']+=1
-            text=text_content(soup)
+            text=raw_text
             article_added=0
             article_bout_labels=[]
             for bout in bouts:
