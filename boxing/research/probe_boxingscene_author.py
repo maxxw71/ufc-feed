@@ -52,6 +52,8 @@ for src in out['scripts']:
         out['author_chunk_probe'].append({
           'url':src,'bytes':len(js),'context_matches':strings[:120],
           'search_action_context':[js[max(0,m.start()-1800):min(len(js),m.end()+2800)] for m in re.finditer(r'searchArticlesAction|PostgresQueryReadonlyFrontendServerFunc|createServerReference',js,re.I)][:30],
+          'search_callsite_context':[js[max(0,m.start()-2400):min(len(js),m.end()+5200)] for m in re.finditer(r'92023|\.Y\)|searchArticles|offset|cursor|pageSize|hasMore',js,re.I)][:60],
+          'module_54161_context':[js[max(0,m.start()-2500):min(len(js),m.end()+14000)] for m in re.finditer(r'54161:\(e,r,t\)=>|54161:',js,re.I)][:4],
           'interesting_literals':list(dict.fromkeys(interesting))[:250]
         })
     except Exception as e:
