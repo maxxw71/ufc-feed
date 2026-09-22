@@ -291,7 +291,7 @@ def main():
     ap=argparse.ArgumentParser();ap.add_argument('--articles',type=int,default=400);args=ap.parse_args()
     if not DB.exists():raise SystemExit('missing boxing.sqlite3')
     bydate,allitems=local_bouts();urls=crawl_articles(max_articles=args.articles)
-    rows=[];diag=defaultdict(int);fail=[];unresolved_sample=[]
+    rows=[];diag=defaultdict(int);fail=[];unresolved_sample=[];no_numeric_sample=[]
     for i,url in enumerate(urls,1):
         try:
             final,raw=fetch(url);soup=BeautifulSoup(raw,'lxml')
@@ -306,7 +306,9 @@ def main():
             if len(bouts)>1:diag['multi_bout_articles_resolved']+=1
             text=text_content(soup)
             article_added=0
+            article_bout_labels=[]
             for bout in bouts:
+                article_bout_labels.append({'date':bout['date'],'fighter_a':bout['fighter_a'],'fighter_b':bout['fighter_b']})
                 stats=parse_explicit_stats(text,bout['fighter_a'],bout['fighter_b'])
                 bout_added=0
                 for fighter,opponent in [(bout['fighter_a'],bout['fighter_b']),(bout['fighter_b'],bout['fighter_a'])]:
@@ -327,6 +329,11 @@ def main():
                 if bout_added:diag['matched_bouts_with_numeric_rows']+=1
                 else:diag['matched_bouts_no_safe_numeric_pattern']+=1
             diag['matched_articles_with_numeric_rows' if article_added else 'matched_articles_no_safe_numeric_pattern']+=1
+            if not article_added and len(no_numeric_sample)<80:
+                no_numeric_sample.append({
+                  'url':final,'title':title,'article_date':pd.isoformat() if pd else None,
+                  'bouts':article_bout_labels,'text_sample':text[:4500]
+                })
             if i%25==0:print('PROGRESS',i,'ROWS',len(rows),dict(diag),flush=True)
         except Exception as e:
             fail.append({'url':url,'error':str(e)[:220]});diag['fetch_or_parse_failure']+=1
@@ -346,7 +353,8 @@ def main():
       'distinct_bouts':len({(r['bout_date'],tuple(sorted([norm(r['fighter']),norm(r['opponent'])]))) for r in rows}),
       'date_min':min((r['bout_date'] for r in rows),default=None),
       'date_max':max((r['bout_date'] for r in rows),default=None),
-      'diagnostics':dict(diag),'unresolved_sample':unresolved_sample,'failures_sample':fail[:80],
+      'diagnostics':dict(diag),'unresolved_sample':unresolved_sample,
+      'matched_no_numeric_sample':no_numeric_sample,'failures_sample':fail[:80],
       'policy':'CompuBox-authored BoxingScene articles only; unique local date+pair; explicit numeric patterns only; separate summary tier from full round reports.'
     }
     REPORT.write_text(json.dumps(report,indent=2,ensure_ascii=False))
