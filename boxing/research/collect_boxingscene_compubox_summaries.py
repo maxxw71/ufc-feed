@@ -224,7 +224,7 @@ def main():
     ap=argparse.ArgumentParser();ap.add_argument('--articles',type=int,default=400);args=ap.parse_args()
     if not DB.exists():raise SystemExit('missing boxing.sqlite3')
     bydate,allitems=local_bouts();urls=crawl_articles(max_articles=args.articles)
-    rows=[];diag=defaultdict(int);fail=[]
+    rows=[];diag=defaultdict(int);fail=[];unresolved_sample=[]
     for i,url in enumerate(urls,1):
         try:
             final,raw=fetch(url);soup=BeautifulSoup(raw,'lxml')
@@ -232,6 +232,8 @@ def main():
             if not bout:
                 diag['unresolved_article_bout']+=1
                 if pd is None:diag['article_date_missing']+=1
+                if len(unresolved_sample)<60:
+                    unresolved_sample.append({'url':final,'title':title,'article_date':pd.isoformat() if pd else None})
                 continue
             diag['resolved_'+resolution]+=1
             text=text_content(soup)
@@ -269,7 +271,7 @@ def main():
       'distinct_bouts':len({(r['bout_date'],tuple(sorted([norm(r['fighter']),norm(r['opponent'])]))) for r in rows}),
       'date_min':min((r['bout_date'] for r in rows),default=None),
       'date_max':max((r['bout_date'] for r in rows),default=None),
-      'diagnostics':dict(diag),'failures_sample':fail[:80],
+      'diagnostics':dict(diag),'unresolved_sample':unresolved_sample,'failures_sample':fail[:80],
       'policy':'CompuBox-authored BoxingScene articles only; unique local date+pair; explicit numeric patterns only; separate summary tier from full round reports.'
     }
     REPORT.write_text(json.dumps(report,indent=2,ensure_ascii=False))
