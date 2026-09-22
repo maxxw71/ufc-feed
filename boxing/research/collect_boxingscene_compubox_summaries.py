@@ -198,18 +198,43 @@ def text_content(soup):
       '[itemprop="articleBody"]','article .article-body','article .content',
       '.article-body','.article-content','.entry-content','article'
     ]
-    root=None
+    candidates=[]
     for sel in selectors:
         root=soup.select_one(sel)
-        if root:break
-    if root is None:
+        if not root:continue
+        body=BeautifulSoup(str(root),'lxml')
+        for tag in body(['script','style','nav','footer','header','aside']):tag.decompose()
+        txt=re.sub(r'\s+',' ',' '.join(body.stripped_strings)).strip()
+        if txt:candidates.append(txt)
+
+    # Migrated legacy BoxingScene articles often retain their original article
+    # synopsis/stat prose only in description metadata / Next.js metadata.
+    for sel,attr in [
+      ('meta[name="description"]','content'),
+      ('meta[property="og:description"]','content'),
+      ('meta[name="twitter:description"]','content')
+    ]:
+        tag=soup.select_one(sel)
+        if tag and tag.get(attr):
+            txt=re.sub(r'\s+',' ',str(tag.get(attr))).strip()
+            if txt:candidates.append(txt)
+
+    if not candidates:
         root=soup.find('main')
-    if root is None:
-        return ''
-    # Work on a detached parse so caller's soup is not mutated.
-    body=BeautifulSoup(str(root),'lxml')
-    for tag in body(['script','style','nav','footer','header','aside']):tag.decompose()
-    return re.sub(r'\s+',' ',' '.join(body.stripped_strings)).strip()
+        if root:
+            body=BeautifulSoup(str(root),'lxml')
+            for tag in body(['script','style','nav','footer','header','aside']):tag.decompose()
+            txt=re.sub(r'\s+',' ',' '.join(body.stripped_strings)).strip()
+            if txt:candidates.append(txt)
+    if not candidates:return ''
+
+    # Prefer candidate containing explicit punch/stat language and avoid a huge
+    # migrated page shell when a concise legacy article description exists.
+    def score(txt):
+        stat=sum(k in txt.casefold() for k in ('punch','landed','threw','power','jab','compubox'))
+        shell_penalty=2 if len(txt)>12000 else 0
+        return (stat-shell_penalty, -abs(len(txt)-1200))
+    return max(candidates,key=score)
 
 def is_compubox_article(soup,url,title):
     # Explicit authorship/source gate. Discovery pages contain unrelated
@@ -326,6 +351,12 @@ def parse_explicit_stats(text,a,b):
         rx=re.compile(p+r'.{0,80}?landed\s+(\d+(?:\.\d+)?)\s+of\s+(\d+(?:\.\d+)?)\s+(?:total\s+)?(?:punches?\s+)?per\s+round',re.I)
         for m in rx.finditer(txt):
             setv(f,'total_landed_per_round',m.group(1));setv(f,'total_thrown_per_round',m.group(2))
+
+    # "Macklin averaged 92 punches thrown per round" (no landed count stated).
+    for f,p in [(a,pa),(b,pb)]:
+        rx=re.compile(p+r'[^.!?]{0,100}?(?:averaged|averaging|avg\.?d?)\s+(?:just\s+)?(\d+(?:\.\d+)?)\s+(?:total\s+)?punches?\s+(?:thrown\s+)?per\s+round',re.I)
+        for m in rx.finditer(txt):
+            setv(f,'total_thrown_per_round',m.group(1))
 
     # "Hopkins averaged 41 punches thrown per round, landing 9 per round"
     for f,p in [(a,pa),(b,pb)]:
