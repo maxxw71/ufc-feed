@@ -26,4 +26,4 @@ jobs:
         run: python -m py_compile *.py
       - name: Run leakage, audit, identity and market-policy tests
         working-directory: boxing/research
-        run: python -m unittest test_chronological_master test_sample_audit test_market_consensus test_identity_links_v2 test_priced_career_backfill test_punch_profiles test_archived_compubox_rounds test_wba_consensus_careers test_ranking_archives
+        run: python -m unittest test_chronological_master test_sample_audit test_market_consensus test_identity_links_v2 test_priced_career_backfill test_punch_profiles test_archived_compubox_rounds test_wba_consensus_careers test_boxingscene_compubox_summaries test_ranking_archives
