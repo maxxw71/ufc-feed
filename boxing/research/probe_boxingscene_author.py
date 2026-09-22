@@ -51,6 +51,7 @@ for src in out['scripts']:
         interesting=[x for x in literals if re.search(r'api|author|article|cursor|offset|page|limit|load',x,re.I)]
         out['author_chunk_probe'].append({
           'url':src,'bytes':len(js),'context_matches':strings[:120],
+          'search_action_context':[js[max(0,m.start()-1800):min(len(js),m.end()+2800)] for m in re.finditer(r'searchArticlesAction|PostgresQueryReadonlyFrontendServerFunc|createServerReference',js,re.I)][:30],
           'interesting_literals':list(dict.fromkeys(interesting))[:250]
         })
     except Exception as e:
