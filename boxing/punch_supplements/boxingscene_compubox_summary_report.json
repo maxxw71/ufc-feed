@@ -1,15 +1,411 @@
 {
-  "generated_at": "2026-09-22T08:27:30.723087+00:00",
+  "generated_at": "2026-09-22T08:31:59.685416+00:00",
   "articles_discovered": 84,
   "summary_rows": 0,
   "distinct_bouts": 0,
   "date_min": null,
   "date_max": null,
   "diagnostics": {
-    "rejected_non_compubox_article": 84
+    "resolved_publication_date_window": 24,
+    "multi_bout_articles_resolved": 7,
+    "matched_bouts_no_safe_numeric_pattern": 32,
+    "matched_articles_no_safe_numeric_pattern": 24,
+    "article_body_missing": 3,
+    "resolved_unique_historical_pair_from_title": 8,
+    "unresolved_article_bout": 7,
+    "rejected_non_compubox_article": 50
   },
-  "unresolved_sample": [],
-  "matched_no_numeric_sample": [],
+  "unresolved_sample": [
+    {
+      "url": "https://www.boxingscene.com/articles/compubox-stats-canelo-ends-cintron-with-big-numbers",
+      "title": "CompuBox Stats: Canelo Ends Cintron With Big Numbers",
+      "article_date": "2011-11-27"
+    },
+    {
+      "url": "https://www.boxingscene.com/articles/compubox-stats-gamboa-more-accurate-lands-harder",
+      "title": "CompuBox Stats: Gamboa More Accurate, Lands Harder",
+      "article_date": "2011-09-11"
+    },
+    {
+      "url": "https://www.boxingscene.com/articles/compubox-stats-chavez-landed-half-his-power-shots",
+      "title": "CompuBox Stats: Chavez Landed Half of His Power Shots",
+      "article_date": "2012-02-05"
+    },
+    {
+      "url": "https://www.boxingscene.com/articles/compubox-stats-david-haye-closes-show-strong",
+      "title": "CompuBox Stats: David Haye Closes The Show Strong",
+      "article_date": "2012-07-15"
+    },
+    {
+      "url": "https://www.boxingscene.com/articles/compubox-stats-golovkin-lands-little-bit-everything",
+      "title": "CompuBox Stats: Golovkin Lands a Little Bit of Everything",
+      "article_date": "2013-03-31"
+    },
+    {
+      "url": "https://www.boxingscene.com/articles/compubox-stats-mike-alvarado-threw-landed-more",
+      "title": "CompuBox Stats: Mike Alvarado Threw and Landed More",
+      "article_date": "2013-04-01"
+    },
+    {
+      "url": "https://www.boxingscene.com/articles/ndam-vs-murata-compubox-reflects-on-first-fight-stats",
+      "title": "N'Dam vs. Murata - CompuBox Reflects on First Fight Stats",
+      "article_date": "2017-10-22"
+    }
+  ],
+  "matched_no_numeric_sample": [
+    {
+      "url": "https://www.boxingscene.com/articles/compubox-stats-berto-quintana-caballero-yordan",
+      "title": "CompuBox Stats: Berto-Quintana, Caballero-Yordan",
+      "article_date": "2010-04-11",
+      "bouts": [
+        {
+          "date": "2010-04-10",
+          "fighter_a": "Andre Berto",
+          "fighter_b": "Carlos Quintana"
+        },
+        {
+          "date": "2010-04-10",
+          "fighter_a": "Celestino Caballero",
+          "fighter_b": "Daud Yordan"
+        }
+      ],
+      "text_sample": "Sponsored AD ProboxTV’s championship series is now on the ProBoxTV YouTube channel for $5/month. Learn More"
+    },
+    {
+      "url": "https://www.boxingscene.com/articles/compubox-stats-pirog-jacobs-guerrero-casamayor-more",
+      "title": "CompuBox Stats: Pirog-Jacobs, Guerrero-Casamayor, More",
+      "article_date": "2010-08-01",
+      "bouts": [
+        {
+          "date": "2010-07-31",
+          "fighter_a": "Dmitry Pirog",
+          "fighter_b": "Daniel Jacobs"
+        },
+        {
+          "date": "2010-07-31",
+          "fighter_a": "Robert Guerrero",
+          "fighter_b": "Joel Casamayor"
+        }
+      ],
+      "text_sample": "Sponsored AD ProboxTV’s championship series is now on the ProBoxTV YouTube channel for $5/month. Learn More"
+    },
+    {
+      "url": "https://www.boxingscene.com/articles/compubox-punch-stats-king-khan-dominates-action",
+      "title": "CompuBox Punch Stats: King Khan Dominates The Action",
+      "article_date": "2010-05-16",
+      "bouts": [
+        {
+          "date": "2009-05-21",
+          "fighter_a": "Abraham Han",
+          "fighter_b": "Ibahiem King"
+        },
+        {
+          "date": "2024-03-09",
+          "fighter_a": "Asad Asif Khan",
+          "fighter_b": "Venkatajalapathy K"
+        },
+        {
+          "date": "2024-09-21",
+          "fighter_a": "Asad Asif Khan",
+          "fighter_b": "Sabari T"
+        }
+      ],
+      "text_sample": "Sponsored AD ProboxTV’s championship series is now on the ProBoxTV YouTube channel for $5/month. Learn More"
+    },
+    {
+      "url": "https://www.boxingscene.com/articles/compubox-punch-stats-concepcion-powers-past-santiago",
+      "title": "CompuBox Punch Stats: Concepcion Powers Past Santiago",
+      "article_date": "2010-02-14",
+      "bouts": [
+        {
+          "date": "2010-02-13",
+          "fighter_a": "Bernabe Concepcion",
+          "fighter_b": "Mario Santiago"
+        }
+      ],
+      "text_sample": "Sponsored AD ProboxTV’s championship series is now on the ProBoxTV YouTube channel for $5/month. Learn More"
+    },
+    {
+      "url": "https://www.boxingscene.com/articles/compubox-historical-punch-stats-martinez-vs-williams-1",
+      "title": "CompuBox Historical Punch Stats: Martinez vs Williams 1",
+      "article_date": "2010-11-20",
+      "bouts": [
+        {
+          "date": "2010-11-20",
+          "fighter_a": "Sergio Martinez",
+          "fighter_b": "Paul Williams"
+        }
+      ],
+      "text_sample": "Sponsored AD ProboxTV’s championship series is now on the ProBoxTV YouTube channel for $5/month. Learn More"
+    },
+    {
+      "url": "https://www.boxingscene.com/articles/compubox-stats-saul-alvarez-powers-up-numbers",
+      "title": "CompuBox Stats: Saul Alvarez Powers Up The Numbers",
+      "article_date": "2011-06-19",
+      "bouts": [
+        {
+          "date": "2021-02-27",
+          "fighter_a": "Canelo Álvarez",
+          "fighter_b": "Avni Yıldırım"
+        },
+        {
+          "date": "2021-02-27",
+          "fighter_a": "Saúl Álvarez",
+          "fighter_b": "Avni Yıldırım"
+        }
+      ],
+      "text_sample": "Lester Martinez’s team petitioning WBC for Mbilli rematch or interim title shot David Greisman • 7mo ago • 1 Comment"
+    },
+    {
+      "url": "https://www.boxingscene.com/articles/compubox-punch-stats-brad-solomon-demetrius-hopkins",
+      "title": "CompuBox Punch Stats: Brad Solomon-Demetrius Hopkins",
+      "article_date": "2011-03-18",
+      "bouts": [
+        {
+          "date": "2011-03-18",
+          "fighter_a": "Brad Solomon",
+          "fighter_b": "Demetrius Hopkins"
+        }
+      ],
+      "text_sample": "Raul Curiel Scores Second-Round Knockout Of Brad Solomon In DAZN Headliner Jake Donovan • 3y ago • 8 Comments"
+    },
+    {
+      "url": "https://www.boxingscene.com/articles/compubox-stats-macklin-big-numbers-over-sturm",
+      "title": "CompuBox Stats: Macklin Has Big Numbers Over Sturm",
+      "article_date": "2011-06-28",
+      "bouts": [
+        {
+          "date": "2011-06-25",
+          "fighter_a": "Felix Sturm",
+          "fighter_b": "Matthew Macklin"
+        }
+      ],
+      "text_sample": "Felix Sturm, 46, returns to win at light heavyweight Per-Ake Persson • 1y ago • 14 Comments"
+    },
+    {
+      "url": "https://www.boxingscene.com/articles/compubox-stats-murray-busier-sturm-more-efficient",
+      "title": "CompuBox Stats: Murray is Busier, Sturm is More Efficient",
+      "article_date": "2011-12-03",
+      "bouts": [
+        {
+          "date": "2011-12-02",
+          "fighter_a": "Felix Sturm",
+          "fighter_b": "Martin Murray"
+        }
+      ],
+      "text_sample": "Felix Sturm, 46, returns to win at light heavyweight Per-Ake Persson • 1y ago • 14 Comments"
+    },
+    {
+      "url": "https://www.boxingscene.com/articles/compubox-stats-soliman-blows-sturms-count-away",
+      "title": "CompuBox Stats: Soliman Blows Sturm's Count Away",
+      "article_date": "2013-02-02",
+      "bouts": [
+        {
+          "date": "2013-02-01",
+          "fighter_a": "Felix Sturm",
+          "fighter_b": "Sam Soliman"
+        }
+      ],
+      "text_sample": "A brief history of recent world boxing champions age 40 and over Lucas Ketelle • 9mo ago • 3 Comments"
+    },
+    {
+      "url": "https://www.boxingscene.com/articles/compubox-stats-danny-garcia-landed-heavy-on-judah",
+      "title": "CompuBox Stats: Danny Garcia Landed Heavy on Judah",
+      "article_date": "2013-04-29",
+      "bouts": [
+        {
+          "date": "2013-04-27",
+          "fighter_a": "Danny Garcia",
+          "fighter_b": "Zab Judah"
+        }
+      ],
+      "text_sample": "The Atlantic City Boxing Hall of Fame announces its Class of 2026 BoxingScene Staff • 7mo ago • Read more"
+    },
+    {
+      "url": "https://www.boxingscene.com/articles/compubox-stats-amir-khans-jab-difference",
+      "title": "CompuBox Stats: Amir Khan's Jab Was The Difference",
+      "article_date": "2013-04-28",
+      "bouts": [
+        {
+          "date": "2024-03-09",
+          "fighter_a": "Asad Asif Khan",
+          "fighter_b": "Venkatajalapathy K"
+        },
+        {
+          "date": "2024-09-21",
+          "fighter_a": "Asad Asif Khan",
+          "fighter_b": "Sabari T"
+        }
+      ],
+      "text_sample": "Amir Khan: I had enough to defeat Floyd Mayweather and Manny Pacquiao Lance Pugmire • 9mo ago • 41 Comments"
+    },
+    {
+      "url": "https://www.boxingscene.com/articles/compubox-stats-crawford-lands-heavy-on-sanabria",
+      "title": "CompuBox Stats: Crawford Lands Heavy on Sanabria",
+      "article_date": "2013-06-16",
+      "bouts": [
+        {
+          "date": "2013-06-15",
+          "fighter_a": "Terence Crawford",
+          "fighter_b": "Alejandro Sanabria"
+        },
+        {
+          "date": "2013-06-15",
+          "fighter_a": "Terrence Crawford",
+          "fighter_b": "Alejandro Sanabria"
+        }
+      ],
+      "text_sample": "Terence Crawford selected BWAA 2025 Fighter of the Year BoxingScene Staff • 7mo ago • 8 Comments"
+    },
+    {
+      "url": "https://www.boxingscene.com/articles/compubox-figueroa-arakawa-produce-big-numbers",
+      "title": "CompuBox: Figueroa, Arakawa Produce Big Numbers",
+      "article_date": "2013-07-28",
+      "bouts": [
+        {
+          "date": "2013-07-27",
+          "fighter_a": "Omar Figueroa Jr.",
+          "fighter_b": "Nihito Arakawa"
+        }
+      ],
+      "text_sample": "Brandon Figueroa Determined to Prove He Is More Than a Brawler Lucas Ketelle • 2y ago • 2 Comments"
+    },
+    {
+      "url": "https://www.boxingscene.com/articles/deontay-wilder-gerald-washington-compubox-punch-stats",
+      "title": "Deontay Wilder-Gerald Washington - CompuBox Punch Stats",
+      "article_date": "2017-02-26",
+      "bouts": [
+        {
+          "date": "2017-02-25",
+          "fighter_a": "Deontay Wilder",
+          "fighter_b": "Gerald Washington"
+        }
+      ],
+      "text_sample": "Deontay Wilder explains why Don House, and not Malik Scott, is his head trainer BoxingScene Staff • 7mo ago • 18 Comments"
+    },
+    {
+      "url": "https://www.boxingscene.com/articles/compubox-daniel-jacobs-luis-arias-punch-stats",
+      "title": "CompuBox: Daniel Jacobs Lands 44% of Power Shots on Arias",
+      "article_date": "2017-11-12",
+      "bouts": [
+        {
+          "date": "2017-11-11",
+          "fighter_a": "Daniel Jacobs",
+          "fighter_b": "Luís Arias"
+        }
+      ],
+      "text_sample": "Luis Arias ready for final stand against Lazaro Lorenzana Lucas Ketelle • 9mo ago • 1 Comment"
+    },
+    {
+      "url": "https://www.boxingscene.com/articles/compubox-jose-ramirez-amir-imam-compubox-punch-stats",
+      "title": "CompuBox: Jose Ramirez's Pressure, Power Shots Was Difference",
+      "article_date": "2018-03-18",
+      "bouts": [
+        {
+          "date": "2016-05-23",
+          "fighter_a": "Avni Yıldırım",
+          "fighter_b": "Zoltan Sera"
+        }
+      ],
+      "text_sample": "Jack Catterall-Jose Ramirez edging closer for May 30 in Fresno Tris Dixon • 7mo ago • Read more"
+    },
+    {
+      "url": "https://www.boxingscene.com/articles/pacquiao-bradley-ii-compubox-historical-review",
+      "title": "Pacquiao-Bradley II - CompuBox Historical Review",
+      "article_date": "2014-04-12",
+      "bouts": [
+        {
+          "date": "2014-04-12",
+          "fighter_a": "Manny Pacquiao",
+          "fighter_b": "Timothy Bradley"
+        },
+        {
+          "date": "2014-04-12",
+          "fighter_a": "Timothy Bradley Jr",
+          "fighter_b": "Manny Pacquiao"
+        }
+      ],
+      "text_sample": "Mario Barrios-Ryan Garcia official for February 21 at T-Mobile in Las Vegas David Greisman • 8mo ago • 6 Comments"
+    },
+    {
+      "url": "https://www.boxingscene.com/articles/danny-garcia-vs-brandon-rios-compubox-historical-review",
+      "title": "Danny Garcia vs. Brandon Rios - CompuBox Historical Review",
+      "article_date": "2018-02-18",
+      "bouts": [
+        {
+          "date": "2018-02-17",
+          "fighter_a": "Danny García",
+          "fighter_b": "Brandon Ríos"
+        }
+      ],
+      "text_sample": "Eight canceled fights that left boxing fans wanting and wondering"
+    },
+    {
+      "url": "https://www.boxingscene.com/articles/bernard-hopkins-joe-smith-compubox-historical-review",
+      "title": "Bernard Hopkins-Joe Smith - CompuBox Historical Review",
+      "article_date": "2016-12-18",
+      "bouts": [
+        {
+          "date": "2016-12-17",
+          "fighter_a": "Bernard Hopkins",
+          "fighter_b": "Joe Smith Jr."
+        }
+      ],
+      "text_sample": "Hair be damned: 10 great fighters who owned going bald Matt Christie • 7mo ago • 3 Comments"
+    },
+    {
+      "url": "https://www.boxingscene.com/articles/pacquiao-rios-clash-compubox-historical-review",
+      "title": "Pacquiao-Rios Clash - CompuBox Historical Review",
+      "article_date": "2013-11-23",
+      "bouts": [
+        {
+          "date": "2013-11-24",
+          "fighter_a": "Manny Pacquiao",
+          "fighter_b": "Brandon Ríos"
+        }
+      ],
+      "text_sample": "Mario Barrios-Ryan Garcia official for February 21 at T-Mobile in Las Vegas David Greisman • 8mo ago • 6 Comments"
+    },
+    {
+      "url": "https://www.boxingscene.com/articles/jermall-charlo-vs-hugo-centeno-compubox-historical-review",
+      "title": "Jermall Charlo vs. Hugo Centeno - CompuBox Historical Review",
+      "article_date": "2018-04-22",
+      "bouts": [
+        {
+          "date": "2018-04-21",
+          "fighter_a": "Jermall Charlo",
+          "fighter_b": "Hugo Centeno Jr."
+        }
+      ],
+      "text_sample": "Ronnie Shields confirms reunion with Jermall Charlo Lucas Ketelle • 8mo ago • 4 Comments"
+    },
+    {
+      "url": "https://www.boxingscene.com/articles/compubox-pacquiao-mosley-weight-class-graphic-view",
+      "title": "CompuBox: Pacquiao-Mosley Weight Class Graphic View",
+      "article_date": "2011-05-07",
+      "bouts": [
+        {
+          "date": "2011-05-07",
+          "fighter_a": "Manny Pacquiao",
+          "fighter_b": "Shane Mosley"
+        }
+      ],
+      "text_sample": "Mario Barrios-Ryan Garcia official for February 21 at T-Mobile in Las Vegas David Greisman • 8mo ago • 6 Comments"
+    },
+    {
+      "url": "https://www.boxingscene.com/articles/compubox-analysis-miguel-cotto-shane-mosley",
+      "title": "CompuBox Analysis: Miguel Cotto-Shane Mosley",
+      "article_date": "2007-11-07",
+      "bouts": [
+        {
+          "date": "2007-11-10",
+          "fighter_a": "Miguel Cotto",
+          "fighter_b": "Shane Mosley"
+        }
+      ],
+      "text_sample": "Sponsored AD ProboxTV’s championship series is now on the ProBoxTV YouTube channel for $5/month. Learn More"
+    }
+  ],
   "failures_sample": [],
   "policy": "CompuBox-authored BoxingScene articles only; unique local date+pair; explicit numeric patterns only; separate summary tier from full round reports."
 }
