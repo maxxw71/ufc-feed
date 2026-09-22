@@ -24,7 +24,7 @@ jobs:
           python-version: '3.12'
       - run: python -m pip install --disable-pip-version-check beautifulsoup4 lxml pycountry
       - name: Backfill exact WBC Eurasia profile fields
-        run: python boxing/research/backfill_wbceurasia_profiles.py --limit 300 --min-appearances 1 --sleep 0.08
+        run: python boxing/research/backfill_wbceurasia_profiles.py --limit 500 --min-appearances 1 --sleep 0.06
       - name: Persist verified WBC Eurasia profile supplements
         shell: bash
         run: |
