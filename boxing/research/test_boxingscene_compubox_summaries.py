@@ -117,5 +117,33 @@ class BoxingSceneCompuBoxResolutionTests(unittest.TestCase):
         self.assertEqual(out2['Jose Ramirez']['power_landed_per_round'],19.0)
         self.assertEqual(out2['Jose Ramirez']['power_thrown_per_round'],45.0)
 
+    def test_historical_review_extended_rate_patterns(self):
+        text=(
+          "Gary Russell averaged 32.7 jabs per round, but landed just 15%. "
+          "Russell opponents landed just 7.8 power shots per round and just 28%. "
+          "Joseph Diaz landed 19 of 38 power shots per round in his last 5 fights (50%). "
+          "Adrien Broner is more accurate, landing 47% of his power punches and 41% overall vs. recent opponents. "
+          "14 of Shawn Porter's 17 landed punches per round were power shots. "
+          "Manny Pacquiao's opponents landed 33% of their power shots."
+        )
+        out=parse_prefight_baselines(text,'Gary Russell','Joseph Diaz')
+        self.assertEqual(out['Gary Russell']['jab_thrown_per_round'],32.7)
+        self.assertEqual(out['Gary Russell']['jab_accuracy_pct'],15.0)
+        self.assertEqual(out['Gary Russell']['opponent_power_landed_per_round'],7.8)
+        self.assertEqual(out['Gary Russell']['opponent_power_accuracy_pct'],28.0)
+        self.assertEqual(out['Joseph Diaz']['power_landed_per_round'],19.0)
+        self.assertEqual(out['Joseph Diaz']['power_thrown_per_round'],38.0)
+        self.assertEqual(out['Joseph Diaz']['history_window_fights'],5.0)
+        self.assertEqual(out['Joseph Diaz']['power_accuracy_pct'],50.0)
+
+        out2=parse_prefight_baselines(text,'Adrien Broner','Shawn Porter')
+        self.assertEqual(out2['Adrien Broner']['power_accuracy_pct'],47.0)
+        self.assertEqual(out2['Adrien Broner']['total_accuracy_pct'],41.0)
+        self.assertEqual(out2['Shawn Porter']['power_landed_per_round'],14.0)
+        self.assertEqual(out2['Shawn Porter']['total_landed_per_round'],17.0)
+
+        out3=parse_prefight_baselines(text,'Manny Pacquiao','Brandon Rios')
+        self.assertEqual(out3['Manny Pacquiao']['opponent_power_accuracy_pct'],33.0)
+
 if __name__=='__main__':
     unittest.main()
