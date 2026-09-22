@@ -33,8 +33,26 @@ jobs:
         with:
           python-version: '3.12'
       - run: python -m pip install --disable-pip-version-check beautifulsoup4 lxml
+      - name: Download current public boxing research DB for ambiguity checks
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          rm -rf /tmp/wba-profile-db
+          mkdir -p /tmp/wba-profile-db
+          python - <<'PY'
+          import io,zipfile,urllib.request,os,shutil
+          url='https://appwiza.com/sports/downloads/boxing/research-database.zip'
+          req=urllib.request.Request(url,headers={'User-Agent':'Mozilla/5.0 AppwizaWBAProfile/1.1'})
+          with urllib.request.urlopen(req,timeout=180) as r:data=r.read()
+          with zipfile.ZipFile(io.BytesIO(data)) as z:z.extractall('/tmp/wba-profile-db')
+          db=next(os.path.join(root,f) for root,_,files in os.walk('/tmp/wba-profile-db') for f in files if f.endswith('.sqlite3'))
+          shutil.copy2(db,'boxing/research/boxing.sqlite3')
+          PY
       - name: Crawl explicitly linked official WBA profiles
         run: python boxing/research/backfill_wba_profiles.py --limit 500 --sleep 0.08
+      - name: Remove temporary profile database
+        if: always()
+        run: rm -f boxing/research/boxing.sqlite3
       - name: Persist verified WBA profile supplements on latest main
         shell: bash
         run: |
