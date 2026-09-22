@@ -22,9 +22,11 @@ jobs:
         run: |
           set -Eeuo pipefail
           ROOT=/home/anestishkurti92/boxing-research
-          test -x "$ROOT/venv/bin/python"
           cp "$GITHUB_WORKSPACE/boxing/research/probe_archived_compubox_pdfs.py" "$ROOT/probe_archived_compubox_pdfs.py.new"
           mv "$ROOT/probe_archived_compubox_pdfs.py.new" "$ROOT/probe_archived_compubox_pdfs.py"
+          TMPV=$(mktemp -d)
+          python3 -m venv "$TMPV/venv"
+          "$TMPV/venv/bin/python" -m pip install -q pypdf
           cd "$ROOT"
-          venv/bin/python -m pip install -q pypdf
-          venv/bin/python probe_archived_compubox_pdfs.py
+          "$TMPV/venv/bin/python" probe_archived_compubox_pdfs.py
+          rm -rf "$TMPV"
