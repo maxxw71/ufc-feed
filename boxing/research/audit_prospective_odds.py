@@ -34,6 +34,41 @@ def participant_names(q):
     vals=[str(x).strip() for x in vals if str(x).strip()]
     return vals if len(set(vals))==2 else []
 
+def sportsbook_market_summary(qs):
+    by=defaultdict(list)
+    for q in qs:
+        if q.get('market_class')!='sportsbook':continue
+        book=str(q.get('bookmaker') or '').strip()
+        sel=str(q.get('selection') or '').strip()
+        fetched=str(q.get('_fetched_at') or '')
+        try:price=float(q.get('decimal_price'))
+        except Exception:continue
+        if not book or not sel or not fetched or price<=1:continue
+        by[(book,sel)].append((fetched,price,int(q.get('american_price')) if q.get('american_price') is not None else None))
+    per_book={}
+    for (book,sel),vals in sorted(by.items()):
+        vals=sorted(vals,key=lambda x:x[0])
+        per_book.setdefault(book,{})[sel]={
+          'first_verified_pre_event':{'fetched_at':vals[0][0],'decimal_price':vals[0][1],'american_price':vals[0][2]},
+          'latest_verified_pre_event':{'fetched_at':vals[-1][0],'decimal_price':vals[-1][1],'american_price':vals[-1][2]},
+          'observations':len(vals),
+          'decimal_move':round(vals[-1][1]-vals[0][1],6)
+        }
+    selections={}
+    for book,data in per_book.items():
+        for sel,x in data.items():
+            selections.setdefault(sel,[]).append((book,x['latest_verified_pre_event']['decimal_price']))
+    consensus={}
+    for sel,vals in selections.items():
+        prices=sorted(v for _,v in vals)
+        n=len(prices)
+        median=prices[n//2] if n%2 else (prices[n//2-1]+prices[n//2])/2
+        consensus[sel]={'books':len(vals),'median_latest_verified_decimal':round(median,6),
+                        'min_latest_verified_decimal':min(prices),'max_latest_verified_decimal':max(prices)}
+    complete_books=sum(len(v)>=2 for v in per_book.values())
+    return {'per_book':per_book,'consensus_latest_verified':consensus,
+            'books_with_both_sides_latest':complete_books,'book_selection_pairs':len(by)}
+
 def result_for_pair(d,date,names):
     target=sorted(nk(x) for x in names)
     if len(target)!=2 or target[0]==target[1]:return None
@@ -83,6 +118,7 @@ def main():
         except Exception:continue
         sportsbook_qs=[q for q in qs if q.get('market_class')=='sportsbook']
         prediction_qs=[q for q in qs if q.get('market_class')=='prediction_market']
+        market_summary=sportsbook_market_summary(qs)
         record={'event_date':date,'bout_id':bid,'participants':list(names),
                 'first_snapshot':min(q['_fetched_at'] for q in qs if q.get('_fetched_at')),
                 'last_snapshot':max(q['_fetched_at'] for q in qs if q.get('_fetched_at')),
@@ -91,6 +127,7 @@ def main():
                 'verified_prediction_market_quote_rows':len(prediction_qs),
                 'market_classes':sorted({q.get('market_class') for q in qs if q.get('market_class')}),
                 'sportsbooks':sorted({q.get('bookmaker') for q in sportsbook_qs if q.get('bookmaker')}),
+                'sportsbook_market_summary':market_summary,
                 'selections':sorted({q.get('selection') for q in qs if q.get('selection')})}
         if event_date>=now.date():
             pending.append(record);continue
@@ -112,6 +149,7 @@ def main():
         'unique_verified_sportsbook_bouts':sum(any(q.get('market_class')=='sportsbook' for q in qs) for qs in groups.values()),
         'unique_prediction_market_only_bouts':sum(not any(q.get('market_class')=='sportsbook' for q in qs) for qs in groups.values()),
         'unique_sportsbooks':sorted({q.get('bookmaker') for q in eligible if q.get('market_class')=='sportsbook' and q.get('bookmaker')}),
+        'sportsbook_bouts_with_two_sided_latest_quotes':sum((sportsbook_market_summary(qs).get('books_with_both_sides_latest') or 0)>0 for qs in groups.values()),
         'settled_verified_bouts':len(settled),
         'settled_verified_sportsbook_bouts':sum(x.get('verified_sportsbook_quote_rows',0)>0 for x in settled),
         'past_unresolved_bouts':len(unresolved),
@@ -120,7 +158,7 @@ def main():
         'future_or_today_sportsbook_bouts':sum(x.get('verified_sportsbook_quote_rows',0)>0 for x in pending),
         'date_min':min((q.get('event_date') for q in eligible if q.get('event_date')),default=None),
         'date_max':max((q.get('event_date') for q in eligible if q.get('event_date')),default=None),
-        'policy':'Only originally timestamped pre-event quotes are eligible; results require exact date+pair and unanimous matching finished source rows. Sportsbook and prediction-market observations are reported separately; only sportsbook rows are candidates for sportsbook ROI validation.'
+        'policy':'Only originally timestamped pre-event quotes are eligible; results require exact date+pair and unanimous matching finished source rows. Sportsbook and prediction-market observations are reported separately. For sportsbook validation, opening=first verified observation and latest=last verified observation before listed event start/date; consensus latest is the median of each sportsbook latest observation, never a retrospectively chosen price.'
     }
     (ODDS/'coverage.json').write_text(json.dumps(coverage,indent=2,ensure_ascii=False))
     (ODDS/'settled_bouts.json').write_text(json.dumps({'generated_at':now.isoformat(),'settled':settled,'past_unresolved':unresolved},indent=2,ensure_ascii=False))
