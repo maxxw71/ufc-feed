@@ -80,7 +80,7 @@ def parse_wba(name,wba_id):
     return {'title':title,'url':url,'stated_record':record,'rows':rows,
             'wba_rows_complete':len(rows)==sum(record),'wba_row_count':len(rows)}
 
-def result_index(con):
+def result_index(con,ibf_rows=None):
     idx=collections.defaultdict(set)
     # Independent career observations only. Do not use WBA-derived supplemental
     # rows to validate a WBA reconstruction.
@@ -94,9 +94,15 @@ def result_index(con):
         elif w=='NO CONTEST':winner='NO CONTEST'
         else:continue
         idx[(r['date'],*sorted((a,b)))].add(winner)
+    for r in ibf_rows or []:
+        date=str(r.get('date') or '');a=nk(r.get('fighter_a'));b=nk(r.get('fighter_b'))
+        side=r.get('winner_side')
+        if not date or not a or not b or side not in {'A','B','DRAW'}:continue
+        winner='DRAW' if side=='DRAW' else (a if side=='A' else b)
+        idx[(date,*sorted((a,b)))].add(winner)
     return idx
 
-def observed_target_rows(con,name):
+def observed_target_rows(con,name,ibf_rows=None):
     me=nk(name);by=collections.defaultdict(list)
     for r in con.execute("""SELECT source,source_id,date,boxer_a,boxer_b,winner,method,rounds,venue,data
                             FROM bouts
@@ -124,6 +130,24 @@ def observed_target_rows(con,name):
                         'location':r['venue'] or '',
                         'raw':{'source':'independent_observed_career_graph',
                                'evidence_source':r['source'],'evidence_source_id':r['source_id']}})
+    for r in ibf_rows or []:
+        date=str(r.get('date') or '')
+        a=nk(r.get('fighter_a'));b=nk(r.get('fighter_b'));side=r.get('winner_side')
+        if me not in {a,b} or side not in {'A','B','DRAW'}:continue
+        if a==me:
+            opp=r.get('fighter_b')
+            result='draw' if side=='DRAW' else ('win' if side=='A' else 'loss')
+        else:
+            opp=r.get('fighter_a')
+            result='draw' if side=='DRAW' else ('win' if side=='B' else 'loss')
+        key=(date,nk(opp))
+        by[key].append({'date':date,'opponent':opp,'result':result,
+                        'type':r.get('method') or '','round_time':str(r.get('round') or ''),
+                        'location':r.get('location') or '',
+                        'raw':{'source':'official_ibf_bout_archive',
+                               'evidence_source':'ibf_official_bout_api',
+                               'evidence_source_id':r.get('source_index')}})
+
     out={};conflicts=[]
     for key,items in by.items():
         results={x['result'] for x in items}
@@ -134,9 +158,9 @@ def observed_target_rows(con,name):
         out[key]=items[0]
     return out,conflicts
 
-def resolve_career(name,page,idx,con):
+def resolve_career(name,page,idx,con,ibf_rows=None):
     me=nk(name)
-    observed,obs_conflicts=observed_target_rows(con,name)
+    observed,obs_conflicts=observed_target_rows(con,name,ibf_rows)
     if obs_conflicts:
         raise ValueError(f'independent observed career conflicts: {obs_conflicts[:3]}')
 
@@ -200,7 +224,12 @@ def main():
             try:x=json.loads(line);done[nk(x.get('requested_name') or x.get('verified_title'))]=x
             except Exception:pass
     missing={nk(x['name']):x for x in priced_missing(con) if nk(x['name']) not in done}
-    idx=result_index(con);accepted=[];failed=[]
+    ibf_file=Path(__file__).resolve().parents[1]/'official_bouts'/'ibf_bouts.json'
+    ibf_rows=[]
+    if ibf_file.exists():
+        try:ibf_rows=json.loads(ibf_file.read_text())
+        except Exception:ibf_rows=[]
+    idx=result_index(con,ibf_rows);accepted=[];failed=[]
 
     # Build exact unique WBA identity candidates from the explicit-link graph.
     dynamic={}
@@ -231,7 +260,7 @@ def main():
     candidates=candidates[:args.limit]
     for i,(name,wid,item) in enumerate(candidates,1):
         try:
-            page=parse_wba(name,wid);rows,recon=resolve_career(name,page,idx,con)
+            page=parse_wba(name,wid);rows,recon=resolve_career(name,page,idx,con,ibf_rows)
             evidence=match_evidence({'rows':rows},item['evidence'])
             if not evidence:raise ValueError('no exact priced date+opponent evidence match')
             found={'requested_name':name,'verified_title':page['title'],'source':'wba_consensus','source_url':page['url'],
@@ -248,7 +277,7 @@ def main():
             failed.append({'name':name,'wba_id':wid,'priced_bouts':item['priced_bouts'],'error':str(e)[:500]});print(i,name,'NO_MATCH',str(e)[:180],flush=True)
         time.sleep(.2)
     report={'attempted':len(candidates),'accepted':len(accepted),'failed':len(failed),
-            'dynamic_index_candidates':len(dynamic),'combined_candidates':len(combined),
+            'dynamic_index_candidates':len(dynamic),'combined_candidates':len(combined),'ibf_official_bout_rows_loaded':len(ibf_rows),
             'accepted_items':accepted,'failed_items':failed,'source':'wba_consensus'}
     (OUT.parent/'latest_wba_consensus_report.json').write_text(json.dumps(report,indent=2,ensure_ascii=False))
     print(json.dumps(report,indent=2,ensure_ascii=False))
