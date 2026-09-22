@@ -23,6 +23,7 @@ OUT=ROOT/'profile_supplements'/'verified_profiles.jsonl'
 REPORT=ROOT/'profile_supplements'/'ranking_nationality_backfill_report.json'
 
 FILES=[
+ ('WBC',ROOT/'rankings'/'wbc_monthly_rankings.json'),
  ('WBA',ROOT/'rankings'/'wba_monthly_rankings.json'),
  ('WBA',ROOT/'rankings'/'wba_monthly_champions.json'),
  ('IBF',ROOT/'rankings'/'ibf_monthly_rankings.json'),
@@ -32,7 +33,7 @@ FILES=[
 ALIASES={
  'UK':'GBR','GB':'GBR','ENG':'GBR','SCO':'GBR','WAL':'GBR','NIR':'GBR',
  'US':'USA','U.S.':'USA','U.S.A.':'USA',
- 'DOM':'DOM','DR':'DOM','D.R.':'DOM',
+ 'DOM':'DOM','DR':'DOM','D.R.':'DOM','DOM. R.':'DOM','DOM R':'DOM',
  'RSA':'ZAF','SA':'ZAF',
  'KOR':'KOR','PR':'PRI','PUR':'PRI',
  'CZE':'CZE','GER':'DEU','DEN':'DNK','NED':'NLD','GRE':'GRC',
