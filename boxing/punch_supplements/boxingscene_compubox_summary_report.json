@@ -1,18 +1,18 @@
 {
-  "generated_at": "2026-09-22T12:11:55.283383+00:00",
+  "generated_at": "2026-09-22T12:14:18.354609+00:00",
   "articles_discovered": 84,
   "summary_rows": 0,
   "distinct_bouts": 0,
   "date_min": null,
   "date_max": null,
   "diagnostics": {
-    "article_body_missing": 7,
-    "resolved_publication_date_window": 19,
+    "article_body_missing": 5,
+    "resolved_publication_date_window": 23,
     "multi_bout_articles_resolved": 6,
-    "matched_bouts_no_safe_numeric_pattern": 27,
-    "matched_articles_no_safe_numeric_pattern": 20,
-    "resolved_unique_historical_pair_from_title": 8,
+    "matched_bouts_no_safe_numeric_pattern": 28,
+    "matched_articles_no_safe_numeric_pattern": 22,
     "unresolved_article_bout": 7,
+    "resolved_unique_historical_pair_from_title": 5,
     "rejected_non_compubox_article": 50
   },
   "unresolved_sample": [
@@ -162,6 +162,24 @@
   "explicit_full_stat_target_count": 15,
   "matched_no_numeric_sample": [
     {
+      "url": "https://www.boxingscene.com/articles/compubox-stats-pirog-jacobs-guerrero-casamayor-more",
+      "title": "CompuBox Stats: Pirog-Jacobs, Guerrero-Casamayor, More",
+      "article_date": "2010-08-01",
+      "bouts": [
+        {
+          "date": "2010-07-31",
+          "fighter_a": "Dmitry Pirog",
+          "fighter_b": "Daniel Jacobs"
+        },
+        {
+          "date": "2010-07-31",
+          "fighter_a": "Robert Guerrero",
+          "fighter_b": "Joel Casamayor"
+        }
+      ],
+      "text_sample": "Sponsored AD ProboxTV’s championship series is now on the ProBoxTV YouTube channel for $5/month. Learn More"
+    },
+    {
       "url": "https://www.boxingscene.com/articles/compubox-punch-stats-khan-kotelnik-maidana-kotelnik",
       "title": "CompuBox Punch Stats: Khan-Kotelnik, Maidana-Kotelnik",
       "article_date": "2010-12-11",
@@ -180,24 +198,27 @@
       "text_sample": "Sponsored AD ProboxTV’s championship series is now on the ProBoxTV YouTube channel for $5/month. Learn More"
     },
     {
-      "url": "https://www.boxingscene.com/articles/compubox-punch-stats-king-khan-dominates-action",
-      "title": "CompuBox Punch Stats: King Khan Dominates The Action",
-      "article_date": "2010-05-16",
+      "url": "https://www.boxingscene.com/articles/compubox-stats-juan-manuel-marquez-outworks-juan-diaz",
+      "title": "CompuBox Stats: Juan Manuel Marquez Outworks Juan Diaz",
+      "article_date": "2010-08-01",
       "bouts": [
         {
-          "date": "2009-05-21",
-          "fighter_a": "Abraham Han",
-          "fighter_b": "Ibahiem King"
-        },
+          "date": "2010-07-31",
+          "fighter_a": "Juan Manuel Marquez",
+          "fighter_b": "Juan Diaz"
+        }
+      ],
+      "text_sample": "Sponsored AD ProboxTV’s championship series is now on the ProBoxTV YouTube channel for $5/month. Learn More"
+    },
+    {
+      "url": "https://www.boxingscene.com/articles/compubox-historical-punch-stats-martinez-vs-williams-1",
+      "title": "CompuBox Historical Punch Stats: Martinez vs Williams 1",
+      "article_date": "2010-11-20",
+      "bouts": [
         {
-          "date": "2024-03-09",
-          "fighter_a": "Asad Asif Khan",
-          "fighter_b": "Venkatajalapathy K"
-        },
-        {
-          "date": "2024-09-21",
-          "fighter_a": "Asad Asif Khan",
-          "fighter_b": "Sabari T"
+          "date": "2010-11-20",
+          "fighter_a": "Sergio Martinez",
+          "fighter_b": "Paul Williams"
         }
       ],
       "text_sample": "Sponsored AD ProboxTV’s championship series is now on the ProBoxTV YouTube channel for $5/month. Learn More"
