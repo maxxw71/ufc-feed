@@ -29,6 +29,7 @@ COUNTRY_CANON={
   "Democratic People's Republic of Korea":'North Korea',
   'Czech Republic':'Czechia',
   'Republic of Ireland':'Ireland',
+  'Kingdom of Denmark':'Denmark',
 }
 def canon_country(value):
     return COUNTRY_CANON.get(str(value or '').strip(),str(value or '').strip())
@@ -127,6 +128,12 @@ def main():
         for line in OUT.read_text().splitlines():
             if not line.strip():continue
             rows.append(json.loads(line))
+    # Normalize previously accepted country labels to the dataset's canonical
+    # vocabulary while preserving the original source label in evidence.
+    for row in rows:
+        fields=row.get('fields') or {}
+        if fields.get('nationality'):
+            fields['nationality']=canon_country(fields['nationality'])
     byid={x['target_source_id']:i for i,x in enumerate(rows)}
 
     # Skip targets already filled by another source since the last gap audit.
