@@ -1,8 +1,8 @@
 {
-  "generated_at": "2026-09-22T12:20:41.613011+00:00",
+  "generated_at": "2026-09-22T12:26:13.517049+00:00",
   "articles_discovered": 84,
-  "summary_rows": 20,
-  "distinct_bouts": 15,
+  "summary_rows": 19,
+  "distinct_bouts": 13,
   "date_min": "2010-02-13",
   "date_max": "2018-02-17",
   "diagnostics": {
@@ -14,7 +14,8 @@
     "matched_bouts_with_numeric_rows": 17,
     "matched_articles_with_numeric_rows": 13,
     "unresolved_article_bout": 2,
-    "rejected_non_compubox_article": 50
+    "rejected_non_compubox_article": 50,
+    "alias_dedup_conflicts_quarantined": 0
   },
   "unresolved_sample": [
     {
@@ -420,6 +421,7 @@
       "text_sample": "By Bob Canobbio - Miguel Cotto, 27, making the third defense of his WBA welterweight title, nearly a 7-5 favorite over Shane Mosley, 36, a three-time champion in three different weight classes. A crowd of 19,000-plus, the majority of them being Cotto fans, is expected at New York’s Madison Square Garden. In June, before an announced crowd of 20,658 at The Garden, Cotto, bleeding from cuts over his right eye and lower lip, wore down Brooklyn’s Zab Judah, stopping the former two-time champ in round eleven. Cotto outlanded Judah 90-24 in power shots over the last four rounds before dropping him flat on his back early in the eleventh. Judah beat the count, but the fight was stopped after he absorbed several more Cotto power shots. Overall, Cotto (30-0, 25KOs) landed 292 of 683 total punches (43%-68 thrown per round, 10 more per round than the welterweight average). He also landed 44% of his power shots (214 of 481) and landed 39% of his 20 jabs thrown per round. Judah had his moments, rocking Cotto early in round one and again in the second with left uppercuts. Judah, who was also down in round nine, landed 57% of his power shots (the welterweight avg. is 39% landed), but landed just nine per round, throwing 16. He was too preoccupied with Cotto’s relentless head and body attack to mount his own sustained offense. Overall, Judah averaged 46 punches thrown per round."
     }
   ],
+  "alias_dedup_conflicts_sample": [],
   "failures_sample": [],
   "policy": "CompuBox-authored BoxingScene articles only; unique local date+pair; explicit numeric patterns only; separate summary tier from full round reports."
 }
