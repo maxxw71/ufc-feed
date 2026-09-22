@@ -321,43 +321,72 @@ def punch_summary_before(hist,name,date):
 
 def load_compubox_prefight_baselines():
     path=ROOT.parent/'punch_supplements'/'boxingscene_compubox_prefight_baselines.jsonl'
-    grouped=collections.defaultdict(list)
+    raw_by_key_date=collections.defaultdict(list)
     if not path.exists():return {}
     for line in path.read_text().splitlines():
         if not line.strip():continue
         try:r=json.loads(line)
         except Exception:continue
-        date=str(r.get('target_bout_date') or '')
+        available=str(r.get('available_from_date') or r.get('article_date') or '')
+        target=str(r.get('target_bout_date') or '')
+        try:
+            dt.date.fromisoformat(available)
+            dt.date.fromisoformat(target)
+        except Exception:
+            continue
         aliases=r.get('fighter_aliases') or [r.get('fighter')]
-        try:dt.date.fromisoformat(date)
-        except Exception:continue
         for alias in aliases:
             key=punch_namekey(alias or '')
-            if key:grouped[(date,key)].append(r)
+            if key:raw_by_key_date[(key,available)].append(r)
 
-    out={}
-    meta_fields={'source_url','article_title','article_date','target_bout_date','fighter','fighter_aliases',
-                 'opponent','quality','timing_evidence'}
-    for key,rows in grouped.items():
+    by_fighter=collections.defaultdict(list)
+    meta_fields={
+      'source_url','article_title','article_date','available_from_date','target_bout_date',
+      'target_bout_eligible','fighter','fighter_aliases','opponent','quality','timing_evidence'
+    }
+    for (key,available),rows in raw_by_key_date.items():
         merged={
           'quality':'compubox_authored_boxingscene_explicit_historical_prefight_aggregate',
-          'source_tier':'direct_prefight_historical_baseline',
+          'source_tier':'publication_timed_prefight_historical_baseline',
+          'available_from_date':available,
           'source_urls':sorted({r.get('source_url') for r in rows if r.get('source_url')}),
-          'history_windows':sorted({int(r['history_window_fights']) for r in rows if r.get('history_window_fights') is not None}),
+          'source_target_bout_dates':sorted({r.get('target_bout_date') for r in rows if r.get('target_bout_date')}),
+          'direct_target_dates':sorted({
+              r.get('target_bout_date') for r in rows
+              if r.get('target_bout_eligible') and r.get('target_bout_date')
+          }),
+          'history_windows':sorted({
+              int(r['history_window_fights']) for r in rows
+              if r.get('history_window_fights') is not None
+          }),
           'timing_evidence':sorted({r.get('timing_evidence') for r in rows if r.get('timing_evidence')})
         }
         bad=False
-        fields=sorted({k for r in rows for k,v in r.items() if k not in meta_fields and isinstance(v,(int,float)) and not isinstance(v,bool)})
+        fields=sorted({
+          k for r in rows for k,v in r.items()
+          if k not in meta_fields and isinstance(v,(int,float)) and not isinstance(v,bool)
+        })
         for field in fields:
             vals={float(r[field]) for r in rows if r.get(field) is not None}
             if len(vals)>1:
                 bad=True;break
             if vals:merged[field]=next(iter(vals))
-        if not bad:out[key]=merged
-    return out
+        if not bad:
+            by_fighter[key].append(merged)
+
+    for key in by_fighter:
+        by_fighter[key].sort(key=lambda r:(r['available_from_date'],','.join(r.get('source_urls') or [])))
+    return by_fighter
 
 def compubox_prefight_baseline(index,name,date):
-    return index.get((date,punch_namekey(name or '')))
+    key=punch_namekey(name or '')
+    snapshots=[r for r in index.get(key,[]) if r.get('available_from_date') and r['available_from_date']<date]
+    if not snapshots:return None
+    direct=[r for r in snapshots if date in (r.get('direct_target_dates') or [])]
+    chosen=dict(direct[-1] if direct else snapshots[-1])
+    chosen['direct_target_match']=bool(direct)
+    chosen['leakage_policy']='publication date strictly before bout date'
+    return chosen
 
 def load_wbc_rankings():
     candidates=[ROOT/'rankings',ROOT.parent/'rankings']
@@ -599,7 +628,8 @@ def main():
             'ibf_official_bout_contexts_loaded':len(ibf_bout_context),
             'punch_identity_fighters_loaded':len(punch_history),'punch_observations_loaded':sum(len(v) for v in punch_history.values()),
             'punch_summary_identity_fighters_loaded':len(punch_summary_history),'punch_summary_observations_loaded':sum(len(v) for v in punch_summary_history.values()),
-            'compubox_prefight_baseline_side_keys_loaded':len(compubox_prefight_baselines),
+            'compubox_prefight_baseline_fighters_loaded':len(compubox_prefight_baselines),
+            'compubox_prefight_baseline_snapshots_loaded':sum(len(v) for v in compubox_prefight_baselines.values()),
             'years':dict(sorted(years.items())),
             'validated_price_rows':0,'limitations':['Career rows preserve source provenance; secondary observed histories are not relabeled as Wikipedia.',
             'Source observations are not a census of all boxing fights.','Own Elo: 1500 initial, K32, reciprocal graph only; all same-day updates batched.',
