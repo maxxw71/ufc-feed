@@ -573,7 +573,7 @@ def parse_prefight_baselines(text,a,b):
 
         # "Rios' last 7 opponents landed 40.8% ... while Rios landed 38.5%"
         rx=re.compile(
-            p+r"['’]s\s+last\s+(\d+)\s+opponents?[^.!?]{0,120}?landed\s+(\d+(?:\.\d+)?)%\s+of\s+(?:their\s+)?power\s+(?:punches|shots)"
+            p+r"['’](?:s)?\s+last\s+(\d+)\s+opponents?[^.!?]{0,120}?landed\s+(\d+(?:\.\d+)?)%\s+of\s+(?:their\s+)?power\s+(?:punches|shots)"
             r'[^.!?]{0,100}?'+p+r'\s+landed\s+(\d+(?:\.\d+)?)%',re.I)
         for m in rx.finditer(txt):
             setv(f,'history_window_fights',m.group(1))
