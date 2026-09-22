@@ -6,7 +6,7 @@ on:
       limit:
         description: 'Maximum missing fighters to attempt this run per source'
         required: false
-        default: '60'
+        default: '120'
   workflow_run:
     workflows:
       - Boxing WBA Profile Identity Index
@@ -35,7 +35,7 @@ jobs:
   backfill:
     if: github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success'
     runs-on: ubuntu-latest
-    timeout-minutes: 35
+    timeout-minutes: 50
     steps:
       - uses: actions/checkout@v4
         with:
@@ -63,15 +63,15 @@ jobs:
         run: python boxing/research/refresh_secondary_careers.py
       - name: Backfill highest-value missing priced fighters from Wikipedia
         env:
-          LIMIT: ${{ inputs.limit || '60' }}
+          LIMIT: ${{ inputs.limit || '120' }}
         run: python boxing/research/backfill_priced_careers.py --limit "$LIMIT"
       - name: Backfill remaining priced fighters from verified secondary records
         env:
-          LIMIT: ${{ inputs.limit || '60' }}
+          LIMIT: ${{ inputs.limit || '120' }}
         run: python boxing/research/backfill_secondary_careers.py --limit "$LIMIT"
       - name: Backfill priced fighters from official WBA career consensus
         env:
-          LIMIT: ${{ inputs.limit || '60' }}
+          LIMIT: ${{ inputs.limit || '120' }}
         run: python boxing/research/backfill_wba_consensus_careers.py --limit "$LIMIT"
       - name: Remove temporary research database
         run: rm -f boxing/research/boxing.sqlite3
