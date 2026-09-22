@@ -170,8 +170,14 @@ def main():
             t['missing'].add(field)
     ordered=sorted(targets.values(),key=lambda x:(-x['appearances'],x['name']))[:args.limit]
     smap=sitemap_index();existing=load_existing()
-    found=[];fail=[];fetched=0
+    found=[];fail=[];fetched=0;already_filled_skipped=0
     for i,t in enumerate(ordered,1):
+        current=(existing.get(t['id']) or {}).get('fields') or {}
+        needed={k for k in t['missing'] if current.get(k) is None}
+        if not needed:
+            already_filled_skipped+=1
+            continue
+        t=dict(t);t['missing']=needed
         urls=[f"{BASE}/fighters/{slug(t['name'])}"]
         for u in smap.get(nk(t['name']),[]):
             if u not in urls:urls.append(u)
@@ -219,9 +225,10 @@ def main():
     os.replace(tmp,OUT)
     counts={'reach_cm':sum('reach_cm' in x['fields'] for x in found),'nationality':sum('nationality' in x['fields'] for x in found)}
     report={'generated_at':dt.datetime.now(dt.timezone.utc).isoformat(),'targets':len(ordered),'profiles_fetched':fetched,
-            'profiles_updated':len(found),'new_field_counts':counts,'found':found,'failures_sample':fail[:100],
+            'profiles_updated':len(found),'already_filled_skipped':already_filled_skipped,
+            'new_field_counts':counts,'found':found,'failures_sample':fail[:100],
             'policy':'WBC Eurasia exact fighter profile only; explicit reach with units; exact H1 identity; missing fields only; existing values never overwritten.'}
     REPORT.write_text(json.dumps(report,indent=2,ensure_ascii=False))
-    print(json.dumps({k:report[k] for k in ['targets','profiles_fetched','profiles_updated','new_field_counts']},indent=2))
+    print(json.dumps({k:report[k] for k in ['targets','profiles_fetched','profiles_updated','already_filled_skipped','new_field_counts']},indent=2))
 
 if __name__=='__main__':main()
