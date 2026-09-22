@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-21T20:27:23.469102+00:00",
+  "generated_at": "2026-09-22T00:28:32.726326+00:00",
   "settled": [],
   "past_unresolved": [
     {
@@ -18,9 +18,119 @@
         "prediction_market"
       ],
       "sportsbooks": [],
+      "sportsbook_market_summary": {
+        "per_book": {},
+        "consensus_latest_verified": {},
+        "books_with_both_sides_latest": 0,
+        "book_selection_pairs": 0
+      },
       "selections": [
         "Floyd Mayweather Jr",
         "Manny Pacquiao"
+      ]
+    },
+    {
+      "event_date": "2026-09-21",
+      "bout_id": "18533",
+      "participants": [
+        "David Ssemujju",
+        "Jin Sasaki"
+      ],
+      "first_snapshot": "2026-09-13T08:27:50.090612+00:00",
+      "last_snapshot": "2026-09-19T12:32:18.162836+00:00",
+      "verified_quote_rows": 60,
+      "verified_sportsbook_quote_rows": 60,
+      "verified_prediction_market_quote_rows": 0,
+      "market_classes": [
+        "sportsbook"
+      ],
+      "sportsbooks": [
+        "BetWay",
+        "FanDuel"
+      ],
+      "sportsbook_market_summary": {
+        "per_book": {
+          "BetWay": {
+            "David Ssemujju": {
+              "first_verified_pre_event": {
+                "fetched_at": "2026-09-18T12:59:38.317077+00:00",
+                "decimal_price": 7.5,
+                "american_price": 650
+              },
+              "latest_verified_pre_event": {
+                "fetched_at": "2026-09-19T12:32:18.162836+00:00",
+                "decimal_price": 7.5,
+                "american_price": 650
+              },
+              "observations": 5,
+              "decimal_move": 0.0
+            },
+            "Jin Sasaki": {
+              "first_verified_pre_event": {
+                "fetched_at": "2026-09-18T12:59:38.317077+00:00",
+                "decimal_price": 1.0829875518672198,
+                "american_price": -1205
+              },
+              "latest_verified_pre_event": {
+                "fetched_at": "2026-09-19T12:32:18.162836+00:00",
+                "decimal_price": 1.0829875518672198,
+                "american_price": -1205
+              },
+              "observations": 5,
+              "decimal_move": 0.0
+            }
+          },
+          "FanDuel": {
+            "David Ssemujju": {
+              "first_verified_pre_event": {
+                "fetched_at": "2026-09-13T08:27:50.090612+00:00",
+                "decimal_price": 6.8,
+                "american_price": 580
+              },
+              "latest_verified_pre_event": {
+                "fetched_at": "2026-09-19T12:32:18.162836+00:00",
+                "decimal_price": 6.8,
+                "american_price": 580
+              },
+              "observations": 25,
+              "decimal_move": 0.0
+            },
+            "Jin Sasaki": {
+              "first_verified_pre_event": {
+                "fetched_at": "2026-09-13T08:27:50.090612+00:00",
+                "decimal_price": 1.0769230769230769,
+                "american_price": -1300
+              },
+              "latest_verified_pre_event": {
+                "fetched_at": "2026-09-19T12:32:18.162836+00:00",
+                "decimal_price": 1.0769230769230769,
+                "american_price": -1300
+              },
+              "observations": 25,
+              "decimal_move": 0.0
+            }
+          }
+        },
+        "consensus_latest_verified": {
+          "David Ssemujju": {
+            "books": 2,
+            "median_latest_verified_decimal": 7.15,
+            "min_latest_verified_decimal": 6.8,
+            "max_latest_verified_decimal": 7.5
+          },
+          "Jin Sasaki": {
+            "books": 2,
+            "median_latest_verified_decimal": 1.079955,
+            "min_latest_verified_decimal": 1.0769230769230769,
+            "max_latest_verified_decimal": 1.0829875518672198
+          }
+        },
+        "books_with_both_sides_latest": 2,
+        "book_selection_pairs": 4
+      },
+      "selections": [
+        "David Ssemujju",
+        "Jin Sasaki"
       ]
     }
   ]

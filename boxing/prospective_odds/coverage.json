@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-21T20:27:23.469102+00:00",
+  "generated_at": "2026-09-22T00:28:32.726326+00:00",
   "snapshot_records": 35,
   "raw_quote_observations": 10014,
   "verified_pre_event_quote_observations": 914,
@@ -15,13 +15,14 @@
     "FanDuel",
     "Unibet"
   ],
+  "sportsbook_bouts_with_two_sided_latest_quotes": 56,
   "settled_verified_bouts": 0,
   "settled_verified_sportsbook_bouts": 0,
-  "past_unresolved_bouts": 1,
-  "past_unresolved_sportsbook_bouts": 0,
-  "future_or_today_bouts": 56,
-  "future_or_today_sportsbook_bouts": 56,
+  "past_unresolved_bouts": 2,
+  "past_unresolved_sportsbook_bouts": 1,
+  "future_or_today_bouts": 55,
+  "future_or_today_sportsbook_bouts": 55,
   "date_min": "2026-09-20",
   "date_max": "2026-12-31",
-  "policy": "Only originally timestamped pre-event quotes are eligible; results require exact date+pair and unanimous matching finished source rows. Sportsbook and prediction-market observations are reported separately; only sportsbook rows are candidates for sportsbook ROI validation."
+  "policy": "Only originally timestamped pre-event quotes are eligible; results require exact date+pair and unanimous matching finished source rows. Sportsbook and prediction-market observations are reported separately. For sportsbook validation, opening=first verified observation and latest=last verified observation before listed event start/date; consensus latest is the median of each sportsbook latest observation, never a retrospectively chosen price."
 }
