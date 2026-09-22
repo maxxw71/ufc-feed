@@ -664,30 +664,66 @@ def main():
             if len(bouts)>1:diag['multi_bout_articles_resolved']+=1
             text=raw_text
             article_added=0
+            article_prefight_added=0
             article_bout_labels=[]
             historical_mode=is_historical_review(title,text)
+            article_date=pd.isoformat() if pd else None
             for bout in bouts:
                 article_bout_labels.append({'date':bout['date'],'fighter_a':bout['fighter_a'],'fighter_b':bout['fighter_b']})
-                if historical_mode:
-                    histstats=parse_prefight_baselines(text,bout['fighter_a'],bout['fighter_b'])
+                published_before_target=bool(article_date and article_date < bout['date'])
+                prefight_mode=historical_mode or published_before_target
+                if prefight_mode:
+                    histstats=parse_prefight_baselines(text,bout['fighter_a'],bout['fighter_b']) if historical_mode else {
+                        bout['fighter_a']:{},bout['fighter_b']:{}
+                    }
+                    # When the source was published before the target bout, any
+                    # explicit target-fighter numeric stats necessarily describe
+                    # prior history and are safe pre-fight context. Keep them out
+                    # of current-fight observations and merge them here instead.
+                    if published_before_target:
+                        explicit=parse_explicit_stats(text,bout['fighter_a'],bout['fighter_b'])
+                        for fighter in (bout['fighter_a'],bout['fighter_b']):
+                            src=explicit.get(fighter) or {}
+                            dst=histstats.setdefault(fighter,{})
+                            if src.get('_invalid_conflict'):
+                                dst['_invalid_conflict']=True
+                                continue
+                            for k,v in src.items():
+                                if not isinstance(v,(int,float)) or isinstance(v,bool):continue
+                                if k in dst and abs(float(dst[k])-float(v))>1e-9:
+                                    dst['_invalid_conflict']=True
+                                else:
+                                    dst[k]=v
+
                     hist_added=0
+                    if not article_date:
+                        diag['prefight_baseline_unknown_publication_date_rejected']+=1
+                        continue
                     for fighter,opponent in [(bout['fighter_a'],bout['fighter_b']),(bout['fighter_b'],bout['fighter_a'])]:
                         st=histstats.get(fighter) or {}
                         if st.get('_invalid_conflict'):continue
                         numeric={k:v for k,v in st.items() if isinstance(v,(int,float)) and not isinstance(v,bool)}
                         if not numeric:continue
                         aliases=[fighter]
+                        target_eligible=published_before_target
                         prefight_rows.append({
-                          'source_url':final,'article_title':title,'article_date':pd.isoformat() if pd else None,
-                          'target_bout_date':bout['date'],'fighter':fighter,'fighter_aliases':aliases,'opponent':opponent,
+                          'source_url':final,'article_title':title,'article_date':article_date,
+                          'available_from_date':article_date,'target_bout_date':bout['date'],
+                          'target_bout_eligible':target_eligible,
+                          'fighter':fighter,'fighter_aliases':aliases,'opponent':opponent,
                           **numeric,
                           'quality':'compubox_authored_boxingscene_explicit_historical_prefight_aggregate',
-                          'timing_evidence':'historical_window_text_explicitly_excludes_current_bout'
+                          'timing_evidence':'article_published_before_target_bout' if target_eligible
+                                            else 'historical_aggregate_available_only_after_article_publication'
                         })
-                        hist_added+=1
+                        hist_added+=1;article_prefight_added+=1
                     if hist_added:
                         diag['prefight_historical_baseline_rows']+=hist_added
                         diag['prefight_historical_baseline_bouts']+=1
+                        diag['prefight_direct_target_rows']+=sum(
+                            1 for x in prefight_rows[-hist_added:] if x.get('target_bout_eligible'))
+                        diag['prefight_future_only_rows']+=sum(
+                            1 for x in prefight_rows[-hist_added:] if not x.get('target_bout_eligible'))
                     continue
                 stats=parse_explicit_stats(text,bout['fighter_a'],bout['fighter_b'])
                 bout_added=0
@@ -709,8 +745,13 @@ def main():
                     rows.append(rec);bout_added+=1;article_added+=1
                 if bout_added:diag['matched_bouts_with_numeric_rows']+=1
                 else:diag['matched_bouts_no_safe_numeric_pattern']+=1
-            diag['matched_articles_with_numeric_rows' if article_added else 'matched_articles_no_safe_numeric_pattern']+=1
-            if not article_added and len(no_numeric_sample)<80:
+            if article_added:
+                diag['matched_articles_with_numeric_rows']+=1
+            elif article_prefight_added:
+                diag['matched_articles_with_prefight_baselines_only']+=1
+            else:
+                diag['matched_articles_no_safe_numeric_pattern']+=1
+            if not article_added and not article_prefight_added and len(no_numeric_sample)<80:
                 no_numeric_sample.append({
                   'url':final,'title':title,'article_date':pd.isoformat() if pd else None,
                   'bouts':article_bout_labels,'text_sample':text[:4500]
@@ -737,7 +778,7 @@ def main():
       'explicit_full_stat_targets':list(full_stat_targets.values()),
       'explicit_full_stat_target_count':len(full_stat_targets),
       'matched_no_numeric_sample':no_numeric_sample,'alias_dedup_conflicts_sample':dedupe_conflicts[:40],'failures_sample':fail[:80],
-      'policy':'CompuBox-authored BoxingScene articles only; unique local date+pair; explicit numeric patterns only. Post-fight summaries are separate from full round reports. Historical-review/last-N-fights aggregates are excluded from current-fight observations and stored only as direct pre-fight baseline features.'
+      'policy':'CompuBox-authored BoxingScene articles only; unique local date+pair; explicit numeric patterns only. Articles published before the resolved target bout are pre-fight context and never current-fight observations. Historical-review/last-N-fights aggregates published on/after the target bout are available only for later bouts after publication. Post-fight summaries remain separate from full round reports.'
     }
     REPORT.write_text(json.dumps(report,indent=2,ensure_ascii=False))
     print(json.dumps(report,indent=2,ensure_ascii=False))
