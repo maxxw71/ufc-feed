@@ -2,6 +2,7 @@
   "existing_verified_links": 23682,
   "new_direct_source_url_links": 92,
   "new_verified_alias_links": 2435,
+  "new_ibf_official_bridge_links": 0,
   "combined_links": 26209,
   "sources": [
     "wikipedia",
@@ -11,12 +12,17 @@
   "diagnostics": {
     "ambiguous": 807,
     "no_candidate": 109032,
-    "no_reciprocal_match": 4542
+    "no_reciprocal_match": 4542,
+    "ibf_bridge_links": 0,
+    "ibf_bridge_ambiguous": 0,
+    "ibf_rows_loaded": 0,
+    "ibf_rows_checked": 0
   },
-  "method": "direct exact opponent profile URL when available; otherwise exact observed alias + same-date reciprocal row + reciprocal outcome; unique candidate only",
+  "method": "direct exact opponent profile URL; else exact observed alias + same-date reciprocal row + reciprocal outcome; else existing unique career candidate + exact official IBF date/pair/result confirmation",
   "limitations": [
     "Does not guess unresolved identities.",
     "Does not use fuzzy edit distance.",
+    "IBF evidence never creates a standalone career identity.",
     "Cannot recover opponents whose career/profile identity is absent from the database."
   ]
 }
