@@ -1,7 +1,8 @@
+from bs4 import BeautifulSoup
 import datetime as dt
 import unittest
 
-from collect_boxingscene_compubox_summaries import resolve_bouts,parse_explicit_stats
+from collect_boxingscene_compubox_summaries import resolve_bouts,parse_explicit_stats,text_content
 
 class BoxingSceneCompuBoxResolutionTests(unittest.TestCase):
     def test_multi_fight_title_resolves_two_unique_pairs(self):
@@ -55,6 +56,14 @@ class BoxingSceneCompuBoxResolutionTests(unittest.TestCase):
         self.assertEqual(out['Bernabe Concepcion']['power_accuracy_pct'],47.0)
         self.assertEqual(out['Mario Santiago']['total_thrown_per_round'],79.0)
         self.assertEqual(out['Mario Santiago']['total_accuracy_pct'],20.0)
+
+    def test_migrated_meta_description_and_thrown_rate(self):
+        html='''<html><head><meta name="description" content="Matthew Macklin averaged 92 punches thrown per round, doubling Felix Sturm’s output. Sturm was the more accurate fighter, landing 45% of his power shots."></head><body><main>unrelated current stories</main></body></html>'''
+        txt=text_content(BeautifulSoup(html,'lxml'))
+        self.assertIn('Macklin averaged 92 punches',txt)
+        out=parse_explicit_stats(txt,'Matthew Macklin','Felix Sturm')
+        self.assertEqual(out['Matthew Macklin']['total_thrown_per_round'],92.0)
+        self.assertEqual(out['Felix Sturm']['power_accuracy_pct'],45.0)
 
 if __name__=='__main__':
     unittest.main()
