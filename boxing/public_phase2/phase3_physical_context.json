@@ -2,7 +2,7 @@
   "status": "EXPLORATORY_STATIC_PHYSICAL_PROXIES_AND_UNVERIFIED_PRICES",
   "coverage": {
     "bouts": 730,
-    "reach_pair": 273,
+    "reach_pair": 320,
     "height_pair": 619,
     "stance_pair": 690,
     "title_bouts": 377,
@@ -412,6 +412,56 @@
       }
     },
     {
+      "rule": "FORM_REACH__price1.2__form1__reach5",
+      "definition": {
+        "family": "FORM_REACH",
+        "price": 1.2,
+        "form": 1,
+        "reach": 5
+      },
+      "metrics": {
+        "bets": 22,
+        "wins": 19,
+        "losses": 3,
+        "win_pct": 86.36363636363636,
+        "wilson95_lower_pct": 66.66458812053,
+        "profit_median_units": 5.7707650019962395,
+        "roi_median_pct": 26.230750009073816,
+        "profit_best_units": 6.625554482092451,
+        "roi_best_pct": 30.116156736783864,
+        "avg_market_prob": 0.6609136277672174,
+        "avg_book_count": 4.818181818181818
+      },
+      "periods": {
+        "2021_2023": {
+          "bets": 8,
+          "wins": 7,
+          "losses": 1,
+          "win_pct": 87.5,
+          "wilson95_lower_pct": 52.910519423013845,
+          "profit_median_units": 3.0364142844049855,
+          "roi_median_pct": 37.95517855506232,
+          "profit_best_units": 3.4470340470340473,
+          "roi_best_pct": 43.08792558792559,
+          "avg_market_prob": 0.6177717685207842,
+          "avg_book_count": 6.125
+        },
+        "2024_2026": {
+          "bets": 14,
+          "wins": 12,
+          "losses": 2,
+          "win_pct": 85.71428571428571,
+          "wilson95_lower_pct": 60.0580922361363,
+          "profit_median_units": 2.734350717591254,
+          "roi_median_pct": 19.53107655422324,
+          "profit_best_units": 3.1785204350584038,
+          "roi_best_pct": 22.70371739327431,
+          "avg_market_prob": 0.6855661187651793,
+          "avg_book_count": 4.071428571428571
+        }
+      }
+    },
+    {
       "rule": "AGE_HEIGHT__price1.2__age3__height3",
       "definition": {
         "family": "AGE_HEIGHT",
@@ -462,52 +512,102 @@
       }
     },
     {
-      "rule": "FORM_REACH__price1.2__form1__reach5",
+      "rule": "FORM_REACH__price1.3__form1__reach5",
       "definition": {
         "family": "FORM_REACH",
-        "price": 1.2,
+        "price": 1.3,
         "form": 1,
         "reach": 5
       },
       "metrics": {
-        "bets": 20,
-        "wins": 17,
-        "losses": 3,
-        "win_pct": 85.0,
-        "wilson95_lower_pct": 63.95767041130426,
-        "profit_median_units": 4.583945989001357,
-        "roi_median_pct": 22.919729945006786,
-        "profit_best_units": 5.412319187974804,
-        "roi_best_pct": 27.061595939874017,
-        "avg_market_prob": 0.6675561038790263,
-        "avg_book_count": 4.9
+        "bets": 16,
+        "wins": 14,
+        "losses": 2,
+        "win_pct": 87.5,
+        "wilson95_lower_pct": 63.976668563251714,
+        "profit_median_units": 5.647235023203102,
+        "roi_median_pct": 35.29521889501939,
+        "profit_best_units": 6.251744958282927,
+        "roi_best_pct": 39.073405989268295,
+        "avg_market_prob": 0.6192663721192583,
+        "avg_book_count": 4.6875
       },
       "periods": {
         "2021_2023": {
-          "bets": 8,
-          "wins": 7,
+          "bets": 7,
+          "wins": 6,
           "losses": 1,
-          "win_pct": 87.5,
-          "wilson95_lower_pct": 52.910519423013845,
-          "profit_median_units": 3.0364142844049855,
-          "roi_median_pct": 37.95517855506232,
-          "profit_best_units": 3.4470340470340473,
-          "roi_best_pct": 43.08792558792559,
-          "avg_market_prob": 0.6177717685207842,
-          "avg_book_count": 6.125
+          "win_pct": 85.71428571428571,
+          "wilson95_lower_pct": 48.686549668097015,
+          "profit_median_units": 2.8166340646247656,
+          "roi_median_pct": 40.23762949463951,
+          "profit_best_units": 3.1970340470340473,
+          "roi_best_pct": 45.67191495762925,
+          "avg_market_prob": 0.5956686053332645,
+          "avg_book_count": 5.857142857142857
         },
         "2024_2026": {
-          "bets": 12,
-          "wins": 10,
+          "bets": 9,
+          "wins": 8,
+          "losses": 1,
+          "win_pct": 88.88888888888889,
+          "wilson95_lower_pct": 56.499378523193975,
+          "profit_median_units": 2.830600958578337,
+          "roi_median_pct": 31.451121761981526,
+          "profit_best_units": 3.05471091124888,
+          "roi_best_pct": 33.94123234720978,
+          "avg_market_prob": 0.6376201907305866,
+          "avg_book_count": 3.7777777777777777
+        }
+      }
+    },
+    {
+      "rule": "FORM_REACH__price1.2__form1__reach3",
+      "definition": {
+        "family": "FORM_REACH",
+        "price": 1.2,
+        "form": 1,
+        "reach": 3
+      },
+      "metrics": {
+        "bets": 27,
+        "wins": 22,
+        "losses": 5,
+        "win_pct": 81.48148148148148,
+        "wilson95_lower_pct": 63.30094349480825,
+        "profit_median_units": 5.6651644621851736,
+        "roi_median_pct": 20.982090600685826,
+        "profit_best_units": 6.9136497201876885,
+        "roi_best_pct": 25.606110074769216,
+        "avg_market_prob": 0.6487365692049674,
+        "avg_book_count": 4.814814814814815
+      },
+      "periods": {
+        "2021_2023": {
+          "bets": 10,
+          "wins": 8,
           "losses": 2,
-          "win_pct": 83.33333333333333,
-          "wilson95_lower_pct": 55.196364261532736,
-          "profit_median_units": 1.547531704596372,
-          "roi_median_pct": 12.896097538303101,
-          "profit_best_units": 1.9652851409407566,
-          "roi_best_pct": 16.377376174506306,
-          "avg_market_prob": 0.7007456607845209,
-          "avg_book_count": 4.083333333333333
+          "win_pct": 80.0,
+          "wilson95_lower_pct": 49.01568467207235,
+          "profit_median_units": 2.2961983599785345,
+          "roi_median_pct": 22.961983599785345,
+          "profit_best_units": 2.732748332748333,
+          "roi_best_pct": 27.32748332748333,
+          "avg_market_prob": 0.63152736611371,
+          "avg_book_count": 5.9
+        },
+        "2024_2026": {
+          "bets": 17,
+          "wins": 14,
+          "losses": 3,
+          "win_pct": 82.3529411764706,
+          "wilson95_lower_pct": 58.97007098262422,
+          "profit_median_units": 3.368966102206639,
+          "roi_median_pct": 19.81744766003905,
+          "profit_best_units": 4.180901387439356,
+          "roi_best_pct": 24.59353757317268,
+          "avg_market_prob": 0.6588596298468835,
+          "avg_book_count": 4.176470588235294
         }
       }
     },
@@ -662,52 +762,52 @@
       }
     },
     {
-      "rule": "FORM_REACH__price1.2__form1__reach3",
+      "rule": "FORM_REACH__price1.3__form1__reach3",
       "definition": {
         "family": "FORM_REACH",
-        "price": 1.2,
+        "price": 1.3,
         "form": 1,
         "reach": 3
       },
       "metrics": {
-        "bets": 24,
-        "wins": 19,
-        "losses": 5,
-        "win_pct": 79.16666666666667,
-        "wilson95_lower_pct": 59.52915551476453,
-        "profit_median_units": 3.67706339790824,
-        "roi_median_pct": 15.321097491284334,
-        "profit_best_units": 4.650414426070041,
-        "roi_best_pct": 19.37672677529184,
-        "avg_market_prob": 0.6582612280116742,
-        "avg_book_count": 4.833333333333333
+        "bets": 20,
+        "wins": 16,
+        "losses": 4,
+        "win_pct": 80.0,
+        "wilson95_lower_pct": 58.397827797424014,
+        "profit_median_units": 5.281850407818487,
+        "roi_median_pct": 26.409252039092433,
+        "profit_best_units": 6.254125910663879,
+        "roi_best_pct": 31.270629553319395,
+        "avg_market_prob": 0.6065981446993668,
+        "avg_book_count": 4.75
       },
       "periods": {
         "2021_2023": {
-          "bets": 10,
-          "wins": 8,
+          "bets": 8,
+          "wins": 6,
           "losses": 2,
-          "win_pct": 80.0,
-          "wilson95_lower_pct": 49.01568467207235,
-          "profit_median_units": 2.2961983599785345,
-          "roi_median_pct": 22.961983599785345,
-          "profit_best_units": 2.732748332748333,
-          "roi_best_pct": 27.32748332748333,
-          "avg_market_prob": 0.63152736611371,
-          "avg_book_count": 5.9
+          "win_pct": 75.0,
+          "wilson95_lower_pct": 40.926987910258916,
+          "profit_median_units": 1.8166340646247654,
+          "roi_median_pct": 22.707925807809566,
+          "profit_best_units": 2.1970340470340473,
+          "roi_best_pct": 27.46292558792559,
+          "avg_market_prob": 0.5988366415909432,
+          "avg_book_count": 5.875
         },
         "2024_2026": {
-          "bets": 14,
-          "wins": 11,
-          "losses": 3,
-          "win_pct": 78.57142857142857,
-          "wilson95_lower_pct": 52.410276226791716,
-          "profit_median_units": 1.3808650379297054,
-          "roi_median_pct": 9.863321699497897,
-          "profit_best_units": 1.917666093321709,
-          "roi_best_pct": 13.697614952297922,
-          "avg_market_prob": 0.6773568436530774,
-          "avg_book_count": 4.071428571428571
+          "bets": 12,
+          "wins": 10,
+          "losses": 2,
+          "win_pct": 83.33333333333333,
+          "wilson95_lower_pct": 55.196364261532736,
+          "profit_median_units": 3.4652163431937217,
+          "roi_median_pct": 28.876802859947684,
+          "profit_best_units": 4.057091863629832,
+          "roi_best_pct": 33.80909886358194,
+          "avg_market_prob": 0.6117724801049825,
+          "avg_book_count": 4.0
         }
       }
     },
@@ -962,10 +1062,10 @@
       }
     },
     {
-      "rule": "FORM_REACH__price1.3__form1__reach3",
+      "rule": "FORM_REACH__price1.4__form1__reach3",
       "definition": {
         "family": "FORM_REACH",
-        "price": 1.3,
+        "price": 1.4,
         "form": 1,
         "reach": 3
       },
@@ -975,39 +1075,39 @@
         "losses": 4,
         "win_pct": 76.47058823529412,
         "wilson95_lower_pct": 52.73775411082839,
-        "profit_median_units": 3.2937493435415535,
-        "roi_median_pct": 19.374996138479727,
-        "profit_best_units": 3.990890616546232,
-        "roi_best_pct": 23.475827156154306,
-        "avg_market_prob": 0.6126085292784351,
-        "avg_book_count": 4.764705882352941
+        "profit_median_units": 4.225384930849414,
+        "roi_median_pct": 24.855205475584786,
+        "profit_best_units": 5.120792577330546,
+        "roi_best_pct": 30.122309278414974,
+        "avg_market_prob": 0.5905207367505857,
+        "avg_book_count": 4.9411764705882355
       },
       "periods": {
         "2021_2023": {
-          "bets": 8,
-          "wins": 6,
+          "bets": 7,
+          "wins": 5,
           "losses": 2,
-          "win_pct": 75.0,
-          "wilson95_lower_pct": 40.926987910258916,
-          "profit_median_units": 1.8166340646247654,
-          "roi_median_pct": 22.707925807809566,
-          "profit_best_units": 2.1970340470340473,
-          "roi_best_pct": 27.46292558792559,
-          "avg_market_prob": 0.5988366415909432,
-          "avg_book_count": 5.875
+          "win_pct": 71.42857142857143,
+          "wilson95_lower_pct": 35.892909014821264,
+          "profit_median_units": 1.456921834408938,
+          "roi_median_pct": 20.81316906298483,
+          "profit_best_units": 1.7970340470340471,
+          "roi_best_pct": 25.671914957629244,
+          "avg_market_prob": 0.5850058512592147,
+          "avg_book_count": 5.714285714285714
         },
         "2024_2026": {
-          "bets": 9,
-          "wins": 7,
+          "bets": 10,
+          "wins": 8,
           "losses": 2,
-          "win_pct": 77.77777777777777,
-          "wilson95_lower_pct": 45.25833436728054,
-          "profit_median_units": 1.4771152789167883,
-          "roi_median_pct": 16.412391987964313,
-          "profit_best_units": 1.793856569512185,
-          "roi_best_pct": 19.931739661246503,
-          "avg_market_prob": 0.6248502072228725,
-          "avg_book_count": 3.7777777777777777
+          "win_pct": 80.0,
+          "wilson95_lower_pct": 49.01568467207235,
+          "profit_median_units": 2.768463096440475,
+          "roi_median_pct": 27.68463096440475,
+          "profit_best_units": 3.323758530296499,
+          "roi_best_pct": 33.23758530296499,
+          "avg_market_prob": 0.5943811565945454,
+          "avg_book_count": 4.4
         }
       }
     },
@@ -1058,6 +1158,55 @@
           "roi_best_pct": 6.154374350512616,
           "avg_market_prob": 0.6233333007478774,
           "avg_book_count": 4.222222222222222
+        }
+      }
+    },
+    {
+      "rule": "REACH__price1.3__reach8",
+      "definition": {
+        "family": "REACH",
+        "price": 1.3,
+        "reach": 8
+      },
+      "metrics": {
+        "bets": 18,
+        "wins": 13,
+        "losses": 5,
+        "win_pct": 72.22222222222223,
+        "wilson95_lower_pct": 49.12692245380548,
+        "profit_median_units": 1.6466100623336777,
+        "roi_median_pct": 9.147833679631542,
+        "profit_best_units": 1.9878881634445371,
+        "roi_best_pct": 11.043823130247429,
+        "avg_market_prob": 0.6336199220288008,
+        "avg_book_count": 4.166666666666667
+      },
+      "periods": {
+        "2021_2023": {
+          "bets": 6,
+          "wins": 4,
+          "losses": 2,
+          "win_pct": 66.66666666666667,
+          "wilson95_lower_pct": 29.99883213415286,
+          "profit_median_units": 0.48916406094479004,
+          "roi_median_pct": 8.152734349079834,
+          "profit_best_units": 0.6437999628183677,
+          "roi_best_pct": 10.729999380306127,
+          "avg_market_prob": 0.6275993354718592,
+          "avg_book_count": 5.0
+        },
+        "2024_2026": {
+          "bets": 12,
+          "wins": 9,
+          "losses": 3,
+          "win_pct": 75.0,
+          "wilson95_lower_pct": 46.76896608793401,
+          "profit_median_units": 1.1574460013888876,
+          "roi_median_pct": 9.645383344907398,
+          "profit_best_units": 1.3440882006261694,
+          "roi_best_pct": 11.200735005218078,
+          "avg_market_prob": 0.6366302153072715,
+          "avg_book_count": 3.75
         }
       }
     }
@@ -1664,34 +1813,50 @@
             "avg_market_prob": 0.6794252011219482,
             "avg_book_count": 4.365384615384615
           }
+        },
+        "REACH": {
+          "rule": "REACH__price1.2__reach3",
+          "validation": {
+            "bets": 39,
+            "wins": 28,
+            "losses": 11,
+            "win_pct": 71.7948717948718,
+            "wilson95_lower_pct": 56.22438267752261,
+            "profit_median_units": 0.6586235773696336,
+            "roi_median_pct": 1.6887784035118811,
+            "profit_best_units": 2.1134327449707127,
+            "roi_best_pct": 5.419058320437725,
+            "avg_market_prob": 0.6727214067411621,
+            "avg_book_count": 4.487179487179487
+          }
         }
       },
       "consensus": {
         "2": {
-          "bets": 6,
-          "wins": 6,
+          "bets": 8,
+          "wins": 8,
           "losses": 0,
           "win_pct": 100.0,
-          "wilson95_lower_pct": 60.96569663469354,
-          "profit_median_units": 2.3203026499963375,
-          "roi_median_pct": 38.67171083327229,
-          "profit_best_units": 2.792988730059668,
-          "roi_best_pct": 46.54981216766114,
-          "avg_market_prob": 0.6870156076723662,
+          "wilson95_lower_pct": 67.55843804891231,
+          "profit_median_units": 3.157915313784871,
+          "roi_median_pct": 39.47394142231089,
+          "profit_best_units": 3.6478737875309326,
+          "roi_best_pct": 45.59842234413666,
+          "avg_market_prob": 0.6841793290136711,
           "avg_book_count": 3.5
         },
         "3": {
-          "bets": 4,
-          "wins": 4,
+          "bets": 5,
+          "wins": 5,
           "losses": 0,
           "win_pct": 100.0,
-          "wilson95_lower_pct": 51.009997959600085,
-          "profit_median_units": 1.5993014289951166,
-          "roi_median_pct": 39.98253572487791,
-          "profit_best_units": 1.9095300834431268,
-          "roi_best_pct": 47.73825208607817,
-          "avg_market_prob": 0.6804577808764675,
-          "avg_book_count": 3.5
+          "wilson95_lower_pct": 56.5508505247919,
+          "profit_median_units": 1.8203026499963377,
+          "roi_median_pct": 36.40605299992676,
+          "profit_best_units": 2.266672940585984,
+          "roi_best_pct": 45.33345881171968,
+          "avg_market_prob": 0.6994187292068395,
+          "avg_book_count": 3.6
         },
         "4": {
           "bets": 3,
