@@ -231,6 +231,25 @@ def is_compubox_article(soup,url,title):
     if re.search(r'\bby\s+compubox\b',lead,re.I):return True
     return False
 
+def explicit_full_stat_links(soup,base):
+    out=[];seen=set()
+    for a in soup.find_all('a',href=True):
+        label=re.sub(r'\s+',' ',a.get_text(' ',strip=True)).strip()
+        href=urllib.parse.urljoin(base,a.get('href')).split('#')[0]
+        low=(label+' '+href).casefold()
+        if not (
+            ('full punch stat' in low)
+            or ('round-by-round' in low)
+            or ('round by round' in low)
+            or re.search(r'featured_stats/.*\.(?:pdf|html?)',low)
+            or re.search(r'stat_files/.*\.(?:pdf|html?)',low)
+        ):
+            continue
+        if href in seen:continue
+        seen.add(href)
+        out.append({'label':label,'url':href})
+    return out
+
 def fighter_patterns(name):
     vals=[re.escape(name),re.escape(surname(name))]
     return '(?:'+'|'.join(x for x in vals if x)+')'
@@ -399,7 +418,7 @@ def main():
     ap=argparse.ArgumentParser();ap.add_argument('--articles',type=int,default=400);args=ap.parse_args()
     if not DB.exists():raise SystemExit('missing boxing.sqlite3')
     bydate,allitems=local_bouts();urls=crawl_articles(max_articles=args.articles)
-    rows=[];diag=defaultdict(int);fail=[];unresolved_sample=[];no_numeric_sample=[]
+    rows=[];diag=defaultdict(int);fail=[];unresolved_sample=[];no_numeric_sample=[];full_stat_targets={}
     for i,url in enumerate(urls,1):
         try:
             final,raw=fetch(url);soup=BeautifulSoup(raw,'lxml')
@@ -407,6 +426,9 @@ def main():
             if not is_compubox_article(soup,final,title):
                 diag['rejected_non_compubox_article']+=1
                 continue
+            for link in explicit_full_stat_links(soup,final):
+                full_stat_targets.setdefault(link['url'],{'url':link['url'],'label':link['label'],'article_urls':[]})
+                full_stat_targets[link['url']]['article_urls'].append(final)
             raw_text=text_content(BeautifulSoup(raw,'lxml'))
             if not raw_text:
                 diag['article_body_missing']+=1
@@ -471,6 +493,8 @@ def main():
       'date_min':min((r['bout_date'] for r in rows),default=None),
       'date_max':max((r['bout_date'] for r in rows),default=None),
       'diagnostics':dict(diag),'unresolved_sample':unresolved_sample,
+      'explicit_full_stat_targets':list(full_stat_targets.values()),
+      'explicit_full_stat_target_count':len(full_stat_targets),
       'matched_no_numeric_sample':no_numeric_sample,'failures_sample':fail[:80],
       'policy':'CompuBox-authored BoxingScene articles only; unique local date+pair; explicit numeric patterns only; separate summary tier from full round reports.'
     }
