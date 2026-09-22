@@ -18,6 +18,17 @@ AUDIT=ROOT/'public_phase2'/'PROFILE_GAP_AUDIT.json'
 OUT=ROOT/'profile_supplements'/'verified_profiles.jsonl'
 REPORT=ROOT/'profile_supplements'/'wikidata_nationality_backfill_report.json'
 UA='Mozilla/5.0 AppwizaBoxingNationality/1.0'
+COUNTRY_CANON={
+  'United States of America':'United States',
+  'United Kingdom of Great Britain and Northern Ireland':'United Kingdom',
+  'Russian Federation':'Russia',
+  'Republic of Korea':'South Korea',
+  'Democratic People\'s Republic of Korea':'North Korea',
+  'Czech Republic':'Czechia',
+  'Republic of Ireland':'Ireland',
+}
+def canon_country(value):
+    return COUNTRY_CANON.get(str(value or '').strip(),str(value or '').strip())
 
 def get_json(url,limit=4_000_000):
     req=urllib.request.Request(url,headers={'User-Agent':UA,'Accept':'application/json','Accept-Language':'en-US,en;q=0.8'})
@@ -57,7 +68,7 @@ def country_from_entity(ent):
     cent=entity(qids[0])
     labels=cent.get('labels') or {}
     label=(labels.get('en') or {}).get('value')
-    return label,qids
+    return canon_country(label),qids
 
 def main():
     audit=json.loads(AUDIT.read_text())
