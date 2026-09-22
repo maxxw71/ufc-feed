@@ -16,6 +16,7 @@ from __future__ import annotations
 import argparse,datetime as dt,json,os,re,time,unicodedata,urllib.parse,urllib.request,xml.etree.ElementTree as ET
 from pathlib import Path
 from bs4 import BeautifulSoup
+import pycountry
 
 ROOT=Path(__file__).resolve().parents[1]
 AUDIT=ROOT/'public_phase2'/'PROFILE_GAP_AUDIT.json'
@@ -107,19 +108,40 @@ def fields(soup):
     if 'nationality' not in data:
         h=soup.find('h1')
         if h:
-            # Inspect nearby preceding visible strings; reject generic nav labels.
-            prev=[]
-            cur=h
-            for _ in range(8):
+            # Country is rendered immediately above nickname/name. Accept only
+            # strings that resolve through ISO country metadata; nicknames and
+            # navigation labels can therefore never be mistaken for nationality.
+            prev=[];cur=h
+            for _ in range(12):
                 cur=cur.find_previous(string=True)
                 if cur is None:break
                 v=re.sub(r'\s+',' ',str(cur)).strip()
                 if v:prev.append(v)
-            blocked={'fighters','home','news','rankings','about','record','career stats'}
+            aliases={
+              'UK':'United Kingdom','U.K.':'United Kingdom','US':'United States',
+              'U.S.':'United States','USA':'United States','DOM. REP.':'Dominican Republic',
+              'DOMINICAN REP.':'Dominican Republic','RUSSIA':'Russian Federation',
+              'SOUTH KOREA':'Korea, Republic of','IRAN':'Iran, Islamic Republic of',
+              'VENEZUELA':'Venezuela, Bolivarian Republic of','BOLIVIA':'Bolivia, Plurinational State of',
+              'TANZANIA':'Tanzania, United Republic of','MOLDOVA':'Moldova, Republic of'
+            }
             for v in prev:
-                if v.casefold() in blocked:continue
-                if re.fullmatch(r'[A-Za-z][A-Za-z .’\'-]{1,50}',v) and not re.search(r'\d',v):
-                    data['nationality']=v
+                probe=aliases.get(v.upper(),v)
+                try:
+                    country=pycountry.countries.lookup(probe)
+                except LookupError:
+                    country=None
+                if country:
+                    name={
+                      'Russian Federation':'Russia',
+                      'Korea, Republic of':'South Korea',
+                      'Iran, Islamic Republic of':'Iran',
+                      'Venezuela, Bolivarian Republic of':'Venezuela',
+                      'Bolivia, Plurinational State of':'Bolivia',
+                      'Tanzania, United Republic of':'Tanzania',
+                      'Moldova, Republic of':'Moldova'
+                    }.get(country.name,country.name)
+                    data['nationality']=name
                     break
     return data
 
