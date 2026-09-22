@@ -83,6 +83,7 @@ jobs:
           cp boxing/research/*.py /tmp/boxing-research/
           if [ -d boxing/supplemental_careers ]; then cp -R boxing/supplemental_careers /tmp/supplemental_careers; fi
           if [ -d boxing/profile_supplements ]; then cp -R boxing/profile_supplements /tmp/profile_supplements; fi
+          if [ -d boxing/punch_supplements ]; then rm -rf /tmp/punch_supplements && cp -R boxing/punch_supplements /tmp/punch_supplements; fi
           if [ -d boxing/rankings ]; then cp -R boxing/rankings /tmp/boxing-research/rankings; fi
           if [ -d boxing/official_bouts ]; then rm -rf /tmp/official_bouts && cp -R boxing/official_bouts /tmp/official_bouts; fi
       - name: Build chronological master and run research passes
