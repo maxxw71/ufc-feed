@@ -291,11 +291,21 @@ def punch_summary_before(hist,name,date):
             out[f'last3_{cat}_{kind}_per_round']=_mean(vals[-3:])
         ratios=[];ratios3=[]
         for rr in rows:
-            l=_summary_metric(rr,cat,'landed');t=_summary_metric(rr,cat,'thrown')
-            ratios.append((100*l/t) if l is not None and t not in (None,0) else None)
+            direct=rr.get(f'{cat}_accuracy_pct')
+            if direct is not None:
+                try:ratios.append(float(direct))
+                except Exception:ratios.append(None)
+            else:
+                l=_summary_metric(rr,cat,'landed');t=_summary_metric(rr,cat,'thrown')
+                ratios.append((100*l/t) if l is not None and t not in (None,0) else None)
         for rr in rows[-3:]:
-            l=_summary_metric(rr,cat,'landed');t=_summary_metric(rr,cat,'thrown')
-            ratios3.append((100*l/t) if l is not None and t not in (None,0) else None)
+            direct=rr.get(f'{cat}_accuracy_pct')
+            if direct is not None:
+                try:ratios3.append(float(direct))
+                except Exception:ratios3.append(None)
+            else:
+                l=_summary_metric(rr,cat,'landed');t=_summary_metric(rr,cat,'thrown')
+                ratios3.append((100*l/t) if l is not None and t not in (None,0) else None)
         out[f'career_{cat}_accuracy_pct']=_mean(ratios)
         out[f'last3_{cat}_accuracy_pct']=_mean(ratios3)
     known_rounds=[]
