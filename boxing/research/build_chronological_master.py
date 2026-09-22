@@ -370,7 +370,7 @@ def main():
                     strength_source['source_stated_prefight_record']+=1
     quotes=collections.defaultdict(list)
     for r in d.execute('select * from priced_bout_research where feature_bout_id is not null'):quotes[r['feature_bout_id']].append(dict(r))
-    years=collections.defaultdict(collections.Counter); total=0;source_rows=collections.Counter()
+    years=collections.defaultdict(collections.Counter); total=0;source_rows=collections.Counter();context_counts=collections.Counter()
     with (outdir/'boxing_prefight_master.jsonl').open('w') as f:
         for fid,history in histories.items():
             for r in history:
@@ -421,9 +421,10 @@ def main():
                     sides[label]['ibf_ranking_quality']='official_ibf_api_post_date_plus_one_day' if (_ibr or _ibc) else None
                     assert not s['latest_input_bout_date'] or s['latest_input_bout_date']<date
                 matched=[q for q in quotes[r['source_id']] if q['event_date']==date]
+                _ctx=bout_context(r)
                 _ibf_ctx=ibf_bout_context.get((date,*sorted((namekey(r['boxer_a']),namekey(r['boxer_b'])))))
                 row={'source_id':r['source_id'],'career_source':r['source'],'bout_date':date,'fighter_name':r['boxer_a'],'opponent_name':r['boxer_b'],
-                     **sides,'canonical_verified_pair':bool(pair and (date,*pair) in eventkeys),'context':bout_context(r),
+                     **sides,'canonical_verified_pair':bool(pair and (date,*pair) in eventkeys),'context':_ctx,
                      'ibf_official_bout_context':_ibf_ctx,
                      'wbc_rank_gap':(sides['opponent']['wbc_rank']-sides['fighter']['wbc_rank']) if sides.get('fighter') and sides.get('opponent') and sides['fighter'].get('wbc_rank') is not None and sides['opponent'].get('wbc_rank') is not None else None,
                      'wba_rank_gap':(sides['opponent']['wba_rank']-sides['fighter']['wba_rank']) if sides.get('fighter') and sides.get('opponent') and sides['fighter'].get('wba_rank') is not None and sides['opponent'].get('wba_rank') is not None else None,
@@ -436,12 +437,20 @@ def main():
                          'opponent':sides['opponent'].get('prior_punch') if sides.get('opponent') else None
                      } if (sides.get('fighter') and sides['fighter'].get('prior_punch')) or (sides.get('opponent') and sides['opponent'].get('prior_punch')) else None}
                 f.write(json.dumps(row,ensure_ascii=False)+'\n');total+=1;source_rows[r['source']]+=1
+                context_counts['scheduled_rounds']+=bool(_ctx.get('scheduled_rounds'))
+                context_counts['division']+=bool(_ctx.get('division_from_record_text') or (_ibf_ctx and _ibf_ctx.get('weight_class')))
+                context_counts['location']+=bool(_ctx.get('location') or (_ibf_ctx and _ibf_ctx.get('location')))
+                context_counts['title_bout']+=bool(_ctx.get('title_bout') or (_ibf_ctx and _ibf_ctx.get('title_or_eliminator_flag')))
+                context_counts['major_world_title']+=bool(_ctx.get('major_world_title_orgs'))
+                context_counts['ibf_official_context']+=bool(_ibf_ctx)
                 y=years[date[:4]];y['fighter_bout_rows']+=1;y['reciprocal_pair_rows']+=row['canonical_verified_pair'];y['price_linked_rows']+=bool(matched)
                 y['both_record_totals_match']+=bool(sides['opponent'] and all(sides[x]['record_totals_match'] for x in ('fighter','opponent')))
                 y['fighter_has_prior_punch']+=bool(sides.get('fighter') and sides['fighter'].get('prior_punch'))
                 y['both_have_prior_punch']+=bool(sides.get('fighter') and sides.get('opponent') and sides['fighter'].get('prior_punch') and sides['opponent'].get('prior_punch'))
                 y['ibf_official_context_rows']+=bool(_ibf_ctx)
+    context_coverage={k:{'rows':int(v),'pct':round(100*v/total,2) if total else None} for k,v in sorted(context_counts.items())}
     report={'built_at':stamp,'rows':total,'career_sources':dict(source_rows),'verified_graph_bouts':len(events),'identity_links':len(links),'opponent_strength_sources':dict(strength_source),
+            'normalized_context_coverage':context_coverage,
             'wbc_ranking_names_loaded':len(wbc_ranks),'wbc_champion_names_loaded':len(wbc_champs),
             'wba_ranking_names_loaded':len(wba_ranks),'wba_champion_names_loaded':len(wba_champs),
             'wbo_ranking_names_loaded':len(wbo_ranks),'wbo_champion_names_loaded':len(wbo_champs),
