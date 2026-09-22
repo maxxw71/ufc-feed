@@ -226,11 +226,10 @@ def is_compubox_article(soup,url,title):
     # their article body even when author metadata is absent.
     body=text_content(soup)
     lead=(title+' '+body[:700]).casefold()
+    if 'compubox' in str(title).casefold():return True
     if any('compubox' in str(x).casefold() for x in signals):return True
     if re.search(r'\bby\s+compubox\b',lead,re.I):return True
-    # Seeded legacy stat pages with CompuBox in title are accepted only when the
-    # body also contains CompuBox, preventing generic modern articles.
-    return ('compubox' in str(title).casefold() and 'compubox' in body[:1200].casefold())
+    return False
 
 def fighter_patterns(name):
     vals=[re.escape(name),re.escape(surname(name))]
@@ -326,6 +325,17 @@ def parse_explicit_stats(text,a,b):
         rx=re.compile(p+r'.{0,100}?(?:only\s+)?threw\s+(\d+)\s+jabs?.{0,120}?(?:landed|land)\s+(?:\d+(?:\.\d+)?%\s*(?:or\s*)?)?(\d+)\b',re.I)
         for m in rx.finditer(txt):
             setv(f,'jab_thrown',m.group(1));setv(f,'jab_landed',m.group(2))
+
+    # Exact per-round percentage form:
+    # "Concepcion landed 37% of the 39 total punches he threw per round"
+    for f,p in [(a,pa),(b,pb)]:
+        rx=re.compile(
+            p+r'\s+(?:landed|landing)\s+(\d+(?:\.\d+)?)%\s+of\s+'
+            r'(?:the\s+)?(\d+(?:\.\d+)?)\s+(?:total\s+)?punches?\s+'
+            r'(?:he|she)\s+threw\s+per\s+round',re.I)
+        for m in rx.finditer(txt):
+            setv(f,'total_accuracy_pct',m.group(1))
+            setv(f,'total_thrown_per_round',m.group(2))
 
     # Explicit accuracy statements. Percentages stay percentages; rounded
     # percentage statements are never inverted to invent landed totals.
