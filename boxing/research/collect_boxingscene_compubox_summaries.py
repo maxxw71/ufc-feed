@@ -580,6 +580,60 @@ def parse_prefight_baselines(text,a,b):
             setv(f,'opponent_power_accuracy_pct',m.group(2))
             setv(f,'power_accuracy_pct',m.group(3))
 
+        # "Diaz landed 19 of 38 power shots per round in his last 5 fights (50%)."
+        rx=re.compile(
+            p+r'[^.!?]{0,140}?landed\s+(\d+(?:\.\d+)?)\s+of\s+(\d+(?:\.\d+)?)\s+'
+            r'power\s+(?:punches|shots)\s+per\s+round[^.!?]{0,100}?(?:in\s+)?(?:his|her)\s+last\s+'
+            r'(\d+)\s+fights?(?:\s*\(\s*(\d+(?:\.\d+)?)%\s*\))?',re.I)
+        for m in rx.finditer(txt):
+            setv(f,'power_landed_per_round',m.group(1))
+            setv(f,'power_thrown_per_round',m.group(2))
+            setv(f,'history_window_fights',m.group(3))
+            if m.group(4):setv(f,'power_accuracy_pct',m.group(4))
+
+        # "Russell averaged 32.7 jabs per round, but landed just 15%."
+        rx=re.compile(
+            p+r'[^.!?]{0,120}?(?:averaged|averaging|avg\.?d?)\s+(\d+(?:\.\d+)?)\s+jabs?\s+per\s+round'
+            r'[^.!?]{0,80}?landed\s+(?:just\s+)?(\d+(?:\.\d+)?)%',re.I)
+        for m in rx.finditer(txt):
+            setv(f,'jab_thrown_per_round',m.group(1))
+            setv(f,'jab_accuracy_pct',m.group(2))
+
+        # "Russell opponents landed just 7.8 power shots per round and just 28%."
+        rx=re.compile(
+            p+r"(?:['’]s)?\s+opponents?[^.!?]{0,100}?landed\s+(?:just\s+)?(\d+(?:\.\d+)?)\s+"
+            r'power\s+(?:punches|shots)\s+per\s+round[^.!?]{0,60}?(?:and\s+)?(?:just\s+)?(\d+(?:\.\d+)?)%',re.I)
+        for m in rx.finditer(txt):
+            setv(f,'opponent_power_landed_per_round',m.group(1))
+            setv(f,'opponent_power_accuracy_pct',m.group(2))
+
+        # Historical-review accuracy phrasing: "Broner ... landing 47% of his
+        # power punches and 41% overall vs. ..."
+        rx=re.compile(
+            p+r'[^.!?]{0,160}?landing\s+(\d+(?:\.\d+)?)%\s+of\s+(?:his|her)\s+power\s+'
+            r'(?:punches|shots)[^.!?]{0,80}?(\d+(?:\.\d+)?)%\s+overall',re.I)
+        for m in rx.finditer(txt):
+            setv(f,'power_accuracy_pct',m.group(1))
+            setv(f,'total_accuracy_pct',m.group(2))
+
+        # "14 of Porter's 17 landed punches per round were power shots."
+        rx=re.compile(
+            r'(\d+(?:\.\d+)?)\s+of\s+'+p+r"['’]s\s+(\d+(?:\.\d+)?)\s+landed\s+punches?\s+"
+            r'per\s+round\s+were\s+power\s+(?:punches|shots)',re.I)
+        for m in rx.finditer(txt):
+            setv(f,'power_landed_per_round',m.group(1))
+            setv(f,'total_landed_per_round',m.group(2))
+
+        # Simple explicit historical rate, e.g. "Rios landed 21 power shots per round".
+        rx=re.compile(p+r'[^.!?]{0,100}?landed\s+(\d+(?:\.\d+)?)\s+power\s+(?:punches|shots)\s+per\s+round',re.I)
+        for m in rx.finditer(txt):setv(f,'power_landed_per_round',m.group(1))
+
+        # "Pacquiao's opponents landed 33% of their power shots."
+        rx=re.compile(
+            p+r"['’]s\s+opponents?[^.!?]{0,100}?landed\s+(\d+(?:\.\d+)?)%\s+of\s+"
+            r'(?:their\s+)?power\s+(?:punches|shots)',re.I)
+        for m in rx.finditer(txt):setv(f,'opponent_power_accuracy_pct',m.group(1))
+
         if out[f].pop('_conflict',False):
             out[f]={'_invalid_conflict':True}
     return out
