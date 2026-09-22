@@ -321,6 +321,45 @@ def parse_explicit_stats(text,a,b):
             setv(f,'jab_landed',m.group(1));setv(f,'jab_thrown',m.group(2))
             setv(f,'power_landed',m.group(3));setv(f,'power_thrown',m.group(4))
 
+    # "Khan threw 369 jabs and landed 151" / "Malignaggi only threw 280 jabs ... land ... 57"
+    for f,p in [(a,pa),(b,pb)]:
+        rx=re.compile(p+r'.{0,100}?(?:only\s+)?threw\s+(\d+)\s+jabs?.{0,120}?(?:landed|land)\s+(?:\d+(?:\.\d+)?%\s*(?:or\s*)?)?(\d+)\b',re.I)
+        for m in rx.finditer(txt):
+            setv(f,'jab_thrown',m.group(1));setv(f,'jab_landed',m.group(2))
+
+    # Explicit accuracy statements. Percentages stay percentages; rounded
+    # percentage statements are never inverted to invent landed totals.
+    for f,p in [(a,pa),(b,pb)]:
+        rx=re.compile(p+r'.{0,110}?landed\s+(\d+(?:\.\d+)?)%\s+of\s+(?:his|her|the)\s+(\d+)\s+(?:total\s+)?punches',re.I)
+        for m in rx.finditer(txt):
+            setv(f,'total_accuracy_pct',m.group(1));setv(f,'total_thrown',m.group(2))
+        rx=re.compile(p+r'.{0,100}?landed\s+(\d+(?:\.\d+)?)%\s+of\s+(?:his|her)\s+power\s+(?:punches|shots)',re.I)
+        for m in rx.finditer(txt):setv(f,'power_accuracy_pct',m.group(1))
+        rx=re.compile(p+r'.{0,100}?landed\s+half\s+(?:his|her)\s+power\s+(?:punches|shots)',re.I)
+        for _ in rx.finditer(txt):setv(f,'power_accuracy_pct',50.0)
+
+    # "Linares landed an average of 10 of 36 jabs per round"
+    for f,p in [(a,pa),(b,pb)]:
+        rx=re.compile(p+r'.{0,100}?landed\s+(?:an?\s+)?(?:average|avg\.?)\s+of\s+(\d+(?:\.\d+)?)\s+of\s+(\d+(?:\.\d+)?)\s+jabs?\s+per\s+round',re.I)
+        for m in rx.finditer(txt):
+            setv(f,'jab_landed_per_round',m.group(1));setv(f,'jab_thrown_per_round',m.group(2))
+
+    # "Juarez averaged 47 punches thrown per round and landed 18%"
+    # "Concepcion landed 37% of the 39 total punches he threw per round"
+    for f,p in [(a,pa),(b,pb)]:
+        rx=re.compile(p+r'.{0,120}?(?:averag(?:ed|ing)|avg\.?d?)\s+(?:just\s+)?(\d+(?:\.\d+)?)\s+(?:total\s+)?punches?\s+thrown\s+per\s+round.{0,90}?(?:landed|landing)\s+(\d+(?:\.\d+)?)%',re.I)
+        for m in rx.finditer(txt):
+            setv(f,'total_thrown_per_round',m.group(1));setv(f,'total_accuracy_pct',m.group(2))
+        rx=re.compile(p+r'.{0,100}?(?:landed|landing)\s+(\d+(?:\.\d+)?)%\s+of\s+(?:the\s+)?(\d+(?:\.\d+)?)\s+(?:total\s+)?punches?\s+(?:he|she)\s+threw\s+per\s+round',re.I)
+        for m in rx.finditer(txt):
+            setv(f,'total_accuracy_pct',m.group(1));setv(f,'total_thrown_per_round',m.group(2))
+
+    # "Rios landed 21 power shots per round, Manny 20 per round"
+    for f1,f2,p1,p2 in [(a,b,pa,pb),(b,a,pb,pa)]:
+        rx=re.compile(p1+r'.{0,80}?landed\s+(\d+(?:\.\d+)?)\s+power\s+(?:punches|shots)\s+per\s+round.{0,80}?'+p2+r'\s+(\d+(?:\.\d+)?)\s+per\s+round',re.I)
+        for m in rx.finditer(txt):
+            setv(f1,'power_landed_per_round',m.group(1));setv(f2,'power_landed_per_round',m.group(2))
+
     # "Murata ... out-land N'Dam 95-80 overall and 71-56 power"
     for f1,f2,p1,p2 in [(a,b,pa,pb),(b,a,pb,pa)]:
         rx=re.compile(p1+r'.{0,160}?out[- ]?land(?:ed)?\s+'+p2+r'\s+(\d+)\s*[-–]\s*(\d+)\s+(?:overall|total).{0,70}?(\d+)\s*[-–]\s*(\d+)\s+power',re.I)
@@ -387,7 +426,8 @@ def main():
                            'total_landed','total_thrown','jab_landed','jab_thrown','power_landed','power_thrown',
                            'total_landed_per_round','total_thrown_per_round',
                            'jab_landed_per_round','jab_thrown_per_round',
-                           'power_landed_per_round','power_thrown_per_round')},
+                           'power_landed_per_round','power_thrown_per_round',
+                           'total_accuracy_pct','jab_accuracy_pct','power_accuracy_pct')},
                          'quality':'compubox_authored_boxingscene_explicit_numeric_summary_exact_date_pair'}
                     rows.append(rec);bout_added+=1;article_added+=1
                 if bout_added:diag['matched_bouts_with_numeric_rows']+=1
