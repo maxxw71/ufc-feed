@@ -15,6 +15,7 @@ from __future__ import annotations
 import argparse,datetime as dt,json,re,sqlite3,time,unicodedata,urllib.error,urllib.request
 from bs4 import BeautifulSoup
 from dateutil.parser import parse as dateparse
+from pathlib import Path
 from backfill_priced_careers import DB,OUT,nk,priced_missing,match_evidence
 
 UA='Mozilla/5.0 AppwizaBoxingSecondaryCareer/1.1'
