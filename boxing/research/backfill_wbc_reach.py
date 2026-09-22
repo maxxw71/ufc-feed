@@ -69,6 +69,20 @@ def search_links(name):
 def norm_token(s):
     return re.sub(r'[^a-z0-9]+','',ascii_text(s).casefold())
 
+ONES={'zero':0,'one':1,'two':2,'three':3,'four':4,'five':5,'six':6,'seven':7,'eight':8,'nine':9,
+      'ten':10,'eleven':11,'twelve':12,'thirteen':13,'fourteen':14,'fifteen':15,'sixteen':16,'seventeen':17,'eighteen':18,'nineteen':19}
+TENS={'twenty':20,'thirty':30,'forty':40,'fifty':50,'sixty':60,'seventy':70,'eighty':80,'ninety':90}
+
+def word_number(value):
+    toks=[x for x in re.split(r'[\s-]+',str(value or '').casefold()) if x]
+    if not toks or len(toks)>2:return None
+    total=0
+    for tok in toks:
+        if tok in TENS:total+=TENS[tok]
+        elif tok in ONES:total+=ONES[tok]
+        else:return None
+    return total if 40<=total<=100 else None
+
 def parse_measure(text):
     # Prefer cm when explicitly supplied.
     m=re.search(r'Reach\s*:\s*[^/\n]{0,45}?(\d{2,3}(?:\.\d+)?)\s*cm\b',text,re.I)
@@ -84,6 +98,34 @@ def parse_measure(text):
     # More permissive WBC spelling: "reach of seventy-three inches" is not
     # parsed because converting words would add avoidable ambiguity.
     return None
+
+def explicit_prose_reach(name,raw):
+    """Parse only direct WBC prose statements about the named fighter's reach."""
+    soup=BeautifulSoup(raw,'lxml')
+    text=ascii_text(' '.join(re.sub(r'\s+',' ',x).strip() for x in soup.stripped_strings if re.sub(r'\s+',' ',x).strip()))
+    target=ascii_text(name)
+    vals=[]
+    for m in re.finditer(re.escape(target),text,re.I):
+        # Keep the window local to the fighter mention; this avoids assigning
+        # an opponent's measurement elsewhere in the article.
+        seg=text[m.start():m.start()+1800]
+        patterns=[
+          r'\breach\s+of\s+([a-z]+(?:[-\s][a-z]+)?)\s+inches\b',
+          r'\b([a-z]+(?:[-\s][a-z]+)?)\s+inches?\s+reach\b',
+          r'\breach\s+(?:is|at)\s+([a-z]+(?:[-\s][a-z]+)?)\s+inches\b',
+        ]
+        for pat in patterns:
+            for z in re.finditer(pat,seg,re.I):
+                n=word_number(z.group(1))
+                if n is not None:
+                    cm=round(n*2.54,2)
+                    if 120<=cm<=270:vals.append(cm)
+        # Numeric prose is also safe: "reach of 75 inches".
+        for z in re.finditer(r'\breach\s+of\s+(\d{2,3}(?:\.\d+)?)\s+inches\b',seg,re.I):
+            cm=round(float(z.group(1))*2.54,2)
+            if 120<=cm<=270:vals.append(cm)
+    vals=sorted(set(vals))
+    return vals[0] if len(vals)==1 else None
 
 def structured_reach(name,raw):
     soup=BeautifulSoup(raw,'lxml')
@@ -133,17 +175,22 @@ def main():
             try:
                 final,raw=fetch(url);pages+=1
                 reach,_=structured_reach(t['name'],raw)
-                if reach is not None:matches.append((reach,final))
+                quality='structured_age_record_height_reach_block'
+                if reach is None:
+                    reach=explicit_prose_reach(t['name'],raw)
+                    quality='explicit_fighter_specific_reach_prose'
+                if reach is not None:matches.append((reach,final,quality))
             except Exception as e:
                 failures.append({'name':t['name'],'url':url,'error':str(e)[:180]})
             time.sleep(max(0,args.sleep))
         values={x[0] for x in matches}
         if len(values)!=1:continue
         reach=next(iter(values))
-        urls=sorted({u for v,u in matches if v==reach})
+        urls=sorted({u for v,u,q in matches if v==reach})
+        qualities=sorted({q for v,u,q in matches if v==reach})
         cur=existing.get(t['id'])
         evidence={'source':'wbc_official_statistics_page','urls':urls[:5],
-                  'field':'reach_cm','value':reach,'identity_gate':'exact_name_structured_age_record_height_reach_block'}
+                  'field':'reach_cm','value':reach,'identity_gate':'+'.join(qualities)}
         if cur:
             fields=dict(cur.get('fields') or {})
             if 'reach_cm' in fields:continue
@@ -170,7 +217,7 @@ def main():
     report={'generated_at':dt.datetime.now(dt.timezone.utc).isoformat(),
             'targets_attempted':len(targets),'pages_fetched':pages,'profiles_updated':len(found),
             'found':found,'failures_sample':failures[:100],
-            'policy':'Official WBC pages only; exact name in structured Age/Record/Height/Reach block; unique plausible reach; existing reach never overwritten.'}
+            'policy':'Official WBC pages only; exact fighter name plus either structured Age/Record/Height/Reach block or explicit fighter-local reach-in-inches prose; unique plausible reach; existing reach never overwritten.'}
     REPORT.write_text(json.dumps(report,indent=2,ensure_ascii=False))
     print(json.dumps({k:report[k] for k in ['targets_attempted','pages_fetched','profiles_updated']},indent=2))
 
