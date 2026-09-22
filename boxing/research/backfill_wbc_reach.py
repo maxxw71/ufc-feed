@@ -43,6 +43,10 @@ def search_links(name):
       BASE+'/?'+urllib.parse.urlencode({'s':name}),
       BASE+'/en/?'+urllib.parse.urlencode({'s':name}),
     ]
+    # WBC search pages contain many sitewide navigation links. Keep only links
+    # whose visible label or slug mentions the target surname.
+    toks=re.findall(r'[A-Za-zÀ-ÿ0-9]+',ascii_text(name))
+    last=norm_token(toks[-1]) if toks else ''
     out=[];seen=set()
     for u in urls:
         try:
@@ -56,9 +60,14 @@ def search_links(name):
             path=urllib.parse.urlsplit(href).path
             if not path.startswith('/en/'):continue
             if any(x in path for x in ('/category/','/tag/','/author/','/page/')):continue
+            label=ascii_text(a.get_text(' ',strip=True)+' '+urllib.parse.unquote(path))
+            if last and last not in norm_token(label):continue
             if href not in seen:
                 seen.add(href);out.append(href)
-    return out[:12]
+    return out[:6]
+
+def norm_token(s):
+    return re.sub(r'[^a-z0-9]+','',ascii_text(s).casefold())
 
 def parse_measure(text):
     # Prefer cm when explicitly supplied.
