@@ -374,7 +374,7 @@ def parse_explicit_stats(text,a,b):
             (r'jabs?', 'jab_landed'),
             (r'power\s+(?:punches|shots)', 'power_landed')
         ]:
-            rx=re.compile(p1+r'.{0,120}?(\d+)\s*[-–]\s*(\d+)\s+(?:edge|advantage).{0,50}?'+cat_pat+r'.{0,25}?landed',re.I)
+            rx=re.compile(p1+r'[^.!?]{0,120}?(\d+)\s*[-–]\s*(\d+)\s+(?:edge|advantage)[^.!?]{0,50}?'+cat_pat+r'[^.!?]{0,25}?landed',re.I)
             for m in rx.finditer(txt):
                 setv(f1,key,m.group(1));setv(f2,key,m.group(2))
 
@@ -678,14 +678,14 @@ def parse_prefight_baselines(text,a,b):
         for m in rx.finditer(txt):setv(f,'plus_minus_rating',m.group(1))
 
         rx=re.compile(
-            ef+r"[^!?]{0,240}?landed\s+(\d+(?:\.\d+)?)%\s+of\s+"
+            ef+r"[^.!?]{0,240}?landed\s+(\d+(?:\.\d+)?)%\s+of\s+"
             r"(?:his|her)\s+power\s+(?:punches|shots)",re.I)
         for m in rx.finditer(txt):setv(f,'power_accuracy_pct',m.group(1))
 
         rx=re.compile(
-            ef+r"(?:['’]s)?\s+opponents?[^!?]{0,140}?(?:landed|land)\s+"
+            ef+r"(?:['’]s)?\s+opponents?[^.!?]{0,140}?(?:landed|land)\s+"
             r"(?:just\s+)?(\d+(?:\.\d+)?)\s+(?:total\s+)?punches?\s+per\s+round"
-            r"[^!?]{0,100}?(?:and\s+)?(?:just\s+)?(\d+(?:\.\d+)?)\s+"
+            r"[^.!?]{0,100}?(?:and\s+)?(?:just\s+)?(\d+(?:\.\d+)?)\s+"
             r"power\s+(?:punches|shots)\s+per\s+round",re.I)
         for m in rx.finditer(txt):
             setv(f,'opponent_total_landed_per_round',m.group(1))
@@ -707,13 +707,13 @@ def parse_prefight_baselines(text,a,b):
 
         # "Crawford landed 47.9% of his power shots" / "Canelo ... 47.8%".
         rx=re.compile(
-            p+r"[^!?]{0,180}?landed\s+(\d+(?:\.\d+)?)%\s+of\s+"
+            p+r"[^.!?]{0,180}?landed\s+(\d+(?:\.\d+)?)%\s+of\s+"
             r"(?:his|her)\s+power\s+(?:punches|shots)",re.I)
         for m in rx.finditer(txt):setv(f,'power_accuracy_pct',m.group(1))
 
         # "landed 31.4% of his punches" / "total connect pct 40.1%".
         rx=re.compile(
-            p+r"[^!?]{0,180}?landed\s+(\d+(?:\.\d+)?)%\s+of\s+"
+            p+r"[^.!?]{0,180}?landed\s+(\d+(?:\.\d+)?)%\s+of\s+"
             r"(?:his|her)\s+(?:total\s+)?punches",re.I)
         for m in rx.finditer(txt):setv(f,'total_accuracy_pct',m.group(1))
         rx=re.compile(
@@ -723,7 +723,7 @@ def parse_prefight_baselines(text,a,b):
 
         # Explicit historical per-round production.
         rx=re.compile(
-            p+r"[^!?]{0,180}?landed\s+(\d+(?:\.\d+)?)\s+jabs?\s+per\s+round",re.I)
+            p+r"[^.!?]{0,180}?landed\s+(\d+(?:\.\d+)?)\s+jabs?\s+per\s+round",re.I)
         for m in rx.finditer(txt):setv(f,'jab_landed_per_round',m.group(1))
         rx=re.compile(
             p+r"[^.!?]{0,220}?(?:punches\s+landed\s+per\s+round|"
@@ -736,11 +736,11 @@ def parse_prefight_baselines(text,a,b):
 
         # Explicit opponent-history defense rates.
         rx=re.compile(
-            p+r"(?:['’]s)?\s+opponents?[^!?]{0,120}?(?:landed|land)\s+"
+            p+r"(?:['’]s)?\s+opponents?[^.!?]{0,120}?(?:landed|land)\s+"
             r"(?:just\s+)?(\d+(?:\.\d+)?)\s+(?:total\s+)?punches?\s+per\s+round",re.I)
         for m in rx.finditer(txt):setv(f,'opponent_total_landed_per_round',m.group(1))
         rx=re.compile(
-            p+r"(?:['’]s)?\s+opponents?[^!?]{0,120}?(?:landed|land)\s+"
+            p+r"(?:['’]s)?\s+opponents?[^.!?]{0,120}?(?:landed|land)\s+"
             r"(?:just\s+)?(\d+(?:\.\d+)?)\s+power\s+(?:punches|shots)\s+per\s+round",re.I)
         for m in rx.finditer(txt):setv(f,'opponent_power_landed_per_round',m.group(1))
         rx=re.compile(
@@ -751,9 +751,9 @@ def parse_prefight_baselines(text,a,b):
         # "Crawford's opponents land just 7.1 punches per round and just
         # 5 power shots per round." Keep both explicitly stated rates.
         rx=re.compile(
-            p+r"(?:['’]s)?\s+opponents?[^!?]{0,120}?(?:landed|land)\s+"
+            p+r"(?:['’]s)?\s+opponents?[^.!?]{0,120}?(?:landed|land)\s+"
             r"(?:just\s+)?(\d+(?:\.\d+)?)\s+(?:total\s+)?punches?\s+per\s+round"
-            r"[^!?]{0,100}?(?:and\s+)?(?:just\s+)?(\d+(?:\.\d+)?)\s+"
+            r"[^.!?]{0,100}?(?:and\s+)?(?:just\s+)?(\d+(?:\.\d+)?)\s+"
             r"power\s+(?:punches|shots)\s+per\s+round",re.I)
         for m in rx.finditer(txt):
             setv(f,'opponent_total_landed_per_round',m.group(1))
