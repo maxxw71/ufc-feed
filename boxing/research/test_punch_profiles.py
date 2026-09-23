@@ -1,7 +1,7 @@
 import sqlite3
 import unittest
 
-from build_punch_profiles import load_reports, fight_observations, pre_fight_profiles
+from build_punch_profiles import load_reports, fight_observations, pre_fight_profiles, merge_observation_tiers
 
 
 class PunchProfileIntegrityTests(unittest.TestCase):
@@ -37,6 +37,22 @@ class PunchProfileIntegrityTests(unittest.TestCase):
         alpha_snaps=sorted([r for r in snaps if r.get('fighter_full_name')=='ALPHA ONE'],key=lambda r:r['bout_date'])
         self.assertEqual([0,1],[r['prior_punch_fights'] for r in alpha_snaps])
         self.assertEqual('2026-02-01',alpha_snaps[1]['bout_date'])
+
+    def test_round_level_preferred_over_total_supplement(self):
+        base=[
+          {'bout_date':'2024-01-01','fighter_key':'alpha','opponent_key':'beta','source_quality':'observed_round_table'},
+          {'bout_date':'2024-01-01','fighter_key':'beta','opponent_key':'alpha','source_quality':'observed_round_table'},
+        ]
+        total=[
+          {'bout_date':'2024-01-01','fighter_key':'alpha','opponent_key':'beta','source_quality':'structured_fight_total_table_ready_to_fight'},
+          {'bout_date':'2024-01-01','fighter_key':'beta','opponent_key':'alpha','source_quality':'structured_fight_total_table_ready_to_fight'},
+          {'bout_date':'2024-02-01','fighter_key':'alpha','opponent_key':'gamma','source_quality':'structured_fight_total_table_ready_to_fight'},
+          {'bout_date':'2024-02-01','fighter_key':'gamma','opponent_key':'alpha','source_quality':'structured_fight_total_table_ready_to_fight'},
+        ]
+        merged,accepted,skipped=merge_observation_tiers(base,total)
+        self.assertEqual(4,len(merged))
+        self.assertEqual(2,accepted)
+        self.assertEqual(2,skipped)
 
     def test_unresolved_title_identity_does_not_create_crossfight_key(self):
         d=self.db()
