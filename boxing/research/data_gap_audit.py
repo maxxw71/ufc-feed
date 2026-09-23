@@ -14,7 +14,14 @@ def pct(n,d): return round(100*n/d,2) if d else None
 
 def main():
     con=sqlite3.connect(DB);con.row_factory=sqlite3.Row
-    out={}
+    out={
+      '_meta':{
+        'scope':'broad/raw public database inventory, not the strict priced research universe',
+        'authoritative_for_current_strict_research_coverage':False,
+        'current_strict_coverage_report':'boxing/public_phase2/CURRENT_DATASET_STATUS.json',
+        'warning':'Do not compare these broad normalized-fighter percentages directly with strict Phase 2 profile coverage.'
+      }
+    }
     bouts=[dict(r) for r in con.execute("select * from bouts where source='wikipedia' and status='FINISHED' and date>='1990-01-01'")]
     out['wikipedia_finished_1990_plus']=len(bouts)
     keys=collections.Counter();values=collections.defaultdict(collections.Counter)
