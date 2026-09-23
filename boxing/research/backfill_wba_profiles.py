@@ -141,7 +141,7 @@ def main():
         for x in items:
             key=nk(x.get('name'))
             if not key:continue
-            t=targets.setdefault(key,{'name':x['name'],'target_source_id':x['id'],'career_source':x.get('career_source'),'missing':set()})
+            t=targets.setdefault(key,{'name':x['name'],'target_source_id':x['id'],'career_source':x.get('career_source'),'strict_bout_appearances':int(x.get('strict_bout_appearances') or 0),'missing':set()})
             t['missing'].add(field_name)
 
     existing={}
@@ -170,7 +170,7 @@ def main():
                 candidates.append((t,entry,why));ambiguous_resolved+=1
     # prioritize fighters missing reach, then height, then appearance order already
     # encoded by PROFILE_GAP_AUDIT.
-    candidates.sort(key=lambda x:(0 if 'reach_cm' in x[0]['missing'] else 1,0 if 'height_cm' in x[0]['missing'] else 1,x[0]['name']))
+    candidates.sort(key=lambda x:(0 if 'reach_cm' in x[0]['missing'] else 1,0 if 'height_cm' in x[0]['missing'] else 1,-int(x[0].get('strict_bout_appearances') or 0),x[0]['name']))
     candidates=candidates[:args.limit]
 
     found=[];fail=[];counts={'born':0,'height_cm':0,'reach_cm':0,'nationality':0};fetched=0
