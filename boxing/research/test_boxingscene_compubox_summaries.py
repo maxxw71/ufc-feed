@@ -184,6 +184,7 @@ class BoxingSceneCompuBoxResolutionTests(unittest.TestCase):
         text2=("Ekow Essuman landed 140 of 363, 22% in total punches and Josh Taylor landed 125 of 493, 25%. "
                "Josh Taylor had a 117-115 edge in power punches landed.")
         out2=parse_explicit_stats(text2,'Ekow Essuman','Josh Taylor')
+        print('DEBUG_MODERN_COUNTS_2',out2)
         self.assertEqual(out2['Ekow Essuman']['total_landed'],140)
         self.assertEqual(out2['Ekow Essuman']['total_thrown'],363)
         self.assertEqual(out2['Josh Taylor']['total_landed'],125)
