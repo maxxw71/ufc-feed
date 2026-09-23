@@ -1,0 +1,39 @@
+name: Boxing Archived CompuBox Summary Archive
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'boxing/research/export_archived_compubox_summaries.py'
+      - 'boxing/research/import_archived_compubox_rounds.py'
+      - '.github/workflows/boxing-archived-compubox-summaries.yml'
+  workflow_dispatch:
+
+concurrency:
+  group: boxing-archived-compubox-summaries
+  cancel-in-progress: true
+
+permissions:
+  contents: write
+
+jobs:
+  export:
+    runs-on: [self-hosted, Linux, X64, appwiza]
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - run: python boxing/research/export_archived_compubox_summaries.py
+      - name: Persist strict archived summaries
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add boxing/punch_supplements/archived_compubox_summaries.jsonl boxing/punch_supplements/archived_compubox_summary_report.json
+          if git diff --cached --quiet; then
+            echo 'No archived CompuBox summary changes.'
+          else
+            git commit -m 'Expand archived CompuBox summary archive'
+            git pull --rebase origin main
+            git push
+          fi
