@@ -62,4 +62,15 @@ for site,urls in SITES.items():
     item['profile_like_sample']=item['profile_like_urls'][:100]
     out[site]=item
 
-print(json.dumps(out,indent=2,ensure_ascii=False))
+summary={}
+for site,item in out.items():
+    summary[site]={
+      'probe_status':[{'url':x.get('url'),'status':x.get('status'),'content_type':x.get('content_type'),
+                       'bytes':x.get('bytes'),'loc_count':x.get('loc_count'),'error':x.get('error')}
+                      for x in item.get('probes',[])],
+      'child_sitemaps':[{'url':x.get('url'),'loc_count':x.get('loc_count'),'error':x.get('error')}
+                        for x in item.get('discovered_sitemaps',[])],
+      'profile_like_count':item.get('profile_like_count'),
+      'profile_like_sample':(item.get('profile_like_sample') or [])[:30]
+    }
+print(json.dumps(summary,indent=2,ensure_ascii=False))
