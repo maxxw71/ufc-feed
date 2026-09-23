@@ -1,5 +1,5 @@
 {
-  "built_at": "2026-09-23T20:20:51.370493+00:00",
+  "built_at": "2026-09-23T21:41:52.680825+00:00",
   "documents": [
     {
       "year": 2023,
@@ -23,7 +23,17 @@
       "year": 2023,
       "month": 4,
       "month_name": "APRIL",
-      "status": "not_found"
+      "status": "parsed",
+      "source_url": "https://web.archive.org/web/20230525040938id_/https://wbcboxing.com/mailing/2023/ratings_pdf/WBC_RATINGS_APRIL_2023_.pdf",
+      "bytes": 2437008,
+      "sha256": "68deffdbe9edf81c2563476b7efc1fb7ac21f51e61ef2fec85796023ead5005e",
+      "pages": 22,
+      "extract_mode": "layout",
+      "ranking_rows": 596,
+      "champions": 23,
+      "integrity_error": null,
+      "archive_capture_date": "2023-05-25",
+      "safe_effective_date": "2023-05-25"
     },
     {
       "year": 2023,
@@ -107,7 +117,17 @@
       "year": 2024,
       "month": 6,
       "month_name": "JUNE",
-      "status": "not_found"
+      "status": "parsed",
+      "source_url": "https://web.archive.org/web/20240620103321id_/https://wbcboxing.com/mailing/2024/ratings_pdf/_WBC_RATINGS_JUNE_2024.pdf",
+      "bytes": 2310043,
+      "sha256": "f010ac1853c0166a7cd76931060fac3125f147af39033d1572637fd185f3f05c",
+      "pages": 22,
+      "extract_mode": "layout",
+      "ranking_rows": 597,
+      "champions": 24,
+      "integrity_error": null,
+      "archive_capture_date": "2024-06-20",
+      "safe_effective_date": "2024-07-01"
     },
     {
       "year": 2024,
@@ -170,6 +190,7 @@
       "ranking_rows": 604,
       "champions": 23,
       "integrity_error": null,
+      "archive_capture_date": null,
       "safe_effective_date": "2025-04-01"
     },
     {
@@ -185,6 +206,7 @@
       "ranking_rows": 622,
       "champions": 22,
       "integrity_error": null,
+      "archive_capture_date": null,
       "safe_effective_date": "2025-05-01"
     },
     {
@@ -200,6 +222,7 @@
       "ranking_rows": 593,
       "champions": 22,
       "integrity_error": null,
+      "archive_capture_date": null,
       "safe_effective_date": "2025-06-01"
     },
     {
@@ -215,6 +238,7 @@
       "ranking_rows": 588,
       "champions": 23,
       "integrity_error": null,
+      "archive_capture_date": null,
       "safe_effective_date": "2025-07-01"
     },
     {
@@ -230,6 +254,7 @@
       "ranking_rows": 597,
       "champions": 25,
       "integrity_error": null,
+      "archive_capture_date": null,
       "safe_effective_date": "2025-08-01"
     },
     {
@@ -245,6 +270,7 @@
       "ranking_rows": 589,
       "champions": 26,
       "integrity_error": null,
+      "archive_capture_date": null,
       "safe_effective_date": "2025-09-01"
     },
     {
@@ -260,6 +286,7 @@
       "ranking_rows": 589,
       "champions": 26,
       "integrity_error": null,
+      "archive_capture_date": null,
       "safe_effective_date": "2025-10-01"
     },
     {
@@ -275,6 +302,7 @@
       "ranking_rows": 591,
       "champions": 26,
       "integrity_error": null,
+      "archive_capture_date": null,
       "safe_effective_date": "2025-11-01"
     },
     {
@@ -326,6 +354,7 @@
       "ranking_rows": 609,
       "champions": 26,
       "integrity_error": null,
+      "archive_capture_date": null,
       "safe_effective_date": "2026-06-01"
     },
     {
@@ -341,6 +370,7 @@
       "ranking_rows": 608,
       "champions": 26,
       "integrity_error": null,
+      "archive_capture_date": null,
       "safe_effective_date": "2026-07-01"
     },
     {
@@ -356,6 +386,7 @@
       "ranking_rows": 591,
       "champions": 25,
       "integrity_error": null,
+      "archive_capture_date": null,
       "safe_effective_date": "2026-08-01"
     },
     {
@@ -371,6 +402,7 @@
       "ranking_rows": 587,
       "champions": 25,
       "integrity_error": null,
+      "archive_capture_date": null,
       "safe_effective_date": "2026-09-01"
     },
     {
@@ -386,15 +418,18 @@
       "ranking_rows": 592,
       "champions": 25,
       "integrity_error": null,
+      "archive_capture_date": null,
       "safe_effective_date": "2026-10-01"
     }
   ],
-  "parsed_documents": 13,
-  "ranking_rows": 7760,
-  "champion_rows": 320,
+  "parsed_documents": 15,
+  "ranking_rows": 8953,
+  "champion_rows": 367,
   "years": [
+    2023,
+    2024,
     2025,
     2026
   ],
-  "policy": "Official WBC monthly PDFs only. Safe effective date is first day of following month; no same-month backfill."
+  "policy": "Official WBC monthly PDFs only. Direct official PDFs preferred; verified Wayback captures of the same official PDF are allowed. Safe effective date is the later of first day of following month or verified archive capture date; no same-month backfill."
 }
