@@ -2,7 +2,6 @@
 """Read-only probe of public profile indexes for scalable reach consensus."""
 from __future__ import annotations
 import json,re,urllib.request,xml.etree.ElementTree as ET
-from urllib.parse import urljoin,urlsplit
 
 UA='Mozilla/5.0 AppwizaReachIndexProbe/1.0'
 SITES={
@@ -34,43 +33,8 @@ for site,urls in SITES.items():
             text=raw.decode('utf-8','replace')
             row={'url':u,'final':final,'status':'ok','content_type':ct,'bytes':len(raw),'sample':text[:7000]}
             ls=locs(raw)
-            robots_sitemaps=re.findall(r'(?im)^\\s*Sitemap:\\s*(https?://\\S+)\\s*
-        except Exception as e:
-            item['probes'].append({'url':u,'status':'error','error':repr(e)})
-    # bounded child sitemap expansion
-    for u in queue[:30]:
-        if u in seen:continue
-        seen.add(u)
-        try:
-            final,raw,ct=get(u)
-            ls=locs(raw)
-            item['discovered_sitemaps'].append({'url':u,'loc_count':len(ls),'sample':ls[:20]})
-            for x in ls:
-                low=x.lower()
-                if re.search(r'/boxing-profiles/|/boxers/|/boxing/boxers/',low):
-                    item['profile_like_urls'].append(x)
-        except Exception as e:
-            item['discovered_sitemaps'].append({'url':u,'error':repr(e)})
-    item['profile_like_urls']=list(dict.fromkeys(item['profile_like_urls']))
-    item['profile_like_count']=len(item['profile_like_urls'])
-    item['profile_like_sample']=item['profile_like_urls'][:100]
-    out[site]=item
-
-summary={}
-for site,item in out.items():
-    summary[site]={
-      'probe_status':[{'url':x.get('url'),'status':x.get('status'),'content_type':x.get('content_type'),
-                       'bytes':x.get('bytes'),'loc_count':x.get('loc_count'),'error':x.get('error')}
-                      for x in item.get('probes',[])],
-      'child_sitemaps':[{'url':x.get('url'),'loc_count':x.get('loc_count'),'error':x.get('error')}
-                        for x in item.get('discovered_sitemaps',[])],
-      'profile_like_count':item.get('profile_like_count'),
-      'profile_like_sample':(item.get('profile_like_sample') or [])[:30]
-    }
-print(json.dumps(summary,indent=2,ensure_ascii=False))
-,text)
-            row['loc_count']=len(ls);row['loc_sample']=ls[:40]
-            row['robots_sitemaps']=robots_sitemaps[:20]
+            robots_sitemaps=re.findall(r'(?im)^\s*Sitemap:\s*(https?://\S+)\s*$',text)
+            row['loc_count']=len(ls);row['loc_sample']=ls[:40];row['robots_sitemaps']=robots_sitemaps[:20]
             item['probes'].append(row)
             for x in [*robots_sitemaps,*ls]:
                 low=x.lower()
@@ -102,7 +66,8 @@ summary={}
 for site,item in out.items():
     summary[site]={
       'probe_status':[{'url':x.get('url'),'status':x.get('status'),'content_type':x.get('content_type'),
-                       'bytes':x.get('bytes'),'loc_count':x.get('loc_count'),'error':x.get('error')}
+                       'bytes':x.get('bytes'),'loc_count':x.get('loc_count'),'error':x.get('error'),
+                       'robots_sitemaps':x.get('robots_sitemaps')}
                       for x in item.get('probes',[])],
       'child_sitemaps':[{'url':x.get('url'),'loc_count':x.get('loc_count'),'error':x.get('error')}
                         for x in item.get('discovered_sitemaps',[])],
