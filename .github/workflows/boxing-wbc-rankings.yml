@@ -8,6 +8,10 @@ on:
       - '.github/workflows/boxing-wbc-rankings.yml'
   workflow_dispatch:
 
+concurrency:
+  group: boxing-wbc-rankings
+  cancel-in-progress: true
+
 permissions:
   contents: write
 
