@@ -14,6 +14,7 @@ from collections import defaultdict,Counter
 ROOT=Path(__file__).resolve().parents[1]
 ODDS=ROOT/'prospective_odds'
 DB=Path('/home/anestishkurti92/boxing-research/boxing.sqlite3')
+RESULT_SUPPLEMENTS=ODDS/'result_supplements.json'
 
 def nk(s):
     x=unicodedata.normalize('NFKD',str(s or '')).encode('ascii','ignore').decode().lower()
@@ -91,6 +92,40 @@ def result_for_pair(d,date,names):
         winner=matches[0]
     return {'winner':winner,'matching_source_rows':len(sources),'result_sources':sources[:20]}
 
+def result_from_supplements(records,date,names):
+    target=sorted(nk(x) for x in names)
+    if len(target)!=2 or target[0]==target[1]:return None
+    matches=[]
+    for r in records or []:
+        if str(r.get('event_date') or '')!=date:continue
+        participants=r.get('participants') or []
+        if len(participants)!=2 or sorted(nk(x) for x in participants)!=target:continue
+        sources=sorted({str(x).strip() for x in (r.get('sources') or []) if str(x).strip()})
+        winner=str(r.get('winner') or '').strip()
+        if len(sources)<2 or nk(winner) not in target:continue
+        matches.append((nk(winner),winner,sources,r))
+    if not matches or len({x[0] for x in matches})!=1:return None
+    key=matches[0][0]
+    display=next((x for x in names if nk(x)==key),None)
+    if not display:return None
+    sources=sorted({src for x in matches for src in x[2]})
+    return {
+      'winner':display,
+      'matching_source_rows':0,
+      'result_sources':[['external_verified_result',src] for src in sources],
+      'result_quality':'two_plus_independent_published_result_sources_exact_date_pair',
+      'result_method':matches[0][3].get('method'),
+      'result_round':matches[0][3].get('round'),
+      'result_time':matches[0][3].get('time')
+    }
+
+def load_result_supplements():
+    try:
+        obj=json.loads(RESULT_SUPPLEMENTS.read_text())
+        return obj.get('results') or []
+    except Exception:
+        return []
+
 def main():
     snaps=snapshots()
     now=dt.datetime.now(dt.timezone.utc)
@@ -112,6 +147,7 @@ def main():
             groups[(date,bid,tuple(sorted(names,key=nk)))].append(q)
 
     d=sqlite3.connect(f'file:{DB}?mode=ro',uri=True,timeout=30);d.row_factory=sqlite3.Row
+    result_supplements=load_result_supplements()
     settled=[];pending=[];unresolved=[]
     for (date,bid,names),qs in sorted(groups.items()):
         try:event_date=dt.date.fromisoformat(date)
@@ -131,7 +167,7 @@ def main():
                 'selections':sorted({q.get('selection') for q in qs if q.get('selection')})}
         if event_date>=now.date():
             pending.append(record);continue
-        result=result_for_pair(d,date,names)
+        result=result_for_pair(d,date,names) or result_from_supplements(result_supplements,date,names)
         if result:
             record.update(result);settled.append(record)
         else:
@@ -158,7 +194,7 @@ def main():
         'future_or_today_sportsbook_bouts':sum(x.get('verified_sportsbook_quote_rows',0)>0 for x in pending),
         'date_min':min((q.get('event_date') for q in eligible if q.get('event_date')),default=None),
         'date_max':max((q.get('event_date') for q in eligible if q.get('event_date')),default=None),
-        'policy':'Only originally timestamped pre-event quotes are eligible; results require exact date+pair and unanimous matching finished source rows. Sportsbook and prediction-market observations are reported separately. For sportsbook validation, opening=first verified observation and latest=last verified observation before listed event start/date; consensus latest is the median of each sportsbook latest observation, never a retrospectively chosen price.'
+        'policy':'Only originally timestamped pre-event quotes are eligible; results require exact date+pair and either unanimous matching finished source rows or a strict manual supplement with at least two independent published result sources. Sportsbook and prediction-market observations are reported separately. For sportsbook validation, opening=first verified observation and latest=last verified observation before listed event start/date; consensus latest is the median of each sportsbook latest observation, never a retrospectively chosen price.'
     }
     (ODDS/'coverage.json').write_text(json.dumps(coverage,indent=2,ensure_ascii=False))
     (ODDS/'settled_bouts.json').write_text(json.dumps({'generated_at':now.isoformat(),'settled':settled,'past_unresolved':unresolved},indent=2,ensure_ascii=False))
