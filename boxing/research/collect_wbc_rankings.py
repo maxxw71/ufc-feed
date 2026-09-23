@@ -34,12 +34,7 @@ DIVS=[
  ('light flyweight',['LIGHT FLYWEIGHT','LIGHTFLYWEIGHT','LIGHT-FLYWEIGHT','LT. FLYWEIGHT']),
  ('minimumweight',['MINIMUMWEIGHT','STRAWWEIGHT','MINI FLYWEIGHT']),
 ]
-COUNTRY_TAIL=re.compile(r'\s*\([^)]{1,45}\)\s*(?:[A-Z][A-Z0-9*/. -]{0,40})?\s*$')
-WBC_ARCHIVE_CAPTURES={
-  (2023,'APRIL'):('20230525040938','https://wbcboxing.com/mailing/2023/ratings_pdf/WBC_RATINGS_APRIL_2023_.pdf'),
-  (2024,'JUNE'):('20240620103321','https://wbcboxing.com/mailing/2024/ratings_pdf/_WBC_RATINGS_JUNE_2024.pdf'),
-}
-
+COUNTRY_TAIL=re.compile(r'\s*\([^)]{1,45}\)\s*(?:[A-Z][A-Z0-9*/. -]{0,40})?\s*
 def next_month(y,m):
     return dt.date(y+1,1,1) if m==12 else dt.date(y,m+1,1)
 
@@ -135,26 +130,22 @@ def _archive_pdf(y,month):
     if not item:return None,None
     ts,original=item
     archived=f'https://web.archive.org/web/{ts}id_/{original}'
-    try:
-      req=urllib.request.Request(archived,headers={'User-Agent':UA,'Accept':'application/pdf,*/*;q=0.8'})
-      with urllib.request.urlopen(req,timeout=45) as r:
-        data=r.read(12_000_001)
-        final=r.geturl()
-      if data.lstrip().startswith(b'%PDF') and 20_000<len(data)<=12_000_000:
-        return final,data
-    except Exception:
-      pass
-    try:
-      p=subprocess.run([
-        'curl','-4','--http1.1','-L','--compressed','--fail','--silent','--show-error',
-        '--connect-timeout','15','--max-time','60','--retry','1','--retry-delay','2',
-        '-A',UA,archived
-      ],capture_output=True,timeout=70)
-      data=p.stdout if p.returncode==0 else b''
-      if data.lstrip().startswith(b'%PDF') and 20_000<len(data)<=12_000_000:
-        return archived,data
-    except Exception:
-      pass
+    for mode in ('urllib','curl'):
+      try:
+        if mode=='urllib':
+          req=urllib.request.Request(archived,headers={'User-Agent':UA,'Accept':'application/pdf,*/*;q=0.8'})
+          with urllib.request.urlopen(req,timeout=45) as r:
+            data=r.read(12_000_001);final=r.geturl()
+        else:
+          p=subprocess.run([
+            'curl','-4','--http1.1','-L','--compressed','--fail','--silent','--show-error',
+            '--connect-timeout','15','--max-time','60','--retry','1','--retry-delay','2','-A',UA,archived
+          ],capture_output=True,timeout=70)
+          data=p.stdout if p.returncode==0 else b'';final=archived
+        if data.lstrip().startswith(b'%PDF') and 20_000<len(data)<=12_000_000:
+          return final,data
+      except Exception:
+        pass
     return None,None
 
 def archive_capture_date(url):
@@ -191,8 +182,8 @@ def fetch_pdf(y,month):
       # same finite official URL candidate; never enumerate IDs or directories.
       final,data=_curl_pdf(url)
       if data:return final,data
-    archived,data=_archive_pdf(y,month)
-    if data:return archived,data
+    final,data=_archive_pdf(y,month)
+    if data:return final,data
     return None,None
 
 def clean_line(x):
@@ -315,9 +306,9 @@ def main():
           valid,integrity_error=validate_rows(rows)
           status='parsed' if valid else 'parse_review'
           effective_date=next_month(y,m)
-          capture_date=archive_capture_date(url)
-          if capture_date and capture_date>effective_date:
-            effective_date=capture_date
+          archived_on=archive_capture_date(url)
+          if archived_on and archived_on>effective_date:
+            effective_date=archived_on
           effective=effective_date.isoformat()
           docs.append({
             'year':y,'month':m,'month_name':month,'status':status,
