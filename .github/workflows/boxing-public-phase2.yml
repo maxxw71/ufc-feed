@@ -44,7 +44,7 @@ jobs:
   analyze:
     if: github.repository == 'maxxw71/ufc-feed' && (github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success')
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 40
     steps:
       - uses: actions/checkout@v4
         with:
