@@ -221,7 +221,7 @@ def load_punch_history():
 
 def punch_before(hist,name,date):
     key=punch_namekey(name or '')
-    rows=[r for r in hist.get(key,[]) if r.get('bout_date') and r['bout_date']<date]
+    rows=[r for r in hist.get(key,[]) if r.get('bout_date') and (r.get('available_from_date') or r['bout_date'])<date]
     if not rows:return None
     out={'prior_punch_fights':len(rows),'prior_punch_rounds':sum(int(r.get('rounds_observed') or 0) for r in rows),
          'latest_prior_punch_date':rows[-1]['bout_date'],'identity_quality':'exact_full_name_from_compubox_report_title'}
@@ -255,7 +255,7 @@ def load_punch_summary_history():
             for key in keys:
                 hist[key].append(r)
     for key in hist:
-        hist[key].sort(key=lambda r:(r['bout_date'],r.get('source_url') or ''))
+        hist[key].sort(key=lambda r:(r.get('available_from_date') or r['bout_date'],r['bout_date'],r.get('source_url') or ''))
     return hist
 
 def _summary_metric(row,cat,kind):
@@ -282,11 +282,12 @@ def _mean(values):
 
 def punch_summary_before(hist,name,date):
     key=punch_namekey(name or '')
-    rows=[r for r in hist.get(key,[]) if r.get('bout_date') and r['bout_date']<date]
+    rows=[r for r in hist.get(key,[]) if r.get('bout_date') and (r.get('available_from_date') or r['bout_date'])<date]
     if not rows:return None
     out={
       'prior_summary_fights':len(rows),
       'latest_prior_summary_date':rows[-1]['bout_date'],
+      'latest_prior_summary_available_from_date':rows[-1].get('available_from_date') or rows[-1]['bout_date'],
       'quality':'verified_compubox_explicit_numeric_summary_exact_bout',
       'source_tier':'historical_summary_separate_from_full_round_reports'
     }
