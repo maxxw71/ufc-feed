@@ -1,5 +1,5 @@
 import unittest
-from build_chronological_master import elo_before, canonical_events, compubox_prefight_baseline, compubox_prefight_baseline
+from build_chronological_master import elo_before, canonical_events, compubox_prefight_baseline, punch_summary_before
 class Chronology(unittest.TestCase):
     def test_same_day_frozen_and_future_invariant(self):
         events=[(('2020-01-01','a','b'),1.),(('2020-01-01','a','c'),1.)]
@@ -18,6 +18,18 @@ class Chronology(unittest.TestCase):
         self.assertEqual(canonical_events(h,links),[])
         b['winner']='BOXER B';h['a'].append(a.copy())
         self.assertEqual(canonical_events(h,links),[])
+    def test_archived_summary_uses_verified_availability_date(self):
+        hist={'fighter':[{
+          'bout_date':'2014-01-25','available_from_date':'2015-12-08',
+          'total_thrown_per_round':42.0,'rounds_observed':10
+        }]}
+        self.assertIsNone(punch_summary_before(hist,'Fighter','2015-12-08'))
+        self.assertIsNone(punch_summary_before(hist,'Fighter','2015-01-01'))
+        row=punch_summary_before(hist,'Fighter','2015-12-09')
+        self.assertEqual(row['prior_summary_fights'],1)
+        self.assertEqual(row['latest_prior_summary_date'],'2014-01-25')
+        self.assertEqual(row['latest_prior_summary_available_from_date'],'2015-12-08')
+
     def test_compubox_baseline_publication_gate(self):
         idx={'fighter':[
             {'available_from_date':'2020-01-02','direct_target_dates':[],'metric':1.0},
