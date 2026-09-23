@@ -41,6 +41,17 @@ SEEDS=[
  'https://rtfight.com/fights/2456/analytics',
  'https://rtfight.com/fights/1090/analytics',
  'https://rtfight.com/fights/davis-vs-martin',
+
+ # Current indexed repeat-fighter targets; verified to expose both-side
+ # Total/Jab/Power fight totals. Strict parser/date/pair/arithmetic gates below
+ # still decide acceptance.
+ 'https://rtfight.com/fights/rea-vs-arthur',
+ 'https://rtfight.com/fights/arthur-vs-cameron',
+ 'https://rtfight.com/fights/bivol-vs-arthur',
+ 'https://rtfight.com/fights/arthur-vs-nahuel-suarez',
+ 'https://rtfight.com/fights/eubank-vs-erdogan',
+ 'https://rtfight.com/fights/eubank-vs-antin',
+ 'https://rtfight.com/fights/crocker-vs-walker',
 ]
 
 def norm(s):
