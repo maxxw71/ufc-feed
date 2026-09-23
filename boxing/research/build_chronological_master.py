@@ -235,21 +235,25 @@ def punch_before(hist,name,date):
     return out
 
 def load_punch_summary_history():
-    path=ROOT.parent/'punch_supplements'/'boxingscene_compubox_summaries.jsonl'
+    paths=[
+      ROOT.parent/'punch_supplements'/'boxingscene_compubox_summaries.jsonl',
+      ROOT.parent/'punch_supplements'/'archived_compubox_summaries.jsonl',
+    ]
     hist=collections.defaultdict(list)
-    if not path.exists():return hist
-    for line in path.read_text().splitlines():
-        if not line.strip():continue
-        try:r=json.loads(line)
-        except Exception:continue
-        aliases=r.get('fighter_aliases') or [r.get('fighter')]
-        keys=sorted({punch_namekey(x or '') for x in aliases if punch_namekey(x or '')})
-        date=r.get('bout_date')
-        if not keys or not date:continue
-        try:dt.date.fromisoformat(date)
-        except Exception:continue
-        for key in keys:
-            hist[key].append(r)
+    for path in paths:
+        if not path.exists():continue
+        for line in path.read_text().splitlines():
+            if not line.strip():continue
+            try:r=json.loads(line)
+            except Exception:continue
+            aliases=r.get('fighter_aliases') or [r.get('fighter')]
+            keys=sorted({punch_namekey(x or '') for x in aliases if punch_namekey(x or '')})
+            date=r.get('bout_date')
+            if not keys or not date:continue
+            try:dt.date.fromisoformat(date)
+            except Exception:continue
+            for key in keys:
+                hist[key].append(r)
     for key in hist:
         hist[key].sort(key=lambda r:(r['bout_date'],r.get('source_url') or ''))
     return hist
@@ -283,7 +287,7 @@ def punch_summary_before(hist,name,date):
     out={
       'prior_summary_fights':len(rows),
       'latest_prior_summary_date':rows[-1]['bout_date'],
-      'quality':'compubox_authored_boxingscene_explicit_numeric_summary_exact_date_pair',
+      'quality':'verified_compubox_explicit_numeric_summary_exact_bout',
       'source_tier':'historical_summary_separate_from_full_round_reports'
     }
     for cat in ('total','jab','power'):
