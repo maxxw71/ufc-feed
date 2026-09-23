@@ -1,0 +1,20 @@
+name: Boxing Reach Source Index Probe
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'boxing/research/probe_reach_source_indexes.py'
+      - '.github/workflows/boxing-reach-source-index-probe.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python boxing/research/probe_reach_source_indexes.py
