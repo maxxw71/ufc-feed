@@ -81,6 +81,29 @@ def urls(y,month):
       }
       names=observed.get(month,[])
       if not names:return
+    elif y==2025:
+      observed={
+        'MARCH':['WBC_RATINGS_MARCH_2025.pdf'],
+        'APRIL':['WBC_RATINGS_APRIL_2025.pdf'],
+        'MAY':['WBC_RATINGS_MAY_%202025.pdf'],
+        'JUNE':['WBC_RATINGS_JUNE_%202025.pdf'],
+        'JULY':['WBC_RATINGS_JULY_2025.pdf'],
+        'AUGUST':['WBC_RATINGS_AUGUST_2025.pdf'],
+        'SEPTEMBER':['WBC_RATINGS_SEPTEMBER_2025.pdf'],
+        'OCTOBER':['WBC_RATINGS_OCTOBER_2025.pdf'],
+      }
+      names=observed.get(month,[])
+      if not names:return
+    elif y==2026:
+      observed={
+        'MAY':['WBC_RATINGS_MAY_2026.pdf'],
+        'JUNE':['WBC_RATINGS_JUNE_2026_.pdf'],
+        'JULY':['WBC_RATINGS_JULY_2026.pdf'],
+        'AUGUST':['WBC_RATINGS_AUGUST_2026.pdf'],
+        'SEPTEMBER':['WBC_RATINGS_SEPTEMBER_2026.pdf'],
+      }
+      names=observed.get(month,[])
+      if not names:return
     bases=[
       f'https://wbcboxing.com/mailing/{y}/ratings_pdf/',
       f'https://wbcboxing.com/mailing/{y}/',
