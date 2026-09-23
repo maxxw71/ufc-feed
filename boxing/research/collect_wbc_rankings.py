@@ -223,7 +223,7 @@ def extract_document(data,y,m,url):
 def main():
     docs=[];allrows=[];champs=[]
     today=dt.date.today()
-    for y in range(2024,today.year+1):
+    for y in range(2023,today.year+1):
       for m,month in enumerate(MONTHS,1):
         if dt.date(y,m,1)>today:
           continue
