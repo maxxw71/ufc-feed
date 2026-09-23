@@ -154,6 +154,7 @@ class BoxingSceneCompuBoxResolutionTests(unittest.TestCase):
           "Lomachenko landed 49.5% of his power punches."
         )
         out=parse_prefight_baselines(text,'Terence Crawford','Vasyl Lomachenko')
+        print('DEBUG_HIST_REVIEW',out)
         self.assertEqual(out['Terence Crawford']['plus_minus_rating'],14.4)
         self.assertEqual(out['Terence Crawford']['power_accuracy_pct'],47.9)
         self.assertEqual(out['Terence Crawford']['opponent_total_landed_per_round'],7.1)
@@ -174,6 +175,7 @@ class BoxingSceneCompuBoxResolutionTests(unittest.TestCase):
     def test_modern_paired_total_counts(self):
         text=("Conah Walker was 192 of 513, 37% in total punches while Liam Taylor was 225 of 655, 34%.")
         out=parse_explicit_stats(text,'Conah Walker','Liam Taylor')
+        print('DEBUG_MODERN_COUNTS',out)
         self.assertEqual(out['Conah Walker']['total_landed'],192)
         self.assertEqual(out['Conah Walker']['total_thrown'],513)
         self.assertEqual(out['Liam Taylor']['total_landed'],225)
