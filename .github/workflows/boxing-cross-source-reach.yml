@@ -1,0 +1,56 @@
+name: Boxing Cross Source Reach Backfill
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'boxing/research/backfill_cross_source_reach.py'
+      - '.github/workflows/boxing-cross-source-reach.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  backfill:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install --disable-pip-version-check beautifulsoup4 lxml
+      - name: Collect exact two-source reach consensus
+        run: |
+          python boxing/research/backfill_cross_source_reach.py --limit 300 --sleep 0.04
+          mkdir -p /tmp/boxing-reach
+          cp boxing/profile_supplements/cross_source_reach_additions.jsonl /tmp/boxing-reach/additions.jsonl
+          cp boxing/profile_supplements/cross_source_reach_report.json /tmp/boxing-reach/report.json
+      - name: Merge additions into latest main without overwriting newer supplements
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          for attempt in 1 2 3; do
+            git fetch origin main
+            git reset --hard origin/main
+            mkdir -p boxing/profile_supplements
+            cp /tmp/boxing-reach/additions.jsonl boxing/profile_supplements/cross_source_reach_additions.jsonl
+            cp /tmp/boxing-reach/report.json boxing/profile_supplements/cross_source_reach_report.json
+            python boxing/research/backfill_cross_source_reach.py --merge-only --additions boxing/profile_supplements/cross_source_reach_additions.jsonl
+            git add boxing/profile_supplements/verified_profiles.jsonl boxing/profile_supplements/cross_source_reach_additions.jsonl boxing/profile_supplements/cross_source_reach_report.json
+            if git diff --cached --quiet; then
+              echo 'No cross-source reach changes.'
+              exit 0
+            fi
+            git commit -m 'Expand verified boxing reach coverage'
+            if git push origin HEAD:main; then
+              exit 0
+            fi
+          done
+          echo 'Failed to merge reach additions after retries.' >&2
+          exit 1
