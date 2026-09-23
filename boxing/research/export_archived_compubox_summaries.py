@@ -35,7 +35,7 @@ def paragraphs(payload):
     return [clean(x) for x in (payload.get('relevant_paragraphs') or []) if clean(x)]
 
 def archive_date(url):
-    m=re.search(r'/web/(\\d{8})\\d*/',str(url or ''))
+    m=re.search(r'/web/(\d{8})\d*/',str(url or ''))
     if not m:return None
     raw=m.group(1)
     try:return dt.datetime.strptime(raw,'%Y%m%d').date().isoformat()
