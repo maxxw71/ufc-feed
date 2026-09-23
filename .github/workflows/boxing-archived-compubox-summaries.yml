@@ -24,7 +24,7 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      - run: python boxing/research/export_archived_compubox_summaries.py
+      - run: python3 boxing/research/export_archived_compubox_summaries.py
       - name: Persist strict archived summaries
         run: |
           git config user.name 'github-actions[bot]'
