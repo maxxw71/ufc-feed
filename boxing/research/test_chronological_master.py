@@ -1,5 +1,5 @@
 import unittest
-from build_chronological_master import elo_before, canonical_events, compubox_prefight_baseline
+from build_chronological_master import elo_before, canonical_events, compubox_prefight_baseline, compubox_prefight_baseline
 class Chronology(unittest.TestCase):
     def test_same_day_frozen_and_future_invariant(self):
         events=[(('2020-01-01','a','b'),1.),(('2020-01-01','a','c'),1.)]
@@ -35,5 +35,31 @@ class Chronology(unittest.TestCase):
         row=compubox_prefight_baseline(idx,'Fighter','2020-01-01')
         self.assertEqual(row['metric'],2.0)
         self.assertTrue(row['direct_target_match'])
+
+    def test_compubox_repeat_baseline_trend_is_strictly_prior(self):
+        idx={'terencecrawford':[
+          {'available_from_date':'2017-08-19','power_accuracy_pct':45.0,'plus_minus_rating':12.0,
+           'direct_target_dates':[],'source_urls':['a']},
+          {'available_from_date':'2018-10-14','power_accuracy_pct':47.5,'plus_minus_rating':14.5,
+           'direct_target_dates':[],'source_urls':['b']},
+          {'available_from_date':'2020-01-01','power_accuracy_pct':60.0,'plus_minus_rating':99.0,
+           'direct_target_dates':[],'source_urls':['future']},
+        ]}
+        out=compubox_prefight_baseline(idx,'Terence Crawford','2019-01-01')
+        self.assertEqual(out['prior_baseline_snapshots'],2)
+        self.assertEqual(out['trend_last2_power_accuracy_pct_delta'],2.5)
+        self.assertEqual(out['trend_last2_plus_minus_rating_delta'],2.5)
+        self.assertEqual(out['prior_baseline_latest_date'],'2018-10-14')
+        self.assertNotEqual(out.get('plus_minus_rating'),99.0)
+
+    def test_compubox_trend_requires_metric_on_both_snapshots(self):
+        idx={'fighter':[
+          {'available_from_date':'2017-01-01','power_accuracy_pct':40.0,'direct_target_dates':[]},
+          {'available_from_date':'2018-01-01','plus_minus_rating':8.0,'direct_target_dates':[]},
+        ]}
+        out=compubox_prefight_baseline(idx,'Fighter','2019-01-01')
+        self.assertEqual(out['prior_baseline_snapshots'],2)
+        self.assertNotIn('trend_last2_power_accuracy_pct_delta',out)
+        self.assertNotIn('trend_last2_plus_minus_rating_delta',out)
 
 if __name__=='__main__':unittest.main()
