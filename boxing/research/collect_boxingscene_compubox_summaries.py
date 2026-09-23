@@ -303,6 +303,24 @@ def parse_explicit_stats(text,a,b):
             setv(f1,'total_landed',m.group(1));setv(f1,'total_thrown',m.group(2))
             setv(f2,'total_landed',m.group(3));setv(f2,'total_thrown',m.group(4))
 
+    # Exact-name modern paired totals. This deliberately precedes the more
+    # flexible alias patterns so reviewed current articles with canonical local
+    # names are parsed deterministically.
+    for f1,f2 in ((a,b),(b,a)):
+        e1,e2=re.escape(f1),re.escape(f2)
+        rx=re.compile(
+            e1+r'\s+(?:was|landed)\s+(\d+)\s+of\s+(\d+)'
+            r'[^!?]{0,160}?(?:while|and|compared\s+to)\s+'+e2+
+            r'[^!?]{0,90}?(?:was|landed)\s+(\d+)\s+of\s+(\d+)',re.I)
+        for m in rx.finditer(txt):
+            # Require explicit total-punch wording somewhere inside this match
+            # window; category-only counts are handled by separate parsers.
+            segment=m.group(0)
+            if not re.search(r'\btotal\s+punches\b',segment,re.I):
+                continue
+            setv(f1,'total_landed',m.group(1));setv(f1,'total_thrown',m.group(2))
+            setv(f2,'total_landed',m.group(3));setv(f2,'total_thrown',m.group(4))
+
     # Modern CompuBox prose:
     # "Walker was 192 of 513, 37% in total punches while Taylor was 225 of 655"
     # "Essuman landed 140 of 363 ... and Taylor landed 125 of 493"
@@ -650,6 +668,28 @@ def parse_prefight_baselines(text,a,b):
         # Simple explicit historical rate, e.g. "Rios landed 21 power shots per round".
         rx=re.compile(p+r'[^.!?]{0,100}?landed\s+(\d+(?:\.\d+)?)\s+power\s+(?:punches|shots)\s+per\s+round',re.I)
         for m in rx.finditer(txt):setv(f,'power_landed_per_round',m.group(1))
+
+        # Exact-name historical-review metrics. These avoid ambiguity from
+        # surname aliases and allow decimal punctuation inside the sentence.
+        ef=re.escape(f)
+        rx=re.compile(
+            ef+r"(?:['’]s)?[^!?]{0,100}?\+\s*(\d+(?:\.\d+)?)\s+"
+            r"(?:compubox\s+)?plus\s*/?\s*minus(?:\s+rating)?",re.I)
+        for m in rx.finditer(txt):setv(f,'plus_minus_rating',m.group(1))
+
+        rx=re.compile(
+            ef+r"[^!?]{0,240}?landed\s+(\d+(?:\.\d+)?)%\s+of\s+"
+            r"(?:his|her)\s+power\s+(?:punches|shots)",re.I)
+        for m in rx.finditer(txt):setv(f,'power_accuracy_pct',m.group(1))
+
+        rx=re.compile(
+            ef+r"(?:['’]s)?\s+opponents?[^!?]{0,140}?(?:landed|land)\s+"
+            r"(?:just\s+)?(\d+(?:\.\d+)?)\s+(?:total\s+)?punches?\s+per\s+round"
+            r"[^!?]{0,100}?(?:and\s+)?(?:just\s+)?(\d+(?:\.\d+)?)\s+"
+            r"power\s+(?:punches|shots)\s+per\s+round",re.I)
+        for m in rx.finditer(txt):
+            setv(f,'opponent_total_landed_per_round',m.group(1))
+            setv(f,'opponent_power_landed_per_round',m.group(2))
 
         # Historical-review articles sometimes give explicit career/recent
         # aggregates without an N-fight window. Because this function is called
