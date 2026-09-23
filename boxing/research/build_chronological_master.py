@@ -386,6 +386,29 @@ def compubox_prefight_baseline(index,name,date):
     chosen=dict(direct[-1] if direct else snapshots[-1])
     chosen['direct_target_match']=bool(direct)
     chosen['leakage_policy']='publication date strictly before bout date'
+    chosen['prior_baseline_snapshots']=len(snapshots)
+    chosen['prior_baseline_first_date']=snapshots[0]['available_from_date']
+    chosen['prior_baseline_latest_date']=snapshots[-1]['available_from_date']
+    try:
+        chosen['prior_baseline_span_days']=(dt.date.fromisoformat(snapshots[-1]['available_from_date'])-
+                                            dt.date.fromisoformat(snapshots[0]['available_from_date'])).days
+    except Exception:
+        chosen['prior_baseline_span_days']=None
+
+    # Trend only between the latest two publication-timed snapshots strictly
+    # before the target bout. A delta is emitted only when both snapshots state
+    # the same metric explicitly; nothing is imputed across missing fields.
+    if len(snapshots)>=2:
+        prev,last=snapshots[-2],snapshots[-1]
+        meta={'available_from_date','quality','source_tier','source_urls','source_target_bout_dates',
+              'direct_target_dates','history_windows','timing_evidence'}
+        common=sorted(set(prev)&set(last)-meta)
+        for field in common:
+            a,b=prev.get(field),last.get(field)
+            if isinstance(a,(int,float)) and not isinstance(a,bool) and isinstance(b,(int,float)) and not isinstance(b,bool):
+                chosen['trend_last2_'+field+'_delta']=round(float(b)-float(a),6)
+        chosen['trend_last2_from_date']=prev['available_from_date']
+        chosen['trend_last2_to_date']=last['available_from_date']
     return chosen
 
 def load_wbc_rankings():
@@ -617,6 +640,8 @@ def main():
                 y['both_have_prior_punch_summary']+=bool(sides.get('fighter') and sides.get('opponent') and sides['fighter'].get('prior_punch_summary') and sides['opponent'].get('prior_punch_summary'))
                 y['fighter_has_compubox_prefight_baseline']+=bool(sides.get('fighter') and sides['fighter'].get('compubox_prefight_baseline'))
                 y['both_have_compubox_prefight_baseline']+=bool(sides.get('fighter') and sides.get('opponent') and sides['fighter'].get('compubox_prefight_baseline') and sides['opponent'].get('compubox_prefight_baseline'))
+                y['fighter_has_compubox_repeat_baseline']+=bool(sides.get('fighter') and sides['fighter'].get('compubox_prefight_baseline') and (sides['fighter']['compubox_prefight_baseline'].get('prior_baseline_snapshots') or 0)>=2)
+                y['both_have_compubox_repeat_baseline']+=bool(sides.get('fighter') and sides.get('opponent') and sides['fighter'].get('compubox_prefight_baseline') and sides['opponent'].get('compubox_prefight_baseline') and (sides['fighter']['compubox_prefight_baseline'].get('prior_baseline_snapshots') or 0)>=2 and (sides['opponent']['compubox_prefight_baseline'].get('prior_baseline_snapshots') or 0)>=2)
                 y['ibf_official_context_rows']+=bool(_ibf_ctx)
     context_coverage={k:{'rows':int(v),'pct':round(100*v/total,2) if total else None} for k,v in sorted(context_counts.items())}
     report={'built_at':stamp,'rows':total,'career_sources':dict(source_rows),'verified_graph_bouts':len(events),'identity_links':len(links),'opponent_strength_sources':dict(strength_source),
