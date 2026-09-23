@@ -101,6 +101,22 @@ def parse_summary_metrics(text,a,b):
                         setv(fighter,'power_landed',m.group(1))
                         setv(opponent,'power_landed',m.group(2))
 
+        # Narrow subject-verb-object construction:
+        # "Cotto ... mugged Rodriguez, landing 47 power shots (54%)."
+        for fighter,opponent in ((a,b),(b,a)):
+            for fa in aliases(fighter):
+                for oa in aliases(opponent):
+                    m=re.search(
+                        r'(?<![A-Za-z0-9])'+re.escape(fa)+
+                        r'(?![A-Za-z0-9])[^.!?]{0,100}?'
+                        r'(?:mugged|dominated|outworked|overwhelmed)\s+'+re.escape(oa)+
+                        r"\s*,?\s*(?:landing|landed)\s+(\d{1,4})\s+power\s+shots?\s*"
+                        r'\((\d+(?:\.\d+)?)%\)',
+                        sentence,re.I)
+                    if m:
+                        setv(fighter,'power_landed',m.group(1))
+                        setv(fighter,'power_accuracy_pct',m.group(2))
+
         for fighter,opponent in ((a,b),(b,a)):
             for seg in attributed_segments(sentence,fighter,opponent):
                 # "Garcia ... landed 29% of his 47 punches thrown per round"
@@ -154,7 +170,7 @@ def parse_summary_metrics(text,a,b):
                 for fa in aliases(fighter):
                     m=re.search(
                         r'(\d{1,4})\s+of\s+'+re.escape(fa)+
-                        r"(?:['’]s)?\s+(\d{1,4})\s+landed\s+punches?\s+were\s+to\s+"
+                        r"(?:['’]?s)?\s+(\d{1,4})\s+landed\s+punches?\s+were\s+to\s+"
                         r'(?:his\s+)?(?:the\s+)?body',
                         sentence,re.I)
                     if m:
