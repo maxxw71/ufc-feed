@@ -1,0 +1,54 @@
+name: Boxing current dataset status
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/boxing-current-status.yml'
+      - 'boxing/research/build_current_dataset_status.py'
+      - 'boxing/public_phase2/PROFILE_GAP_AUDIT.json'
+      - 'boxing/public_phase2/coverage.json'
+      - 'boxing/public_phase2/punch_profile_coverage.json'
+      - 'boxing/public_phase2/database_status.json'
+      - 'boxing/public_phase2/phase2_interaction_summary.json'
+      - 'boxing/profile_supplements/cross_source_reach_report.json'
+      - 'boxing/punch_supplements/boxingscene_compubox_summary_report.json'
+      - 'boxing/rankings/wbc_monthly_rankings_meta.json'
+      - 'boxing/rankings/wba_monthly_rankings_meta.json'
+      - 'boxing/rankings/wbo_monthly_rankings_meta.json'
+      - 'boxing/rankings/ibf_monthly_rankings_meta.json'
+      - 'boxing/prospective_odds/coverage.json'
+      - 'boxing/prospective_odds/settled_bouts.json'
+  workflow_dispatch:
+
+concurrency:
+  group: boxing-current-dataset-status
+  cancel-in-progress: true
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python boxing/research/build_current_dataset_status.py
+      - name: Commit authoritative current status
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add boxing/public_phase2/CURRENT_DATASET_STATUS.json
+          if git diff --cached --quiet; then
+            echo 'No current boxing status changes.'
+          else
+            git commit -m 'Refresh authoritative boxing dataset status'
+            git pull --rebase origin main
+            git push
+          fi
