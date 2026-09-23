@@ -34,6 +34,13 @@ def clean(s):
 def paragraphs(payload):
     return [clean(x) for x in (payload.get('relevant_paragraphs') or []) if clean(x)]
 
+def archive_date(url):
+    m=re.search(r'/web/(\\d{8})\\d*/',str(url or ''))
+    if not m:return None
+    raw=m.group(1)
+    try:return dt.datetime.strptime(raw,'%Y%m%d').date().isoformat()
+    except ValueError:return None
+
 def sentence_parts(text):
     # CompuBox prose is conventional enough that punctuation followed by a
     # capital letter is a safe sentence boundary; decimal points are preserved.
@@ -134,6 +141,9 @@ def merge_rows(rows):
             quarantined.append({'key':key,'conflicts':bad,'source_urls':sorted({x['source_url'] for x in items})})
             continue
         base['source_urls']=sorted({x['source_url'] for x in items})
+        capture_dates=sorted({x.get('available_from_date') for x in items if x.get('available_from_date')})
+        base['available_from_date']=capture_dates[0] if capture_dates else None
+        base['archive_capture_dates']=capture_dates
         base['archive_capture_count']=len(base['source_urls'])
         merged.append(base)
     merged.sort(key=lambda r:(r['bout_date'],norm(r['fighter']),norm(r['opponent'])))
@@ -169,7 +179,7 @@ def main():
             numeric={k:v for k,v in st.items() if isinstance(v,(int,float)) and not isinstance(v,bool)}
             if not numeric:continue
             rows.append({
-              'source_url':url,'bout_date':date,'fighter':fighter,'opponent':opponent,
+              'source_url':url,'bout_date':date,'available_from_date':archive_date(url),'fighter':fighter,'opponent':opponent,
               'rounds_observed':rounds,'date_identity_resolution':resolution,
               **numeric,
               'quality':'compubox_owned_archived_explicit_numeric_summary_exact_verified_bout',
@@ -199,7 +209,7 @@ def main():
       'rejections':dict(rejections),
       'quarantined_conflicts':len(quarantined),
       'quarantined_conflict_sample':quarantined[:30],
-      'policy':'Archived CompuBox-owned captures only; strict verified bout resolution; explicit fighter-attributed rates/percentages only; historical-reference sentences excluded; duplicate captures must agree.'
+      'policy':'Archived CompuBox-owned captures only; strict verified bout resolution; explicit fighter-attributed rates/percentages only; historical-reference sentences excluded; duplicate captures must agree; research availability begins at earliest verified Wayback capture date, never the fight date.'
     }
     REPORT.write_text(json.dumps(report,indent=2,ensure_ascii=False),encoding='utf-8')
     print(json.dumps(report,indent=2,ensure_ascii=False))
