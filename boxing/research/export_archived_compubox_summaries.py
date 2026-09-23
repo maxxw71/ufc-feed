@@ -153,7 +153,7 @@ def main():
     if not DB.exists():
         raise SystemExit(f'missing server boxing database: {DB}')
     d=sqlite3.connect(f'file:{DB}?mode=ro',uri=True,timeout=120);d.row_factory=sqlite3.Row
-    rows=[];captured=resolved=with_numeric=0;rejections=defaultdict(int)
+    rows=[];captured=resolved=with_numeric=0;rejections=defaultdict(int);no_numeric_samples=[]
     for row in d.execute("select source_id,data from source_rows where source='external_evidence' and kind='punch' order by source_id"):
         captured+=1
         url=str(row['source_id'] or '')
@@ -190,6 +190,11 @@ def main():
             with_numeric+=1
         else:
             rejections['resolved_no_safe_numeric_pattern']+=1
+            if len(no_numeric_samples)<40:
+                no_numeric_samples.append({
+                  'url':url,'bout_date':date,'fighters':[a,b],'rounds':rounds,
+                  'resolution':resolution,'text_sample':text[:1800]
+                })
     d.close()
 
     merged,quarantined=merge_rows(rows)
@@ -207,6 +212,7 @@ def main():
       'date_min':min((r['bout_date'] for r in merged),default=None),
       'date_max':max((r['bout_date'] for r in merged),default=None),
       'rejections':dict(rejections),
+      'resolved_no_safe_numeric_sample':no_numeric_samples,
       'quarantined_conflicts':len(quarantined),
       'quarantined_conflict_sample':quarantined[:30],
       'policy':'Archived CompuBox-owned captures only; strict verified bout resolution; explicit fighter-attributed rates/percentages only; historical-reference sentences excluded; duplicate captures must agree; research availability begins at earliest verified Wayback capture date, never the fight date.'
