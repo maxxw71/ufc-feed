@@ -117,6 +117,19 @@ def parse_summary_metrics(text,a,b):
                         setv(fighter,'power_landed',m.group(1))
                         setv(fighter,'power_accuracy_pct',m.group(2))
 
+        # Possessive identity may be normalized without an apostrophe:
+        # "27 of Cottos 55 landed punches were to Rodriguezs body."
+        for fighter,opponent in ((a,b),(b,a)):
+            for fa in aliases(fighter):
+                m=re.search(
+                    r'(\d{1,4})\s+of\s+'+re.escape(fa)+
+                    r"(?:['’]?s)?\s+(\d{1,4})\s+landed\s+punches?\s+were\s+to\s+"
+                    r'(?:his\s+)?(?:the\s+)?(?:[A-Za-zÀ-ÿ0-9 .\'’\-]+?\s+)?body',
+                    sentence,re.I)
+                if m:
+                    setv(fighter,'body_landed',m.group(1))
+                    setv(fighter,'total_landed',m.group(2))
+
         for fighter,opponent in ((a,b),(b,a)):
             for seg in attributed_segments(sentence,fighter,opponent):
                 # "Garcia ... landed 29% of his 47 punches thrown per round"
