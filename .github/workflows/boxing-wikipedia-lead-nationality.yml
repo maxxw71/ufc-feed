@@ -33,14 +33,22 @@ jobs:
           cp boxing/profile_supplements/wikipedia_lead_nationality_backfill_report.json /tmp/wiki-lead-nationality/report.json
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git fetch origin main
-          git reset --hard origin/main
-          cp /tmp/wiki-lead-nationality/verified_profiles.jsonl boxing/profile_supplements/verified_profiles.jsonl
-          cp /tmp/wiki-lead-nationality/report.json boxing/profile_supplements/wikipedia_lead_nationality_backfill_report.json
-          git add boxing/profile_supplements/verified_profiles.jsonl boxing/profile_supplements/wikipedia_lead_nationality_backfill_report.json
-          if git diff --cached --quiet; then
-            echo 'No Wikipedia lead nationality changes.'
-          else
+          for attempt in 1 2 3 4; do
+            git fetch origin main
+            git reset --hard origin/main
+            cp /tmp/wiki-lead-nationality/verified_profiles.jsonl boxing/profile_supplements/verified_profiles.jsonl
+            cp /tmp/wiki-lead-nationality/report.json boxing/profile_supplements/wikipedia_lead_nationality_backfill_report.json
+            git add boxing/profile_supplements/verified_profiles.jsonl boxing/profile_supplements/wikipedia_lead_nationality_backfill_report.json
+            if git diff --cached --quiet; then
+              echo 'No Wikipedia lead nationality changes.'
+              exit 0
+            fi
             git commit -m 'Expand boxer nationalities from explicit Wikipedia leads'
-            git push origin HEAD:main
-          fi
+            if git push origin HEAD:main; then
+              exit 0
+            fi
+            echo "Push race on attempt $attempt; retrying on latest main."
+            sleep $((attempt * 2))
+          done
+          echo 'Unable to publish Wikipedia nationality supplements after retries.'
+          exit 1
