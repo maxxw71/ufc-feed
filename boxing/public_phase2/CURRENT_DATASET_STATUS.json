@@ -1,0 +1,260 @@
+{
+  "generated_at": "2026-09-23T19:53:44.262689+00:00",
+  "authoritative_for_current_strict_research_coverage": true,
+  "scope": "strict/research-relevant boxing dataset and current prospective price collection",
+  "do_not_use_as_current_strict_coverage": "boxing/public_reports/DATA_GAP_AUDIT.json",
+  "phase2_build_at": "20260923T125405Z",
+  "database": {
+    "status": "database_ready",
+    "tables": [
+      "bouts",
+      "enriched_pre_bout",
+      "fight_punch_totals",
+      "fighters",
+      "historical_punch_observations",
+      "normalized_fighters",
+      "odds",
+      "opponent_links",
+      "pre_bout_features",
+      "priced_bout_research",
+      "published_fight_punch_totals",
+      "punch_reports",
+      "reported_historical_odds",
+      "reviewed_chart_rounds",
+      "reviewed_round_charts",
+      "round_punches",
+      "secondary_round_punches",
+      "wiki_bout_context"
+    ],
+    "source_rows_present": false,
+    "source_rows_required_for_phase2": false,
+    "source_rows_note": "Compact public research DB may omit source_rows; Phase 2 retains supplemental quote links and skips only raw-source price rematching."
+  },
+  "research_universe": {
+    "fighter_bout_rows": 118296,
+    "strict_profile_fighters": 723,
+    "consensus_priced_bouts": 730,
+    "verified_graph_bouts": 11283,
+    "identity_links": 26405,
+    "career_sources": {
+      "wikipedia": 112714,
+      "champinon": 5582
+    },
+    "years": [
+      "1990",
+      "1991",
+      "1992",
+      "1993",
+      "1994",
+      "1995",
+      "1996",
+      "1997",
+      "1998",
+      "1999",
+      "2000",
+      "2001",
+      "2002",
+      "2003",
+      "2004",
+      "2005",
+      "2006",
+      "2007",
+      "2008",
+      "2009",
+      "2010",
+      "2011",
+      "2012",
+      "2013",
+      "2014",
+      "2015",
+      "2016",
+      "2017",
+      "2018",
+      "2019",
+      "2020",
+      "2021",
+      "2022",
+      "2023",
+      "2024",
+      "2025",
+      "2026"
+    ]
+  },
+  "fighter_profiles": {
+    "born": {
+      "fighters_present": 720,
+      "fighters_total": 723,
+      "fighter_coverage_pct": 99.59,
+      "missing_fighters": 3,
+      "priced_bout_both_sides": {
+        "both_sides": 727,
+        "both_sides_pct": 99.59,
+        "at_least_one_side": 730
+      }
+    },
+    "height_cm": {
+      "fighters_present": 655,
+      "fighters_total": 723,
+      "fighter_coverage_pct": 90.59,
+      "missing_fighters": 68,
+      "priced_bout_both_sides": {
+        "both_sides": 619,
+        "both_sides_pct": 84.79,
+        "at_least_one_side": 727
+      }
+    },
+    "reach_cm": {
+      "fighters_present": 441,
+      "fighters_total": 723,
+      "fighter_coverage_pct": 61.0,
+      "missing_fighters": 282,
+      "priced_bout_both_sides": {
+        "both_sides": 370,
+        "both_sides_pct": 50.68,
+        "at_least_one_side": 634
+      }
+    },
+    "stance": {
+      "fighters_present": 700,
+      "fighters_total": 723,
+      "fighter_coverage_pct": 96.82,
+      "missing_fighters": 23,
+      "priced_bout_both_sides": {
+        "both_sides": 690,
+        "both_sides_pct": 94.52,
+        "at_least_one_side": 729
+      }
+    },
+    "nationality": {
+      "fighters_present": 721,
+      "fighters_total": 723,
+      "fighter_coverage_pct": 99.72,
+      "missing_fighters": 2,
+      "priced_bout_both_sides": {
+        "both_sides": 727,
+        "both_sides_pct": 99.59,
+        "at_least_one_side": 730
+      }
+    }
+  },
+  "rankings": {
+    "WBC": {
+      "ranking_rows": 7760,
+      "champion_rows": 320,
+      "parsed_documents": 13,
+      "usable_documents": null,
+      "rating_periods": null,
+      "years": [
+        2025,
+        2026
+      ],
+      "date_min": "2025-04-01",
+      "date_max": "2026-10-01",
+      "policy": "Official WBC monthly PDFs only. Safe effective date is first day of following month; no same-month backfill."
+    },
+    "WBA": {
+      "ranking_rows": 16085,
+      "champion_rows": 1341,
+      "parsed_documents": 68,
+      "usable_documents": 62,
+      "rating_periods": null,
+      "years": [
+        2021,
+        2022,
+        2023,
+        2024,
+        2025,
+        2026
+      ],
+      "date_min": "2021-03-06",
+      "date_max": "2026-09-11",
+      "policy": "Official WBA monthly PDFs only. If multiple rating months share one official posting date, only the later rating month is retained. Conflicting rank slots are quarantined. No month-end backdating."
+    },
+    "WBO": {
+      "ranking_rows": 11422,
+      "champion_rows": 794,
+      "parsed_documents": 51,
+      "usable_documents": null,
+      "rating_periods": null,
+      "years": [],
+      "date_min": "2021-04-04",
+      "date_max": "2026-09-19",
+      "policy": "Official WBO article publication date; if multiple rating periods share one publication date, only the later nominal period is retained; conflicting slots are quarantined."
+    },
+    "IBF": {
+      "ranking_rows": 58855,
+      "champion_rows": 3765,
+      "parsed_documents": null,
+      "usable_documents": null,
+      "rating_periods": 244,
+      "years": [
+        2005,
+        2006,
+        2007,
+        2008,
+        2009,
+        2010,
+        2011,
+        2012,
+        2013,
+        2014,
+        2015,
+        2016,
+        2017,
+        2018,
+        2019,
+        2020,
+        2021,
+        2022,
+        2023,
+        2024,
+        2025,
+        2026
+      ],
+      "date_min": "2005-12-02",
+      "date_max": "2026-09-09",
+      "policy": "Official IBF public ratings API only. Safe effective date is one day after official post_date. If historical months share a publication date, only the latest nominal period is retained. Empty rank slots remain missing; nothing is inferred."
+    }
+  },
+  "punch_data": {
+    "full_round_reports": 12,
+    "full_round_fighter_observations": 24,
+    "fighters_with_any_prior_full_punch_fight": 1,
+    "snapshots_with_3plus_prior_full_punch_fights": 0,
+    "summary_articles_discovered": 158,
+    "summary_rows": 32,
+    "summary_distinct_bouts": 24,
+    "prefight_baseline_rows": 57,
+    "prefight_baseline_bouts": 45,
+    "explicit_full_stat_targets": 22,
+    "latest_cross_source_reach_backfill": {
+      "generated_at": "2026-09-23T12:44:10.565970+00:00",
+      "targets": 287,
+      "accepted": 5,
+      "policy": "Unique exact-name URL on both sources; exact H1 on both; both numeric reaches; <=1 cm agreement; missing reach only; never overwrite."
+    }
+  },
+  "historical_pricing": {
+    "validated_price_rows": 0,
+    "status": "exploratory_only_until_archived_quote timing/settlement is independently verified"
+  },
+  "prospective_pricing": {
+    "generated_at": "2026-09-23T19:42:20.883720+00:00",
+    "raw_quote_observations": 11872,
+    "verified_pre_event_quote_observations": 2336,
+    "verified_pre_event_sportsbook_quote_observations": 2208,
+    "verification_pct": 19.68,
+    "unique_verified_bouts": 57,
+    "unique_verified_sportsbook_bouts": 56,
+    "settled_verified_bouts": 0,
+    "past_unresolved_bouts": 2,
+    "future_or_today_bouts": 55,
+    "settlement_generated_at": "2026-09-23T19:42:20.883720+00:00"
+  },
+  "largest_remaining_gaps": [
+    "verified reach coverage",
+    "historical full-fight/round-level punch depth",
+    "independently validated historical archived quote timing and settlement",
+    "older WBC official ranking depth"
+  ]
+}
