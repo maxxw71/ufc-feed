@@ -171,5 +171,29 @@ class BoxingSceneCompuBoxResolutionTests(unittest.TestCase):
         self.assertEqual(out['Errol Spence']['jab_landed_per_round'],7.2)
         self.assertEqual(out['Errol Spence']['power_accuracy_pct'],47.8)
 
+    def test_modern_paired_total_counts(self):
+        text=("Conah Walker was 192 of 513, 37% in total punches while Liam Taylor was 225 of 655, 34%.")
+        out=parse_explicit_stats(text,'Conah Walker','Liam Taylor')
+        self.assertEqual(out['Conah Walker']['total_landed'],192)
+        self.assertEqual(out['Conah Walker']['total_thrown'],513)
+        self.assertEqual(out['Liam Taylor']['total_landed'],225)
+        self.assertEqual(out['Liam Taylor']['total_thrown'],655)
+
+        text2=("Ekow Essuman landed 140 of 363, 22% in total punches and Josh Taylor landed 125 of 493, 25%. "
+               "Josh Taylor had a 117-115 edge in power punches landed.")
+        out2=parse_explicit_stats(text2,'Ekow Essuman','Josh Taylor')
+        self.assertEqual(out2['Ekow Essuman']['total_landed'],140)
+        self.assertEqual(out2['Ekow Essuman']['total_thrown'],363)
+        self.assertEqual(out2['Josh Taylor']['total_landed'],125)
+        self.assertEqual(out2['Josh Taylor']['total_thrown'],493)
+        self.assertEqual(out2['Josh Taylor']['power_landed'],117)
+        self.assertEqual(out2['Ekow Essuman']['power_landed'],115)
+
+    def test_modern_explicit_power_edge(self):
+        text="Paddy Donovan had an 86-49 edge in power punches landed against Lewis Crocker."
+        out=parse_explicit_stats(text,'Paddy Donovan','Lewis Crocker')
+        self.assertEqual(out['Paddy Donovan']['power_landed'],86)
+        self.assertEqual(out['Lewis Crocker']['power_landed'],49)
+
 if __name__=='__main__':
     unittest.main()
