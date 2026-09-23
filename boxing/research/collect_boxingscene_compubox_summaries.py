@@ -686,9 +686,9 @@ def parse_prefight_baselines(text,a,b):
 
         rx=re.compile(
             ef+r"(?:['’]s)?\s+opponents?"+SENTENCE_CHAR+r"{0,140}?(?:landed|land)\s+"
-            r"(?:just\s+)?(\d+(?:\.\d+)?)\s+(?:total\s+)?punches?\s+per\s+round"
-            SENTENCE_CHAR+r"{0,100}?(?:and\s+)?(?:just\s+)?(\d+(?:\.\d+)?)\s+"
-            r"power\s+(?:punches|shots)\s+per\s+round",re.I)
+            +r"(?:just\s+)?(\d+(?:\.\d+)?)\s+(?:total\s+)?punches?\s+per\s+round"
+            +SENTENCE_CHAR+r"{0,100}?(?:and\s+)?(?:just\s+)?(\d+(?:\.\d+)?)\s+"
+            +r"power\s+(?:punches|shots)\s+per\s+round",re.I)
         for m in rx.finditer(txt):
             setv(f,'opponent_total_landed_per_round',m.group(1))
             setv(f,'opponent_power_landed_per_round',m.group(2))
@@ -739,11 +739,11 @@ def parse_prefight_baselines(text,a,b):
         # Explicit opponent-history defense rates.
         rx=re.compile(
             p+r"(?:['’]s)?\s+opponents?"+SENTENCE_CHAR+r"{0,120}?(?:landed|land)\s+"
-            r"(?:just\s+)?(\d+(?:\.\d+)?)\s+(?:total\s+)?punches?\s+per\s+round",re.I)
+            +r"(?:just\s+)?(\d+(?:\.\d+)?)\s+(?:total\s+)?punches?\s+per\s+round",re.I)
         for m in rx.finditer(txt):setv(f,'opponent_total_landed_per_round',m.group(1))
         rx=re.compile(
             p+r"(?:['’]s)?\s+opponents?"+SENTENCE_CHAR+r"{0,120}?(?:landed|land)\s+"
-            r"(?:just\s+)?(\d+(?:\.\d+)?)\s+power\s+(?:punches|shots)\s+per\s+round",re.I)
+            +r"(?:just\s+)?(\d+(?:\.\d+)?)\s+power\s+(?:punches|shots)\s+per\s+round",re.I)
         for m in rx.finditer(txt):setv(f,'opponent_power_landed_per_round',m.group(1))
         rx=re.compile(
             p+r"(?:['’]s)?\s+opponents?[^!?]{0,140}?landed\s+"
@@ -754,9 +754,9 @@ def parse_prefight_baselines(text,a,b):
         # 5 power shots per round." Keep both explicitly stated rates.
         rx=re.compile(
             p+r"(?:['’]s)?\s+opponents?"+SENTENCE_CHAR+r"{0,120}?(?:landed|land)\s+"
-            r"(?:just\s+)?(\d+(?:\.\d+)?)\s+(?:total\s+)?punches?\s+per\s+round"
-            SENTENCE_CHAR+r"{0,100}?(?:and\s+)?(?:just\s+)?(\d+(?:\.\d+)?)\s+"
-            r"power\s+(?:punches|shots)\s+per\s+round",re.I)
+            +r"(?:just\s+)?(\d+(?:\.\d+)?)\s+(?:total\s+)?punches?\s+per\s+round"
+            +SENTENCE_CHAR+r"{0,100}?(?:and\s+)?(?:just\s+)?(\d+(?:\.\d+)?)\s+"
+            +r"power\s+(?:punches|shots)\s+per\s+round",re.I)
         for m in rx.finditer(txt):
             setv(f,'opponent_total_landed_per_round',m.group(1))
             setv(f,'opponent_power_landed_per_round',m.group(2))
