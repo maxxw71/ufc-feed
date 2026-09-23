@@ -139,6 +139,11 @@ def archive_capture_date(url):
     except ValueError:return None
 
 def fetch_pdf(y,month):
+    # Historical WBC endpoints for 2023-2024 are Cloudflare-blocked from the
+    # collector. Only use explicitly verified official Wayback captures there;
+    # do not waste time retrying known-blocked direct URLs.
+    if y<=2024:
+      return _archive_pdf(y,month)
     for url in urls(y,month):
       for attempt in range(3):
         try:
