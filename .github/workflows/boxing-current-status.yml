@@ -21,6 +21,14 @@ on:
       - 'boxing/prospective_odds/coverage.json'
       - 'boxing/prospective_odds/settled_bouts.json'
   workflow_dispatch:
+  workflow_run:
+    workflows:
+      - Boxing public Phase 2
+      - Boxing prospective odds settlement
+      - Boxing Archived CompuBox Summary Archive
+      - Boxing WBC Monthly Rankings Archive
+    types: [completed]
+    branches: [main]
 
 concurrency:
   group: boxing-current-dataset-status
@@ -31,6 +39,7 @@ permissions:
 
 jobs:
   build:
+    if: github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success'
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
