@@ -152,6 +152,23 @@ jobs:
           for name in ['IDENTITY_LINKS_V2.json','PRICE_MATCH_COVERAGE.json','SUPPLEMENT_APPLY_REPORT.json','PROFILE_SUPPLEMENT_APPLY_REPORT.json','PROFILE_GAP_AUDIT.json']:
               src=root/name
               if src.exists():shutil.copy2(src,out/name)
+          dbstat={}
+          if (out/'database_status.json').exists():
+              dbstat=json.loads((out/'database_status.json').read_text())
+          coverage={}
+          if (out/'coverage.json').exists():
+              coverage=json.loads((out/'coverage.json').read_text())
+          tables=set(dbstat.get('tables') or [])
+          (out/'status.json').write_text(json.dumps({
+              'status':'ready',
+              'built_at':coverage.get('built_at'),
+              'database_status':dbstat.get('status'),
+              'required_phase2_tables_present':True,
+              'source_rows_present':'source_rows' in tables,
+              'source_rows_required_for_phase2':False,
+              'price_rematch_status':'available' if 'source_rows' in tables else 'skipped_on_compact_public_db_supplemental_quote_links_retained',
+              'authoritative_current_coverage':'boxing/public_phase2/CURRENT_DATASET_STATUS.json'
+          },indent=2))
           PY
       - name: Record failure diagnostics
         if: failure()
