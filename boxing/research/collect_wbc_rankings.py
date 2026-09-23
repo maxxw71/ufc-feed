@@ -34,7 +34,11 @@ DIVS=[
  ('light flyweight',['LIGHT FLYWEIGHT','LIGHTFLYWEIGHT','LIGHT-FLYWEIGHT','LT. FLYWEIGHT']),
  ('minimumweight',['MINIMUMWEIGHT','STRAWWEIGHT','MINI FLYWEIGHT']),
 ]
-COUNTRY_TAIL=re.compile(r'\s*\([^)]{1,45}\)\s*(?:[A-Z][A-Z0-9*/. -]{0,40})?\s*
+COUNTRY_TAIL=re.compile(r'\s*\([^)]{1,45}\)\s*(?:[A-Z][A-Z0-9*/. -]{0,40})?\s*$')
+WBC_ARCHIVE_CAPTURES={
+  (2023,'APRIL'):('20230525040938','https://wbcboxing.com/mailing/2023/ratings_pdf/WBC_RATINGS_APRIL_2023_.pdf'),
+  (2024,'JUNE'):('20240620103321','https://wbcboxing.com/mailing/2024/ratings_pdf/_WBC_RATINGS_JUNE_2024.pdf'),
+}
 
 def next_month(y,m):
     return dt.date(y+1,1,1) if m==12 else dt.date(y,m+1,1)
