@@ -21,6 +21,37 @@ class ArchivedCompuBoxSummaryTests(unittest.TestCase):
         self.assertEqual(out['Bryant Jennings']['total_thrown_per_round'],42.0)
         self.assertEqual(out['Bryant Jennings']['power_accuracy_pct'],46.0)
 
+    def test_additional_explicit_archive_phrases(self):
+        out=parse_summary_metrics(
+            "PunchStat Report Donaire landed the harder punches. Mathebula was busier, averaging 92 thrown per round.",
+            'Nonito Donaire','Jeffrey Mathebula')
+        self.assertEqual(out['Jeffrey Mathebula']['total_thrown_per_round'],92.0)
+
+        out=parse_summary_metrics(
+            "Cotto, desperate for a win, absolutely mugged Rodriguez, landing 47 power shots (54%) in 6:18. "
+            "27 of Cottos 55 landed punches were to Rodriguezs body.",
+            'Miguel Cotto','Delvin Rodriguez')
+        self.assertEqual(out['Miguel Cotto']['power_landed'],47.0)
+        self.assertEqual(out['Miguel Cotto']['power_accuracy_pct'],54.0)
+        self.assertEqual(out['Miguel Cotto']['body_landed'],27.0)
+        self.assertEqual(out['Miguel Cotto']['total_landed'],55.0)
+
+        out=parse_summary_metrics(
+            "Klitschko mixed up his attack (9 jabs landed per round/24 thrown- 10 power landed/13 thrown) "
+            "vs. the over-matched Pianeta, who landed just 24 total punches all fight.",
+            'Wladimir Klitschko','Francesco Pianeta')
+        self.assertEqual(out['Wladimir Klitschko']['jab_landed_per_round'],9.0)
+        self.assertEqual(out['Wladimir Klitschko']['jab_thrown_per_round'],24.0)
+        self.assertEqual(out['Wladimir Klitschko']['power_landed_per_round'],10.0)
+        self.assertEqual(out['Wladimir Klitschko']['power_thrown_per_round'],13.0)
+        self.assertEqual(out['Francesco Pianeta']['total_landed'],24.0)
+
+        out=parse_summary_metrics(
+            "After landing a huge left hook in round three, Danny Garcia outlanded Amir Khan 44-23 in power shots.",
+            'Danny Garcia','Amir Khan')
+        self.assertEqual(out['Danny Garcia']['power_landed'],44.0)
+        self.assertEqual(out['Amir Khan']['power_landed'],23.0)
+
     def test_wayback_capture_date(self):
         self.assertEqual(archive_date('https://web.archive.org/web/20151208081612/http://compuboxonline.com/x/'),'2015-12-08')
         self.assertIsNone(archive_date('https://compuboxonline.com/x/'))
