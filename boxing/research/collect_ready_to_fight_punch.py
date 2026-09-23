@@ -30,35 +30,33 @@ REPORT=ROOT/'punch_supplements'/'ready_to_fight_punch_report.json'
 UA='Mozilla/5.0 AppwizaBoxingRTFPunch/1.0'
 
 SEEDS=[
- 'https://rtfight.com/fights/essuman-vs-kongo',
- 'https://rtfight.com/de/fights/2781/analytics',
- 'https://rtfight.com/fights/essuman-vs-vaughan',
- 'https://rtfight.com/fights/jack-catterall-vs-ekow-essuman',
- 'https://rtfight.com/fights/baraou-vs-eggington',
- 'https://rtfight.com/fights/crocker-vs-donovan-1',
- 'https://rtfight.com/fights/crocker-vs-donovan',
- 'https://rtfight.com/fights/2455/analytics',
- 'https://rtfight.com/fights/2456/analytics',
+ # Current indexed Ready To Fight pages verified to expose structured fight
+ # totals or analytics. Strict parser/date/pair/arithmetic gates below still
+ # decide acceptance; a listed URL is never accepted merely because it loads.
+ 'https://rtfight.com/fights/sheeraz-vs-denny',
  'https://rtfight.com/fights/1090/analytics',
- 'https://rtfight.com/fights/davis-vs-martin',
-
- # Current indexed repeat-fighter targets; verified to expose both-side
- # Total/Jab/Power fight totals. Strict parser/date/pair/arithmetic gates below
- # still decide acceptance.
- 'https://rtfight.com/fights/rea-vs-arthur',
- 'https://rtfight.com/fights/arthur-vs-cameron',
- 'https://rtfight.com/fights/bivol-vs-arthur',
- 'https://rtfight.com/fights/arthur-vs-nahuel-suarez',
- 'https://rtfight.com/fights/eubank-vs-erdogan',
- 'https://rtfight.com/fights/eubank-vs-antin',
- 'https://rtfight.com/fights/crocker-vs-walker',
-
- # Additional current structured pages discovered during repeat-history audit.
- 'https://rtfight.com/fights/3438/analytics',
- 'https://rtfight.com/fights/3437',
+ 'https://rtfight.com/fights/valenzuela-vs-russell',
+ 'https://rtfight.com/fights/garcia-vs-tagoe',
+ 'https://rtfight.com/fights/figueroa-vs-fulton',
+ 'https://rtfight.com/fights/garcia-vs-roach-jr',
+ 'https://rtfight.com/fights/puello-vs-akhmedov',
+ 'https://rtfight.com/fights/2455/analytics',
+ 'https://rtfight.com/fights/garcia-vs-fortuna',
+ 'https://rtfight.com/fights/2499/analytics',
+ 'https://rtfight.com/fights/tszyu-vs-mendoza',
+ 'https://rtfight.com/fights/olascuaga-vs-camacho',
+ 'https://rtfight.com/fights/bohachuk-vs-davis',
+ 'https://rtfight.com/fights/taylor-vs-catterall',
  'https://rtfight.com/fights/baraou-vs-mcgowan',
+ 'https://rtfight.com/fights/essuman-vs-vaughan',
+ 'https://rtfight.com/fights/catterall-vs-prograis',
+ 'https://rtfight.com/fights/cooper-vs-essuman',
+ 'https://rtfight.com/fights/tellez-vs-baraou',
+ 'https://rtfight.com/fights/catterall-vs-eubank',
+ 'https://rtfight.com/fights/baraou-vs-eggington',
+ 'https://rtfight.com/fights/rea-vs-arthur',
+ 'https://rtfight.com/fights/catterall-vs-foley',
 ]
-
 def norm(s):
     x=unicodedata.normalize('NFKD',str(s or '')).encode('ascii','ignore').decode().lower()
     return re.sub(r'[^a-z0-9]+','',x)
