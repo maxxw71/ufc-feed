@@ -52,6 +52,11 @@ SEEDS=[
  'https://rtfight.com/fights/eubank-vs-erdogan',
  'https://rtfight.com/fights/eubank-vs-antin',
  'https://rtfight.com/fights/crocker-vs-walker',
+
+ # Additional current structured pages discovered during repeat-history audit.
+ 'https://rtfight.com/fights/3438/analytics',
+ 'https://rtfight.com/fights/3437',
+ 'https://rtfight.com/fights/baraou-vs-mcgowan',
 ]
 
 def norm(s):
