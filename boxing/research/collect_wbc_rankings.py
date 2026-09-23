@@ -79,7 +79,8 @@ def urls(y,month):
         'OCTOBER':['WBC_RATINGS_OCTOBER_2024.pdf'],
         'DECEMBER':['WBC_RATINGS_CONVENTION_HAMBURG_GERMANY_2024_.pdf'],
       }
-      names=(observed.get(month,[])+names)
+      names=observed.get(month,[])
+      if not names:return
     bases=[
       f'https://wbcboxing.com/mailing/{y}/ratings_pdf/',
       f'https://wbcboxing.com/mailing/{y}/',
