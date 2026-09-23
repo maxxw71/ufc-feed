@@ -1,5 +1,5 @@
 {
-  "built_at": "2026-09-23T11:57:23.770563+00:00",
+  "built_at": "2026-09-23T16:37:06.392531+00:00",
   "status": "PASS",
   "hard_failures": [],
   "warnings": [],
@@ -73,13 +73,13 @@
     {
       "name": "UFC canonical_public_current_exact",
       "ok": true,
-      "detail": "canonical=['UFC:ufc-332:deivesonfigueiredo:paytontalbott', 'UFC:ufc-fight-night-september-26-2026:robertbryczek:rodolfovieira', 'UFC:ufc-fight-night-september-26-2026:vanessademopoulos:yazminjauregui'] public=['UFC:ufc-332:deivesonfigueiredo:paytontalbott', 'UFC:ufc-fight-night-september-26-2026:robertbryczek:rodolfovieira', 'UFC:ufc-fight-night-september-26-2026:vanessademopoulos:yazminjauregui']",
+      "detail": "canonical=['UFC:ufc-332:deivesonfigueiredo:paytontalbott', 'UFC:ufc-fight-night-september-26-2026:mickeygall:sedriquesdumas', 'UFC:ufc-fight-night-september-26-2026:robertbryczek:rodolfovieira', 'UFC:ufc-fight-night-september-26-2026:vanessademopoulos:yazminjauregui'] public=['UFC:ufc-332:deivesonfigueiredo:paytontalbott', 'UFC:ufc-fight-night-september-26-2026:mickeygall:sedriquesdumas', 'UFC:ufc-fight-night-september-26-2026:robertbryczek:rodolfovieira', 'UFC:ufc-fight-night-september-26-2026:vanessademopoulos:yazminjauregui']",
       "hard": true
     },
     {
       "name": "UFC canonical_state_ids_exact",
       "ok": true,
-      "detail": "canonical=['UFC:ufc-332:deivesonfigueiredo:paytontalbott', 'UFC:ufc-fight-night-september-26-2026:robertbryczek:rodolfovieira', 'UFC:ufc-fight-night-september-26-2026:vanessademopoulos:yazminjauregui'] state=['UFC:ufc-332:deivesonfigueiredo:paytontalbott', 'UFC:ufc-fight-night-september-26-2026:robertbryczek:rodolfovieira', 'UFC:ufc-fight-night-september-26-2026:vanessademopoulos:yazminjauregui']",
+      "detail": "canonical=['UFC:ufc-332:deivesonfigueiredo:paytontalbott', 'UFC:ufc-fight-night-september-26-2026:mickeygall:sedriquesdumas', 'UFC:ufc-fight-night-september-26-2026:robertbryczek:rodolfovieira', 'UFC:ufc-fight-night-september-26-2026:vanessademopoulos:yazminjauregui'] state=['UFC:ufc-332:deivesonfigueiredo:paytontalbott', 'UFC:ufc-fight-night-september-26-2026:mickeygall:sedriquesdumas', 'UFC:ufc-fight-night-september-26-2026:robertbryczek:rodolfovieira', 'UFC:ufc-fight-night-september-26-2026:vanessademopoulos:yazminjauregui']",
       "hard": true
     },
     {
@@ -89,9 +89,15 @@
       "hard": true
     },
     {
+      "name": "UFC methods_exact:UFC:ufc-fight-night-september-26-2026:mickeygall:sedriquesdumas",
+      "ok": true,
+      "detail": "canonical=['U10'] state=['U10']",
+      "hard": true
+    },
+    {
       "name": "UFC methods_exact:UFC:ufc-fight-night-september-26-2026:robertbryczek:rodolfovieira",
       "ok": true,
-      "detail": "canonical=['U5'] state=['U5']",
+      "detail": "canonical=['U11', 'U12', 'U5', 'U9'] state=['U11', 'U12', 'U5', 'U9']",
       "hard": true
     },
     {
@@ -103,7 +109,7 @@
     {
       "name": "UFC canonical_future_tracker_exact",
       "ok": true,
-      "detail": "canonical=['UFC:ufc-332:deivesonfigueiredo:paytontalbott', 'UFC:ufc-fight-night-september-26-2026:robertbryczek:rodolfovieira', 'UFC:ufc-fight-night-september-26-2026:vanessademopoulos:yazminjauregui'] tracker=['UFC:ufc-332:deivesonfigueiredo:paytontalbott', 'UFC:ufc-fight-night-september-26-2026:robertbryczek:rodolfovieira', 'UFC:ufc-fight-night-september-26-2026:vanessademopoulos:yazminjauregui']",
+      "detail": "canonical=['UFC:ufc-332:deivesonfigueiredo:paytontalbott', 'UFC:ufc-fight-night-september-26-2026:mickeygall:sedriquesdumas', 'UFC:ufc-fight-night-september-26-2026:robertbryczek:rodolfovieira', 'UFC:ufc-fight-night-september-26-2026:vanessademopoulos:yazminjauregui'] tracker=['UFC:ufc-332:deivesonfigueiredo:paytontalbott', 'UFC:ufc-fight-night-september-26-2026:mickeygall:sedriquesdumas', 'UFC:ufc-fight-night-september-26-2026:robertbryczek:rodolfovieira', 'UFC:ufc-fight-night-september-26-2026:vanessademopoulos:yazminjauregui']",
       "hard": true
     },
     {
@@ -216,7 +222,7 @@
       "ufc"
     ],
     "future_pending_by_sport": {
-      "UFC": 3
+      "UFC": 4
     }
   },
   "contract": {
