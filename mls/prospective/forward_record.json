@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-09-23T06:24:25.831643+00:00",
+  "updated_at": "2026-09-23T12:56:29.216150+00:00",
   "shadow_only": true,
   "official_autopromotions": 0,
   "active_method_ids": [
@@ -14,7 +14,7 @@
   "watch_only_method_ids": [
     "MLS-A04"
   ],
-  "active_signals": 9,
+  "active_signals": 10,
   "watch_only_signals": 2,
   "methods": {
     "MLS-P01": {
@@ -46,18 +46,18 @@
       "avg_market_prob_move": 0.005117282432683982
     },
     "MLS-A03": {
-      "signals": 2,
-      "pending": 0,
+      "signals": 3,
+      "pending": 1,
       "settled": 2,
       "wins": 0,
       "losses": 2,
       "units": -2.0,
       "win_rate": 0.0,
       "roi": -1.0,
-      "clv_samples": 2,
-      "avg_price_clv_pct": -0.028438886647841888,
+      "clv_samples": 3,
+      "avg_price_clv_pct": -0.018959257765227926,
       "positive_clv_rate": 0.0,
-      "avg_market_prob_move": -0.00598411191081448
+      "avg_market_prob_move": -0.003989407940542987
     },
     "MLS-R03": {
       "signals": 2,
@@ -69,9 +69,9 @@
       "win_rate": 1.0,
       "roi": 2.3,
       "clv_samples": 2,
-      "avg_price_clv_pct": -0.046052631578947345,
+      "avg_price_clv_pct": -0.06874999999999998,
       "positive_clv_rate": 0.0,
-      "avg_market_prob_move": -0.010285207361741933
+      "avg_market_prob_move": -0.01626014128620265
     },
     "MLS-A06": {
       "signals": 1,
@@ -515,10 +515,10 @@
       "tracking_tier": "ACTIVE_PROSPECTIVE",
       "portfolio_eligible": 1,
       "portfolio_conflict": 0,
-      "closing_price_decimal": 3.8,
-      "closing_market_prob": 0.2432432432432432,
-      "price_clv_pct": -0.09210526315789469,
-      "market_prob_move": -0.020570414723483865
+      "closing_price_decimal": 4.0,
+      "closing_market_prob": 0.23129337539432177,
+      "price_clv_pct": -0.13749999999999996,
+      "market_prob_move": -0.0325202825724053
     },
     {
       "signal_key": "MLS-A04:761843",
@@ -550,6 +550,37 @@
       "closing_market_prob": 0.4671940108764744,
       "price_clv_pct": -0.022172949002217224,
       "market_prob_move": -0.009790645561150668
+    },
+    {
+      "signal_key": "MLS-A03:761835",
+      "method_id": "MLS-A03",
+      "method_name": "Away Underdog \u2014 Contrarian PPG + xGD",
+      "event_id": "761835",
+      "commence_time": "2026-09-27T00:30Z",
+      "home_team": "FC Dallas",
+      "away_team": "Los Angeles FC",
+      "selection": "Los Angeles FC",
+      "opponent": "FC Dallas",
+      "side": "AWAY",
+      "first_seen_at": "2026-09-23T12:55:38.474128+00:00",
+      "first_price_american": 170.0,
+      "first_price_decimal": 2.7,
+      "first_book": "DraftKings",
+      "first_market_prob": 0.3389830508474576,
+      "status": "pending",
+      "settled_at": null,
+      "home_score": null,
+      "away_score": null,
+      "profit_units": null,
+      "result_note": null,
+      "confidence_tier": "BASE",
+      "tracking_tier": "ACTIVE_PROSPECTIVE",
+      "portfolio_eligible": 1,
+      "portfolio_conflict": 0,
+      "closing_price_decimal": 2.7,
+      "closing_market_prob": 0.3389830508474576,
+      "price_clv_pct": 0.0,
+      "market_prob_move": 0.0
     }
   ]
 }

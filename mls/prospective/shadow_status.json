@@ -1,9 +1,9 @@
 {
-  "built_at": "2026-09-23T06:24:21.162969+00:00",
-  "market_captured_at": "2026-09-23T06:23:45.815389+00:00",
+  "built_at": "2026-09-23T12:56:24.448946+00:00",
+  "market_captured_at": "2026-09-23T12:55:38.474128+00:00",
   "elo_updated_at": "2026-09-20T23:00:00+00:00",
-  "elo_age_days": 2.308436718113426,
-  "qualifier_count": 2,
+  "elo_age_days": 2.5807202477546296,
+  "qualifier_count": 3,
   "qualifiers": [
     {
       "method_id": "MLS-A04",
@@ -14,6 +14,19 @@
       "book": "DraftKings",
       "market_prob": 0.4342857142857142,
       "research_status": "SHADOW_WATCH",
+      "confidence_tier": "BASE",
+      "portfolio_conflict": false,
+      "same_side_consensus": null
+    },
+    {
+      "method_id": "MLS-A03",
+      "selection": "Los Angeles FC",
+      "opponent": "FC Dallas",
+      "commence_time": "2026-09-27T00:30Z",
+      "american_price": "+170",
+      "book": "DraftKings",
+      "market_prob": 0.3389830508474576,
+      "research_status": "PROSPECTIVE_PRIORITY_SHADOW",
       "confidence_tier": "BASE",
       "portfolio_conflict": false,
       "same_side_consensus": null
@@ -44,9 +57,22 @@
   "watch_only_method_ids": [
     "MLS-A04"
   ],
-  "active_qualifier_count": 0,
+  "active_qualifier_count": 1,
   "watch_qualifier_count": 2,
-  "portfolio_matches": [],
+  "portfolio_matches": [
+    {
+      "event_id": "761835",
+      "home_team": "FC Dallas",
+      "away_team": "Los Angeles FC",
+      "selection": "Los Angeles FC",
+      "methods": [
+        "MLS-A03"
+      ],
+      "consensus": false,
+      "max_bankroll_exposure_pct": 1.0,
+      "staking_policy": "MAX_1_PERCENT_CURRENT_BANKROLL_PER_MATCH"
+    }
+  ],
   "portfolio_conflicts": [],
   "conflicts": [],
   "consensus": [],
