@@ -53,7 +53,20 @@ def urls(y,month):
       f'WBC_RATINGS_{month}_%20{y}_.pdf',
       f'_WBC_RATINGS_{month}_%20{y}_.pdf',
     ]
-    if y==2024:
+    if y==2023:
+      # Verified official WBC PDF filenames. For this older year, use only
+      # observed filenames so missing months do not burn minutes probing many
+      # Cloudflare-protected variants.
+      observed={
+        'APRIL':['WBC_RATINGS_APRIL_2023_.pdf'],
+        'JUNE':['WBC_RATINGS_JUNE_2023.pdf'],
+        'JULY':['WBC_RATINGS_JULY_2023.pdf'],
+        'SEPTEMBER':['WBC_RATINGS_SEPTEMBER_2023.pdf'],
+        'NOVEMBER':['WBC_RATINGS_NOVEMBER_2023__.pdf'],
+      }
+      names=observed.get(month,[])
+      if not names:return
+    elif y==2024:
       observed={
         'JANUARY':['WBC_RATINGS_JANUARY__2024.pdf'],
         'FEBRUARY':['WBC_RATINGS_FEBRUARY_2024.pdf'],
