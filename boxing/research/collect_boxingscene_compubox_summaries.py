@@ -303,6 +303,29 @@ def parse_explicit_stats(text,a,b):
             setv(f1,'total_landed',m.group(1));setv(f1,'total_thrown',m.group(2))
             setv(f2,'total_landed',m.group(3));setv(f2,'total_thrown',m.group(4))
 
+    # Modern CompuBox prose:
+    # "Walker was 192 of 513, 37% in total punches while Taylor was 225 of 655"
+    # "Essuman landed 140 of 363 ... and Taylor landed 125 of 493"
+    for f1,f2,p1,p2 in [(a,b,pa,pb),(b,a,pb,pa)]:
+        rx=re.compile(
+            p1+r'[^.!?]{0,110}?\b(?:was|landed)\s+(\d+)\s+of\s+(\d+)'
+            r'[^.!?]{0,110}?(?:total\s+punches|in\s+total\s+punches)'
+            r'[^.!?]{0,150}?(?:while|and|compared\s+to)\s+'+p2+
+            r'[^.!?]{0,80}?\b(?:was|landed)\s+(\d+)\s+of\s+(\d+)',re.I)
+        for m in rx.finditer(txt):
+            setv(f1,'total_landed',m.group(1));setv(f1,'total_thrown',m.group(2))
+            setv(f2,'total_landed',m.group(3));setv(f2,'total_thrown',m.group(4))
+
+        # Variant with "in total punches" after the second fighter's values.
+        rx=re.compile(
+            p1+r'[^.!?]{0,100}?\b(?:was|landed)\s+(\d+)\s+of\s+(\d+)'
+            r'[^.!?]{0,140}?(?:while|and)\s+'+p2+
+            r'[^.!?]{0,80}?\b(?:was|landed)\s+(\d+)\s+of\s+(\d+)'
+            r'[^.!?]{0,70}?(?:total\s+punches|in\s+total\s+punches)',re.I)
+        for m in rx.finditer(txt):
+            setv(f1,'total_landed',m.group(1));setv(f1,'total_thrown',m.group(2))
+            setv(f2,'total_landed',m.group(3));setv(f2,'total_thrown',m.group(4))
+
     # "Ajagba was 186 of 583 ... compared to 177 of 622 ... for Vianello in total punches"
     for f1,f2,p1,p2 in [(a,b,pa,pb),(b,a,pb,pa)]:
         rx=re.compile(p1+r'.{0,100}?\bwas\s+(\d+)\s+of\s+(\d+).{0,100}?compared\s+to\s+(\d+)\s+of\s+(\d+).{0,100}?'+p2+r'.{0,60}?total\s+punch',re.I)
