@@ -145,5 +145,31 @@ class BoxingSceneCompuBoxResolutionTests(unittest.TestCase):
         out3=parse_prefight_baselines(text,'Manny Pacquiao','Brandon Rios')
         self.assertEqual(out3['Manny Pacquiao']['opponent_power_accuracy_pct'],33.0)
 
+    def test_historical_review_without_explicit_window(self):
+        text=(
+          "Terence Crawford's +14.4 plus/minus rating is among the best active fighters. "
+          "Crawford landed 47.9% of his power shots. "
+          "Crawford's opponents land just 7.1 punches per round and just 5 power shots per round. "
+          "Vasyl Lomachenko's +20.9 rating is number one. "
+          "Lomachenko landed 49.5% of his power punches."
+        )
+        out=parse_prefight_baselines(text,'Terence Crawford','Vasyl Lomachenko')
+        self.assertEqual(out['Terence Crawford']['plus_minus_rating'],14.4)
+        self.assertEqual(out['Terence Crawford']['power_accuracy_pct'],47.9)
+        self.assertEqual(out['Terence Crawford']['opponent_total_landed_per_round'],7.1)
+        self.assertEqual(out['Terence Crawford']['opponent_power_landed_per_round'],5.0)
+        self.assertEqual(out['Vasyl Lomachenko']['plus_minus_rating'],20.9)
+        self.assertEqual(out['Vasyl Lomachenko']['power_accuracy_pct'],49.5)
+
+    def test_historical_review_explicit_jab_rate(self):
+        text=(
+          "Kell Brook landed 8.5 jabs per round in his last 7 fights. "
+          "Errol Spence landed 7.2 jabs per round in his last 4 fights and landed 47.8% of his power shots."
+        )
+        out=parse_prefight_baselines(text,'Kell Brook','Errol Spence')
+        self.assertEqual(out['Kell Brook']['jab_landed_per_round'],8.5)
+        self.assertEqual(out['Errol Spence']['jab_landed_per_round'],7.2)
+        self.assertEqual(out['Errol Spence']['power_accuracy_pct'],47.8)
+
 if __name__=='__main__':
     unittest.main()
