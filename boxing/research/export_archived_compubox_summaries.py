@@ -87,6 +87,20 @@ def parse_summary_metrics(text,a,b):
             out[f][key]=v
 
     for sentence in sentence_parts(text):
+        # Explicit two-fighter landed comparison: "Garcia outlanded Amir Khan
+        # 44-23 in power shots." Both values are unambiguous landed counts.
+        for fighter,opponent in ((a,b),(b,a)):
+            for fa in aliases(fighter):
+                for oa in aliases(opponent):
+                    m=re.search(
+                        r'(?<![A-Za-z0-9])'+re.escape(fa)+
+                        r'(?![A-Za-z0-9])[^.!?]{0,90}?outlanded\s+'+
+                        re.escape(oa)+r'\s+(\d{1,3})\s*[-–]\s*(\d{1,3})\s+in\s+power\s+shots',
+                        sentence,re.I)
+                    if m:
+                        setv(fighter,'power_landed',m.group(1))
+                        setv(opponent,'power_landed',m.group(2))
+
         for fighter,opponent in ((a,b),(b,a)):
             for seg in attributed_segments(sentence,fighter,opponent):
                 # "Garcia ... landed 29% of his 47 punches thrown per round"
@@ -120,6 +134,52 @@ def parse_summary_metrics(text,a,b):
                     seg,re.I)
                 if m:setv(fighter,'power_accuracy_pct',m.group(1))
 
+                # "Mathebula ... averaging 92 thrown per round"
+                m=re.search(
+                    r"(?:avg(?:'d|d)?|averaged|averaging)\s+(?:just\s+)?"
+                    r'(\d+(?:\.\d+)?)\s+thrown\s+per\s+round',
+                    seg,re.I)
+                if m:setv(fighter,'total_thrown_per_round',m.group(1))
+
+                # "Cotto ... landing 47 power shots (54%)"
+                m=re.search(
+                    r'(?:landed|landing)\s+(\d{1,4})\s+power\s+shots?\s*'
+                    r'\((\d+(?:\.\d+)?)%\)',
+                    seg,re.I)
+                if m:
+                    setv(fighter,'power_landed',m.group(1))
+                    setv(fighter,'power_accuracy_pct',m.group(2))
+
+                # "27 of Cotto's 55 landed punches were to the body"
+                for fa in aliases(fighter):
+                    m=re.search(
+                        r'(\d{1,4})\s+of\s+'+re.escape(fa)+
+                        r"(?:['’]s)?\s+(\d{1,4})\s+landed\s+punches?\s+were\s+to\s+"
+                        r'(?:his\s+)?(?:the\s+)?body',
+                        sentence,re.I)
+                    if m:
+                        setv(fighter,'body_landed',m.group(1))
+                        setv(fighter,'total_landed',m.group(2))
+
+                # "9 jabs landed per round/24 thrown - 10 power landed/13 thrown"
+                m=re.search(
+                    r'(\d+(?:\.\d+)?)\s+jabs?\s+landed\s+per\s+round\s*/\s*'
+                    r'(\d+(?:\.\d+)?)\s+thrown[^.!?]{0,50}?'
+                    r'(\d+(?:\.\d+)?)\s+power\s+landed\s*/\s*'
+                    r'(\d+(?:\.\d+)?)\s+thrown',
+                    seg,re.I)
+                if m:
+                    setv(fighter,'jab_landed_per_round',m.group(1))
+                    setv(fighter,'jab_thrown_per_round',m.group(2))
+                    setv(fighter,'power_landed_per_round',m.group(3))
+                    setv(fighter,'power_thrown_per_round',m.group(4))
+
+                # "Pianeta ... landed just 24 total punches all fight"
+                m=re.search(
+                    r'(?:landed|landing)\s+(?:just\s+)?(\d{1,4})\s+total\s+punches?\s+all\s+fight',
+                    seg,re.I)
+                if m:setv(fighter,'total_landed',m.group(1))
+
     for fighter in (a,b):
         if conflicts[fighter]:
             out[fighter]={'_invalid_conflict':True,'_conflict_details':conflicts[fighter]}
@@ -130,7 +190,11 @@ def merge_rows(rows):
     for r in rows:
         groups[(r['bout_date'],norm(r['fighter']),norm(r['opponent']))].append(r)
     merged=[];quarantined=[]
-    metric_fields=('total_thrown_per_round','total_accuracy_pct','power_accuracy_pct')
+    metric_fields=(
+      'total_landed','total_thrown_per_round','total_accuracy_pct','body_landed',
+      'jab_landed_per_round','jab_thrown_per_round',
+      'power_landed','power_landed_per_round','power_thrown_per_round','power_accuracy_pct'
+    )
     for key,items in groups.items():
         base=dict(items[0]);bad=[]
         for field in metric_fields:
