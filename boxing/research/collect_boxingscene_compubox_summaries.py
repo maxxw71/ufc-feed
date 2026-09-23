@@ -628,6 +628,63 @@ def parse_prefight_baselines(text,a,b):
         rx=re.compile(p+r'[^.!?]{0,100}?landed\s+(\d+(?:\.\d+)?)\s+power\s+(?:punches|shots)\s+per\s+round',re.I)
         for m in rx.finditer(txt):setv(f,'power_landed_per_round',m.group(1))
 
+        # Historical-review articles sometimes give explicit career/recent
+        # aggregates without an N-fight window. Because this function is called
+        # only for verified historical-review mode, retain the stated metric,
+        # but it becomes usable only after article publication.
+
+        # "Crawford's +14.4 plus/minus rating" / "Lomachenko +20.9 rating".
+        rx=re.compile(
+            p+r"(?:['’]s)?[^.!?]{0,100}?\+\s*(\d+(?:\.\d+)?)\s+"
+            r"(?:compubox\s+)?plus\s*/?\s*minus(?:\s+rating)?",re.I)
+        for m in rx.finditer(txt):setv(f,'plus_minus_rating',m.group(1))
+        rx=re.compile(
+            p+r"(?:['’]s)?[^.!?]{0,100}?\+\s*(\d+(?:\.\d+)?)\s+rating",re.I)
+        for m in rx.finditer(txt):setv(f,'plus_minus_rating',m.group(1))
+
+        # "Crawford landed 47.9% of his power shots" / "Canelo ... 47.8%".
+        rx=re.compile(
+            p+r"[^.!?]{0,180}?landed\s+(\d+(?:\.\d+)?)%\s+of\s+"
+            r"(?:his|her)\s+power\s+(?:punches|shots)",re.I)
+        for m in rx.finditer(txt):setv(f,'power_accuracy_pct',m.group(1))
+
+        # "landed 31.4% of his punches" / "total connect pct 40.1%".
+        rx=re.compile(
+            p+r"[^.!?]{0,180}?landed\s+(\d+(?:\.\d+)?)%\s+of\s+"
+            r"(?:his|her)\s+(?:total\s+)?punches",re.I)
+        for m in rx.finditer(txt):setv(f,'total_accuracy_pct',m.group(1))
+        rx=re.compile(
+            p+r"[^.!?]{0,220}?(?:total\s+(?:conn\.?|connect)\s*(?:pct\.?|percentage)?|"
+            r"total\s+connect\s*%)\s*[:=-]?\s*(\d+(?:\.\d+)?)%",re.I)
+        for m in rx.finditer(txt):setv(f,'total_accuracy_pct',m.group(1))
+
+        # Explicit historical per-round production.
+        rx=re.compile(
+            p+r"[^.!?]{0,180}?landed\s+(\d+(?:\.\d+)?)\s+jabs?\s+per\s+round",re.I)
+        for m in rx.finditer(txt):setv(f,'jab_landed_per_round',m.group(1))
+        rx=re.compile(
+            p+r"[^.!?]{0,220}?(?:punches\s+landed\s+per\s+round|"
+            r"total\s+(?:connects?|landed)\s+per\s+round)\s*[:=-]?\s*(\d+(?:\.\d+)?)",re.I)
+        for m in rx.finditer(txt):setv(f,'total_landed_per_round',m.group(1))
+        rx=re.compile(
+            p+r"[^.!?]{0,160}?(?:avg\.?d?|averaged)\s+(?:just\s+)?"
+            r"(\d+(?:\.\d+)?)\s+(?:punches\s+)?(?:thrown\s+)?per\s+round",re.I)
+        for m in rx.finditer(txt):setv(f,'total_thrown_per_round',m.group(1))
+
+        # Explicit opponent-history defense rates.
+        rx=re.compile(
+            p+r"(?:['’]s)?\s+opponents?[^.!?]{0,120}?(?:landed|land)\s+"
+            r"(?:just\s+)?(\d+(?:\.\d+)?)\s+(?:total\s+)?punches?\s+per\s+round",re.I)
+        for m in rx.finditer(txt):setv(f,'opponent_total_landed_per_round',m.group(1))
+        rx=re.compile(
+            p+r"(?:['’]s)?\s+opponents?[^.!?]{0,120}?(?:landed|land)\s+"
+            r"(?:just\s+)?(\d+(?:\.\d+)?)\s+power\s+(?:punches|shots)\s+per\s+round",re.I)
+        for m in rx.finditer(txt):setv(f,'opponent_power_landed_per_round',m.group(1))
+        rx=re.compile(
+            p+r"(?:['’]s)?\s+opponents?[^.!?]{0,140}?landed\s+"
+            r"(\d+(?:\.\d+)?)%\s+of\s+(?:their\s+)?(?:total\s+)?punches",re.I)
+        for m in rx.finditer(txt):setv(f,'opponent_total_accuracy_pct',m.group(1))
+
         # "Pacquiao's opponents landed 33% of their power shots."
         rx=re.compile(
             p+r"['’]s\s+opponents?[^.!?]{0,100}?landed\s+(\d+(?:\.\d+)?)%\s+of\s+"
