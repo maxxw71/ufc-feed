@@ -33,7 +33,9 @@ def ranking(org):
             v=str(d.get(key) or '')
             if len(v)>=10 and v[:4].isdigit():
                 dates.append(v[:10]);break
-    years=x.get('years') or sorted({int(d.get('year')) for d in docs if str(d.get('year') or '').isdigit()})\n    if not years and dates:\n        years=sorted({int(v[:4]) for v in dates if v[:4].isdigit()})
+    years=x.get('years') or sorted({int(d.get('year')) for d in docs if str(d.get('year') or '').isdigit()})
+    if not years and dates:
+        years=sorted({int(v[:4]) for v in dates if v[:4].isdigit()})
     return {
       'ranking_rows':x.get('ranking_rows'),
       'champion_rows':x.get('champion_rows'),
@@ -49,7 +51,8 @@ def ranking(org):
 gap=load(PHASE2/'PROFILE_GAP_AUDIT.json')
 cov=load(PHASE2/'coverage.json')
 punch=load(PHASE2/'punch_profile_coverage.json')
-summary=load(PUNCH/'boxingscene_compubox_summary_report.json')\narchived_summary=load(PUNCH/'archived_compubox_summary_report.json')
+summary=load(PUNCH/'boxingscene_compubox_summary_report.json')
+archived_summary=load(PUNCH/'archived_compubox_summary_report.json')
 reach=load(PROFILE/'cross_source_reach_report.json')
 pros=load(ODDS/'coverage.json')
 settle=load(ODDS/'settled_bouts.json')
@@ -102,7 +105,11 @@ out={
     'summary_distinct_bouts':summary.get('distinct_bouts'),
     'prefight_baseline_rows':summary.get('prefight_historical_baseline_rows'),
     'prefight_baseline_bouts':summary.get('prefight_historical_baseline_bouts'),
-    'explicit_full_stat_targets':summary.get('explicit_full_stat_target_count'),\n    'archived_compubox_summary_rows':archived_summary.get('merged_fighter_rows'),\n    'archived_compubox_summary_bouts':archived_summary.get('distinct_bouts'),\n    'archived_compubox_summary_date_min':archived_summary.get('date_min'),\n    'archived_compubox_summary_date_max':archived_summary.get('date_max'),
+    'explicit_full_stat_targets':summary.get('explicit_full_stat_target_count'),
+    'archived_compubox_summary_rows':archived_summary.get('merged_fighter_rows'),
+    'archived_compubox_summary_bouts':archived_summary.get('distinct_bouts'),
+    'archived_compubox_summary_date_min':archived_summary.get('date_min'),
+    'archived_compubox_summary_date_max':archived_summary.get('date_max'),
     'latest_cross_source_reach_backfill':{
       'generated_at':reach.get('generated_at'),'targets':reach.get('targets'),
       'accepted':reach.get('accepted'),'policy':reach.get('policy')
