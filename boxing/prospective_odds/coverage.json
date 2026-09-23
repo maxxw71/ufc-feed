@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-23T19:42:20.883720+00:00",
+  "generated_at": "2026-09-23T20:05:51.358729+00:00",
   "snapshot_records": 42,
   "raw_quote_observations": 11872,
   "verified_pre_event_quote_observations": 2336,
@@ -16,13 +16,13 @@
     "Unibet"
   ],
   "sportsbook_bouts_with_two_sided_latest_quotes": 56,
-  "settled_verified_bouts": 0,
-  "settled_verified_sportsbook_bouts": 0,
-  "past_unresolved_bouts": 2,
-  "past_unresolved_sportsbook_bouts": 1,
+  "settled_verified_bouts": 1,
+  "settled_verified_sportsbook_bouts": 1,
+  "past_unresolved_bouts": 1,
+  "past_unresolved_sportsbook_bouts": 0,
   "future_or_today_bouts": 55,
   "future_or_today_sportsbook_bouts": 55,
   "date_min": "2026-09-20",
   "date_max": "2026-12-31",
-  "policy": "Only originally timestamped pre-event quotes are eligible; results require exact date+pair and unanimous matching finished source rows. Sportsbook and prediction-market observations are reported separately. For sportsbook validation, opening=first verified observation and latest=last verified observation before listed event start/date; consensus latest is the median of each sportsbook latest observation, never a retrospectively chosen price."
+  "policy": "Only originally timestamped pre-event quotes are eligible; results require exact date+pair and either unanimous matching finished source rows or a strict manual supplement with at least two independent published result sources. Sportsbook and prediction-market observations are reported separately. For sportsbook validation, opening=first verified observation and latest=last verified observation before listed event start/date; consensus latest is the median of each sportsbook latest observation, never a retrospectively chosen price."
 }
