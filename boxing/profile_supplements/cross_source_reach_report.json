@@ -1,0 +1,105 @@
+{
+  "generated_at": "2026-09-23T12:44:10.565970+00:00",
+  "targets": 287,
+  "unique_pairs": 105,
+  "fetched_pairs": 105,
+  "accepted": 5,
+  "missing_mb_url": 175,
+  "missing_rtf_url": 0,
+  "ambiguous_url": 7,
+  "missing_mb_reach": 0,
+  "missing_rtf_reach": 94,
+  "identity_mismatch": 1,
+  "reach_conflict": 5,
+  "fetch_error": 0,
+  "martialbot_exact_keys": 2151,
+  "rtf_english_urls": 265444,
+  "rtf_exact_keys": 127885,
+  "rtf_sitemaps": [
+    {
+      "url": "https://rtfight.com/sitemaps/en-profiles-1.xml",
+      "loc_count": 46000
+    },
+    {
+      "url": "https://rtfight.com/sitemaps/en-profiles-2.xml",
+      "loc_count": 46000
+    },
+    {
+      "url": "https://rtfight.com/sitemaps/en-profiles-3.xml",
+      "loc_count": 46000
+    },
+    {
+      "url": "https://rtfight.com/sitemaps/en-profiles-4.xml",
+      "loc_count": 46000
+    },
+    {
+      "url": "https://rtfight.com/sitemaps/en-profiles-5.xml",
+      "loc_count": 46000
+    },
+    {
+      "url": "https://rtfight.com/sitemaps/en-profiles-6.xml",
+      "loc_count": 35444
+    }
+  ],
+  "accepted_profiles": [
+    {
+      "name": "Endry Saavedra",
+      "reach_cm": 188
+    },
+    {
+      "name": "Huseyin Cinkara",
+      "reach_cm": 190
+    },
+    {
+      "name": "Rene Mark Cuarto",
+      "reach_cm": 157
+    },
+    {
+      "name": "Floyd Masson",
+      "reach_cm": 203
+    },
+    {
+      "name": "Maxim Prodan",
+      "reach_cm": 173
+    }
+  ],
+  "rejects_sample": [
+    {
+      "name": "Shannon O'Connell",
+      "reason": "reach_conflict",
+      "mb": 165.0,
+      "rtf": 159.0
+    },
+    {
+      "name": "Ellie Scotney",
+      "reason": "identity",
+      "mb_h1": "# 2 Ellie Scotney",
+      "rtf_h1": "Ellie Scotney"
+    },
+    {
+      "name": "Sho Ishida",
+      "reason": "reach_conflict",
+      "mb": 173.0,
+      "rtf": 177.0
+    },
+    {
+      "name": "Conor Wallace",
+      "reason": "reach_conflict",
+      "mb": 192.0,
+      "rtf": 174.0
+    },
+    {
+      "name": "Joel Julio",
+      "reason": "reach_conflict",
+      "mb": 178.0,
+      "rtf": 183.0
+    },
+    {
+      "name": "Uisma Lima",
+      "reason": "reach_conflict",
+      "mb": 187.0,
+      "rtf": 180.0
+    }
+  ],
+  "policy": "Unique exact-name URL on both sources; exact H1 on both; both numeric reaches; <=1 cm agreement; missing reach only; never overwrite."
+}
