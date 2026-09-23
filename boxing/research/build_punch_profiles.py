@@ -173,6 +173,50 @@ def fight_observations(reports):
     return rows
 
 
+def load_total_supplement_observations():
+    path=Path(__file__).resolve().parent.parent/'punch_supplements'/'ready_to_fight_punch_observations.jsonl'
+    if not path.exists():return []
+    rows=[]
+    for line in path.read_text().splitlines():
+        if not line.strip():continue
+        try:r=json.loads(line)
+        except Exception:continue
+        if r.get('source_quality')!='structured_fight_total_table_ready_to_fight':continue
+        if not r.get('bout_date') or not r.get('fighter_key') or not r.get('opponent_key'):continue
+        if not r.get('rounds_observed'):continue
+        rows.append(r)
+    # Require reciprocal two-sided observations for every supplement fight.
+    grouped=defaultdict(list)
+    for r in rows:
+        key=(r['bout_date'],r.get('report_url') or '',tuple(sorted([r['fighter_key'],r['opponent_key']])))
+        grouped[key].append(r)
+    out=[]
+    for key,items in grouped.items():
+        if len(items)!=2:continue
+        a,b=items
+        if a['fighter_key']!=b['opponent_key'] or a['opponent_key']!=b['fighter_key']:continue
+        out.extend(items)
+    return out
+
+def merge_observation_tiers(round_rows,total_rows):
+    """Prefer round-level observations when the same exact date+pair exists."""
+    strong=set()
+    for r in round_rows:
+        if not r.get('fighter_key') or not r.get('opponent_key'):continue
+        strong.add((r['bout_date'],tuple(sorted([r['fighter_key'],r['opponent_key']]))))
+    out=list(round_rows);accepted=0;skipped=0
+    grouped=defaultdict(list)
+    for r in total_rows:
+        grouped[(r['bout_date'],tuple(sorted([r['fighter_key'],r['opponent_key']])))] .append(r)
+    for key,items in sorted(grouped.items()):
+        if key in strong:
+            skipped+=len(items);continue
+        if len(items)!=2:
+            skipped+=len(items);continue
+        out.extend(items);accepted+=len(items)
+    return out,accepted,skipped
+
+
 def weighted(history,key,weight='rounds_observed',limit=None):
     rows=history[-limit:] if limit else history
     vals=[(r.get(key),r.get(weight)) for r in rows if r.get(key) is not None and r.get(weight)]
@@ -216,7 +260,11 @@ def main():
     args=ap.parse_args()
     dbpath=Path(args.db);out=Path(args.out) if args.out else dbpath.resolve().parent/'punch_profiles';out.mkdir(parents=True,exist_ok=True)
     db=sqlite3.connect(dbpath)
-    reports=load_reports(db);obs=fight_observations(reports);snaps=pre_fight_profiles(obs)
+    reports=load_reports(db)
+    round_obs=fight_observations(reports)
+    total_obs=load_total_supplement_observations()
+    obs,supplement_obs_accepted,supplement_obs_skipped=merge_observation_tiers(round_obs,total_obs)
+    snaps=pre_fight_profiles(obs)
     with (out/'fight_punch_observations.jsonl').open('w') as f:
         for row in obs:f.write(json.dumps(row,sort_keys=True)+'\n')
     with (out/'prefight_punch_profiles.jsonl').open('w') as f:
@@ -227,10 +275,16 @@ def main():
         'resolved_full_identity_reports':sum(len(r.get('identity_map',{}))==2 for r in reports),
         'duplicate_source_variants_collapsed':sum(max(0,int(r.get('variant_count',1))-1) for r in reports),
         'fighter_fight_observations':len(obs),
+        'round_level_fighter_observations':len(round_obs),
+        'fight_total_supplement_observations_loaded':len(total_obs),
+        'fight_total_supplement_observations_accepted':supplement_obs_accepted,
+        'fight_total_supplement_observations_skipped_due_to_stronger_or_invalid_pair':supplement_obs_skipped,
+        'fight_total_supplement_fights_accepted':supplement_obs_accepted//2,
+        'source_quality_counts':dict(__import__('collections').Counter(r.get('source_quality') or 'unknown' for r in obs)),
         'prefight_snapshots':len(snaps),
         'fighters_with_any_prior_punch_fight':len({r['fighter_key'] for r in snaps if r['prior_punch_fights']>0}),
         'snapshots_with_3plus_prior_punch_fights':sum(r['prior_punch_fights']>=3 for r in snaps),
-        'date_min':min((r['date'] for r in reports),default=None),'date_max':max((r['date'] for r in reports),default=None),
+        'date_min':min((r['bout_date'] for r in obs),default=None),'date_max':max((r['bout_date'] for r in obs),default=None),
         'leakage_policy':'snapshot before current report update; same-report sides frozen together',
         'avoidance_definition':'100 - opponent connect percentage; not literal slips/blocks/parries',
     }
