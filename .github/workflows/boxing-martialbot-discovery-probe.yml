@@ -1,0 +1,21 @@
+name: Boxing MartialBot Discovery Probe
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'boxing/research/probe_martialbot_discovery.py'
+      - '.github/workflows/boxing-martialbot-discovery-probe.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install -q beautifulsoup4 lxml
+      - run: python boxing/research/probe_martialbot_discovery.py
