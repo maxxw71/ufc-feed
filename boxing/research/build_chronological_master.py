@@ -238,6 +238,7 @@ def load_punch_summary_history():
     paths=[
       ROOT.parent/'punch_supplements'/'boxingscene_compubox_summaries.jsonl',
       ROOT.parent/'punch_supplements'/'archived_compubox_summaries.jsonl',
+      ROOT.parent/'punch_supplements'/'ring_compubox_summaries.jsonl',
     ]
     hist=collections.defaultdict(list)
     for path in paths:
