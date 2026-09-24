@@ -25,7 +25,7 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
-ROOT=Path.home()/'ufc-predictor-v1'
+ROOT=Path('/home/anestishkurti92/ufc-predictor-v1')
 STATE=ROOT/'auto_research'/'state'
 PDB=STATE/'prospective_ufc.sqlite3'
 DB=STATE/'shadow_tracker.sqlite3'
