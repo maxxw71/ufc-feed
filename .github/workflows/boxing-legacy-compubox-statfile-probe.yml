@@ -54,7 +54,32 @@ jobs:
                   item['total_rows']=d.execute("select count(*) from fight_punch_totals where report_url=?",(pr['url'],)).fetchone()[0]
                   normalized.append(item)
           d.close()
-          out={'matching_payloads':len(rows),'rows':rows,'normalized_punch_reports':normalized}
+          normalized_urls={x['url'] for x in normalized}
+          table_candidates=[]
+          for r in d.execute("select source_id,data from source_rows where source='external_evidence' and kind='punch' order by source_id"):
+              url=str(r['source_id'] or '')
+              low=url.lower()
+              if 'web.archive.org' not in low or 'compuboxonline.com' not in low or '*' in url:
+                  continue
+              if url in normalized_urls:
+                  continue
+              try:p=json.loads(r['data'])
+              except Exception:continue
+              tabs=p.get('tables') or []
+              substantial=[t for t in tabs if len(t)>=4 and max([len(rr) for rr in t] or [0])>=4]
+              if not substantial:
+                  continue
+              table_candidates.append({
+                'url':url,'title':p.get('title'),
+                'paragraphs':(p.get('relevant_paragraphs') or [])[:6],
+                'table_count':len(tabs),
+                'substantial_table_shapes':[[len(t),max([len(rr) for rr in t] or [0])] for t in substantial],
+                'substantial_table_previews':[t[:8] for t in substantial[:4]],
+                'stat_links':(p.get('stat_links') or [])[:30]
+              })
+          d.close()
+          out={'matching_payloads':len(rows),'rows':rows,'normalized_punch_reports':normalized,
+               'unparsed_substantial_table_candidates':table_candidates}
           path=Path('boxing/public_punch_audit/legacy_compubox_statfile_probe.json')
           path.parent.mkdir(parents=True,exist_ok=True)
           path.write_text(json.dumps(out,indent=2,ensure_ascii=False))
