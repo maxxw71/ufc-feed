@@ -101,6 +101,20 @@ def parse_summary_metrics(text,a,b):
                         setv(fighter,'power_landed',m.group(1))
                         setv(opponent,'power_landed',m.group(2))
 
+        # Direct subject construction: "Fighter landed 47 power shots (54%)."
+        # The fighter name must own the finite verb; do not infer from an
+        # opponent mention followed by a trailing participial "landing" clause.
+        for fighter,opponent in ((a,b),(b,a)):
+            for fa in aliases(fighter):
+                m=re.search(
+                    r'(?<![A-Za-z0-9])'+re.escape(fa)+
+                    r"(?![A-Za-z0-9])(?:['’]s)?[^.!?]{0,70}?\blanded\s+"
+                    r'(\d{1,4})\s+power\s+shots?\s*\((\d+(?:\.\d+)?)%\)',
+                    sentence,re.I)
+                if m:
+                    setv(fighter,'power_landed',m.group(1))
+                    setv(fighter,'power_accuracy_pct',m.group(2))
+
         # Narrow subject-verb-object construction:
         # "Cotto ... mugged Rodriguez, landing 47 power shots (54%)."
         for fighter,opponent in ((a,b),(b,a)):
@@ -169,15 +183,6 @@ def parse_summary_metrics(text,a,b):
                     r'(\d+(?:\.\d+)?)\s+thrown\s+per\s+round',
                     seg,re.I)
                 if m:setv(fighter,'total_thrown_per_round',m.group(1))
-
-                # "Cotto ... landing 47 power shots (54%)"
-                m=re.search(
-                    r'(?:landed|landing)\s+(\d{1,4})\s+power\s+shots?\s*'
-                    r'\((\d+(?:\.\d+)?)%\)',
-                    seg,re.I)
-                if m:
-                    setv(fighter,'power_landed',m.group(1))
-                    setv(fighter,'power_accuracy_pct',m.group(2))
 
                 # "27 of Cotto's 55 landed punches were to the body"
                 for fa in aliases(fighter):
