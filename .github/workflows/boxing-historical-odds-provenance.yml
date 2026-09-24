@@ -1,0 +1,35 @@
+name: Boxing historical odds provenance audit
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'boxing/research/audit_historical_odds_provenance.py'
+      - '.github/workflows/boxing-historical-odds-provenance.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  audit:
+    runs-on: [self-hosted, Linux, X64, appwiza]
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+        with: {fetch-depth: 0}
+      - run: python3 boxing/research/audit_historical_odds_provenance.py
+      - name: Persist provenance audit on latest main
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          cp boxing/public_reports/HISTORICAL_ODDS_PROVENANCE_AUDIT.json /tmp/HISTORICAL_ODDS_PROVENANCE_AUDIT.json
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git fetch origin main
+          git reset --hard origin/main
+          cp /tmp/HISTORICAL_ODDS_PROVENANCE_AUDIT.json boxing/public_reports/HISTORICAL_ODDS_PROVENANCE_AUDIT.json
+          git add boxing/public_reports/HISTORICAL_ODDS_PROVENANCE_AUDIT.json
+          if git diff --cached --quiet; then
+            echo 'No historical odds provenance changes.'
+          else
+            git commit -m 'Publish historical boxing odds provenance audit'
+            git push origin HEAD:main
+          fi
