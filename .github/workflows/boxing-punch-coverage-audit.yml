@@ -38,6 +38,22 @@ jobs:
               count=db.execute(f'select count(*) from {name}').fetchone()[0]
               sample=[dict(r) for r in db.execute(f'select * from {name} limit 3')]
               out['tables'][name]={'rows':count,'columns':[c['name'] for c in cols],'sample':sample}
+          # Publish the exact normalized full-report inventory so future
+          # punch-depth work can target missing eras instead of probing blindly.
+          out['parsed_report_inventory']=[]
+          if 'punch_reports' in out['tables']:
+              prcols=set(out['tables']['punch_reports']['columns'])
+              urlcol='url' if 'url' in prcols else ('report_url' if 'report_url' in prcols else None)
+              if urlcol:
+                  sql=f"select * from punch_reports where status='parsed' order by bout_date,{urlcol}"
+                  for pr in db.execute(sql):
+                      item=dict(pr);url=str(item.get(urlcol) or '')
+                      item['round_rows']=db.execute("select count(*) from round_punches where report_url=?",(url,)).fetchone()[0] if 'round_punches' in out['tables'] else 0
+                      item['total_rows']=db.execute("select count(*) from fight_punch_totals where report_url=?",(url,)).fetchone()[0] if 'fight_punch_totals' in out['tables'] else 0
+                      if 'round_punches' in out['tables']:
+                          item['round_categories']=[r[0] for r in db.execute("select distinct category from round_punches where report_url=? order by category",(url,)) if r[0]]
+                          item['round_fighters']=[r[0] for r in db.execute("select distinct fighter from round_punches where report_url=? order by fighter",(url,)) if r[0]]
+                      out['parsed_report_inventory'].append(item)
           # Date/identity coverage where columns permit it.
           for name,meta in out['tables'].items():
               cols=set(meta['columns']);extra={}
