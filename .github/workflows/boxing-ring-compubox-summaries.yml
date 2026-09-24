@@ -1,0 +1,47 @@
+name: Boxing Ring CompuBox Summary Archive
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'boxing/research/collect_ring_compubox_summaries.py'
+      - 'boxing/research/ring_compubox_seed_urls.json'
+      - '.github/workflows/boxing-ring-compubox-summaries.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  collect:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+        with: {fetch-depth: 0}
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.12'}
+      - run: python -m pip install -q beautifulsoup4 lxml
+      - name: Download current public boxing research DB
+        run: |
+          python - <<'PY'
+          import io,zipfile,urllib.request,os,shutil
+          u='https://appwiza.com/sports/downloads/boxing/research-database.zip'
+          req=urllib.request.Request(u,headers={'User-Agent':'Mozilla/5.0 AppwizaRingCompuBox/1.0'})
+          with urllib.request.urlopen(req,timeout=180) as r:data=r.read()
+          with zipfile.ZipFile(io.BytesIO(data)) as z:z.extractall('/tmp/ring-compubox-db')
+          db=next(os.path.join(root,f) for root,_,fs in os.walk('/tmp/ring-compubox-db') for f in fs if f.endswith('.sqlite3'))
+          shutil.copy2(db,'boxing/research/boxing.sqlite3')
+          PY
+      - run: python boxing/research/collect_ring_compubox_summaries.py
+      - if: always()
+        run: rm -f boxing/research/boxing.sqlite3
+      - name: Persist Ring summary archive
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add boxing/punch_supplements/ring_compubox_summaries.jsonl boxing/punch_supplements/ring_compubox_summary_report.json
+          if git diff --cached --quiet; then
+            echo 'No Ring CompuBox summary changes.'
+          else
+            git commit -m 'Expand modern CompuBox summary archive'
+            git pull --rebase origin main
+            git push
+          fi
