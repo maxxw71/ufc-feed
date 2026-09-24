@@ -127,11 +127,129 @@ def load_reports(db):
         if chosen:out.append(chosen)
     return out
 
+def reviewed_chart_metadata():
+    path=Path(__file__).resolve().parent.parent/'punch_supplements'/'reviewed_round_chart_metadata.json'
+    if not path.exists():return {}
+    try:
+        obj=json.loads(path.read_text())
+    except Exception:
+        return {}
+    return obj.get('charts') or {}
+
+
+def load_reviewed_chart_reports(db,metadata=None):
+    """Load only explicitly whitelisted, arithmetic-verified round charts."""
+    t=tables(db)
+    if not {'reviewed_round_charts','reviewed_chart_rounds'}<=t:
+        return []
+    metadata=reviewed_chart_metadata() if metadata is None else metadata
+    if not metadata:return []
+    out=[]
+    rows=db.execute(
+        "select source_url,bout_date,fighters_json,quality,totals_json "
+        "from reviewed_round_charts where bout_date is not null order by bout_date,source_url"
+    ).fetchall()
+    for source_url,bout_date,fighters_json,quality,totals_json in rows:
+        meta=metadata.get(source_url)
+        if not meta:continue
+        required=meta.get('required_db_quality') or []
+        if any(str(x) not in str(quality or '') for x in required):continue
+        available=str(meta.get('available_from_date') or '')
+        try:
+            __import__('datetime').date.fromisoformat(str(bout_date))
+            __import__('datetime').date.fromisoformat(available)
+        except Exception:
+            continue
+        try:
+            fighters=json.loads(fighters_json)
+            totals=json.loads(totals_json or '{}')
+        except Exception:
+            continue
+        if not isinstance(fighters,list) or len(fighters)!=2:continue
+        fighters=[str(x).strip() for x in fighters]
+        if any(len(re.findall(r"[A-Za-zÀ-ÿ0-9'-]+",x))<2 for x in fighters):continue
+        if len({norm_name(x) for x in fighters})!=2:continue
+
+        rrows=db.execute(
+            "select fighter,round,category,landed,thrown from reviewed_chart_rounds "
+            "where source_url=? order by round,category,fighter",(source_url,)
+        ).fetchall()
+        by=defaultdict(dict);valid=True
+        for fighter,rnd,cat,landed,thrown in rrows:
+            if fighter not in fighters or cat not in CATEGORIES or landed is None or thrown is None:
+                continue
+            try:
+                rnd=int(rnd);landed=int(landed);thrown=int(thrown)
+            except Exception:
+                valid=False;break
+            if rnd<1 or landed<0 or thrown<0 or landed>thrown:
+                valid=False;break
+            by[fighter][(rnd,cat)]=(landed,thrown)
+        if not valid:continue
+
+        round_sets=[]
+        for fighter in fighters:
+            for cat in CATEGORIES:
+                rs={rnd for (rnd,c) in by[fighter] if c==cat}
+                if not rs:
+                    valid=False;break
+                round_sets.append(rs)
+            if not valid:break
+        if not valid or len({tuple(sorted(x)) for x in round_sets})!=1:continue
+        common=sorted(round_sets[0])
+        if common!=list(range(1,max(common)+1)):continue
+
+        for fighter in fighters:
+            ft=totals.get(fighter)
+            if not isinstance(ft,dict):
+                valid=False;break
+            for cat in CATEGORIES:
+                tv=ft.get(cat)
+                if not isinstance(tv,list) or len(tv)<2:
+                    valid=False;break
+                landed=sum(by[fighter][(rnd,cat)][0] for rnd in common)
+                thrown=sum(by[fighter][(rnd,cat)][1] for rnd in common)
+                try:expected_landed=int(tv[0]);expected_thrown=int(tv[1])
+                except Exception:
+                    valid=False;break
+                if (landed,thrown)!=(expected_landed,expected_thrown):
+                    valid=False;break
+            if not valid:break
+        if not valid:continue
+
+        out.append({
+          'url':source_url,'report_id':'reviewed:'+source_url,'date':str(bout_date),
+          'available_from_date':available,
+          'title':f'{fighters[0]} vs {fighters[1]} reviewed CompuBox chart',
+          'fighters':fighters,'identity_map':{x:x for x in fighters},
+          'by':by,'rounds':common,'totals':{},'variant_count':1,
+          'source_quality':'publisher_reproduced_compubox_round_chart'
+        })
+    return out
+
+
+def report_pair_key(report):
+    identities=report.get('identity_map') or {}
+    vals=[identities.get(x) for x in report.get('fighters') or []]
+    if len(vals)!=2 or not all(vals):return None
+    return (report.get('date'),tuple(sorted(norm_name(x) for x in vals)))
+
+
+def merge_round_report_tiers(direct_reports,reviewed_reports):
+    """Direct/archived CompuBox tables outrank publisher-reproduced charts."""
+    strong={report_pair_key(r) for r in direct_reports}
+    strong.discard(None)
+    accepted=[r for r in reviewed_reports if report_pair_key(r) not in strong]
+    skipped=len(reviewed_reports)-len(accepted)
+    return list(direct_reports)+accepted,len(accepted),skipped
+
+
 def summarize_side(report,fighter,opponent):
     by=report['by'];rounds=report['rounds']
     full=report.get('identity_map',{}).get(fighter)
     opp_full=report.get('identity_map',{}).get(opponent)
     result={'report_url':report['url'],'report_id':report.get('report_id'),'bout_date':report['date'],'report_title':report['title'],
+            'available_from_date':report.get('available_from_date'),
             'fighter_label':fighter,'fighter_full_name':full,'fighter_key':norm_name(full) if full else None,
             'opponent_label':opponent,'opponent_full_name':opp_full,'opponent_key':norm_name(opp_full) if opp_full else None,
             'identity_quality':'report_title_full_name_suffix_match' if full and opp_full else 'unresolved_report_label',
@@ -159,7 +277,7 @@ def summarize_side(report,fighter,opponent):
     ft=report['totals'].get((report['url'],fighter,'total'))
     result['body_landed']=ft.get('body_landed') if ft else None
     result['body_landed_share_pct']=pct(div(result['body_landed'],ft.get('landed'))) if ft and ft.get('landed') and result['body_landed'] is not None else None
-    result['source_quality']='observed_round_table'
+    result['source_quality']=report.get('source_quality') or 'observed_round_table'
     result['round_edge_note']='punch-count edge only; not a judge score or inferred 10-9 round'
     result['avoidance_note']='100 - opponent connect%; proxy only, not literal evasion tracking'
     return result
@@ -225,16 +343,29 @@ def weighted(history,key,weight='rounds_observed',limit=None):
 
 
 def pre_fight_profiles(observations):
-    history=defaultdict(list);snapshots=[]
+    """Build snapshots using only observations provably available before date D."""
+    snapshots=[]
+    history_by_fighter=defaultdict(list)
+    for row in observations:
+        if row.get('fighter_key'):
+            history_by_fighter[row['fighter_key']].append(row)
+    for key in history_by_fighter:
+        history_by_fighter[key].sort(
+            key=lambda r:(r.get('bout_date') or '',r.get('available_from_date') or r.get('bout_date') or '',r.get('report_url') or '')
+        )
+
     grouped=defaultdict(list)
-    for row in observations:grouped[(row['bout_date'],row['report_url'])].append(row)
+    for row in observations:
+        grouped[(row['bout_date'],row['report_url'])].append(row)
     for (date,url),fight_rows in sorted(grouped.items()):
-        # Freeze same-day state: every snapshot is created before any side from this report is added.
-        pending=[]
         for row in fight_rows:
             if not row.get('fighter_key'):
                 continue
-            h=history[row['fighter_key']]
+            h=[
+              x for x in history_by_fighter[row['fighter_key']]
+              if x.get('bout_date') and x['bout_date']<date
+              and (x.get('available_from_date') or x['bout_date'])<date
+            ]
             snap={'bout_date':date,'report_url':url,'fighter_key':row['fighter_key'],'fighter_label':row['fighter_label'],
                   'fighter_full_name':row.get('fighter_full_name'),'opponent_key':row.get('opponent_key'),
                   'opponent_label':row['opponent_label'],'opponent_full_name':row.get('opponent_full_name'),
@@ -248,8 +379,7 @@ def pre_fight_profiles(observations):
                     snap['last5_'+key]=weighted(h,key,limit=5)
             snap['career_body_landed_share_pct']=weighted(h,'body_landed_share_pct')
             snap['last3_body_landed_share_pct']=weighted(h,'body_landed_share_pct',limit=3)
-            snapshots.append(snap);pending.append(row)
-        for row in pending:history[row['fighter_key']].append(row)
+            snapshots.append(snap)
     return snapshots
 
 
@@ -260,7 +390,9 @@ def main():
     args=ap.parse_args()
     dbpath=Path(args.db);out=Path(args.out) if args.out else dbpath.resolve().parent/'punch_profiles';out.mkdir(parents=True,exist_ok=True)
     db=sqlite3.connect(dbpath)
-    reports=load_reports(db)
+    direct_reports=load_reports(db)
+    reviewed_reports=load_reviewed_chart_reports(db)
+    reports,reviewed_reports_accepted,reviewed_reports_skipped=merge_round_report_tiers(direct_reports,reviewed_reports)
     round_obs=fight_observations(reports)
     total_obs=load_total_supplement_observations()
     obs,supplement_obs_accepted,supplement_obs_skipped=merge_observation_tiers(round_obs,total_obs)
@@ -271,6 +403,10 @@ def main():
         for row in snaps:f.write(json.dumps(row,sort_keys=True)+'\n')
     coverage={
         'parsed_reports_with_two_sides':len(reports),
+        'direct_round_reports':len(direct_reports),
+        'reviewed_chart_reports_loaded':len(reviewed_reports),
+        'reviewed_chart_reports_accepted':reviewed_reports_accepted,
+        'reviewed_chart_reports_skipped_due_to_stronger_pair':reviewed_reports_skipped,
         'unique_report_ids':len({r.get('report_id') for r in reports}),
         'resolved_full_identity_reports':sum(len(r.get('identity_map',{}))==2 for r in reports),
         'duplicate_source_variants_collapsed':sum(max(0,int(r.get('variant_count',1))-1) for r in reports),
@@ -285,7 +421,7 @@ def main():
         'fighters_with_any_prior_punch_fight':len({r['fighter_key'] for r in snaps if r['prior_punch_fights']>0}),
         'snapshots_with_3plus_prior_punch_fights':sum(r['prior_punch_fights']>=3 for r in snaps),
         'date_min':min((r['bout_date'] for r in obs),default=None),'date_max':max((r['bout_date'] for r in obs),default=None),
-        'leakage_policy':'snapshot before current report update; same-report sides frozen together',
+        'leakage_policy':'historical observations require bout_date < target date and available_from_date (or bout_date) < target date; strict same-day exclusion',
         'avoidance_definition':'100 - opponent connect percentage; not literal slips/blocks/parries',
     }
     (out/'coverage.json').write_text(json.dumps(coverage,indent=2))
