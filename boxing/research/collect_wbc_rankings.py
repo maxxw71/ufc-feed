@@ -139,6 +139,14 @@ def archive_capture_date(url):
     except ValueError:return None
 
 def fetch_pdf(y,month):
+    # One older official document remains directly indexed by WBC. Treat the
+    # December-2022 / January-2023 combined sheet as the January 2023 rating
+    # period and keep the existing next-month effective-date rule (2023-02-01).
+    if (y,month)==(2023,'JANUARY'):
+      known='https://wbcboxing.com/mailing/2023/ratings_pdf/WBC%20RATINGS%20DECEMBER%202022%20%20-%20%20JANUARY%202023.pdf'
+      final,data=_curl_pdf(known)
+      if data:return final,data
+
     # Historical WBC endpoints for 2023-2024 are Cloudflare-blocked from the
     # collector. Only use explicitly verified official Wayback captures there;
     # do not waste time retrying known-blocked direct URLs.
