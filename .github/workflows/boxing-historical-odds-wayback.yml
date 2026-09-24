@@ -1,0 +1,35 @@
+name: Boxing historical odds Wayback pilot
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'boxing/research/probe_historical_odds_wayback.py'
+      - '.github/workflows/boxing-historical-odds-wayback.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  probe:
+    runs-on: [self-hosted, Linux, X64, appwiza]
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with: {fetch-depth: 0}
+      - run: python3 boxing/research/probe_historical_odds_wayback.py
+      - name: Persist pilot
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          cp boxing/public_reports/HISTORICAL_ODDS_WAYBACK_PILOT.json /tmp/HISTORICAL_ODDS_WAYBACK_PILOT.json
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git fetch origin main
+          git reset --hard origin/main
+          cp /tmp/HISTORICAL_ODDS_WAYBACK_PILOT.json boxing/public_reports/HISTORICAL_ODDS_WAYBACK_PILOT.json
+          git add boxing/public_reports/HISTORICAL_ODDS_WAYBACK_PILOT.json
+          if git diff --cached --quiet; then
+            echo 'No historical odds Wayback pilot changes.'
+          else
+            git commit -m 'Publish historical boxing odds Wayback pilot'
+            git push origin HEAD:main
+          fi
