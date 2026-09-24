@@ -1,0 +1,64 @@
+name: UFC Frozen Shadow Tracker
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/ufc_shadow_tracker.py'
+      - '.github/workflows/ufc-shadow-tracker-live.yml'
+  workflow_dispatch:
+
+concurrency:
+  group: ufc-frozen-shadow-tracker
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  install:
+    runs-on: [self-hosted, Linux, X64, appwiza]
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with: {fetch-depth: 0}
+      - name: Install isolated prospective shadow tracker
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          ROOT=/home/anestishkurti92/ufc-predictor-v1
+          test -x "$ROOT/venv/bin/python"
+          test -f "$ROOT/ufc_feature_expansion.py"
+          test -f "$ROOT/auto_research/state/prospective_ufc.sqlite3"
+          cp "$GITHUB_WORKSPACE/scripts/ufc_shadow_tracker.py" "$ROOT/ufc_shadow_tracker.py.new"
+          chmod 0700 "$ROOT/ufc_shadow_tracker.py.new"
+          mv -f "$ROOT/ufc_shadow_tracker.py.new" "$ROOT/ufc_shadow_tracker.py"
+          cd "$ROOT"
+          venv/bin/python -m py_compile ufc_shadow_tracker.py
+          venv/bin/python ufc_shadow_tracker.py run
+          echo '=== SHADOW TRACKER STATE ==='
+          venv/bin/python - <<'PY'
+          import json,sqlite3
+          from pathlib import Path
+          p=Path('auto_research/state/shadow_tracker.sqlite3')
+          c=sqlite3.connect(p)
+          print('rules',c.execute('select count(*) from shadow_rules').fetchone()[0])
+          print('picks',c.execute('select count(*) from shadow_picks').fetchone()[0])
+          print('pending',c.execute("select count(*) from shadow_picks where status='pending'").fetchone()[0])
+          print('official_integration',0)
+          print('public_state',json.loads(Path('/srv/appwiza-sports/public/ufc/shadow/state.json').read_text())['overall_unique'])
+          PY
+          CR=/tmp/ufc_shadow_cron
+          crontab -l 2>/dev/null | grep -v 'ufc_shadow_tracker.py' > "$CR" || true
+          cat >> "$CR" <<'CRON'
+          CRON_TZ=America/New_York
+          25 0,6,12,18 * * * cd /home/anestishkurti92/ufc-predictor-v1 && timeout 12m nice -n 12 venv/bin/python ufc_shadow_tracker.py run >> auto_research/shadow_tracker.log 2>&1
+          CRON
+          crontab "$CR"
+          rm -f "$CR"
+          echo '=== SHADOW CRON ==='
+          crontab -l | grep -E 'CRON_TZ|ufc_shadow_tracker.py'
+          echo '=== OFFICIAL ISOLATION CHECK ==='
+          ! grep -q 'ufc_shadow_tracker' ufc_email_watcher.py
+          ! grep -q 'shadow_tracker' /opt/sports-publisher/bet_tracker.py
+          echo 'Shadow tracker installed separately from official UFC methods.'
