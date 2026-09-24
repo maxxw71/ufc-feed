@@ -1,0 +1,170 @@
+#!/usr/bin/env python3
+"""Collect conservative CompuBox-attributed summaries from The Ring.
+
+This is NOT the full round-chart tier. It retains only explicit numeric
+fight-level/segment statistics from pages whose exact date and participant pair
+resolve against the local verified boxing history. Availability begins no
+earlier than the day after the bout, and never before the article date.
+"""
+from __future__ import annotations
+import argparse,datetime as dt,json,re,sqlite3,unicodedata,urllib.request
+from pathlib import Path
+from bs4 import BeautifulSoup
+
+ROOT=Path(__file__).resolve().parents[1]
+SEEDS=ROOT/'research'/'ring_compubox_seed_urls.json'
+DB=ROOT/'research'/'boxing.sqlite3'
+OUT=ROOT/'punch_supplements'/'ring_compubox_summaries.jsonl'
+REPORT=ROOT/'punch_supplements'/'ring_compubox_summary_report.json'
+UA='Mozilla/5.0 AppwizaRingCompuBox/1.0'
+
+def clean(s):
+    x=unicodedata.normalize('NFKD',str(s or '')).encode('ascii','ignore').decode()
+    return re.sub(r'\s+',' ',x.replace('’',"'")).strip()
+
+def nk(s):return re.sub(r'[^a-z0-9]+','',clean(s).casefold())
+
+def fetch(url):
+    req=urllib.request.Request(url,headers={'User-Agent':UA,'Accept-Language':'en-US,en;q=0.8'})
+    with urllib.request.urlopen(req,timeout=40) as r:
+        raw=r.read(3_500_001)
+        if len(raw)>3_500_000:raise ValueError('page too large')
+        return r.geturl(),raw
+
+def page_text(raw):
+    soup=BeautifulSoup(raw,'lxml')
+    for x in soup(['script','style','noscript']):x.decompose()
+    return clean(' '.join(soup.stripped_strings)),soup
+
+def article_date(soup):
+    for tag in soup.find_all('meta'):
+        k=(tag.get('property') or tag.get('name') or '').casefold()
+        if k in {'article:published_time','datepublished','date','publishdate'}:
+            v=str(tag.get('content') or '')
+            m=re.search(r'(\d{4}-\d{2}-\d{2})',v)
+            if m:return m.group(1)
+    text=clean(' '.join(soup.stripped_strings[:250]))
+    for fmt,pat in [('%b %d, %Y',r'\b(?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)\s+\d{1,2},\s+20\d{2}\b')]:
+        m=re.search(pat,text,re.I)
+        if m:
+            try:return dt.datetime.strptime(m.group(0).title(),fmt).date().isoformat()
+            except Exception:pass
+    return None
+
+def db_pair_ok(date,names):
+    if not DB.exists():return False,'missing_db'
+    d=sqlite3.connect(f'file:{DB}?mode=ro',uri=True);d.row_factory=sqlite3.Row
+    try:
+        rows=d.execute("select fighter_name,opponent_name from pre_bout_features where bout_date=?",(date,)).fetchall()
+    finally:d.close()
+    target=sorted(nk(x) for x in names)
+    for r in rows:
+        if sorted([nk(r['fighter_name']),nk(r['opponent_name'])])==target:return True,'exact_pre_bout_pair'
+    return False,'pair_not_found'
+
+def segments(text,name,other):
+    aliases=[clean(name),clean(name).split()[-1]]
+    other_aliases=[clean(other),clean(other).split()[-1]]
+    out=[]
+    for sent in re.split(r'(?<=[.!?])\s+',text):
+        if not any(re.search(r'(?<![A-Za-z0-9])'+re.escape(a)+r'(?![A-Za-z0-9])',sent,re.I) for a in aliases):continue
+        # Keep the whole sentence; patterns below explicitly anchor the subject.
+        out.append(sent)
+    return out
+
+def parse_pair(text,a,b):
+    out={a:{},b:{}}
+    conflicts={a:[],b:[]}
+    def setv(f,k,v):
+        v=float(v);old=out[f].get(k)
+        if old is not None and abs(float(old)-v)>1e-9:conflicts[f].append((k,old,v))
+        else:out[f][k]=v
+    # Exact per-fighter patterns.
+    for f,o in ((a,b),(b,a)):
+        aliases=sorted({clean(f),clean(f).split()[-1]},key=len,reverse=True)
+        for sent in segments(text,f,o):
+            for alias in aliases:
+                p=r'(?<![A-Za-z0-9])'+re.escape(alias)+r'(?![A-Za-z0-9])'
+                # "X landed/went/connected on 146 of 498 total punches"
+                m=re.search(p+r"[^.!?]{0,120}?(?:landed|went|connected(?:\s+on)?)\s+(\d{1,4})\s*(?:of|[-–])\s*(\d{1,4})\s+(?:total\s+)?punches",sent,re.I)
+                if m:setv(f,'total_landed',m.group(1));setv(f,'total_thrown',m.group(2))
+                # Parenthetical or bare "X (249 of 567)" when sentence says punches/connects.
+                m=re.search(p+r"\s*\(?(\d{1,4})\s+(?:of|[-–])\s+(\d{1,4})\)?",sent,re.I)
+                if m and re.search(r'\b(?:punch|connect)',sent,re.I):
+                    setv(f,'total_landed',m.group(1));setv(f,'total_thrown',m.group(2))
+                # category exact: "118 of 233, 51% in jabs"
+                for cat,label in [('jab','jabs?'),('power','power\s+(?:punches|shots)')]:
+                    m=re.search(r'(\d{1,4})\s+(?:of|[-–])\s+(\d{1,4})(?:\s*,\s*(\d+(?:\.\d+)?)%)?\s+(?:in|on|of)?\s*'+label,sent,re.I)
+                    if m:
+                        setv(f,cat+'_landed',m.group(1));setv(f,cat+'_thrown',m.group(2))
+                        if m.group(3):setv(f,cat+'_accuracy_pct',m.group(3))
+                # "connected on 46% of his power punches"
+                m=re.search(p+r"[^.!?]{0,140}?(?:connected|landed)[^.!?]{0,30}?(\d+(?:\.\d+)?)%\s+of\s+(?:his|her)\s+power\s+(?:punches|shots)",sent,re.I)
+                if m:setv(f,'power_accuracy_pct',m.group(1))
+    # Pair comparisons: "Hrgovic outlanded Adeleye 228-92 on total punches ... power shots (169-47)"
+    for f,o in ((a,b),(b,a)):
+        fa=clean(f).split()[-1];oa=clean(o).split()[-1]
+        for sent in re.split(r'(?<=[.!?])\s+',text):
+            m=re.search(re.escape(fa)+r'\s+outlanded\s+'+re.escape(oa)+r'\s+(\d{1,4})\s*[-–]\s*(\d{1,4})\s+(?:on|in)\s+total\s+punches',sent,re.I)
+            if m:
+                setv(f,'total_landed',m.group(1));setv(o,'total_landed',m.group(2))
+                pwr=re.search(r'power\s+(?:shots|punches)[^()]{0,30}\((\d{1,4})\s*[-–]\s*(\d{1,4})\)',sent,re.I)
+                if pwr:setv(f,'power_landed',pwr.group(1));setv(o,'power_landed',pwr.group(2))
+    for f in (a,b):
+        if conflicts[f]:out[f]={'_invalid_conflict':True,'details':conflicts[f]}
+    return out
+
+def main():
+    seeds=json.loads(SEEDS.read_text()).get('pages') or []
+    rows=[];diag=[]
+    for seed in seeds:
+        date=seed['bout_date'];a,b=seed['fighters'];rounds=int(seed.get('rounds') or 0)
+        ok,res=db_pair_ok(date,[a,b])
+        item={'url':seed['url'],'bout_date':date,'fighters':[a,b],'pair_resolution':res}
+        if not ok:item['status']='rejected_identity';diag.append(item);continue
+        try:
+            final,raw=fetch(seed['url']);text,soup=page_text(raw)
+            pub=article_date(soup)
+            if 'compubox' not in text.casefold():raise ValueError('CompuBox attribution missing')
+            parsed=parse_pair(text,a,b)
+            added=0
+            nextday=(dt.date.fromisoformat(date)+dt.timedelta(days=1))
+            avail=max(nextday,dt.date.fromisoformat(pub)) if pub else nextday
+            for f,o in ((a,b),(b,a)):
+                vals={k:v for k,v in (parsed.get(f) or {}).items() if isinstance(v,(int,float)) and not isinstance(v,bool)}
+                if not vals:continue
+                rows.append({'source_url':final,'article_date':pub,'bout_date':date,'available_from_date':avail.isoformat(),
+                             'fighter':f,'opponent':o,'rounds_observed':rounds,**vals,
+                             'quality':'ring_published_compubox_explicit_numeric_summary_exact_verified_bout',
+                             'source_tier':'modern_publisher_compubox_summary_separate_from_full_round_reports'})
+                added+=1
+            item.update({'status':'accepted' if added else 'no_safe_numeric_pattern','article_date':pub,'fighter_rows':added})
+        except Exception as e:item.update({'status':'error','error':type(e).__name__+': '+str(e)[:220]})
+        diag.append(item)
+    # Deduplicate exact fight/fighter; conflicts are quarantined.
+    grouped={}
+    conflicts=[]
+    for r in rows:
+        key=(r['bout_date'],nk(r['fighter']),nk(r['opponent']))
+        if key not in grouped:grouped[key]=r;continue
+        base=grouped[key]
+        bad=[]
+        for k,v in r.items():
+            if isinstance(v,(int,float)) and not isinstance(v,bool) and k in base and float(base[k])!=float(v):bad.append((k,base[k],v))
+            elif isinstance(v,(int,float)) and not isinstance(v,bool):base[k]=v
+        if bad:conflicts.append({'key':key,'fields':bad})
+    badkeys={tuple(x['key']) for x in conflicts}
+    merged=[r for k,r in grouped.items() if tuple(k) not in badkeys]
+    merged.sort(key=lambda r:(r['bout_date'],nk(r['fighter'])))
+    OUT.parent.mkdir(parents=True,exist_ok=True)
+    OUT.write_text(''.join(json.dumps(r,ensure_ascii=False)+'\n' for r in merged),encoding='utf-8')
+    report={'generated_at':dt.datetime.now(dt.timezone.utc).isoformat(),'seed_pages':len(seeds),
+            'accepted_pages':sum(x.get('status')=='accepted' for x in diag),'fighter_rows':len(merged),
+            'distinct_bouts':len({r['bout_date']+'|'+ '|'.join(sorted([nk(r['fighter']),nk(r['opponent'])])) for r in merged}),
+            'date_min':min((r['bout_date'] for r in merged),default=None),'date_max':max((r['bout_date'] for r in merged),default=None),
+            'conflicts_quarantined':len(conflicts),'diagnostics':diag,'conflicts':conflicts,
+            'policy':'The Ring pages explicitly attributing statistics to CompuBox; exact DB date/pair; explicit numeric text only; next-day-or-later availability; separate from full round-chart tier.'}
+    REPORT.write_text(json.dumps(report,indent=2,ensure_ascii=False),encoding='utf-8')
+    print(json.dumps({k:report[k] for k in ('seed_pages','accepted_pages','fighter_rows','distinct_bouts','date_min','date_max','conflicts_quarantined')},indent=2))
+
+if __name__=='__main__':main()
