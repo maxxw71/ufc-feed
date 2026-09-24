@@ -36,7 +36,10 @@ on:
     branches: [main]
 
 concurrency:
-  group: boxing-public-phase2
+  # Keep push builds separate from workflow_run callbacks. A failed/skipped
+  # upstream callback is evaluated at the job level; it must never cancel a
+  # valid push rebuild before that condition is evaluated.
+  group: boxing-public-phase2-${{ github.event_name }}
   cancel-in-progress: true
 
 permissions:
