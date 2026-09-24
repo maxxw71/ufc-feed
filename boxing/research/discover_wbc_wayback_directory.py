@@ -11,18 +11,18 @@ from pathlib import Path
 
 OUT=Path('boxing/rankings/wbc_wayback_directory_discovery.json')
 UA='Mozilla/5.0 AppwizaWBCArchiveDiscovery/1.0'
-YEARS=range(2018,2025)
+YEARS=range(2018,2023)
 
 def get_json(url):
     req=urllib.request.Request(url,headers={'User-Agent':UA})
-    with urllib.request.urlopen(req,timeout=60) as r:
+    with urllib.request.urlopen(req,timeout=25) as r:
         return json.loads(r.read().decode('utf-8','replace'))
 
 def query(pattern):
     params=[
       ('url',pattern),('output','json'),('filter','statuscode:200'),
       ('filter','mimetype:application/pdf'),('fl','timestamp,original,statuscode,mimetype,digest'),
-      ('collapse','urlkey'),('limit','500')
+      ('collapse','urlkey'),('limit','250')
     ]
     url='https://web.archive.org/cdx/search/cdx?'+urllib.parse.urlencode(params)
     try:
@@ -36,9 +36,6 @@ def main():
     for year in YEARS:
         patterns=[
           f'https://wbcboxing.com/mailing/{year}/ratings_pdf/*',
-          f'http://wbcboxing.com/mailing/{year}/ratings_pdf/*',
-          f'https://www.wbcboxing.com/mailing/{year}/ratings_pdf/*',
-          f'http://www.wbcboxing.com/mailing/{year}/ratings_pdf/*',
           f'https://wbcboxing.com/mailing/{year}/*',
         ]
         for pattern in patterns:
