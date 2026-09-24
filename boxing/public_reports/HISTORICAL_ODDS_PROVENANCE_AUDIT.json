@@ -1,0 +1,293 @@
+{
+  "generated_at": "2026-09-24T14:10:20.624869+00:00",
+  "policy": "Discovery only. No historical quote is validated unless evidence independently proves that exact bookmaker/selection/price was available before the event.",
+  "tables": {
+    "odds": {
+      "columns": [
+        "source",
+        "bout_id",
+        "bookmaker",
+        "selection",
+        "decimal_price",
+        "quoted_at",
+        "timestamp_quality",
+        "url"
+      ],
+      "rows": 45522
+    },
+    "source_rows": {
+      "columns": [
+        "source",
+        "kind",
+        "source_id",
+        "data"
+      ],
+      "rows": 24060
+    },
+    "priced_bout_research": {
+      "columns": [
+        "quote_rowid",
+        "odds_bout_id",
+        "event_date",
+        "bookmaker",
+        "selection",
+        "decimal_price",
+        "result",
+        "decisive_profit_per_unit",
+        "feature_bout_id",
+        "result_sources_json",
+        "readiness",
+        "match_method",
+        "date_offset_days"
+      ],
+      "rows": 26812
+    },
+    "reported_historical_odds": {
+      "columns": [
+        "source_url",
+        "publication_date",
+        "bookmaker",
+        "selection",
+        "opponent",
+        "american",
+        "decimal_price",
+        "bout_date",
+        "evidence_status"
+      ],
+      "rows": 7
+    }
+  },
+  "odds_direct_metadata": {
+    "time_like_columns": [
+      "timestamp_quality"
+    ],
+    "url_like_columns": [
+      "url"
+    ],
+    "rows_scanned": 45522,
+    "nonempty_time_like": {
+      "timestamp_quality": 45522
+    },
+    "nonempty_url_like": {
+      "url": 45522
+    },
+    "samples": [
+      {
+        "_rowid": 29855,
+        "bout_id": "10000",
+        "bookmaker": "DraftKings",
+        "selection": "Maria Nechita",
+        "decimal_price": 3.65,
+        "timestamp_quality": "archived_display_time_unknown_rules_unverified",
+        "url": "https://www.proboxingodds.com/events/2021-07-26-1461"
+      },
+      {
+        "_rowid": 29856,
+        "bout_id": "10000",
+        "bookmaker": "DraftKings",
+        "selection": "Ramla Ali",
+        "decimal_price": 1.2941176470588236,
+        "timestamp_quality": "archived_display_time_unknown_rules_unverified",
+        "url": "https://www.proboxingodds.com/events/2021-07-26-1461"
+      },
+      {
+        "_rowid": 29859,
+        "bout_id": "10001",
+        "bookmaker": "DraftKings",
+        "selection": "Kavuma David Ssemujju",
+        "decimal_price": 2.85,
+        "timestamp_quality": "archived_display_time_unknown_rules_unverified",
+        "url": "https://www.proboxingodds.com/events/2021-07-26-1461"
+      },
+      {
+        "_rowid": 29860,
+        "bout_id": "10001",
+        "bookmaker": "DraftKings",
+        "selection": "Younes Nemouchi",
+        "decimal_price": 1.434782608695652,
+        "timestamp_quality": "archived_display_time_unknown_rules_unverified",
+        "url": "https://www.proboxingodds.com/events/2021-07-26-1461"
+      },
+      {
+        "_rowid": 29861,
+        "bout_id": "10002",
+        "bookmaker": "DraftKings",
+        "selection": "Ashish Kumar",
+        "decimal_price": 1.6896551724137931,
+        "timestamp_quality": "archived_display_time_unknown_rules_unverified",
+        "url": "https://www.proboxingodds.com/events/2021-07-26-1461"
+      },
+      {
+        "_rowid": 29862,
+        "bout_id": "10002",
+        "bookmaker": "DraftKings",
+        "selection": "Tuohetaerbieke Tanglatihan",
+        "decimal_price": 2.2,
+        "timestamp_quality": "archived_display_time_unknown_rules_unverified",
+        "url": "https://www.proboxingodds.com/events/2021-07-26-1461"
+      },
+      {
+        "_rowid": 29863,
+        "bout_id": "10003",
+        "bookmaker": "DraftKings",
+        "selection": "Fanat Kakhramonov",
+        "decimal_price": 1.606060606060606,
+        "timestamp_quality": "archived_display_time_unknown_rules_unverified",
+        "url": "https://www.proboxingodds.com/events/2021-07-26-1461"
+      },
+      {
+        "_rowid": 29864,
+        "bout_id": "10003",
+        "bookmaker": "DraftKings",
+        "selection": "Giorgi Kharabadze",
+        "decimal_price": 2.35,
+        "timestamp_quality": "archived_display_time_unknown_rules_unverified",
+        "url": "https://www.proboxingodds.com/events/2021-07-26-1461"
+      },
+      {
+        "_rowid": 29867,
+        "bout_id": "10004",
+        "bookmaker": "DraftKings",
+        "selection": "Troy Isley",
+        "decimal_price": 1.2105263157894737,
+        "timestamp_quality": "archived_display_time_unknown_rules_unverified",
+        "url": "https://www.proboxingodds.com/events/2021-07-26-1461"
+      },
+      {
+        "_rowid": 29868,
+        "bout_id": "10004",
+        "bookmaker": "DraftKings",
+        "selection": "Vitali Bandarenka",
+        "decimal_price": 4.5,
+        "timestamp_quality": "archived_display_time_unknown_rules_unverified",
+        "url": "https://www.proboxingodds.com/events/2021-07-26-1461"
+      },
+      {
+        "_rowid": 29865,
+        "bout_id": "10005",
+        "bookmaker": "DraftKings",
+        "selection": "David Tshama",
+        "decimal_price": 1.7692307692307692,
+        "timestamp_quality": "archived_display_time_unknown_rules_unverified",
+        "url": "https://www.proboxingodds.com/events/2021-07-26-1461"
+      },
+      {
+        "_rowid": 29866,
+        "bout_id": "10005",
+        "bookmaker": "DraftKings",
+        "selection": "Wilfried Ntsengue",
+        "decimal_price": 2.05,
+        "timestamp_quality": "archived_display_time_unknown_rules_unverified",
+        "url": "https://www.proboxingodds.com/events/2021-07-26-1461"
+      },
+      {
+        "_rowid": 16702,
+        "bout_id": "10008",
+        "bookmaker": "DraftKings",
+        "selection": "Bobo-Usmon Baturov",
+        "decimal_price": 1.1739130434782608,
+        "timestamp_quality": "archived_display_time_unknown_rules_unverified",
+        "url": "https://www.proboxingodds.com/events/2021-07-27-1462"
+      },
+      {
+        "_rowid": 16704,
+        "bout_id": "10008",
+        "bookmaker": "DraftKings",
+        "selection": "Rohan Polanco",
+        "decimal_price": 5.25,
+        "timestamp_quality": "archived_display_time_unknown_rules_unverified",
+        "url": "https://www.proboxingodds.com/events/2021-07-27-1462"
+      },
+      {
+        "_rowid": 16701,
+        "bout_id": "10008",
+        "bookmaker": "FanDuel",
+        "selection": "Bobo-Usmon Baturov",
+        "decimal_price": 1.1666666666666667,
+        "timestamp_quality": "archived_display_time_unknown_rules_unverified",
+        "url": "https://www.proboxingodds.com/events/2021-07-27-1462"
+      },
+      {
+        "_rowid": 16703,
+        "bout_id": "10008",
+        "bookmaker": "FanDuel",
+        "selection": "Rohan Polanco",
+        "decimal_price": 5.1,
+        "timestamp_quality": "archived_display_time_unknown_rules_unverified",
+        "url": "https://www.proboxingodds.com/events/2021-07-27-1462"
+      },
+      {
+        "_rowid": 16710,
+        "bout_id": "10009",
+        "bookmaker": "DraftKings",
+        "selection": "Aidan Walsh",
+        "decimal_price": 1.4651162790697674,
+        "timestamp_quality": "archived_display_time_unknown_rules_unverified",
+        "url": "https://www.proboxingodds.com/events/2021-07-27-1462"
+      },
+      {
+        "_rowid": 16712,
+        "bout_id": "10009",
+        "bookmaker": "DraftKings",
+        "selection": "Albert Mengue",
+        "decimal_price": 2.75,
+        "timestamp_quality": "archived_display_time_unknown_rules_unverified",
+        "url": "https://www.proboxingodds.com/events/2021-07-27-1462"
+      },
+      {
+        "_rowid": 16709,
+        "bout_id": "10009",
+        "bookmaker": "FanDuel",
+        "selection": "Aidan Walsh",
+        "decimal_price": 1.4878048780487805,
+        "timestamp_quality": "archived_display_time_unknown_rules_unverified",
+        "url": "https://www.proboxingodds.com/events/2021-07-27-1462"
+      },
+      {
+        "_rowid": 16711,
+        "bout_id": "10009",
+        "bookmaker": "FanDuel",
+        "selection": "Albert Mengue",
+        "decimal_price": 2.6399999999999997,
+        "timestamp_quality": "archived_display_time_unknown_rules_unverified",
+        "url": "https://www.proboxingodds.com/events/2021-07-27-1462"
+      }
+    ]
+  },
+  "source_rows_payloads": {
+    "kinds": {
+      "matchup": 7584
+    },
+    "top_payload_keys": [
+      [
+        "participants.2",
+        7584
+      ],
+      [
+        "participants",
+        7584
+      ],
+      [
+        "event_date",
+        7584
+      ],
+      [
+        "event_url",
+        7584
+      ],
+      [
+        "participants.1",
+        7584
+      ]
+    ],
+    "time_like_paths": {},
+    "url_like_paths": {},
+    "rows_with_wayback_url_values": 0,
+    "samples": []
+  },
+  "candidate_pre_event_timing_fields": {
+    "counts": {},
+    "samples": [],
+    "warning": "These are candidates only. A database/collector timestamp must be shown to represent the original quote observation, not a later import or rebuild time, before it can validate a historical price."
+  }
+}
