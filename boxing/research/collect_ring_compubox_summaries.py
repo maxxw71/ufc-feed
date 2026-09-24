@@ -55,11 +55,19 @@ def db_pair_ok(date,names):
     if not DB.exists():return False,'missing_db'
     d=sqlite3.connect(f'file:{DB}?mode=ro',uri=True);d.row_factory=sqlite3.Row
     try:
-        rows=d.execute("select fighter_name,opponent_name from pre_bout_features where bout_date=?",(date,)).fetchall()
+        tabs={r[0] for r in d.execute("select name from sqlite_master where type='table'")}
+        table='pre_bout_features' if 'pre_bout_features' in tabs else ('bouts' if 'bouts' in tabs else None)
+        if not table:return False,'missing_pair_table'
+        cols={r[1] for r in d.execute(f'pragma table_info({table})')}
+        fc=next((x for x in ('fighter_name','fighter','name') if x in cols),None)
+        oc=next((x for x in ('opponent_name','opponent') if x in cols),None)
+        dc=next((x for x in ('bout_date','date','event_date') if x in cols),None)
+        if not fc or not oc or not dc:return False,'unresolved_pair_schema:'+','.join(sorted(cols))
+        rows=d.execute(f"select {fc} as fighter,{oc} as opponent from {table} where {dc}=?",(date,)).fetchall()
     finally:d.close()
     target=sorted(nk(x) for x in names)
     for r in rows:
-        if sorted([nk(r['fighter_name']),nk(r['opponent_name'])])==target:return True,'exact_pre_bout_pair'
+        if sorted([nk(r['fighter']),nk(r['opponent'])])==target:return True,'exact_'+table+'_pair'
     return False,'pair_not_found'
 
 def segments(text,name,other):
@@ -86,14 +94,16 @@ def parse_pair(text,a,b):
             for alias in aliases:
                 p=r'(?<![A-Za-z0-9])'+re.escape(alias)+r'(?![A-Za-z0-9])'
                 # "X landed/went/connected on 146 of 498 total punches"
-                m=re.search(p+r"[^.!?]{0,120}?(?:landed|went|connected(?:\s+on)?)\s+(\d{1,4})\s*(?:of|[-–])\s*(\d{1,4})\s+(?:total\s+)?punches",sent,re.I)
-                if m:setv(f,'total_landed',m.group(1));setv(f,'total_thrown',m.group(2))
+                m=re.search(p+r"[^.!?]{0,120}?(?:landed|went|connected(?:\s+on)?)\s+(\d{1,4})\s*(?:of|[-–])\s*(\d{1,4})(?:\s*\(?(\d+(?:\.\d+)?)%\)?)?(?:\s*,)?\s*(?:in\s+)?(?:total\s+)?punches",sent,re.I)
+                if m:
+                    setv(f,'total_landed',m.group(1));setv(f,'total_thrown',m.group(2))
+                    if m.group(3):setv(f,'total_accuracy_pct',m.group(3))
                 # Parenthetical or bare "X (249 of 567)" when sentence says punches/connects.
                 m=re.search(p+r"\s*\(?(\d{1,4})\s+(?:of|[-–])\s+(\d{1,4})\)?",sent,re.I)
                 if m and re.search(r'\b(?:punch|connect)',sent,re.I):
                     setv(f,'total_landed',m.group(1));setv(f,'total_thrown',m.group(2))
                 # category exact: "118 of 233, 51% in jabs"
-                for cat,label in [('jab','jabs?'),('power','power\s+(?:punches|shots)')]:
+                for cat,label in [('jab',r'jabs?'),('power',r'power\s+(?:punches|shots)')]:
                     m=re.search(r'(\d{1,4})\s+(?:of|[-–])\s+(\d{1,4})(?:\s*,\s*(\d+(?:\.\d+)?)%)?\s+(?:in|on|of)?\s*'+label,sent,re.I)
                     if m:
                         setv(f,cat+'_landed',m.group(1));setv(f,cat+'_thrown',m.group(2))
