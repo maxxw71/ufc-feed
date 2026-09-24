@@ -1,22 +1,27 @@
 {
-  "parsed_reports_with_two_sides": 12,
-  "unique_report_ids": 12,
-  "resolved_full_identity_reports": 12,
+  "parsed_reports_with_two_sides": 13,
+  "direct_round_reports": 12,
+  "reviewed_chart_reports_loaded": 1,
+  "reviewed_chart_reports_accepted": 1,
+  "reviewed_chart_reports_skipped_due_to_stronger_pair": 0,
+  "unique_report_ids": 13,
+  "resolved_full_identity_reports": 13,
   "duplicate_source_variants_collapsed": 17,
-  "fighter_fight_observations": 24,
-  "round_level_fighter_observations": 24,
+  "fighter_fight_observations": 26,
+  "round_level_fighter_observations": 26,
   "fight_total_supplement_observations_loaded": 0,
   "fight_total_supplement_observations_accepted": 0,
   "fight_total_supplement_observations_skipped_due_to_stronger_or_invalid_pair": 0,
   "fight_total_supplement_fights_accepted": 0,
   "source_quality_counts": {
-    "observed_round_table": 24
+    "observed_round_table": 24,
+    "publisher_reproduced_compubox_round_chart": 2
   },
-  "prefight_snapshots": 24,
+  "prefight_snapshots": 26,
   "fighters_with_any_prior_punch_fight": 1,
   "snapshots_with_3plus_prior_punch_fights": 0,
   "date_min": "2008-03-15",
   "date_max": "2026-09-12",
-  "leakage_policy": "snapshot before current report update; same-report sides frozen together",
+  "leakage_policy": "historical observations require bout_date < target date and available_from_date (or bout_date) < target date; strict same-day exclusion",
   "avoidance_definition": "100 - opponent connect percentage; not literal slips/blocks/parries"
 }
