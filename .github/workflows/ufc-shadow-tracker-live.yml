@@ -52,12 +52,18 @@ jobs:
           print('picks',c.execute('select count(*) from shadow_picks').fetchone()[0])
           print('pending',c.execute("select count(*) from shadow_picks where status='pending'").fetchone()[0])
           print('official_integration',0)
+          print('pending_rows',[dict(zip([c[0] for c in c.execute("pragma table_info(shadow_picks)").fetchall()],[]))] if False else [
+            dict(r) for r in (lambda db: (setattr(db,'row_factory',sqlite3.Row) or db).execute(
+              "select event_date,selection,opponent,quote_american,rule_ids_json,strong_opp_sig_diff,days_since_ko_loss_diff,status from shadow_picks where status='pending' order by event_date"
+            ))(sqlite3.connect(p))
+          ])
           print('public_state',json.loads(Path('/srv/appwiza-sports/public/ufc/shadow/state.json').read_text())['overall_unique'])
           PY
           echo '=== SHADOW SCHEDULER ==='
           echo 'GitHub Actions schedule: 04:25, 10:25, 16:25, 22:25 UTC'
           echo '=== OFFICIAL ISOLATION CHECK ==='
+          test -f /home/anestishkurti92/betting-ledger/code/bet_tracker.py
           ! grep -q 'ufc_shadow_tracker' ufc_email_watcher.py
-          ! grep -q 'shadow_tracker' /opt/sports-publisher/bet_tracker.py
+          ! grep -q 'shadow_tracker' /home/anestishkurti92/betting-ledger/code/bet_tracker.py
           echo 'Shadow tracker installed separately from official UFC methods.'
           EOF
