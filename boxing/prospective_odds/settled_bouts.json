@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-23T22:58:54.616965+00:00",
+  "generated_at": "2026-09-24T13:35:42.833292+00:00",
   "settled": [
     {
       "event_date": "2026-09-21",
@@ -148,6 +148,110 @@
       "selections": [
         "Floyd Mayweather Jr",
         "Manny Pacquiao"
+      ]
+    },
+    {
+      "event_date": "2026-09-23",
+      "bout_id": "18523",
+      "participants": [
+        "Kyonosuke Kameda",
+        "Sebastian Hernandez Reyes"
+      ],
+      "first_snapshot": "2026-09-13T08:27:50.090612+00:00",
+      "last_snapshot": "2026-09-23T04:50:16.969312+00:00",
+      "verified_quote_rows": 132,
+      "verified_sportsbook_quote_rows": 132,
+      "verified_prediction_market_quote_rows": 0,
+      "market_classes": [
+        "sportsbook"
+      ],
+      "sportsbooks": [
+        "BetWay",
+        "FanDuel"
+      ],
+      "sportsbook_market_summary": {
+        "per_book": {
+          "BetWay": {
+            "Kyonosuke Kameda": {
+              "first_verified_pre_event": {
+                "fetched_at": "2026-09-16T22:59:43.697999+00:00",
+                "decimal_price": 4.0,
+                "american_price": 300
+              },
+              "latest_verified_pre_event": {
+                "fetched_at": "2026-09-23T04:50:16.969312+00:00",
+                "decimal_price": 4.5,
+                "american_price": 350
+              },
+              "observations": 26,
+              "decimal_move": 0.5
+            },
+            "Sebastian Hernandez Reyes": {
+              "first_verified_pre_event": {
+                "fetched_at": "2026-09-16T22:59:43.697999+00:00",
+                "decimal_price": 1.2857142857142856,
+                "american_price": -350
+              },
+              "latest_verified_pre_event": {
+                "fetched_at": "2026-09-23T04:50:16.969312+00:00",
+                "decimal_price": 1.2,
+                "american_price": -500
+              },
+              "observations": 26,
+              "decimal_move": -0.085714
+            }
+          },
+          "FanDuel": {
+            "Kyonosuke Kameda": {
+              "first_verified_pre_event": {
+                "fetched_at": "2026-09-13T08:27:50.090612+00:00",
+                "decimal_price": 5.0,
+                "american_price": 400
+              },
+              "latest_verified_pre_event": {
+                "fetched_at": "2026-09-23T04:50:16.969312+00:00",
+                "decimal_price": 4.6,
+                "american_price": 360
+              },
+              "observations": 40,
+              "decimal_move": -0.4
+            },
+            "Sebastian Hernandez Reyes": {
+              "first_verified_pre_event": {
+                "fetched_at": "2026-09-13T08:27:50.090612+00:00",
+                "decimal_price": 1.1538461538461537,
+                "american_price": -650
+              },
+              "latest_verified_pre_event": {
+                "fetched_at": "2026-09-23T04:50:16.969312+00:00",
+                "decimal_price": 1.1818181818181819,
+                "american_price": -550
+              },
+              "observations": 40,
+              "decimal_move": 0.027972
+            }
+          }
+        },
+        "consensus_latest_verified": {
+          "Kyonosuke Kameda": {
+            "books": 2,
+            "median_latest_verified_decimal": 4.55,
+            "min_latest_verified_decimal": 4.5,
+            "max_latest_verified_decimal": 4.6
+          },
+          "Sebastian Hernandez Reyes": {
+            "books": 2,
+            "median_latest_verified_decimal": 1.190909,
+            "min_latest_verified_decimal": 1.1818181818181819,
+            "max_latest_verified_decimal": 1.2
+          }
+        },
+        "books_with_both_sides_latest": 2,
+        "book_selection_pairs": 4
+      },
+      "selections": [
+        "Kyonosuke Kameda",
+        "Sebastian Hernandez Reyes"
       ]
     }
   ]
