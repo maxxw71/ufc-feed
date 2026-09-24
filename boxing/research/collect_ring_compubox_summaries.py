@@ -54,21 +54,60 @@ def article_date(soup):
 def db_pair_ok(date,names):
     if not DB.exists():return False,'missing_db'
     d=sqlite3.connect(f'file:{DB}?mode=ro',uri=True);d.row_factory=sqlite3.Row
+    target=sorted(nk(x) for x in names)
     try:
         tabs={r[0] for r in d.execute("select name from sqlite_master where type='table'")}
         table='pre_bout_features' if 'pre_bout_features' in tabs else ('bouts' if 'bouts' in tabs else None)
         if not table:return False,'missing_pair_table'
         cols={r[1] for r in d.execute(f'pragma table_info({table})')}
+        dc=next((x for x in ('bout_date','date','event_date') if x in cols),None)
+        if not dc:return False,'missing_date_column'
+
+        # Direct name columns, if present.
         fc=next((x for x in ('fighter_name','fighter','name') if x in cols),None)
         oc=next((x for x in ('opponent_name','opponent') if x in cols),None)
-        dc=next((x for x in ('bout_date','date','event_date') if x in cols),None)
-        if not fc or not oc or not dc:return False,'unresolved_pair_schema:'+','.join(sorted(cols))
-        rows=d.execute(f"select {fc} as fighter,{oc} as opponent from {table} where {dc}=?",(date,)).fetchall()
-    finally:d.close()
-    target=sorted(nk(x) for x in names)
-    for r in rows:
-        if sorted([nk(r['fighter']),nk(r['opponent'])])==target:return True,'exact_'+table+'_pair'
-    return False,'pair_not_found'
+        if fc and oc:
+            for r in d.execute(f"select {fc} as fighter,{oc} as opponent from {table} where {dc}=?",(date,)):
+                if sorted([nk(r['fighter']),nk(r['opponent'])])==target:
+                    return True,'exact_'+table+'_name_pair'
+
+        # ID columns linked through normalized_fighters.
+        fic=next((x for x in ('fighter_id','fighter_source_id') if x in cols),None)
+        oic=next((x for x in ('opponent_id','opponent_source_id') if x in cols),None)
+        if fic and oic and 'normalized_fighters' in tabs:
+            ncols={r[1] for r in d.execute('pragma table_info(normalized_fighters)')}
+            nid=next((x for x in ('source_id','id','fighter_id','url') if x in ncols),None)
+            nname=next((x for x in ('name','fighter_name') if x in ncols),None)
+            if nid and nname:
+                ids=set()
+                dated=list(d.execute(f"select {fic} as fighter_id,{oic} as opponent_id from {table} where {dc}=?",(date,)))
+                for r in dated:
+                    if r['fighter_id'] is not None:ids.add(str(r['fighter_id']))
+                    if r['opponent_id'] is not None:ids.add(str(r['opponent_id']))
+                idmap={}
+                if ids:
+                    marks=','.join('?' for _ in ids)
+                    for r in d.execute(f"select {nid} as ident,{nname} as name from normalized_fighters where cast({nid} as text) in ({marks})",tuple(ids)):
+                        idmap[str(r['ident'])]=r['name']
+                for r in dated:
+                    a=idmap.get(str(r['fighter_id']));b=idmap.get(str(r['opponent_id']))
+                    if a and b and sorted([nk(a),nk(b)])==target:
+                        return True,'exact_'+table+'_id_pair_via_normalized_fighters'
+
+        # Conservative JSON fallback: both full normalized seed names must
+        # appear in the same dated row's JSON payload. This never supplies
+        # punch values and is used only for identity verification.
+        jcols=[x for x in ('pre_fight_json','outcome_json','data','features_json') if x in cols]
+        if jcols:
+            q=f"select {','.join(jcols)} from {table} where {dc}=?"
+            for r in d.execute(q,(date,)):
+                blob=' '.join(str(r[c] or '') for c in jcols)
+                nblob=nk(blob)
+                if all(x and x in nblob for x in target):
+                    return True,'exact_'+table+'_json_pair'
+        return False,'pair_not_found_or_unresolved_ids'
+    finally:
+        d.close()
 
 def segments(text,name,other):
     aliases=[clean(name),clean(name).split()[-1]]
