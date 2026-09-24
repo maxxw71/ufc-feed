@@ -16,12 +16,12 @@ UA='Mozilla/5.0 AppwizaHistoricalOddsWayback/1.0'
 
 def get_json(url):
     req=urllib.request.Request(url,headers={'User-Agent':UA})
-    with urllib.request.urlopen(req,timeout=45) as r:
+    with urllib.request.urlopen(req,timeout=20) as r:
         return json.loads(r.read().decode('utf-8','replace'))
 
 def get_text(url):
     req=urllib.request.Request(url,headers={'User-Agent':UA})
-    with urllib.request.urlopen(req,timeout=60) as r:
+    with urllib.request.urlopen(req,timeout=25) as r:
         raw=r.read(3_000_001)
         return r.geturl(),raw.decode('utf-8','replace') if len(raw)<=3_000_000 else ''
 
@@ -30,7 +30,7 @@ def cdx_before(url,event_date):
     params=[
       ('url',url),('output','json'),('filter','statuscode:200'),
       ('fl','timestamp,original,statuscode,mimetype,digest'),
-      ('to',to),('collapse','digest'),('limit','20')
+      ('to',to),('collapse','digest'),('limit','8')
     ]
     q='https://web.archive.org/cdx/search/cdx?'+urllib.parse.urlencode(params)
     try:
@@ -68,7 +68,7 @@ def main():
 
     # Prioritize older events with multiple bookmaker/selection rows; these are
     # most valuable for converting exploratory historical backtests.
-    candidates=sorted(byevent.items(),key=lambda kv:(kv[0][0],-len(kv[1])))[:40]
+    candidates=sorted(byevent.items(),key=lambda kv:(kv[0][0],-len(kv[1])))[:12]
     out=[]
     for (event_date,url),quotes in candidates:
         q,rows,error=cdx_before(url,event_date)
