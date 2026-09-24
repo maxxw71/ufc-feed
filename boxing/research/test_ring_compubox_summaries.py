@@ -26,4 +26,19 @@ class RingCompuBoxSummaryTests(unittest.TestCase):
         self.assertEqual(out['Richardson Hitchins']['power_landed'],87)
         self.assertEqual(out['Richardson Hitchins']['power_thrown'],165)
 
+    def test_additional_ring_totals(self):
+        out=parse_pair(
+            "From the sixth round on, Bivol found another gear. Bivol landed 170 punches - the most by a Beterbiev opponent.",
+            'Dmitry Bivol','Artur Beterbiev')
+        self.assertEqual(out['Dmitry Bivol']['total_landed'],170)
+
+        out=parse_pair(
+            "Stevenson landed 165 of 372 punches (44.4%) compared to 72 of 468 (15.4%) for Lopez, per CompuBox.",
+            'Shakur Stevenson','Teofimo Lopez')
+        self.assertEqual(out['Shakur Stevenson']['total_landed'],165)
+        self.assertEqual(out['Shakur Stevenson']['total_thrown'],372)
+        self.assertEqual(out['Teofimo Lopez']['total_landed'],72)
+        self.assertEqual(out['Teofimo Lopez']['total_thrown'],468)
+        self.assertEqual(out['Teofimo Lopez']['total_accuracy_pct'],15.4)
+
 if __name__=='__main__':unittest.main()
