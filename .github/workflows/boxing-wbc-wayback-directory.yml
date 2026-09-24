@@ -1,0 +1,32 @@
+name: Boxing WBC Wayback Directory Discovery
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'boxing/research/discover_wbc_wayback_directory.py'
+      - '.github/workflows/boxing-wbc-wayback-directory.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  discover:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+        with: {fetch-depth: 0}
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.12'}
+      - run: python boxing/research/discover_wbc_wayback_directory.py
+      - name: Persist WBC archive discovery
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add boxing/rankings/wbc_wayback_directory_discovery.json
+          if git diff --cached --quiet; then
+            echo 'No WBC directory discovery changes.'
+          else
+            git commit -m 'Publish older WBC archive discovery'
+            git pull --rebase origin main
+            git push
+          fi
