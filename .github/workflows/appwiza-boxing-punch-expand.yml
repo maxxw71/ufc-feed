@@ -2,6 +2,10 @@ name: Appwiza boxing punch expansion
 
 on:
   workflow_dispatch:
+  schedule:
+    # Daily bounded refresh of public, linked CompuBox reports. The collector
+    # does not enumerate numeric endpoints and retains source provenance.
+    - cron: '23 8 * * *'
   push:
     branches: [main]
     paths:
