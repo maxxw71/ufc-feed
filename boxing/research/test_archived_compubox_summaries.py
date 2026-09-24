@@ -35,6 +35,8 @@ class ArchivedCompuBoxSummaryTests(unittest.TestCase):
         self.assertEqual(out['Miguel Cotto']['power_accuracy_pct'],54.0)
         self.assertEqual(out['Miguel Cotto']['body_landed'],27.0)
         self.assertEqual(out['Miguel Cotto']['total_landed'],55.0)
+        self.assertNotIn('power_landed',out['Delvin Rodriguez'])
+        self.assertNotIn('power_accuracy_pct',out['Delvin Rodriguez'])
 
         out=parse_summary_metrics(
             "Klitschko mixed up his attack (9 jabs landed per round/24 thrown- 10 power landed/13 thrown) "
