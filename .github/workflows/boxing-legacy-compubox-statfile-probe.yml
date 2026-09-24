@@ -81,10 +81,35 @@ jobs:
           if 'url' in qcols:
               for q in d.execute("select * from external_evidence_queue where kind='punch' and (url like '%Mtagwa%' or url like '%CompuBox-Stats%' or url like '%Mayweather-Marquez%' or url like '%Klitschko%Arreola%') order by url"):
                   queue_rows.append(dict(q))
+          review_candidates=[]
+          qreview={str(q['url']):dict(q) for q in d.execute("select * from external_evidence_queue where kind='punch' and status='tables_need_review'")}
+          for r in d.execute("select source_id,data from source_rows where source='external_evidence' and kind='punch' order by source_id"):
+              url=str(r['source_id'] or '')
+              if url not in qreview:continue
+              try:p=json.loads(r['data'])
+              except Exception:continue
+              flat=' '.join(str(cell) for t in (p.get('tables') or []) for rr in (t or []) for cell in (rr or []) if cell)
+              flat+=' '+' '.join(str(x) for x in (p.get('relevant_paragraphs') or []) if x)
+              flat=re.sub(r'\\s+',' ',flat).strip()
+              markers={
+                'round_sequence':bool(re.search(r'\\bRound\\s+1\\s+2(?:\\s+3)?',flat,re.I)),
+                'total':bool(re.search(r'Total\\s+Punch',flat,re.I)),
+                'jab':bool(re.search(r'\\bJabs?\\b',flat,re.I)),
+                'power':bool(re.search(r'Power\\s+Punch',flat,re.I)),
+                'pair_density':len(re.findall(r'\\b\\d{1,3}\\s*/\\s*\\d{1,3}\\b',flat)),
+              }
+              if markers['round_sequence'] or markers['pair_density']>=6:
+                  review_candidates.append({
+                    'url':url,'title':p.get('title'),'markers':markers,
+                    'table_shapes':[[len(t),max([len(rr) for rr in t] or [0])] for t in (p.get('tables') or [])],
+                    'paragraphs':(p.get('relevant_paragraphs') or [])[:8],
+                    'flat_sample':flat[:5000]
+                  })
           d.close()
           out={'matching_payloads':len(rows),'rows':rows,'normalized_punch_reports':normalized,
                'unparsed_substantial_table_candidates':table_candidates,
-               'linked_fight_queue_status':queue_rows}
+               'linked_fight_queue_status':queue_rows,
+               'tables_need_review_numeric_candidates':review_candidates}
           path=Path('boxing/public_punch_audit/legacy_compubox_statfile_probe.json')
           path.parent.mkdir(parents=True,exist_ok=True)
           path.write_text(json.dumps(out,indent=2,ensure_ascii=False))
