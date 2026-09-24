@@ -1,0 +1,164 @@
+name: UFC Shadow Promotion Audit
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/ufc-shadow-promotion-audit.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  audit:
+    runs-on: [self-hosted, appwiza]
+    timeout-minutes: 15
+    steps:
+      - name: Audit top autonomous UFC shadow candidates
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          ROOT=/home/anestishkurti92/ufc-predictor-v1
+          PY="$ROOT/venv/bin/python"
+          cd "$ROOT"
+          "$PY" - <<'PY'
+          import sqlite3,json,math
+          import numpy as np,pandas as pd
+          from pathlib import Path
+
+          DB=Path('auto_research/state/research.sqlite3')
+          DATA=Path('feature_expansion/prefight_favorite_features_v6.csv')
+          db=sqlite3.connect(DB);db.row_factory=sqlite3.Row
+          top=[dict(r) for r in db.execute("""
+            select fingerprint,name,rule_json,first_seen,last_seen,times_seen,bets,wins,losses,
+                   win_rate,roi,train_roi,holdout_roi,early_roi,recent_roi,yearly_positive_ratio,status,official
+            from candidates
+            where official=0 and status='shadow_candidate'
+            order by holdout_roi desc,bets desc limit 10
+          """)]
+          print('=== TOP SHADOW DB ===')
+          print(json.dumps(top,indent=2))
+          targets=[r for r in top if 'f2_diff_strong_opp_sig_diff' in r['name']][:2]
+          if len(targets)<2:
+              targets=[dict(r) for r in db.execute("""
+                select fingerprint,name,rule_json,first_seen,last_seen,times_seen,bets,wins,losses,
+                       win_rate,roi,train_roi,holdout_roi,early_roi,recent_roi,yearly_positive_ratio,status,official
+                from candidates
+                where name like 'f2_diff_strong_opp_sig_diff%'
+                order by holdout_roi desc,bets desc limit 2
+              """)]
+          print('=== TARGETS ===')
+          print(json.dumps(targets,indent=2))
+          runs=[dict(r) for r in db.execute("""
+            select id,started_at,finished_at,mode,dataset_sha,dataset_rows,candidates_tested,survivors,status,note
+            from research_runs order by id desc limit 12
+          """)]
+          print('=== RECENT RESEARCH RUNS ===')
+          print(json.dumps(runs,indent=2))
+          db.close()
+
+          d=pd.read_csv(DATA,low_memory=False)
+          d['_date']=pd.to_datetime(d['event_date'],errors='coerce')
+          d=d.sort_values('_date',kind='stable').reset_index(drop=True)
+          won=d['won'].astype(bool)
+          dec=pd.to_numeric(d['fav_decimal'],errors='coerce')
+          valid=dec.notna()&(dec>1)&d['_date'].notna()
+          d=d.loc[valid].reset_index(drop=True);won=d['won'].astype(bool);dec=pd.to_numeric(d['fav_decimal'],errors='coerce')
+          def mask_for(rule):
+              m=pd.Series(True,index=d.index)
+              for c,op,t in rule:
+                  x=pd.to_numeric(d[c],errors='coerce')
+                  m &= (x>=float(t)) if op=='>=' else (x<=float(t))
+              return m.fillna(False)
+          def american(x):
+              if not np.isfinite(x) or x<=1:return np.nan
+              return 100*(x-1) if x>=2 else -100/(x-1)
+          def sm(mask):
+              idx=np.where(mask.to_numpy())[0]
+              if not len(idx):return {'n':0}
+              w=won.iloc[idx].to_numpy();o=dec.iloc[idx].to_numpy()
+              p=np.where(w,o-1,-1.0)
+              aos=np.array([american(x) for x in o])
+              return {'n':int(len(idx)),'wins':int(w.sum()),'losses':int((~w).sum()),
+                      'win_rate':float(w.mean()),'roi':float(p.mean()),'profit_100':float(p.sum()*100),
+                      'avg_decimal':float(np.mean(o)),'median_american':float(np.nanmedian(aos)),
+                      'min_american':float(np.nanmin(aos)),'max_american':float(np.nanmax(aos))}
+          def year_stats(mask):
+              out={}
+              yrs=d['_date'].dt.year
+              for y in sorted(yrs[mask].dropna().unique()):
+                  q=mask&(yrs==y);out[str(int(y))]=sm(q)
+              return out
+          def split_stats(mask):
+              n=len(d);out={}
+              for frac in (.60,.65,.70,.75,.80):
+                  cut=int(n*frac)
+                  out[f'train_{int(frac*100)}']=sm(mask&(d.index<cut))
+                  out[f'test_{int((1-frac)*100)}']=sm(mask&(d.index>=cut))
+                  out[f'cutdate_{int(frac*100)}']=str(d.loc[min(cut,n-1),'_date'].date())
+              # calendar stress windows
+              for y in [2018,2019,2020,2021,2022,2023,2024]:
+                  out[f'{y}_plus']=sm(mask&(d['_date'].dt.year>=y))
+              return out
+          def odds_stress(mask):
+              ao=pd.Series([american(x) for x in dec],index=d.index)
+              out={}
+              for cap in [-1000,-750,-500,-400,-300]:
+                  # Remove favorites more negative than the cap.
+                  keep=~((ao<0)&(ao<=cap))
+                  out[f'exclude_{abs(cap)}plus_favorites']=sm(mask&keep)
+                  out[f'removed_{abs(cap)}plus_count']=int((mask&~keep).sum())
+              bins=[(-10000,-1000),(-999,-500),(-499,-300),(-299,-200),(-199,-150),(-149,-110),(-109,0)]
+              out['negative_price_bands']={}
+              for lo,hi in bins:
+                  q=mask&(ao>=lo)&(ao<=hi)
+                  if q.sum():out['negative_price_bands'][f'{lo}_{hi}']=sm(q)
+              return out
+          audits=[]
+          masks=[]
+          for t in targets:
+              rule=json.loads(t['rule_json'])
+              m=mask_for(rule);masks.append(m)
+              rec={'db':t,'rule':rule,'recomputed':sm(m),'yearly':year_stats(m),
+                   'splits':split_stats(m),'odds_stress':odds_stress(m)}
+              audits.append(rec)
+          if len(masks)>=2:
+              a,b=masks[:2]
+              relation={'a_n':int(a.sum()),'b_n':int(b.sum()),'intersection':int((a&b).sum()),
+                        'b_subset_a':bool((b&~a).sum()==0),'a_subset_b':bool((a&~b).sum()==0),
+                        'a_only':int((a&~b).sum()),'b_only':int((b&~a).sum())}
+          else:relation={}
+          print('=== TARGET AUDITS ===')
+          print(json.dumps(audits,indent=2,default=str))
+          print('=== OVERLAP ===')
+          print(json.dumps(relation,indent=2))
+
+          # Sensitivity grid around the two visible thresholds.
+          x=pd.to_numeric(d['f2_diff_strong_opp_sig_diff'],errors='coerce')
+          k=pd.to_numeric(d['f2_diff_days_since_ko_loss'],errors='coerce')
+          grid=[]
+          for st in [1.75,2.0,2.1,2.202,2.3,2.4,2.5,2.623,2.75,3.0]:
+              for kt in [-16.5,0,30,60,90,105,120,150,180]:
+                  m=(x>=st)&(k>=kt)
+                  z=sm(m.fillna(False))
+                  if z['n']>=30:
+                      z.update({'strong_threshold':st,'ko_days_threshold':kt})
+                      # recent fixed window not used in discovery scoring
+                      z['2022_plus']=sm(m.fillna(False)&(d['_date'].dt.year>=2022))
+                      grid.append(z)
+          grid=sorted(grid,key=lambda r:(r.get('roi',-9),r.get('n',0)),reverse=True)
+          print('=== SENSITIVITY GRID ===')
+          print(json.dumps(grid,indent=2))
+
+          # Loss rows and exact odds for forensic review.
+          for i,(t,m) in enumerate(zip(targets,masks),1):
+              cols=['event_date','favorite','opponent','won','fav_decimal',
+                    'f2_diff_strong_opp_sig_diff','f2_diff_days_since_ko_loss']
+              q=d.loc[m,cols].copy()
+              q['american_odds']=[american(v) for v in q['fav_decimal']]
+              print(f'=== TARGET {i} BETS ===')
+              print(q.to_csv(index=False))
+              print(f'=== TARGET {i} LOSSES ===')
+              print(q[~q['won'].astype(bool)].to_csv(index=False))
+          PY
