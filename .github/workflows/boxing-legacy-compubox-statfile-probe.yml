@@ -45,8 +45,16 @@ jobs:
                 'stat_links':p.get('stat_links') or [],
                 'payload_keys':sorted(p.keys())
               })
+          normalized=[]
+          tabs={x[0] for x in d.execute("select name from sqlite_master where type='table'")}
+          if {'punch_reports','round_punches','fight_punch_totals'}<=tabs:
+              for pr in d.execute("select url,bout_date,title,status from punch_reports where bout_date in ('2008-03-15','2009-09-19') order by bout_date,url"):
+                  item=dict(pr)
+                  item['round_rows']=d.execute("select count(*) from round_punches where report_url=?",(pr['url'],)).fetchone()[0]
+                  item['total_rows']=d.execute("select count(*) from fight_punch_totals where report_url=?",(pr['url'],)).fetchone()[0]
+                  normalized.append(item)
           d.close()
-          out={'matching_payloads':len(rows),'rows':rows}
+          out={'matching_payloads':len(rows),'rows':rows,'normalized_punch_reports':normalized}
           path=Path('boxing/public_punch_audit/legacy_compubox_statfile_probe.json')
           path.parent.mkdir(parents=True,exist_ok=True)
           path.write_text(json.dumps(out,indent=2,ensure_ascii=False))
