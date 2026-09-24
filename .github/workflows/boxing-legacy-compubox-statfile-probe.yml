@@ -53,7 +53,6 @@ jobs:
                   item['round_rows']=d.execute("select count(*) from round_punches where report_url=?",(pr['url'],)).fetchone()[0]
                   item['total_rows']=d.execute("select count(*) from fight_punch_totals where report_url=?",(pr['url'],)).fetchone()[0]
                   normalized.append(item)
-          d.close()
           normalized_urls={x['url'] for x in normalized}
           table_candidates=[]
           for r in d.execute("select source_id,data from source_rows where source='external_evidence' and kind='punch' order by source_id"):
