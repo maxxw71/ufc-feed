@@ -1,9 +1,9 @@
 {
-  "generated_at": "2026-09-24T02:11:18.419976+00:00",
+  "generated_at": "2026-09-24T02:23:50.683892+00:00",
   "authoritative_for_current_strict_research_coverage": true,
   "scope": "strict/research-relevant boxing dataset and current prospective price collection",
   "do_not_use_as_current_strict_coverage": "boxing/public_reports/DATA_GAP_AUDIT.json",
-  "phase2_build_at": "20260923T125405Z",
+  "phase2_build_at": "20260924T021836Z",
   "database": {
     "status": "database_ready",
     "tables": [
@@ -82,6 +82,39 @@
   },
   "fighter_profiles": {
     "born": {
+      "fighters_present": 723,
+      "fighters_total": 723,
+      "fighter_coverage_pct": 100.0,
+      "missing_fighters": 0,
+      "priced_bout_both_sides": {
+        "both_sides": 730,
+        "both_sides_pct": 100.0,
+        "at_least_one_side": 730
+      }
+    },
+    "height_cm": {
+      "fighters_present": 656,
+      "fighters_total": 723,
+      "fighter_coverage_pct": 90.73,
+      "missing_fighters": 67,
+      "priced_bout_both_sides": {
+        "both_sides": 620,
+        "both_sides_pct": 84.93,
+        "at_least_one_side": 727
+      }
+    },
+    "reach_cm": {
+      "fighters_present": 442,
+      "fighters_total": 723,
+      "fighter_coverage_pct": 61.13,
+      "missing_fighters": 281,
+      "priced_bout_both_sides": {
+        "both_sides": 372,
+        "both_sides_pct": 50.96,
+        "at_least_one_side": 634
+      }
+    },
+    "stance": {
       "fighters_present": 720,
       "fighters_total": 723,
       "fighter_coverage_pct": 99.59,
@@ -90,39 +123,6 @@
         "both_sides": 727,
         "both_sides_pct": 99.59,
         "at_least_one_side": 730
-      }
-    },
-    "height_cm": {
-      "fighters_present": 655,
-      "fighters_total": 723,
-      "fighter_coverage_pct": 90.59,
-      "missing_fighters": 68,
-      "priced_bout_both_sides": {
-        "both_sides": 619,
-        "both_sides_pct": 84.79,
-        "at_least_one_side": 727
-      }
-    },
-    "reach_cm": {
-      "fighters_present": 441,
-      "fighters_total": 723,
-      "fighter_coverage_pct": 61.0,
-      "missing_fighters": 282,
-      "priced_bout_both_sides": {
-        "both_sides": 370,
-        "both_sides_pct": 50.68,
-        "at_least_one_side": 634
-      }
-    },
-    "stance": {
-      "fighters_present": 700,
-      "fighters_total": 723,
-      "fighter_coverage_pct": 96.82,
-      "missing_fighters": 23,
-      "priced_bout_both_sides": {
-        "both_sides": 690,
-        "both_sides_pct": 94.52,
-        "at_least_one_side": 729
       }
     },
     "nationality": {
