@@ -7,6 +7,11 @@ on:
       - 'scripts/ufc_shadow_tracker.py'
       - '.github/workflows/ufc-shadow-tracker-live.yml'
   workflow_dispatch:
+  workflow_run:
+    workflows:
+      - Update UFC Feed
+    types: [completed]
+    branches: [main]
   schedule:
     - cron: '25 4,10,16,22 * * *'
 
@@ -19,6 +24,7 @@ permissions:
 
 jobs:
   install:
+    if: github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success'
     runs-on: [self-hosted, Linux, X64, appwiza]
     timeout-minutes: 15
     steps:
