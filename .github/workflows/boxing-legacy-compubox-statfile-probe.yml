@@ -1,0 +1,72 @@
+name: Boxing Legacy CompuBox Statfile Probe
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/boxing-legacy-compubox-statfile-probe.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  probe:
+    runs-on: [self-hosted, Linux, X64, appwiza]
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Inspect stored legacy CompuBox stat-file payloads
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          python3 - <<'PY'
+          import sqlite3,json,re,os
+          from pathlib import Path
+          db='/home/anestishkurti92/boxing-research/boxing.sqlite3'
+          d=sqlite3.connect(f'file:{db}?mode=ro',uri=True);d.row_factory=sqlite3.Row
+          targets=['MAR-PAC2.html','stat_files/','Mayweather-Marquez']
+          rows=[]
+          for r in d.execute("select source_id,data from source_rows where source='external_evidence' and kind='punch' order by source_id"):
+              url=str(r['source_id'] or '')
+              if not any(t.lower() in url.lower() for t in targets):continue
+              try:p=json.loads(r['data'])
+              except Exception as e:
+                  rows.append({'url':url,'payload_error':repr(e)});continue
+              tabs=p.get('tables') or []
+              rows.append({
+                'url':url,
+                'title':p.get('title'),
+                'relevant_paragraphs':p.get('relevant_paragraphs') or [],
+                'table_count':len(tabs),
+                'tables':tabs,
+                'stat_links':p.get('stat_links') or [],
+                'payload_keys':sorted(p.keys())
+              })
+          d.close()
+          out={'matching_payloads':len(rows),'rows':rows}
+          path=Path('boxing/public_punch_audit/legacy_compubox_statfile_probe.json')
+          path.parent.mkdir(parents=True,exist_ok=True)
+          path.write_text(json.dumps(out,indent=2,ensure_ascii=False))
+          print(json.dumps({'matching_payloads':len(rows),'summaries':[
+            {'url':x.get('url'),'title':x.get('title'),'table_count':x.get('table_count'),
+             'paragraph_count':len(x.get('relevant_paragraphs') or []),
+             'table_shapes':[[len(t),max([len(rr) for rr in t] or [0])] for t in (x.get('tables') or [])]}
+            for x in rows]},indent=2,ensure_ascii=False))
+          PY
+      - name: Persist probe
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add boxing/public_punch_audit/legacy_compubox_statfile_probe.json
+          if git diff --cached --quiet; then
+            echo 'No statfile probe changes.'
+          else
+            git commit -m 'Inspect legacy CompuBox stat files'
+            git pull --rebase origin main
+            git push
+          fi
