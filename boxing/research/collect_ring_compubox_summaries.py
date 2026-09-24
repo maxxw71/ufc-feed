@@ -87,6 +87,22 @@ def parse_pair(text,a,b):
         v=float(v);old=out[f].get(k)
         if old is not None and abs(float(old)-v)>1e-9:conflicts[f].append((k,old,v))
         else:out[f][k]=v
+    # Paired construction where the second clause inherits the category:
+    # "Chamberlain went 287 of 952 (30%) in total punches while Rafferty went 202 of 761 (27%)."
+    for f,o in ((a,b),(b,a)):
+        for fa in sorted({clean(f),clean(f).split()[-1]},key=len,reverse=True):
+            for oa in sorted({clean(o),clean(o).split()[-1]},key=len,reverse=True):
+                m=re.search(
+                    r'(?<![A-Za-z0-9])'+re.escape(fa)+r'(?![A-Za-z0-9])\s+went\s+'
+                    r'(\d{1,4})\s+of\s+(\d{1,4})\s*\(?(\d+(?:\.\d+)?)%\)?\s+in\s+total\s+punches\s+'
+                    r'while\s+'+re.escape(oa)+r'\s+went\s+(\d{1,4})\s+of\s+(\d{1,4})'
+                    r'(?:\s*\(?(\d+(?:\.\d+)?)%\)?)?',
+                    text,re.I)
+                if m:
+                    setv(f,'total_landed',m.group(1));setv(f,'total_thrown',m.group(2));setv(f,'total_accuracy_pct',m.group(3))
+                    setv(o,'total_landed',m.group(4));setv(o,'total_thrown',m.group(5))
+                    if m.group(6):setv(o,'total_accuracy_pct',m.group(6))
+
     # Exact per-fighter patterns.
     for f,o in ((a,b),(b,a)):
         aliases=sorted({clean(f),clean(f).split()[-1]},key=len,reverse=True)
