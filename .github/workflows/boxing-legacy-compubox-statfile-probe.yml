@@ -77,8 +77,14 @@ jobs:
                 'stat_links':(p.get('stat_links') or [])[:30]
               })
           d.close()
+          queue_rows=[]
+          qcols={r[1] for r in d.execute("pragma table_info(external_evidence_queue)")}
+          if 'url' in qcols:
+              for q in d.execute("select * from external_evidence_queue where kind='punch' and (url like '%Mtagwa%' or url like '%CompuBox-Stats%' or url like '%Mayweather-Marquez%' or url like '%Klitschko%Arreola%') order by url"):
+                  queue_rows.append(dict(q))
           out={'matching_payloads':len(rows),'rows':rows,'normalized_punch_reports':normalized,
-               'unparsed_substantial_table_candidates':table_candidates}
+               'unparsed_substantial_table_candidates':table_candidates,
+               'linked_fight_queue_status':queue_rows}
           path=Path('boxing/public_punch_audit/legacy_compubox_statfile_probe.json')
           path.parent.mkdir(parents=True,exist_ok=True)
           path.write_text(json.dumps(out,indent=2,ensure_ascii=False))
