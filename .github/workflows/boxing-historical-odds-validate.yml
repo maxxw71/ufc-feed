@@ -17,8 +17,15 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with: {fetch-depth: 0}
-      - run: python3 -m pip install -q beautifulsoup4 lxml
-      - run: python3 boxing/research/validate_historical_odds_snapshot.py
+      - name: Validate archived prices in isolated Python environment
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          TMPV=$(mktemp -d)
+          python3 -m venv "$TMPV/venv"
+          "$TMPV/venv/bin/python" -m pip install -q beautifulsoup4 lxml
+          "$TMPV/venv/bin/python" boxing/research/validate_historical_odds_snapshot.py
+          rm -rf "$TMPV"
       - name: Persist strict historical odds validation on latest main
         shell: bash
         run: |
