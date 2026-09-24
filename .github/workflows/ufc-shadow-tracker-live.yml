@@ -26,14 +26,18 @@ jobs:
         shell: bash
         run: |
           set -Eeuo pipefail
+          KEY=/home/appwiza-runner/.ssh/appwiza_vps
+          HOST=anestishkurti92@127.0.0.1
+          SSH="ssh -i $KEY -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=accept-new $HOST"
+          cat scripts/ufc_shadow_tracker.py | $SSH 'set -e; D=/home/anestishkurti92/ufc-predictor-v1; cat > "$D/ufc_shadow_tracker.py.new"; chmod 0700 "$D/ufc_shadow_tracker.py.new"; mv -f "$D/ufc_shadow_tracker.py.new" "$D/ufc_shadow_tracker.py"'
+          $SSH 'bash -s' <<'EOF'
+          set -Eeuo pipefail
+          export HOME=/home/anestishkurti92
           ROOT=/home/anestishkurti92/ufc-predictor-v1
-          test -x "$ROOT/venv/bin/python"
-          test -f "$ROOT/ufc_feature_expansion.py"
-          test -f "$ROOT/auto_research/state/prospective_ufc.sqlite3"
-          cp "$GITHUB_WORKSPACE/scripts/ufc_shadow_tracker.py" "$ROOT/ufc_shadow_tracker.py.new"
-          chmod 0700 "$ROOT/ufc_shadow_tracker.py.new"
-          mv -f "$ROOT/ufc_shadow_tracker.py.new" "$ROOT/ufc_shadow_tracker.py"
           cd "$ROOT"
+          test -x venv/bin/python
+          test -f ufc_feature_expansion.py
+          test -f auto_research/state/prospective_ufc.sqlite3
           venv/bin/python -m py_compile ufc_shadow_tracker.py
           venv/bin/python ufc_shadow_tracker.py run
           echo '=== SHADOW TRACKER STATE ==='
@@ -62,3 +66,4 @@ jobs:
           ! grep -q 'ufc_shadow_tracker' ufc_email_watcher.py
           ! grep -q 'shadow_tracker' /opt/sports-publisher/bet_tracker.py
           echo 'Shadow tracker installed separately from official UFC methods.'
+          EOF
