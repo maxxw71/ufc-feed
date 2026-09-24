@@ -53,6 +53,7 @@ cov=load(PHASE2/'coverage.json')
 punch=load(PHASE2/'punch_profile_coverage.json')
 summary=load(PUNCH/'boxingscene_compubox_summary_report.json')
 archived_summary=load(PUNCH/'archived_compubox_summary_report.json')
+ring_summary=load(PUNCH/'ring_compubox_summary_report.json')
 reach=load(PROFILE/'cross_source_reach_report.json')
 pros=load(ODDS/'coverage.json')
 settle=load(ODDS/'settled_bouts.json')
@@ -110,6 +111,10 @@ out={
     'archived_compubox_summary_bouts':archived_summary.get('distinct_bouts'),
     'archived_compubox_summary_date_min':archived_summary.get('date_min'),
     'archived_compubox_summary_date_max':archived_summary.get('date_max'),
+    'ring_compubox_summary_rows':ring_summary.get('fighter_rows'),
+    'ring_compubox_summary_bouts':ring_summary.get('distinct_bouts'),
+    'ring_compubox_summary_date_min':ring_summary.get('date_min'),
+    'ring_compubox_summary_date_max':ring_summary.get('date_max'),
     'latest_cross_source_reach_backfill':{
       'generated_at':reach.get('generated_at'),'targets':reach.get('targets'),
       'accepted':reach.get('accepted'),'policy':reach.get('policy')
