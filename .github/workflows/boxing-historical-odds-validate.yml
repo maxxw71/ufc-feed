@@ -1,0 +1,40 @@
+name: Boxing historical odds strict validation
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'boxing/research/validate_historical_odds_snapshot.py'
+      - 'boxing/research/test_historical_odds_snapshot.py'
+      - '.github/workflows/boxing-historical-odds-validate.yml'
+      - 'boxing/public_reports/HISTORICAL_ODDS_WAYBACK_PILOT.json'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  validate:
+    runs-on: [self-hosted, Linux, X64, appwiza]
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+        with: {fetch-depth: 0}
+      - run: python3 -m pip install -q beautifulsoup4 lxml
+      - run: python3 boxing/research/validate_historical_odds_snapshot.py
+      - name: Persist strict historical odds validation on latest main
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          mkdir -p /tmp/historical-odds-validation
+          cp boxing/public_reports/HISTORICAL_ODDS_VALIDATION_REPORT.json /tmp/historical-odds-validation/
+          cp boxing/public_reports/HISTORICAL_ODDS_VALIDATED_ROWS.json /tmp/historical-odds-validation/
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git fetch origin main
+          git reset --hard origin/main
+          cp /tmp/historical-odds-validation/* boxing/public_reports/
+          git add boxing/public_reports/HISTORICAL_ODDS_VALIDATION_REPORT.json boxing/public_reports/HISTORICAL_ODDS_VALIDATED_ROWS.json
+          if git diff --cached --quiet; then
+            echo 'No strict historical odds validation changes.'
+          else
+            git commit -m 'Publish validated historical boxing prices'
+            git push origin HEAD:main
+          fi
