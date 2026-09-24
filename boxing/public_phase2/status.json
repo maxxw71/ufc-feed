@@ -1,26 +1,10 @@
 {
-  "status": "missing_required_tables",
-  "missing": [
-    "source_rows"
-  ],
-  "tables": [
-    "bouts",
-    "enriched_pre_bout",
-    "fight_punch_totals",
-    "fighters",
-    "historical_punch_observations",
-    "normalized_fighters",
-    "odds",
-    "opponent_links",
-    "pre_bout_features",
-    "priced_bout_research",
-    "published_fight_punch_totals",
-    "punch_reports",
-    "reported_historical_odds",
-    "reviewed_chart_rounds",
-    "reviewed_round_charts",
-    "round_punches",
-    "secondary_round_punches",
-    "wiki_bout_context"
-  ]
+  "status": "ready",
+  "built_at": "20260924T021836Z",
+  "database_status": "database_ready",
+  "required_phase2_tables_present": true,
+  "source_rows_present": false,
+  "source_rows_required_for_phase2": false,
+  "price_rematch_status": "skipped_on_compact_public_db_supplemental_quote_links_retained",
+  "authoritative_current_coverage": "boxing/public_phase2/CURRENT_DATASET_STATUS.json"
 }
