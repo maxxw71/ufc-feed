@@ -166,6 +166,24 @@ def parse_pair(text,a,b):
                 # "connected on 46% of his power punches"
                 m=re.search(p+r"[^.!?]{0,140}?(?:connected|landed)[^.!?]{0,30}?(\d+(?:\.\d+)?)%\s+of\s+(?:his|her)\s+power\s+(?:punches|shots)",sent,re.I)
                 if m:setv(f,'power_accuracy_pct',m.group(1))
+
+                # "Bivol landed 170 punches" - exact fighter-attributed total
+                # landed count even when attempts are not stated.
+                m=re.search(p+r"[^.!?]{0,80}?landed\s+(\d{1,4})\s+(?:total\s+)?punches\b",sent,re.I)
+                if m:setv(f,'total_landed',m.group(1))
+
+                # "Stevenson landed 165 of 372 punches ... compared to
+                # 72 of 468 ... for Lopez." Capture the opponent tail only
+                # when both exact fighter names occur in the same sentence.
+                for oa in sorted({clean(o),clean(o).split()[-1]},key=len,reverse=True):
+                    m=re.search(
+                        r'compared\s+to\s+(\d{1,4})\s+of\s+(\d{1,4})'
+                        r'(?:\s*\(?(\d+(?:\.\d+)?)%\)?)?[^.!?]{0,80}?'
+                        r'(?:for|by)\s+'+re.escape(oa)+r'(?![A-Za-z0-9])',
+                        sent,re.I)
+                    if m:
+                        setv(o,'total_landed',m.group(1));setv(o,'total_thrown',m.group(2))
+                        if m.group(3):setv(o,'total_accuracy_pct',m.group(3))
     # Pair comparisons: "Hrgovic outlanded Adeleye 228-92 on total punches ... power shots (169-47)"
     for f,o in ((a,b),(b,a)):
         fa=clean(f).split()[-1];oa=clean(o).split()[-1]
