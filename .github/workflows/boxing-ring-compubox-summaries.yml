@@ -33,15 +33,23 @@ jobs:
       - run: python boxing/research/collect_ring_compubox_summaries.py
       - if: always()
         run: rm -f boxing/research/boxing.sqlite3
-      - name: Persist Ring summary archive
+      - name: Persist Ring summary archive on latest main
+        shell: bash
         run: |
+          set -Eeuo pipefail
+          mkdir -p /tmp/ring-compubox-out
+          cp boxing/punch_supplements/ring_compubox_summaries.jsonl /tmp/ring-compubox-out/
+          cp boxing/punch_supplements/ring_compubox_summary_report.json /tmp/ring-compubox-out/
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git fetch origin main
+          git reset --hard origin/main
+          cp /tmp/ring-compubox-out/ring_compubox_summaries.jsonl boxing/punch_supplements/
+          cp /tmp/ring-compubox-out/ring_compubox_summary_report.json boxing/punch_supplements/
           git add boxing/punch_supplements/ring_compubox_summaries.jsonl boxing/punch_supplements/ring_compubox_summary_report.json
           if git diff --cached --quiet; then
             echo 'No Ring CompuBox summary changes.'
           else
             git commit -m 'Expand modern CompuBox summary archive'
-            git pull --rebase origin main
-            git push
+            git push origin HEAD:main
           fi
