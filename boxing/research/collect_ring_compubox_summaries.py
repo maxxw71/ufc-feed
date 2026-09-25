@@ -209,6 +209,84 @@ def parse_pair(text,a,b):
                     setv(f,'total_landed',m.group(2));setv(f,'total_thrown',m.group(3))
                     setv(f,'total_accuracy_pct',m.group(4))
 
+    # Pair construction where the second clause inherits "total punches":
+    # "Resendiz landed 186 of 600 total punches while Plant went 108 of 509."
+    # Also accepts "X landed 170 of 442 punches and Y landed 169 of 407."
+    for f,o in ((a,b),(b,a)):
+        for fa in sorted({clean(f),clean(f).split()[-1]},key=len,reverse=True):
+            for oa in sorted({clean(o),clean(o).split()[-1]},key=len,reverse=True):
+                m=re.search(
+                    r'(?<![A-Za-z0-9])'+re.escape(fa)+r'(?![A-Za-z0-9])[^.!?]{0,70}?'
+                    r'(?:landed|went|connected(?:\s+on)?)\s+(\d{1,4})\s+(?:of|[-–])\s+(\d{1,4})'
+                    r'\s+(?:total\s+)?punches[^.!?]{0,40}?\b(?:while|and)\s+'+
+                    re.escape(oa)+r'(?![A-Za-z0-9])\s+(?:landed|went|connected(?:\s+on)?)\s+'
+                    r'(\d{1,4})\s+(?:of|[-–])\s+(\d{1,4})(?:\s+(?:total\s+)?punches)?',
+                    text,re.I)
+                if m:
+                    setv(f,'total_landed',m.group(1));setv(f,'total_thrown',m.group(2))
+                    setv(o,'total_landed',m.group(3));setv(o,'total_thrown',m.group(4))
+
+    # Exact pair "connect advantage" construction, e.g. 117-115 in power punches.
+    for f,o in ((a,b),(b,a)):
+        for fa in sorted({clean(f),clean(f).split()[-1]},key=len,reverse=True):
+            m=re.search(
+                r'(?<![A-Za-z0-9])'+re.escape(fa)+
+                r'(?![A-Za-z0-9])[^.!?]{0,100}?(?:held|hold|had)[^.!?]{0,30}?'
+                r'(\d{1,4})\s*(?:to|[-–])\s*(\d{1,4})\s+connect\s+advantage\s+in\s+'
+                r'(power|jabs?)\s+(?:punches|shots)?',
+                text,re.I)
+            if m:
+                cat='jab' if m.group(3).lower().startswith('jab') else 'power'
+                setv(f,cat+'_landed',m.group(1));setv(o,cat+'_landed',m.group(2))
+
+    # Catterall-Eubank style exact completed-fight totals:
+    # "... Catterall ... punches (51) than Eubank (17), ... attempts (186-85)"
+    for f,o in ((a,b),(b,a)):
+        for fa in sorted({clean(f),clean(f).split()[-1]},key=len,reverse=True):
+            for oa in sorted({clean(o),clean(o).split()[-1]},key=len,reverse=True):
+                m=re.search(
+                    r'(?<![A-Za-z0-9])'+re.escape(fa)+
+                    r'(?![A-Za-z0-9])[^.!?]{0,120}?punches\s*\((\d{1,4})\)\s+than\s+'+
+                    re.escape(oa)+r'\s*\((\d{1,4})\)[^.!?]{0,100}?attempts\s*'
+                    r'\((\d{1,4})\s*[-–]\s*(\d{1,4})\)',
+                    text,re.I)
+                if m:
+                    setv(f,'total_landed',m.group(1));setv(o,'total_landed',m.group(2))
+                    setv(f,'total_thrown',m.group(3));setv(o,'total_thrown',m.group(4))
+
+    # Inoue-Picasso style explicit category edges and per-round landed values.
+    for f,o in ((a,b),(b,a)):
+        for fa in sorted({clean(f),clean(f).split()[-1]},key=len,reverse=True):
+            for oa in sorted({clean(o),clean(o).split()[-1]},key=len,reverse=True):
+                m=re.search(
+                    r'(?<![A-Za-z0-9])'+re.escape(fa)+
+                    r'(?![A-Za-z0-9])[^.!?]{0,180}?(\d{1,4})\s*[-–]\s*(\d{1,4})\s+edge\s+in\s+jabs\s+landed'
+                    r'[^.!?]{0,100}?power\s+shots\s*\((\d{1,4})\s*[-–]\s*(\d{1,4})\)'
+                    r'[^.!?]{0,100}?body\s*\((\d{1,4})\s*[-–]\s*(\d{1,4})\)',
+                    text,re.I)
+                if m:
+                    setv(f,'jab_landed',m.group(1));setv(o,'jab_landed',m.group(2))
+                    setv(f,'power_landed',m.group(3));setv(o,'power_landed',m.group(4))
+                    setv(f,'body_landed',m.group(5));setv(o,'body_landed',m.group(6))
+                m=re.search(
+                    r'(?<![A-Za-z0-9])'+re.escape(fa)+
+                    r'(?![A-Za-z0-9])\s+averaged\s+(\d+(?:\.\d+)?)\s+punches\s+landed\s+per\s+round'
+                    r'[^.!?]{0,100}?'+re.escape(oa)+
+                    r'[^.!?]{0,100}?\((\d+(?:\.\d+)?)\)\s+per\s+(?:frame|round)',
+                    text,re.I)
+                if m:
+                    setv(f,'total_landed_per_round',m.group(1));setv(o,'total_landed_per_round',m.group(2))
+
+    # Simple exact overall landed comparison: "Roach outlanded Davis 112 to 103 in the fight."
+    for f,o in ((a,b),(b,a)):
+        fa=clean(f).split()[-1];oa=clean(o).split()[-1]
+        m=re.search(
+            re.escape(fa)+r'\s+outlanded\s+'+re.escape(oa)+
+            r'\s+(\d{1,4})\s*(?:to|[-–])\s*(\d{1,4})\s+(?:overall|in\s+the\s+fight)',
+            text,re.I)
+        if m:
+            setv(f,'total_landed',m.group(1));setv(o,'total_landed',m.group(2))
+
     # Exact per-fighter patterns. Numeric extraction is constrained to the
     # fighter's subject clause and cannot cross an exact opponent mention.
     for f,o in ((a,b),(b,a)):
