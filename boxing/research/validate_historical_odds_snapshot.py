@@ -115,6 +115,37 @@ def parse_snapshot(raw):
                     }
     return out
 
+def validate_quote_across_snapshots(q,event_date,event_url,snapshots):
+    """Return a strict validation row from the newest exact matching snapshot.
+
+    snapshots must already be ordered newest-first and contain parsed market
+    cells from the exact preserved Wayback timestamp.
+    """
+    key=(str(q.get('bout_id') or ''),nk(q.get('bookmaker')),nk(q.get('selection')))
+    checks=[]
+    for snap in snapshots:
+        arc=(snap.get('cells') or {}).get(key)
+        item={'timestamp':snap.get('timestamp'),'snapshot_url':snap.get('snapshot_used_url'),
+              'archive_match':arc}
+        if arc and arc.get('decimal_from_archive') is not None and q.get('decimal_price') is not None:
+            diff=abs(float(q['decimal_price'])-float(arc['decimal_from_archive']))
+            item['decimal_abs_diff']=round(diff,8)
+            if diff<=0.005:
+                return {
+                  'quote_rowid':q['quote_rowid'],'bout_id':str(q.get('bout_id') or ''),
+                  'bookmaker':q.get('bookmaker'),'selection':q.get('selection'),
+                  'stored_decimal_price':float(q['decimal_price']),
+                  'archived_american_price':arc['american_price'],
+                  'archived_decimal_price':round(float(arc['decimal_from_archive']),6),
+                  'event_date':event_date,'event_url':event_url,
+                  'snapshot_timestamp':snap['timestamp'],
+                  'snapshot_url':snap['snapshot_used_url'],
+                  'verification':'exact_pre_event_archive_event_bookmaker_bout_selection_price_match'
+                },checks+[dict(item,validated=True)]
+        item['validated']=False
+        checks.append(item)
+    return None,checks
+
 def candidate_events():
     if INDEX.exists():
         obj=json.loads(INDEX.read_text())
@@ -159,7 +190,7 @@ def main():
             continue
         events_with_stored_quotes+=1
 
-        parsed=None;chosen=None;replay_log=[]
+        snapshots=[];replay_log=[]
         for cap in event.get('captures',[]):
             stamp=str(cap.get('timestamp') or '')
             snapshot=str(cap.get('snapshot_url') or '')
@@ -176,15 +207,14 @@ def main():
                 }
                 replay_log.append(attempt)
                 if cells:
-                    parsed=cells
-                    chosen=attempt
-                    break
+                    snapshots.append({**attempt,'cells':cells})
             except Exception as e:
                 replay_log.append({
                   'timestamp':stamp,'snapshot_url':snapshot,'status':'fetch_or_parse_error',
                   'error':type(e).__name__+': '+str(e)[:500]
                 })
-        if not parsed or not chosen:
+        snapshots.sort(key=lambda x:x['timestamp'],reverse=True)
+        if not snapshots:
             audits.append({
               'event_date':event_date,'event_url':event_url,'stored_quote_rows':len(qrows),
               'status':'no_exact_pre_event_market_replay','capture_attempts':replay_log
@@ -193,40 +223,23 @@ def main():
 
         checks=[]
         for q in qrows:
-            key=(str(q.get('bout_id') or ''),nk(q.get('bookmaker')),nk(q.get('selection')))
-            arc=parsed.get(key)
+            v,attempts=validate_quote_across_snapshots(q,event_date,event_url,snapshots)
             check={
               'quote_rowid':q.get('quote_rowid'),'bout_id':q.get('bout_id'),
               'bookmaker':q.get('bookmaker'),'selection':q.get('selection'),
-              'stored_decimal_price':q.get('decimal_price'),'archive_match':arc
+              'stored_decimal_price':q.get('decimal_price'),
+              'validated':bool(v),'snapshot_checks':attempts
             }
-            if arc and arc.get('decimal_from_archive') is not None and q.get('decimal_price') is not None:
-                diff=abs(float(q['decimal_price'])-float(arc['decimal_from_archive']))
-                check['decimal_abs_diff']=round(diff,8)
-                if diff<=0.005:
-                    v={
-                      'quote_rowid':q['quote_rowid'],'bout_id':str(q.get('bout_id') or ''),
-                      'bookmaker':q.get('bookmaker'),'selection':q.get('selection'),
-                      'stored_decimal_price':float(q['decimal_price']),
-                      'archived_american_price':arc['american_price'],
-                      'archived_decimal_price':round(float(arc['decimal_from_archive']),6),
-                      'event_date':event_date,'event_url':event_url,
-                      'snapshot_timestamp':chosen['timestamp'],
-                      'snapshot_url':chosen['snapshot_used_url'],
-                      'verification':'exact_pre_event_archive_event_bookmaker_bout_selection_price_match'
-                    }
-                    validated.append(v);check['validated']=True
-                else:
-                    check['validated']=False
-            else:
-                check['validated']=False
+            if v:
+                validated.append(v)
+                check['matched_snapshot_timestamp']=v['snapshot_timestamp']
             checks.append(check)
         audits.append({
           'event_date':event_date,'event_url':event_url,
-          'snapshot_timestamp':chosen['timestamp'],
-          'snapshot_url':chosen['snapshot_used_url'],
-          'snapshot_final_url':chosen['snapshot_final_url'],
-          'archive_market_cells':len(parsed),'stored_quote_rows':len(qrows),
+          'parsed_pre_event_snapshots':len(snapshots),
+          'snapshot_timestamps':[x['timestamp'] for x in snapshots],
+          'archive_market_cells_max':max(len(x['cells']) for x in snapshots),
+          'stored_quote_rows':len(qrows),
           'validated_rows':sum(bool(x.get('validated')) for x in checks),
           'capture_attempts':replay_log,'checks':checks
         })
