@@ -35,6 +35,17 @@ class ConsensusMarket(unittest.TestCase):
         self.assertAlmostEqual(r['profit_median'],.55)
         self.assertTrue(.60<r['market_prob']<.65)
 
+    def test_verified_quote_filter_requires_both_sides(self):
+        a=row('a','b','A','B','BOXER A',[
+            q('One','9',1.50,'WIN',1),q('Two','9',1.55,'WIN',2)])
+        b=row('b','a','B','A','BOXER B',[
+            q('One','9',2.70,'LOSS',3),q('Two','9',2.60,'LOSS',4)])
+        rows=canonical_market_rows([a,b],min_books=1,allowed_quote_rowids={1,3})
+        self.assertEqual(len(rows),1)
+        self.assertEqual(rows[0]['books'],['One'])
+        self.assertEqual(canonical_market_rows([a,b],min_books=2,allowed_quote_rowids={1,3}),[])
+        self.assertEqual(canonical_market_rows([a,b],min_books=1,allowed_quote_rowids={1}),[])
+
     def test_requires_two_clean_books(self):
         a=row('a','b','A','B','BOXER A',[q('Only','9',1.5,'WIN',1)])
         b=row('b','a','B','A','BOXER B',[q('Only','9',2.7,'LOSS',2)])
