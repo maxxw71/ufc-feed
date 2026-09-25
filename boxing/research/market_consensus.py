@@ -29,7 +29,7 @@ def load_master(path):
         return [json.loads(line) for line in f if line.strip()]
 
 
-def canonical_market_rows(master_rows,min_books=2):
+def canonical_market_rows(master_rows,min_books=2,allowed_quote_rowids=None):
     """Return one consensus favorite row per canonical bout.
 
     Each bookmaker must expose exactly one quote for each fighter and both quotes
@@ -38,6 +38,7 @@ def canonical_market_rows(master_rows,min_books=2):
     remaining books.  ROI fields use the median displayed decimal price; best
     displayed price is retained separately as an optimistic sensitivity bound.
     """
+    allowed=None if allowed_quote_rowids is None else {str(x) for x in allowed_quote_rowids}
     groups=defaultdict(list)
     for row in master_rows:
         a=row.get('fighter') or {}; b=row.get('opponent') or {}
@@ -68,6 +69,8 @@ def canonical_market_rows(master_rows,min_books=2):
         books=defaultdict(lambda:defaultdict(list))
         for fid,row in side_rows.items():
             for q in row.get('quotes') or []:
+                if allowed is not None and str(q.get('quote_rowid')) not in allowed:
+                    continue
                 if q.get('result') not in ('WIN','LOSS'):
                     continue
                 try: price=float(q.get('decimal_price'))
