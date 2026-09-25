@@ -1,11 +1,47 @@
 {
-  "generated_at": "2026-09-25T13:08:02.278331+00:00",
-  "candidate_events": 0,
-  "events_with_stored_quotes": 0,
+  "generated_at": "2026-09-25T13:09:58.494471+00:00",
+  "candidate_events": 2,
+  "events_with_stored_quotes": 2,
   "validated_price_rows": 0,
   "distinct_validated_bouts": 0,
   "distinct_validated_events": 0,
   "validated_rows": [],
-  "event_audits": [],
+  "event_audits": [
+    {
+      "event_date": "2021-05-29",
+      "event_url": "https://www.proboxingodds.com/events/2021-05-29-1344",
+      "stored_quote_rows": 6,
+      "status": "no_exact_pre_event_market_replay",
+      "capture_attempts": [
+        {
+          "timestamp": "20210528114306",
+          "snapshot_url": "https://web.archive.org/web/20210528114306id_/https://www.proboxingodds.com/events/2021-05-29-1344",
+          "status": "fetch_or_parse_error",
+          "error": "RuntimeError: no exact Wayback replay: [{\"url\": \"https://web.archive.org/web/20210528114306id_/https://www.proboxingodds.com/events/2021-05-29-1344\", \"final_url\": \"https://web.archive.org/web/20210119154525id_/https://www.proboxingodds.com/events/2021-05-29-1344\", \"reason\": \"wayback_timestamp_drift\"}, {\"url\": \"https://web.archive.org/web/20210528114306/https://www.proboxingodds.com/events/2021-05-29-1344\", \"final_url\": \"https://web.archive.org/web/20210119154525/https://www.proboxingodds.com/events/2021-05-29"
+        }
+      ]
+    },
+    {
+      "event_date": "2021-05-30",
+      "event_url": "https://www.proboxingodds.com/events/2021-05-30-1393",
+      "stored_quote_rows": 16,
+      "status": "no_exact_pre_event_market_replay",
+      "capture_attempts": [
+        {
+          "timestamp": "20210420200146",
+          "snapshot_url": "https://web.archive.org/web/20210420200146id_/https://www.proboxingodds.com/events/2021-05-30-1393",
+          "snapshot_used_url": "https://web.archive.org/web/20210420200146/https://www.proboxingodds.com/events/2021-05-30-1393",
+          "snapshot_final_url": "https://web.archive.org/web/20210420200146/https://www.proboxingodds.com/events/2021-05-30-1393",
+          "archive_market_cells": 0,
+          "replay_attempts_before_success": [
+            {
+              "url": "https://web.archive.org/web/20210420200146id_/https://www.proboxingodds.com/events/2021-05-30-1393",
+              "reason": "URLError: <urlopen error timed out>"
+            }
+          ]
+        }
+      ]
+    }
+  ],
   "policy": "Validation requires an exact pre-event Wayback snapshot plus exact archived event/bookmaker/bout/selection cell and price equivalence after American-to-decimal conversion (<=0.005 absolute difference). Newest eligible capture is attempted first; older captures may be used only if their exact Wayback timestamp is preserved."
 }
