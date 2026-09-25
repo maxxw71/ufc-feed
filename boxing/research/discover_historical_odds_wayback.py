@@ -70,6 +70,12 @@ def main():
         date,url=canonical(original)
         if not date or len(stamp)<8:
             rejected+=1;continue
+        try:
+            event_day=dt.date.fromisoformat(date)
+        except ValueError:
+            rejected+=1;continue
+        if event_day>dt.datetime.now(dt.timezone.utc).date():
+            rejected+=1;continue
         # Strictly before event calendar date. Same-day captures are not accepted
         # because fight start time is not proven here.
         if stamp[:8] >= date.replace('-',''):
