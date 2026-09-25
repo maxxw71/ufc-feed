@@ -46,7 +46,7 @@ def snapshot_variants(url):
             originals.append(sch+host+rest)
     out=[]
     for orig in originals:
-        for mod in ('id_','if_',''):
+        for mod in ('id_',''):
             cand=f'{base}{stamp}{mod}/{orig}'
             if cand not in out:out.append(cand)
     return out
@@ -59,7 +59,7 @@ def fetch_exact_snapshot(url,requested_stamp):
               'User-Agent':'Mozilla/5.0 AppwizaHistoricalOddsStructure/1.0',
               'Accept-Language':'en-US,en;q=0.8'
             })
-            with urllib.request.urlopen(req,timeout=60) as r:
+            with urllib.request.urlopen(req,timeout=15) as r:
                 raw=r.read(4_000_001);final=r.geturl()
             if len(raw)>4_000_000:
                 errors.append({'url':cand,'reason':'snapshot_too_large'});continue
