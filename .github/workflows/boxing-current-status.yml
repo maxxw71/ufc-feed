@@ -54,16 +54,29 @@ jobs:
           python-version: '3.12'
       - run: python boxing/research/build_current_dataset_status.py
       - name: Commit authoritative current status
+        shell: bash
         run: |
+          set -Eeuo pipefail
+          cp boxing/public_phase2/CURRENT_DATASET_STATUS.json /tmp/CURRENT_DATASET_STATUS.json
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add boxing/public_phase2/CURRENT_DATASET_STATUS.json
-          if git diff --cached --quiet; then
-            echo 'No current boxing status changes.'
-          else
+          for attempt in 1 2 3; do
+            git fetch origin main
+            git reset --hard origin/main
+            cp /tmp/CURRENT_DATASET_STATUS.json boxing/public_phase2/CURRENT_DATASET_STATUS.json
+            git add boxing/public_phase2/CURRENT_DATASET_STATUS.json
+            if git diff --cached --quiet; then
+              echo 'No current boxing status changes.'
+              exit 0
+            fi
             git commit -m 'Refresh authoritative boxing dataset status'
-            git pull --rebase origin main
-            git push
-          fi
+            if git push origin HEAD:main; then
+              exit 0
+            fi
+            echo "Status publish race on attempt $attempt; retrying from latest main."
+            sleep $((attempt * 2))
+          done
+          echo 'Failed to publish authoritative boxing status after 3 race-safe attempts.'
+          exit 1
 
 # status-refresh: 2026-09-23T22:23-04:00
