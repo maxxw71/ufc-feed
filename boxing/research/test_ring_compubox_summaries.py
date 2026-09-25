@@ -129,6 +129,40 @@ class RingCompuBoxSummaryTests(unittest.TestCase):
         ok,_=supplement_pair_ok('2025-03-01',['Gervonta Davis','Lamont Roach'],dav)
         self.assertTrue(ok)
 
+    def test_roach_cruz_overall_prefix(self):
+        out=parse_pair(
+            "Overall in the fight, Roach outlanded Cruz 191 to 159.",
+            'Lamont Roach','Isaac Cruz')
+        self.assertEqual(out['Lamont Roach']['total_landed'],191)
+        self.assertEqual(out['Isaac Cruz']['total_landed'],159)
+
+    def test_muratalla_cruz_full_tally_and_categories(self):
+        out=parse_pair(
+            "Cruz landed one more punch overall according to CompuBox (176-of-537 to 175-of-611). "
+            "Muratalla was credited for landing 13 more power punches (112 of 296 to 99 of 251), "
+            "whereas Cruz landed 14 more jabs (77 of 286 to 63 of 215).",
+            'Raymond Muratalla','Andy Cruz')
+        self.assertEqual(out['Andy Cruz']['total_landed'],176)
+        self.assertEqual(out['Andy Cruz']['total_thrown'],537)
+        self.assertEqual(out['Raymond Muratalla']['total_landed'],175)
+        self.assertEqual(out['Raymond Muratalla']['power_landed'],112)
+        self.assertEqual(out['Andy Cruz']['power_landed'],99)
+        self.assertEqual(out['Andy Cruz']['jab_landed'],77)
+        self.assertEqual(out['Raymond Muratalla']['jab_landed'],63)
+
+    def test_barrios_pacquiao_full_tally_and_categories(self):
+        out=parse_pair(
+            "Barrios landed only 19 more punches overall (120 of 658 to 101 of 577). "
+            "CompuBox recorded more power punches for Pacquiao (81 of 259 to 75 of 235) "
+            "and more jabs for Barrios (45 of 423 to 20 of 318).",
+            'Mario Barrios','Manny Pacquiao')
+        self.assertEqual(out['Mario Barrios']['total_landed'],120)
+        self.assertEqual(out['Manny Pacquiao']['total_thrown'],577)
+        self.assertEqual(out['Manny Pacquiao']['power_landed'],81)
+        self.assertEqual(out['Mario Barrios']['power_landed'],75)
+        self.assertEqual(out['Mario Barrios']['jab_landed'],45)
+        self.assertEqual(out['Manny Pacquiao']['jab_landed'],20)
+
     def test_itauma_hyphen_of_hyphen_total(self):
         out=parse_pair(
             "Itauma, 17 years his junior, admitted needing to quickly be wary of the firepower flashing back at him after absorbing a shot - Whyte landed just two - while the unbeaten 20-year-old connected on 19-of-34 punches (55.9%).",
