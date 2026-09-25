@@ -1,7 +1,15 @@
 import unittest
-from collect_ring_compubox_summaries import parse_pair
+from collect_ring_compubox_summaries import parse_pair,supplement_pair_ok
 
 class RingCompuBoxSummaryTests(unittest.TestCase):
+    def test_verified_pair_supplement_is_exact(self):
+        url='https://www.ringmagazine.com/news/jack-catterall-vs-harlem-eubank--compubox-punch-stats-5S39F1SF97apVMe5OL8PIZ'
+        ok,why=supplement_pair_ok('2025-07-05',['Harlem Eubank','Jack Catterall'],url)
+        self.assertTrue(ok);self.assertIn('independent_result',why)
+        self.assertFalse(supplement_pair_ok('2025-07-06',['Harlem Eubank','Jack Catterall'],url)[0])
+        self.assertFalse(supplement_pair_ok('2025-07-05',['Harlem Eubank','Other Fighter'],url)[0])
+        self.assertFalse(supplement_pair_ok('2025-07-05',['Harlem Eubank','Jack Catterall'],url+'-wrong')[0])
+
     def test_full_total_pair(self):
         t="Mark Chamberlain went 287 of 952 (30%) in total punches while Jack Rafferty went 202 of 761 (27%)."
         out=parse_pair(t,'Mark Chamberlain','Jack Rafferty')
