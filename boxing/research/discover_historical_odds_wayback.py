@@ -26,10 +26,10 @@ def get_json(url,timeout=75):
 
 def cdx_prefix(prefix):
     params=[
-      ('url',prefix),('matchType','prefix'),('output','json'),
+      ('url',prefix+'*'),('output','json'),
       ('filter','statuscode:200'),
       ('fl','timestamp,original,statuscode,mimetype,digest'),
-      ('collapse','urlkey,digest'),('limit','10000')
+      ('limit','10000')
     ]
     q='https://web.archive.org/cdx/search/cdx?'+urllib.parse.urlencode(params)
     try:
@@ -57,6 +57,9 @@ def main():
         queries.append({'prefix':prefix,'query':q,'rows':len(rows),'error':error})
         raw.extend(rows)
         time.sleep(.25)
+
+    if not raw and queries and all(q.get('error') for q in queries):
+        raise RuntimeError('all Wayback CDX prefix queries failed: '+json.dumps(queries,ensure_ascii=False))
 
     grouped=defaultdict(list)
     rejected=0
