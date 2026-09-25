@@ -55,5 +55,8 @@ class RingCompuBoxSummaryTests(unittest.TestCase):
         self.assertEqual(out['Moses Itauma']['total_landed'],19)
         self.assertEqual(out['Moses Itauma']['total_thrown'],34)
         self.assertEqual(out['Moses Itauma']['total_accuracy_pct'],55.9)
+        self.assertEqual(out['Dillian Whyte']['total_landed'],2)
+        self.assertNotIn('total_thrown',out['Dillian Whyte'])
+        self.assertNotEqual(out['Dillian Whyte']['total_landed'],19)
 
 if __name__=='__main__':unittest.main()
