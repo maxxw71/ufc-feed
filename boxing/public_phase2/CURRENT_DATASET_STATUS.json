@@ -1,9 +1,9 @@
 {
-  "generated_at": "2026-09-25T20:03:15.249230+00:00",
+  "generated_at": "2026-09-25T23:13:51.167551+00:00",
   "authoritative_for_current_strict_research_coverage": true,
   "scope": "strict/research-relevant boxing dataset and current prospective price collection",
   "do_not_use_as_current_strict_coverage": "boxing/public_reports/DATA_GAP_AUDIT.json",
-  "phase2_build_at": "20260925T135858Z",
+  "phase2_build_at": "20260925T230827Z",
   "database": {
     "status": "database_ready",
     "tables": [
@@ -252,8 +252,24 @@
     }
   },
   "historical_pricing": {
-    "validated_price_rows": 0,
-    "status": "exploratory_only_until_archived_quote timing/settlement is independently verified"
+    "validated_price_rows": 515,
+    "distinct_validated_bouts": 155,
+    "distinct_validated_events": 62,
+    "validated_event_date_min": "2021-07-31",
+    "validated_event_date_max": "2026-05-31",
+    "validated_bookmakers": [
+      "BetMGM",
+      "BetRivers",
+      "BetWay",
+      "Caesars",
+      "DraftKings",
+      "FanDuel",
+      "PointsBet",
+      "Unibet"
+    ],
+    "status": "independently_verified_pre_event_subset_available",
+    "policy": "Validation requires an exact pre-event Wayback snapshot plus exact archived event/bookmaker/bout/selection cell and price equivalence after American-to-decimal conversion (<=0.005 absolute difference). Newest eligible capture is attempted first; older captures may be used only if their exact Wayback timestamp is preserved.",
+    "note": "Only this verified subset has independently proven pre-event archived prices; the remaining historical archive stays exploratory."
   },
   "prospective_pricing": {
     "generated_at": "2026-09-25T20:02:59.310347+00:00",
@@ -271,7 +287,7 @@
   "largest_remaining_gaps": [
     "verified reach coverage",
     "historical full-fight/round-level punch depth",
-    "independently validated historical archived quote timing and settlement",
+    "expand independently validated historical archived price coverage",
     "older WBC official ranking depth"
   ]
 }
