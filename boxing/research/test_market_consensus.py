@@ -1,5 +1,5 @@
 import unittest
-from market_consensus import canonical_market_rows
+from market_consensus import canonical_market_rows,quote_signature
 
 
 def row(fid,opp,name,oppname,result,quotes):
@@ -45,6 +45,23 @@ class ConsensusMarket(unittest.TestCase):
         self.assertEqual(rows[0]['books'],['One'])
         self.assertEqual(canonical_market_rows([a,b],min_books=2,allowed_quote_rowids={1,3}),[])
         self.assertEqual(canonical_market_rows([a,b],min_books=1,allowed_quote_rowids={1}),[])
+
+    def test_stable_quote_signature_ignores_transient_rowid(self):
+        a=row('a','b','A','B','BOXER A',[
+            q('One','9',1.50,'WIN',101),q('Two','9',1.55,'WIN',102)])
+        b=row('b','a','B','A','BOXER B',[
+            q('One','9',2.70,'LOSS',103),q('Two','9',2.60,'LOSS',104)])
+        # priced_bout_research quotes inherit event date from their parent row
+        for z in a['quotes']+b['quotes']:
+            z['event_date']='2025-01-01'
+        allowed={
+          ('2025-01-01','9','one','a',1.5),
+          ('2025-01-01','9','one','b',2.7),
+        }
+        rows=canonical_market_rows([a,b],min_books=1,allowed_quote_signatures=allowed)
+        self.assertEqual(len(rows),1)
+        self.assertEqual(rows[0]['books'],['One'])
+        self.assertEqual(quote_signature(a['quotes'][0]),('2025-01-01','9','one','a',1.5))
 
     def test_requires_two_clean_books(self):
         a=row('a','b','A','B','BOXER A',[q('Only','9',1.5,'WIN',1)])
