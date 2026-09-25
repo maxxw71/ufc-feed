@@ -15,6 +15,7 @@ RANK=ROOT/'rankings'
 PROFILE=ROOT/'profile_supplements'
 PUNCH=ROOT/'punch_supplements'
 ODDS=ROOT/'prospective_odds'
+REPORTS=ROOT/'public_reports'
 OUT=PHASE2/'CURRENT_DATASET_STATUS.json'
 
 def load(path):
@@ -58,6 +59,12 @@ reach=load(PROFILE/'cross_source_reach_report.json')
 pros=load(ODDS/'coverage.json')
 settle=load(ODDS/'settled_bouts.json')
 db=load(PHASE2/'database_status.json')
+hist_valid=load(REPORTS/'HISTORICAL_ODDS_VALIDATED_ROWS.json')
+hist_valid_rows=hist_valid.get('rows') or []
+hist_valid_bouts=sorted({str(x.get('bout_id') or '') for x in hist_valid_rows if str(x.get('bout_id') or '')})
+hist_valid_events=sorted({str(x.get('event_url') or '') for x in hist_valid_rows if str(x.get('event_url') or '')})
+hist_valid_dates=sorted({str(x.get('event_date') or '') for x in hist_valid_rows if str(x.get('event_date') or '')})
+hist_valid_books=sorted({str(x.get('bookmaker') or '') for x in hist_valid_rows if str(x.get('bookmaker') or '')})
 
 fighters=int(gap.get('unique_fighters') or 0)
 missing=gap.get('missing_fighter_counts') or {}
@@ -121,8 +128,15 @@ out={
     }
   },
   'historical_pricing':{
-    'validated_price_rows':cov.get('validated_price_rows'),
-    'status':'exploratory_only_until_archived_quote timing/settlement is independently verified'
+    'validated_price_rows':len(hist_valid_rows),
+    'distinct_validated_bouts':len(hist_valid_bouts),
+    'distinct_validated_events':len(hist_valid_events),
+    'validated_event_date_min':hist_valid_dates[0] if hist_valid_dates else None,
+    'validated_event_date_max':hist_valid_dates[-1] if hist_valid_dates else None,
+    'validated_bookmakers':hist_valid_books,
+    'status':'independently_verified_pre_event_subset_available' if hist_valid_rows else 'no_independently_verified_historical_rows',
+    'policy':hist_valid.get('policy'),
+    'note':'Only this verified subset has independently proven pre-event archived prices; the remaining historical archive stays exploratory.'
   },
   'prospective_pricing':{
     'generated_at':pros.get('generated_at'),
@@ -140,7 +154,7 @@ out={
   'largest_remaining_gaps':[
     'verified reach coverage',
     'historical full-fight/round-level punch depth',
-    'independently validated historical archived quote timing and settlement',
+    'expand independently validated historical archived price coverage',
     'older WBC official ranking depth'
   ]
 }
