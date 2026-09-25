@@ -15,7 +15,7 @@ import json,math
 from collections import Counter
 from pathlib import Path
 
-from market_consensus import load_master, canonical_market_rows
+from market_consensus import load_master, canonical_market_rows,quote_signature
 from phase2_interaction_scan import feature_rows,metrics,rule_universe,matches,period_metrics
 from candidate_method_validation import RULES as CANDIDATE_RULES, match as candidate_match
 
@@ -92,7 +92,7 @@ def rolling_origin(rows):
     return out
 
 def tier(master,allowed,min_books):
-    markets=canonical_market_rows(master,min_books=min_books,allowed_quote_rowids=allowed)
+    markets=canonical_market_rows(master,min_books=min_books,allowed_quote_signatures=allowed)
     rows=feature_rows(markets)
     screen=fixed_rule_screen(rows)
     # A compact descriptive screen only. These are not promoted methods.
@@ -113,11 +113,19 @@ def main():
     master=load_master(run/'boxing_prefight_master.jsonl')
     valid=json.loads(VALID.read_text())
     vrows=valid.get('rows') or []
-    allowed={str(x.get('quote_rowid')) for x in vrows if x.get('quote_rowid') is not None}
+    allowed={quote_signature({
+      'event_date':x.get('event_date'),
+      'odds_bout_id':x.get('bout_id'),
+      'bookmaker':x.get('bookmaker'),
+      'selection':x.get('selection'),
+      'decimal_price':x.get('stored_decimal_price')
+    }) for x in vrows}
+    allowed.discard(None)
     report={
       'status':'INDEPENDENTLY_VERIFIED_HISTORICAL_PRICE_SUBSET_RESEARCH',
       'generated_from_validation_artifact':str(VALID.name),
       'validated_quote_rows':len(vrows),
+      'stable_verified_quote_signatures':len(allowed),
       'distinct_validated_bouts':len({str(x.get('bout_id') or '') for x in vrows if str(x.get('bout_id') or '')}),
       'distinct_validated_events':len({str(x.get('event_url') or '') for x in vrows if str(x.get('event_url') or '')}),
       'validation_policy':valid.get('policy'),
