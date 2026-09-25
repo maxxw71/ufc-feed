@@ -153,6 +153,16 @@ def parse_pair(text,a,b):
                 if m:
                     setv(f,'total_landed',m.group(1));setv(f,'total_thrown',m.group(2))
                     if m.group(3):setv(f,'total_accuracy_pct',m.group(3))
+                # Ring sometimes prints the percentage after the noun:
+                # "connected on 19-of-34 punches (55.9%)"
+                m2=re.search(
+                    p+r"[^.!?]{0,180}?(?:landed|went|connected(?:\s+on)?)\s+"
+                    r"(\d{1,4})\s*[-–]\s*of\s*[-–]\s*(\d{1,4})\s+"
+                    r"(?:total\s+)?punches\s*\((\d+(?:\.\d+)?)%\)",
+                    sent,re.I)
+                if m2:
+                    setv(f,'total_landed',m2.group(1));setv(f,'total_thrown',m2.group(2))
+                    setv(f,'total_accuracy_pct',m2.group(3))
                 # Parenthetical or bare "X (249 of 567)" when sentence says punches/connects.
                 m=re.search(p+r"\s*\(?(\d{1,4})\s+(?:of|[-–])\s+(\d{1,4})\)?",sent,re.I)
                 if m and re.search(r'\b(?:punch|connect)',sent,re.I):
