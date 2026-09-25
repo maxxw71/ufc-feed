@@ -1,82 +1,23 @@
 {
-  "generated_at": "2026-09-25T12:58:42.812558+00:00",
+  "generated_at": "2026-09-25T13:06:13.836588+00:00",
   "validated_price_rows": 0,
   "distinct_validated_bouts": 0,
   "distinct_validated_events": 0,
   "validated_rows": [],
   "event_audits": [
     {
-      "event_date": "2021-05-29",
       "event_url": "https://www.proboxingodds.com/events/2021-05-29-1344",
-      "snapshot_timestamp": "20210528114306",
-      "snapshot_url": "https://web.archive.org/web/20210528114306id_/https://www.proboxingodds.com/events/2021-05-29-1344",
-      "snapshot_final_url": "https://web.archive.org/web/20210119154525id_/https://www.proboxingodds.com/events/2021-05-29-1344",
-      "archive_market_cells": 0,
-      "stored_quote_rows": 6,
-      "validated_rows": 0,
-      "checks": [
-        {
-          "quote_rowid": 40335,
-          "bout_id": "9455",
-          "bookmaker": "BetWay",
-          "selection": "Jason Quigley",
-          "stored_decimal_price": 1.5714285714285714,
-          "archive_match": null,
-          "validated": false
-        },
-        {
-          "quote_rowid": 40336,
-          "bout_id": "9455",
-          "bookmaker": "BetWay",
-          "selection": "Shane Mosley Jr",
-          "stored_decimal_price": 2.4,
-          "archive_match": null,
-          "validated": false
-        },
-        {
-          "quote_rowid": 40337,
-          "bout_id": "9457",
-          "bookmaker": "BetWay",
-          "selection": "Chantelle Cameron",
-          "stored_decimal_price": 1.01,
-          "archive_match": null,
-          "validated": false
-        },
-        {
-          "quote_rowid": 40338,
-          "bout_id": "9457",
-          "bookmaker": "BetWay",
-          "selection": "Melissa Hernandez",
-          "stored_decimal_price": 17.0,
-          "archive_match": null,
-          "validated": false
-        },
-        {
-          "quote_rowid": 40339,
-          "bout_id": "9211",
-          "bookmaker": "BetWay",
-          "selection": "Devin Haney",
-          "stored_decimal_price": 1.125,
-          "archive_match": null,
-          "validated": false
-        },
-        {
-          "quote_rowid": 40340,
-          "bout_id": "9211",
-          "bookmaker": "BetWay",
-          "selection": "Jorge Linares",
-          "stored_decimal_price": 6.0,
-          "archive_match": null,
-          "validated": false
-        }
-      ]
+      "status": "fetch_or_parse_error",
+      "error": "RuntimeError: no exact Wayback replay: [{\"url\": \"https://web.archive.org/web/20210528114306id_/https://www.proboxingodds.com/events/2021-05-29-1344\", \"final_url\": \"https://web.archive.org/web/20210119154525id_/https://www.proboxingodd"
     },
     {
       "event_date": "2021-05-30",
       "event_url": "https://www.proboxingodds.com/events/2021-05-30-1393",
       "snapshot_timestamp": "20210420200146",
       "snapshot_url": "https://web.archive.org/web/20210420200146id_/https://www.proboxingodds.com/events/2021-05-30-1393",
+      "snapshot_used_url": "https://web.archive.org/web/20210420200146id_/https://www.proboxingodds.com/events/2021-05-30-1393",
       "snapshot_final_url": "https://web.archive.org/web/20210420200146id_/https://www.proboxingodds.com/events/2021-05-30-1393",
+      "replay_attempts_before_success": [],
       "archive_market_cells": 0,
       "stored_quote_rows": 16,
       "validated_rows": 0,
