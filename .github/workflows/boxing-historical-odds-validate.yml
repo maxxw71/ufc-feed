@@ -9,10 +9,20 @@ on:
       - 'boxing/public_reports/HISTORICAL_ODDS_WAYBACK_PILOT.json'
       - 'boxing/public_reports/HISTORICAL_ODDS_WAYBACK_INDEX.json'
   workflow_dispatch:
+  workflow_run:
+    workflows:
+      - Boxing historical odds Wayback index
+    types: [completed]
+    branches: [main]
+concurrency:
+  group: boxing-historical-odds-validation
+  cancel-in-progress: true
+
 permissions:
   contents: write
 jobs:
   validate:
+    if: github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success'
     runs-on: ubuntu-latest
     timeout-minutes: 8
     steps:
