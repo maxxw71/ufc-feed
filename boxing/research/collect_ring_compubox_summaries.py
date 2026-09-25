@@ -13,6 +13,7 @@ from bs4 import BeautifulSoup
 
 ROOT=Path(__file__).resolve().parents[1]
 SEEDS=ROOT/'research'/'ring_compubox_seed_urls.json'
+PAIR_SUPPLEMENTS=ROOT/'research'/'ring_compubox_pair_supplements.json'
 DB=ROOT/'research'/'boxing.sqlite3'
 OUT=ROOT/'punch_supplements'/'ring_compubox_summaries.jsonl'
 REPORT=ROOT/'punch_supplements'/'ring_compubox_summary_report.json'
@@ -50,6 +51,22 @@ def article_date(soup):
             try:return dt.datetime.strptime(m.group(0).title(),fmt).date().isoformat()
             except Exception:pass
     return None
+
+def supplement_pair_ok(date,names,ring_url):
+    if not PAIR_SUPPLEMENTS.exists():return False,'missing_pair_supplements'
+    try:obj=json.loads(PAIR_SUPPLEMENTS.read_text())
+    except Exception:return False,'invalid_pair_supplements'
+    target=sorted(nk(x) for x in names)
+    for row in obj.get('pairs') or []:
+        evidence=[x for x in (row.get('evidence') or []) if str(x.get('url') or '').startswith('http')]
+        if (
+          str(row.get('bout_date') or '')==date
+          and str(row.get('ring_url') or '')==ring_url
+          and sorted(nk(x) for x in (row.get('fighters') or []))==target
+          and evidence
+        ):
+            return True,'exact_ring_url_date_pair_plus_independent_result'
+    return False,'pair_not_in_verified_supplements'
 
 def db_pair_ok(date,names):
     if not DB.exists():return False,'missing_db'
@@ -289,6 +306,8 @@ def main():
     for seed in seeds:
         date=seed['bout_date'];a,b=seed['fighters'];rounds=int(seed.get('rounds') or 0)
         ok,res=db_pair_ok(date,[a,b])
+        if not ok:
+            ok,res=supplement_pair_ok(date,[a,b],seed['url'])
         item={'url':seed['url'],'bout_date':date,'fighters':[a,b],'pair_resolution':res}
         if not ok:item['status']='rejected_identity';diag.append(item);continue
         try:
