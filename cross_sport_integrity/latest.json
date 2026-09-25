@@ -1,7 +1,14 @@
 {
-  "built_at": "2026-09-25T12:16:08.824175+00:00",
-  "status": "PASS",
-  "hard_failures": [],
+  "built_at": "2026-09-25T17:25:46.231179+00:00",
+  "status": "FAIL",
+  "hard_failures": [
+    {
+      "name": "UFC canonical_future_tracker_exact",
+      "ok": false,
+      "detail": "canonical=['UFC:ufc-332:andreypulyaev:damianpinas', 'UFC:ufc-332:deivesonfigueiredo:paytontalbott', 'UFC:ufc-fight-night-september-26-2026:bradyhiestand:rinyanakamura', 'UFC:ufc-fight-night-september-26-2026:monteljackson:rickysimon', 'UFC:ufc-fight-night-september-26-2026:robertbryczek:rodolfovieira', 'UFC:ufc-fight-night-september-26-2026:vanessademopoulos:yazminjauregui'] tracker=['UFC:ufc-332:andreypulyaev:damianpinas', 'UFC:ufc-332:deivesonfigueiredo:paytontalbott', 'UFC:ufc-fight-night-september-26-2026:bradyhiestand:rinyanakamura', 'UFC:ufc-fight-night-september-26-2026:mickeygall:sedriquesdumas', 'UFC:ufc-fight-night-september-26-2026:monteljackson:rickysimon', 'UFC:ufc-fight-night-september-26-2026:robertbryczek:rodolfovieira', 'UFC:ufc-fight-night-september-26-2026:vanessademopoulos:yazminjauregui']",
+      "hard": true
+    }
+  ],
   "warnings": [],
   "checks": [
     {
@@ -73,13 +80,19 @@
     {
       "name": "UFC canonical_public_current_exact",
       "ok": true,
-      "detail": "canonical=['UFC:ufc-332:deivesonfigueiredo:paytontalbott', 'UFC:ufc-fight-night-september-26-2026:bradyhiestand:rinyanakamura', 'UFC:ufc-fight-night-september-26-2026:mickeygall:sedriquesdumas', 'UFC:ufc-fight-night-september-26-2026:robertbryczek:rodolfovieira', 'UFC:ufc-fight-night-september-26-2026:vanessademopoulos:yazminjauregui'] public=['UFC:ufc-332:deivesonfigueiredo:paytontalbott', 'UFC:ufc-fight-night-september-26-2026:bradyhiestand:rinyanakamura', 'UFC:ufc-fight-night-september-26-2026:mickeygall:sedriquesdumas', 'UFC:ufc-fight-night-september-26-2026:robertbryczek:rodolfovieira', 'UFC:ufc-fight-night-september-26-2026:vanessademopoulos:yazminjauregui']",
+      "detail": "canonical=['UFC:ufc-332:andreypulyaev:damianpinas', 'UFC:ufc-332:deivesonfigueiredo:paytontalbott', 'UFC:ufc-fight-night-september-26-2026:bradyhiestand:rinyanakamura', 'UFC:ufc-fight-night-september-26-2026:monteljackson:rickysimon', 'UFC:ufc-fight-night-september-26-2026:robertbryczek:rodolfovieira', 'UFC:ufc-fight-night-september-26-2026:vanessademopoulos:yazminjauregui'] public=['UFC:ufc-332:andreypulyaev:damianpinas', 'UFC:ufc-332:deivesonfigueiredo:paytontalbott', 'UFC:ufc-fight-night-september-26-2026:bradyhiestand:rinyanakamura', 'UFC:ufc-fight-night-september-26-2026:monteljackson:rickysimon', 'UFC:ufc-fight-night-september-26-2026:robertbryczek:rodolfovieira', 'UFC:ufc-fight-night-september-26-2026:vanessademopoulos:yazminjauregui']",
       "hard": true
     },
     {
       "name": "UFC canonical_state_ids_exact",
       "ok": true,
-      "detail": "canonical=['UFC:ufc-332:deivesonfigueiredo:paytontalbott', 'UFC:ufc-fight-night-september-26-2026:bradyhiestand:rinyanakamura', 'UFC:ufc-fight-night-september-26-2026:mickeygall:sedriquesdumas', 'UFC:ufc-fight-night-september-26-2026:robertbryczek:rodolfovieira', 'UFC:ufc-fight-night-september-26-2026:vanessademopoulos:yazminjauregui'] state=['UFC:ufc-332:deivesonfigueiredo:paytontalbott', 'UFC:ufc-fight-night-september-26-2026:bradyhiestand:rinyanakamura', 'UFC:ufc-fight-night-september-26-2026:mickeygall:sedriquesdumas', 'UFC:ufc-fight-night-september-26-2026:robertbryczek:rodolfovieira', 'UFC:ufc-fight-night-september-26-2026:vanessademopoulos:yazminjauregui']",
+      "detail": "canonical=['UFC:ufc-332:andreypulyaev:damianpinas', 'UFC:ufc-332:deivesonfigueiredo:paytontalbott', 'UFC:ufc-fight-night-september-26-2026:bradyhiestand:rinyanakamura', 'UFC:ufc-fight-night-september-26-2026:monteljackson:rickysimon', 'UFC:ufc-fight-night-september-26-2026:robertbryczek:rodolfovieira', 'UFC:ufc-fight-night-september-26-2026:vanessademopoulos:yazminjauregui'] state=['UFC:ufc-332:andreypulyaev:damianpinas', 'UFC:ufc-332:deivesonfigueiredo:paytontalbott', 'UFC:ufc-fight-night-september-26-2026:bradyhiestand:rinyanakamura', 'UFC:ufc-fight-night-september-26-2026:monteljackson:rickysimon', 'UFC:ufc-fight-night-september-26-2026:robertbryczek:rodolfovieira', 'UFC:ufc-fight-night-september-26-2026:vanessademopoulos:yazminjauregui']",
+      "hard": true
+    },
+    {
+      "name": "UFC methods_exact:UFC:ufc-332:andreypulyaev:damianpinas",
+      "ok": true,
+      "detail": "canonical=['U1'] state=['U1']",
       "hard": true
     },
     {
@@ -95,9 +108,9 @@
       "hard": true
     },
     {
-      "name": "UFC methods_exact:UFC:ufc-fight-night-september-26-2026:mickeygall:sedriquesdumas",
+      "name": "UFC methods_exact:UFC:ufc-fight-night-september-26-2026:monteljackson:rickysimon",
       "ok": true,
-      "detail": "canonical=['U10'] state=['U10']",
+      "detail": "canonical=['U2'] state=['U2']",
       "hard": true
     },
     {
@@ -114,8 +127,8 @@
     },
     {
       "name": "UFC canonical_future_tracker_exact",
-      "ok": true,
-      "detail": "canonical=['UFC:ufc-332:deivesonfigueiredo:paytontalbott', 'UFC:ufc-fight-night-september-26-2026:bradyhiestand:rinyanakamura', 'UFC:ufc-fight-night-september-26-2026:mickeygall:sedriquesdumas', 'UFC:ufc-fight-night-september-26-2026:robertbryczek:rodolfovieira', 'UFC:ufc-fight-night-september-26-2026:vanessademopoulos:yazminjauregui'] tracker=['UFC:ufc-332:deivesonfigueiredo:paytontalbott', 'UFC:ufc-fight-night-september-26-2026:bradyhiestand:rinyanakamura', 'UFC:ufc-fight-night-september-26-2026:mickeygall:sedriquesdumas', 'UFC:ufc-fight-night-september-26-2026:robertbryczek:rodolfovieira', 'UFC:ufc-fight-night-september-26-2026:vanessademopoulos:yazminjauregui']",
+      "ok": false,
+      "detail": "canonical=['UFC:ufc-332:andreypulyaev:damianpinas', 'UFC:ufc-332:deivesonfigueiredo:paytontalbott', 'UFC:ufc-fight-night-september-26-2026:bradyhiestand:rinyanakamura', 'UFC:ufc-fight-night-september-26-2026:monteljackson:rickysimon', 'UFC:ufc-fight-night-september-26-2026:robertbryczek:rodolfovieira', 'UFC:ufc-fight-night-september-26-2026:vanessademopoulos:yazminjauregui'] tracker=['UFC:ufc-332:andreypulyaev:damianpinas', 'UFC:ufc-332:deivesonfigueiredo:paytontalbott', 'UFC:ufc-fight-night-september-26-2026:bradyhiestand:rinyanakamura', 'UFC:ufc-fight-night-september-26-2026:mickeygall:sedriquesdumas', 'UFC:ufc-fight-night-september-26-2026:monteljackson:rickysimon', 'UFC:ufc-fight-night-september-26-2026:robertbryczek:rodolfovieira', 'UFC:ufc-fight-night-september-26-2026:vanessademopoulos:yazminjauregui']",
       "hard": true
     },
     {
@@ -228,7 +241,7 @@
       "ufc"
     ],
     "future_pending_by_sport": {
-      "UFC": 5
+      "UFC": 7
     }
   },
   "contract": {

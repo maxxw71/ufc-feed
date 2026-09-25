@@ -1,7 +1,7 @@
 CROSS-SPORT APPROVAL INTEGRITY
 ========================================================================================
-built_at: 2026-09-25T12:16:08.824175+00:00
-status: PASS
+built_at: 2026-09-25T17:25:46.231179+00:00
+status: FAIL
 
 CONTRACT
 NFL: LIVE_CANONICAL_ONLY
@@ -10,7 +10,7 @@ MLS: SHADOW_ONLY_NO_OFFICIAL_BETS
 BOXING: RESEARCH_ONLY_NO_OFFICIAL_BETS
 
 HARD FAILURES
-- none
+- UFC canonical_future_tracker_exact: canonical=['UFC:ufc-332:andreypulyaev:damianpinas', 'UFC:ufc-332:deivesonfigueiredo:paytontalbott', 'UFC:ufc-fight-night-september-26-2026:bradyhiestand:rinyanakamura', 'UFC:ufc-fight-night-september-26-2026:monteljackson:rickysimon', 'UFC:ufc-fight-night-september-26-2026:robertbryczek:rodolfovieira', 'UFC:ufc-fight-night-september-26-2026:vanessademopoulos:yazminjauregui'] tracker=['UFC:ufc-332:andreypulyaev:damianpinas', 'UFC:ufc-332:deivesonfigueiredo:paytontalbott', 'UFC:ufc-fight-night-september-26-2026:bradyhiestand:rinyanakamura', 'UFC:ufc-fight-night-september-26-2026:mickeygall:sedriquesdumas', 'UFC:ufc-fight-night-september-26-2026:monteljackson:rickysimon', 'UFC:ufc-fight-night-september-26-2026:robertbryczek:rodolfovieira', 'UFC:ufc-fight-night-september-26-2026:vanessademopoulos:yazminjauregui']
 
 WARNINGS
 - none
@@ -27,14 +27,15 @@ ALL CHECKS
 [PASS] NFL m_record_fail_closed :: 
 [PASS] NFL page_missing_audit_fails_closed :: NFL public deep-audit must never treat a missing row as scanner-qualified/monitor
 [PASS] NFL page_missing_preseason_fails_closed :: missing deep-audit preseason status must be no-bet
-[PASS] UFC canonical_public_current_exact :: canonical=['UFC:ufc-332:deivesonfigueiredo:paytontalbott', 'UFC:ufc-fight-night-september-26-2026:bradyhiestand:rinyanakamura', 'UFC:ufc-fight-night-september-26-2026:mickeygall:sedriquesdumas', 'UFC:ufc-fight-night-september-26-2026:robertbryczek:rodolfovieira', 'UFC:ufc-fight-night-september-26-2026:vanessademopoulos:yazminjauregui'] public=['UFC:ufc-332:deivesonfigueiredo:paytontalbott', 'UFC:ufc-fight-night-september-26-2026:bradyhiestand:rinyanakamura', 'UFC:ufc-fight-night-september-26-2026:mickeygall:sedriquesdumas', 'UFC:ufc-fight-night-september-26-2026:robertbryczek:rodolfovieira', 'UFC:ufc-fight-night-september-26-2026:vanessademopoulos:yazminjauregui']
-[PASS] UFC canonical_state_ids_exact :: canonical=['UFC:ufc-332:deivesonfigueiredo:paytontalbott', 'UFC:ufc-fight-night-september-26-2026:bradyhiestand:rinyanakamura', 'UFC:ufc-fight-night-september-26-2026:mickeygall:sedriquesdumas', 'UFC:ufc-fight-night-september-26-2026:robertbryczek:rodolfovieira', 'UFC:ufc-fight-night-september-26-2026:vanessademopoulos:yazminjauregui'] state=['UFC:ufc-332:deivesonfigueiredo:paytontalbott', 'UFC:ufc-fight-night-september-26-2026:bradyhiestand:rinyanakamura', 'UFC:ufc-fight-night-september-26-2026:mickeygall:sedriquesdumas', 'UFC:ufc-fight-night-september-26-2026:robertbryczek:rodolfovieira', 'UFC:ufc-fight-night-september-26-2026:vanessademopoulos:yazminjauregui']
+[PASS] UFC canonical_public_current_exact :: canonical=['UFC:ufc-332:andreypulyaev:damianpinas', 'UFC:ufc-332:deivesonfigueiredo:paytontalbott', 'UFC:ufc-fight-night-september-26-2026:bradyhiestand:rinyanakamura', 'UFC:ufc-fight-night-september-26-2026:monteljackson:rickysimon', 'UFC:ufc-fight-night-september-26-2026:robertbryczek:rodolfovieira', 'UFC:ufc-fight-night-september-26-2026:vanessademopoulos:yazminjauregui'] public=['UFC:ufc-332:andreypulyaev:damianpinas', 'UFC:ufc-332:deivesonfigueiredo:paytontalbott', 'UFC:ufc-fight-night-september-26-2026:bradyhiestand:rinyanakamura', 'UFC:ufc-fight-night-september-26-2026:monteljackson:rickysimon', 'UFC:ufc-fight-night-september-26-2026:robertbryczek:rodolfovieira', 'UFC:ufc-fight-night-september-26-2026:vanessademopoulos:yazminjauregui']
+[PASS] UFC canonical_state_ids_exact :: canonical=['UFC:ufc-332:andreypulyaev:damianpinas', 'UFC:ufc-332:deivesonfigueiredo:paytontalbott', 'UFC:ufc-fight-night-september-26-2026:bradyhiestand:rinyanakamura', 'UFC:ufc-fight-night-september-26-2026:monteljackson:rickysimon', 'UFC:ufc-fight-night-september-26-2026:robertbryczek:rodolfovieira', 'UFC:ufc-fight-night-september-26-2026:vanessademopoulos:yazminjauregui'] state=['UFC:ufc-332:andreypulyaev:damianpinas', 'UFC:ufc-332:deivesonfigueiredo:paytontalbott', 'UFC:ufc-fight-night-september-26-2026:bradyhiestand:rinyanakamura', 'UFC:ufc-fight-night-september-26-2026:monteljackson:rickysimon', 'UFC:ufc-fight-night-september-26-2026:robertbryczek:rodolfovieira', 'UFC:ufc-fight-night-september-26-2026:vanessademopoulos:yazminjauregui']
+[PASS] UFC methods_exact:UFC:ufc-332:andreypulyaev:damianpinas :: canonical=['U1'] state=['U1']
 [PASS] UFC methods_exact:UFC:ufc-332:deivesonfigueiredo:paytontalbott :: canonical=['U1', 'U7', 'U8'] state=['U1', 'U7', 'U8']
 [PASS] UFC methods_exact:UFC:ufc-fight-night-september-26-2026:bradyhiestand:rinyanakamura :: canonical=['U8'] state=['U8']
-[PASS] UFC methods_exact:UFC:ufc-fight-night-september-26-2026:mickeygall:sedriquesdumas :: canonical=['U10'] state=['U10']
+[PASS] UFC methods_exact:UFC:ufc-fight-night-september-26-2026:monteljackson:rickysimon :: canonical=['U2'] state=['U2']
 [PASS] UFC methods_exact:UFC:ufc-fight-night-september-26-2026:robertbryczek:rodolfovieira :: canonical=['U11', 'U12', 'U5', 'U9'] state=['U11', 'U12', 'U5', 'U9']
 [PASS] UFC methods_exact:UFC:ufc-fight-night-september-26-2026:vanessademopoulos:yazminjauregui :: canonical=['U1', 'U2', 'U4', 'U8'] state=['U1', 'U2', 'U4', 'U8']
-[PASS] UFC canonical_future_tracker_exact :: canonical=['UFC:ufc-332:deivesonfigueiredo:paytontalbott', 'UFC:ufc-fight-night-september-26-2026:bradyhiestand:rinyanakamura', 'UFC:ufc-fight-night-september-26-2026:mickeygall:sedriquesdumas', 'UFC:ufc-fight-night-september-26-2026:robertbryczek:rodolfovieira', 'UFC:ufc-fight-night-september-26-2026:vanessademopoulos:yazminjauregui'] tracker=['UFC:ufc-332:deivesonfigueiredo:paytontalbott', 'UFC:ufc-fight-night-september-26-2026:bradyhiestand:rinyanakamura', 'UFC:ufc-fight-night-september-26-2026:mickeygall:sedriquesdumas', 'UFC:ufc-fight-night-september-26-2026:robertbryczek:rodolfovieira', 'UFC:ufc-fight-night-september-26-2026:vanessademopoulos:yazminjauregui']
+[FAIL] UFC canonical_future_tracker_exact :: canonical=['UFC:ufc-332:andreypulyaev:damianpinas', 'UFC:ufc-332:deivesonfigueiredo:paytontalbott', 'UFC:ufc-fight-night-september-26-2026:bradyhiestand:rinyanakamura', 'UFC:ufc-fight-night-september-26-2026:monteljackson:rickysimon', 'UFC:ufc-fight-night-september-26-2026:robertbryczek:rodolfovieira', 'UFC:ufc-fight-night-september-26-2026:vanessademopoulos:yazminjauregui'] tracker=['UFC:ufc-332:andreypulyaev:damianpinas', 'UFC:ufc-332:deivesonfigueiredo:paytontalbott', 'UFC:ufc-fight-night-september-26-2026:bradyhiestand:rinyanakamura', 'UFC:ufc-fight-night-september-26-2026:mickeygall:sedriquesdumas', 'UFC:ufc-fight-night-september-26-2026:monteljackson:rickysimon', 'UFC:ufc-fight-night-september-26-2026:robertbryczek:rodolfovieira', 'UFC:ufc-fight-night-september-26-2026:vanessademopoulos:yazminjauregui']
 [PASS] UFC extreme_no_bet_absent_from_canonical :: overlap=[]
 [PASS] UFC extreme_no_bet_absent_from_state :: overlap=[]
 [PASS] UFC extreme_no_bet_absent_from_tracker :: overlap=[]
