@@ -119,6 +119,28 @@ def segments(text,name,other):
         out.append(sent)
     return out
 
+def subject_segments(sentence,name,other):
+    """Return clauses beginning at an exact fighter mention and ending before
+    the next exact opponent mention. This prevents a fighter's parser from
+    consuming numeric stats that belong to the opponent later in the sentence.
+    """
+    own=sorted({clean(name),clean(name).split()[-1]},key=len,reverse=True)
+    opp=sorted({clean(other),clean(other).split()[-1]},key=len,reverse=True)
+    own_spans=[]
+    for alias in own:
+        for m in re.finditer(r'(?<![A-Za-z0-9])'+re.escape(alias)+r'(?![A-Za-z0-9])',sentence,re.I):
+            own_spans.append((m.start(),m.end()))
+    opp_spans=[]
+    for alias in opp:
+        for m in re.finditer(r'(?<![A-Za-z0-9])'+re.escape(alias)+r'(?![A-Za-z0-9])',sentence,re.I):
+            opp_spans.append((m.start(),m.end()))
+    chunks=[]
+    for start,end in sorted(set(own_spans)):
+        stop=min((a for a,b in opp_spans if a>=end),default=len(sentence))
+        chunk=sentence[start:stop].strip()
+        if chunk and chunk not in chunks:chunks.append(chunk)
+    return chunks
+
 def parse_pair(text,a,b):
     out={a:{},b:{}}
     conflicts={a:[],b:[]}
@@ -142,58 +164,92 @@ def parse_pair(text,a,b):
                     setv(o,'total_landed',m.group(4));setv(o,'total_thrown',m.group(5))
                     if m.group(6):setv(o,'total_accuracy_pct',m.group(6))
 
-    # Exact per-fighter patterns.
+    # Exact pair grammar where the first fighter is named, the opponent has
+    # an explicit landed count, and a trailing "while" clause returns to the
+    # first fighter. Example: Itauma ... Whyte landed just two ... while ...
+    # connected on 19-of-34 punches (55.9%).
     for f,o in ((a,b),(b,a)):
-        aliases=sorted({clean(f),clean(f).split()[-1]},key=len,reverse=True)
+        for fa in sorted({clean(f),clean(f).split()[-1]},key=len,reverse=True):
+            for oa in sorted({clean(o),clean(o).split()[-1]},key=len,reverse=True):
+                m=re.search(
+                    r'(?<![A-Za-z0-9])'+re.escape(fa)+r'(?![A-Za-z0-9])'
+                    r'[^.!?]{0,220}?'+re.escape(oa)+
+                    r'\s+landed\s+just\s+(two|2)\b[^.!?]{0,140}?\bwhile\b'
+                    r'[^.!?]{0,120}?connected(?:\s+on)?\s+'
+                    r'(\d{1,4})\s*[-–]\s*of\s*[-–]\s*(\d{1,4})\s+'
+                    r'(?:total\s+)?punches\s*\((\d+(?:\.\d+)?)%\)',
+                    text,re.I)
+                if m:
+                    setv(o,'total_landed',2)
+                    setv(f,'total_landed',m.group(2));setv(f,'total_thrown',m.group(3))
+                    setv(f,'total_accuracy_pct',m.group(4))
+
+    # Exact per-fighter patterns. Numeric extraction is constrained to the
+    # fighter's subject clause and cannot cross an exact opponent mention.
+    for f,o in ((a,b),(b,a)):
         for sent in segments(text,f,o):
-            for alias in aliases:
-                p=r'(?<![A-Za-z0-9])'+re.escape(alias)+r'(?![A-Za-z0-9])'
+            for local in subject_segments(sent,f,o):
                 # "X landed/went/connected on 146 of 498 total punches"
-                m=re.search(p+r"[^.!?]{0,180}?(?:landed|went|connected(?:\s+on)?)\s+(\d{1,4})\s*(?:(?:of|[-–])|[-–]\s*of\s*[-–])\s*(\d{1,4})(?:\s*\(?(\d+(?:\.\d+)?)%\)?)?(?:\s*,)?\s*(?:in\s+)?(?:total\s+)?punches",sent,re.I)
+                m=re.search(
+                    r"^[^.!?]{0,180}?(?:landed|went|connected(?:\s+on)?)\s+"
+                    r"(\d{1,4})\s*(?:(?:of|[-–])|[-–]\s*of\s*[-–])\s*(\d{1,4})"
+                    r"(?:\s*\(?(\d+(?:\.\d+)?)%\)?)?(?:\s*,)?\s*(?:in\s+)?"
+                    r"(?:total\s+)?punches",
+                    local,re.I)
                 if m:
                     setv(f,'total_landed',m.group(1));setv(f,'total_thrown',m.group(2))
                     if m.group(3):setv(f,'total_accuracy_pct',m.group(3))
-                # Ring sometimes prints the percentage after the noun:
+
                 # "connected on 19-of-34 punches (55.9%)"
-                m2=re.search(
-                    p+r"[^.!?]{0,180}?(?:landed|went|connected(?:\s+on)?)\s+"
+                m=re.search(
+                    r"^[^.!?]{0,180}?(?:landed|went|connected(?:\s+on)?)\s+"
                     r"(\d{1,4})\s*[-–]\s*of\s*[-–]\s*(\d{1,4})\s+"
                     r"(?:total\s+)?punches\s*\((\d+(?:\.\d+)?)%\)",
-                    sent,re.I)
-                if m2:
-                    setv(f,'total_landed',m2.group(1));setv(f,'total_thrown',m2.group(2))
-                    setv(f,'total_accuracy_pct',m2.group(3))
-                # Parenthetical or bare "X (249 of 567)" when sentence says punches/connects.
-                m=re.search(p+r"\s*\(?(\d{1,4})\s+(?:of|[-–])\s+(\d{1,4})\)?",sent,re.I)
-                if m and re.search(r'\b(?:punch|connect)',sent,re.I):
+                    local,re.I)
+                if m:
                     setv(f,'total_landed',m.group(1));setv(f,'total_thrown',m.group(2))
+                    setv(f,'total_accuracy_pct',m.group(3))
+
+                # Parenthetical or bare "X (249 of 567)" when clause says punches/connects.
+                m=re.search(r"^\S+(?:\s+\S+){0,4}?\s*\(?(\d{1,4})\s+(?:of|[-–])\s+(\d{1,4})\)?",local,re.I)
+                if m and re.search(r'\b(?:punch|connect)',local,re.I):
+                    setv(f,'total_landed',m.group(1));setv(f,'total_thrown',m.group(2))
+
                 # category exact: "118 of 233, 51% in jabs"
                 for cat,label in [('jab',r'jabs?'),('power',r'power\s+(?:punches|shots)')]:
-                    m=re.search(r'(\d{1,4})\s+(?:of|[-–])\s+(\d{1,4})(?:\s*,\s*(\d+(?:\.\d+)?)%)?\s+(?:in|on|of)?\s*'+label,sent,re.I)
+                    m=re.search(
+                        r'(\d{1,4})\s+(?:of|[-–])\s+(\d{1,4})'
+                        r'(?:\s*,\s*(\d+(?:\.\d+)?)%)?\s+(?:in|on|of)?\s*'+label,
+                        local,re.I)
                     if m:
                         setv(f,cat+'_landed',m.group(1));setv(f,cat+'_thrown',m.group(2))
                         if m.group(3):setv(f,cat+'_accuracy_pct',m.group(3))
+
                 # "connected on 46% of his power punches"
-                m=re.search(p+r"[^.!?]{0,140}?(?:connected|landed)[^.!?]{0,30}?(\d+(?:\.\d+)?)%\s+of\s+(?:his|her)\s+power\s+(?:punches|shots)",sent,re.I)
+                m=re.search(
+                    r"^[^.!?]{0,140}?(?:connected|landed)[^.!?]{0,30}?"
+                    r"(\d+(?:\.\d+)?)%\s+of\s+(?:his|her)\s+power\s+(?:punches|shots)",
+                    local,re.I)
                 if m:setv(f,'power_accuracy_pct',m.group(1))
 
-                # "Bivol landed 170 punches" - exact fighter-attributed total
-                # landed count even when attempts are not stated.
-                m=re.search(p+r"[^.!?]{0,80}?landed\s+(\d{1,4})\s+(?:total\s+)?punches\b",sent,re.I)
+                # "Bivol landed 170 punches"
+                m=re.search(
+                    r"^[^.!?]{0,80}?landed\s+(\d{1,4})\s+(?:total\s+)?punches\b",
+                    local,re.I)
                 if m:setv(f,'total_landed',m.group(1))
 
-                # "Stevenson landed 165 of 372 punches ... compared to
-                # 72 of 468 ... for Lopez." Capture the opponent tail only
-                # when both exact fighter names occur in the same sentence.
-                for oa in sorted({clean(o),clean(o).split()[-1]},key=len,reverse=True):
-                    m=re.search(
-                        r'compared\s+to\s+(\d{1,4})\s+of\s+(\d{1,4})'
-                        r'(?:\s*\(?(\d+(?:\.\d+)?)%\)?)?[^.!?]{0,80}?'
-                        r'(?:for|by)\s+'+re.escape(oa)+r'(?![A-Za-z0-9])',
-                        sent,re.I)
-                    if m:
-                        setv(o,'total_landed',m.group(1));setv(o,'total_thrown',m.group(2))
-                        if m.group(3):setv(o,'total_accuracy_pct',m.group(3))
+            # Opponent-tail comparison deliberately uses the full sentence but
+            # requires the opponent's exact name after the numeric pair.
+            for oa in sorted({clean(o),clean(o).split()[-1]},key=len,reverse=True):
+                m=re.search(
+                    r'compared\s+to\s+(\d{1,4})\s+of\s+(\d{1,4})'
+                    r'(?:\s*\(?(\d+(?:\.\d+)?)%\)?)?[^.!?]{0,80}?'
+                    r'(?:for|by)\s+'+re.escape(oa)+r'(?![A-Za-z0-9])',
+                    sent,re.I)
+                if m:
+                    setv(o,'total_landed',m.group(1));setv(o,'total_thrown',m.group(2))
+                    if m.group(3):setv(o,'total_accuracy_pct',m.group(3))
+
     # Exact named-subject overall comparison:
     # "Ball ... landed at a slightly higher clip overall (240-220) over 12 rounds"
     for f,o in ((a,b),(b,a)):
