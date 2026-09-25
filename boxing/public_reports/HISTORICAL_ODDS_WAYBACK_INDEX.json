@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-25T13:10:16.140205+00:00",
+  "generated_at": "2026-09-25T13:13:51.684169+00:00",
   "queries": [
     {
       "prefix": "https://www.proboxingodds.com/events/",
@@ -10,8 +10,8 @@
     {
       "prefix": "http://www.proboxingodds.com/events/",
       "query": "https://web.archive.org/cdx/search/cdx?url=http%3A%2F%2Fwww.proboxingodds.com%2Fevents%2F%2A&output=json&filter=statuscode%3A200&fl=timestamp%2Coriginal%2Cstatuscode%2Cmimetype%2Cdigest&limit=10000",
-      "rows": 0,
-      "error": "HTTPError: HTTP Error 503: Service Unavailable"
+      "rows": 5766,
+      "error": null
     },
     {
       "prefix": "https://proboxingodds.com/events/",
@@ -23,15 +23,15 @@
       "prefix": "http://proboxingodds.com/events/",
       "query": "https://web.archive.org/cdx/search/cdx?url=http%3A%2F%2Fproboxingodds.com%2Fevents%2F%2A&output=json&filter=statuscode%3A200&fl=timestamp%2Coriginal%2Cstatuscode%2Cmimetype%2Cdigest&limit=10000",
       "rows": 0,
-      "error": "HTTPError: HTTP Error 503: Service Unavailable"
+      "error": "HTTPError: HTTP Error 504: Gateway Time-out"
     }
   ],
-  "raw_cdx_rows": 5766,
-  "rejected_unparsed_rows": 421,
-  "events_with_pre_event_captures": 257,
-  "pre_event_captures_indexed": 289,
+  "raw_cdx_rows": 11532,
+  "rejected_unparsed_rows": 850,
+  "events_with_pre_event_captures": 255,
+  "pre_event_captures_indexed": 285,
   "date_min": "2017-07-08",
-  "date_max": "2107-07-15",
+  "date_max": "2026-09-19",
   "events": [
     {
       "event_date": "2017-07-08",
@@ -4095,52 +4095,6 @@
           "mimetype": "text/html",
           "digest": "V36FGW4HUM7LPD23JH26OATCEAFGJYFL",
           "snapshot_url": "https://web.archive.org/web/20260314084738id_/https://www.proboxingodds.com/events/2026-09-19-2403"
-        }
-      ]
-    },
-    {
-      "event_date": "2026-12-31",
-      "event_url": "https://www.proboxingodds.com/events/2026-12-31-2276",
-      "pre_event_capture_count": 3,
-      "captures": [
-        {
-          "timestamp": "20260608173437",
-          "original": "https://www.proboxingodds.com/events/2026-12-31-2276",
-          "statuscode": "200",
-          "mimetype": "text/html",
-          "digest": "QZARJTITJ6BL6RKHCIO5SDBALGAGJKIP",
-          "snapshot_url": "https://web.archive.org/web/20260608173437id_/https://www.proboxingodds.com/events/2026-12-31-2276"
-        },
-        {
-          "timestamp": "20260209021838",
-          "original": "https://www.proboxingodds.com/events/2026-12-31-2276",
-          "statuscode": "200",
-          "mimetype": "text/html",
-          "digest": "LDF3IG7MFKVWQXROTF5PIBENWIKEPEJP",
-          "snapshot_url": "https://web.archive.org/web/20260209021838id_/https://www.proboxingodds.com/events/2026-12-31-2276"
-        },
-        {
-          "timestamp": "20251016161957",
-          "original": "https://www.proboxingodds.com/events/2026-12-31-2276",
-          "statuscode": "200",
-          "mimetype": "text/html",
-          "digest": "6IYICQE76RDT2J3RDTAGAOUIITIQ2IP3",
-          "snapshot_url": "https://web.archive.org/web/20251016161957id_/https://www.proboxingodds.com/events/2026-12-31-2276"
-        }
-      ]
-    },
-    {
-      "event_date": "2107-07-15",
-      "event_url": "https://www.proboxingodds.com/events/2107-07-15-707",
-      "pre_event_capture_count": 1,
-      "captures": [
-        {
-          "timestamp": "20210506095136",
-          "original": "https://www.proboxingodds.com/events/2107-07-15-707",
-          "statuscode": "200",
-          "mimetype": "text/html",
-          "digest": "3COV2HNSCMGBLY2FUJXT7OH5FW72ZBQC",
-          "snapshot_url": "https://web.archive.org/web/20210506095136id_/https://www.proboxingodds.com/events/2107-07-15-707"
         }
       ]
     }
