@@ -218,9 +218,9 @@ def parse_pair(text,a,b):
                 m=re.search(
                     r'(?<![A-Za-z0-9])'+re.escape(fa)+r'(?![A-Za-z0-9])[^.!?]{0,70}?'
                     r'(?:landed|went|connected(?:\s+on)?)\s+(\d{1,4})\s+(?:of|[-–])\s+(\d{1,4})'
-                    r'\s+(?:total\s+)?punches[^.!?]{0,40}?\b(?:while|and)\s+'+
+                    r'(?:\s*,\s*\d+(?:\.\d+)?%)?\s+(?:in\s+)?(?:total\s+)?punches[^.!?]{0,40}?\b(?:while|and)\s+'+
                     re.escape(oa)+r'(?![A-Za-z0-9])\s+(?:landed|went|connected(?:\s+on)?)\s+'
-                    r'(\d{1,4})\s+(?:of|[-–])\s+(\d{1,4})(?:\s+(?:total\s+)?punches)?',
+                    r'(\d{1,4})\s+(?:of|[-–])\s+(\d{1,4})(?:\s*,\s*\d+(?:\.\d+)?%)?(?:\s+(?:in\s+)?(?:total\s+)?punches)?',
                     text,re.I)
                 if m:
                     setv(f,'total_landed',m.group(1));setv(f,'total_thrown',m.group(2))
