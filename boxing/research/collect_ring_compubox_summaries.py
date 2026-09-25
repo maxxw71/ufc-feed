@@ -149,7 +149,7 @@ def parse_pair(text,a,b):
             for alias in aliases:
                 p=r'(?<![A-Za-z0-9])'+re.escape(alias)+r'(?![A-Za-z0-9])'
                 # "X landed/went/connected on 146 of 498 total punches"
-                m=re.search(p+r"[^.!?]{0,120}?(?:landed|went|connected(?:\s+on)?)\s+(\d{1,4})\s*(?:of|[-–])\s*(\d{1,4})(?:\s*\(?(\d+(?:\.\d+)?)%\)?)?(?:\s*,)?\s*(?:in\s+)?(?:total\s+)?punches",sent,re.I)
+                m=re.search(p+r"[^.!?]{0,180}?(?:landed|went|connected(?:\s+on)?)\s+(\d{1,4})\s*(?:(?:of|[-–])|[-–]\s*of\s*[-–])\s*(\d{1,4})(?:\s*\(?(\d+(?:\.\d+)?)%\)?)?(?:\s*,)?\s*(?:in\s+)?(?:total\s+)?punches",sent,re.I)
                 if m:
                     setv(f,'total_landed',m.group(1));setv(f,'total_thrown',m.group(2))
                     if m.group(3):setv(f,'total_accuracy_pct',m.group(3))
@@ -184,6 +184,18 @@ def parse_pair(text,a,b):
                     if m:
                         setv(o,'total_landed',m.group(1));setv(o,'total_thrown',m.group(2))
                         if m.group(3):setv(o,'total_accuracy_pct',m.group(3))
+    # Exact named-subject overall comparison:
+    # "Ball ... landed at a slightly higher clip overall (240-220) over 12 rounds"
+    for f,o in ((a,b),(b,a)):
+        for fa in sorted({clean(f),clean(f).split()[-1]},key=len,reverse=True):
+            m=re.search(
+                r'(?<![A-Za-z0-9])'+re.escape(fa)+
+                r'(?![A-Za-z0-9])[^.!?]{0,150}?landed[^.!?]{0,80}?overall\s*'
+                r'\((\d{1,4})\s*[-–]\s*(\d{1,4})\)',
+                text,re.I)
+            if m:
+                setv(f,'total_landed',m.group(1));setv(o,'total_landed',m.group(2))
+
     # Pair comparisons: "Hrgovic outlanded Adeleye 228-92 on total punches ... power shots (169-47)"
     for f,o in ((a,b),(b,a)):
         fa=clean(f).split()[-1];oa=clean(o).split()[-1]
