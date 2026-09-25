@@ -41,4 +41,19 @@ class RingCompuBoxSummaryTests(unittest.TestCase):
         self.assertEqual(out['Teofimo Lopez']['total_thrown'],468)
         self.assertEqual(out['Teofimo Lopez']['total_accuracy_pct'],15.4)
 
+    def test_ball_goodman_overall_landed_pair(self):
+        out=parse_pair(
+            "Ball threw considerably more shots and landed at a slightly higher clip overall (240-220) over 12 rounds, while Goodman was credited with 5.7% more accuracy.",
+            'Nick Ball','Sam Goodman')
+        self.assertEqual(out['Nick Ball']['total_landed'],240)
+        self.assertEqual(out['Sam Goodman']['total_landed'],220)
+
+    def test_itauma_hyphen_of_hyphen_total(self):
+        out=parse_pair(
+            "Itauma, 17 years his junior, admitted needing to quickly be wary of the firepower flashing back at him after absorbing a shot - Whyte landed just two - while the unbeaten 20-year-old connected on 19-of-34 punches (55.9%).",
+            'Moses Itauma','Dillian Whyte')
+        self.assertEqual(out['Moses Itauma']['total_landed'],19)
+        self.assertEqual(out['Moses Itauma']['total_thrown'],34)
+        self.assertEqual(out['Moses Itauma']['total_accuracy_pct'],55.9)
+
 if __name__=='__main__':unittest.main()
