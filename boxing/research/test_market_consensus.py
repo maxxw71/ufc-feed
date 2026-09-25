@@ -52,8 +52,12 @@ class ConsensusMarket(unittest.TestCase):
         b=row('b','a','B','A','BOXER B',[
             q('One','9',2.70,'LOSS',103),q('Two','9',2.60,'LOSS',104)])
         # priced_bout_research quotes inherit event date from their parent row
-        for z in a['quotes']+b['quotes']:
+        for z in a['quotes']:
             z['event_date']='2025-01-01'
+            z['selection']='A'
+        for z in b['quotes']:
+            z['event_date']='2025-01-01'
+            z['selection']='B'
         allowed={
           ('2025-01-01','9','one','a',1.5),
           ('2025-01-01','9','one','b',2.7),
