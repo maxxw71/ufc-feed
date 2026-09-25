@@ -29,7 +29,22 @@ def load_master(path):
         return [json.loads(line) for line in f if line.strip()]
 
 
-def canonical_market_rows(master_rows,min_books=2,allowed_quote_rowids=None):
+def quote_signature(row):
+    """Stable ProBoxingOdds quote identity across database/export rebuilds."""
+    try:
+        price=round(float(row.get('decimal_price')),6)
+    except (TypeError,ValueError):
+        return None
+    event_date=str(row.get('event_date') or '').strip()
+    bout_id=str(row.get('odds_bout_id') or row.get('bout_id') or '').strip()
+    bookmaker=str(row.get('bookmaker') or '').strip().casefold()
+    selection=''.join(ch for ch in str(row.get('selection') or '').casefold() if ch.isalnum())
+    if not (event_date and bout_id and bookmaker and selection):
+        return None
+    return (event_date,bout_id,bookmaker,selection,price)
+
+
+def canonical_market_rows(master_rows,min_books=2,allowed_quote_rowids=None,allowed_quote_signatures=None):
     """Return one consensus favorite row per canonical bout.
 
     Each bookmaker must expose exactly one quote for each fighter and both quotes
@@ -39,6 +54,7 @@ def canonical_market_rows(master_rows,min_books=2,allowed_quote_rowids=None):
     displayed price is retained separately as an optimistic sensitivity bound.
     """
     allowed=None if allowed_quote_rowids is None else {str(x) for x in allowed_quote_rowids}
+    allowed_sigs=None if allowed_quote_signatures is None else set(allowed_quote_signatures)
     groups=defaultdict(list)
     for row in master_rows:
         a=row.get('fighter') or {}; b=row.get('opponent') or {}
@@ -70,6 +86,8 @@ def canonical_market_rows(master_rows,min_books=2,allowed_quote_rowids=None):
         for fid,row in side_rows.items():
             for q in row.get('quotes') or []:
                 if allowed is not None and str(q.get('quote_rowid')) not in allowed:
+                    continue
+                if allowed_sigs is not None and quote_signature(q) not in allowed_sigs:
                     continue
                 if q.get('result') not in ('WIN','LOSS'):
                     continue
