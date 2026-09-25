@@ -94,6 +94,7 @@ jobs:
           if [ -d boxing/punch_supplements ]; then rm -rf /tmp/punch_supplements && cp -R boxing/punch_supplements /tmp/punch_supplements; fi
           if [ -d boxing/rankings ]; then cp -R boxing/rankings /tmp/boxing-research/rankings; fi
           if [ -d boxing/official_bouts ]; then rm -rf /tmp/official_bouts && cp -R boxing/official_bouts /tmp/official_bouts; fi
+          if [ -f boxing/public_reports/HISTORICAL_ODDS_VALIDATED_ROWS.json ]; then cp boxing/public_reports/HISTORICAL_ODDS_VALIDATED_ROWS.json /tmp/boxing-research/; fi
       - name: Build chronological master and run research passes
         run: |
           cd /tmp/boxing-research
@@ -127,6 +128,7 @@ jobs:
           python age_form_robustness.py
           python rising_prospect_hypothesis.py
           python candidate_method_validation.py
+          python validated_price_method_search.py
           python phase3_physical_context_scan.py
           python phase3_robustness.py
           python phase4_dynamic_factors.py
@@ -140,7 +142,7 @@ jobs:
           root=Path('/tmp/boxing-research')
           run=Path((root/'LATEST_CHRONOLOGICAL_MASTER.txt').read_text().strip())
           out=Path('boxing/public_phase2');out.mkdir(exist_ok=True)
-          for name in ['phase2_report.txt','phase2_target_candidates.json','phase2_interaction_research.json','coverage.json','age_form_robustness.txt','age_form_robustness.json','rising_prospect_hypothesis.txt','rising_prospect_hypothesis.json','candidate_method_validation.txt','candidate_method_validation.json','phase3_physical_context.txt','phase3_physical_context.json','phase3_robustness.txt','phase3_robustness.json','phase4_dynamic_factors.txt','phase4_dynamic_factors.json']:
+          for name in ['phase2_report.txt','phase2_target_candidates.json','phase2_interaction_research.json','coverage.json','age_form_robustness.txt','age_form_robustness.json','rising_prospect_hypothesis.txt','rising_prospect_hypothesis.json','candidate_method_validation.txt','candidate_method_validation.json','validated_price_method_search.txt','validated_price_method_search.json','phase3_physical_context.txt','phase3_physical_context.json','phase3_robustness.txt','phase3_robustness.json','phase4_dynamic_factors.txt','phase4_dynamic_factors.json']:
               src=run/name
               if src.exists():
                   if name=='phase2_interaction_research.json':
@@ -151,6 +153,15 @@ jobs:
                       data=json.loads(src.read_text())
                       compact=dict(data)
                       for c in compact.get('candidates',[]): c.pop('selected_bouts',None)
+                      (out/name).write_text(json.dumps(compact,indent=2))
+                  elif name=='validated_price_method_search.json':
+                      data=json.loads(src.read_text())
+                      compact=dict(data)
+                      for tier in (compact.get('tiers') or {}).values():
+                          for c in tier.get('existing_candidates') or []:
+                              c.pop('selected_bouts',None)
+                          for rule in tier.get('notable_fixed_rule_screen') or []:
+                              rule.pop('selected_bouts',None)
                       (out/name).write_text(json.dumps(compact,indent=2))
                   else: shutil.copy2(src,out/name)
           punch=root/'punch_profiles'/'coverage.json'
