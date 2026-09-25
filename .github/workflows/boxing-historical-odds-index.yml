@@ -1,0 +1,34 @@
+name: Boxing historical odds Wayback index
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'boxing/research/discover_historical_odds_wayback.py'
+      - '.github/workflows/boxing-historical-odds-index.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  discover:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+        with: {fetch-depth: 0}
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.12'}
+      - run: python boxing/research/discover_historical_odds_wayback.py
+      - name: Persist capture index
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add boxing/public_reports/HISTORICAL_ODDS_WAYBACK_INDEX.json
+          if git diff --cached --quiet; then
+            echo 'No historical odds capture-index changes.'
+          else
+            git commit -m 'Publish historical boxing odds capture index'
+            git pull --rebase origin main
+            git push
+          fi
