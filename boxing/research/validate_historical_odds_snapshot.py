@@ -10,7 +10,7 @@ A validated row requires:
 - archived displayed American odds convert back to the stored decimal price.
 """
 from __future__ import annotations
-import datetime as dt,json,os,re,sqlite3,unicodedata,urllib.parse,urllib.request
+import datetime as dt,json,os,re,sqlite3,unicodedata,urllib.request
 from pathlib import Path
 from bs4 import BeautifulSoup
 
@@ -33,11 +33,45 @@ def american_to_decimal(s):
     return None
 
 def wayback_timestamp(url):
-    m=re.search(r'/web/(\\d{14})',str(url or ''))
+    m=re.search(r'/web/(\d{14})',str(url or ''))
     return m.group(1) if m else None
 
 def snapshot_variants(url):
-    m=re.match(r'^(https://web\\.archive\\.org/web/)(\\d{14})(?:[a-z_]+)?/(https?://)(www\\.)?(.+)
+    m=re.match(r'^(https://web\.archive\.org/web/)(\d{14})(?:[a-z_]+)?/(https?://)(www\.)?(.+)$',str(url or ''),re.I)
+    if not m:return [url]
+    base,stamp,scheme,www,rest=m.groups()
+    originals=[]
+    for sch in ('https://','http://'):
+        for host in ('www.',''):
+            originals.append(sch+host+rest)
+    out=[]
+    for orig in originals:
+        for mod in ('id_','if_',''):
+            cand=f'{base}{stamp}{mod}/{orig}'
+            if cand not in out:out.append(cand)
+    return out
+
+def fetch_exact_snapshot(url,requested_stamp):
+    errors=[]
+    for cand in snapshot_variants(url):
+        try:
+            req=urllib.request.Request(cand,headers={
+              'User-Agent':'Mozilla/5.0 AppwizaHistoricalOddsStructure/1.0',
+              'Accept-Language':'en-US,en;q=0.8'
+            })
+            with urllib.request.urlopen(req,timeout=60) as r:
+                raw=r.read(4_000_001);final=r.geturl()
+            if len(raw)>4_000_000:
+                errors.append({'url':cand,'reason':'snapshot_too_large'});continue
+            if wayback_timestamp(final)!=requested_stamp:
+                errors.append({'url':cand,'final_url':final,'reason':'wayback_timestamp_drift'});continue
+            if b'odds-table' not in raw.lower():
+                errors.append({'url':cand,'final_url':final,'reason':'no_odds_table'});continue
+            return final,raw,cand,errors
+        except Exception as e:
+            errors.append({'url':cand,'reason':type(e).__name__+': '+str(e)[:160]})
+    raise RuntimeError('no exact Wayback replay: '+json.dumps(errors[:12],ensure_ascii=False))
+
 def parse_snapshot(raw):
     soup=BeautifulSoup(raw,'lxml')
     out={}
@@ -123,149 +157,6 @@ def main():
         audits.append({'event_date':event_date,'event_url':event['event_url'],'snapshot_timestamp':stamp,
                        'snapshot_url':event['snapshot'],'snapshot_used_url':used_snapshot,'snapshot_final_url':final,
                        'replay_attempts_before_success':replay_attempts,
-                       'archive_market_cells':len(parsed),'stored_quote_rows':len(qrows),
-                       'validated_rows':sum(bool(x.get('validated')) for x in checks),'checks':checks})
-    d.close()
-    # exact quote row can appear only once
-    uniq={str(x['quote_rowid']):x for x in validated}
-    validated=list(uniq.values())
-    report={
-      'generated_at':dt.datetime.now(dt.timezone.utc).isoformat(),
-      'validated_price_rows':len(validated),
-      'distinct_validated_bouts':len({x['bout_id'] for x in validated}),
-      'distinct_validated_events':len({x['event_url'] for x in validated}),
-      'validated_rows':validated,'event_audits':audits,
-      'policy':'Validation requires an exact pre-event Wayback snapshot plus exact archived event/bookmaker/bout/selection cell and price equivalence after American-to-decimal conversion (<=0.005 absolute difference).'
-    }
-    OUT.parent.mkdir(parents=True,exist_ok=True)
-    OUT.write_text(json.dumps(report,indent=2,ensure_ascii=False),encoding='utf-8')
-    VALID.write_text(json.dumps({'generated_at':report['generated_at'],'rows':validated,'policy':report['policy']},indent=2,ensure_ascii=False),encoding='utf-8')
-    print(json.dumps({k:report[k] for k in ('validated_price_rows','distinct_validated_bouts','distinct_validated_events')},indent=2))
-
-if __name__=='__main__':main()
-,str(url or ''),re.I)
-    if not m:return [url]
-    base,stamp,scheme,www,rest=m.groups()
-    originals=[]
-    for sch in ('https://','http://'):
-        for host in ('www.',''):
-            originals.append(sch+host+rest)
-    out=[]
-    for orig in originals:
-        for mod in ('id_','if_',''):
-            cand=f'{base}{stamp}{mod}/{orig}'
-            if cand not in out:out.append(cand)
-    return out
-
-def fetch_exact_snapshot(url,requested_stamp):
-    errors=[]
-    for cand in snapshot_variants(url):
-        try:
-            req=urllib.request.Request(cand,headers={
-              'User-Agent':'Mozilla/5.0 AppwizaHistoricalOddsStructure/1.0',
-              'Accept-Language':'en-US,en;q=0.8'
-            })
-            with urllib.request.urlopen(req,timeout=60) as r:
-                raw=r.read(4_000_001);final=r.geturl()
-            if len(raw)>4_000_000:
-                errors.append({'url':cand,'reason':'snapshot_too_large'});continue
-            final_stamp=wayback_timestamp(final)
-            if final_stamp!=requested_stamp:
-                errors.append({'url':cand,'final_url':final,'reason':'wayback_timestamp_drift'});continue
-            # A true event capture should contain the odds-table structure.
-            # Keep the exact bytes for parse_snapshot; merely matching text is
-            # never enough to validate a quote.
-            if b'odds-table' not in raw.lower():
-                errors.append({'url':cand,'final_url':final,'reason':'no_odds_table'});continue
-            return final,raw,cand,errors
-        except Exception as e:
-            errors.append({'url':cand,'reason':type(e).__name__+': '+str(e)[:160]})
-    raise RuntimeError('no exact Wayback replay: '+json.dumps(errors[:12],ensure_ascii=False))
-
-def parse_snapshot(raw):
-    soup=BeautifulSoup(raw,'lxml')
-    out={}
-    for table in soup.select('table.odds-table'):
-        headers={}
-        head=table.find('thead')
-        if head:
-            for th in head.find_all('th'):
-                bid=th.get('data-b')
-                if bid:
-                    headers[str(bid)]=re.sub(r'\s+',' ',th.get_text(' ',strip=True)).strip()
-        if not headers:continue
-        for tr in table.find_all('tr'):
-            namecell=tr.find('th',attrs={'scope':'row'})
-            if not namecell:continue
-            selection=re.sub(r'\s+',' ',namecell.get_text(' ',strip=True)).strip()
-            if not selection:continue
-            for td in tr.find_all('td'):
-                rawli=str(td.get('data-li') or '')
-                m=re.fullmatch(r'\[\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*\]',rawli)
-                if not m:continue
-                book_id,side,bout_id=m.groups()
-                book=headers.get(book_id)
-                if not book:continue
-                odds=None
-                for span in td.find_all('span'):
-                    txt=span.get_text(' ',strip=True)
-                    if re.fullmatch(r'[+-]\d+',txt):
-                        odds=txt;break
-                if odds is None:
-                    txt=td.get_text(' ',strip=True)
-                    mm=re.search(r'(?<!\d)([+-]\d+)(?!\d)',txt)
-                    odds=mm.group(1) if mm else None
-                if odds:
-                    out[(bout_id,nk(book),nk(selection))]={
-                      'bout_id':bout_id,'bookmaker':book,'selection':selection,
-                      'side':int(side),'american_price':odds,
-                      'decimal_from_archive':american_to_decimal(odds),
-                      'data_li':rawli
-                    }
-    return out
-
-def main():
-    pilot=json.loads(PILOT.read_text())
-    positives=[e for e in pilot.get('events',[]) if e.get('pre_event_captures') and e.get('snapshot')]
-    d=sqlite3.connect(f'file:{DB}?mode=ro',uri=True,timeout=120);d.row_factory=sqlite3.Row
-    validated=[];audits=[]
-    for event in positives:
-        event_date=event['event_date'];stamp=str(event.get('latest_pre_event_timestamp') or '')
-        if len(stamp)<8 or stamp[:8]>=event_date.replace('-',''):
-            audits.append({'event_url':event['event_url'],'status':'rejected_non_pre_event_snapshot'});continue
-        try:
-            final,raw=fetch(event['snapshot']);parsed=parse_snapshot(raw)
-        except Exception as e:
-            audits.append({'event_url':event['event_url'],'status':'fetch_or_parse_error','error':type(e).__name__+': '+str(e)[:220]});continue
-        qrows=[dict(r) for r in d.execute(
-          "select rowid as quote_rowid,* from odds where source='proboxingodds' and url=? order by rowid",
-          (event['event_url'],))]
-        checks=[]
-        for q in qrows:
-            key=(str(q.get('bout_id') or ''),nk(q.get('bookmaker')),nk(q.get('selection')))
-            arc=parsed.get(key)
-            check={'quote_rowid':q.get('quote_rowid'),'bout_id':q.get('bout_id'),'bookmaker':q.get('bookmaker'),
-                   'selection':q.get('selection'),'stored_decimal_price':q.get('decimal_price'),'archive_match':arc}
-            if arc and arc.get('decimal_from_archive') is not None and q.get('decimal_price') is not None:
-                diff=abs(float(q['decimal_price'])-float(arc['decimal_from_archive']))
-                check['decimal_abs_diff']=round(diff,8)
-                if diff<=0.005:
-                    v={
-                      'quote_rowid':q['quote_rowid'],'bout_id':str(q.get('bout_id') or ''),
-                      'bookmaker':q.get('bookmaker'),'selection':q.get('selection'),
-                      'stored_decimal_price':float(q['decimal_price']),
-                      'archived_american_price':arc['american_price'],
-                      'archived_decimal_price':round(float(arc['decimal_from_archive']),6),
-                      'event_date':event_date,'event_url':event['event_url'],
-                      'snapshot_timestamp':stamp,'snapshot_url':event['snapshot'],
-                      'verification':'exact_pre_event_archive_event_bookmaker_bout_selection_price_match'
-                    }
-                    validated.append(v);check['validated']=True
-                else:check['validated']=False
-            else:check['validated']=False
-            checks.append(check)
-        audits.append({'event_date':event_date,'event_url':event['event_url'],'snapshot_timestamp':stamp,
-                       'snapshot_url':event['snapshot'],'snapshot_final_url':final,
                        'archive_market_cells':len(parsed),'stored_quote_rows':len(qrows),
                        'validated_rows':sum(bool(x.get('validated')) for x in checks),'checks':checks})
     d.close()
