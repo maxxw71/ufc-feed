@@ -128,7 +128,8 @@ def candidate_events():
                     caps.append({'timestamp':stamp,'snapshot_url':snap,'original':c.get('original'),'digest':c.get('digest')})
             if caps:
                 out.append({'event_date':e.get('event_date'),'event_url':e.get('event_url'),'captures':caps,'source':'wayback_index'})
-        return out
+        if out:
+            return out
     pilot=json.loads(PILOT.read_text())
     out=[]
     for e in pilot.get('events',[]):
