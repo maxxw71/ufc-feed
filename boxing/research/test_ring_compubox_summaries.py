@@ -56,6 +56,59 @@ class RingCompuBoxSummaryTests(unittest.TestCase):
         self.assertEqual(out['Nick Ball']['total_landed'],240)
         self.assertEqual(out['Sam Goodman']['total_landed'],220)
 
+    def test_new_ring_pair_formats(self):
+        out=parse_pair(
+            "Resendiz landed 186 of 600 total punches while Plant went 108 of 509. "
+            "Resendiz held a 109 to 70 connect advantage in power punches.",
+            'Armando Resendiz','Caleb Plant')
+        self.assertEqual(out['Armando Resendiz']['total_landed'],186)
+        self.assertEqual(out['Armando Resendiz']['total_thrown'],600)
+        self.assertEqual(out['Caleb Plant']['total_landed'],108)
+        self.assertEqual(out['Caleb Plant']['total_thrown'],509)
+        self.assertEqual(out['Armando Resendiz']['power_landed'],109)
+        self.assertEqual(out['Caleb Plant']['power_landed'],70)
+
+        out=parse_pair(
+            "Essuman landed 140 of 363, 22% in total punches and Taylor landed 125 of 493, 25%. "
+            "Taylor did hold a 117-115 connect advantage in power punches in the end.",
+            'Josh Taylor','Ekow Essuman')
+        self.assertEqual(out['Ekow Essuman']['total_landed'],140)
+        self.assertEqual(out['Josh Taylor']['total_landed'],125)
+        self.assertEqual(out['Josh Taylor']['power_landed'],117)
+        self.assertEqual(out['Ekow Essuman']['power_landed'],115)
+
+        out=parse_pair(
+            "Melikuziev landed 170 of 442 punches and Fulghum landed 169 of 407.",
+            'Bektemir Melikuziev','Darius Fulghum')
+        self.assertEqual(out['Bektemir Melikuziev']['total_landed'],170)
+        self.assertEqual(out['Darius Fulghum']['total_thrown'],407)
+
+    def test_catterall_and_inoue_pair_formats(self):
+        out=parse_pair(
+            "After six completed rounds, Catterall had landed almost three times as many punches (51) than Eubank (17), "
+            "thrown more than twice more attempts (186-85).",
+            'Jack Catterall','Harlem Eubank')
+        self.assertEqual(out['Jack Catterall']['total_landed'],51)
+        self.assertEqual(out['Harlem Eubank']['total_landed'],17)
+        self.assertEqual(out['Jack Catterall']['total_thrown'],186)
+        self.assertEqual(out['Harlem Eubank']['total_thrown'],85)
+
+        out=parse_pair(
+            "Inoue had a 161-63 edge in jabs landed, 60 more power shots (167-107) and 30 more to the body (96-66). "
+            "Inoue averaged 27 punches landed per round, while Picasso could only muster half that tally (14) per frame.",
+            'Naoya Inoue','Alan Picasso')
+        self.assertEqual(out['Naoya Inoue']['jab_landed'],161)
+        self.assertEqual(out['Alan Picasso']['jab_landed'],63)
+        self.assertEqual(out['Naoya Inoue']['power_landed'],167)
+        self.assertEqual(out['Alan Picasso']['body_landed'],66)
+        self.assertEqual(out['Naoya Inoue']['total_landed_per_round'],27)
+        self.assertEqual(out['Alan Picasso']['total_landed_per_round'],14)
+
+    def test_simple_outlanded_total_pair(self):
+        out=parse_pair("Roach outlanded Davis 112 to 103 in the fight.",'Lamont Roach','Gervonta Davis')
+        self.assertEqual(out['Lamont Roach']['total_landed'],112)
+        self.assertEqual(out['Gervonta Davis']['total_landed'],103)
+
     def test_itauma_hyphen_of_hyphen_total(self):
         out=parse_pair(
             "Itauma, 17 years his junior, admitted needing to quickly be wary of the firepower flashing back at him after absorbing a shot - Whyte landed just two - while the unbeaten 20-year-old connected on 19-of-34 punches (55.9%).",
