@@ -109,6 +109,26 @@ class RingCompuBoxSummaryTests(unittest.TestCase):
         self.assertEqual(out['Lamont Roach']['total_landed'],112)
         self.assertEqual(out['Gervonta Davis']['total_landed'],103)
 
+    def test_ring_result_final_tally_and_equal_power(self):
+        out=parse_pair(
+            "CompuBox credited Romero and Garcia for landing only 18 power punches apiece in 12 rounds. "
+            "Garcia landed nine more punches overall, according to CompuBox's final tally (66-of-210 to 57-of-280).",
+            'Rolando Romero','Ryan Garcia')
+        self.assertEqual(out['Ryan Garcia']['total_landed'],66)
+        self.assertEqual(out['Ryan Garcia']['total_thrown'],210)
+        self.assertEqual(out['Rolando Romero']['total_landed'],57)
+        self.assertEqual(out['Rolando Romero']['total_thrown'],280)
+        self.assertEqual(out['Ryan Garcia']['power_landed'],18)
+        self.assertEqual(out['Rolando Romero']['power_landed'],18)
+
+    def test_new_exact_pair_supplements(self):
+        mel='https://www.ringmagazine.com/news/bektemir-melikuziev-drops-outlasts-darius-fulghum-to-win-in-thrilling-battle-5J42VnOm6DguwAfdsxa1NV'
+        ok,_=supplement_pair_ok('2025-05-30',['Bektemir Melikuziev','Darius Fulghum'],mel)
+        self.assertTrue(ok)
+        dav='https://www.ringmagazine.com/news/tank-says-judges-took-fight-from-him-due-to-kneel-former-nysac-commish-says-tank-shouldve-been-dqd-4q5xioFCxVFevPVkthmWzP'
+        ok,_=supplement_pair_ok('2025-03-01',['Gervonta Davis','Lamont Roach'],dav)
+        self.assertTrue(ok)
+
     def test_itauma_hyphen_of_hyphen_total(self):
         out=parse_pair(
             "Itauma, 17 years his junior, admitted needing to quickly be wary of the firepower flashing back at him after absorbing a shot - Whyte landed just two - while the unbeaten 20-year-old connected on 19-of-34 punches (55.9%).",
