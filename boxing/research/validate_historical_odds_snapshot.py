@@ -10,11 +10,11 @@ A validated row requires:
 - archived displayed American odds convert back to the stored decimal price.
 """
 from __future__ import annotations
-import datetime as dt,json,re,sqlite3,unicodedata,urllib.request
+import datetime as dt,json,os,re,sqlite3,unicodedata,urllib.request
 from pathlib import Path
 from bs4 import BeautifulSoup
 
-DB=Path('/home/anestishkurti92/boxing-research/boxing.sqlite3')
+DB=Path(os.environ.get('BOXING_DB','/home/anestishkurti92/boxing-research/boxing.sqlite3'))
 PILOT=Path('boxing/public_reports/HISTORICAL_ODDS_WAYBACK_PILOT.json')
 OUT=Path('boxing/public_reports/HISTORICAL_ODDS_VALIDATION_REPORT.json')
 VALID=Path('boxing/public_reports/HISTORICAL_ODDS_VALIDATED_ROWS.json')
