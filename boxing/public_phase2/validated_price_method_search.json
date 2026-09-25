@@ -1,0 +1,509 @@
+{
+  "status": "INDEPENDENTLY_VERIFIED_HISTORICAL_PRICE_SUBSET_RESEARCH",
+  "generated_from_validation_artifact": "HISTORICAL_ODDS_VALIDATED_ROWS.json",
+  "validated_quote_rows": 515,
+  "distinct_validated_bouts": 155,
+  "distinct_validated_events": 62,
+  "validation_policy": "Validation requires an exact pre-event Wayback snapshot plus exact archived event/bookmaker/bout/selection cell and price equivalence after American-to-decimal conversion (<=0.005 absolute difference). Newest eligible capture is attempted first; older captures may be used only if their exact Wayback timestamp is preserved.",
+  "tiers": {
+    "one_or_more_verified_books": {
+      "min_verified_two_sided_books": 1,
+      "eligible_verified_price_bouts": 5,
+      "years": {
+        "2024": 1,
+        "2025": 4
+      },
+      "average_verified_books": 1.8,
+      "existing_candidates": [
+        {
+          "name": "B1_AGE_FORM_CENTER",
+          "definition": {
+            "younger": 3,
+            "form": 1,
+            "price": 1.2,
+            "less_experienced": false,
+            "origin": "Phase-2 descriptive center; historically inspected."
+          },
+          "metrics": {
+            "bets": 1,
+            "wins": 1,
+            "losses": 0,
+            "win_pct": 100.0,
+            "wilson95_lower_pct": 20.654329147389294,
+            "profit_median_units": 0.3181818181818181,
+            "roi_median_pct": 31.818181818181813,
+            "profit_best_units": 0.33333333333333326,
+            "roi_best_pct": 33.33333333333333,
+            "avg_market_prob": 0.7130049673828476,
+            "avg_book_count": 2.0
+          },
+          "periods": {
+            "2021_2023": {
+              "bets": 0,
+              "wins": 0,
+              "losses": 0,
+              "win_pct": null,
+              "wilson95_lower_pct": null,
+              "profit_median_units": 0,
+              "roi_median_pct": null,
+              "profit_best_units": 0,
+              "roi_best_pct": null,
+              "avg_market_prob": null,
+              "avg_book_count": null
+            },
+            "2024_2026": {
+              "bets": 1,
+              "wins": 1,
+              "losses": 0,
+              "win_pct": 100.0,
+              "wilson95_lower_pct": 20.654329147389294,
+              "profit_median_units": 0.3181818181818181,
+              "roi_median_pct": 31.818181818181813,
+              "profit_best_units": 0.33333333333333326,
+              "roi_best_pct": 33.33333333333333,
+              "avg_market_prob": 0.7130049673828476,
+              "avg_book_count": 2.0
+            }
+          },
+          "yearly": {
+            "2024": {
+              "bets": 0,
+              "wins": 0,
+              "losses": 0,
+              "win_pct": null,
+              "wilson95_lower_pct": null,
+              "profit_median_units": 0,
+              "roi_median_pct": null,
+              "profit_best_units": 0,
+              "roi_best_pct": null,
+              "avg_market_prob": null,
+              "avg_book_count": null
+            },
+            "2025": {
+              "bets": 1,
+              "wins": 1,
+              "losses": 0,
+              "win_pct": 100.0,
+              "wilson95_lower_pct": 20.654329147389294,
+              "profit_median_units": 0.3181818181818181,
+              "roi_median_pct": 31.818181818181813,
+              "profit_best_units": 0.33333333333333326,
+              "roi_best_pct": 33.33333333333333,
+              "avg_market_prob": 0.7130049673828476,
+              "avg_book_count": 2.0
+            }
+          }
+        },
+        {
+          "name": "B1_AGE_FORM_DEV_SELECTED",
+          "definition": {
+            "younger": 4,
+            "form": 1,
+            "price": 1.2,
+            "less_experienced": false,
+            "origin": "Selected using 2021-2023 development evidence only; 2024-2026 is the later-period check."
+          },
+          "metrics": {
+            "bets": 0,
+            "wins": 0,
+            "losses": 0,
+            "win_pct": null,
+            "wilson95_lower_pct": null,
+            "profit_median_units": 0,
+            "roi_median_pct": null,
+            "profit_best_units": 0,
+            "roi_best_pct": null,
+            "avg_market_prob": null,
+            "avg_book_count": null
+          },
+          "periods": {
+            "2021_2023": {
+              "bets": 0,
+              "wins": 0,
+              "losses": 0,
+              "win_pct": null,
+              "wilson95_lower_pct": null,
+              "profit_median_units": 0,
+              "roi_median_pct": null,
+              "profit_best_units": 0,
+              "roi_best_pct": null,
+              "avg_market_prob": null,
+              "avg_book_count": null
+            },
+            "2024_2026": {
+              "bets": 0,
+              "wins": 0,
+              "losses": 0,
+              "win_pct": null,
+              "wilson95_lower_pct": null,
+              "profit_median_units": 0,
+              "roi_median_pct": null,
+              "profit_best_units": 0,
+              "roi_best_pct": null,
+              "avg_market_prob": null,
+              "avg_book_count": null
+            }
+          },
+          "yearly": {
+            "2024": {
+              "bets": 0,
+              "wins": 0,
+              "losses": 0,
+              "win_pct": null,
+              "wilson95_lower_pct": null,
+              "profit_median_units": 0,
+              "roi_median_pct": null,
+              "profit_best_units": 0,
+              "roi_best_pct": null,
+              "avg_market_prob": null,
+              "avg_book_count": null
+            },
+            "2025": {
+              "bets": 0,
+              "wins": 0,
+              "losses": 0,
+              "win_pct": null,
+              "wilson95_lower_pct": null,
+              "profit_median_units": 0,
+              "roi_median_pct": null,
+              "profit_best_units": 0,
+              "roi_best_pct": null,
+              "avg_market_prob": null,
+              "avg_book_count": null
+            }
+          }
+        },
+        {
+          "name": "B2_RISING_PROSPECT",
+          "definition": {
+            "younger": 3,
+            "form": 1,
+            "price": 1.2,
+            "less_experienced": true,
+            "origin": "Post-hoc hypothesis from AGE+FORM diagnostics; not an untouched discovery."
+          },
+          "metrics": {
+            "bets": 1,
+            "wins": 1,
+            "losses": 0,
+            "win_pct": 100.0,
+            "wilson95_lower_pct": 20.654329147389294,
+            "profit_median_units": 0.3181818181818181,
+            "roi_median_pct": 31.818181818181813,
+            "profit_best_units": 0.33333333333333326,
+            "roi_best_pct": 33.33333333333333,
+            "avg_market_prob": 0.7130049673828476,
+            "avg_book_count": 2.0
+          },
+          "periods": {
+            "2021_2023": {
+              "bets": 0,
+              "wins": 0,
+              "losses": 0,
+              "win_pct": null,
+              "wilson95_lower_pct": null,
+              "profit_median_units": 0,
+              "roi_median_pct": null,
+              "profit_best_units": 0,
+              "roi_best_pct": null,
+              "avg_market_prob": null,
+              "avg_book_count": null
+            },
+            "2024_2026": {
+              "bets": 1,
+              "wins": 1,
+              "losses": 0,
+              "win_pct": 100.0,
+              "wilson95_lower_pct": 20.654329147389294,
+              "profit_median_units": 0.3181818181818181,
+              "roi_median_pct": 31.818181818181813,
+              "profit_best_units": 0.33333333333333326,
+              "roi_best_pct": 33.33333333333333,
+              "avg_market_prob": 0.7130049673828476,
+              "avg_book_count": 2.0
+            }
+          },
+          "yearly": {
+            "2024": {
+              "bets": 0,
+              "wins": 0,
+              "losses": 0,
+              "win_pct": null,
+              "wilson95_lower_pct": null,
+              "profit_median_units": 0,
+              "roi_median_pct": null,
+              "profit_best_units": 0,
+              "roi_best_pct": null,
+              "avg_market_prob": null,
+              "avg_book_count": null
+            },
+            "2025": {
+              "bets": 1,
+              "wins": 1,
+              "losses": 0,
+              "win_pct": 100.0,
+              "wilson95_lower_pct": 20.654329147389294,
+              "profit_median_units": 0.3181818181818181,
+              "roi_median_pct": 31.818181818181813,
+              "profit_best_units": 0.33333333333333326,
+              "roi_best_pct": 33.33333333333333,
+              "avg_market_prob": 0.7130049673828476,
+              "avg_book_count": 2.0
+            }
+          }
+        }
+      ],
+      "fixed_rules_tested_with_at_least_5_bets": 0,
+      "notable_fixed_rule_screen": [],
+      "rolling_origin": [
+        {
+          "test_year": 2025,
+          "selected_rule": null,
+          "prior": {
+            "bets": 0,
+            "wins": 0,
+            "losses": 0,
+            "win_pct": null,
+            "wilson95_lower_pct": null,
+            "profit_median_units": 0,
+            "roi_median_pct": null,
+            "profit_best_units": 0,
+            "roi_best_pct": null,
+            "avg_market_prob": null,
+            "avg_book_count": null
+          },
+          "test": {
+            "bets": 0,
+            "wins": 0,
+            "losses": 0,
+            "win_pct": null,
+            "wilson95_lower_pct": null,
+            "profit_median_units": 0,
+            "roi_median_pct": null,
+            "profit_best_units": 0,
+            "roi_best_pct": null,
+            "avg_market_prob": null,
+            "avg_book_count": null
+          }
+        }
+      ]
+    },
+    "two_or_more_verified_books": {
+      "min_verified_two_sided_books": 2,
+      "eligible_verified_price_bouts": 2,
+      "years": {
+        "2025": 2
+      },
+      "average_verified_books": 3.0,
+      "existing_candidates": [
+        {
+          "name": "B1_AGE_FORM_CENTER",
+          "definition": {
+            "younger": 3,
+            "form": 1,
+            "price": 1.2,
+            "less_experienced": false,
+            "origin": "Phase-2 descriptive center; historically inspected."
+          },
+          "metrics": {
+            "bets": 1,
+            "wins": 1,
+            "losses": 0,
+            "win_pct": 100.0,
+            "wilson95_lower_pct": 20.654329147389294,
+            "profit_median_units": 0.3181818181818181,
+            "roi_median_pct": 31.818181818181813,
+            "profit_best_units": 0.33333333333333326,
+            "roi_best_pct": 33.33333333333333,
+            "avg_market_prob": 0.7130049673828476,
+            "avg_book_count": 2.0
+          },
+          "periods": {
+            "2021_2023": {
+              "bets": 0,
+              "wins": 0,
+              "losses": 0,
+              "win_pct": null,
+              "wilson95_lower_pct": null,
+              "profit_median_units": 0,
+              "roi_median_pct": null,
+              "profit_best_units": 0,
+              "roi_best_pct": null,
+              "avg_market_prob": null,
+              "avg_book_count": null
+            },
+            "2024_2026": {
+              "bets": 1,
+              "wins": 1,
+              "losses": 0,
+              "win_pct": 100.0,
+              "wilson95_lower_pct": 20.654329147389294,
+              "profit_median_units": 0.3181818181818181,
+              "roi_median_pct": 31.818181818181813,
+              "profit_best_units": 0.33333333333333326,
+              "roi_best_pct": 33.33333333333333,
+              "avg_market_prob": 0.7130049673828476,
+              "avg_book_count": 2.0
+            }
+          },
+          "yearly": {
+            "2025": {
+              "bets": 1,
+              "wins": 1,
+              "losses": 0,
+              "win_pct": 100.0,
+              "wilson95_lower_pct": 20.654329147389294,
+              "profit_median_units": 0.3181818181818181,
+              "roi_median_pct": 31.818181818181813,
+              "profit_best_units": 0.33333333333333326,
+              "roi_best_pct": 33.33333333333333,
+              "avg_market_prob": 0.7130049673828476,
+              "avg_book_count": 2.0
+            }
+          }
+        },
+        {
+          "name": "B1_AGE_FORM_DEV_SELECTED",
+          "definition": {
+            "younger": 4,
+            "form": 1,
+            "price": 1.2,
+            "less_experienced": false,
+            "origin": "Selected using 2021-2023 development evidence only; 2024-2026 is the later-period check."
+          },
+          "metrics": {
+            "bets": 0,
+            "wins": 0,
+            "losses": 0,
+            "win_pct": null,
+            "wilson95_lower_pct": null,
+            "profit_median_units": 0,
+            "roi_median_pct": null,
+            "profit_best_units": 0,
+            "roi_best_pct": null,
+            "avg_market_prob": null,
+            "avg_book_count": null
+          },
+          "periods": {
+            "2021_2023": {
+              "bets": 0,
+              "wins": 0,
+              "losses": 0,
+              "win_pct": null,
+              "wilson95_lower_pct": null,
+              "profit_median_units": 0,
+              "roi_median_pct": null,
+              "profit_best_units": 0,
+              "roi_best_pct": null,
+              "avg_market_prob": null,
+              "avg_book_count": null
+            },
+            "2024_2026": {
+              "bets": 0,
+              "wins": 0,
+              "losses": 0,
+              "win_pct": null,
+              "wilson95_lower_pct": null,
+              "profit_median_units": 0,
+              "roi_median_pct": null,
+              "profit_best_units": 0,
+              "roi_best_pct": null,
+              "avg_market_prob": null,
+              "avg_book_count": null
+            }
+          },
+          "yearly": {
+            "2025": {
+              "bets": 0,
+              "wins": 0,
+              "losses": 0,
+              "win_pct": null,
+              "wilson95_lower_pct": null,
+              "profit_median_units": 0,
+              "roi_median_pct": null,
+              "profit_best_units": 0,
+              "roi_best_pct": null,
+              "avg_market_prob": null,
+              "avg_book_count": null
+            }
+          }
+        },
+        {
+          "name": "B2_RISING_PROSPECT",
+          "definition": {
+            "younger": 3,
+            "form": 1,
+            "price": 1.2,
+            "less_experienced": true,
+            "origin": "Post-hoc hypothesis from AGE+FORM diagnostics; not an untouched discovery."
+          },
+          "metrics": {
+            "bets": 1,
+            "wins": 1,
+            "losses": 0,
+            "win_pct": 100.0,
+            "wilson95_lower_pct": 20.654329147389294,
+            "profit_median_units": 0.3181818181818181,
+            "roi_median_pct": 31.818181818181813,
+            "profit_best_units": 0.33333333333333326,
+            "roi_best_pct": 33.33333333333333,
+            "avg_market_prob": 0.7130049673828476,
+            "avg_book_count": 2.0
+          },
+          "periods": {
+            "2021_2023": {
+              "bets": 0,
+              "wins": 0,
+              "losses": 0,
+              "win_pct": null,
+              "wilson95_lower_pct": null,
+              "profit_median_units": 0,
+              "roi_median_pct": null,
+              "profit_best_units": 0,
+              "roi_best_pct": null,
+              "avg_market_prob": null,
+              "avg_book_count": null
+            },
+            "2024_2026": {
+              "bets": 1,
+              "wins": 1,
+              "losses": 0,
+              "win_pct": 100.0,
+              "wilson95_lower_pct": 20.654329147389294,
+              "profit_median_units": 0.3181818181818181,
+              "roi_median_pct": 31.818181818181813,
+              "profit_best_units": 0.33333333333333326,
+              "roi_best_pct": 33.33333333333333,
+              "avg_market_prob": 0.7130049673828476,
+              "avg_book_count": 2.0
+            }
+          },
+          "yearly": {
+            "2025": {
+              "bets": 1,
+              "wins": 1,
+              "losses": 0,
+              "win_pct": 100.0,
+              "wilson95_lower_pct": 20.654329147389294,
+              "profit_median_units": 0.3181818181818181,
+              "roi_median_pct": 31.818181818181813,
+              "profit_best_units": 0.33333333333333326,
+              "roi_best_pct": 33.33333333333333,
+              "avg_market_prob": 0.7130049673828476,
+              "avg_book_count": 2.0
+            }
+          }
+        }
+      ],
+      "fixed_rules_tested_with_at_least_5_bets": 0,
+      "notable_fixed_rule_screen": [],
+      "rolling_origin": []
+    }
+  },
+  "interpretation_policy": [
+    "Only independently verified pre-event quote rows are used in this report.",
+    "One-book results verify price provenance but are less robust to bookmaker-specific pricing than the 2+ book tier.",
+    "Historical verified-price results are not pristine holdouts because rule families and thresholds were developed on overlapping historical bouts.",
+    "No rule is promoted live from this report alone; prospective timestamped settlement remains the cleanest confirmation."
+  ]
+}
