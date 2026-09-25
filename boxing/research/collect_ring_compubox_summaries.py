@@ -287,6 +287,33 @@ def parse_pair(text,a,b):
         if m:
             setv(f,'total_landed',m.group(1));setv(o,'total_landed',m.group(2))
 
+    # Ring result-style final tally:
+    # "Garcia ... final tally (66-of-210 to 57-of-280)".
+    # The first pair belongs to the explicitly named subject; the second to the
+    # already verified opponent for this exact bout.
+    for f,o in ((a,b),(b,a)):
+        for fa in sorted({clean(f),clean(f).split()[-1]},key=len,reverse=True):
+            m=re.search(
+                r'(?<![A-Za-z0-9])'+re.escape(fa)+
+                r'(?![A-Za-z0-9])[^.!?]{0,180}?final\s+tally\s*\('
+                r'(\d{1,4})\s*[-–]?\s*of\s*[-–]?\s*(\d{1,4})\s+to\s+'
+                r'(\d{1,4})\s*[-–]?\s*of\s*[-–]?\s*(\d{1,4})\)',
+                text,re.I)
+            if m:
+                setv(f,'total_landed',m.group(1));setv(f,'total_thrown',m.group(2))
+                setv(o,'total_landed',m.group(3));setv(o,'total_thrown',m.group(4))
+
+    # "CompuBox credited Romero and Garcia for landing only 18 power punches apiece."
+    for f,o in ((a,b),(b,a)):
+        for fa in sorted({clean(f),clean(f).split()[-1]},key=len,reverse=True):
+            for oa in sorted({clean(o),clean(o).split()[-1]},key=len,reverse=True):
+                m=re.search(
+                    r'credited\s+'+re.escape(fa)+r'\s+and\s+'+re.escape(oa)+
+                    r'\s+for\s+landing\s+(?:only\s+)?(\d{1,4})\s+power\s+punches\s+apiece',
+                    text,re.I)
+                if m:
+                    setv(f,'power_landed',m.group(1));setv(o,'power_landed',m.group(1))
+
     # Exact per-fighter patterns. Numeric extraction is constrained to the
     # fighter's subject clause and cannot cross an exact opponent mention.
     for f,o in ((a,b),(b,a)):
