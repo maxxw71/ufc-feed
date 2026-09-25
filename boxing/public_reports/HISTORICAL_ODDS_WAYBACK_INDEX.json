@@ -1,37 +1,4149 @@
 {
-  "generated_at": "2026-09-25T13:06:59.071292+00:00",
+  "generated_at": "2026-09-25T13:10:16.140205+00:00",
   "queries": [
     {
       "prefix": "https://www.proboxingodds.com/events/",
-      "query": "https://web.archive.org/cdx/search/cdx?url=https%3A%2F%2Fwww.proboxingodds.com%2Fevents%2F&matchType=prefix&output=json&filter=statuscode%3A200&fl=timestamp%2Coriginal%2Cstatuscode%2Cmimetype%2Cdigest&collapse=urlkey%2Cdigest&limit=10000",
-      "rows": 0,
-      "error": "HTTPError: HTTP Error 400: BAD REQUEST"
+      "query": "https://web.archive.org/cdx/search/cdx?url=https%3A%2F%2Fwww.proboxingodds.com%2Fevents%2F%2A&output=json&filter=statuscode%3A200&fl=timestamp%2Coriginal%2Cstatuscode%2Cmimetype%2Cdigest&limit=10000",
+      "rows": 5766,
+      "error": null
     },
     {
       "prefix": "http://www.proboxingodds.com/events/",
-      "query": "https://web.archive.org/cdx/search/cdx?url=http%3A%2F%2Fwww.proboxingodds.com%2Fevents%2F&matchType=prefix&output=json&filter=statuscode%3A200&fl=timestamp%2Coriginal%2Cstatuscode%2Cmimetype%2Cdigest&collapse=urlkey%2Cdigest&limit=10000",
+      "query": "https://web.archive.org/cdx/search/cdx?url=http%3A%2F%2Fwww.proboxingodds.com%2Fevents%2F%2A&output=json&filter=statuscode%3A200&fl=timestamp%2Coriginal%2Cstatuscode%2Cmimetype%2Cdigest&limit=10000",
       "rows": 0,
-      "error": "HTTPError: HTTP Error 400: BAD REQUEST"
+      "error": "HTTPError: HTTP Error 503: Service Unavailable"
     },
     {
       "prefix": "https://proboxingodds.com/events/",
-      "query": "https://web.archive.org/cdx/search/cdx?url=https%3A%2F%2Fproboxingodds.com%2Fevents%2F&matchType=prefix&output=json&filter=statuscode%3A200&fl=timestamp%2Coriginal%2Cstatuscode%2Cmimetype%2Cdigest&collapse=urlkey%2Cdigest&limit=10000",
+      "query": "https://web.archive.org/cdx/search/cdx?url=https%3A%2F%2Fproboxingodds.com%2Fevents%2F%2A&output=json&filter=statuscode%3A200&fl=timestamp%2Coriginal%2Cstatuscode%2Cmimetype%2Cdigest&limit=10000",
       "rows": 0,
-      "error": "HTTPError: HTTP Error 400: BAD REQUEST"
+      "error": "HTTPError: HTTP Error 503: Service Unavailable"
     },
     {
       "prefix": "http://proboxingodds.com/events/",
-      "query": "https://web.archive.org/cdx/search/cdx?url=http%3A%2F%2Fproboxingodds.com%2Fevents%2F&matchType=prefix&output=json&filter=statuscode%3A200&fl=timestamp%2Coriginal%2Cstatuscode%2Cmimetype%2Cdigest&collapse=urlkey%2Cdigest&limit=10000",
+      "query": "https://web.archive.org/cdx/search/cdx?url=http%3A%2F%2Fproboxingodds.com%2Fevents%2F%2A&output=json&filter=statuscode%3A200&fl=timestamp%2Coriginal%2Cstatuscode%2Cmimetype%2Cdigest&limit=10000",
       "rows": 0,
-      "error": "HTTPError: HTTP Error 400: BAD REQUEST"
+      "error": "HTTPError: HTTP Error 503: Service Unavailable"
     }
   ],
-  "raw_cdx_rows": 0,
-  "rejected_unparsed_rows": 0,
-  "events_with_pre_event_captures": 0,
-  "pre_event_captures_indexed": 0,
-  "date_min": null,
-  "date_max": null,
-  "events": [],
+  "raw_cdx_rows": 5766,
+  "rejected_unparsed_rows": 421,
+  "events_with_pre_event_captures": 257,
+  "pre_event_captures_indexed": 289,
+  "date_min": "2017-07-08",
+  "date_max": "2107-07-15",
+  "events": [
+    {
+      "event_date": "2017-07-08",
+      "event_url": "https://www.proboxingodds.com/events/2017-07-08-605",
+      "pre_event_capture_count": 1,
+      "captures": [
+        {
+          "timestamp": "20170704082917",
+          "original": "https://www.proboxingodds.com/events/2017-07-08-605",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "PWR7XAK6GKGBRD4DSBDP4YLBBPI6D53H",
+          "snapshot_url": "https://web.archive.org/web/20170704082917id_/https://www.proboxingodds.com/events/2017-07-08-605"
+        }
+      ]
+    },
+    {
+      "event_date": "2017-09-16",
+      "event_url": "https://www.proboxingodds.com/events/2017-09-16-662",
+      "pre_event_capture_count": 1,
+      "captures": [
+        {
+          "timestamp": "20170704050854",
+          "original": "https://www.proboxingodds.com/events/2017-09-16-662",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "MRN3NTIHDE56TDJJG2QQVQ5FHLJQ4HPE",
+          "snapshot_url": "https://web.archive.org/web/20170704050854id_/https://www.proboxingodds.com/events/2017-09-16-662"
+        }
+      ]
+    },
+    {
+      "event_date": "2017-12-30",
+      "event_url": "https://www.proboxingodds.com/events/2017-12-30-666",
+      "pre_event_capture_count": 1,
+      "captures": [
+        {
+          "timestamp": "20170704053739",
+          "original": "https://www.proboxingodds.com/events/2017-12-30-666",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "IGJWDVM3RHKDYQ7P7ACDOGWD6IXV4Y74",
+          "snapshot_url": "https://web.archive.org/web/20170704053739id_/https://www.proboxingodds.com/events/2017-12-30-666"
+        }
+      ]
+    },
+    {
+      "event_date": "2017-12-31",
+      "event_url": "https://www.proboxingodds.com/events/2017-12-31-492",
+      "pre_event_capture_count": 1,
+      "captures": [
+        {
+          "timestamp": "20170704090955",
+          "original": "https://www.proboxingodds.com/events/2017-12-31-492",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "BT4LOR2VPEZGWUBA55I6DUBDEDDPUZVQ",
+          "snapshot_url": "https://web.archive.org/web/20170704090955id_/https://www.proboxingodds.com/events/2017-12-31-492"
+        }
+      ]
+    },
+    {
+      "event_date": "2019-04-05",
+      "event_url": "https://www.proboxingodds.com/events/2019-04-05-1029",
+      "pre_event_capture_count": 1,
+      "captures": [
+        {
+          "timestamp": "20190401005310",
+          "original": "https://www.proboxingodds.com/events/2019-04-05-1029",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "T56N2YFBZFSN4XPMCJS7BIASXF43NBXV",
+          "snapshot_url": "https://web.archive.org/web/20190401005310id_/https://www.proboxingodds.com/events/2019-04-05-1029"
+        }
+      ]
+    },
+    {
+      "event_date": "2019-04-06",
+      "event_url": "https://www.proboxingodds.com/events/2019-04-06-1030",
+      "pre_event_capture_count": 1,
+      "captures": [
+        {
+          "timestamp": "20190401065558",
+          "original": "https://www.proboxingodds.com/events/2019-04-06-1030",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "PKEBZIGZQU4W2UTFRCREZYQLRNNTZ5LP",
+          "snapshot_url": "https://web.archive.org/web/20190401065558id_/https://www.proboxingodds.com/events/2019-04-06-1030"
+        }
+      ]
+    },
+    {
+      "event_date": "2019-04-12",
+      "event_url": "https://www.proboxingodds.com/events/2019-04-12-999",
+      "pre_event_capture_count": 1,
+      "captures": [
+        {
+          "timestamp": "20190331154951",
+          "original": "https://www.proboxingodds.com/events/2019-04-12-999",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "TMA6UAWM6ZXKEHG3XOBRK5KCYWFJZ6A6",
+          "snapshot_url": "https://web.archive.org/web/20190331154951id_/https://www.proboxingodds.com/events/2019-04-12-999"
+        }
+      ]
+    },
+    {
+      "event_date": "2019-04-13",
+      "event_url": "https://www.proboxingodds.com/events/2019-04-13-1012",
+      "pre_event_capture_count": 1,
+      "captures": [
+        {
+          "timestamp": "20190401063715",
+          "original": "https://www.proboxingodds.com/events/2019-04-13-1012",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "6VYHZWIUAMTOAKJNDHD3LFG5PMQAGGGE",
+          "snapshot_url": "https://web.archive.org/web/20190401063715id_/https://www.proboxingodds.com/events/2019-04-13-1012"
+        }
+      ]
+    },
+    {
+      "event_date": "2019-04-20",
+      "event_url": "https://www.proboxingodds.com/events/2019-04-20-992",
+      "pre_event_capture_count": 1,
+      "captures": [
+        {
+          "timestamp": "20190401130803",
+          "original": "https://www.proboxingodds.com/events/2019-04-20-992",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "MKBKZXBOSVVPAKE545RRDCBUZE7GO6FW",
+          "snapshot_url": "https://web.archive.org/web/20190401130803id_/https://www.proboxingodds.com/events/2019-04-20-992"
+        }
+      ]
+    },
+    {
+      "event_date": "2019-04-26",
+      "event_url": "https://www.proboxingodds.com/events/2019-04-26-1025",
+      "pre_event_capture_count": 1,
+      "captures": [
+        {
+          "timestamp": "20190401031114",
+          "original": "https://www.proboxingodds.com/events/2019-04-26-1025",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "YP5EZNAQJGGGK4P62VXVKSVBYQIPSYAA",
+          "snapshot_url": "https://web.archive.org/web/20190401031114id_/https://www.proboxingodds.com/events/2019-04-26-1025"
+        }
+      ]
+    },
+    {
+      "event_date": "2019-04-27",
+      "event_url": "https://www.proboxingodds.com/events/2019-04-27-1014",
+      "pre_event_capture_count": 1,
+      "captures": [
+        {
+          "timestamp": "20190401030357",
+          "original": "https://www.proboxingodds.com/events/2019-04-27-1014",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "PPP2VJM3ZPLOMTARSM5HCREKIGQ46J6V",
+          "snapshot_url": "https://web.archive.org/web/20190401030357id_/https://www.proboxingodds.com/events/2019-04-27-1014"
+        }
+      ]
+    },
+    {
+      "event_date": "2019-05-04",
+      "event_url": "https://www.proboxingodds.com/events/2019-05-04-994",
+      "pre_event_capture_count": 1,
+      "captures": [
+        {
+          "timestamp": "20190401034846",
+          "original": "https://www.proboxingodds.com/events/2019-05-04-994",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "7UNMGZYVHKD2OJCVIPX7MY6SYKFLWB7P",
+          "snapshot_url": "https://web.archive.org/web/20190401034846id_/https://www.proboxingodds.com/events/2019-05-04-994"
+        }
+      ]
+    },
+    {
+      "event_date": "2019-05-18",
+      "event_url": "https://www.proboxingodds.com/events/2019-05-18-1003",
+      "pre_event_capture_count": 1,
+      "captures": [
+        {
+          "timestamp": "20190331161116",
+          "original": "https://www.proboxingodds.com/events/2019-05-18-1003",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "FH2TJFTH4J54ZSFD6YWTPO2D7A662PFW",
+          "snapshot_url": "https://web.archive.org/web/20190331161116id_/https://www.proboxingodds.com/events/2019-05-18-1003"
+        }
+      ]
+    },
+    {
+      "event_date": "2019-06-01",
+      "event_url": "https://www.proboxingodds.com/events/2019-06-01-1002",
+      "pre_event_capture_count": 1,
+      "captures": [
+        {
+          "timestamp": "20190401114300",
+          "original": "https://www.proboxingodds.com/events/2019-06-01-1002",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "SD2XRZFWX6OAOHB2GPOGNSB6YCARJBFI",
+          "snapshot_url": "https://web.archive.org/web/20190401114300id_/https://www.proboxingodds.com/events/2019-06-01-1002"
+        }
+      ]
+    },
+    {
+      "event_date": "2019-06-06",
+      "event_url": "https://www.proboxingodds.com/events/2019-06-06-1028",
+      "pre_event_capture_count": 1,
+      "captures": [
+        {
+          "timestamp": "20190401100042",
+          "original": "https://www.proboxingodds.com/events/2019-06-06-1028",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "75E5RGEO3EI2QYLNNDNBQTI2J5HBWXNZ",
+          "snapshot_url": "https://web.archive.org/web/20190401100042id_/https://www.proboxingodds.com/events/2019-06-06-1028"
+        }
+      ]
+    },
+    {
+      "event_date": "2019-06-15",
+      "event_url": "https://www.proboxingodds.com/events/2019-06-15-1015",
+      "pre_event_capture_count": 1,
+      "captures": [
+        {
+          "timestamp": "20190401023248",
+          "original": "https://www.proboxingodds.com/events/2019-06-15-1015",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "XT36WVN3RCHDJFEVCPFVG5WTIECMQBNA",
+          "snapshot_url": "https://web.archive.org/web/20190401023248id_/https://www.proboxingodds.com/events/2019-06-15-1015"
+        }
+      ]
+    },
+    {
+      "event_date": "2019-07-27",
+      "event_url": "https://www.proboxingodds.com/events/2019-07-27-1076",
+      "pre_event_capture_count": 1,
+      "captures": [
+        {
+          "timestamp": "20190718075158",
+          "original": "https://www.proboxingodds.com/events/2019-07-27-1076",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "4G6AG5VCMDMXGBE53HSI7QLRUNP2BQW5",
+          "snapshot_url": "https://web.archive.org/web/20190718075158id_/https://www.proboxingodds.com/events/2019-07-27-1076"
+        }
+      ]
+    },
+    {
+      "event_date": "2019-08-24",
+      "event_url": "https://www.proboxingodds.com/events/2019-08-24-1081",
+      "pre_event_capture_count": 1,
+      "captures": [
+        {
+          "timestamp": "20190821061758",
+          "original": "https://www.proboxingodds.com/events/2019-08-24-1081",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "VPKPXDVIK7WDZN4M2T3PMPKGZBI6QBWS",
+          "snapshot_url": "https://web.archive.org/web/20190821061758id_/https://www.proboxingodds.com/events/2019-08-24-1081"
+        }
+      ]
+    },
+    {
+      "event_date": "2019-08-31",
+      "event_url": "https://www.proboxingodds.com/events/2019-08-31-1069",
+      "pre_event_capture_count": 1,
+      "captures": [
+        {
+          "timestamp": "20190821062002",
+          "original": "https://www.proboxingodds.com/events/2019-08-31-1069",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "5LUELLB27KTRPZI5OFMLCCYPCC57OIKU",
+          "snapshot_url": "https://web.archive.org/web/20190821062002id_/https://www.proboxingodds.com/events/2019-08-31-1069"
+        }
+      ]
+    },
+    {
+      "event_date": "2019-09-07",
+      "event_url": "https://www.proboxingodds.com/events/2019-09-07-1061",
+      "pre_event_capture_count": 1,
+      "captures": [
+        {
+          "timestamp": "20190821061919",
+          "original": "https://www.proboxingodds.com/events/2019-09-07-1061",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "QZ3EZABQXYBIYETALLAJ2IWI7LJS3VB2",
+          "snapshot_url": "https://web.archive.org/web/20190821061919id_/https://www.proboxingodds.com/events/2019-09-07-1061"
+        }
+      ]
+    },
+    {
+      "event_date": "2019-09-14",
+      "event_url": "https://www.proboxingodds.com/events/2019-09-14-1091",
+      "pre_event_capture_count": 1,
+      "captures": [
+        {
+          "timestamp": "20190821062048",
+          "original": "https://www.proboxingodds.com/events/2019-09-14-1091",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "EBBBWZ4KH7LEVYLG7TYS4M24FXSDXST2",
+          "snapshot_url": "https://web.archive.org/web/20190821062048id_/https://www.proboxingodds.com/events/2019-09-14-1091"
+        }
+      ]
+    },
+    {
+      "event_date": "2019-09-27",
+      "event_url": "https://www.proboxingodds.com/events/2019-09-27-1109",
+      "pre_event_capture_count": 1,
+      "captures": [
+        {
+          "timestamp": "20190915212200",
+          "original": "https://www.proboxingodds.com/events/2019-09-27-1109",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "7IHK3BBTMNHT7DIKTP6XU4EE3WVX3ESN",
+          "snapshot_url": "https://web.archive.org/web/20190915212200id_/https://www.proboxingodds.com/events/2019-09-27-1109"
+        }
+      ]
+    },
+    {
+      "event_date": "2019-09-28",
+      "event_url": "https://www.proboxingodds.com/events/2019-09-28-1087",
+      "pre_event_capture_count": 1,
+      "captures": [
+        {
+          "timestamp": "20190821061412",
+          "original": "https://www.proboxingodds.com/events/2019-09-28-1087",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "V4FBB6WWNA7P7GES55KNZ2MUKCCLPCVZ",
+          "snapshot_url": "https://web.archive.org/web/20190821061412id_/https://www.proboxingodds.com/events/2019-09-28-1087"
+        }
+      ]
+    },
+    {
+      "event_date": "2019-10-05",
+      "event_url": "https://www.proboxingodds.com/events/2019-10-05-1106",
+      "pre_event_capture_count": 1,
+      "captures": [
+        {
+          "timestamp": "20190915211402",
+          "original": "https://www.proboxingodds.com/events/2019-10-05-1106",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "2QWCGVI5LL3KKFRGUO6IXRDOOWU5F53E",
+          "snapshot_url": "https://web.archive.org/web/20190915211402id_/https://www.proboxingodds.com/events/2019-10-05-1106"
+        }
+      ]
+    },
+    {
+      "event_date": "2019-10-12",
+      "event_url": "https://www.proboxingodds.com/events/2019-10-12-1107",
+      "pre_event_capture_count": 1,
+      "captures": [
+        {
+          "timestamp": "20190915211836",
+          "original": "https://www.proboxingodds.com/events/2019-10-12-1107",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "DL3UOAY3UDALG6WHV2BEUAFY4CP3MSBE",
+          "snapshot_url": "https://web.archive.org/web/20190915211836id_/https://www.proboxingodds.com/events/2019-10-12-1107"
+        }
+      ]
+    },
+    {
+      "event_date": "2019-10-18",
+      "event_url": "https://www.proboxingodds.com/events/2019-10-18-1119",
+      "pre_event_capture_count": 1,
+      "captures": [
+        {
+          "timestamp": "20191014192722",
+          "original": "https://www.proboxingodds.com/events/2019-10-18-1119",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "KD2EPAQTH4CIPFTITJ27W4U4S44KSLEV",
+          "snapshot_url": "https://web.archive.org/web/20191014192722id_/https://www.proboxingodds.com/events/2019-10-18-1119"
+        }
+      ]
+    },
+    {
+      "event_date": "2019-10-19",
+      "event_url": "https://www.proboxingodds.com/events/2019-10-19-1102",
+      "pre_event_capture_count": 1,
+      "captures": [
+        {
+          "timestamp": "20190915212134",
+          "original": "https://www.proboxingodds.com/events/2019-10-19-1102",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "WMYCTDJOS2D3OBSNYWU2NK3QGAFFU3YJ",
+          "snapshot_url": "https://web.archive.org/web/20190915212134id_/https://www.proboxingodds.com/events/2019-10-19-1102"
+        }
+      ]
+    },
+    {
+      "event_date": "2019-10-26",
+      "event_url": "https://www.proboxingodds.com/events/2019-10-26-1108",
+      "pre_event_capture_count": 1,
+      "captures": [
+        {
+          "timestamp": "20190915211615",
+          "original": "https://www.proboxingodds.com/events/2019-10-26-1108",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "6SRDV7Q7ORLR7F2VO4S5L33AEVETWITU",
+          "snapshot_url": "https://web.archive.org/web/20190915211615id_/https://www.proboxingodds.com/events/2019-10-26-1108"
+        }
+      ]
+    },
+    {
+      "event_date": "2019-11-02",
+      "event_url": "https://www.proboxingodds.com/events/2019-11-02-1113",
+      "pre_event_capture_count": 1,
+      "captures": [
+        {
+          "timestamp": "20191014192945",
+          "original": "https://www.proboxingodds.com/events/2019-11-02-1113",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "PXPKUCO3OFA6ERFP3VAGGNWV6RSUTMS2",
+          "snapshot_url": "https://web.archive.org/web/20191014192945id_/https://www.proboxingodds.com/events/2019-11-02-1113"
+        }
+      ]
+    },
+    {
+      "event_date": "2019-11-07",
+      "event_url": "https://www.proboxingodds.com/events/2019-11-07-1096",
+      "pre_event_capture_count": 1,
+      "captures": [
+        {
+          "timestamp": "20190915211502",
+          "original": "https://www.proboxingodds.com/events/2019-11-07-1096",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "MLFBGL44YBRRVJMCLKR6IWGHQCGRBNKD",
+          "snapshot_url": "https://web.archive.org/web/20190915211502id_/https://www.proboxingodds.com/events/2019-11-07-1096"
+        }
+      ]
+    },
+    {
+      "event_date": "2019-11-08",
+      "event_url": "https://www.proboxingodds.com/events/2019-11-08-1112",
+      "pre_event_capture_count": 1,
+      "captures": [
+        {
+          "timestamp": "20190915212006",
+          "original": "https://www.proboxingodds.com/events/2019-11-08-1112",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "AEZWVNO2EABZ3HRXYPT5P4QHGSQCTBAZ",
+          "snapshot_url": "https://web.archive.org/web/20190915212006id_/https://www.proboxingodds.com/events/2019-11-08-1112"
+        }
+      ]
+    },
+    {
+      "event_date": "2019-11-09",
+      "event_url": "https://www.proboxingodds.com/events/2019-11-09-1111",
+      "pre_event_capture_count": 1,
+      "captures": [
+        {
+          "timestamp": "20190915211343",
+          "original": "https://www.proboxingodds.com/events/2019-11-09-1111",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "BB2WKUGBLS6CCH5HKZ6E7CYDMQ2INX6D",
+          "snapshot_url": "https://web.archive.org/web/20190915211343id_/https://www.proboxingodds.com/events/2019-11-09-1111"
+        }
+      ]
+    },
+    {
+      "event_date": "2019-11-15",
+      "event_url": "https://www.proboxingodds.com/events/2019-11-15-1134",
+      "pre_event_capture_count": 1,
+      "captures": [
+        {
+          "timestamp": "20191112181200",
+          "original": "https://www.proboxingodds.com/events/2019-11-15-1134",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "S7ARUJUMUVPHV3Z43N5NH7SGSB2IIB2D",
+          "snapshot_url": "https://web.archive.org/web/20191112181200id_/https://www.proboxingodds.com/events/2019-11-15-1134"
+        }
+      ]
+    },
+    {
+      "event_date": "2019-11-16",
+      "event_url": "https://www.proboxingodds.com/events/2019-11-16-995",
+      "pre_event_capture_count": 3,
+      "captures": [
+        {
+          "timestamp": "20191014193619",
+          "original": "https://www.proboxingodds.com/events/2019-11-16-995",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "MOUPHG7SQZOH4QHBKDOX2X3MNX7PTEEJ",
+          "snapshot_url": "https://web.archive.org/web/20191014193619id_/https://www.proboxingodds.com/events/2019-11-16-995"
+        },
+        {
+          "timestamp": "20190821062052",
+          "original": "https://www.proboxingodds.com/events/2019-11-16-995",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "CL3LOXT37AY6KHC6A3WWJCPEDKSSC26C",
+          "snapshot_url": "https://web.archive.org/web/20190821062052id_/https://www.proboxingodds.com/events/2019-11-16-995"
+        },
+        {
+          "timestamp": "20190331162057",
+          "original": "https://www.proboxingodds.com/events/2019-11-16-995",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "A7HJK4ETWANYJE4LJRDROOQSOSKCKMPT",
+          "snapshot_url": "https://web.archive.org/web/20190331162057id_/https://www.proboxingodds.com/events/2019-11-16-995"
+        }
+      ]
+    },
+    {
+      "event_date": "2019-11-23",
+      "event_url": "https://www.proboxingodds.com/events/2019-11-23-1114",
+      "pre_event_capture_count": 1,
+      "captures": [
+        {
+          "timestamp": "20191014193038",
+          "original": "https://www.proboxingodds.com/events/2019-11-23-1114",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "2KPHGEZBJRUK34ASLK4KACD3DWHNHBAX",
+          "snapshot_url": "https://web.archive.org/web/20191014193038id_/https://www.proboxingodds.com/events/2019-11-23-1114"
+        }
+      ]
+    },
+    {
+      "event_date": "2019-11-30",
+      "event_url": "https://www.proboxingodds.com/events/2019-11-30-1133",
+      "pre_event_capture_count": 1,
+      "captures": [
+        {
+          "timestamp": "20191112181134",
+          "original": "https://www.proboxingodds.com/events/2019-11-30-1133",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "VG4IBPWZC2XTOOG7BYOYAIIGL2VOXMDD",
+          "snapshot_url": "https://web.archive.org/web/20191112181134id_/https://www.proboxingodds.com/events/2019-11-30-1133"
+        }
+      ]
+    },
+    {
+      "event_date": "2019-12-06",
+      "event_url": "https://www.proboxingodds.com/events/2019-12-06-1139",
+      "pre_event_capture_count": 1,
+      "captures": [
+        {
+          "timestamp": "20191112183220",
+          "original": "https://www.proboxingodds.com/events/2019-12-06-1139",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "INGEXZ7UMZU4UUKZNSSWEJ5767KYWKCL",
+          "snapshot_url": "https://web.archive.org/web/20191112183220id_/https://www.proboxingodds.com/events/2019-12-06-1139"
+        }
+      ]
+    },
+    {
+      "event_date": "2019-12-07",
+      "event_url": "https://www.proboxingodds.com/events/2019-12-07-1095",
+      "pre_event_capture_count": 2,
+      "captures": [
+        {
+          "timestamp": "20191014193519",
+          "original": "https://www.proboxingodds.com/events/2019-12-07-1095",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "S554EI7OXIZDVVEGYWRWNM2KTKUG3CAX",
+          "snapshot_url": "https://web.archive.org/web/20191014193519id_/https://www.proboxingodds.com/events/2019-12-07-1095"
+        },
+        {
+          "timestamp": "20190821061952",
+          "original": "https://www.proboxingodds.com/events/2019-12-07-1095",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "C4RUHZFLH6YRW4BBKY7W6ZGC6P4PBNGI",
+          "snapshot_url": "https://web.archive.org/web/20190821061952id_/https://www.proboxingodds.com/events/2019-12-07-1095"
+        }
+      ]
+    },
+    {
+      "event_date": "2019-12-18",
+      "event_url": "https://www.proboxingodds.com/events/2019-12-18-1143",
+      "pre_event_capture_count": 1,
+      "captures": [
+        {
+          "timestamp": "20191214095554",
+          "original": "https://www.proboxingodds.com/events/2019-12-18-1143",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "EGHZF6QY777BKSKPBW7CWIVUA4N72IYJ",
+          "snapshot_url": "https://web.archive.org/web/20191214095554id_/https://www.proboxingodds.com/events/2019-12-18-1143"
+        }
+      ]
+    },
+    {
+      "event_date": "2019-12-19",
+      "event_url": "https://www.proboxingodds.com/events/2019-12-19-1142",
+      "pre_event_capture_count": 1,
+      "captures": [
+        {
+          "timestamp": "20191214103156",
+          "original": "https://www.proboxingodds.com/events/2019-12-19-1142",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "E3FVWEQJ4RFGIRZUORBPPWFLIFYC3TY4",
+          "snapshot_url": "https://web.archive.org/web/20191214103156id_/https://www.proboxingodds.com/events/2019-12-19-1142"
+        }
+      ]
+    },
+    {
+      "event_date": "2019-12-20",
+      "event_url": "https://www.proboxingodds.com/events/2019-12-20-1144",
+      "pre_event_capture_count": 1,
+      "captures": [
+        {
+          "timestamp": "20191214102538",
+          "original": "https://www.proboxingodds.com/events/2019-12-20-1144",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "PSTIV4CB74LUMFWSUWXVZ6YK6QHVORDO",
+          "snapshot_url": "https://web.archive.org/web/20191214102538id_/https://www.proboxingodds.com/events/2019-12-20-1144"
+        }
+      ]
+    },
+    {
+      "event_date": "2019-12-28",
+      "event_url": "https://www.proboxingodds.com/events/2019-12-28-909",
+      "pre_event_capture_count": 4,
+      "captures": [
+        {
+          "timestamp": "20191211180019",
+          "original": "https://www.proboxingodds.com/events/2019-12-28-909",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "HQBU5BMEWOKMWPP5KGHJ7IQJVKJQZBXX",
+          "snapshot_url": "https://web.archive.org/web/20191211180019id_/https://www.proboxingodds.com/events/2019-12-28-909"
+        },
+        {
+          "timestamp": "20191014193541",
+          "original": "https://www.proboxingodds.com/events/2019-12-28-909",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "OSNAEDICRNL2EP2USRNZG2HWUL5FQZEH",
+          "snapshot_url": "https://web.archive.org/web/20191014193541id_/https://www.proboxingodds.com/events/2019-12-28-909"
+        },
+        {
+          "timestamp": "20190821062011",
+          "original": "https://www.proboxingodds.com/events/2019-12-28-909",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "4HEDAS7ATAARKNMJMKOYWRGVKMPEBN7L",
+          "snapshot_url": "https://web.archive.org/web/20190821062011id_/https://www.proboxingodds.com/events/2019-12-28-909"
+        },
+        {
+          "timestamp": "20190401115919",
+          "original": "https://www.proboxingodds.com/events/2019-12-28-909",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "GOE4UIIOOA2IYI2XBRSF2WB7BUYZAQOH",
+          "snapshot_url": "https://web.archive.org/web/20190401115919id_/https://www.proboxingodds.com/events/2019-12-28-909"
+        }
+      ]
+    },
+    {
+      "event_date": "2019-12-30",
+      "event_url": "https://www.proboxingodds.com/events/2019-12-30-1031",
+      "pre_event_capture_count": 1,
+      "captures": [
+        {
+          "timestamp": "20190821061632",
+          "original": "https://www.proboxingodds.com/events/2019-12-30-1031",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "UZA4GCACW4PWXVZ4F23VKUHNN3KGJ4E6",
+          "snapshot_url": "https://web.archive.org/web/20190821061632id_/https://www.proboxingodds.com/events/2019-12-30-1031"
+        }
+      ]
+    },
+    {
+      "event_date": "2019-12-31",
+      "event_url": "https://www.proboxingodds.com/events/2019-12-31-241",
+      "pre_event_capture_count": 2,
+      "captures": [
+        {
+          "timestamp": "20191214094817",
+          "original": "https://www.proboxingodds.com/events/2019-12-31-241",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "ZTVYCR274GJAJIKJYIKB4MAWWOMMSOHU",
+          "snapshot_url": "https://web.archive.org/web/20191214094817id_/https://www.proboxingodds.com/events/2019-12-31-241"
+        },
+        {
+          "timestamp": "20170704075635",
+          "original": "https://www.proboxingodds.com/events/2019-12-31-241",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "5J4XOCVZBFNBTQZR5JMPGACOHIWTJW2M",
+          "snapshot_url": "https://web.archive.org/web/20170704075635id_/https://www.proboxingodds.com/events/2019-12-31-241"
+        }
+      ]
+    },
+    {
+      "event_date": "2020-01-25",
+      "event_url": "https://www.proboxingodds.com/events/2020-01-25-1126",
+      "pre_event_capture_count": 1,
+      "captures": [
+        {
+          "timestamp": "20191214100820",
+          "original": "https://www.proboxingodds.com/events/2020-01-25-1126",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "QIDH6FXUPHGZTBTYLV7K3IUL7V6ABY2C",
+          "snapshot_url": "https://web.archive.org/web/20191214100820id_/https://www.proboxingodds.com/events/2020-01-25-1126"
+        }
+      ]
+    },
+    {
+      "event_date": "2020-02-22",
+      "event_url": "https://www.proboxingodds.com/events/2020-02-22-1122",
+      "pre_event_capture_count": 2,
+      "captures": [
+        {
+          "timestamp": "20191211160533",
+          "original": "https://www.proboxingodds.com/events/2020-02-22-1122",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "IPZH3IBBTFZ5UI2JMJQQVTNKUASYUQMB",
+          "snapshot_url": "https://web.archive.org/web/20191211160533id_/https://www.proboxingodds.com/events/2020-02-22-1122"
+        },
+        {
+          "timestamp": "20191014192733",
+          "original": "https://www.proboxingodds.com/events/2020-02-22-1122",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "GEBDVIYL653SIYRAEHN7332Y4MSS32EN",
+          "snapshot_url": "https://web.archive.org/web/20191014192733id_/https://www.proboxingodds.com/events/2020-02-22-1122"
+        }
+      ]
+    },
+    {
+      "event_date": "2020-05-15",
+      "event_url": "https://www.proboxingodds.com/events/2020-05-15-1212",
+      "pre_event_capture_count": 1,
+      "captures": [
+        {
+          "timestamp": "20200514204005",
+          "original": "https://www.proboxingodds.com/events/2020-05-15-1212",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "2JHCX2EETUYCDV6YLGDKZ5CIAWFUVJHO",
+          "snapshot_url": "https://web.archive.org/web/20200514204005id_/https://www.proboxingodds.com/events/2020-05-15-1212"
+        }
+      ]
+    },
+    {
+      "event_date": "2020-05-16",
+      "event_url": "https://www.proboxingodds.com/events/2020-05-16-1207",
+      "pre_event_capture_count": 1,
+      "captures": [
+        {
+          "timestamp": "20200515105648",
+          "original": "https://www.proboxingodds.com/events/2020-05-16-1207",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "63NXPTURUDYRL2SJJWW5QBVCRYJUBIK4",
+          "snapshot_url": "https://web.archive.org/web/20200515105648id_/https://www.proboxingodds.com/events/2020-05-16-1207"
+        }
+      ]
+    },
+    {
+      "event_date": "2020-05-23",
+      "event_url": "https://www.proboxingodds.com/events/2020-05-23-1206",
+      "pre_event_capture_count": 1,
+      "captures": [
+        {
+          "timestamp": "20200515053120",
+          "original": "https://www.proboxingodds.com/events/2020-05-23-1206",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "6NOKQX3XTGIKOTRVDNQ53QMJWWR2HPXA",
+          "snapshot_url": "https://web.archive.org/web/20200515053120id_/https://www.proboxingodds.com/events/2020-05-23-1206"
+        }
+      ]
+    },
+    {
+      "event_date": "2020-06-12",
+      "event_url": "https://www.proboxingodds.com/events/2020-06-12-1213",
+      "pre_event_capture_count": 1,
+      "captures": [
+        {
+          "timestamp": "20200514195109",
+          "original": "https://www.proboxingodds.com/events/2020-06-12-1213",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "27EOGJSFT6BNV2WJBAOXN2XF4PZPCUEY",
+          "snapshot_url": "https://web.archive.org/web/20200514195109id_/https://www.proboxingodds.com/events/2020-06-12-1213"
+        }
+      ]
+    },
+    {
+      "event_date": "2020-06-13",
+      "event_url": "https://www.proboxingodds.com/events/2020-06-13-1204",
+      "pre_event_capture_count": 1,
+      "captures": [
+        {
+          "timestamp": "20200515013903",
+          "original": "https://www.proboxingodds.com/events/2020-06-13-1204",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "HKJEICN2UQOWMCLJVGXNPTTFAVWFDC4T",
+          "snapshot_url": "https://web.archive.org/web/20200515013903id_/https://www.proboxingodds.com/events/2020-06-13-1204"
+        }
+      ]
+    },
+    {
+      "event_date": "2020-06-20",
+      "event_url": "https://www.proboxingodds.com/events/2020-06-20-1189",
+      "pre_event_capture_count": 1,
+      "captures": [
+        {
+          "timestamp": "20200515071253",
+          "original": "https://www.proboxingodds.com/events/2020-06-20-1189",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "34FBYQIMXI5FIVZQKUO7DZVOU46BMLMG",
+          "snapshot_url": "https://web.archive.org/web/20200515071253id_/https://www.proboxingodds.com/events/2020-06-20-1189"
+        }
+      ]
+    },
+    {
+      "event_date": "2020-07-04",
+      "event_url": "https://www.proboxingodds.com/events/2020-07-04-1211",
+      "pre_event_capture_count": 1,
+      "captures": [
+        {
+          "timestamp": "20200515054357",
+          "original": "https://www.proboxingodds.com/events/2020-07-04-1211",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "DJOGQULF2UMHCHT4SM6BR65LR5CLFGZ6",
+          "snapshot_url": "https://web.archive.org/web/20200515054357id_/https://www.proboxingodds.com/events/2020-07-04-1211"
+        }
+      ]
+    },
+    {
+      "event_date": "2020-07-11",
+      "event_url": "https://www.proboxingodds.com/events/2020-07-11-1208",
+      "pre_event_capture_count": 1,
+      "captures": [
+        {
+          "timestamp": "20200515030236",
+          "original": "https://www.proboxingodds.com/events/2020-07-11-1208",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "F5BBJJ2JZC3LJWSI7ESK5TS54DTQVJPL",
+          "snapshot_url": "https://web.archive.org/web/20200515030236id_/https://www.proboxingodds.com/events/2020-07-11-1208"
+        }
+      ]
+    },
+    {
+      "event_date": "2020-07-18",
+      "event_url": "https://www.proboxingodds.com/events/2020-07-18-1193",
+      "pre_event_capture_count": 1,
+      "captures": [
+        {
+          "timestamp": "20200514175426",
+          "original": "https://www.proboxingodds.com/events/2020-07-18-1193",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "BWZZ3B62J4PO5YKSEGHIFB3WA2WL5FFY",
+          "snapshot_url": "https://web.archive.org/web/20200514175426id_/https://www.proboxingodds.com/events/2020-07-18-1193"
+        }
+      ]
+    },
+    {
+      "event_date": "2020-08-15",
+      "event_url": "https://www.proboxingodds.com/events/2020-08-15-1259",
+      "pre_event_capture_count": 1,
+      "captures": [
+        {
+          "timestamp": "20200808024354",
+          "original": "https://www.proboxingodds.com/events/2020-08-15-1259",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "EEYHH2OHB3T6WOVKHMGHLUCV7JUMFQ45",
+          "snapshot_url": "https://web.archive.org/web/20200808024354id_/https://www.proboxingodds.com/events/2020-08-15-1259"
+        }
+      ]
+    },
+    {
+      "event_date": "2020-08-22",
+      "event_url": "https://www.proboxingodds.com/events/2020-08-22-1215",
+      "pre_event_capture_count": 2,
+      "captures": [
+        {
+          "timestamp": "20200805021916",
+          "original": "https://www.proboxingodds.com/events/2020-08-22-1215",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "EOVLIIWUGQ4OSU2KCP7ZHDQAPADX7P3U",
+          "snapshot_url": "https://web.archive.org/web/20200805021916id_/https://www.proboxingodds.com/events/2020-08-22-1215"
+        },
+        {
+          "timestamp": "20200710073857",
+          "original": "https://www.proboxingodds.com/events/2020-08-22-1215",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "OV3FJ3KHY34HOBNGD7KYNMORAXRV6AOE",
+          "snapshot_url": "https://web.archive.org/web/20200710073857id_/https://www.proboxingodds.com/events/2020-08-22-1215"
+        }
+      ]
+    },
+    {
+      "event_date": "2020-08-26",
+      "event_url": "https://www.proboxingodds.com/events/2020-08-26-1247",
+      "pre_event_capture_count": 1,
+      "captures": [
+        {
+          "timestamp": "20200808033959",
+          "original": "https://www.proboxingodds.com/events/2020-08-26-1247",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "2PJGOCBYFDGMHYYYBDOWJACC2MOSKPIB",
+          "snapshot_url": "https://web.archive.org/web/20200808033959id_/https://www.proboxingodds.com/events/2020-08-26-1247"
+        }
+      ]
+    },
+    {
+      "event_date": "2020-08-29",
+      "event_url": "https://www.proboxingodds.com/events/2020-08-29-1249",
+      "pre_event_capture_count": 1,
+      "captures": [
+        {
+          "timestamp": "20200808031127",
+          "original": "https://www.proboxingodds.com/events/2020-08-29-1249",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "YBZ55TUXW2IOZMDTTBU3LT4GDMCJ4FOO",
+          "snapshot_url": "https://web.archive.org/web/20200808031127id_/https://www.proboxingodds.com/events/2020-08-29-1249"
+        }
+      ]
+    },
+    {
+      "event_date": "2020-09-13",
+      "event_url": "https://www.proboxingodds.com/events/2020-09-13-1258",
+      "pre_event_capture_count": 1,
+      "captures": [
+        {
+          "timestamp": "20200808035135",
+          "original": "https://www.proboxingodds.com/events/2020-09-13-1258",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "4CMW4WKYEQKXIAPMBPLEFGQDURZY57J3",
+          "snapshot_url": "https://web.archive.org/web/20200808035135id_/https://www.proboxingodds.com/events/2020-09-13-1258"
+        }
+      ]
+    },
+    {
+      "event_date": "2020-09-26",
+      "event_url": "https://www.proboxingodds.com/events/2020-09-26-1210",
+      "pre_event_capture_count": 2,
+      "captures": [
+        {
+          "timestamp": "20200921031716",
+          "original": "https://www.proboxingodds.com/events/2020-09-26-1210",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "UN7B7XXPMM5GBFYDEQOSXAED5BIRUGXF",
+          "snapshot_url": "https://web.archive.org/web/20200921031716id_/https://www.proboxingodds.com/events/2020-09-26-1210"
+        },
+        {
+          "timestamp": "20200515113511",
+          "original": "https://www.proboxingodds.com/events/2020-09-26-1210",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "RIRTHK4S4XO26CA7MF3OGKHWJEFATE4A",
+          "snapshot_url": "https://web.archive.org/web/20200515113511id_/https://www.proboxingodds.com/events/2020-09-26-1210"
+        }
+      ]
+    },
+    {
+      "event_date": "2020-09-27",
+      "event_url": "https://www.proboxingodds.com/events/2020-09-27-1257",
+      "pre_event_capture_count": 1,
+      "captures": [
+        {
+          "timestamp": "20200808024855",
+          "original": "https://www.proboxingodds.com/events/2020-09-27-1257",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "QSUSLU6T2LHN5PK2DFFD46UM6LGPY4WS",
+          "snapshot_url": "https://web.archive.org/web/20200808024855id_/https://www.proboxingodds.com/events/2020-09-27-1257"
+        }
+      ]
+    },
+    {
+      "event_date": "2020-09-30",
+      "event_url": "https://www.proboxingodds.com/events/2020-09-30-1283",
+      "pre_event_capture_count": 1,
+      "captures": [
+        {
+          "timestamp": "20200921042240",
+          "original": "https://www.proboxingodds.com/events/2020-09-30-1283",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "UWYHXZE5PFGMGVO2K3NB7KSZPCI5VDNK",
+          "snapshot_url": "https://web.archive.org/web/20200921042240id_/https://www.proboxingodds.com/events/2020-09-30-1283"
+        }
+      ]
+    },
+    {
+      "event_date": "2020-10-03",
+      "event_url": "https://www.proboxingodds.com/events/2020-10-03-1209",
+      "pre_event_capture_count": 1,
+      "captures": [
+        {
+          "timestamp": "20200920193020",
+          "original": "https://www.proboxingodds.com/events/2020-10-03-1209",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "4ZXXZW4CFOKXCJOQNLKKZPCLMOKHP7C6",
+          "snapshot_url": "https://web.archive.org/web/20200920193020id_/https://www.proboxingodds.com/events/2020-10-03-1209"
+        }
+      ]
+    },
+    {
+      "event_date": "2020-10-10",
+      "event_url": "https://www.proboxingodds.com/events/2020-10-10-1285",
+      "pre_event_capture_count": 1,
+      "captures": [
+        {
+          "timestamp": "20200921041325",
+          "original": "https://www.proboxingodds.com/events/2020-10-10-1285",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "XXSDUWFMFJDIWLN6Y4MLSOOGDPAEU4AW",
+          "snapshot_url": "https://web.archive.org/web/20200921041325id_/https://www.proboxingodds.com/events/2020-10-10-1285"
+        }
+      ]
+    },
+    {
+      "event_date": "2020-10-17",
+      "event_url": "https://www.proboxingodds.com/events/2020-10-17-1287",
+      "pre_event_capture_count": 1,
+      "captures": [
+        {
+          "timestamp": "20200921025358",
+          "original": "https://www.proboxingodds.com/events/2020-10-17-1287",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "ZMF7MBFDQ7PFKJ4XI3ABEEJWWPLCEG5S",
+          "snapshot_url": "https://web.archive.org/web/20200921025358id_/https://www.proboxingodds.com/events/2020-10-17-1287"
+        }
+      ]
+    },
+    {
+      "event_date": "2020-10-24",
+      "event_url": "https://www.proboxingodds.com/events/2020-10-24-1235",
+      "pre_event_capture_count": 1,
+      "captures": [
+        {
+          "timestamp": "20200808022015",
+          "original": "https://www.proboxingodds.com/events/2020-10-24-1235",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "VGZAHT5JYOFTN66ZS4MYOQUWOGESTKYA",
+          "snapshot_url": "https://web.archive.org/web/20200808022015id_/https://www.proboxingodds.com/events/2020-10-24-1235"
+        }
+      ]
+    },
+    {
+      "event_date": "2020-10-25",
+      "event_url": "https://www.proboxingodds.com/events/2020-10-25-1256",
+      "pre_event_capture_count": 1,
+      "captures": [
+        {
+          "timestamp": "20200808024210",
+          "original": "https://www.proboxingodds.com/events/2020-10-25-1256",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "GPYBVDATK5DFCEK5SQPL6WY5JFA55BB5",
+          "snapshot_url": "https://web.archive.org/web/20200808024210id_/https://www.proboxingodds.com/events/2020-10-25-1256"
+        }
+      ]
+    },
+    {
+      "event_date": "2020-10-31",
+      "event_url": "https://www.proboxingodds.com/events/2020-10-31-1291",
+      "pre_event_capture_count": 1,
+      "captures": [
+        {
+          "timestamp": "20201020194536",
+          "original": "https://www.proboxingodds.com/events/2020-10-31-1291",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "P3IDUSQR2GHG55ERDSPAJ3NESOFQE4LQ",
+          "snapshot_url": "https://web.archive.org/web/20201020194536id_/https://www.proboxingodds.com/events/2020-10-31-1291"
+        }
+      ]
+    },
+    {
+      "event_date": "2020-11-01",
+      "event_url": "https://www.proboxingodds.com/events/2020-11-01-1303",
+      "pre_event_capture_count": 1,
+      "captures": [
+        {
+          "timestamp": "20201020204651",
+          "original": "https://www.proboxingodds.com/events/2020-11-01-1303",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "YMSA5KO4MDUXPAW6M4A6VAEIS6WZPMEP",
+          "snapshot_url": "https://web.archive.org/web/20201020204651id_/https://www.proboxingodds.com/events/2020-11-01-1303"
+        }
+      ]
+    },
+    {
+      "event_date": "2020-11-14",
+      "event_url": "https://www.proboxingodds.com/events/2020-11-14-1295",
+      "pre_event_capture_count": 1,
+      "captures": [
+        {
+          "timestamp": "20201020203404",
+          "original": "https://www.proboxingodds.com/events/2020-11-14-1295",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "PTYTZQMTYFX7LRSERJAIETKCHD3NWOJM",
+          "snapshot_url": "https://web.archive.org/web/20201020203404id_/https://www.proboxingodds.com/events/2020-11-14-1295"
+        }
+      ]
+    },
+    {
+      "event_date": "2020-11-21",
+      "event_url": "https://www.proboxingodds.com/events/2020-11-21-1273",
+      "pre_event_capture_count": 1,
+      "captures": [
+        {
+          "timestamp": "20200921021620",
+          "original": "https://www.proboxingodds.com/events/2020-11-21-1273",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "LS5BORLBJG5XWBIN3KI7K3V3ISCLCS7Q",
+          "snapshot_url": "https://web.archive.org/web/20200921021620id_/https://www.proboxingodds.com/events/2020-11-21-1273"
+        }
+      ]
+    },
+    {
+      "event_date": "2020-11-28",
+      "event_url": "https://www.proboxingodds.com/events/2020-11-28-1305",
+      "pre_event_capture_count": 1,
+      "captures": [
+        {
+          "timestamp": "20201020204857",
+          "original": "https://www.proboxingodds.com/events/2020-11-28-1305",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "TEWW7N5OD7GQTE64HEVTHUIUS2V2VRSK",
+          "snapshot_url": "https://web.archive.org/web/20201020204857id_/https://www.proboxingodds.com/events/2020-11-28-1305"
+        }
+      ]
+    },
+    {
+      "event_date": "2020-11-29",
+      "event_url": "https://www.proboxingodds.com/events/2020-11-29-1268",
+      "pre_event_capture_count": 1,
+      "captures": [
+        {
+          "timestamp": "20200921030353",
+          "original": "https://www.proboxingodds.com/events/2020-11-29-1268",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "YIEJHKWZFC4Z4SLWC64BPKA5ZJR34KJF",
+          "snapshot_url": "https://web.archive.org/web/20200921030353id_/https://www.proboxingodds.com/events/2020-11-29-1268"
+        }
+      ]
+    },
+    {
+      "event_date": "2020-11-30",
+      "event_url": "https://www.proboxingodds.com/events/2020-11-30-1266",
+      "pre_event_capture_count": 1,
+      "captures": [
+        {
+          "timestamp": "20200928121338",
+          "original": "https://www.proboxingodds.com/events/2020-11-30-1266",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "FWGNUZHKF5OHHZ57LWU65ML3DBH53IPO",
+          "snapshot_url": "https://web.archive.org/web/20200928121338id_/https://www.proboxingodds.com/events/2020-11-30-1266"
+        }
+      ]
+    },
+    {
+      "event_date": "2020-12-02",
+      "event_url": "https://www.proboxingodds.com/events/2020-12-02-1317",
+      "pre_event_capture_count": 1,
+      "captures": [
+        {
+          "timestamp": "20201127210756",
+          "original": "https://www.proboxingodds.com/events/2020-12-02-1317",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "OGABDVPJIV57LJW3LUKABEX4K5NC3WFR",
+          "snapshot_url": "https://web.archive.org/web/20201127210756id_/https://www.proboxingodds.com/events/2020-12-02-1317"
+        }
+      ]
+    },
+    {
+      "event_date": "2020-12-04",
+      "event_url": "https://www.proboxingodds.com/events/2020-12-04-1312",
+      "pre_event_capture_count": 1,
+      "captures": [
+        {
+          "timestamp": "20201127191708",
+          "original": "https://www.proboxingodds.com/events/2020-12-04-1312",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "EXSI4JVLRKW42U3HM2NT6K6J7FZ4FALH",
+          "snapshot_url": "https://web.archive.org/web/20201127191708id_/https://www.proboxingodds.com/events/2020-12-04-1312"
+        }
+      ]
+    },
+    {
+      "event_date": "2020-12-05",
+      "event_url": "https://www.proboxingodds.com/events/2020-12-05-1311",
+      "pre_event_capture_count": 1,
+      "captures": [
+        {
+          "timestamp": "20201127194603",
+          "original": "https://www.proboxingodds.com/events/2020-12-05-1311",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "2CPURCZSD4B2GT6SFJF6Q56L36XBOU4Q",
+          "snapshot_url": "https://web.archive.org/web/20201127194603id_/https://www.proboxingodds.com/events/2020-12-05-1311"
+        }
+      ]
+    },
+    {
+      "event_date": "2020-12-06",
+      "event_url": "https://www.proboxingodds.com/events/2020-12-06-1302",
+      "pre_event_capture_count": 1,
+      "captures": [
+        {
+          "timestamp": "20201020203252",
+          "original": "https://www.proboxingodds.com/events/2020-12-06-1302",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "UZECO65ISKOCYZOIZADUFENDXMGLTMJJ",
+          "snapshot_url": "https://web.archive.org/web/20201020203252id_/https://www.proboxingodds.com/events/2020-12-06-1302"
+        }
+      ]
+    },
+    {
+      "event_date": "2020-12-11",
+      "event_url": "https://www.proboxingodds.com/events/2020-12-11-1308",
+      "pre_event_capture_count": 1,
+      "captures": [
+        {
+          "timestamp": "20201127193237",
+          "original": "https://www.proboxingodds.com/events/2020-12-11-1308",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "PVOFN57D23DGCUFDWUBAOCRK4U6IB6LQ",
+          "snapshot_url": "https://web.archive.org/web/20201127193237id_/https://www.proboxingodds.com/events/2020-12-11-1308"
+        }
+      ]
+    },
+    {
+      "event_date": "2020-12-12",
+      "event_url": "https://www.proboxingodds.com/events/2020-12-12-1286",
+      "pre_event_capture_count": 2,
+      "captures": [
+        {
+          "timestamp": "20201205220458",
+          "original": "https://www.proboxingodds.com/events/2020-12-12-1286",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "CTBQMVVJUSVRBHJ6JYNCJVUOLJVMECW4",
+          "snapshot_url": "https://web.archive.org/web/20201205220458id_/https://www.proboxingodds.com/events/2020-12-12-1286"
+        },
+        {
+          "timestamp": "20200921030244",
+          "original": "https://www.proboxingodds.com/events/2020-12-12-1286",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "FOOFBBPY3J7P47KCVQQTI5CLJVI3OFQU",
+          "snapshot_url": "https://web.archive.org/web/20200921030244id_/https://www.proboxingodds.com/events/2020-12-12-1286"
+        }
+      ]
+    },
+    {
+      "event_date": "2020-12-16",
+      "event_url": "https://www.proboxingodds.com/events/2020-12-16-1315",
+      "pre_event_capture_count": 1,
+      "captures": [
+        {
+          "timestamp": "20201127193820",
+          "original": "https://www.proboxingodds.com/events/2020-12-16-1315",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "AMKT74QLFMSDYS2K2J5DGO3XXR5WT53I",
+          "snapshot_url": "https://web.archive.org/web/20201127193820id_/https://www.proboxingodds.com/events/2020-12-16-1315"
+        }
+      ]
+    },
+    {
+      "event_date": "2020-12-20",
+      "event_url": "https://www.proboxingodds.com/events/2020-12-20-1293",
+      "pre_event_capture_count": 2,
+      "captures": [
+        {
+          "timestamp": "20201219021253",
+          "original": "https://www.proboxingodds.com/events/2020-12-20-1293",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "N2NBLEHZOKHEH44JWRQ2CQGK52FR3TPP",
+          "snapshot_url": "https://web.archive.org/web/20201219021253id_/https://www.proboxingodds.com/events/2020-12-20-1293"
+        },
+        {
+          "timestamp": "20201020210812",
+          "original": "https://www.proboxingodds.com/events/2020-12-20-1293",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "KUJQOL5RIIKDNES467JWOGIXMZ43LLYV",
+          "snapshot_url": "https://web.archive.org/web/20201020210812id_/https://www.proboxingodds.com/events/2020-12-20-1293"
+        }
+      ]
+    },
+    {
+      "event_date": "2020-12-31",
+      "event_url": "https://www.proboxingodds.com/events/2020-12-31-1058",
+      "pre_event_capture_count": 7,
+      "captures": [
+        {
+          "timestamp": "20201219021255",
+          "original": "https://www.proboxingodds.com/events/2020-12-31-1058",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "WYRCHWFYYUV7OY7WFAN6NTTIRARZJDLU",
+          "snapshot_url": "https://web.archive.org/web/20201219021255id_/https://www.proboxingodds.com/events/2020-12-31-1058"
+        },
+        {
+          "timestamp": "20201202211052",
+          "original": "https://www.proboxingodds.com/events/2020-12-31-1058",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "CKT6NMN33PWGVRCKBZZHPGD66HQ6PEUG",
+          "snapshot_url": "https://web.archive.org/web/20201202211052id_/https://www.proboxingodds.com/events/2020-12-31-1058"
+        },
+        {
+          "timestamp": "20200919080827",
+          "original": "https://www.proboxingodds.com/events/2020-12-31-1058",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "53B4FQVEBGIOT6FQMBB4GI3VN7JT3VYS",
+          "snapshot_url": "https://web.archive.org/web/20200919080827id_/https://www.proboxingodds.com/events/2020-12-31-1058"
+        },
+        {
+          "timestamp": "20200514233926",
+          "original": "https://www.proboxingodds.com/events/2020-12-31-1058",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "KEMVN5AUBUMXY4PKKA75PYOEO6GLZ5QN",
+          "snapshot_url": "https://web.archive.org/web/20200514233926id_/https://www.proboxingodds.com/events/2020-12-31-1058"
+        },
+        {
+          "timestamp": "20191211160554",
+          "original": "https://www.proboxingodds.com/events/2020-12-31-1058",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "W5CN3DLCOSXDLAWRGQ6IH3CSDU6ORQWX",
+          "snapshot_url": "https://web.archive.org/web/20191211160554id_/https://www.proboxingodds.com/events/2020-12-31-1058"
+        },
+        {
+          "timestamp": "20191014192818",
+          "original": "https://www.proboxingodds.com/events/2020-12-31-1058",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "6MPR45UUFDMPXKUYD7P4WL6CBNPPZAGI",
+          "snapshot_url": "https://web.archive.org/web/20191014192818id_/https://www.proboxingodds.com/events/2020-12-31-1058"
+        },
+        {
+          "timestamp": "20190821061319",
+          "original": "https://www.proboxingodds.com/events/2020-12-31-1058",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "SDN3X24WVYMGEM4PDORRNCMVC6IY52RX",
+          "snapshot_url": "https://web.archive.org/web/20190821061319id_/https://www.proboxingodds.com/events/2020-12-31-1058"
+        }
+      ]
+    },
+    {
+      "event_date": "2021-01-01",
+      "event_url": "https://www.proboxingodds.com/events/2021-01-01-1158",
+      "pre_event_capture_count": 2,
+      "captures": [
+        {
+          "timestamp": "20201219045806",
+          "original": "https://www.proboxingodds.com/events/2021-01-01-1158",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "M2JIJZC6RVL74OKKXKXOYXQX3MZBR7FN",
+          "snapshot_url": "https://web.archive.org/web/20201219045806id_/https://www.proboxingodds.com/events/2021-01-01-1158"
+        },
+        {
+          "timestamp": "20201127204230",
+          "original": "https://www.proboxingodds.com/events/2021-01-01-1158",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "A6V76VQU2W7JSGWFEPMEIOBLDCWIJEHZ",
+          "snapshot_url": "https://web.archive.org/web/20201127204230id_/https://www.proboxingodds.com/events/2021-01-01-1158"
+        }
+      ]
+    },
+    {
+      "event_date": "2021-01-03",
+      "event_url": "https://www.proboxingodds.com/events/2021-01-03-1327",
+      "pre_event_capture_count": 1,
+      "captures": [
+        {
+          "timestamp": "20201219042105",
+          "original": "https://www.proboxingodds.com/events/2021-01-03-1327",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "DW7FGDTAMQMYVSMPITKATGPIHIEGEUVR",
+          "snapshot_url": "https://web.archive.org/web/20201219042105id_/https://www.proboxingodds.com/events/2021-01-03-1327"
+        }
+      ]
+    },
+    {
+      "event_date": "2021-01-22",
+      "event_url": "https://www.proboxingodds.com/events/2021-01-22-1343",
+      "pre_event_capture_count": 1,
+      "captures": [
+        {
+          "timestamp": "20210119144238",
+          "original": "https://www.proboxingodds.com/events/2021-01-22-1343",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "EII4L37LI2QYTSY3EKYGXK4TN2V52ENR",
+          "snapshot_url": "https://web.archive.org/web/20210119144238id_/https://www.proboxingodds.com/events/2021-01-22-1343"
+        }
+      ]
+    },
+    {
+      "event_date": "2021-01-24",
+      "event_url": "https://www.proboxingodds.com/events/2021-01-24-1347",
+      "pre_event_capture_count": 1,
+      "captures": [
+        {
+          "timestamp": "20210119135522",
+          "original": "https://www.proboxingodds.com/events/2021-01-24-1347",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "NKCLXPYM6JMO7GBE4PKVXLKVWGZHVQRD",
+          "snapshot_url": "https://web.archive.org/web/20210119135522id_/https://www.proboxingodds.com/events/2021-01-24-1347"
+        }
+      ]
+    },
+    {
+      "event_date": "2021-01-30",
+      "event_url": "https://www.proboxingodds.com/events/2021-01-30-1335",
+      "pre_event_capture_count": 1,
+      "captures": [
+        {
+          "timestamp": "20210119143227",
+          "original": "https://www.proboxingodds.com/events/2021-01-30-1335",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "EERTXR5VLXBLV6LM3QY6C2DHMLZ3JW4I",
+          "snapshot_url": "https://web.archive.org/web/20210119143227id_/https://www.proboxingodds.com/events/2021-01-30-1335"
+        }
+      ]
+    },
+    {
+      "event_date": "2021-01-31",
+      "event_url": "https://www.proboxingodds.com/events/2021-01-31-1336",
+      "pre_event_capture_count": 1,
+      "captures": [
+        {
+          "timestamp": "20210119155937",
+          "original": "https://www.proboxingodds.com/events/2021-01-31-1336",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "T27K4EUDWP5CTTPPRIOEXB72RLXCU2GT",
+          "snapshot_url": "https://web.archive.org/web/20210119155937id_/https://www.proboxingodds.com/events/2021-01-31-1336"
+        }
+      ]
+    },
+    {
+      "event_date": "2021-02-14",
+      "event_url": "https://www.proboxingodds.com/events/2021-02-14-1341",
+      "pre_event_capture_count": 1,
+      "captures": [
+        {
+          "timestamp": "20210119160719",
+          "original": "https://www.proboxingodds.com/events/2021-02-14-1341",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "ZDHOPFEXPEMNRSZMUEFC2LAPNFVK3S7P",
+          "snapshot_url": "https://web.archive.org/web/20210119160719id_/https://www.proboxingodds.com/events/2021-02-14-1341"
+        }
+      ]
+    },
+    {
+      "event_date": "2021-02-21",
+      "event_url": "https://www.proboxingodds.com/events/2021-02-21-1331",
+      "pre_event_capture_count": 2,
+      "captures": [
+        {
+          "timestamp": "20210119140118",
+          "original": "https://www.proboxingodds.com/events/2021-02-21-1331",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "7UVU6XLMPM6SSCWI7KTU634ZZOKLD3ZK",
+          "snapshot_url": "https://web.archive.org/web/20210119140118id_/https://www.proboxingodds.com/events/2021-02-21-1331"
+        },
+        {
+          "timestamp": "20201220052526",
+          "original": "https://www.proboxingodds.com/events/2021-02-21-1331",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "TJPPDEDFN6PLRT7NZK3QCURIJBFZ4475",
+          "snapshot_url": "https://web.archive.org/web/20201220052526id_/https://www.proboxingodds.com/events/2021-02-21-1331"
+        }
+      ]
+    },
+    {
+      "event_date": "2021-02-27",
+      "event_url": "https://www.proboxingodds.com/events/2021-02-27-1342",
+      "pre_event_capture_count": 1,
+      "captures": [
+        {
+          "timestamp": "20210119142656",
+          "original": "https://www.proboxingodds.com/events/2021-02-27-1342",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "UHQP7HGTMOWF4VCVPDZO44VXKOBOA45F",
+          "snapshot_url": "https://web.archive.org/web/20210119142656id_/https://www.proboxingodds.com/events/2021-02-27-1342"
+        }
+      ]
+    },
+    {
+      "event_date": "2021-03-06",
+      "event_url": "https://www.proboxingodds.com/events/2021-03-06-1352",
+      "pre_event_capture_count": 1,
+      "captures": [
+        {
+          "timestamp": "20210301191305",
+          "original": "https://www.proboxingodds.com/events/2021-03-06-1352",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "4KWRGHL2QDOG4IEP4LWVM4BJLICTCGQD",
+          "snapshot_url": "https://web.archive.org/web/20210301191305id_/https://www.proboxingodds.com/events/2021-03-06-1352"
+        }
+      ]
+    },
+    {
+      "event_date": "2021-03-13",
+      "event_url": "https://www.proboxingodds.com/events/2021-03-13-1345",
+      "pre_event_capture_count": 1,
+      "captures": [
+        {
+          "timestamp": "20210119135403",
+          "original": "https://www.proboxingodds.com/events/2021-03-13-1345",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "K37PSIMDXW43GSUBBDRZCQXG6OD6DST3",
+          "snapshot_url": "https://web.archive.org/web/20210119135403id_/https://www.proboxingodds.com/events/2021-03-13-1345"
+        }
+      ]
+    },
+    {
+      "event_date": "2021-03-14",
+      "event_url": "https://www.proboxingodds.com/events/2021-03-14-1340",
+      "pre_event_capture_count": 1,
+      "captures": [
+        {
+          "timestamp": "20210119150917",
+          "original": "https://www.proboxingodds.com/events/2021-03-14-1340",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "SM3HIIRD3CZA5VBTKSJC3BIHK5Z6AYO5",
+          "snapshot_url": "https://web.archive.org/web/20210119150917id_/https://www.proboxingodds.com/events/2021-03-14-1340"
+        }
+      ]
+    },
+    {
+      "event_date": "2021-03-19",
+      "event_url": "https://www.proboxingodds.com/events/2021-03-19-1367",
+      "pre_event_capture_count": 1,
+      "captures": [
+        {
+          "timestamp": "20210301194729",
+          "original": "https://www.proboxingodds.com/events/2021-03-19-1367",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "22CR762AWFU7KCKRRRF4PP2UBRKNUTSR",
+          "snapshot_url": "https://web.archive.org/web/20210301194729id_/https://www.proboxingodds.com/events/2021-03-19-1367"
+        }
+      ]
+    },
+    {
+      "event_date": "2021-03-20",
+      "event_url": "https://www.proboxingodds.com/events/2021-03-20-1354",
+      "pre_event_capture_count": 1,
+      "captures": [
+        {
+          "timestamp": "20210301192037",
+          "original": "https://www.proboxingodds.com/events/2021-03-20-1354",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "2KQVORAX4UF4UVMNJV5TVML6EGDRB3K4",
+          "snapshot_url": "https://web.archive.org/web/20210301192037id_/https://www.proboxingodds.com/events/2021-03-20-1354"
+        }
+      ]
+    },
+    {
+      "event_date": "2021-03-27",
+      "event_url": "https://www.proboxingodds.com/events/2021-03-27-1372",
+      "pre_event_capture_count": 1,
+      "captures": [
+        {
+          "timestamp": "20210301200909",
+          "original": "https://www.proboxingodds.com/events/2021-03-27-1372",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "TEQNZLAGROE3M7GKVM75OAYE6NNITRCD",
+          "snapshot_url": "https://web.archive.org/web/20210301200909id_/https://www.proboxingodds.com/events/2021-03-27-1372"
+        }
+      ]
+    },
+    {
+      "event_date": "2021-03-29",
+      "event_url": "https://www.proboxingodds.com/events/2021-03-29-1349",
+      "pre_event_capture_count": 1,
+      "captures": [
+        {
+          "timestamp": "20210119141149",
+          "original": "https://www.proboxingodds.com/events/2021-03-29-1349",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "IQQ4MVWUVISY5KBWNF4Y3RKIGGYIO4XJ",
+          "snapshot_url": "https://web.archive.org/web/20210119141149id_/https://www.proboxingodds.com/events/2021-03-29-1349"
+        }
+      ]
+    },
+    {
+      "event_date": "2021-03-31",
+      "event_url": "https://www.proboxingodds.com/events/2021-03-31-1364",
+      "pre_event_capture_count": 1,
+      "captures": [
+        {
+          "timestamp": "20210301201716",
+          "original": "https://www.proboxingodds.com/events/2021-03-31-1364",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "GIZS2HQDS23SS5MG5CHVVKAUGIF22YFM",
+          "snapshot_url": "https://web.archive.org/web/20210301201716id_/https://www.proboxingodds.com/events/2021-03-31-1364"
+        }
+      ]
+    },
+    {
+      "event_date": "2021-04-10",
+      "event_url": "https://www.proboxingodds.com/events/2021-04-10-1355",
+      "pre_event_capture_count": 1,
+      "captures": [
+        {
+          "timestamp": "20210301194820",
+          "original": "https://www.proboxingodds.com/events/2021-04-10-1355",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "XN67P3S35KICLQGN7GO2GWSNXT3HN4G7",
+          "snapshot_url": "https://web.archive.org/web/20210301194820id_/https://www.proboxingodds.com/events/2021-04-10-1355"
+        }
+      ]
+    },
+    {
+      "event_date": "2021-04-17",
+      "event_url": "https://www.proboxingodds.com/events/2021-04-17-1362",
+      "pre_event_capture_count": 2,
+      "captures": [
+        {
+          "timestamp": "20210301194021",
+          "original": "https://www.proboxingodds.com/events/2021-04-17-1362",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "UFNACYO2ICKP5FTQJ2XAQMWRGLUYAHZN",
+          "snapshot_url": "https://web.archive.org/web/20210301194021id_/https://www.proboxingodds.com/events/2021-04-17-1362"
+        },
+        {
+          "timestamp": "20210127160814",
+          "original": "https://www.proboxingodds.com/events/2021-04-17-1362",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "FMWA3A76TLQ2I43UIZYPQXSOW3MI3FH7",
+          "snapshot_url": "https://web.archive.org/web/20210127160814id_/https://www.proboxingodds.com/events/2021-04-17-1362"
+        }
+      ]
+    },
+    {
+      "event_date": "2021-04-21",
+      "event_url": "https://www.proboxingodds.com/events/2021-04-21-1380",
+      "pre_event_capture_count": 1,
+      "captures": [
+        {
+          "timestamp": "20210420202514",
+          "original": "https://www.proboxingodds.com/events/2021-04-21-1380",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "OOWAI2NO2YYY6IVPRVNGQ6YUFT5NK3DV",
+          "snapshot_url": "https://web.archive.org/web/20210420202514id_/https://www.proboxingodds.com/events/2021-04-21-1380"
+        }
+      ]
+    },
+    {
+      "event_date": "2021-04-24",
+      "event_url": "https://www.proboxingodds.com/events/2021-04-24-1385",
+      "pre_event_capture_count": 1,
+      "captures": [
+        {
+          "timestamp": "20210420184335",
+          "original": "https://www.proboxingodds.com/events/2021-04-24-1385",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "7KGSEBN7YK53TIN3MD6GXWD3PO7GGTBW",
+          "snapshot_url": "https://web.archive.org/web/20210420184335id_/https://www.proboxingodds.com/events/2021-04-24-1385"
+        }
+      ]
+    },
+    {
+      "event_date": "2021-04-30",
+      "event_url": "https://www.proboxingodds.com/events/2021-04-30-1392",
+      "pre_event_capture_count": 1,
+      "captures": [
+        {
+          "timestamp": "20210420200931",
+          "original": "https://www.proboxingodds.com/events/2021-04-30-1392",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "XA6NL54KUXMT2B5OA3D57IAJSLN5Y44B",
+          "snapshot_url": "https://web.archive.org/web/20210420200931id_/https://www.proboxingodds.com/events/2021-04-30-1392"
+        }
+      ]
+    },
+    {
+      "event_date": "2021-05-01",
+      "event_url": "https://www.proboxingodds.com/events/2021-05-01-1391",
+      "pre_event_capture_count": 1,
+      "captures": [
+        {
+          "timestamp": "20210420195007",
+          "original": "https://www.proboxingodds.com/events/2021-05-01-1391",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "E5TOBPS363AW6KPPCN5TSD2QGKOMG3JY",
+          "snapshot_url": "https://web.archive.org/web/20210420195007id_/https://www.proboxingodds.com/events/2021-05-01-1391"
+        }
+      ]
+    },
+    {
+      "event_date": "2021-05-08",
+      "event_url": "https://www.proboxingodds.com/events/2021-05-08-1377",
+      "pre_event_capture_count": 1,
+      "captures": [
+        {
+          "timestamp": "20210420192141",
+          "original": "https://www.proboxingodds.com/events/2021-05-08-1377",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "MSZ7G62UG2YGPCFPSMO3QO7TUE2AGHU6",
+          "snapshot_url": "https://web.archive.org/web/20210420192141id_/https://www.proboxingodds.com/events/2021-05-08-1377"
+        }
+      ]
+    },
+    {
+      "event_date": "2021-05-23",
+      "event_url": "https://www.proboxingodds.com/events/2021-05-23-1379",
+      "pre_event_capture_count": 1,
+      "captures": [
+        {
+          "timestamp": "20210420202830",
+          "original": "https://www.proboxingodds.com/events/2021-05-23-1379",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "NKGTVW5NEW3S6OBQYSLWAQA67Z47NJNA",
+          "snapshot_url": "https://web.archive.org/web/20210420202830id_/https://www.proboxingodds.com/events/2021-05-23-1379"
+        }
+      ]
+    },
+    {
+      "event_date": "2021-05-29",
+      "event_url": "https://www.proboxingodds.com/events/2021-05-29-1344",
+      "pre_event_capture_count": 2,
+      "captures": [
+        {
+          "timestamp": "20210528114306",
+          "original": "https://www.proboxingodds.com/events/2021-05-29-1344",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "EN6664Y4WHXFIPYCS55P7QG4EXENKY7V",
+          "snapshot_url": "https://web.archive.org/web/20210528114306id_/https://www.proboxingodds.com/events/2021-05-29-1344"
+        },
+        {
+          "timestamp": "20210119154525",
+          "original": "https://www.proboxingodds.com/events/2021-05-29-1344",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "IFDAYD23E2HVCTAPCPJMUCAKZLMX73VO",
+          "snapshot_url": "https://web.archive.org/web/20210119154525id_/https://www.proboxingodds.com/events/2021-05-29-1344"
+        }
+      ]
+    },
+    {
+      "event_date": "2021-05-30",
+      "event_url": "https://www.proboxingodds.com/events/2021-05-30-1393",
+      "pre_event_capture_count": 1,
+      "captures": [
+        {
+          "timestamp": "20210420200146",
+          "original": "https://www.proboxingodds.com/events/2021-05-30-1393",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "6HWHU52VYRKOAA2FLSGTDE5XEYXAZ7HB",
+          "snapshot_url": "https://web.archive.org/web/20210420200146id_/https://www.proboxingodds.com/events/2021-05-30-1393"
+        }
+      ]
+    },
+    {
+      "event_date": "2021-06-06",
+      "event_url": "https://www.proboxingodds.com/events/2021-06-06-1394",
+      "pre_event_capture_count": 1,
+      "captures": [
+        {
+          "timestamp": "20210420185522",
+          "original": "https://www.proboxingodds.com/events/2021-06-06-1394",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "EMWOSCVMD4O2ING4PGY4NBW4XYQ6AE4O",
+          "snapshot_url": "https://web.archive.org/web/20210420185522id_/https://www.proboxingodds.com/events/2021-06-06-1394"
+        }
+      ]
+    },
+    {
+      "event_date": "2021-07-31",
+      "event_url": "https://www.proboxingodds.com/events/2021-07-31-1439",
+      "pre_event_capture_count": 1,
+      "captures": [
+        {
+          "timestamp": "20210726143112",
+          "original": "https://www.proboxingodds.com/events/2021-07-31-1439",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "SYHFANU453NA5QD47Z3YAUPH5JGNMG3P",
+          "snapshot_url": "https://web.archive.org/web/20210726143112id_/https://www.proboxingodds.com/events/2021-07-31-1439"
+        }
+      ]
+    },
+    {
+      "event_date": "2021-08-06",
+      "event_url": "https://www.proboxingodds.com/events/2021-08-06-1454",
+      "pre_event_capture_count": 1,
+      "captures": [
+        {
+          "timestamp": "20210726132441",
+          "original": "https://www.proboxingodds.com/events/2021-08-06-1454",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "V5Q6PI4PCUW23CL52TPFPNBXX3PFS6XQ",
+          "snapshot_url": "https://web.archive.org/web/20210726132441id_/https://www.proboxingodds.com/events/2021-08-06-1454"
+        }
+      ]
+    },
+    {
+      "event_date": "2021-08-07",
+      "event_url": "https://www.proboxingodds.com/events/2021-08-07-1440",
+      "pre_event_capture_count": 1,
+      "captures": [
+        {
+          "timestamp": "20210726143019",
+          "original": "https://www.proboxingodds.com/events/2021-08-07-1440",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "PKVPNQWCE2T6K6TETQRT5JBQESM6YZF3",
+          "snapshot_url": "https://web.archive.org/web/20210726143019id_/https://www.proboxingodds.com/events/2021-08-07-1440"
+        }
+      ]
+    },
+    {
+      "event_date": "2021-08-14",
+      "event_url": "https://www.proboxingodds.com/events/2021-08-14-1412",
+      "pre_event_capture_count": 1,
+      "captures": [
+        {
+          "timestamp": "20210726142422",
+          "original": "https://www.proboxingodds.com/events/2021-08-14-1412",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "EGD2SUEIDOOW7UYFEKJBZ2AN54DWEWK6",
+          "snapshot_url": "https://web.archive.org/web/20210726142422id_/https://www.proboxingodds.com/events/2021-08-14-1412"
+        }
+      ]
+    },
+    {
+      "event_date": "2021-08-21",
+      "event_url": "https://www.proboxingodds.com/events/2021-08-21-1426",
+      "pre_event_capture_count": 1,
+      "captures": [
+        {
+          "timestamp": "20210726123911",
+          "original": "https://www.proboxingodds.com/events/2021-08-21-1426",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "JB43F7S2G5F5IRPKLAHN3A2T4ZVWTQXU",
+          "snapshot_url": "https://web.archive.org/web/20210726123911id_/https://www.proboxingodds.com/events/2021-08-21-1426"
+        }
+      ]
+    },
+    {
+      "event_date": "2021-08-22",
+      "event_url": "https://www.proboxingodds.com/events/2021-08-22-1421",
+      "pre_event_capture_count": 1,
+      "captures": [
+        {
+          "timestamp": "20210726140223",
+          "original": "https://www.proboxingodds.com/events/2021-08-22-1421",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "XYCONRL5WZNQ3ASYCWKMI5VQVGN5XL7I",
+          "snapshot_url": "https://web.archive.org/web/20210726140223id_/https://www.proboxingodds.com/events/2021-08-22-1421"
+        }
+      ]
+    },
+    {
+      "event_date": "2021-08-29",
+      "event_url": "https://www.proboxingodds.com/events/2021-08-29-1434",
+      "pre_event_capture_count": 1,
+      "captures": [
+        {
+          "timestamp": "20210726140345",
+          "original": "https://www.proboxingodds.com/events/2021-08-29-1434",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "TDA32QXXYKOCKRLIQL3GA2FIJ7LQ6MHX",
+          "snapshot_url": "https://web.archive.org/web/20210726140345id_/https://www.proboxingodds.com/events/2021-08-29-1434"
+        }
+      ]
+    },
+    {
+      "event_date": "2021-09-04",
+      "event_url": "https://www.proboxingodds.com/events/2021-09-04-1453",
+      "pre_event_capture_count": 1,
+      "captures": [
+        {
+          "timestamp": "20210726123040",
+          "original": "https://www.proboxingodds.com/events/2021-09-04-1453",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "AITDNBFSNG4B4PM5QA5MMFSKSPFGDGUZ",
+          "snapshot_url": "https://web.archive.org/web/20210726123040id_/https://www.proboxingodds.com/events/2021-09-04-1453"
+        }
+      ]
+    },
+    {
+      "event_date": "2021-09-24",
+      "event_url": "https://www.proboxingodds.com/events/2021-09-24-1457",
+      "pre_event_capture_count": 1,
+      "captures": [
+        {
+          "timestamp": "20210726125446",
+          "original": "https://www.proboxingodds.com/events/2021-09-24-1457",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "YZIEO4H7A6EXUYHNDO525IATGWL5HJGO",
+          "snapshot_url": "https://web.archive.org/web/20210726125446id_/https://www.proboxingodds.com/events/2021-09-24-1457"
+        }
+      ]
+    },
+    {
+      "event_date": "2021-10-02",
+      "event_url": "https://www.proboxingodds.com/events/2021-10-02-1490",
+      "pre_event_capture_count": 1,
+      "captures": [
+        {
+          "timestamp": "20210925040609",
+          "original": "https://www.proboxingodds.com/events/2021-10-02-1490",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "N37EUCX6XGKIZKYQU5PQRI3BMC4B3TCJ",
+          "snapshot_url": "https://web.archive.org/web/20210925040609id_/https://www.proboxingodds.com/events/2021-10-02-1490"
+        }
+      ]
+    },
+    {
+      "event_date": "2021-10-04",
+      "event_url": "https://www.proboxingodds.com/events/2021-10-04-1495",
+      "pre_event_capture_count": 1,
+      "captures": [
+        {
+          "timestamp": "20210925034121",
+          "original": "https://www.proboxingodds.com/events/2021-10-04-1495",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "55CNW3BYH46SH6HHLPG53STPSVVEVAVW",
+          "snapshot_url": "https://web.archive.org/web/20210925034121id_/https://www.proboxingodds.com/events/2021-10-04-1495"
+        }
+      ]
+    },
+    {
+      "event_date": "2021-10-07",
+      "event_url": "https://www.proboxingodds.com/events/2021-10-07-1496",
+      "pre_event_capture_count": 1,
+      "captures": [
+        {
+          "timestamp": "20210925025330",
+          "original": "https://www.proboxingodds.com/events/2021-10-07-1496",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "DMQGLITE47ZJNNEKECDULWC4NI6FVGNI",
+          "snapshot_url": "https://web.archive.org/web/20210925025330id_/https://www.proboxingodds.com/events/2021-10-07-1496"
+        }
+      ]
+    },
+    {
+      "event_date": "2021-10-09",
+      "event_url": "https://www.proboxingodds.com/events/2021-10-09-1456",
+      "pre_event_capture_count": 1,
+      "captures": [
+        {
+          "timestamp": "20210726121524",
+          "original": "https://www.proboxingodds.com/events/2021-10-09-1456",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "WTENOGIQCNROLEESJLS5YMEGCZPQPKON",
+          "snapshot_url": "https://web.archive.org/web/20210726121524id_/https://www.proboxingodds.com/events/2021-10-09-1456"
+        }
+      ]
+    },
+    {
+      "event_date": "2021-10-10",
+      "event_url": "https://www.proboxingodds.com/events/2021-10-10-1455",
+      "pre_event_capture_count": 1,
+      "captures": [
+        {
+          "timestamp": "20210726131450",
+          "original": "https://www.proboxingodds.com/events/2021-10-10-1455",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "FZXWPVMZ2T567ZOEDEKNMVB7GFLASGAO",
+          "snapshot_url": "https://web.archive.org/web/20210726131450id_/https://www.proboxingodds.com/events/2021-10-10-1455"
+        }
+      ]
+    },
+    {
+      "event_date": "2021-10-24",
+      "event_url": "https://www.proboxingodds.com/events/2021-10-24-1493",
+      "pre_event_capture_count": 1,
+      "captures": [
+        {
+          "timestamp": "20210925035341",
+          "original": "https://www.proboxingodds.com/events/2021-10-24-1493",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "NISD5QJAMB6C5JHWDMP3WCATXOHDHJGV",
+          "snapshot_url": "https://web.archive.org/web/20210925035341id_/https://www.proboxingodds.com/events/2021-10-24-1493"
+        }
+      ]
+    },
+    {
+      "event_date": "2021-11-06",
+      "event_url": "https://www.proboxingodds.com/events/2021-11-06-1479",
+      "pre_event_capture_count": 1,
+      "captures": [
+        {
+          "timestamp": "20210922115542",
+          "original": "https://www.proboxingodds.com/events/2021-11-06-1479",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "RNGROF5SNKYRNQY4BVAY4IWOBPD2YRG5",
+          "snapshot_url": "https://web.archive.org/web/20210922115542id_/https://www.proboxingodds.com/events/2021-11-06-1479"
+        }
+      ]
+    },
+    {
+      "event_date": "2021-11-27",
+      "event_url": "https://www.proboxingodds.com/events/2021-11-27-1487",
+      "pre_event_capture_count": 1,
+      "captures": [
+        {
+          "timestamp": "20210925030347",
+          "original": "https://www.proboxingodds.com/events/2021-11-27-1487",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "QYBKAL7O2SULFD6IYHP4OO5DYXXA4ZPP",
+          "snapshot_url": "https://web.archive.org/web/20210925030347id_/https://www.proboxingodds.com/events/2021-11-27-1487"
+        }
+      ]
+    },
+    {
+      "event_date": "2021-11-28",
+      "event_url": "https://www.proboxingodds.com/events/2021-11-28-1503",
+      "pre_event_capture_count": 1,
+      "captures": [
+        {
+          "timestamp": "20211123033141",
+          "original": "https://www.proboxingodds.com/events/2021-11-28-1503",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "JHDJFAINXGL5M2SNLQ2ROMBD3JSKVV7G",
+          "snapshot_url": "https://web.archive.org/web/20211123033141id_/https://www.proboxingodds.com/events/2021-11-28-1503"
+        }
+      ]
+    },
+    {
+      "event_date": "2021-12-01",
+      "event_url": "https://www.proboxingodds.com/events/2021-12-01-1350",
+      "pre_event_capture_count": 1,
+      "captures": [
+        {
+          "timestamp": "20210420204111",
+          "original": "https://www.proboxingodds.com/events/2021-12-01-1350",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "FI5FUSAL6NNPQPZKS2H5HHWFZCMM7N4I",
+          "snapshot_url": "https://web.archive.org/web/20210420204111id_/https://www.proboxingodds.com/events/2021-12-01-1350"
+        }
+      ]
+    },
+    {
+      "event_date": "2021-12-17",
+      "event_url": "https://www.proboxingodds.com/events/2021-12-17-1530",
+      "pre_event_capture_count": 1,
+      "captures": [
+        {
+          "timestamp": "20211208184231",
+          "original": "https://www.proboxingodds.com/events/2021-12-17-1530",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "MZ5XUTXAZ2DDLIP6JFO777JE4KHJBX6J",
+          "snapshot_url": "https://web.archive.org/web/20211208184231id_/https://www.proboxingodds.com/events/2021-12-17-1530"
+        }
+      ]
+    },
+    {
+      "event_date": "2021-12-18",
+      "event_url": "https://www.proboxingodds.com/events/2021-12-18-1473",
+      "pre_event_capture_count": 1,
+      "captures": [
+        {
+          "timestamp": "20211019124605",
+          "original": "https://www.proboxingodds.com/events/2021-12-18-1473",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "J22PK2K5KOH6M5KLHC4X2CL2PYXUWLBG",
+          "snapshot_url": "https://web.archive.org/web/20211019124605id_/https://www.proboxingodds.com/events/2021-12-18-1473"
+        }
+      ]
+    },
+    {
+      "event_date": "2021-12-31",
+      "event_url": "https://www.proboxingodds.com/events/2021-12-31-1316",
+      "pre_event_capture_count": 2,
+      "captures": [
+        {
+          "timestamp": "20210925023436",
+          "original": "https://www.proboxingodds.com/events/2021-12-31-1316",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "76RXXMDVJDKTDK46OKOIP7UXEBBAQFJJ",
+          "snapshot_url": "https://web.archive.org/web/20210925023436id_/https://www.proboxingodds.com/events/2021-12-31-1316"
+        },
+        {
+          "timestamp": "20210301182820",
+          "original": "https://www.proboxingodds.com/events/2021-12-31-1316",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "RTWANXKPVYWYWHA6M2VEZYVT7G4VZXHJ",
+          "snapshot_url": "https://web.archive.org/web/20210301182820id_/https://www.proboxingodds.com/events/2021-12-31-1316"
+        }
+      ]
+    },
+    {
+      "event_date": "2022-01-01",
+      "event_url": "https://www.proboxingodds.com/events/2022-01-01-1407",
+      "pre_event_capture_count": 1,
+      "captures": [
+        {
+          "timestamp": "20210925034358",
+          "original": "https://www.proboxingodds.com/events/2022-01-01-1407",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "MQ3Q6422ZQ5ZTSHJKZJIH4MPOO6JHKUB",
+          "snapshot_url": "https://web.archive.org/web/20210925034358id_/https://www.proboxingodds.com/events/2022-01-01-1407"
+        }
+      ]
+    },
+    {
+      "event_date": "2022-12-31",
+      "event_url": "https://www.proboxingodds.com/events/2022-12-31-1492",
+      "pre_event_capture_count": 1,
+      "captures": [
+        {
+          "timestamp": "20210925042517",
+          "original": "https://www.proboxingodds.com/events/2022-12-31-1492",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "OVWUOUWAICUBYM7XPFNIXZJGNREPPYUG",
+          "snapshot_url": "https://web.archive.org/web/20210925042517id_/https://www.proboxingodds.com/events/2022-12-31-1492"
+        }
+      ]
+    },
+    {
+      "event_date": "2023-02-03",
+      "event_url": "https://www.proboxingodds.com/events/2023-02-03-1739",
+      "pre_event_capture_count": 1,
+      "captures": [
+        {
+          "timestamp": "20230202122600",
+          "original": "https://www.proboxingodds.com/events/2023-02-03-1739",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "ZNU4BCGWISTZ3W65RMOL5JQZMUX4ICJE",
+          "snapshot_url": "https://web.archive.org/web/20230202122600id_/https://www.proboxingodds.com/events/2023-02-03-1739"
+        }
+      ]
+    },
+    {
+      "event_date": "2023-02-04",
+      "event_url": "https://www.proboxingodds.com/events/2023-02-04-1702",
+      "pre_event_capture_count": 1,
+      "captures": [
+        {
+          "timestamp": "20230202110418",
+          "original": "https://www.proboxingodds.com/events/2023-02-04-1702",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "DQHI6AXZLRKQMFG2SP7DUMD4KOBHUV6P",
+          "snapshot_url": "https://web.archive.org/web/20230202110418id_/https://www.proboxingodds.com/events/2023-02-04-1702"
+        }
+      ]
+    },
+    {
+      "event_date": "2023-03-29",
+      "event_url": "https://www.proboxingodds.com/events/2023-03-29-1738",
+      "pre_event_capture_count": 1,
+      "captures": [
+        {
+          "timestamp": "20230325122224",
+          "original": "https://www.proboxingodds.com/events/2023-03-29-1738",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "U46A6SDH5W4NNDLUI6WHMPCHYWX37MJV",
+          "snapshot_url": "https://web.archive.org/web/20230325122224id_/https://www.proboxingodds.com/events/2023-03-29-1738"
+        }
+      ]
+    },
+    {
+      "event_date": "2023-04-01",
+      "event_url": "https://www.proboxingodds.com/events/2023-04-01-1762",
+      "pre_event_capture_count": 1,
+      "captures": [
+        {
+          "timestamp": "20230322201710",
+          "original": "https://www.proboxingodds.com/events/2023-04-01-1762",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "3XG5U6RLXW6VDLYWOM47HP7UPH7UHXEI",
+          "snapshot_url": "https://web.archive.org/web/20230322201710id_/https://www.proboxingodds.com/events/2023-04-01-1762"
+        }
+      ]
+    },
+    {
+      "event_date": "2023-05-30",
+      "event_url": "https://www.proboxingodds.com/events/2023-05-30-1752",
+      "pre_event_capture_count": 1,
+      "captures": [
+        {
+          "timestamp": "20230202105151",
+          "original": "https://www.proboxingodds.com/events/2023-05-30-1752",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "PQGS7KNNPLRN5ORNDRKWB27AKUHKK3H7",
+          "snapshot_url": "https://web.archive.org/web/20230202105151id_/https://www.proboxingodds.com/events/2023-05-30-1752"
+        }
+      ]
+    },
+    {
+      "event_date": "2023-09-30",
+      "event_url": "https://www.proboxingodds.com/events/2023-09-30-1782",
+      "pre_event_capture_count": 1,
+      "captures": [
+        {
+          "timestamp": "20230530200638",
+          "original": "https://www.proboxingodds.com/events/2023-09-30-1782",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "S6P327VBVI2YSPYDTM3EQZPT7H7NEPRY",
+          "snapshot_url": "https://web.archive.org/web/20230530200638id_/https://www.proboxingodds.com/events/2023-09-30-1782"
+        }
+      ]
+    },
+    {
+      "event_date": "2023-12-31",
+      "event_url": "https://www.proboxingodds.com/events/2023-12-31-1717",
+      "pre_event_capture_count": 3,
+      "captures": [
+        {
+          "timestamp": "20230107014027",
+          "original": "https://www.proboxingodds.com/events/2023-12-31-1717",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "5CE2QVXDNIT4MPHULW56GLSU66MKH57P",
+          "snapshot_url": "https://web.archive.org/web/20230107014027id_/https://www.proboxingodds.com/events/2023-12-31-1717"
+        },
+        {
+          "timestamp": "20230107014020",
+          "original": "https://www.proboxingodds.com/events/2023-12-31-1717",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "XE6KEUEBTPR2SMJASQED5KTH6YKFRCJF",
+          "snapshot_url": "https://web.archive.org/web/20230107014020id_/https://www.proboxingodds.com/events/2023-12-31-1717"
+        },
+        {
+          "timestamp": "20221208030428",
+          "original": "https://www.proboxingodds.com/events/2023-12-31-1717",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "7Z4HUYIIFFQQ7DQJE7T3ESIHMHX3MHTM",
+          "snapshot_url": "https://web.archive.org/web/20221208030428id_/https://www.proboxingodds.com/events/2023-12-31-1717"
+        }
+      ]
+    },
+    {
+      "event_date": "2024-05-25",
+      "event_url": "https://www.proboxingodds.com/events/2024-05-25-2000",
+      "pre_event_capture_count": 1,
+      "captures": [
+        {
+          "timestamp": "20240522042037",
+          "original": "https://www.proboxingodds.com/events/2024-05-25-2000",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "WKHFAES27GCT5BLS4GEH73YEL7GCATTT",
+          "snapshot_url": "https://web.archive.org/web/20240522042037id_/https://www.proboxingodds.com/events/2024-05-25-2000"
+        }
+      ]
+    },
+    {
+      "event_date": "2024-05-26",
+      "event_url": "https://www.proboxingodds.com/events/2024-05-26-2020",
+      "pre_event_capture_count": 1,
+      "captures": [
+        {
+          "timestamp": "20240522041403",
+          "original": "https://www.proboxingodds.com/events/2024-05-26-2020",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "FHRVODPKRFGJQIXQMJ4H2CMY5NWGVG3C",
+          "snapshot_url": "https://web.archive.org/web/20240522041403id_/https://www.proboxingodds.com/events/2024-05-26-2020"
+        }
+      ]
+    },
+    {
+      "event_date": "2024-06-01",
+      "event_url": "https://www.proboxingodds.com/events/2024-06-01-1987",
+      "pre_event_capture_count": 1,
+      "captures": [
+        {
+          "timestamp": "20240522045708",
+          "original": "https://www.proboxingodds.com/events/2024-06-01-1987",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "JQPXO6B34LOIEIW3VF2TPTBM53BJYLLA",
+          "snapshot_url": "https://web.archive.org/web/20240522045708id_/https://www.proboxingodds.com/events/2024-06-01-1987"
+        }
+      ]
+    },
+    {
+      "event_date": "2024-06-02",
+      "event_url": "https://www.proboxingodds.com/events/2024-06-02-2008",
+      "pre_event_capture_count": 1,
+      "captures": [
+        {
+          "timestamp": "20240522045937",
+          "original": "https://www.proboxingodds.com/events/2024-06-02-2008",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "PRQJTFLSHVMOXUDWHRJT375F3UYFLDWX",
+          "snapshot_url": "https://web.archive.org/web/20240522045937id_/https://www.proboxingodds.com/events/2024-06-02-2008"
+        }
+      ]
+    },
+    {
+      "event_date": "2024-06-09",
+      "event_url": "https://www.proboxingodds.com/events/2024-06-09-2031",
+      "pre_event_capture_count": 1,
+      "captures": [
+        {
+          "timestamp": "20240522043427",
+          "original": "https://www.proboxingodds.com/events/2024-06-09-2031",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "KYPNKMKRLUNAHI3TTXBWO3GGY5L5UWZS",
+          "snapshot_url": "https://web.archive.org/web/20240522043427id_/https://www.proboxingodds.com/events/2024-06-09-2031"
+        }
+      ]
+    },
+    {
+      "event_date": "2024-06-16",
+      "event_url": "https://www.proboxingodds.com/events/2024-06-16-2015",
+      "pre_event_capture_count": 1,
+      "captures": [
+        {
+          "timestamp": "20240522053459",
+          "original": "https://www.proboxingodds.com/events/2024-06-16-2015",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "ZUJD7QHMMZCOT2SJQKZYHCGIP7QNTWYX",
+          "snapshot_url": "https://web.archive.org/web/20240522053459id_/https://www.proboxingodds.com/events/2024-06-16-2015"
+        }
+      ]
+    },
+    {
+      "event_date": "2024-06-22",
+      "event_url": "https://www.proboxingodds.com/events/2024-06-22-2026",
+      "pre_event_capture_count": 1,
+      "captures": [
+        {
+          "timestamp": "20240522041517",
+          "original": "https://www.proboxingodds.com/events/2024-06-22-2026",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "MTCC2TCPENSZBLDKB7SCUO6V7366W7GA",
+          "snapshot_url": "https://web.archive.org/web/20240522041517id_/https://www.proboxingodds.com/events/2024-06-22-2026"
+        }
+      ]
+    },
+    {
+      "event_date": "2024-06-30",
+      "event_url": "https://www.proboxingodds.com/events/2024-06-30-2016",
+      "pre_event_capture_count": 1,
+      "captures": [
+        {
+          "timestamp": "20240522051939",
+          "original": "https://www.proboxingodds.com/events/2024-06-30-2016",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "OXU4NGNL2TBAIO4O4HYE5JZBY7A3MVAC",
+          "snapshot_url": "https://web.archive.org/web/20240522051939id_/https://www.proboxingodds.com/events/2024-06-30-2016"
+        }
+      ]
+    },
+    {
+      "event_date": "2024-07-07",
+      "event_url": "https://www.proboxingodds.com/events/2024-07-07-2044",
+      "pre_event_capture_count": 1,
+      "captures": [
+        {
+          "timestamp": "20240704011536",
+          "original": "https://www.proboxingodds.com/events/2024-07-07-2044",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "YWQYGGKSIQ26YL7R4NELMGABKACMKHIX",
+          "snapshot_url": "https://web.archive.org/web/20240704011536id_/https://www.proboxingodds.com/events/2024-07-07-2044"
+        }
+      ]
+    },
+    {
+      "event_date": "2024-07-21",
+      "event_url": "https://www.proboxingodds.com/events/2024-07-21-2027",
+      "pre_event_capture_count": 1,
+      "captures": [
+        {
+          "timestamp": "20240522051048",
+          "original": "https://www.proboxingodds.com/events/2024-07-21-2027",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "DOJOYUBVDX27ZPINJFWF72U3GIWDIPHE",
+          "snapshot_url": "https://web.archive.org/web/20240522051048id_/https://www.proboxingodds.com/events/2024-07-21-2027"
+        }
+      ]
+    },
+    {
+      "event_date": "2024-08-04",
+      "event_url": "https://www.proboxingodds.com/events/2024-08-04-2035",
+      "pre_event_capture_count": 1,
+      "captures": [
+        {
+          "timestamp": "20240714004933",
+          "original": "https://www.proboxingodds.com/events/2024-08-04-2035",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "E5VXQ3PBEAUA2K5MX7N2FFKKL5ARS6LV",
+          "snapshot_url": "https://web.archive.org/web/20240714004933id_/https://www.proboxingodds.com/events/2024-08-04-2035"
+        }
+      ]
+    },
+    {
+      "event_date": "2024-12-21",
+      "event_url": "https://www.proboxingodds.com/events/2024-12-21-2056",
+      "pre_event_capture_count": 1,
+      "captures": [
+        {
+          "timestamp": "20241207233551",
+          "original": "https://www.proboxingodds.com/events/2024-12-21-2056",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "OSRRR754MIL3T5TB3MRHYM2MKCQ5REDZ",
+          "snapshot_url": "https://web.archive.org/web/20241207233551id_/https://www.proboxingodds.com/events/2024-12-21-2056"
+        }
+      ]
+    },
+    {
+      "event_date": "2024-12-31",
+      "event_url": "https://www.proboxingodds.com/events/2024-12-31-1881",
+      "pre_event_capture_count": 1,
+      "captures": [
+        {
+          "timestamp": "20240522045745",
+          "original": "https://www.proboxingodds.com/events/2024-12-31-1881",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "X5WOHGSA4CZUSIAMSNQMRPQFGZUXBKBM",
+          "snapshot_url": "https://web.archive.org/web/20240522045745id_/https://www.proboxingodds.com/events/2024-12-31-1881"
+        }
+      ]
+    },
+    {
+      "event_date": "2025-01-24",
+      "event_url": "https://www.proboxingodds.com/events/2025-01-24-2168",
+      "pre_event_capture_count": 1,
+      "captures": [
+        {
+          "timestamp": "20250120044629",
+          "original": "https://www.proboxingodds.com/events/2025-01-24-2168",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "MPA72RWOPGNPZZX4AY2Q4W4EB5BS7SS5",
+          "snapshot_url": "https://web.archive.org/web/20250120044629id_/https://www.proboxingodds.com/events/2025-01-24-2168"
+        }
+      ]
+    },
+    {
+      "event_date": "2025-01-25",
+      "event_url": "https://www.proboxingodds.com/events/2025-01-25-2169",
+      "pre_event_capture_count": 1,
+      "captures": [
+        {
+          "timestamp": "20250120063128",
+          "original": "https://www.proboxingodds.com/events/2025-01-25-2169",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "AM25K5IQ7T5TDFZZRNHCKD6722O4LYAF",
+          "snapshot_url": "https://web.archive.org/web/20250120063128id_/https://www.proboxingodds.com/events/2025-01-25-2169"
+        }
+      ]
+    },
+    {
+      "event_date": "2025-02-01",
+      "event_url": "https://www.proboxingodds.com/events/2025-02-01-2162",
+      "pre_event_capture_count": 1,
+      "captures": [
+        {
+          "timestamp": "20250120070143",
+          "original": "https://www.proboxingodds.com/events/2025-02-01-2162",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "VGEYI6SL275WQN3GSWZ6S265QJ4UKRYC",
+          "snapshot_url": "https://web.archive.org/web/20250120070143id_/https://www.proboxingodds.com/events/2025-02-01-2162"
+        }
+      ]
+    },
+    {
+      "event_date": "2025-02-02",
+      "event_url": "https://www.proboxingodds.com/events/2025-02-02-2151",
+      "pre_event_capture_count": 1,
+      "captures": [
+        {
+          "timestamp": "20250120070421",
+          "original": "https://www.proboxingodds.com/events/2025-02-02-2151",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "QD5P4G3AN6Y4FGO4I46JCLBJDHX34DJW",
+          "snapshot_url": "https://web.archive.org/web/20250120070421id_/https://www.proboxingodds.com/events/2025-02-02-2151"
+        }
+      ]
+    },
+    {
+      "event_date": "2025-02-03",
+      "event_url": "https://www.proboxingodds.com/events/2025-02-03-2167",
+      "pre_event_capture_count": 1,
+      "captures": [
+        {
+          "timestamp": "20250120063639",
+          "original": "https://www.proboxingodds.com/events/2025-02-03-2167",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "D65NI5JKMSN47AUHE53ANFAVCGMITAPI",
+          "snapshot_url": "https://web.archive.org/web/20250120063639id_/https://www.proboxingodds.com/events/2025-02-03-2167"
+        }
+      ]
+    },
+    {
+      "event_date": "2025-02-08",
+      "event_url": "https://www.proboxingodds.com/events/2025-02-08-2158",
+      "pre_event_capture_count": 1,
+      "captures": [
+        {
+          "timestamp": "20250120070624",
+          "original": "https://www.proboxingodds.com/events/2025-02-08-2158",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "VJMO3DEAUK6HRT62PKVMKSEV6EUPCHBC",
+          "snapshot_url": "https://web.archive.org/web/20250120070624id_/https://www.proboxingodds.com/events/2025-02-08-2158"
+        }
+      ]
+    },
+    {
+      "event_date": "2025-02-15",
+      "event_url": "https://www.proboxingodds.com/events/2025-02-15-2176",
+      "pre_event_capture_count": 1,
+      "captures": [
+        {
+          "timestamp": "20250120055230",
+          "original": "https://www.proboxingodds.com/events/2025-02-15-2176",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "KLBTNTN5FWBXK64RKVGFVTGYSGTV55BG",
+          "snapshot_url": "https://web.archive.org/web/20250120055230id_/https://www.proboxingodds.com/events/2025-02-15-2176"
+        }
+      ]
+    },
+    {
+      "event_date": "2025-02-22",
+      "event_url": "https://www.proboxingodds.com/events/2025-02-22-2161",
+      "pre_event_capture_count": 1,
+      "captures": [
+        {
+          "timestamp": "20250117083327",
+          "original": "https://www.proboxingodds.com/events/2025-02-22-2161",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "HRBRCKSLZZMGFETDMTPMG3Q5XPVKVBN2",
+          "snapshot_url": "https://web.archive.org/web/20250117083327id_/https://www.proboxingodds.com/events/2025-02-22-2161"
+        }
+      ]
+    },
+    {
+      "event_date": "2025-02-24",
+      "event_url": "https://www.proboxingodds.com/events/2025-02-24-2177",
+      "pre_event_capture_count": 1,
+      "captures": [
+        {
+          "timestamp": "20250120065858",
+          "original": "https://www.proboxingodds.com/events/2025-02-24-2177",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "JXZH2MUIFEOUUCYFWAIIVFNRLBEWOFSR",
+          "snapshot_url": "https://web.archive.org/web/20250120065858id_/https://www.proboxingodds.com/events/2025-02-24-2177"
+        }
+      ]
+    },
+    {
+      "event_date": "2025-03-01",
+      "event_url": "https://www.proboxingodds.com/events/2025-03-01-2171",
+      "pre_event_capture_count": 1,
+      "captures": [
+        {
+          "timestamp": "20250120064142",
+          "original": "https://www.proboxingodds.com/events/2025-03-01-2171",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "AN25EVY3B3NGZAZ4MV7FGTHSWEQK3YXX",
+          "snapshot_url": "https://web.archive.org/web/20250120064142id_/https://www.proboxingodds.com/events/2025-03-01-2171"
+        }
+      ]
+    },
+    {
+      "event_date": "2025-03-07",
+      "event_url": "https://www.proboxingodds.com/events/2025-03-07-2174",
+      "pre_event_capture_count": 1,
+      "captures": [
+        {
+          "timestamp": "20250120044522",
+          "original": "https://www.proboxingodds.com/events/2025-03-07-2174",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "WPTEWJPMDBYEM2QNHWXYKCO3SE5PNTDT",
+          "snapshot_url": "https://web.archive.org/web/20250120044522id_/https://www.proboxingodds.com/events/2025-03-07-2174"
+        }
+      ]
+    },
+    {
+      "event_date": "2025-03-15",
+      "event_url": "https://www.proboxingodds.com/events/2025-03-15-2166",
+      "pre_event_capture_count": 1,
+      "captures": [
+        {
+          "timestamp": "20250120070739",
+          "original": "https://www.proboxingodds.com/events/2025-03-15-2166",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "I3KTWDZ3L3T4OXRDNTQRDNQ2EEOAHTNA",
+          "snapshot_url": "https://web.archive.org/web/20250120070739id_/https://www.proboxingodds.com/events/2025-03-15-2166"
+        }
+      ]
+    },
+    {
+      "event_date": "2025-07-11",
+      "event_url": "https://www.proboxingodds.com/events/2025-07-11-2241",
+      "pre_event_capture_count": 1,
+      "captures": [
+        {
+          "timestamp": "20250709034234",
+          "original": "https://www.proboxingodds.com/events/2025-07-11-2241",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "443ESCVP4EC2PQJRBU74DNCV2GR3OJOO",
+          "snapshot_url": "https://web.archive.org/web/20250709034234id_/https://www.proboxingodds.com/events/2025-07-11-2241"
+        }
+      ]
+    },
+    {
+      "event_date": "2025-07-12",
+      "event_url": "https://www.proboxingodds.com/events/2025-07-12-2214",
+      "pre_event_capture_count": 1,
+      "captures": [
+        {
+          "timestamp": "20250709035647",
+          "original": "https://www.proboxingodds.com/events/2025-07-12-2214",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "ZB25RLYLTJJZ3B4CKGRD72PUWJ2PQY7G",
+          "snapshot_url": "https://web.archive.org/web/20250709035647id_/https://www.proboxingodds.com/events/2025-07-12-2214"
+        }
+      ]
+    },
+    {
+      "event_date": "2025-07-13",
+      "event_url": "https://www.proboxingodds.com/events/2025-07-13-2235",
+      "pre_event_capture_count": 1,
+      "captures": [
+        {
+          "timestamp": "20250515085458",
+          "original": "https://www.proboxingodds.com/events/2025-07-13-2235",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "DQIWQHOWDYEOLXMKJAK36PEG6WDMXD3L",
+          "snapshot_url": "https://web.archive.org/web/20250515085458id_/https://www.proboxingodds.com/events/2025-07-13-2235"
+        }
+      ]
+    },
+    {
+      "event_date": "2025-07-19",
+      "event_url": "https://www.proboxingodds.com/events/2025-07-19-2242",
+      "pre_event_capture_count": 1,
+      "captures": [
+        {
+          "timestamp": "20250709032632",
+          "original": "https://www.proboxingodds.com/events/2025-07-19-2242",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "5JJPUHTOO4LCIPAG6RKELEKAP7ZNU7HQ",
+          "snapshot_url": "https://web.archive.org/web/20250709032632id_/https://www.proboxingodds.com/events/2025-07-19-2242"
+        }
+      ]
+    },
+    {
+      "event_date": "2025-07-20",
+      "event_url": "https://www.proboxingodds.com/events/2025-07-20-2244",
+      "pre_event_capture_count": 1,
+      "captures": [
+        {
+          "timestamp": "20250709032138",
+          "original": "https://www.proboxingodds.com/events/2025-07-20-2244",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "XAB7PWZ7P2LAHHAF3I5JUUTVGB4Y7LSX",
+          "snapshot_url": "https://web.archive.org/web/20250709032138id_/https://www.proboxingodds.com/events/2025-07-20-2244"
+        }
+      ]
+    },
+    {
+      "event_date": "2025-07-26",
+      "event_url": "https://www.proboxingodds.com/events/2025-07-26-2255",
+      "pre_event_capture_count": 1,
+      "captures": [
+        {
+          "timestamp": "20250709034204",
+          "original": "https://www.proboxingodds.com/events/2025-07-26-2255",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "XM3XPCISVMULLKAQS6DVWMFKXBWY5SVR",
+          "snapshot_url": "https://web.archive.org/web/20250709034204id_/https://www.proboxingodds.com/events/2025-07-26-2255"
+        }
+      ]
+    },
+    {
+      "event_date": "2025-07-27",
+      "event_url": "https://www.proboxingodds.com/events/2025-07-27-2253",
+      "pre_event_capture_count": 1,
+      "captures": [
+        {
+          "timestamp": "20250709035033",
+          "original": "https://www.proboxingodds.com/events/2025-07-27-2253",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "6KY7D5FARDQWFYZI7YO2XRSXS4WXZKTX",
+          "snapshot_url": "https://web.archive.org/web/20250709035033id_/https://www.proboxingodds.com/events/2025-07-27-2253"
+        }
+      ]
+    },
+    {
+      "event_date": "2025-07-30",
+      "event_url": "https://www.proboxingodds.com/events/2025-07-30-2267",
+      "pre_event_capture_count": 1,
+      "captures": [
+        {
+          "timestamp": "20250709025524",
+          "original": "https://www.proboxingodds.com/events/2025-07-30-2267",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "2WSAI5WF5YWTVUNPBKNTK6PR547LCFQS",
+          "snapshot_url": "https://web.archive.org/web/20250709025524id_/https://www.proboxingodds.com/events/2025-07-30-2267"
+        }
+      ]
+    },
+    {
+      "event_date": "2025-08-03",
+      "event_url": "https://www.proboxingodds.com/events/2025-08-03-2268",
+      "pre_event_capture_count": 1,
+      "captures": [
+        {
+          "timestamp": "20250709030708",
+          "original": "https://www.proboxingodds.com/events/2025-08-03-2268",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "SZLLNZ5NY3WSAISJK743ZM66U2TWSS7P",
+          "snapshot_url": "https://web.archive.org/web/20250709030708id_/https://www.proboxingodds.com/events/2025-08-03-2268"
+        }
+      ]
+    },
+    {
+      "event_date": "2025-08-10",
+      "event_url": "https://www.proboxingodds.com/events/2025-08-10-2281",
+      "pre_event_capture_count": 1,
+      "captures": [
+        {
+          "timestamp": "20250807151901",
+          "original": "https://www.proboxingodds.com/events/2025-08-10-2281",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "DX2HTBDOQ2E2N7HVF7WB5TPUHCK5SBVK",
+          "snapshot_url": "https://web.archive.org/web/20250807151901id_/https://www.proboxingodds.com/events/2025-08-10-2281"
+        }
+      ]
+    },
+    {
+      "event_date": "2025-08-16",
+      "event_url": "https://www.proboxingodds.com/events/2025-08-16-2262",
+      "pre_event_capture_count": 1,
+      "captures": [
+        {
+          "timestamp": "20250709031353",
+          "original": "https://www.proboxingodds.com/events/2025-08-16-2262",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "5NGGFS5JB7GHJ554XXITAAOBF47PUAUY",
+          "snapshot_url": "https://web.archive.org/web/20250709031353id_/https://www.proboxingodds.com/events/2025-08-16-2262"
+        }
+      ]
+    },
+    {
+      "event_date": "2025-08-17",
+      "event_url": "https://www.proboxingodds.com/events/2025-08-17-2264",
+      "pre_event_capture_count": 1,
+      "captures": [
+        {
+          "timestamp": "20250709025422",
+          "original": "https://www.proboxingodds.com/events/2025-08-17-2264",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "R5E2AOJMDPSP3LT55C5UUO37NELZJJYF",
+          "snapshot_url": "https://web.archive.org/web/20250709025422id_/https://www.proboxingodds.com/events/2025-08-17-2264"
+        }
+      ]
+    },
+    {
+      "event_date": "2025-08-23",
+      "event_url": "https://www.proboxingodds.com/events/2025-08-23-2277",
+      "pre_event_capture_count": 1,
+      "captures": [
+        {
+          "timestamp": "20250807170447",
+          "original": "https://www.proboxingodds.com/events/2025-08-23-2277",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "MOSXDXY3TLD2RSOIPTRLKZ743NF3L5RP",
+          "snapshot_url": "https://web.archive.org/web/20250807170447id_/https://www.proboxingodds.com/events/2025-08-23-2277"
+        }
+      ]
+    },
+    {
+      "event_date": "2025-08-24",
+      "event_url": "https://www.proboxingodds.com/events/2025-08-24-2273",
+      "pre_event_capture_count": 1,
+      "captures": [
+        {
+          "timestamp": "20250807163824",
+          "original": "https://www.proboxingodds.com/events/2025-08-24-2273",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "SFAF3UOMFWDTF33ACPLJQIIUQLNUPGK5",
+          "snapshot_url": "https://web.archive.org/web/20250807163824id_/https://www.proboxingodds.com/events/2025-08-24-2273"
+        }
+      ]
+    },
+    {
+      "event_date": "2025-09-05",
+      "event_url": "https://www.proboxingodds.com/events/2025-09-05-2274",
+      "pre_event_capture_count": 1,
+      "captures": [
+        {
+          "timestamp": "20250807162930",
+          "original": "https://www.proboxingodds.com/events/2025-09-05-2274",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "MSR6FTGGDQV7CH3LTCP5QEMDRFFXWS7O",
+          "snapshot_url": "https://web.archive.org/web/20250807162930id_/https://www.proboxingodds.com/events/2025-09-05-2274"
+        }
+      ]
+    },
+    {
+      "event_date": "2025-09-13",
+      "event_url": "https://www.proboxingodds.com/events/2025-09-13-2248",
+      "pre_event_capture_count": 1,
+      "captures": [
+        {
+          "timestamp": "20250709030207",
+          "original": "https://www.proboxingodds.com/events/2025-09-13-2248",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "F7IWIS766OIEO2GWFR3I52QXY3S3JXCY",
+          "snapshot_url": "https://web.archive.org/web/20250709030207id_/https://www.proboxingodds.com/events/2025-09-13-2248"
+        }
+      ]
+    },
+    {
+      "event_date": "2025-09-14",
+      "event_url": "https://www.proboxingodds.com/events/2025-09-14-2250",
+      "pre_event_capture_count": 1,
+      "captures": [
+        {
+          "timestamp": "20250709034005",
+          "original": "https://www.proboxingodds.com/events/2025-09-14-2250",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "WRQCT5CZOKJOUAYFTGPN45L36AELKAGG",
+          "snapshot_url": "https://web.archive.org/web/20250709034005id_/https://www.proboxingodds.com/events/2025-09-14-2250"
+        }
+      ]
+    },
+    {
+      "event_date": "2025-09-20",
+      "event_url": "https://www.proboxingodds.com/events/2025-09-20-2271",
+      "pre_event_capture_count": 1,
+      "captures": [
+        {
+          "timestamp": "20250709025454",
+          "original": "https://www.proboxingodds.com/events/2025-09-20-2271",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "4OAT64HJHFXZNXTYNDJG6Z5YUGXO655M",
+          "snapshot_url": "https://web.archive.org/web/20250709025454id_/https://www.proboxingodds.com/events/2025-09-20-2271"
+        }
+      ]
+    },
+    {
+      "event_date": "2025-10-17",
+      "event_url": "https://www.proboxingodds.com/events/2025-10-17-2287",
+      "pre_event_capture_count": 1,
+      "captures": [
+        {
+          "timestamp": "20251016152753",
+          "original": "https://www.proboxingodds.com/events/2025-10-17-2287",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "PZ44LTYKCJ5NXMLWNTC4AGL7UY27QVEQ",
+          "snapshot_url": "https://web.archive.org/web/20251016152753id_/https://www.proboxingodds.com/events/2025-10-17-2287"
+        }
+      ]
+    },
+    {
+      "event_date": "2025-10-19",
+      "event_url": "https://www.proboxingodds.com/events/2025-10-19-2317",
+      "pre_event_capture_count": 1,
+      "captures": [
+        {
+          "timestamp": "20251016153427",
+          "original": "https://www.proboxingodds.com/events/2025-10-19-2317",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "3VZIWON5ZKTCKHPZF23VDA4JXYZYSME5",
+          "snapshot_url": "https://web.archive.org/web/20251016153427id_/https://www.proboxingodds.com/events/2025-10-19-2317"
+        }
+      ]
+    },
+    {
+      "event_date": "2025-10-25",
+      "event_url": "https://www.proboxingodds.com/events/2025-10-25-2309",
+      "pre_event_capture_count": 1,
+      "captures": [
+        {
+          "timestamp": "20251016152517",
+          "original": "https://www.proboxingodds.com/events/2025-10-25-2309",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "D3MOYHH6GDZU6JRF3TKQEJZHPTTEOAF7",
+          "snapshot_url": "https://web.archive.org/web/20251016152517id_/https://www.proboxingodds.com/events/2025-10-25-2309"
+        }
+      ]
+    },
+    {
+      "event_date": "2025-10-26",
+      "event_url": "https://www.proboxingodds.com/events/2025-10-26-2307",
+      "pre_event_capture_count": 1,
+      "captures": [
+        {
+          "timestamp": "20251016154232",
+          "original": "https://www.proboxingodds.com/events/2025-10-26-2307",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "U4M7KA4JRA527HRZULAAJ2TIQQOQU67G",
+          "snapshot_url": "https://web.archive.org/web/20251016154232id_/https://www.proboxingodds.com/events/2025-10-26-2307"
+        }
+      ]
+    },
+    {
+      "event_date": "2025-10-29",
+      "event_url": "https://www.proboxingodds.com/events/2025-10-29-2315",
+      "pre_event_capture_count": 1,
+      "captures": [
+        {
+          "timestamp": "20251016162554",
+          "original": "https://www.proboxingodds.com/events/2025-10-29-2315",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "Z5XG3IMCOGJTBDEADZAWGSDJMMHUX2XW",
+          "snapshot_url": "https://web.archive.org/web/20251016162554id_/https://www.proboxingodds.com/events/2025-10-29-2315"
+        }
+      ]
+    },
+    {
+      "event_date": "2025-10-31",
+      "event_url": "https://www.proboxingodds.com/events/2025-10-31-2302",
+      "pre_event_capture_count": 1,
+      "captures": [
+        {
+          "timestamp": "20251016165633",
+          "original": "https://www.proboxingodds.com/events/2025-10-31-2302",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "KLD46GOYVZRRFPGHFDTJISUBDYASSTHI",
+          "snapshot_url": "https://web.archive.org/web/20251016165633id_/https://www.proboxingodds.com/events/2025-10-31-2302"
+        }
+      ]
+    },
+    {
+      "event_date": "2025-11-01",
+      "event_url": "https://www.proboxingodds.com/events/2025-11-01-2290",
+      "pre_event_capture_count": 1,
+      "captures": [
+        {
+          "timestamp": "20251016161559",
+          "original": "https://www.proboxingodds.com/events/2025-11-01-2290",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "5T3II3H3RD3TLQRP62FEWYSBU5OTWA5K",
+          "snapshot_url": "https://web.archive.org/web/20251016161559id_/https://www.proboxingodds.com/events/2025-11-01-2290"
+        }
+      ]
+    },
+    {
+      "event_date": "2025-11-02",
+      "event_url": "https://www.proboxingodds.com/events/2025-11-02-2293",
+      "pre_event_capture_count": 1,
+      "captures": [
+        {
+          "timestamp": "20251016161518",
+          "original": "https://www.proboxingodds.com/events/2025-11-02-2293",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "BFZPJCEW2UET223EAW4CJMPTLGDT662Y",
+          "snapshot_url": "https://web.archive.org/web/20251016161518id_/https://www.proboxingodds.com/events/2025-11-02-2293"
+        }
+      ]
+    },
+    {
+      "event_date": "2025-11-08",
+      "event_url": "https://www.proboxingodds.com/events/2025-11-08-2326",
+      "pre_event_capture_count": 1,
+      "captures": [
+        {
+          "timestamp": "20251016170053",
+          "original": "https://www.proboxingodds.com/events/2025-11-08-2326",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "GGGDGN63NKUEJKSVWJNNWY27B6UU6VD4",
+          "snapshot_url": "https://web.archive.org/web/20251016170053id_/https://www.proboxingodds.com/events/2025-11-08-2326"
+        }
+      ]
+    },
+    {
+      "event_date": "2025-11-09",
+      "event_url": "https://www.proboxingodds.com/events/2025-11-09-2301",
+      "pre_event_capture_count": 1,
+      "captures": [
+        {
+          "timestamp": "20251016170924",
+          "original": "https://www.proboxingodds.com/events/2025-11-09-2301",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "N6QD4WFBH4IA3MCAA5LD67KMQHBP6OMP",
+          "snapshot_url": "https://web.archive.org/web/20251016170924id_/https://www.proboxingodds.com/events/2025-11-09-2301"
+        }
+      ]
+    },
+    {
+      "event_date": "2025-11-14",
+      "event_url": "https://www.proboxingodds.com/events/2025-11-14-2316",
+      "pre_event_capture_count": 1,
+      "captures": [
+        {
+          "timestamp": "20251016161801",
+          "original": "https://www.proboxingodds.com/events/2025-11-14-2316",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "QTCLUCWS6MDRRZ3HJKG2P7DCUJP7ZLJV",
+          "snapshot_url": "https://web.archive.org/web/20251016161801id_/https://www.proboxingodds.com/events/2025-11-14-2316"
+        }
+      ]
+    },
+    {
+      "event_date": "2025-11-15",
+      "event_url": "https://www.proboxingodds.com/events/2025-11-15-2300",
+      "pre_event_capture_count": 1,
+      "captures": [
+        {
+          "timestamp": "20251016163158",
+          "original": "https://www.proboxingodds.com/events/2025-11-15-2300",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "QBI4BBQBKOLWUPPSVHOWI42TTA7RUKQU",
+          "snapshot_url": "https://web.archive.org/web/20251016163158id_/https://www.proboxingodds.com/events/2025-11-15-2300"
+        }
+      ]
+    },
+    {
+      "event_date": "2025-11-16",
+      "event_url": "https://www.proboxingodds.com/events/2025-11-16-2299",
+      "pre_event_capture_count": 1,
+      "captures": [
+        {
+          "timestamp": "20251016150929",
+          "original": "https://www.proboxingodds.com/events/2025-11-16-2299",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "KUUULI3FADWZOCI2OPISOTIT5I4VP2FY",
+          "snapshot_url": "https://web.archive.org/web/20251016150929id_/https://www.proboxingodds.com/events/2025-11-16-2299"
+        }
+      ]
+    },
+    {
+      "event_date": "2025-11-22",
+      "event_url": "https://www.proboxingodds.com/events/2025-11-22-2282",
+      "pre_event_capture_count": 1,
+      "captures": [
+        {
+          "timestamp": "20251016161638",
+          "original": "https://www.proboxingodds.com/events/2025-11-22-2282",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "SSJBM2ZKNI4IG6APXUYUQ32X4NVEXKXM",
+          "snapshot_url": "https://web.archive.org/web/20251016161638id_/https://www.proboxingodds.com/events/2025-11-22-2282"
+        }
+      ]
+    },
+    {
+      "event_date": "2025-11-23",
+      "event_url": "https://www.proboxingodds.com/events/2025-11-23-2275",
+      "pre_event_capture_count": 1,
+      "captures": [
+        {
+          "timestamp": "20250807154617",
+          "original": "https://www.proboxingodds.com/events/2025-11-23-2275",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "R7JS7DO662ML7YM22ZUAM5GXPWVMPKJF",
+          "snapshot_url": "https://web.archive.org/web/20250807154617id_/https://www.proboxingodds.com/events/2025-11-23-2275"
+        }
+      ]
+    },
+    {
+      "event_date": "2025-11-24",
+      "event_url": "https://www.proboxingodds.com/events/2025-11-24-2320",
+      "pre_event_capture_count": 1,
+      "captures": [
+        {
+          "timestamp": "20251016160443",
+          "original": "https://www.proboxingodds.com/events/2025-11-24-2320",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "4K4ZQV6Y7VDE26TNWTOMXBTMQ4DLCI3S",
+          "snapshot_url": "https://web.archive.org/web/20251016160443id_/https://www.proboxingodds.com/events/2025-11-24-2320"
+        }
+      ]
+    },
+    {
+      "event_date": "2025-11-29",
+      "event_url": "https://www.proboxingodds.com/events/2025-11-29-2331",
+      "pre_event_capture_count": 1,
+      "captures": [
+        {
+          "timestamp": "20251117151153",
+          "original": "https://www.proboxingodds.com/events/2025-11-29-2331",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "NUZYO5WCUQ4NCVNGJCDZHHDEGTYJY4ZL",
+          "snapshot_url": "https://web.archive.org/web/20251117151153id_/https://www.proboxingodds.com/events/2025-11-29-2331"
+        }
+      ]
+    },
+    {
+      "event_date": "2025-12-06",
+      "event_url": "https://www.proboxingodds.com/events/2025-12-06-2324",
+      "pre_event_capture_count": 1,
+      "captures": [
+        {
+          "timestamp": "20251016155014",
+          "original": "https://www.proboxingodds.com/events/2025-12-06-2324",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "63AYHIYUKFCVD6OLQPQMR2AP564I7RBI",
+          "snapshot_url": "https://web.archive.org/web/20251016155014id_/https://www.proboxingodds.com/events/2025-12-06-2324"
+        }
+      ]
+    },
+    {
+      "event_date": "2025-12-07",
+      "event_url": "https://www.proboxingodds.com/events/2025-12-07-2325",
+      "pre_event_capture_count": 1,
+      "captures": [
+        {
+          "timestamp": "20251016171150",
+          "original": "https://www.proboxingodds.com/events/2025-12-07-2325",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "Z6MZWQ2HE6763BNLOXOXHXOFRH25SF5R",
+          "snapshot_url": "https://web.archive.org/web/20251016171150id_/https://www.proboxingodds.com/events/2025-12-07-2325"
+        }
+      ]
+    },
+    {
+      "event_date": "2025-12-12",
+      "event_url": "https://www.proboxingodds.com/events/2025-12-12-2336",
+      "pre_event_capture_count": 1,
+      "captures": [
+        {
+          "timestamp": "20251117163200",
+          "original": "https://www.proboxingodds.com/events/2025-12-12-2336",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "HOUIE7T53II535PVWURF2ST3LI57OL4B",
+          "snapshot_url": "https://web.archive.org/web/20251117163200id_/https://www.proboxingodds.com/events/2025-12-12-2336"
+        }
+      ]
+    },
+    {
+      "event_date": "2025-12-13",
+      "event_url": "https://www.proboxingodds.com/events/2025-12-13-2338",
+      "pre_event_capture_count": 1,
+      "captures": [
+        {
+          "timestamp": "20251206002845",
+          "original": "https://www.proboxingodds.com/events/2025-12-13-2338",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "LGZ7MWI53XFKX7WOMTRELKSBDU7Q5PTH",
+          "snapshot_url": "https://web.archive.org/web/20251206002845id_/https://www.proboxingodds.com/events/2025-12-13-2338"
+        }
+      ]
+    },
+    {
+      "event_date": "2025-12-14",
+      "event_url": "https://www.proboxingodds.com/events/2025-12-14-2330",
+      "pre_event_capture_count": 1,
+      "captures": [
+        {
+          "timestamp": "20251117161526",
+          "original": "https://www.proboxingodds.com/events/2025-12-14-2330",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "YPO6T24S7RBGYNVNIDP3KNVI5FM6INPZ",
+          "snapshot_url": "https://web.archive.org/web/20251117161526id_/https://www.proboxingodds.com/events/2025-12-14-2330"
+        }
+      ]
+    },
+    {
+      "event_date": "2025-12-17",
+      "event_url": "https://www.proboxingodds.com/events/2025-12-17-2339",
+      "pre_event_capture_count": 1,
+      "captures": [
+        {
+          "timestamp": "20251117161410",
+          "original": "https://www.proboxingodds.com/events/2025-12-17-2339",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "N6BVUCNMT7R5UKGXKM6N7OIQXSMH5QMA",
+          "snapshot_url": "https://web.archive.org/web/20251117161410id_/https://www.proboxingodds.com/events/2025-12-17-2339"
+        }
+      ]
+    },
+    {
+      "event_date": "2025-12-19",
+      "event_url": "https://www.proboxingodds.com/events/2025-12-19-2353",
+      "pre_event_capture_count": 1,
+      "captures": [
+        {
+          "timestamp": "20251205231011",
+          "original": "https://www.proboxingodds.com/events/2025-12-19-2353",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "YDRNS5FQSFVRMIHSWVEOYSBTHSFXQSJA",
+          "snapshot_url": "https://web.archive.org/web/20251205231011id_/https://www.proboxingodds.com/events/2025-12-19-2353"
+        }
+      ]
+    },
+    {
+      "event_date": "2025-12-20",
+      "event_url": "https://www.proboxingodds.com/events/2025-12-20-2342",
+      "pre_event_capture_count": 1,
+      "captures": [
+        {
+          "timestamp": "20251117151955",
+          "original": "https://www.proboxingodds.com/events/2025-12-20-2342",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "OS5FXSMDXNRYIPB7U4GPIKPWFC7JDEBB",
+          "snapshot_url": "https://web.archive.org/web/20251117151955id_/https://www.proboxingodds.com/events/2025-12-20-2342"
+        }
+      ]
+    },
+    {
+      "event_date": "2025-12-27",
+      "event_url": "https://www.proboxingodds.com/events/2025-12-27-2313",
+      "pre_event_capture_count": 1,
+      "captures": [
+        {
+          "timestamp": "20251016165554",
+          "original": "https://www.proboxingodds.com/events/2025-12-27-2313",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "GRQYLWUUNTXFBQBINMTB6YJQ6X22PSIF",
+          "snapshot_url": "https://web.archive.org/web/20251016165554id_/https://www.proboxingodds.com/events/2025-12-27-2313"
+        }
+      ]
+    },
+    {
+      "event_date": "2025-12-31",
+      "event_url": "https://www.proboxingodds.com/events/2025-12-31-2127",
+      "pre_event_capture_count": 2,
+      "captures": [
+        {
+          "timestamp": "20250515195456",
+          "original": "https://www.proboxingodds.com/events/2025-12-31-2127",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "3CMHS6R5UG5T4UNOQLDDXUGFUTVAG5KK",
+          "snapshot_url": "https://web.archive.org/web/20250515195456id_/https://www.proboxingodds.com/events/2025-12-31-2127"
+        },
+        {
+          "timestamp": "20250120064922",
+          "original": "https://www.proboxingodds.com/events/2025-12-31-2127",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "O5HOY4RRXDQGDUV2PRWMN577U2DNXDZS",
+          "snapshot_url": "https://web.archive.org/web/20250120064922id_/https://www.proboxingodds.com/events/2025-12-31-2127"
+        }
+      ]
+    },
+    {
+      "event_date": "2026-01-04",
+      "event_url": "https://www.proboxingodds.com/events/2026-01-04-2332",
+      "pre_event_capture_count": 1,
+      "captures": [
+        {
+          "timestamp": "20251117152147",
+          "original": "https://www.proboxingodds.com/events/2026-01-04-2332",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "D2PYTYVOP2TRFDSLLFIM47LCVJJKW2SN",
+          "snapshot_url": "https://web.archive.org/web/20251117152147id_/https://www.proboxingodds.com/events/2026-01-04-2332"
+        }
+      ]
+    },
+    {
+      "event_date": "2026-01-10",
+      "event_url": "https://www.proboxingodds.com/events/2026-01-10-2344",
+      "pre_event_capture_count": 1,
+      "captures": [
+        {
+          "timestamp": "20251117161912",
+          "original": "https://www.proboxingodds.com/events/2026-01-10-2344",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "SL5HGEVDOILLRCNLCZMNZTKOFDZ6DUNQ",
+          "snapshot_url": "https://web.archive.org/web/20251117161912id_/https://www.proboxingodds.com/events/2026-01-10-2344"
+        }
+      ]
+    },
+    {
+      "event_date": "2026-01-11",
+      "event_url": "https://www.proboxingodds.com/events/2026-01-11-2327",
+      "pre_event_capture_count": 1,
+      "captures": [
+        {
+          "timestamp": "20251016153510",
+          "original": "https://www.proboxingodds.com/events/2026-01-11-2327",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "OO747B53A4HGFSEH7722BYQNZR5DJQHS",
+          "snapshot_url": "https://web.archive.org/web/20251016153510id_/https://www.proboxingodds.com/events/2026-01-11-2327"
+        }
+      ]
+    },
+    {
+      "event_date": "2026-01-16",
+      "event_url": "https://www.proboxingodds.com/events/2026-01-16-2341",
+      "pre_event_capture_count": 1,
+      "captures": [
+        {
+          "timestamp": "20251117163932",
+          "original": "https://www.proboxingodds.com/events/2026-01-16-2341",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "SEUCO623DCFQXP74EN5YSFQDKQWOXB5L",
+          "snapshot_url": "https://web.archive.org/web/20251117163932id_/https://www.proboxingodds.com/events/2026-01-16-2341"
+        }
+      ]
+    },
+    {
+      "event_date": "2026-01-17",
+      "event_url": "https://www.proboxingodds.com/events/2026-01-17-2355",
+      "pre_event_capture_count": 1,
+      "captures": [
+        {
+          "timestamp": "20251205235842",
+          "original": "https://www.proboxingodds.com/events/2026-01-17-2355",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "A5V3MMUWF2AIHGKSHGXAAY7GS2AB4WSQ",
+          "snapshot_url": "https://web.archive.org/web/20251205235842id_/https://www.proboxingodds.com/events/2026-01-17-2355"
+        }
+      ]
+    },
+    {
+      "event_date": "2026-01-24",
+      "event_url": "https://www.proboxingodds.com/events/2026-01-24-2348",
+      "pre_event_capture_count": 1,
+      "captures": [
+        {
+          "timestamp": "20251206005850",
+          "original": "https://www.proboxingodds.com/events/2026-01-24-2348",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "LL7TXGE43DGW35DPQKRXUYEUCT55KGCY",
+          "snapshot_url": "https://web.archive.org/web/20251206005850id_/https://www.proboxingodds.com/events/2026-01-24-2348"
+        }
+      ]
+    },
+    {
+      "event_date": "2026-01-25",
+      "event_url": "https://www.proboxingodds.com/events/2026-01-25-2328",
+      "pre_event_capture_count": 1,
+      "captures": [
+        {
+          "timestamp": "20251117163812",
+          "original": "https://www.proboxingodds.com/events/2026-01-25-2328",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "HZQHPKBEYSDMWNQI4RMXU3RJ5JWQNXUX",
+          "snapshot_url": "https://web.archive.org/web/20251117163812id_/https://www.proboxingodds.com/events/2026-01-25-2328"
+        }
+      ]
+    },
+    {
+      "event_date": "2026-01-31",
+      "event_url": "https://www.proboxingodds.com/events/2026-01-31-2347",
+      "pre_event_capture_count": 1,
+      "captures": [
+        {
+          "timestamp": "20251205233200",
+          "original": "https://www.proboxingodds.com/events/2026-01-31-2347",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "45MLSVFXS6ELNRIKK47HY4W67VBKKEJL",
+          "snapshot_url": "https://web.archive.org/web/20251205233200id_/https://www.proboxingodds.com/events/2026-01-31-2347"
+        }
+      ]
+    },
+    {
+      "event_date": "2026-02-01",
+      "event_url": "https://www.proboxingodds.com/events/2026-02-01-2340",
+      "pre_event_capture_count": 1,
+      "captures": [
+        {
+          "timestamp": "20251206001526",
+          "original": "https://www.proboxingodds.com/events/2026-02-01-2340",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "WQZTG5ZB3E7GXWO6XV5APJHQDLXUPIC3",
+          "snapshot_url": "https://web.archive.org/web/20251206001526id_/https://www.proboxingodds.com/events/2026-02-01-2340"
+        }
+      ]
+    },
+    {
+      "event_date": "2026-02-06",
+      "event_url": "https://www.proboxingodds.com/events/2026-02-06-2371",
+      "pre_event_capture_count": 1,
+      "captures": [
+        {
+          "timestamp": "20260120190302",
+          "original": "https://www.proboxingodds.com/events/2026-02-06-2371",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "5IYJFCKULFLXRJTH7QGB4UA4UHPUOHJI",
+          "snapshot_url": "https://web.archive.org/web/20260120190302id_/https://www.proboxingodds.com/events/2026-02-06-2371"
+        }
+      ]
+    },
+    {
+      "event_date": "2026-02-07",
+      "event_url": "https://www.proboxingodds.com/events/2026-02-07-2362",
+      "pre_event_capture_count": 1,
+      "captures": [
+        {
+          "timestamp": "20260120174406",
+          "original": "https://www.proboxingodds.com/events/2026-02-07-2362",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "G6RXRNUJS6IHLSIBCI3Z6LB6G5WLZFKE",
+          "snapshot_url": "https://web.archive.org/web/20260120174406id_/https://www.proboxingodds.com/events/2026-02-07-2362"
+        }
+      ]
+    },
+    {
+      "event_date": "2026-02-15",
+      "event_url": "https://www.proboxingodds.com/events/2026-02-15-2376",
+      "pre_event_capture_count": 1,
+      "captures": [
+        {
+          "timestamp": "20260214021851",
+          "original": "https://www.proboxingodds.com/events/2026-02-15-2376",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "3GJRDW7NTIUQQ24CLXPMISFZ7WBJZODF",
+          "snapshot_url": "https://web.archive.org/web/20260214021851id_/https://www.proboxingodds.com/events/2026-02-15-2376"
+        }
+      ]
+    },
+    {
+      "event_date": "2026-02-21",
+      "event_url": "https://www.proboxingodds.com/events/2026-02-21-2352",
+      "pre_event_capture_count": 1,
+      "captures": [
+        {
+          "timestamp": "20251206002250",
+          "original": "https://www.proboxingodds.com/events/2026-02-21-2352",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "BRP7FTNJMUSXUCFHOL2VRTUUBBCKDITH",
+          "snapshot_url": "https://web.archive.org/web/20251206002250id_/https://www.proboxingodds.com/events/2026-02-21-2352"
+        }
+      ]
+    },
+    {
+      "event_date": "2026-02-22",
+      "event_url": "https://www.proboxingodds.com/events/2026-02-22-2350",
+      "pre_event_capture_count": 1,
+      "captures": [
+        {
+          "timestamp": "20251206003130",
+          "original": "https://www.proboxingodds.com/events/2026-02-22-2350",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "E4FV75FQ3QYLHEVS2JHBH4XGLO66X6AT",
+          "snapshot_url": "https://web.archive.org/web/20251206003130id_/https://www.proboxingodds.com/events/2026-02-22-2350"
+        }
+      ]
+    },
+    {
+      "event_date": "2026-02-28",
+      "event_url": "https://www.proboxingodds.com/events/2026-02-28-2369",
+      "pre_event_capture_count": 1,
+      "captures": [
+        {
+          "timestamp": "20260120180945",
+          "original": "https://www.proboxingodds.com/events/2026-02-28-2369",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "KWPHX2AH34LQXKDKGZVDG4IMZMXHVDOX",
+          "snapshot_url": "https://web.archive.org/web/20260120180945id_/https://www.proboxingodds.com/events/2026-02-28-2369"
+        }
+      ]
+    },
+    {
+      "event_date": "2026-03-01",
+      "event_url": "https://www.proboxingodds.com/events/2026-03-01-2351",
+      "pre_event_capture_count": 1,
+      "captures": [
+        {
+          "timestamp": "20251206003539",
+          "original": "https://www.proboxingodds.com/events/2026-03-01-2351",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "XK7TWC2FSOFNG7BUWUS64BJXPVVW6L35",
+          "snapshot_url": "https://web.archive.org/web/20251206003539id_/https://www.proboxingodds.com/events/2026-03-01-2351"
+        }
+      ]
+    },
+    {
+      "event_date": "2026-03-14",
+      "event_url": "https://www.proboxingodds.com/events/2026-03-14-2370",
+      "pre_event_capture_count": 1,
+      "captures": [
+        {
+          "timestamp": "20260120174533",
+          "original": "https://www.proboxingodds.com/events/2026-03-14-2370",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "RNDGPMTT4CMRAHHJTB7UD5AVHIOAR2ER",
+          "snapshot_url": "https://web.archive.org/web/20260120174533id_/https://www.proboxingodds.com/events/2026-03-14-2370"
+        }
+      ]
+    },
+    {
+      "event_date": "2026-03-15",
+      "event_url": "https://www.proboxingodds.com/events/2026-03-15-2379",
+      "pre_event_capture_count": 1,
+      "captures": [
+        {
+          "timestamp": "20260214010333",
+          "original": "https://www.proboxingodds.com/events/2026-03-15-2379",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "Q7LNIB35ACFKA2NCHKXDSNTOXC2JFWWZ",
+          "snapshot_url": "https://web.archive.org/web/20260214010333id_/https://www.proboxingodds.com/events/2026-03-15-2379"
+        }
+      ]
+    },
+    {
+      "event_date": "2026-03-20",
+      "event_url": "https://www.proboxingodds.com/events/2026-03-20-2389",
+      "pre_event_capture_count": 1,
+      "captures": [
+        {
+          "timestamp": "20260314090858",
+          "original": "https://www.proboxingodds.com/events/2026-03-20-2389",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "SVU2DUBASS7SQPQRRBY4N4TNRMW64QIO",
+          "snapshot_url": "https://web.archive.org/web/20260314090858id_/https://www.proboxingodds.com/events/2026-03-20-2389"
+        }
+      ]
+    },
+    {
+      "event_date": "2026-03-21",
+      "event_url": "https://www.proboxingodds.com/events/2026-03-21-2395",
+      "pre_event_capture_count": 1,
+      "captures": [
+        {
+          "timestamp": "20260314090930",
+          "original": "https://www.proboxingodds.com/events/2026-03-21-2395",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "TBAQVIE4DIVIVQ3LAOKETWDQQSKHIJHX",
+          "snapshot_url": "https://web.archive.org/web/20260314090930id_/https://www.proboxingodds.com/events/2026-03-21-2395"
+        }
+      ]
+    },
+    {
+      "event_date": "2026-03-22",
+      "event_url": "https://www.proboxingodds.com/events/2026-03-22-2399",
+      "pre_event_capture_count": 1,
+      "captures": [
+        {
+          "timestamp": "20260314080214",
+          "original": "https://www.proboxingodds.com/events/2026-03-22-2399",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "XBL4TFWBAWU7QF2E6ACFB3TG6WQKAZCC",
+          "snapshot_url": "https://web.archive.org/web/20260314080214id_/https://www.proboxingodds.com/events/2026-03-22-2399"
+        }
+      ]
+    },
+    {
+      "event_date": "2026-03-28",
+      "event_url": "https://www.proboxingodds.com/events/2026-03-28-2372",
+      "pre_event_capture_count": 1,
+      "captures": [
+        {
+          "timestamp": "20260214004531",
+          "original": "https://www.proboxingodds.com/events/2026-03-28-2372",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "O4VMVJANCB4OK2VA5IFYOBBJJVHCJ3I6",
+          "snapshot_url": "https://web.archive.org/web/20260214004531id_/https://www.proboxingodds.com/events/2026-03-28-2372"
+        }
+      ]
+    },
+    {
+      "event_date": "2026-03-29",
+      "event_url": "https://www.proboxingodds.com/events/2026-03-29-2384",
+      "pre_event_capture_count": 4,
+      "captures": [
+        {
+          "timestamp": "20260304125512",
+          "original": "https://www.proboxingodds.com/events/2026-03-29-2384",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "UIB6LHN4BXBYTD2S2JXWVW5G26WKXPX5",
+          "snapshot_url": "https://web.archive.org/web/20260304125512id_/https://www.proboxingodds.com/events/2026-03-29-2384"
+        },
+        {
+          "timestamp": "20260302195441",
+          "original": "https://www.proboxingodds.com/events/2026-03-29-2384",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "FEKYMER47F6FGLC3CMWMW3IENXHWAY6R",
+          "snapshot_url": "https://web.archive.org/web/20260302195441id_/https://www.proboxingodds.com/events/2026-03-29-2384"
+        },
+        {
+          "timestamp": "20260302195415",
+          "original": "https://www.proboxingodds.com/events/2026-03-29-2384",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "3WDIFQGQZOUHIHVD466L7OJ2XVR36TJ3",
+          "snapshot_url": "https://web.archive.org/web/20260302195415id_/https://www.proboxingodds.com/events/2026-03-29-2384"
+        },
+        {
+          "timestamp": "20260214005757",
+          "original": "https://www.proboxingodds.com/events/2026-03-29-2384",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "KHLEF3PG3TV7NBEIKSOKOUCBJ3SP266H",
+          "snapshot_url": "https://web.archive.org/web/20260214005757id_/https://www.proboxingodds.com/events/2026-03-29-2384"
+        }
+      ]
+    },
+    {
+      "event_date": "2026-04-03",
+      "event_url": "https://www.proboxingodds.com/events/2026-04-03-2396",
+      "pre_event_capture_count": 1,
+      "captures": [
+        {
+          "timestamp": "20260314082413",
+          "original": "https://www.proboxingodds.com/events/2026-04-03-2396",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "HOEKU6QFH32PE3JTQPACP3XNALRQLJXT",
+          "snapshot_url": "https://web.archive.org/web/20260314082413id_/https://www.proboxingodds.com/events/2026-04-03-2396"
+        }
+      ]
+    },
+    {
+      "event_date": "2026-04-04",
+      "event_url": "https://www.proboxingodds.com/events/2026-04-04-2382",
+      "pre_event_capture_count": 1,
+      "captures": [
+        {
+          "timestamp": "20260214020653",
+          "original": "https://www.proboxingodds.com/events/2026-04-04-2382",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "CVMEKWE3OKMP2P6NWJUXFJD65DSBXOCK",
+          "snapshot_url": "https://web.archive.org/web/20260214020653id_/https://www.proboxingodds.com/events/2026-04-04-2382"
+        }
+      ]
+    },
+    {
+      "event_date": "2026-04-05",
+      "event_url": "https://www.proboxingodds.com/events/2026-04-05-2388",
+      "pre_event_capture_count": 1,
+      "captures": [
+        {
+          "timestamp": "20260314082644",
+          "original": "https://www.proboxingodds.com/events/2026-04-05-2388",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "BO5TYVK3YEDKVPN3XYMHEYO7YMHO2FRI",
+          "snapshot_url": "https://web.archive.org/web/20260314082644id_/https://www.proboxingodds.com/events/2026-04-05-2388"
+        }
+      ]
+    },
+    {
+      "event_date": "2026-04-10",
+      "event_url": "https://www.proboxingodds.com/events/2026-04-10-2385",
+      "pre_event_capture_count": 1,
+      "captures": [
+        {
+          "timestamp": "20260214010826",
+          "original": "https://www.proboxingodds.com/events/2026-04-10-2385",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "YYTOXLBBYOIQ3KXFNGE5DLZAKNQPK663",
+          "snapshot_url": "https://web.archive.org/web/20260214010826id_/https://www.proboxingodds.com/events/2026-04-10-2385"
+        }
+      ]
+    },
+    {
+      "event_date": "2026-04-11",
+      "event_url": "https://www.proboxingodds.com/events/2026-04-11-2381",
+      "pre_event_capture_count": 1,
+      "captures": [
+        {
+          "timestamp": "20260214022456",
+          "original": "https://www.proboxingodds.com/events/2026-04-11-2381",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "S7RNVBWQYK3I5AH4EK5OM6RWSGQOMFGR",
+          "snapshot_url": "https://web.archive.org/web/20260214022456id_/https://www.proboxingodds.com/events/2026-04-11-2381"
+        }
+      ]
+    },
+    {
+      "event_date": "2026-04-12",
+      "event_url": "https://www.proboxingodds.com/events/2026-04-12-2397",
+      "pre_event_capture_count": 1,
+      "captures": [
+        {
+          "timestamp": "20260314085626",
+          "original": "https://www.proboxingodds.com/events/2026-04-12-2397",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "XPIRPOFUCXNAAT5V7THIIZCNMWAACTRJ",
+          "snapshot_url": "https://web.archive.org/web/20260314085626id_/https://www.proboxingodds.com/events/2026-04-12-2397"
+        }
+      ]
+    },
+    {
+      "event_date": "2026-04-13",
+      "event_url": "https://www.proboxingodds.com/events/2026-04-13-2380",
+      "pre_event_capture_count": 1,
+      "captures": [
+        {
+          "timestamp": "20260214015820",
+          "original": "https://www.proboxingodds.com/events/2026-04-13-2380",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "VE2ZCKXIJCBHUYN6XEBLFS4UYCHBRHM2",
+          "snapshot_url": "https://web.archive.org/web/20260214015820id_/https://www.proboxingodds.com/events/2026-04-13-2380"
+        }
+      ]
+    },
+    {
+      "event_date": "2026-04-17",
+      "event_url": "https://www.proboxingodds.com/events/2026-04-17-2400",
+      "pre_event_capture_count": 1,
+      "captures": [
+        {
+          "timestamp": "20260314082857",
+          "original": "https://www.proboxingodds.com/events/2026-04-17-2400",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "PV4SFVHC57RZ7P3OFSHNDJESY4BSE66D",
+          "snapshot_url": "https://web.archive.org/web/20260314082857id_/https://www.proboxingodds.com/events/2026-04-17-2400"
+        }
+      ]
+    },
+    {
+      "event_date": "2026-04-18",
+      "event_url": "https://www.proboxingodds.com/events/2026-04-18-2398",
+      "pre_event_capture_count": 1,
+      "captures": [
+        {
+          "timestamp": "20260314085221",
+          "original": "https://www.proboxingodds.com/events/2026-04-18-2398",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "57MLS6ZBNC53OQYLOB74EGESAHQYMQKB",
+          "snapshot_url": "https://web.archive.org/web/20260314085221id_/https://www.proboxingodds.com/events/2026-04-18-2398"
+        }
+      ]
+    },
+    {
+      "event_date": "2026-04-23",
+      "event_url": "https://www.proboxingodds.com/events/2026-04-23-2410",
+      "pre_event_capture_count": 1,
+      "captures": [
+        {
+          "timestamp": "20260420161504",
+          "original": "https://www.proboxingodds.com/events/2026-04-23-2410",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "3DDCDGVJXQJCXOW5G2L775E7NVNOZFHB",
+          "snapshot_url": "https://web.archive.org/web/20260420161504id_/https://www.proboxingodds.com/events/2026-04-23-2410"
+        }
+      ]
+    },
+    {
+      "event_date": "2026-04-25",
+      "event_url": "https://www.proboxingodds.com/events/2026-04-25-2407",
+      "pre_event_capture_count": 1,
+      "captures": [
+        {
+          "timestamp": "20260314083117",
+          "original": "https://www.proboxingodds.com/events/2026-04-25-2407",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "BIFNTTYK5GZRKS3LFIM2IQVF3MYV4CQ5",
+          "snapshot_url": "https://web.archive.org/web/20260314083117id_/https://www.proboxingodds.com/events/2026-04-25-2407"
+        }
+      ]
+    },
+    {
+      "event_date": "2026-04-26",
+      "event_url": "https://www.proboxingodds.com/events/2026-04-26-2416",
+      "pre_event_capture_count": 1,
+      "captures": [
+        {
+          "timestamp": "20260420165131",
+          "original": "https://www.proboxingodds.com/events/2026-04-26-2416",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "YXXHR2AYNEU2JGODPBSLNCLHYW5DFS6W",
+          "snapshot_url": "https://web.archive.org/web/20260420165131id_/https://www.proboxingodds.com/events/2026-04-26-2416"
+        }
+      ]
+    },
+    {
+      "event_date": "2026-04-29",
+      "event_url": "https://www.proboxingodds.com/events/2026-04-29-2414",
+      "pre_event_capture_count": 1,
+      "captures": [
+        {
+          "timestamp": "20260420165316",
+          "original": "https://www.proboxingodds.com/events/2026-04-29-2414",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "MA56PG3U5ETOHR4BVDBC4C26R6QNPPAV",
+          "snapshot_url": "https://web.archive.org/web/20260420165316id_/https://www.proboxingodds.com/events/2026-04-29-2414"
+        }
+      ]
+    },
+    {
+      "event_date": "2026-05-02",
+      "event_url": "https://www.proboxingodds.com/events/2026-05-02-2404",
+      "pre_event_capture_count": 1,
+      "captures": [
+        {
+          "timestamp": "20260314090246",
+          "original": "https://www.proboxingodds.com/events/2026-05-02-2404",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "SXRKFXYDLYBUND5PGVHQBI56P4ZLSJOM",
+          "snapshot_url": "https://web.archive.org/web/20260314090246id_/https://www.proboxingodds.com/events/2026-05-02-2404"
+        }
+      ]
+    },
+    {
+      "event_date": "2026-05-03",
+      "event_url": "https://www.proboxingodds.com/events/2026-05-03-2356",
+      "pre_event_capture_count": 2,
+      "captures": [
+        {
+          "timestamp": "20260208065855",
+          "original": "https://www.proboxingodds.com/events/2026-05-03-2356",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "3GNX3P3YBY2ZJ5WGSLF5KCRZ3TPHSOEB",
+          "snapshot_url": "https://web.archive.org/web/20260208065855id_/https://www.proboxingodds.com/events/2026-05-03-2356"
+        },
+        {
+          "timestamp": "20251205230508",
+          "original": "https://www.proboxingodds.com/events/2026-05-03-2356",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "4EP5Y3KP5HYIGS6C56JBFKCLUA3A4YBI",
+          "snapshot_url": "https://web.archive.org/web/20251205230508id_/https://www.proboxingodds.com/events/2026-05-03-2356"
+        }
+      ]
+    },
+    {
+      "event_date": "2026-05-09",
+      "event_url": "https://www.proboxingodds.com/events/2026-05-09-2391",
+      "pre_event_capture_count": 1,
+      "captures": [
+        {
+          "timestamp": "20260314091206",
+          "original": "https://www.proboxingodds.com/events/2026-05-09-2391",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "ZKVQVOUHBTRSEBCF6GENDOBJPJSMCFIH",
+          "snapshot_url": "https://web.archive.org/web/20260314091206id_/https://www.proboxingodds.com/events/2026-05-09-2391"
+        }
+      ]
+    },
+    {
+      "event_date": "2026-05-23",
+      "event_url": "https://www.proboxingodds.com/events/2026-05-23-2408",
+      "pre_event_capture_count": 1,
+      "captures": [
+        {
+          "timestamp": "20260314083206",
+          "original": "https://www.proboxingodds.com/events/2026-05-23-2408",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "WJEO4ZNDBOUHBGHLB2HWYNDMXST6HYK7",
+          "snapshot_url": "https://web.archive.org/web/20260314083206id_/https://www.proboxingodds.com/events/2026-05-23-2408"
+        }
+      ]
+    },
+    {
+      "event_date": "2026-05-31",
+      "event_url": "https://www.proboxingodds.com/events/2026-05-31-2415",
+      "pre_event_capture_count": 1,
+      "captures": [
+        {
+          "timestamp": "20260420165245",
+          "original": "https://www.proboxingodds.com/events/2026-05-31-2415",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "NJGAMBGSKOJIPGOSOTWVTHM3T5QZFHTC",
+          "snapshot_url": "https://web.archive.org/web/20260420165245id_/https://www.proboxingodds.com/events/2026-05-31-2415"
+        }
+      ]
+    },
+    {
+      "event_date": "2026-09-19",
+      "event_url": "https://www.proboxingodds.com/events/2026-09-19-2403",
+      "pre_event_capture_count": 1,
+      "captures": [
+        {
+          "timestamp": "20260314084738",
+          "original": "https://www.proboxingodds.com/events/2026-09-19-2403",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "V36FGW4HUM7LPD23JH26OATCEAFGJYFL",
+          "snapshot_url": "https://web.archive.org/web/20260314084738id_/https://www.proboxingodds.com/events/2026-09-19-2403"
+        }
+      ]
+    },
+    {
+      "event_date": "2026-12-31",
+      "event_url": "https://www.proboxingodds.com/events/2026-12-31-2276",
+      "pre_event_capture_count": 3,
+      "captures": [
+        {
+          "timestamp": "20260608173437",
+          "original": "https://www.proboxingodds.com/events/2026-12-31-2276",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "QZARJTITJ6BL6RKHCIO5SDBALGAGJKIP",
+          "snapshot_url": "https://web.archive.org/web/20260608173437id_/https://www.proboxingodds.com/events/2026-12-31-2276"
+        },
+        {
+          "timestamp": "20260209021838",
+          "original": "https://www.proboxingodds.com/events/2026-12-31-2276",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "LDF3IG7MFKVWQXROTF5PIBENWIKEPEJP",
+          "snapshot_url": "https://web.archive.org/web/20260209021838id_/https://www.proboxingodds.com/events/2026-12-31-2276"
+        },
+        {
+          "timestamp": "20251016161957",
+          "original": "https://www.proboxingodds.com/events/2026-12-31-2276",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "6IYICQE76RDT2J3RDTAGAOUIITIQ2IP3",
+          "snapshot_url": "https://web.archive.org/web/20251016161957id_/https://www.proboxingodds.com/events/2026-12-31-2276"
+        }
+      ]
+    },
+    {
+      "event_date": "2107-07-15",
+      "event_url": "https://www.proboxingodds.com/events/2107-07-15-707",
+      "pre_event_capture_count": 1,
+      "captures": [
+        {
+          "timestamp": "20210506095136",
+          "original": "https://www.proboxingodds.com/events/2107-07-15-707",
+          "statuscode": "200",
+          "mimetype": "text/html",
+          "digest": "3COV2HNSCMGBLY2FUJXT7OH5FW72ZBQC",
+          "snapshot_url": "https://web.archive.org/web/20210506095136id_/https://www.proboxingodds.com/events/2107-07-15-707"
+        }
+      ]
+    }
+  ],
   "policy": "Discovery only. Capture timestamp must be strictly before the event calendar date; same-day captures are excluded. No quote is validated by this index."
 }
