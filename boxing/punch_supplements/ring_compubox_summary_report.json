@@ -1,9 +1,9 @@
 {
-  "generated_at": "2026-09-25T13:26:07.734460+00:00",
-  "seed_pages": 17,
-  "accepted_pages": 8,
-  "fighter_rows": 13,
-  "distinct_bouts": 8,
+  "generated_at": "2026-09-25T23:21:48.843183+00:00",
+  "seed_pages": 22,
+  "accepted_pages": 11,
+  "fighter_rows": 19,
+  "distinct_bouts": 11,
   "date_min": "2025-02-22",
   "date_max": "2026-01-31",
   "conflicts_quarantined": 0,
@@ -40,9 +40,9 @@
         "Harlem Eubank"
       ],
       "pair_resolution": "exact_ring_url_date_pair_plus_independent_result",
-      "status": "no_safe_numeric_pattern",
+      "status": "accepted",
       "article_date": "2025-07-06",
-      "fighter_rows": 0
+      "fighter_rows": 2
     },
     {
       "url": "https://www.ringmagazine.com/news/joe-cordina-vs-jaret-gonzalez-quiroz-compu-box-punch-stats-6Eoo9mhRIHY4s7xxRdp5vW",
@@ -211,6 +211,62 @@
       "status": "accepted",
       "article_date": "2026-02-03",
       "fighter_rows": 2
+    },
+    {
+      "url": "https://www.ringmagazine.com/news/armando-resendiz-vs-caleb-plant--compubox-punch-stats-1avPYz19q55lr97AWwQWoe",
+      "bout_date": "2025-05-31",
+      "fighters": [
+        "Armando Resendiz",
+        "Caleb Plant"
+      ],
+      "pair_resolution": "exact_pre_bout_features_id_pair_via_normalized_fighters",
+      "status": "accepted",
+      "article_date": "2025-06-01",
+      "fighter_rows": 2
+    },
+    {
+      "url": "https://www.ringmagazine.com/news/josh-taylor-vs-ekow-essuman--compubox-punch-stats-40L0Zni7Ibg8GtrwT05YYI",
+      "bout_date": "2025-05-24",
+      "fighters": [
+        "Josh Taylor",
+        "Ekow Essuman"
+      ],
+      "pair_resolution": "exact_pre_bout_features_id_pair_via_normalized_fighters",
+      "status": "accepted",
+      "article_date": "2025-05-24",
+      "fighter_rows": 2
+    },
+    {
+      "url": "https://www.ringmagazine.com/fr/news/bektemir-melikuziev-chute-mais-l-emporte-aux-points-apres-12-rounds-dans-un-combat-palpitant-face-a-darius-fulghum/",
+      "bout_date": "2025-05-30",
+      "fighters": [
+        "Bektemir Melikuziev",
+        "Darius Fulghum"
+      ],
+      "pair_resolution": "pair_not_in_verified_supplements",
+      "status": "rejected_identity"
+    },
+    {
+      "url": "https://www.ringmagazine.com/news/rolly-romero-drops-stuns-ryan-garcia-with-ud12-victory-devin-haney-rematch-plans-up-in-smoke-3r1QaheFI7rzzKBHIKC8Ez",
+      "bout_date": "2025-05-02",
+      "fighters": [
+        "Rolando Romero",
+        "Ryan Garcia"
+      ],
+      "pair_resolution": "exact_pre_bout_features_id_pair_via_normalized_fighters",
+      "status": "no_safe_numeric_pattern",
+      "article_date": "2025-05-03",
+      "fighter_rows": 0
+    },
+    {
+      "url": "https://www.ringmagazine.com/news/tank-says-judges-took-fight-from-him-due-to-kneel-former-nysac-commish-says-tank-shouldve-been-dqd-4q5xioFCxVFevPVkthmWzP",
+      "bout_date": "2025-03-01",
+      "fighters": [
+        "Gervonta Davis",
+        "Lamont Roach"
+      ],
+      "pair_resolution": "pair_not_in_verified_supplements",
+      "status": "rejected_identity"
     }
   ],
   "conflicts": [],
