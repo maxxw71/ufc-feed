@@ -137,6 +137,14 @@ def subject_segments(sentence,name,other):
     chunks=[]
     for start,end in sorted(set(own_spans)):
         stop=min((a for a,b in opp_spans if a>=end),default=len(sentence))
+        # Contrast clauses can switch the grammatical subject without naming
+        # it again. Do not let generic fighter-attributed patterns cross them.
+        # A separately tested pair grammar may still resolve the construction.
+        for cm in re.finditer(r'\b(?:while|whereas)\b',sentence[end:],re.I):
+            boundary=end+cm.start()
+            if boundary<stop:
+                stop=boundary
+                break
         chunk=sentence[start:stop].strip()
         if chunk and chunk not in chunks:chunks.append(chunk)
     return chunks
