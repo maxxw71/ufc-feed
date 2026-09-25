@@ -314,6 +314,52 @@ def parse_pair(text,a,b):
                 if m:
                     setv(f,'power_landed',m.group(1));setv(o,'power_landed',m.group(1))
 
+    # "Overall in the fight, Roach outlanded Cruz 191 to 159."
+    for f,o in ((a,b),(b,a)):
+        fa=clean(f).split()[-1];oa=clean(o).split()[-1]
+        m=re.search(
+            r'overall\s+in\s+the\s+fight[^.!?]{0,40}?'+re.escape(fa)+
+            r'\s+outlanded\s+'+re.escape(oa)+r'\s+(\d{1,4})\s*(?:to|[-–])\s*(\d{1,4})',
+            text,re.I)
+        if m:
+            setv(f,'total_landed',m.group(1));setv(o,'total_landed',m.group(2))
+
+    # Verified pair with a parenthetical full tally after a named subject:
+    # "Cruz landed one more punch overall ... (176-of-537 to 175-of-611)."
+    # "Barrios ... punches overall (120 of 658 to 101 of 577)."
+    for f,o in ((a,b),(b,a)):
+        for fa in sorted({clean(f),clean(f).split()[-1]},key=len,reverse=True):
+            m=re.search(
+                r'(?<![A-Za-z0-9])'+re.escape(fa)+
+                r'(?![A-Za-z0-9])[^.!?]{0,180}?(?:punch|punches)[^.!?]{0,30}?overall'
+                r'[^.!?]{0,80}?\((\d{1,4})\s*[-–]?\s*of\s*[-–]?\s*(\d{1,4})\s+to\s+'
+                r'(\d{1,4})\s*[-–]?\s*of\s*[-–]?\s*(\d{1,4})\)',
+                text,re.I)
+            if m:
+                setv(f,'total_landed',m.group(1));setv(f,'total_thrown',m.group(2))
+                setv(o,'total_landed',m.group(3));setv(o,'total_thrown',m.group(4))
+
+    # "more power punches for Pacquiao (81 of 259 to 75 of 235)"
+    # or "Muratalla ... power punches (112 of 296 to 99 of 251)".
+    for f,o in ((a,b),(b,a)):
+        for fa in sorted({clean(f),clean(f).split()[-1]},key=len,reverse=True):
+            for cat,label in [('jab',r'jabs?'),('power',r'power\s+punches')]:
+                patterns=[
+                    r'more\s+'+label+r'\s+for\s+'+re.escape(fa)+
+                    r'\s*\((\d{1,4})\s*(?:of|[-–])\s*(\d{1,4})\s+to\s+'
+                    r'(\d{1,4})\s*(?:of|[-–])\s*(\d{1,4})\)',
+                    r'(?<![A-Za-z0-9])'+re.escape(fa)+
+                    r'(?![A-Za-z0-9])[^.!?]{0,160}?'+label+
+                    r'\s*\((\d{1,4})\s*(?:of|[-–])\s*(\d{1,4})\s+to\s+'
+                    r'(\d{1,4})\s*(?:of|[-–])\s*(\d{1,4})\)'
+                ]
+                for pat in patterns:
+                    m=re.search(pat,text,re.I)
+                    if m:
+                        setv(f,cat+'_landed',m.group(1));setv(f,cat+'_thrown',m.group(2))
+                        setv(o,cat+'_landed',m.group(3));setv(o,cat+'_thrown',m.group(4))
+                        break
+
     # Exact per-fighter patterns. Numeric extraction is constrained to the
     # fighter's subject clause and cannot cross an exact opponent mention.
     for f,o in ((a,b),(b,a)):
