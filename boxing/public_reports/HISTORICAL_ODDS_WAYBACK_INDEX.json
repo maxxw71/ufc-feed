@@ -1,0 +1,37 @@
+{
+  "generated_at": "2026-09-25T13:06:59.071292+00:00",
+  "queries": [
+    {
+      "prefix": "https://www.proboxingodds.com/events/",
+      "query": "https://web.archive.org/cdx/search/cdx?url=https%3A%2F%2Fwww.proboxingodds.com%2Fevents%2F&matchType=prefix&output=json&filter=statuscode%3A200&fl=timestamp%2Coriginal%2Cstatuscode%2Cmimetype%2Cdigest&collapse=urlkey%2Cdigest&limit=10000",
+      "rows": 0,
+      "error": "HTTPError: HTTP Error 400: BAD REQUEST"
+    },
+    {
+      "prefix": "http://www.proboxingodds.com/events/",
+      "query": "https://web.archive.org/cdx/search/cdx?url=http%3A%2F%2Fwww.proboxingodds.com%2Fevents%2F&matchType=prefix&output=json&filter=statuscode%3A200&fl=timestamp%2Coriginal%2Cstatuscode%2Cmimetype%2Cdigest&collapse=urlkey%2Cdigest&limit=10000",
+      "rows": 0,
+      "error": "HTTPError: HTTP Error 400: BAD REQUEST"
+    },
+    {
+      "prefix": "https://proboxingodds.com/events/",
+      "query": "https://web.archive.org/cdx/search/cdx?url=https%3A%2F%2Fproboxingodds.com%2Fevents%2F&matchType=prefix&output=json&filter=statuscode%3A200&fl=timestamp%2Coriginal%2Cstatuscode%2Cmimetype%2Cdigest&collapse=urlkey%2Cdigest&limit=10000",
+      "rows": 0,
+      "error": "HTTPError: HTTP Error 400: BAD REQUEST"
+    },
+    {
+      "prefix": "http://proboxingodds.com/events/",
+      "query": "https://web.archive.org/cdx/search/cdx?url=http%3A%2F%2Fproboxingodds.com%2Fevents%2F&matchType=prefix&output=json&filter=statuscode%3A200&fl=timestamp%2Coriginal%2Cstatuscode%2Cmimetype%2Cdigest&collapse=urlkey%2Cdigest&limit=10000",
+      "rows": 0,
+      "error": "HTTPError: HTTP Error 400: BAD REQUEST"
+    }
+  ],
+  "raw_cdx_rows": 0,
+  "rejected_unparsed_rows": 0,
+  "events_with_pre_event_captures": 0,
+  "pre_event_captures_indexed": 0,
+  "date_min": null,
+  "date_max": null,
+  "events": [],
+  "policy": "Discovery only. Capture timestamp must be strictly before the event calendar date; same-day captures are excluded. No quote is validated by this index."
+}
