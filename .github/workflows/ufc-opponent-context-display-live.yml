@@ -1,0 +1,51 @@
+name: UFC Opponent Context Display Live
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/apply_live_opponent_context_display.sh'
+      - 'ufc/ufc_public_page.py'
+      - '.github/workflows/ufc-opponent-context-display-live.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  deploy:
+    runs-on: [self-hosted, Linux, X64, appwiza]
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - name: Deploy canonical UFC page module
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          KEY=/home/appwiza-runner/.ssh/appwiza_vps
+          HOST=anestishkurti92@127.0.0.1
+          scp -i "$KEY" -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=accept-new ufc/ufc_public_page.py "$HOST":/home/anestishkurti92/ufc-predictor-v1/ufc_public_page.py
+      - name: Deploy display sync and republish
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          KEY=/home/appwiza-runner/.ssh/appwiza_vps
+          HOST=anestishkurti92@127.0.0.1
+          cat scripts/apply_live_opponent_context_display.sh | ssh -i "$KEY" -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=accept-new "$HOST" 'export HOME=/home/anestishkurti92; bash -s'
+      - name: Verify live page markers and state
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          KEY=/home/appwiza-runner/.ssh/appwiza_vps
+          HOST=anestishkurti92@127.0.0.1
+          ssh -i "$KEY" -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=accept-new "$HOST" 'bash -s' <<'EOF'
+          set -Eeuo pipefail
+          grep -q 'Striking Differential + Opponent Context' /srv/appwiza-sports/public/ufc/index.html
+          grep -q 'KO/TKO Recovery + Opponent Age Guard' /srv/appwiza-sports/public/ufc/index.html
+          grep -q 'shared opponent-context publication guard' /srv/appwiza-sports/public/ufc/index.html
+          python3 - <<'PY'
+          import json
+          d=json.load(open('/srv/appwiza-sports/state/ufc.json'))
+          print('updated_at',d.get('updated_at'))
+          for c in d.get('cards',[]):
+              if not c.get('result') and not c.get('withdrawn'):
+                  print('ACTIVE',c.get('selection'),'vs',c.get('opponent'),[(m.get('id'),m.get('title'),m.get('win'),m.get('roi')) for m in c.get('methods',[])])
+          PY
+          EOF
