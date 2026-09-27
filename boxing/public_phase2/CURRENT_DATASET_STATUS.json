@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-27T11:49:50.560573+00:00",
+  "generated_at": "2026-09-27T11:54:28.707891+00:00",
   "authoritative_for_current_strict_research_coverage": true,
   "scope": "strict/research-relevant boxing dataset and current prospective price collection",
   "do_not_use_as_current_strict_coverage": "boxing/public_reports/DATA_GAP_AUDIT.json",
@@ -252,10 +252,10 @@
     }
   },
   "historical_pricing": {
-    "validated_price_rows": 515,
-    "distinct_validated_bouts": 155,
-    "distinct_validated_events": 62,
-    "validated_event_date_min": "2021-07-31",
+    "validated_price_rows": 1651,
+    "distinct_validated_bouts": 443,
+    "distinct_validated_events": 123,
+    "validated_event_date_min": "2021-06-20",
     "validated_event_date_max": "2026-05-31",
     "validated_bookmakers": [
       "BetMGM",
@@ -268,7 +268,7 @@
       "Unibet"
     ],
     "status": "independently_verified_pre_event_subset_available",
-    "policy": "Validation requires an exact pre-event Wayback snapshot plus exact archived event/bookmaker/bout/selection cell and price equivalence after American-to-decimal conversion (<=0.005 absolute difference). Newest eligible capture is attempted first; older captures may be used only if their exact Wayback timestamp is preserved.",
+    "policy": "Union of strict exact pre-event Wayback event-page and homepage quote validation. Stable quote signature = event date + bout id + bookmaker + selection + stored decimal price. No unverified historical rows.",
     "note": "Only this strict union of independently proven pre-event archived prices is treated as validated; remaining historical archive rows stay exploratory."
   },
   "prospective_pricing": {
