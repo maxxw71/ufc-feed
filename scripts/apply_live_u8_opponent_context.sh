@@ -95,6 +95,7 @@ print('Installed U8 opponent-context gate')
 PY
 
 "$ROOT/venv/bin/python" -m py_compile "$WATCHER"
+cd "$ROOT"
 
 "$ROOT/venv/bin/python" - <<'PY'
 import importlib.util,pandas as pd
