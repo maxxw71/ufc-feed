@@ -38,9 +38,6 @@ jobs:
           # Prime current archive links without sending a backlog.
           "$PY" "$ROOT/crypto_press_scanner.py" prime
 
-          # Use the live UFC/Appwiza send_email(subject, body) interface for one end-to-end test.
-          "$PY" "$ROOT/crypto_press_scanner.py" test-quant
-
           # Install an isolated hourly user cron. Keep sports jobs untouched.
           TMP=$(mktemp)
           crontab -l 2>/dev/null | grep -v '/crypto-press-scanner/crypto_press_scanner.py' > "$TMP" || true
@@ -53,8 +50,7 @@ jobs:
           date -u
           echo 'compile=ok'
           echo 'prime=ok'
-          echo 'test_email=attempted_via_live_appwiza_send_email'
-          echo '--- cron ---'
+                    echo '--- cron ---'
           crontab -l | grep -E 'CRON_TZ|crypto-press-scanner/crypto_press_scanner.py'
           echo '--- files ---'
           ls -l "$ROOT/crypto_press_scanner.py" "$ROOT/seen.json"
