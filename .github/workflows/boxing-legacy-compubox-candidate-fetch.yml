@@ -1,0 +1,36 @@
+name: Boxing Legacy CompuBox Candidate Fetch
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'boxing/research/fetch_legacy_compubox_candidates.py'
+      - 'boxing/public_punch_audit/legacy_compubox_cdx_index.json'
+      - '.github/workflows/boxing-legacy-compubox-candidate-fetch.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install -q beautifulsoup4 lxml
+      - run: python boxing/research/fetch_legacy_compubox_candidates.py
+      - name: Persist staged candidates
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          cp boxing/public_punch_audit/legacy_compubox_fetched_candidates.json /tmp/legacy_compubox_fetched_candidates.json
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git fetch origin main
+          git reset --hard origin/main
+          cp /tmp/legacy_compubox_fetched_candidates.json boxing/public_punch_audit/legacy_compubox_fetched_candidates.json
+          git add boxing/public_punch_audit/legacy_compubox_fetched_candidates.json
+          git diff --cached --quiet || (git commit -m 'Stage legacy CompuBox archive candidates' && git push origin HEAD:main)
