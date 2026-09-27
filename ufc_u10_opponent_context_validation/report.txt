@@ -1,0 +1,89 @@
+source feature_expansion/prefight_favorite_features_v6.csv
+rows 3322
+COLUMNS
+market_prob
+profit100
+won
+age_adv
+f_sig_diff_pm
+f_td_l15
+f_td_a15
+f_ctrl15
+f_ctrl_allowed15
+o_sig_diff_pm
+o_td_l15
+o_td_a15
+o_ctrl15
+o_ctrl_allowed15
+f2_f_recent5_sig_diff_pm
+f2_o_recent5_sig_diff_pm
+f2_diff_recent5_sig_diff_pm
+f2_f_r3_sig_diff_pm
+f2_o_r3_sig_diff_pm
+f2_diff_r3_sig_diff_pm
+f2_f_ko_losses
+f2_o_ko_losses
+f2_diff_ko_losses
+f2_f_days_since_ko_loss
+f2_o_days_since_ko_loss
+f2_f_r1_ctrl_diff
+f2_o_r1_ctrl_diff
+f2_diff_r1_ctrl_diff
+f2_f_recent5_ctrl_diff15
+f2_o_recent5_ctrl_diff15
+f2_diff_recent5_ctrl_diff15
+f2_f_sig_diff_trend3
+f2_o_sig_diff_trend3
+f2_diff_sig_diff_trend3
+f2_f_r3_ctrl_diff
+f2_o_r3_ctrl_diff
+f2_diff_r3_ctrl_diff
+f2_f_cardio_ctrl_decay
+f2_o_cardio_ctrl_decay
+f2_diff_cardio_ctrl_decay
+f2_f_recent3_sig_diff_pm
+f2_o_recent3_sig_diff_pm
+f2_diff_recent3_sig_diff_pm
+f2_f_ko_loss_last5
+f2_o_ko_loss_last5
+f2_diff_ko_loss_last5
+f2_f_r1_sig_diff_pm
+f2_o_r1_sig_diff_pm
+f2_diff_r1_sig_diff_pm
+f2_f_strong_opp_sig_diff
+f2_o_strong_opp_sig_diff
+f2_f_quality_adj_sig_diff
+f2_o_quality_adj_sig_diff
+f2_diff_quality_adj_sig_diff
+f2_f_recent3_ctrl_diff15
+f2_o_recent3_ctrl_diff15
+f2_diff_recent3_ctrl_diff15
+f2_f_ko_loss_last3
+f2_o_ko_loss_last3
+f2_diff_ko_loss_last3
+f2_f_ctrl_diff_trend3
+f2_o_ctrl_diff_trend3
+f2_diff_ctrl_diff_trend3
+f2_diff_strong_opp_sig_diff
+f2_diff_days_since_ko_loss
+f2_norm_f_sig_diff_pm
+f2_norm_f_ctrl15
+f2_norm_f_ctrl_allowed15
+u10_key f2_diff_days_since_ko_loss
+BASE U10                                           n=330 235-95 win= 71.2% ROI=  +7.80%
+KEEP favorite not >1y older                        n=330 235-95 win= 71.2% ROI=  +7.80%
+KEEP favorite not >2y older                        n=330 235-95 win= 71.2% ROI=  +7.80%
+KEEP favorite not >3y older                        n=330 235-95 win= 71.2% ROI=  +7.80%
+KEEP favorite not >4y older                        n=330 235-95 win= 71.2% ROI=  +7.80%
+KEEP veto older>1+ctrladv>=0.5                     n=330 235-95 win= 71.2% ROI=  +7.80%
+KEEP veto older>1+ctrladv>=1.0                     n=330 235-95 win= 71.2% ROI=  +7.80%
+KEEP veto older>1+ctrladv>=2.0                     n=330 235-95 win= 71.2% ROI=  +7.80%
+KEEP veto older>2+ctrladv>=0.5                     n=330 235-95 win= 71.2% ROI=  +7.80%
+KEEP veto older>2+ctrladv>=1.0                     n=330 235-95 win= 71.2% ROI=  +7.80%
+KEEP veto older>2+ctrladv>=2.0                     n=330 235-95 win= 71.2% ROI=  +7.80%
+KEEP veto older>3+ctrladv>=0.5                     n=330 235-95 win= 71.2% ROI=  +7.80%
+KEEP veto older>3+ctrladv>=1.0                     n=330 235-95 win= 71.2% ROI=  +7.80%
+KEEP veto older>3+ctrladv>=2.0                     n=330 235-95 win= 71.2% ROI=  +7.80%
+KEEP opp sig diff adv < 0.5                        n=241 176-65 win= 73.0% ROI=  +9.27%
+KEEP opp sig diff adv < 1.0                        n=274 197-77 win= 71.9% ROI=  +8.57%
+KEEP opp sig diff adv < 1.5                        n=295 210-85 win= 71.2% ROI=  +7.18%
