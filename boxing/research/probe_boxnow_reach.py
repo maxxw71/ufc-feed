@@ -12,6 +12,8 @@ from bs4 import BeautifulSoup
 ROOT=Path(__file__).resolve().parents[1]
 AUDIT=ROOT/'public_phase2'/'PROFILE_GAP_AUDIT.json'
 OUT=ROOT/'profile_supplements'/'boxnow_reach_probe.json'
+ADD=ROOT/'profile_supplements'/'boxnow_reach_additions.jsonl'
+MB=ROOT/'profile_supplements'/'martialbot_missing_reach_inventory.json'
 UA='Mozilla/5.0 AppwizaBoxNowReach/1.0'
 BASE='https://boxnow.live'
 SITEMAPS=[
@@ -124,6 +126,8 @@ def page_name_and_reach(raw):
 def main():
     audit=json.loads(AUDIT.read_text())
     targets={nk(x['name']):x for x in audit.get('fighters',[]) if 'reach_cm' in set(x.get('missing') or [])}
+    mbobj=json.loads(MB.read_text()) if MB.exists() else {}
+    mb={nk(x['name']):x for x in mbobj.get('leads',[])}
     urls,diag=discover()
     # Candidate mapping uses visible slug only to avoid fetching every page.
     cmap={}
@@ -145,16 +149,40 @@ def main():
             elif r is None:rec['status']='no_reach'
             elif not 120<=r<=270:rec['status']='implausible_reach'
             else:
-                rec['status']='lead';leads.append({'id':t['id'],'name':t['name'],'reach_cm':r,'url':final,
-                  'strict_bout_appearances':t.get('strict_bout_appearances')})
+                rec['status']='lead'
+                m=mb.get(key)
+                if m and m.get('reach_cm') is not None:
+                    rec['martialbot_reach_cm']=m['reach_cm']
+                    rec['agrees_martialbot']=abs(float(m['reach_cm'])-float(r))<=1
+                leads.append({'id':t['id'],'name':t['name'],'reach_cm':r,'url':final,
+                  'strict_bout_appearances':t.get('strict_bout_appearances'),
+                  'martialbot_reach_cm':rec.get('martialbot_reach_cm'),
+                  'agrees_martialbot':rec.get('agrees_martialbot')})
             rows.append(rec)
         except Exception as e:rows.append({'name':t['name'],'url':cand[0],'status':'fetch_error','error':type(e).__name__+': '+str(e)[:180]})
+    corroborated=[x for x in leads if x.get('agrees_martialbot') is True]
+    additions=[]
+    for x in corroborated:
+        t=targets[nk(x['name'])];m=mb[nk(x['name'])]
+        reach=round((float(x['reach_cm'])+float(m['reach_cm']))/2,2)
+        if float(reach).is_integer():reach=int(reach)
+        additions.append({'target_source_id':t['id'],'name':t['name'],'career_source':t.get('career_source'),
+          'fields':{'reach_cm':reach},
+          'evidence':[{'source':'boxnow_martialbot_reach_consensus','fields':{'reach_cm':reach},
+            'exact_identity':True,'agreement_tolerance_cm':1,
+            'sources':[{'source':'boxnow','url':x['url'],'reported_reach_cm':x['reach_cm']},
+                       {'source':'martialbot','url':m['url'],'reported_reach_cm':m['reach_cm']}]}],
+          'conflicts':{},'quality':'two_source_reach_consensus_boxnow_martialbot_exact_identity',
+          'collected_at':dt.datetime.now(dt.timezone.utc).isoformat()})
+    ADD.parent.mkdir(parents=True,exist_ok=True)
+    with ADD.open('w') as f:
+        for x in additions:f.write(json.dumps(x,ensure_ascii=False)+'\n')
     counts={}
     for r in rows:counts[r['status']]=counts.get(r['status'],0)+1
     out={'generated_at':dt.datetime.now(dt.timezone.utc).isoformat(),'missing_reach_targets':len(targets),
-      'discovered_boxer_urls':len(urls),'matched_target_urls':len(rows),'status_counts':counts,'lead_count':len(leads),
+      'discovered_boxer_urls':len(urls),'matched_target_urls':len(rows),'status_counts':counts,'lead_count':len(leads),'martialbot_corroborated':len(corroborated),
       'leads':leads,'discovery_diagnostics':diag,'rows':rows,
-      'policy':'Discovery only; public sitemap/listing discovery, exact H1 identity and plausible numeric reach. No guessed numeric IDs and no automatic merge without corroboration.'}
+      'policy':'Public sitemap/listing discovery, exact H1 identity and plausible numeric reach. Automatic additions require independent exact-identity MartialBot agreement within 1 cm; no guessed IDs.'}
     OUT.write_text(json.dumps(out,indent=2,ensure_ascii=False))
     print(json.dumps({k:out[k] for k in ('missing_reach_targets','discovered_boxer_urls','matched_target_urls','status_counts','lead_count')},indent=2))
 if __name__=='__main__':main()
