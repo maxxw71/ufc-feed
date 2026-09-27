@@ -7,6 +7,7 @@ import os
 import re
 import sys
 import time
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path
 from urllib.parse import urljoin, urlparse
 from urllib.request import Request, urlopen
@@ -14,7 +15,9 @@ from urllib.request import Request, urlopen
 ROOT = Path("/home/anestishkurti92/crypto-press-scanner")
 STATE = ROOT / "seen.json"
 UA = "Mozilla/5.0 (compatible; AppwizaCryptoPressScanner/1.0; +https://appwiza.com)"
-TIMEOUT = 18
+TIMEOUT = 8
+MAX_LINKS_PER_PAGE = 80
+MAX_ARTICLES_PER_RUN = 350
 
 SOURCES = [
     {"name":"Quant","domains":["quant.network"],"pages":["https://quant.network/press-releases/"],"tokens":["QNT"]},
@@ -183,11 +186,12 @@ def page_title(raw):
 
 def page_links(base, raw):
     s = raw.decode("utf-8","ignore")
-    out = set()
+    out, seen = [], set()
     for m in re.finditer(r'(?is)<a\b[^>]*href=["\']([^"\'#]+)', s):
         u = urljoin(base, html.unescape(m.group(1)).strip()).split("#",1)[0]
-        if u.startswith("http"):
-            out.add(u)
+        if u.startswith("http") and u not in seen:
+            seen.add(u)
+            out.append(u)
     return out
 
 def source_for(url):
@@ -198,25 +202,41 @@ def source_for(url):
     return None
 
 def articleish(url):
+    host = (urlparse(url).hostname or "").lower()
     p = urlparse(url).path.lower()
     if len(p.strip("/")) < 8:
         return False
     if any(x in p for x in ("/tag/","/category/","/author/","/page/","/search","/privacy","/terms","/careers","/events")):
         return False
+
+    # Press-wire category/index links were the main source of crawl explosion.
+    if "prnewswire.com" in host:
+        return p.startswith("/news-releases/") and p.endswith(".html") and "-list/" not in p and "latest-news" not in p
+    if "globenewswire.com" in host:
+        return ("/news-release/" in p or "/newsroom/" in p) and (p.endswith(".html") or p.count("/") >= 4)
+
     return any(x in p for x in ("press","news","article","insight","blog","perspective","announcement","release","story"))
 
 def discover():
-    found = set()
+    found = []
+    seen = set()
     for src in SOURCES:
         for page in src["pages"]:
             try:
                 raw = fetch(page)
+                accepted = 0
                 for u in page_links(page, raw):
+                    if u in seen:
+                        continue
                     if source_for(u) and articleish(u):
-                        found.add(u)
+                        seen.add(u)
+                        found.append(u)
+                        accepted += 1
+                        if accepted >= MAX_LINKS_PER_PAGE:
+                            break
             except Exception as e:
                 print("source_error", src["name"], page, type(e).__name__, flush=True)
-    return found
+    return found[:MAX_ARTICLES_PER_RUN]
 
 def evaluate(url, raw):
     src = source_for(url)
@@ -329,21 +349,28 @@ def save_seen(seen):
 def scan(prime=False):
     seen = load_seen()
     urls = discover()
-    print("discovered", len(urls), flush=True)
+    fresh = [u for u in urls if u not in seen]
+    print("discovered", len(urls), "fresh", len(fresh), flush=True)
     alerts = []
     now = int(time.time())
 
-    for url in sorted(urls):
-        if url in seen:
-            continue
+    def process(url):
         try:
             raw = fetch(url)
-            item = evaluate(url, raw)
-            seen[url] = now
-            if item:
-                alerts.append(item)
+            return url, evaluate(url, raw), None
         except Exception as e:
-            print("article_error", url, type(e).__name__, flush=True)
+            return url, None, type(e).__name__
+
+    # Parallel bounded fetches keep broad discovery fast and isolate slow/blocking sites.
+    with ThreadPoolExecutor(max_workers=12) as pool:
+        futures = [pool.submit(process, u) for u in fresh]
+        for fut in as_completed(futures):
+            url, item, err = fut.result()
+            seen[url] = now
+            if err:
+                print("article_error", url, err, flush=True)
+            elif item:
+                alerts.append(item)
 
     if not prime:
         alerts.sort(key=lambda x: x["score"], reverse=True)
