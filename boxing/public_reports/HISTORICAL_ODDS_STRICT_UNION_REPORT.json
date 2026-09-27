@@ -1,0 +1,26 @@
+{
+  "generated_at": "2026-09-27T11:49:43.876789+00:00",
+  "input_rows": {
+    "event_page": 515,
+    "homepage": 1253
+  },
+  "stable_unique_quote_rows": 1651,
+  "quote_signatures_validated_by_both_routes": 117,
+  "event_page_only_quote_rows": 398,
+  "homepage_only_quote_rows": 1136,
+  "distinct_validated_bouts": 443,
+  "distinct_validated_events": 123,
+  "date_min": "2021-06-20",
+  "date_max": "2026-05-31",
+  "validated_bookmakers": [
+    "BetMGM",
+    "BetRivers",
+    "BetWay",
+    "Caesars",
+    "DraftKings",
+    "FanDuel",
+    "PointsBet",
+    "Unibet"
+  ],
+  "policy": "Union of strict exact pre-event Wayback event-page and homepage quote validation. Stable quote signature = event date + bout id + bookmaker + selection + stored decimal price. No unverified historical rows."
+}
