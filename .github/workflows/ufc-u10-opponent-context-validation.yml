@@ -1,0 +1,75 @@
+name: UFC U10 Opponent Context Validation
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/ufc-u10-opponent-context-validation.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  validate:
+    runs-on: [self-hosted, Linux, X64, appwiza]
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - shell: bash
+        run: |
+          set -Eeuo pipefail
+          KEY=/home/appwiza-runner/.ssh/appwiza_vps
+          HOST=anestishkurti92@127.0.0.1
+          mkdir -p ufc_u10_opponent_context_validation
+          ssh -i "$KEY" -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=accept-new "$HOST" 'bash -s' > ufc_u10_opponent_context_validation/report.txt <<'EOF'
+          set -Eeuo pipefail
+          ROOT=/home/anestishkurti92/ufc-predictor-v1
+          cd "$ROOT"
+          venv/bin/python - <<'PY'
+          import pandas as pd, numpy as np
+          paths=['feature_expansion/prefight_favorite_features_v6.csv','feature_expansion/prefight_favorite_features_v5.csv','feature_expansion/prefight_favorite_features_v2.csv','new_category_discovery/prefight_favorite_features.csv']
+          p=next((x for x in paths if __import__('pathlib').Path(x).exists()),None)
+          print('source',p)
+          d=pd.read_csv(p,low_memory=False)
+          print('rows',len(d))
+          cand=[c for c in d.columns if any(k in c.lower() for k in ['ko_loss','age','ctrl','td_a15','td_l15','sig_diff','market_prob','profit100','won'])]
+          print('COLUMNS')
+          print('\n'.join(cand))
+          key=next((c for c in d.columns if 'diff_days_since_ko_loss' in c.lower()),None)
+          print('u10_key',key)
+          if not key: raise SystemExit(2)
+          x=d[pd.to_numeric(d[key],errors='coerce')>=105].copy()
+          for c in ['profit100','won','market_prob','f_age','o_age','age_adv','f_ctrl15','o_ctrl15','f_td_a15','o_td_a15','f_sig_diff_pm','o_sig_diff_pm']:
+              if c in x.columns:x[c]=pd.to_numeric(x[c],errors='coerce')
+          def roi(z): return z.profit100.sum()/(100*len(z)) if len(z) else np.nan
+          def show(label,z):
+              w=pd.to_numeric(z.won,errors='coerce').fillna(0)
+              print(f"{label:<50} n={len(z):3d} {int(w.sum())}-{int(len(z)-w.sum())} win={(w.mean()*100 if len(z) else np.nan):5.1f}% ROI={(roi(z)*100 if len(z) else np.nan):+7.2f}%")
+          show('BASE U10',x)
+          # resolve available age fields
+          agegap=None
+          if 'age_adv' in x.columns: agegap=-x.age_adv  # convert to favorite older-by if age_adv=opp-fav
+          elif 'f_age' in x.columns and 'o_age' in x.columns: agegap=x.f_age-x.o_age
+          if agegap is not None:
+              x['fav_older_by']=agegap
+              for a in [1,2,3,4]:
+                  show(f'KEEP favorite not >{a}y older',x[~(x.fav_older_by>a)])
+          if 'f_ctrl15' in x.columns and 'o_ctrl15' in x.columns:
+              x['opp_ctrl_adv']=x.o_ctrl15-x.f_ctrl15
+              for a in [1,2,3]:
+                  for gap in [.5,1.0,2.0]:
+                      veto=(x.fav_older_by>a)&(x.opp_ctrl_adv>=gap) if 'fav_older_by' in x else (x.opp_ctrl_adv>=gap)
+                      show(f'KEEP veto older>{a}+ctrladv>={gap}',x[~veto])
+          if 'f_sig_diff_pm' in x.columns and 'o_sig_diff_pm' in x.columns:
+              x['opp_sig_adv']=x.o_sig_diff_pm-x.f_sig_diff_pm
+              for gap in [.5,1.0,1.5]:
+                  show(f'KEEP opp sig diff adv < {gap}',x[~(x.opp_sig_adv>=gap)])
+          PY
+          EOF
+          cat ufc_u10_opponent_context_validation/report.txt
+      - shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add ufc_u10_opponent_context_validation/report.txt
+          git diff --cached --quiet && exit 0
+          git commit -m "Validate U10 opponent context"
+          git push
