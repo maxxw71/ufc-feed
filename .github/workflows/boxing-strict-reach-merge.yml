@@ -1,0 +1,48 @@
+name: Boxing Strict Reach Merge
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'boxing/research/merge_strict_reach_additions.py'
+      - 'boxing/profile_supplements/cross_source_reach_additions.jsonl'
+      - 'boxing/profile_supplements/third_source_reach_additions.jsonl'
+      - 'boxing/profile_supplements/boxingscene_wayback_reach_additions.jsonl'
+      - 'boxing/profile_supplements/fitequant_reach_additions.jsonl'
+      - 'boxing/profile_supplements/boxrec_wayback_reach_additions.jsonl'
+      - '.github/workflows/boxing-strict-reach-merge.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  merge:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python boxing/research/merge_strict_reach_additions.py
+      - name: Persist verified reach merge
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          mkdir -p /tmp/strict-reach
+          cp boxing/profile_supplements/verified_profiles.jsonl /tmp/strict-reach/
+          cp boxing/profile_supplements/strict_reach_merge_report.json /tmp/strict-reach/
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          for attempt in 1 2 3 4; do
+            git fetch origin main
+            git reset --hard origin/main
+            cp /tmp/strict-reach/verified_profiles.jsonl boxing/profile_supplements/
+            cp /tmp/strict-reach/strict_reach_merge_report.json boxing/profile_supplements/
+            git add boxing/profile_supplements/verified_profiles.jsonl boxing/profile_supplements/strict_reach_merge_report.json
+            if git diff --cached --quiet; then exit 0; fi
+            git commit -m 'Merge strict corroborated boxing reaches'
+            if git push origin HEAD:main; then exit 0; fi
+            sleep $((attempt * 2))
+          done
+          exit 1
