@@ -132,6 +132,7 @@ jobs:
           python phase3_physical_context_scan.py
           python phase3_robustness.py
           python phase4_dynamic_factors.py
+          python full_method_discovery_sweep.py
           python audit_strict_profile_gaps.py
       - name: Collect compact results
         if: success()
@@ -142,7 +143,7 @@ jobs:
           root=Path('/tmp/boxing-research')
           run=Path((root/'LATEST_CHRONOLOGICAL_MASTER.txt').read_text().strip())
           out=Path('boxing/public_phase2');out.mkdir(exist_ok=True)
-          for name in ['phase2_report.txt','phase2_target_candidates.json','phase2_interaction_research.json','coverage.json','age_form_robustness.txt','age_form_robustness.json','rising_prospect_hypothesis.txt','rising_prospect_hypothesis.json','candidate_method_validation.txt','candidate_method_validation.json','validated_price_method_search.txt','validated_price_method_search.json','phase3_physical_context.txt','phase3_physical_context.json','phase3_robustness.txt','phase3_robustness.json','phase4_dynamic_factors.txt','phase4_dynamic_factors.json']:
+          for name in ['phase2_report.txt','phase2_target_candidates.json','phase2_interaction_research.json','coverage.json','age_form_robustness.txt','age_form_robustness.json','rising_prospect_hypothesis.txt','rising_prospect_hypothesis.json','candidate_method_validation.txt','candidate_method_validation.json','validated_price_method_search.txt','validated_price_method_search.json','phase3_physical_context.txt','phase3_physical_context.json','phase3_robustness.txt','phase3_robustness.json','phase4_dynamic_factors.txt','phase4_dynamic_factors.json','full_method_discovery_sweep.txt','full_method_discovery_sweep.json']:
               src=run/name
               if src.exists():
                   if name=='phase2_interaction_research.json':
