@@ -127,6 +127,61 @@ def load_reports(db):
         if chosen:out.append(chosen)
     return out
 
+def load_legacy_round_reports():
+    path=Path(__file__).resolve().parent.parent/'punch_supplements'/'legacy_compubox_round_reports.jsonl'
+    if not path.exists():return []
+    out=[]
+    for line in path.read_text().splitlines():
+        if not line.strip():continue
+        try:x=json.loads(line)
+        except Exception:continue
+        fighters=[str(v).strip() for v in (x.get('fighters') or [])]
+        rounds=int(x.get('rounds') or 0)
+        cats=x.get('cats') or {}
+        if len(fighters)!=2 or rounds<1 or not all(cat in cats for cat in CATEGORIES):continue
+        by=defaultdict(dict);valid=True
+        for cat in CATEGORIES:
+            for fighter in fighters:
+                vals=(cats.get(cat) or {}).get(fighter)
+                if not isinstance(vals,list) or len(vals)!=rounds:
+                    valid=False;break
+                for i,pair in enumerate(vals,1):
+                    if not isinstance(pair,list) or len(pair)!=2:
+                        valid=False;break
+                    try:landed,thrown=int(pair[0]),int(pair[1])
+                    except Exception:
+                        valid=False;break
+                    if landed<0 or thrown<landed:
+                        valid=False;break
+                    by[fighter][(i,cat)]=(landed,thrown)
+                if not valid:break
+            if not valid:break
+        if not valid:continue
+        # Re-check total == jab + power for every round before use.
+        for fighter in fighters:
+            for rnd in range(1,rounds+1):
+                t=by[fighter][(rnd,'total')];j=by[fighter][(rnd,'jab')];p=by[fighter][(rnd,'power')]
+                if t!=(j[0]+p[0],j[1]+p[1]):
+                    valid=False;break
+            if not valid:break
+        if not valid:continue
+        url=str(x.get('report_url') or '')
+        out.append({
+          'url':url,'report_id':'legacy:'+url,'date':str(x.get('bout_date') or ''),
+          'available_from_date':str(x.get('available_from_date') or x.get('bout_date') or ''),
+          'title':f"{fighters[0]} vs {fighters[1]} legacy archived CompuBox",
+          'fighters':fighters,'identity_map':{v:v for v in fighters},
+          'by':by,'rounds':list(range(1,rounds+1)),'totals':{},'variant_count':1,
+          'source_quality':'archived_compubox_full_round_table_strict'
+        })
+    return out
+
+def merge_legacy_round_reports(direct_reports,legacy_reports):
+    strong={report_pair_key(r) for r in direct_reports};strong.discard(None)
+    accepted=[r for r in legacy_reports if report_pair_key(r) not in strong]
+    return list(direct_reports)+accepted,len(accepted),len(legacy_reports)-len(accepted)
+
+
 def reviewed_chart_metadata():
     path=Path(__file__).resolve().parent.parent/'punch_supplements'/'reviewed_round_chart_metadata.json'
     if not path.exists():return {}
@@ -391,8 +446,10 @@ def main():
     dbpath=Path(args.db);out=Path(args.out) if args.out else dbpath.resolve().parent/'punch_profiles';out.mkdir(parents=True,exist_ok=True)
     db=sqlite3.connect(dbpath)
     direct_reports=load_reports(db)
+    legacy_reports=load_legacy_round_reports()
+    strong_reports,legacy_reports_accepted,legacy_reports_skipped=merge_legacy_round_reports(direct_reports,legacy_reports)
     reviewed_reports=load_reviewed_chart_reports(db)
-    reports,reviewed_reports_accepted,reviewed_reports_skipped=merge_round_report_tiers(direct_reports,reviewed_reports)
+    reports,reviewed_reports_accepted,reviewed_reports_skipped=merge_round_report_tiers(strong_reports,reviewed_reports)
     round_obs=fight_observations(reports)
     total_obs=load_total_supplement_observations()
     obs,supplement_obs_accepted,supplement_obs_skipped=merge_observation_tiers(round_obs,total_obs)
@@ -404,6 +461,9 @@ def main():
     coverage={
         'parsed_reports_with_two_sides':len(reports),
         'direct_round_reports':len(direct_reports),
+        'legacy_round_reports_loaded':len(legacy_reports),
+        'legacy_round_reports_accepted':legacy_reports_accepted,
+        'legacy_round_reports_skipped_due_to_stronger_pair':legacy_reports_skipped,
         'reviewed_chart_reports_loaded':len(reviewed_reports),
         'reviewed_chart_reports_accepted':reviewed_reports_accepted,
         'reviewed_chart_reports_skipped_due_to_stronger_pair':reviewed_reports_skipped,
