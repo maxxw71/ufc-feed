@@ -1,0 +1,81 @@
+name: Appwiza crypto scanner deploy
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'crypto/crypto_press_scanner.py'
+      - '.github/workflows/appwiza-crypto-scanner-deploy.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  deploy:
+    runs-on: [self-hosted, Linux, X64, appwiza]
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Deploy scanner and hourly timer
+        shell: bash
+        run: |
+          set -euo pipefail
+          ROOT=/home/anestishkurti92/crypto-press-scanner
+          mkdir -p "$ROOT" "$HOME/.config/systemd/user" crypto
+          install -m 755 crypto/crypto_press_scanner.py "$ROOT/crypto_press_scanner.py"
+          python3 -m py_compile "$ROOT/crypto_press_scanner.py"
+
+          cat > "$HOME/.config/systemd/user/appwiza-crypto-press.service" <<'UNIT'
+          [Unit]
+          Description=Appwiza crypto primary-source press scanner
+          After=network-online.target
+
+          [Service]
+          Type=oneshot
+          WorkingDirectory=/home/anestishkurti92/crypto-press-scanner
+          ExecStart=/usr/bin/python3 /home/anestishkurti92/crypto-press-scanner/crypto_press_scanner.py run
+          Nice=10
+          UNIT
+
+          cat > "$HOME/.config/systemd/user/appwiza-crypto-press.timer" <<'UNIT'
+          [Unit]
+          Description=Run Appwiza crypto press scanner hourly
+
+          [Timer]
+          OnBootSec=5m
+          OnUnitActiveSec=1h
+          RandomizedDelaySec=3m
+          Persistent=true
+
+          [Install]
+          WantedBy=timers.target
+          UNIT
+
+          systemctl --user daemon-reload
+          systemctl --user enable --now appwiza-crypto-press.timer
+
+          # Prime existing archive items without emailing historical backlog.
+          python3 "$ROOT/crypto_press_scanner.py" prime
+
+          # End-to-end proof through the exact existing UFC/Appwiza send_email() function.
+          python3 "$ROOT/crypto_press_scanner.py" test-quant
+
+          REPORT=crypto/press_scanner_deploy_report.txt
+          {
+            echo "APPWIZA CRYPTO PRESS SCANNER"
+            date -u
+            echo "compile=ok"
+            echo "timer_enabled=$(systemctl --user is-enabled appwiza-crypto-press.timer || true)"
+            echo "timer_active=$(systemctl --user is-active appwiza-crypto-press.timer || true)"
+            systemctl --user list-timers appwiza-crypto-press.timer --no-pager || true
+            echo "--- files ---"
+            ls -l "$ROOT/crypto_press_scanner.py" "$ROOT/seen.json" 2>/dev/null || true
+          } > "$REPORT"
+
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add "$REPORT"
+          if ! git diff --cached --quiet; then
+            git commit -m 'Record crypto scanner deployment status'
+            git push
+          fi
