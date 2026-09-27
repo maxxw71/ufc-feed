@@ -33,6 +33,59 @@ SOURCES = [
     {"name":"BIS","domains":["bis.org"],"pages":["https://www.bis.org/press/index.htm"],"tokens":[]},
     {"name":"Visa","domains":["visa.com"],"pages":["https://usa.visa.com/about-visa/newsroom.html"],"tokens":[]},
     {"name":"Mastercard","domains":["mastercard.com"],"pages":["https://www.mastercard.com/news/"],"tokens":[]},
+
+    # Broad discovery: these can surface projects/tokens we have never preselected.
+    {"name":"PR Newswire Crypto","domains":["prnewswire.com"],"pages":[
+        "https://www.prnewswire.com/news-releases/consumer-technology-latest-news/cryptocurrency-list/",
+        "https://www.prnewswire.com/news-releases/business-technology-latest-news/blockchain-list/",
+        "https://www.prnewswire.com/news-releases/consumer-technology-latest-news/blockchain-list/"
+    ],"tokens":[]},
+    {"name":"GlobeNewswire Crypto","domains":["globenewswire.com"],"pages":[
+        "https://www.globenewswire.com/en/search/tag/blockchain",
+        "https://www.globenewswire.com/search/tag/crypto"
+    ],"tokens":[]},
+
+    # US / global regulators and central-bank infrastructure.
+    {"name":"SEC Crypto","domains":["sec.gov"],"pages":[
+        "https://www.sec.gov/about/crypto-task-force/crypto-newsroom",
+        "https://www.sec.gov/newsroom/press-releases?combine=crypto"
+    ],"tokens":[]},
+    {"name":"CFTC","domains":["cftc.gov"],"pages":["https://www.cftc.gov/PressRoom/PressReleases"],"tokens":[]},
+    {"name":"OCC","domains":["occ.treas.gov"],"pages":["https://www.occ.treas.gov/news-issuances/news-releases/index-news-releases.html"],"tokens":[]},
+    {"name":"Federal Reserve","domains":["federalreserve.gov"],"pages":["https://www.federalreserve.gov/newsevents/pressreleases.htm"],"tokens":[]},
+    {"name":"FCA","domains":["fca.org.uk"],"pages":["https://www.fca.org.uk/news"],"tokens":[]},
+    {"name":"MAS","domains":["mas.gov.sg"],"pages":["https://www.mas.gov.sg/news/media-releases"],"tokens":[]},
+    {"name":"HKMA","domains":["hkma.gov.hk"],"pages":["https://www.hkma.gov.hk/eng/news-and-media/press-releases/"],"tokens":[]},
+    {"name":"NYDFS","domains":["dfs.ny.gov"],"pages":["https://www.dfs.ny.gov/reports_and_publications/press_releases"],"tokens":[]},
+
+    # Exchanges / brokers often announce listings and institutional integrations first.
+    {"name":"Coinbase","domains":["coinbase.com"],"pages":["https://www.coinbase.com/blog"],"tokens":[]},
+    {"name":"Kraken","domains":["kraken.com"],"pages":["https://blog.kraken.com/"],"tokens":[]},
+    {"name":"Binance","domains":["binance.com"],"pages":["https://www.binance.com/en/support/announcement"],"tokens":[]},
+    {"name":"Robinhood","domains":["robinhood.com"],"pages":["https://newsroom.aboutrobinhood.com/"],"tokens":[]},
+
+    # Asset managers / tokenization infrastructure.
+    {"name":"BlackRock","domains":["blackrock.com"],"pages":["https://www.blackrock.com/corporate/newsroom"],"tokens":[]},
+    {"name":"Franklin Templeton","domains":["franklintempleton.com"],"pages":["https://www.franklintempleton.com/press-releases"],"tokens":[]},
+    {"name":"WisdomTree","domains":["wisdomtree.com"],"pages":["https://www.wisdomtree.com/investments/blog"],"tokens":[]},
+    {"name":"Grayscale","domains":["grayscale.com"],"pages":["https://www.grayscale.com/press"],"tokens":[]},
+    {"name":"VanEck","domains":["vaneck.com"],"pages":["https://www.vaneck.com/us/en/blogs/digital-assets/"],"tokens":[]},
+    {"name":"Bitwise","domains":["bitwiseinvestments.com"],"pages":["https://bitwiseinvestments.com/newsroom"],"tokens":[]},
+    {"name":"Securitize","domains":["securitize.io"],"pages":["https://securitize.io/learn/press"],"tokens":[]},
+    {"name":"Fireblocks","domains":["fireblocks.com"],"pages":["https://www.fireblocks.com/blog"],"tokens":[]},
+
+    # Payments / fintech can reveal adoption before a token project's own press page.
+    {"name":"PayPal","domains":["paypal.com"],"pages":["https://newsroom.paypal-corp.com/"],"tokens":[]},
+    {"name":"Stripe","domains":["stripe.com"],"pages":["https://stripe.com/newsroom"],"tokens":[]},
+
+    # Large banks with active digital-asset/tokenization programs.
+    {"name":"JPMorgan","domains":["jpmorganchase.com","jpmorgan.com"],"pages":["https://www.jpmorganchase.com/newsroom"],"tokens":[]},
+    {"name":"Citi","domains":["citigroup.com"],"pages":["https://www.citigroup.com/global/news"],"tokens":[]},
+    {"name":"BNY","domains":["bny.com"],"pages":["https://www.bny.com/corporate/global/en/about-us/newsroom.html"],"tokens":[]},
+    {"name":"State Street","domains":["statestreet.com"],"pages":["https://newsroom.statestreet.com/"],"tokens":[]},
+    {"name":"Standard Chartered","domains":["sc.com"],"pages":["https://www.sc.com/en/media/press-release/"],"tokens":[]},
+    {"name":"HSBC","domains":["hsbc.com"],"pages":["https://www.hsbc.com/news-and-views/news"],"tokens":[]},
+    {"name":"UBS","domains":["ubs.com"],"pages":["https://www.ubs.com/global/en/media/display-page-ndp/en-2026.html"],"tokens":[]},
 ]
 
 CRYPTO_TERMS = [
@@ -58,6 +111,52 @@ NAMED_INSTITUTIONS = [
 ]
 
 LOW_VALUE = ["webinar","podcast","event recap","conference","sponsorship","award","career","hiring","meet us at"]
+
+TOKEN_ALIASES = {
+    "BTC":["bitcoin"," btc ","$btc"], "ETH":["ethereum"," ether "," eth ","$eth"],
+    "SOL":["solana"," sol ","$sol"], "XRP":["xrp","ripple"], "QNT":["quant"," qnt ","$qnt"],
+    "LINK":["chainlink"," link ","$link"], "ADA":["cardano"," ada ","$ada"], "AVAX":["avalanche"," avax ","$avax"],
+    "DOT":["polkadot"," dot ","$dot"], "ATOM":["cosmos"," atom ","$atom"], "NEAR":["near protocol"," near ","$near"],
+    "SUI":["sui"," sui ","$sui"], "APT":["aptos"," apt ","$apt"], "ARB":["arbitrum"," arb ","$arb"],
+    "OP":["optimism"," op ","$op"], "MATIC":["polygon","matic"," pol "], "POL":["polygon ecosystem token"," pol ","$pol"],
+    "HBAR":["hedera","hbar"], "XLM":["stellar"," xlm "], "ALGO":["algorand"," algo "],
+    "ICP":["internet computer"," icp "], "FIL":["filecoin"," fil "], "AAVE":["aave"],
+    "UNI":["uniswap"," uni "], "MKR":["makerdao","maker protocol"," mkr "], "ONDO":["ondo finance"," ondo "],
+    "ENA":["ethena"," ena "], "PENDLE":["pendle"], "LDO":["lido"," ldo "], "RUNE":["thorchain"," rune "],
+    "INJ":["injective"," inj "], "SEI":["sei network"," sei "], "TIA":["celestia"," tia "],
+    "FET":["fetch.ai","artificial superintelligence alliance"," fet "], "TAO":["bittensor"," tao "],
+    "RENDER":["render network"," render "], "GRT":["the graph"," grt "], "WLD":["worldcoin","world network"," wld "],
+    "DOGE":["dogecoin"," doge "], "SHIB":["shiba inu"," shib "], "PEPE":["pepe"," pepe "],
+    "TON":["the open network","toncoin"," ton "], "TRX":["tron"," trx "], "BCH":["bitcoin cash"," bch "],
+    "LTC":["litecoin"," ltc "], "ETC":["ethereum classic"," etc "], "CRO":["cronos"," cro "],
+    "KAS":["kaspa"," kas "], "STX":["stacks"," stx "], "IMX":["immutable"," imx "],
+    "MNT":["mantle"," mnt "], "KAIA":["kaia"," kaia "], "FLOW":["flow blockchain"," flow "],
+    "EGLD":["multiversx"," egld "], "XTZ":["tezos"," xtz "], "VET":["vechain"," vet "],
+    "THETA":["theta network"," theta "], "PYTH":["pyth network"," pyth "], "JUP":["jupiter exchange"," jup "],
+    "BONK":["bonk"," bonk "], "USDC":["usd coin"," usdc "], "USDT":["tether"," usdt "],
+    "PYUSD":["paypal usd","pyusd"], "RLUSD":["ripple usd","rlusd"], "USDG":["global dollar","usdg"],
+    "CC":["canton coin","canton network"], "HYPE":["hyperliquid"," hype "],
+}
+
+def infer_tokens(text, fixed=None):
+    padded = " " + text.lower() + " "
+    found = []
+    for ticker, aliases in TOKEN_ALIASES.items():
+        if any(alias in padded for alias in aliases):
+            found.append(ticker)
+    # Explicit cashtags are useful for newly launched assets not in our dictionary.
+    for ticker in re.findall(r'\$([A-Z][A-Z0-9]{1,9})\b', text):
+        if ticker not in found:
+            found.append(ticker)
+    # Also catch common "(XYZ)" ticker notation in title/lead, but stay conservative.
+    for ticker in re.findall(r'\(([A-Z][A-Z0-9]{1,7})\)', text[:3500]):
+        if ticker not in found and ticker not in {"ETF","SEC","CEO","USA","USD","API","AI","ETP","IPO"}:
+            found.append(ticker)
+    for ticker in (fixed or []):
+        if ticker not in found:
+            found.append(ticker)
+    return found[:12]
+
 
 def fetch(url, max_bytes=3_000_000):
     req = Request(url, headers={"User-Agent": UA, "Accept": "text/html,application/xhtml+xml,*/*"})
@@ -166,7 +265,7 @@ def evaluate(url, raw):
     if score < 10:
         return None
 
-    tokens = list(src["tokens"])
+    tokens = infer_tokens(title + " " + text[:5500], src["tokens"])
     excerpt = text[:900]
     return {
         "source": src["name"],
