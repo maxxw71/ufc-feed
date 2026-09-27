@@ -4,6 +4,7 @@ on:
     branches: [main]
     paths:
       - 'boxing/research/parse_legacy_compubox_candidates.py'
+      - 'boxing/research/import_archived_compubox_rounds.py'
       - 'boxing/public_punch_audit/legacy_compubox_fetched_candidates.json'
       - '.github/workflows/boxing-legacy-compubox-parse.yml'
   workflow_dispatch:
