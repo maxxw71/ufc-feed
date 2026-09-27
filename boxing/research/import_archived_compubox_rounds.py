@@ -153,23 +153,23 @@ def resolve_fight(db,text,payload):
     # result/date. Infer only from the two round-table row labels, and accept
     # only when those two surnames map to exactly one verified finished bout.
     total_text=None
-    for pat in (r'Total Punches Landed\\s*/\\s*Thrown',r'Total Punches Landed/Thrown'):
+    for pat in (r'Total Punches Landed\s*/\s*Thrown',r'Total Punches Landed/Thrown'):
         z=re.search(pat,text,re.I)
         if z:
             total_text=text[z.end():]
             break
     if total_text:
         stop=len(total_text)
-        for pat in (r'(?:Total )?Jabs Landed\\s*/\\s*Thrown',r'Total Jabs Thrown/Landed',
-                    r'(?:Total )?Power Punches Landed\\s*/\\s*Thrown',r'Final Punch'):
+        for pat in (r'(?:Total )?Jabs Landed\s*/\s*Thrown',r'Total Jabs Thrown/Landed',
+                    r'(?:Total )?Power Punches Landed\s*/\s*Thrown',r'Final Punch'):
             z=re.search(pat,total_text,re.I)
             if z:stop=min(stop,z.start())
         total_text=total_text[:stop]
         found=[]
-        rowpat=re.compile(r'([A-Za-zÀ-ÿ][A-Za-zÀ-ÿ0-9 .,\'’\\-]{1,50}?)\\s+((?:\\d{1,3}\\s*/\\s*\\d{1,3}\\s+){3,}\\d{1,3}\\s*/\\s*\\d{1,3})',re.I)
+        rowpat=re.compile(r'([A-Za-zÀ-ÿ][A-Za-zÀ-ÿ0-9 .,\'’\-]{1,50}?)\s+((?:\d{1,3}\s*/\s*\d{1,3}\s+){3,}\d{1,3}\s*/\s*\d{1,3})',re.I)
         for z in rowpat.finditer(total_text):
             label=z.group(1).strip()
-            pairs=re.findall(r'\\d{1,3}\\s*/\\s*\\d{1,3}',z.group(2))
+            pairs=re.findall(r'\d{1,3}\s*/\s*\d{1,3}',z.group(2))
             last=surname(label)
             if last and 4<=len(pairs)<=15:
                 found.append((last,len(pairs),label))
