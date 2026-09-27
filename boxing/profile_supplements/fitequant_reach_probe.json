@@ -1,0 +1,49 @@
+{
+  "generated_at": "2026-09-27T11:44:50.452427+00:00",
+  "missing_targets": 266,
+  "discovered_fighter_urls": 24,
+  "exact_slug_targets": 1,
+  "status_counts": {
+    "no_reach": 1
+  },
+  "lead_count": 0,
+  "martialbot_corroborated": 0,
+  "corroborated_profiles": [],
+  "discovery_diagnostics": [
+    {
+      "url": "https://fitequant.com/sitemap.xml",
+      "status": "ok",
+      "locs": 231,
+      "bytes": 34525
+    },
+    {
+      "url": "https://fitequant.com/sitemap_index.xml",
+      "status": "error",
+      "error": "HTTPError: HTTP Error 404: Not Found"
+    },
+    {
+      "url": "https://fitequant.com/sitemap-index.xml",
+      "status": "error",
+      "error": "HTTPError: HTTP Error 404: Not Found"
+    },
+    {
+      "url": "https://fitequant.com/fighters",
+      "status": "ok_html",
+      "links": 24,
+      "bytes": 140384
+    }
+  ],
+  "rows": [
+    {
+      "id": "https://champinon.info/boxing/agron-smakici/",
+      "name": "Agron Smakici",
+      "url": "https://fitequant.com/fighters/2609-agron-smakici",
+      "strict_bout_appearances": 1,
+      "h1": "Agron Smakici",
+      "full_name": "Agron Smakici",
+      "reach_cm": null,
+      "status": "no_reach"
+    }
+  ],
+  "policy": "FiteQuant public sitemap/listing exact slug + exact/explicit full-name identity. Automatic addition only when exact-identity MartialBot agrees within 1 cm."
+}
