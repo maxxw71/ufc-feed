@@ -1,0 +1,1224 @@
+APPWIZA MAILER INSPECTION
+Sun Sep 27 01:49:03 AM UTC 2026
+
+=== /home/anestishkurti92/ufc-predictor-v1 ===
+/home/anestishkurti92/ufc-predictor-v1/ufc_email_watcher.before_cards_20260912.py
+/home/anestishkurti92/ufc-predictor-v1/ufc_email_watcher.before_tracker_20260912.py
+/home/anestishkurti92/ufc-predictor-v1/ufc_email_design.py
+/home/anestishkurti92/ufc-predictor-v1/ufc_email_watcher.py
+=== /home/anestishkurti92/nfl-predictor-v1 ===
+/home/anestishkurti92/nfl-predictor-v1/backups/manual_guard_20260914T072423Z/nfl_email_design.py
+/home/anestishkurti92/nfl-predictor-v1/backups/manual_guard_20260914T073237Z/nfl_email_design.py
+/home/anestishkurti92/nfl-predictor-v1/research_v2/nfl_email_candidate.py
+/home/anestishkurti92/nfl-predictor-v1/research_v2/nfl_email_design.py
+/home/anestishkurti92/nfl-predictor-v1/research_v2/verify_email_candidate.py
+/home/anestishkurti92/nfl-predictor-v1/research_v2/verify_email_design.py
+=== /srv/appwiza-sports ===
+=== /opt/sports-publisher ===
+=== MAILER STRUCTURE / CALLS (SECRETS REDACTED) ===
+/home/anestishkurti92/ufc-predictor-v1/ufc_historical_backtest.py-592-        "",
+/home/anestishkurti92/ufc-predictor-v1/ufc_historical_backtest.py-593-        "A positive historical ROI does not prove future profitability.",
+/home/anestishkurti92/ufc-predictor-v1/ufc_historical_backtest.py-594-    ]
+/home/anestishkurti92/ufc-predictor-v1/ufc_historical_backtest.py-595-    p = OUT / "backtest_report.txt"
+/home/anestishkurti92/ufc-predictor-v1/ufc_historical_backtest.py-596-    p.write_text("\n".join(lines)+"\n", encoding="utf-8")
+/home/anestishkurti92/ufc-predictor-v1/ufc_historical_backtest.py-597-    return p
+/home/anestishkurti92/ufc-predictor-v1/ufc_historical_backtest.py-598-
+/home/anestishkurti92/ufc-predictor-v1/ufc_historical_backtest.py-599-
+/home/anestishkurti92/ufc-predictor-v1/ufc_historical_backtest.py:600:def email_report(report_text, thresholds, predmet):
+/home/anestishkurti92/ufc-predictor-v1/ufc_historical_backtest.py-601-    env_path = Path.home() / ".config" / "ufc-watcher.env"
+/home/anestishkurti92/ufc-predictor-v1/ufc_historical_backtest.py-602-    if not env_path.exists():
+/home/anestishkurti92/ufc-predictor-v1/ufc_historical_backtest.py-603-        return False
+/home/anestishkurti92/ufc-predictor-v1/ufc_historical_backtest.py-604-    vals = {}
+/home/anestishkurti92/ufc-predictor-v1/ufc_historical_backtest.py-605-    for line in env_path.read_text(encoding="utf-8").splitlines():
+/home/anestishkurti92/ufc-predictor-v1/ufc_historical_backtest.py-606-        if "=" in line and not line.lstrip().startswith("#"):
+/home/anestishkurti92/ufc-predictor-v1/ufc_historical_backtest.py-607-            k,v = line.split("=",1)
+/home/anestishkurti92/ufc-predictor-v1/ufc_historical_backtest.py-608-            vals[k.strip()] = v.strip().strip('"').strip("'")
+--
+/home/anestishkurti92/ufc-predictor-v1/ufc_historical_backtest.py-637-      Historical lines are archival public moneylines and may not equal exact
+/home/anestishkurti92/ufc-predictor-v1/ufc_historical_backtest.py-638-      closing/best sportsbook prices. Positive historical ROI does not guarantee
+/home/anestishkurti92/ufc-predictor-v1/ufc_historical_backtest.py-639-      future results.</p>
+/home/anestishkurti92/ufc-predictor-v1/ufc_historical_backtest.py-640-    </div>
+/home/anestishkurti92/ufc-predictor-v1/ufc_historical_backtest.py-641-    """
+/home/anestishkurti92/ufc-predictor-v1/ufc_historical_backtest.py-642-    r = requests.post(
+/home/anestishkurti92/ufc-predictor-v1/ufc_historical_backtest.py-643-        "https://api.resend.com/emails",
+/home/anestishkurti92/ufc-predictor-v1/ufc_historical_backtest.py-644-        headers={"Authorization":f"Bearer {key}","Content-Type":"application/json"},
+/home/anestishkurti92/ufc-predictor-v1/ufc_historical_backtest.py:645:        json={"from":sender,"to":[to],"subject":"UFC Model — Historical Betting Backtest","html":body},
+/home/anestishkurti92/ufc-predictor-v1/ufc_historical_backtest.py-646-        timeout=30
+/home/anestishkurti92/ufc-predictor-v1/ufc_historical_backtest.py-647-    )
+/home/anestishkurti92/ufc-predictor-v1/ufc_historical_backtest.py-648-    return r.status_code < 300
+/home/anestishkurti92/ufc-predictor-v1/ufc_historical_backtest.py-649-
+/home/anestishkurti92/ufc-predictor-v1/ufc_historical_backtest.py-650-
+/home/anestishkurti92/ufc-predictor-v1/ufc_historical_backtest.py-651-def main():
+/home/anestishkurti92/ufc-predictor-v1/ufc_historical_backtest.py-652-    if not MODEL_PATH.exists():
+/home/anestishkurti92/ufc-predictor-v1/ufc_historical_backtest.py-653-        raise RuntimeError(f"Missing model bundle: {MODEL_PATH}")
+--
+/home/anestishkurti92/ufc-predictor-v1/ufc_historical_backtest.py-708-    archive = ROOT / "ufc_historical_backtest.tar.gz"
+/home/anestishkurti92/ufc-predictor-v1/ufc_historical_backtest.py-709-    with tarfile.open(archive, "w:gz") as tf:
+/home/anestishkurti92/ufc-predictor-v1/ufc_historical_backtest.py-710-        for p in OUT.iterdir():
+/home/anestishkurti92/ufc-predictor-v1/ufc_historical_backtest.py-711-            if p.is_file() and p.suffix in {".csv",".txt",".json"}:
+/home/anestishkurti92/ufc-predictor-v1/ufc_historical_backtest.py-712-                tf.add(p, arcname=f"historical_backtest/{p.name}")
+/home/anestishkurti92/ufc-predictor-v1/ufc_historical_backtest.py-713-
+/home/anestishkurti92/ufc-predictor-v1/ufc_historical_backtest.py-714-    say()
+/home/anestishkurti92/ufc-predictor-v1/ufc_historical_backtest.py-715-    say(report.read_text(encoding="utf-8"))
+/home/anestishkurti92/ufc-predictor-v1/ufc_historical_backtest.py:716:    sent = email_report(report.read_text(encoding="utf-8"), thresholds, predmet)
+/home/anestishkurti92/ufc-predictor-v1/ufc_historical_backtest.py-717-    say(f"Email summary sent: {sent}")
+/home/anestishkurti92/ufc-predictor-v1/ufc_historical_backtest.py-718-    say(f"Archive: {archive}")
+/home/anestishkurti92/ufc-predictor-v1/ufc_historical_backtest.py-719-    say("DONE")
+/home/anestishkurti92/ufc-predictor-v1/ufc_historical_backtest.py-720-
+/home/anestishkurti92/ufc-predictor-v1/ufc_historical_backtest.py-721-
+/home/anestishkurti92/ufc-predictor-v1/ufc_historical_backtest.py-722-if __name__ == "__main__":
+/home/anestishkurti92/ufc-predictor-v1/ufc_historical_backtest.py-723-    main()
+--
+/home/anestishkurti92/ufc-predictor-v1/install_ufc_dashboard_hook.py-1-#!/usr/bin/env python3
+/home/anestishkurti92/ufc-predictor-v1/install_ufc_dashboard_hook.py-2-from __future__ import annotations
+/home/anestishkurti92/ufc-predictor-v1/install_ufc_dashboard_hook.py-3-
+/home/anestishkurti92/ufc-predictor-v1/install_ufc_dashboard_hook.py-4-from datetime import datetime, timezone
+/home/anestishkurti92/ufc-predictor-v1/install_ufc_dashboard_hook.py-5-from pathlib import Path
+/home/anestishkurti92/ufc-predictor-v1/install_ufc_dashboard_hook.py-6-import py_compile
+/home/anestishkurti92/ufc-predictor-v1/install_ufc_dashboard_hook.py-7-import shutil
+/home/anestishkurti92/ufc-predictor-v1/install_ufc_dashboard_hook.py-8-
+/home/anestishkurti92/ufc-predictor-v1/install_ufc_dashboard_hook.py:9:TARGET = Path('/home/anestishkurti92/ufc-predictor-v1/ufc_email_watcher.py')
+/home/anestishkurti92/ufc-predictor-v1/install_ufc_dashboard_hook.py-10-ANCHOR = 'sports_publish.safe_call(sports_publish.publish_ufc,events,preds_by_event,globals())'
+/home/anestishkurti92/ufc-predictor-v1/install_ufc_dashboard_hook.py-11-MARKER = '# UFC_PUBLIC_DASHBOARD_HOOK'
+/home/anestishkurti92/ufc-predictor-v1/install_ufc_dashboard_hook.py-12-
+/home/anestishkurti92/ufc-predictor-v1/install_ufc_dashboard_hook.py-13-
+/home/anestishkurti92/ufc-predictor-v1/install_ufc_dashboard_hook.py-14-def main() -> None:
+/home/anestishkurti92/ufc-predictor-v1/install_ufc_dashboard_hook.py-15-    text = TARGET.read_text()
+/home/anestishkurti92/ufc-predictor-v1/install_ufc_dashboard_hook.py-16-    if MARKER in text:
+/home/anestishkurti92/ufc-predictor-v1/install_ufc_dashboard_hook.py-17-        py_compile.compile(str(TARGET), doraise=True)
+--
+/home/anestishkurti92/ufc-predictor-v1/hybrid_robustness.py-358-    </div>
+/home/anestishkurti92/ufc-predictor-v1/hybrid_robustness.py-359-    """
+/home/anestishkurti92/ufc-predictor-v1/hybrid_robustness.py-360-    r = requests.post(
+/home/anestishkurti92/ufc-predictor-v1/hybrid_robustness.py-361-        "https://api.resend.com/emails",
+/home/anestishkurti92/ufc-predictor-v1/hybrid_robustness.py-362-        headers={"Authorization": f"Bearer {key}", "Content-Type": "application/json"},
+/home/anestishkurti92/ufc-predictor-v1/hybrid_robustness.py-363-        json={
+/home/anestishkurti92/ufc-predictor-v1/hybrid_robustness.py-364-            "from": sender,
+/home/anestishkurti92/ufc-predictor-v1/hybrid_robustness.py-365-            "to": [to],
+/home/anestishkurti92/ufc-predictor-v1/hybrid_robustness.py:366:            "subject": "UFC Model — 70% + 3yr Age Gap Robustness Test",
+/home/anestishkurti92/ufc-predictor-v1/hybrid_robustness.py-367-            "html": body,
+/home/anestishkurti92/ufc-predictor-v1/hybrid_robustness.py-368-        },
+/home/anestishkurti92/ufc-predictor-v1/hybrid_robustness.py-369-        timeout=30,
+/home/anestishkurti92/ufc-predictor-v1/hybrid_robustness.py-370-    )
+/home/anestishkurti92/ufc-predictor-v1/hybrid_robustness.py-371-    return r.status_code < 300
+/home/anestishkurti92/ufc-predictor-v1/hybrid_robustness.py-372-
+/home/anestishkurti92/ufc-predictor-v1/hybrid_robustness.py-373-def main():
+/home/anestishkurti92/ufc-predictor-v1/hybrid_robustness.py-374-    if not INFILE.exists():
+--
+/home/anestishkurti92/ufc-predictor-v1/verify_ufc_design.py-1-import ast,json,sys,hashlib
+/home/anestishkurti92/ufc-predictor-v1/verify_ufc_design.py-2-from pathlib import Path
+/home/anestishkurti92/ufc-predictor-v1/verify_ufc_design.py-3-import ufc_design_candidate as w
+/home/anestishkurti92/ufc-predictor-v1/verify_ufc_design.py:4:import ufc_email_design as d
+/home/anestishkurti92/ufc-predictor-v1/verify_ufc_design.py-5-import bet_tracker as b
+/home/anestishkurti92/ufc-predictor-v1/verify_ufc_design.py-6-# Presentation-only AST check against the live module.
+/home/anestishkurti92/ufc-predictor-v1/verify_ufc_design.py:7:old=ast.parse((w.ROOT/'ufc_email_watcher.py').read_text());new=ast.parse(Path(w.__file__).read_text())
+/home/anestishkurti92/ufc-predictor-v1/verify_ufc_design.py-8-def funcs(tree):return [ast.dump(n,include_attributes=False) for n in tree.body if isinstance(n,ast.FunctionDef) and n.name not in {'shell','event_block'}]
+/home/anestishkurti92/ufc-predictor-v1/verify_ufc_design.py-9-assert funcs(old)==funcs(new)
+/home/anestishkurti92/ufc-predictor-v1/verify_ufc_design.py-10-feed=w.fetch_feed();bundle=w.joblib.load(w.BUNDLE_PATH);reach=w.load_reach_index();skill=w.load_skill_index();blocks=[];picks=[];method_ids=set();counts=[]
+/home/anestishkurti92/ufc-predictor-v1/verify_ufc_design.py-11-for ev in feed['events']:
+/home/anestishkurti92/ufc-predictor-v1/verify_ufc_design.py-12- if w.pd.Timestamp(ev['date']).date()<w.date.today():continue
+/home/anestishkurti92/ufc-predictor-v1/verify_ufc_design.py-13- preds=[w.predict_bout(p,w.pd.Timestamp(ev['date']).date(),bundle,reach,skill) for p in ev.get('bouts',[])]
+/home/anestishkurti92/ufc-predictor-v1/verify_ufc_design.py-14- block=w.event_block(ev,preds);blocks.append(block);event_picks=b.ufc_picks(ev,preds);picks.extend(event_picks)
+/home/anestishkurti92/ufc-predictor-v1/verify_ufc_design.py-15- for p in preds:
+/home/anestishkurti92/ufc-predictor-v1/verify_ufc_design.py-16-  for m in d.method_cards(p,vars(w)):method_ids.add(m['id'])
+/home/anestishkurti92/ufc-predictor-v1/verify_ufc_design.py-17- for pick in event_picks:assert d.e(pick['selection'])+' to win' in block
+/home/anestishkurti92/ufc-predictor-v1/verify_ufc_design.py-18- assert block.count('PICK · FIGHT WINNER')==len(event_picks)
+/home/anestishkurti92/ufc-predictor-v1/verify_ufc_design.py-19- counts.append({'event':ev['name'],'fights':len(preds),'picks':len(event_picks)})
+/home/anestishkurti92/ufc-predictor-v1/verify_ufc_design.py-20-body=w.shell('UFC design preview',blocks,feed,bundle,bet_picks=picks)
+/home/anestishkurti92/ufc-predictor-v1/verify_ufc_design.py-21-assert body.picks==picks and 'Our assumed-bet record' in body
+/home/anestishkurti92/ufc-predictor-v1/verify_ufc_design.py-22-assert 'Age-only ref A' not in body
+/home/anestishkurti92/ufc-predictor-v1/verify_ufc_design.py:23:(w.ROOT/'ufc_email_preview.html').write_text(body)
+/home/anestishkurti92/ufc-predictor-v1/verify_ufc_design.py-24-# Missing odds and escaping fixture using one existing qualifying prediction.
+/home/anestishkurti92/ufc-predictor-v1/verify_ufc_design.py-25-example=next((p for ev in feed['events'] for p in []),None)
+/home/anestishkurti92/ufc-predictor-v1/verify_ufc_design.py-26-p={'fighter_a':'A <test>','fighter_b':'B & Test','division':'Fixture','hybrid':{'tier':'none'},'striking_methods':{'pace_defense':True,'favorite':'A <test>','market_prob':.7,'fav_profile':{'fights':4},'opp_profile':{'fights':4},'landed_gap':.3,'sig_def_gap':.2}}
+/home/anestishkurti92/ufc-predictor-v1/verify_ufc_design.py-27-block=w.event_block({'name':'Fixture','date':'2026-12-01'},[p]);assert 'A &lt;test&gt; to win' in block and 'Current moneyline unavailable' in block and '92.5%' in block and '+20.41%' in block
+/home/anestishkurti92/ufc-predictor-v1/verify_ufc_design.py-28-print(json.dumps({'events':counts,'active_methods_seen':sorted(method_ids),'html_bytes':len(body),'selection_and_delivery_code_unchanged':True,'real_emails_sent':0}),flush=True)
+--
+/home/anestishkurti92/ufc-predictor-v1/ufc_confluence_layer.py-1-#!/usr/bin/env python3
+/home/anestishkurti92/ufc-predictor-v1/ufc_confluence_layer.py-2-from __future__ import annotations
+/home/anestishkurti92/ufc-predictor-v1/ufc_confluence_layer.py-3-from pathlib import Path
+/home/anestishkurti92/ufc-predictor-v1/ufc_confluence_layer.py-4-
+/home/anestishkurti92/ufc-predictor-v1/ufc_confluence_layer.py-5-ROOT=Path.home()/"ufc-predictor-v1"
+/home/anestishkurti92/ufc-predictor-v1/ufc_confluence_layer.py:6:WATCHER=ROOT/"ufc_email_watcher.py"
+/home/anestishkurti92/ufc-predictor-v1/ufc_confluence_layer.py-7-
+/home/anestishkurti92/ufc-predictor-v1/ufc_confluence_layer.py-8-FAMILY_MAP={
+/home/anestishkurti92/ufc-predictor-v1/ufc_confluence_layer.py-9-    'U1':'structural','U2':'structural','U3':'structural','U4':'structural',
+/home/anestishkurti92/ufc-predictor-v1/ufc_confluence_layer.py-10-    'U5':'wrestling','U6':'striking','U7':'striking','U8':'striking',
+/home/anestishkurti92/ufc-predictor-v1/ufc_confluence_layer.py-11-    'U9':'experience','U10':'recovery'
+/home/anestishkurti92/ufc-predictor-v1/ufc_confluence_layer.py-12-}
+/home/anestishkurti92/ufc-predictor-v1/ufc_confluence_layer.py-13-
+/home/anestishkurti92/ufc-predictor-v1/ufc_confluence_layer.py-14-HIST={
+--
+/home/anestishkurti92/ufc-predictor-v1/ufc_confluence_layer.py-35- 'U1':'structural','U2':'structural','U3':'structural','U4':'structural',
+/home/anestishkurti92/ufc-predictor-v1/ufc_confluence_layer.py-36- 'U5':'wrestling','U6':'striking','U7':'striking','U8':'striking',
+/home/anestishkurti92/ufc-predictor-v1/ufc_confluence_layer.py-37- 'U9':'experience','U10':'recovery'}
+/home/anestishkurti92/ufc-predictor-v1/ufc_confluence_layer.py-38-_UFC_CONFLUENCE_HISTORY=__HISTORY__
+/home/anestishkurti92/ufc-predictor-v1/ufc_confluence_layer.py-39-
+/home/anestishkurti92/ufc-predictor-v1/ufc_confluence_layer.py-40-def _confluence_method_ids(p,w=None):
+/home/anestishkurti92/ufc-predictor-v1/ufc_confluence_layer.py-41-    ids=[]
+/home/anestishkurti92/ufc-predictor-v1/ufc_confluence_layer.py-42-    try:
+/home/anestishkurti92/ufc-predictor-v1/ufc_confluence_layer.py:43:        for c in ufc_email_design.method_cards(p,w):
+/home/anestishkurti92/ufc-predictor-v1/ufc_confluence_layer.py-44-            i=str(c.get('id') or '').upper().strip()
+/home/anestishkurti92/ufc-predictor-v1/ufc_confluence_layer.py-45-            if i in _UFC_METHOD_FAMILIES and i not in ids: ids.append(i)
+/home/anestishkurti92/ufc-predictor-v1/ufc_confluence_layer.py-46-    except Exception: pass
+/home/anestishkurti92/ufc-predictor-v1/ufc_confluence_layer.py-47-    return ids
+/home/anestishkurti92/ufc-predictor-v1/ufc_confluence_layer.py-48-
+/home/anestishkurti92/ufc-predictor-v1/ufc_confluence_layer.py-49-def compute_method_confluence(p,w=None):
+/home/anestishkurti92/ufc-predictor-v1/ufc_confluence_layer.py-50-    ids=_confluence_method_ids(p,w)
+/home/anestishkurti92/ufc-predictor-v1/ufc_confluence_layer.py-51-    fam=[]
+--
+/home/anestishkurti92/ufc-predictor-v1/ufc_confluence_layer.py-59-            'historical_at_least':_UFC_CONFLUENCE_HISTORY.get('at_least',{}).get(str(n))}
+/home/anestishkurti92/ufc-predictor-v1/ufc_confluence_layer.py-60-
+/home/anestishkurti92/ufc-predictor-v1/ufc_confluence_layer.py-61-_orig_predict_bout_confluence=predict_bout
+/home/anestishkurti92/ufc-predictor-v1/ufc_confluence_layer.py-62-def predict_bout(*args,**kwargs):
+/home/anestishkurti92/ufc-predictor-v1/ufc_confluence_layer.py-63-    out=_orig_predict_bout_confluence(*args,**kwargs)
+/home/anestishkurti92/ufc-predictor-v1/ufc_confluence_layer.py-64-    out['confluence']=compute_method_confluence(out,None)
+/home/anestishkurti92/ufc-predictor-v1/ufc_confluence_layer.py-65-    return out
+/home/anestishkurti92/ufc-predictor-v1/ufc_confluence_layer.py-66-
+/home/anestishkurti92/ufc-predictor-v1/ufc_confluence_layer.py:67:_orig_method_cards_confluence=ufc_email_design.method_cards
+/home/anestishkurti92/ufc-predictor-v1/ufc_confluence_layer.py-68-def _confluence_cards(p,w):
+/home/anestishkurti92/ufc-predictor-v1/ufc_confluence_layer.py-69-    cards=list(_orig_method_cards_confluence(p,w))
+/home/anestishkurti92/ufc-predictor-v1/ufc_confluence_layer.py-70-    ids=[]
+/home/anestishkurti92/ufc-predictor-v1/ufc_confluence_layer.py-71-    for c in cards:
+/home/anestishkurti92/ufc-predictor-v1/ufc_confluence_layer.py-72-        i=str(c.get('id') or '').upper().strip()
+/home/anestishkurti92/ufc-predictor-v1/ufc_confluence_layer.py-73-        if i in _UFC_METHOD_FAMILIES and i not in ids: ids.append(i)
+/home/anestishkurti92/ufc-predictor-v1/ufc_confluence_layer.py-74-    fam=[]
+/home/anestishkurti92/ufc-predictor-v1/ufc_confluence_layer.py-75-    for i in ids:
+/home/anestishkurti92/ufc-predictor-v1/ufc_confluence_layer.py-76-        f=_UFC_METHOD_FAMILIES.get(i)
+/home/anestishkurti92/ufc-predictor-v1/ufc_confluence_layer.py-77-        if f and f not in fam:fam.append(f)
+/home/anestishkurti92/ufc-predictor-v1/ufc_confluence_layer.py-78-    p['confluence']={'method_ids':ids,'method_count':len(ids),'families':fam,'family_count':len(fam),
+/home/anestishkurti92/ufc-predictor-v1/ufc_confluence_layer.py-79-                     'multi_method':len(ids)>=2,'multi_family':len(fam)>=2,
+/home/anestishkurti92/ufc-predictor-v1/ufc_confluence_layer.py-80-                     'historical_exact':_UFC_CONFLUENCE_HISTORY.get('exact',{}).get(str(len(ids))),
+/home/anestishkurti92/ufc-predictor-v1/ufc_confluence_layer.py-81-                     'historical_at_least':_UFC_CONFLUENCE_HISTORY.get('at_least',{}).get(str(len(ids)))}
+/home/anestishkurti92/ufc-predictor-v1/ufc_confluence_layer.py-82-    return cards
+/home/anestishkurti92/ufc-predictor-v1/ufc_confluence_layer.py:83:ufc_email_design.method_cards=_confluence_cards
+/home/anestishkurti92/ufc-predictor-v1/ufc_confluence_layer.py-84-
+/home/anestishkurti92/ufc-predictor-v1/ufc_confluence_layer.py-85-_orig_ufc_picks_confluence=bet_tracker.ufc_picks
+/home/anestishkurti92/ufc-predictor-v1/ufc_confluence_layer.py-86-def _confluence_ufc_picks(event,preds):
+/home/anestishkurti92/ufc-predictor-v1/ufc_confluence_layer.py-87-    base=list(_orig_ufc_picks_confluence(event,preds))
+/home/anestishkurti92/ufc-predictor-v1/ufc_confluence_layer.py-88-    bysel={}
+/home/anestishkurti92/ufc-predictor-v1/ufc_confluence_layer.py-89-    for p in preds or []:
+/home/anestishkurti92/ufc-predictor-v1/ufc_confluence_layer.py-90-        c=p.get('confluence') or compute_method_confluence(p,None)
+/home/anestishkurti92/ufc-predictor-v1/ufc_confluence_layer.py-91-        fav=str(p.get('favorite') or '').strip()
+--
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/numpy/_core/_exceptions.py-15-
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/numpy/_core/_exceptions.py-16-def _display_as_base(cls):
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/numpy/_core/_exceptions.py-17-    """
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/numpy/_core/_exceptions.py-18-    A decorator that makes an exception class look like its base.
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/numpy/_core/_exceptions.py-19-
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/numpy/_core/_exceptions.py-20-    We use this to hide subclasses that are implementation details - the user
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/numpy/_core/_exceptions.py-21-    should catch the base type, which is what the traceback will show them.
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/numpy/_core/_exceptions.py-22-
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/numpy/_core/_exceptions.py:23:    Classes decorated with this decorator are subject to removal without a
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/numpy/_core/_exceptions.py-24-    deprecation warning.
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/numpy/_core/_exceptions.py-25-    """
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/numpy/_core/_exceptions.py-26-    assert issubclass(cls, Exception)
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/numpy/_core/_exceptions.py-27-    cls.__name__ = cls.__base__.__name__
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/numpy/_core/_exceptions.py-28-    return cls
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/numpy/_core/_exceptions.py-29-
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/numpy/_core/_exceptions.py-30-
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/numpy/_core/_exceptions.py-31-class UFuncTypeError(TypeError):
+--
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/numpy/ma/core.py-8-and to improve support of structured arrays.
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/numpy/ma/core.py-9-
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/numpy/ma/core.py-10-
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/numpy/ma/core.py-11-Copyright 1999, 2000, 2001 Regents of the University of California.
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/numpy/ma/core.py-12-Released for unlimited redistribution.
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/numpy/ma/core.py-13-
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/numpy/ma/core.py-14-* Adapted for numpy_core 2005 by Travis Oliphant and (mainly) Paul Dubois.
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/numpy/ma/core.py-15-* Subclassing of the base `ndarray` 2006 by Pierre Gerard-Marchant
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/numpy/ma/core.py:16:  (pgmdevlist_AT_gmail_DOT_com)
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/numpy/ma/core.py-17-* Improvements suggested by Reggie Dugard (reggie_AT_merfinllc_DOT_com)
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/numpy/ma/core.py-18-
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/numpy/ma/core.py-19-.. moduleauthor:: Pierre Gerard-Marchant
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/numpy/ma/core.py-20-
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/numpy/ma/core.py-21-"""
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/numpy/ma/core.py-22-import builtins
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/numpy/ma/core.py-23-import datetime as dt
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/numpy/ma/core.py-24-import functools
+--
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/numpy/ma/core.py-8556-
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/numpy/ma/core.py-8557-    Notes
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/numpy/ma/core.py-8558-    -----
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/numpy/ma/core.py-8559-    If the following equation is element-wise True, then `allclose` returns
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/numpy/ma/core.py-8560-    True::
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/numpy/ma/core.py-8561-
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/numpy/ma/core.py-8562-      absolute(`a` - `b`) <= (`atol` + `rtol` * absolute(`b`))
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/numpy/ma/core.py-8563-
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/numpy/ma/core.py:8564:    Return True if all elements of `a` and `b` are equal subject to
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/numpy/ma/core.py-8565-    given tolerances.
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/numpy/ma/core.py-8566-
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/numpy/ma/core.py-8567-    Examples
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/numpy/ma/core.py-8568-    --------
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/numpy/ma/core.py-8569-    >>> import numpy as np
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/numpy/ma/core.py-8570-    >>> a = np.ma.array([1e10, 1e-7, 42.0], mask=[0, 0, 1])
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/numpy/ma/core.py-8571-    >>> a
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/numpy/ma/core.py-8572-    masked_array(data=[10000000000.0, 1e-07, --],
+--
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/distlib/compat.py-145-        CertificateError is raised on failure. On success, the function
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/distlib/compat.py-146-        returns nothing.
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/distlib/compat.py-147-        """
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/distlib/compat.py-148-        if not cert:
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/distlib/compat.py-149-            raise ValueError("empty or no certificate, match_hostname needs a "
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/distlib/compat.py-150-                             "SSL socket or SSL context with either "
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/distlib/compat.py-151-                             "CERT_OPTIONAL or CERT_REQUIRED")
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/distlib/compat.py-152-        dnsnames = []
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/distlib/compat.py:153:        san = cert.get('subjectAltName', ())
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/distlib/compat.py-154-        for key, value in san:
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/distlib/compat.py-155-            if key == 'DNS':
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/distlib/compat.py-156-                if _dnsname_match(value, hostname):
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/distlib/compat.py-157-                    return
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/distlib/compat.py-158-                dnsnames.append(value)
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/distlib/compat.py-159-        if not dnsnames:
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/distlib/compat.py:160:            # The subject is only checked when there is no dNSName entry
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/distlib/compat.py:161:            # in subjectAltName
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/distlib/compat.py:162:            for sub in cert.get('subject', ()):
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/distlib/compat.py-163-                for key, value in sub:
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/distlib/compat.py-164-                    # XXX according to RFC 2818, the most specific Common Name
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/distlib/compat.py-165-                    # must be used.
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/distlib/compat.py-166-                    if key == 'commonName':
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/distlib/compat.py-167-                        if _dnsname_match(value, hostname):
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/distlib/compat.py-168-                            return
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/distlib/compat.py-169-                        dnsnames.append(value)
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/distlib/compat.py-170-        if len(dnsnames) > 1:
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/distlib/compat.py-171-            raise CertificateError("hostname %r "
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/distlib/compat.py-172-                                   "doesn't match either of %s" % (hostname, ', '.join(map(repr, dnsnames))))
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/distlib/compat.py-173-        elif len(dnsnames) == 1:
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/distlib/compat.py-174-            raise CertificateError("hostname %r "
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/distlib/compat.py-175-                                   "doesn't match %r" % (hostname, dnsnames[0]))
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/distlib/compat.py-176-        else:
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/distlib/compat.py-177-            raise CertificateError("no appropriate commonName or "
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/distlib/compat.py:178:                                   "subjectAltName fields were found")
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/distlib/compat.py-179-
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/distlib/compat.py-180-
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/distlib/compat.py-181-try:
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/distlib/compat.py-182-    from types import SimpleNamespace as Container
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/distlib/compat.py-183-except ImportError:  # pragma: no cover
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/distlib/compat.py-184-
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/distlib/compat.py-185-    class Container(object):
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/distlib/compat.py-186-        """
+--
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/packaging/__init__.py-4-
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/packaging/__init__.py-5-__title__ = "packaging"
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/packaging/__init__.py-6-__summary__ = "Core utilities for Python packages"
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/packaging/__init__.py-7-__uri__ = "https://github.com/pypa/packaging"
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/packaging/__init__.py-8-
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/packaging/__init__.py-9-__version__ = "26.2"
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/packaging/__init__.py-10-
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/packaging/__init__.py-11-__author__ = "Donald Stufft and individual contributors"
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/packaging/__init__.py:12:__email__ = "donald@stufft.io"
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/packaging/__init__.py-13-
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/packaging/__init__.py-14-__license__ = "BSD-2-Clause or Apache-2.0"
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/packaging/__init__.py-15-__copyright__ = f"2014 {__author__}"
+--
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/packaging/licenses/__init__.py-6-# MIT License
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/packaging/licenses/__init__.py-7-#
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/packaging/licenses/__init__.py-8-# Copyright (c) 2017-present Ofek Lev <oss@ofek.dev>
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/packaging/licenses/__init__.py-9-#
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/packaging/licenses/__init__.py-10-# Permission is hereby granted, free of charge, to any person obtaining a copy of this
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/packaging/licenses/__init__.py-11-# software and associated documentation files (the "Software"), to deal in the Software
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/packaging/licenses/__init__.py-12-# without restriction, including without limitation the rights to use, copy, modify,
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/packaging/licenses/__init__.py-13-# merge, publish, distribute, sublicense, and/or sell copies of the Software, and to
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/packaging/licenses/__init__.py:14:# permit persons to whom the Software is furnished to do so, subject to the following
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/packaging/licenses/__init__.py-15-# conditions:
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/packaging/licenses/__init__.py-16-#
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/packaging/licenses/__init__.py-17-# The above copyright notice and this permission notice shall be included in all copies
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/packaging/licenses/__init__.py-18-# or substantial portions of the Software.
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/packaging/licenses/__init__.py-19-#
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/packaging/licenses/__init__.py-20-# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/packaging/licenses/__init__.py-21-# INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/packaging/licenses/__init__.py-22-# PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+--
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/packaging/metadata.py-245-# To aid in this, we also generally want to do as little touching of the
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/packaging/metadata.py-246-# data as possible, except where there are possibly some historic holdovers
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/packaging/metadata.py-247-# that make valid data awkward to work with.
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/packaging/metadata.py-248-#
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/packaging/metadata.py-249-# While this is a lower level, intermediate format than our ``Metadata``
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/packaging/metadata.py-250-# class, some light touch ups can make a massive difference in usability.
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/packaging/metadata.py-251-
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/packaging/metadata.py-252-# Map METADATA fields to RawMetadata.
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/packaging/metadata.py:253:_EMAIL_TO_RAW_MAPPING = {
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/packaging/metadata.py-254-    "author": "author",
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/packaging/metadata.py-255-    "author-email": "author_email",
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/packaging/metadata.py-256-    "classifier": "classifiers",
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/packaging/metadata.py-257-    "description": "description",
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/packaging/metadata.py-258-    "description-content-type": "description_content_type",
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/packaging/metadata.py-259-    "download-url": "download_url",
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/packaging/metadata.py-260-    "dynamic": "dynamic",
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/packaging/metadata.py-261-    "home-page": "home_page",
+--
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/packaging/metadata.py-279-    "requires": "requires",
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/packaging/metadata.py-280-    "requires-dist": "requires_dist",
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/packaging/metadata.py-281-    "requires-external": "requires_external",
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/packaging/metadata.py-282-    "requires-python": "requires_python",
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/packaging/metadata.py-283-    "summary": "summary",
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/packaging/metadata.py-284-    "supported-platform": "supported_platforms",
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/packaging/metadata.py-285-    "version": "version",
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/packaging/metadata.py-286-}
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/packaging/metadata.py:287:_RAW_TO_EMAIL_MAPPING = {raw: email for email, raw in _EMAIL_TO_RAW_MAPPING.items()}
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/packaging/metadata.py-288-
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/packaging/metadata.py-289-
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/packaging/metadata.py-290-# This class is for writing RFC822 messages
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/packaging/metadata.py-291-class RFC822Policy(email.policy.EmailPolicy):
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/packaging/metadata.py-292-    """
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/packaging/metadata.py-293-    This is :class:`email.policy.EmailPolicy`, but with a simple ``header_store_parse``
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/packaging/metadata.py-294-    implementation that handles multi-line values, and some nice defaults.
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/packaging/metadata.py-295-    """
+--
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/packaging/metadata.py-300-
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/packaging/metadata.py-301-    def header_store_parse(self, name: str, value: str) -> tuple[str, str]:
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/packaging/metadata.py-302-        size = len(name) + 2
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/packaging/metadata.py-303-        value = value.replace("\n", "\n" + " " * size)
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/packaging/metadata.py-304-        return (name, value)
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/packaging/metadata.py-305-
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/packaging/metadata.py-306-
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/packaging/metadata.py-307-# This class is for writing RFC822 messages
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/packaging/metadata.py:308:class RFC822Message(email.message.EmailMessage):
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/packaging/metadata.py-309-    """
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/packaging/metadata.py:310:    This is :class:`email.message.EmailMessage` with two small changes: it defaults to
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/packaging/metadata.py-311-    our `RFC822Policy`, and it correctly writes unicode when being called
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/packaging/metadata.py-312-    with `bytes()`.
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/packaging/metadata.py-313-    """
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/packaging/metadata.py-314-
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/packaging/metadata.py-315-    def __init__(self) -> None:
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/packaging/metadata.py-316-        super().__init__(policy=RFC822Policy())
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/packaging/metadata.py-317-
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/packaging/metadata.py-318-    def as_bytes(
+--
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/packaging/metadata.py-413-
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/packaging/metadata.py-414-        # We've processed all of our values to get them into a list of str,
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/packaging/metadata.py-415-        # but we may have mojibake data, in which case this is an unparsed
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/packaging/metadata.py-416-        # field.
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/packaging/metadata.py-417-        if not valid_encoding:
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/packaging/metadata.py-418-            unparsed[name] = value
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/packaging/metadata.py-419-            continue
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/packaging/metadata.py-420-
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/packaging/metadata.py:421:        raw_name = _EMAIL_TO_RAW_MAPPING.get(name)
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/packaging/metadata.py-422-        if raw_name is None:
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/packaging/metadata.py-423-            # This is a bit of a weird situation, we've encountered a key that
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/packaging/metadata.py-424-            # we don't know what it means, so we don't know whether it's meant
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/packaging/metadata.py-425-            # to be a list or not.
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/packaging/metadata.py-426-            #
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/packaging/metadata.py-427-            # Since we can't really tell one way or another, we'll just leave it
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/packaging/metadata.py-428-            # as a list, even though it may be a single item list, because that's
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/packaging/metadata.py-429-            # what makes the most sense for email headers.
+--
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/packaging/metadata.py-535-        self,
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/packaging/metadata.py-536-        *,
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/packaging/metadata.py-537-        added: _MetadataVersion = "1.0",
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/packaging/metadata.py-538-    ) -> None:
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/packaging/metadata.py-539-        self.added = added
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/packaging/metadata.py-540-
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/packaging/metadata.py-541-    def __set_name__(self, _owner: Metadata, name: str) -> None:
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/packaging/metadata.py-542-        self.name = name
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/packaging/metadata.py:543:        self.raw_name = _RAW_TO_EMAIL_MAPPING[name]
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/packaging/metadata.py-544-
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/packaging/metadata.py-545-    def __get__(self, instance: Metadata, _owner: type[Metadata]) -> T:
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/packaging/metadata.py-546-        # With Python 3.8, the caching can be replaced with functools.cached_property().
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/packaging/metadata.py-547-        # No need to check the cache as attribute lookup will resolve into the
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/packaging/metadata.py-548-        # instance's __dict__ before __get__ is called.
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/packaging/metadata.py-549-        cache = instance.__dict__
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/packaging/metadata.py-550-        value = instance._raw.get(self.name)
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/packaging/metadata.py-551-
+--
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/packaging/metadata.py-610-    def _process_summary(self, value: str) -> str:
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/packaging/metadata.py-611-        """Check the field contains no newlines."""
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/packaging/metadata.py-612-        if "\n" in value:
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/packaging/metadata.py-613-            raise self._invalid_metadata("{field} must be a single line")
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/packaging/metadata.py-614-        return value
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/packaging/metadata.py-615-
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/packaging/metadata.py-616-    def _process_description_content_type(self, value: str) -> str:
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/packaging/metadata.py-617-        content_types = {"text/plain", "text/x-rst", "text/markdown"}
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/packaging/metadata.py:618:        message = email.message.EmailMessage()
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/packaging/metadata.py-619-        message["content-type"] = value
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/packaging/metadata.py-620-
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/packaging/metadata.py-621-        content_type, parameters = (
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/packaging/metadata.py-622-            # Defaults to `text/plain` if parsing failed.
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/packaging/metadata.py-623-            message.get_content_type().lower(),
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/packaging/metadata.py-624-            message["content-type"].params,
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/packaging/metadata.py-625-        )
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/packaging/metadata.py-626-        # Check if content-type is valid or defaulted to `text/plain` and thus was
+--
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/packaging/metadata.py-646-        return value
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/packaging/metadata.py-647-
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/packaging/metadata.py-648-    def _process_dynamic(self, value: list[str]) -> list[str]:
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/packaging/metadata.py-649-        for dynamic_field in map(str.lower, value):
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/packaging/metadata.py-650-            if dynamic_field in {"name", "version", "metadata-version"}:
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/packaging/metadata.py-651-                raise self._invalid_metadata(
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/packaging/metadata.py-652-                    f"{dynamic_field!r} is not allowed as a dynamic field"
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/packaging/metadata.py-653-                )
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/packaging/metadata.py:654:            elif dynamic_field not in _EMAIL_TO_RAW_MAPPING:
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/packaging/metadata.py-655-                raise self._invalid_metadata(
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/packaging/metadata.py-656-                    f"{dynamic_field!r} is not a valid dynamic field"
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/packaging/metadata.py-657-                )
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/packaging/metadata.py-658-        return list(map(str.lower, value))
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/packaging/metadata.py-659-
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/packaging/metadata.py-660-    def _process_provides_extra(
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/packaging/metadata.py-661-        self,
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/packaging/metadata.py-662-        value: list[str],
+--
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/packaging/metadata.py-798-                        except KeyError:
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/packaging/metadata.py-799-                            exc = InvalidMetadata(key, f"unrecognized field: {key!r}")
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/packaging/metadata.py-800-                            collector.error(exc)
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/packaging/metadata.py-801-                            continue
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/packaging/metadata.py-802-                        field_age = _VALID_METADATA_VERSIONS.index(
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/packaging/metadata.py-803-                            field_metadata_version
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/packaging/metadata.py-804-                        )
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/packaging/metadata.py-805-                        if field_age > metadata_age:
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/packaging/metadata.py:806:                            field = _RAW_TO_EMAIL_MAPPING[key]
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/packaging/metadata.py-807-                            exc = InvalidMetadata(
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/packaging/metadata.py-808-                                field,
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/packaging/metadata.py-809-                                f"{field} introduced in metadata version "
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/packaging/metadata.py-810-                                f"{field_metadata_version}, not {metadata_version}",
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/packaging/metadata.py-811-                            )
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/packaging/metadata.py-812-                            collector.error(exc)
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/packaging/metadata.py-813-                            continue
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/packaging/metadata.py-814-                    getattr(ins, key)
+--
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/packaging/metadata.py-826-        If *validate* is true, the metadata will be validated. All exceptions
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/packaging/metadata.py-827-        related to validation will be gathered and raised as an :class:`ExceptionGroup`.
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/packaging/metadata.py-828-        """
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/packaging/metadata.py-829-        raw, unparsed = parse_email(data)
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/packaging/metadata.py-830-
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/packaging/metadata.py-831-        if validate:
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/packaging/metadata.py-832-            with _ErrorCollector().on_exit("unparsed") as collector:
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/packaging/metadata.py-833-                for unparsed_key in unparsed:
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/packaging/metadata.py:834:                    if unparsed_key in _EMAIL_TO_RAW_MAPPING:
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/packaging/metadata.py-835-                        message = f"{unparsed_key!r} has invalid data"
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/packaging/metadata.py-836-                    else:
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/packaging/metadata.py-837-                        message = f"unrecognized field: {unparsed_key!r}"
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/packaging/metadata.py-838-                    collector.error(InvalidMetadata(unparsed_key, message))
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/packaging/metadata.py-839-
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/packaging/metadata.py-840-        try:
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/packaging/metadata.py-841-            return cls.from_raw(raw, validate=validate)
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/packaging/metadata.py-842-        except ExceptionGroup as exc_group:
+--
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/packaging/metadata.py-939-
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/packaging/metadata.py-940-    def _write_metadata(self, message: RFC822Message) -> None:
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/packaging/metadata.py-941-        """
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/packaging/metadata.py-942-        Return an RFC822 message with the metadata.
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/packaging/metadata.py-943-        """
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/packaging/metadata.py-944-        for name, validator in self.__class__.__dict__.items():
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/packaging/metadata.py-945-            if isinstance(validator, _Validator) and name != "description":
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/packaging/metadata.py-946-                value = getattr(self, name)
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/packaging/metadata.py:947:                email_name = _RAW_TO_EMAIL_MAPPING[name]
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/packaging/metadata.py-948-                if value is not None:
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/packaging/metadata.py:949:                    if email_name == "project-url":
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/packaging/metadata.py-950-                        for label, url in value.items():
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/packaging/metadata.py:951:                            message[email_name] = f"{label}, {url}"
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/packaging/metadata.py:952:                    elif email_name == "keywords":
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/packaging/metadata.py:953:                        message[email_name] = ",".join(value)
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/packaging/metadata.py:954:                    elif email_name == "import-name" and value == []:
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/packaging/metadata.py:955:                        message[email_name] = ""
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/packaging/metadata.py-956-                    elif isinstance(value, list):
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/packaging/metadata.py-957-                        for item in value:
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/packaging/metadata.py:958:                            message[email_name] = str(item)
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/packaging/metadata.py-959-                    else:
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/packaging/metadata.py:960:                        message[email_name] = str(value)
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/packaging/metadata.py-961-
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/packaging/metadata.py-962-        # The description is a special case because it is in the body of the message.
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/packaging/metadata.py-963-        if self.description is not None:
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/packaging/metadata.py-964-            message.set_payload(self.description)
+--
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/urllib3/util/ssl_match_hostname.py-79-
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/urllib3/util/ssl_match_hostname.py-80-def _ipaddress_match(ipname: str, host_ip: IPv4Address | IPv6Address) -> bool:
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/urllib3/util/ssl_match_hostname.py-81-    """Exact matching of IP addresses.
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/urllib3/util/ssl_match_hostname.py-82-
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/urllib3/util/ssl_match_hostname.py-83-    RFC 9110 section 4.3.5: "A reference identity of IP-ID contains the decoded
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/urllib3/util/ssl_match_hostname.py-84-    bytes of the IP address. An IP version 4 address is 4 octets, and an IP
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/urllib3/util/ssl_match_hostname.py-85-    version 6 address is 16 octets. [...] A reference identity of type IP-ID
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/urllib3/util/ssl_match_hostname.py-86-    matches if the address is identical to an iPAddress value of the
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/urllib3/util/ssl_match_hostname.py:87:    subjectAltName extension of the certificate."
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/urllib3/util/ssl_match_hostname.py-88-    """
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/urllib3/util/ssl_match_hostname.py:89:    # OpenSSL may add a trailing newline to a subjectAltName's IP address
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/urllib3/util/ssl_match_hostname.py-90-    # Divergence from upstream: ipaddress can't handle byte str
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/urllib3/util/ssl_match_hostname.py-91-    ip = ipaddress.ip_address(ipname.rstrip())
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/urllib3/util/ssl_match_hostname.py-92-    return bool(ip.packed == host_ip.packed)
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/urllib3/util/ssl_match_hostname.py-93-
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/urllib3/util/ssl_match_hostname.py-94-
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/urllib3/util/ssl_match_hostname.py-95-def match_hostname(
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/urllib3/util/ssl_match_hostname.py-96-    cert: _TYPE_PEER_CERT_RET_DICT | None,
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/urllib3/util/ssl_match_hostname.py-97-    hostname: str,
+--
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/urllib3/util/ssl_match_hostname.py-112-        )
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/urllib3/util/ssl_match_hostname.py-113-
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/urllib3/util/ssl_match_hostname.py-114-    try:
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/urllib3/util/ssl_match_hostname.py-115-        host_ip = ipaddress.ip_address(hostname)
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/urllib3/util/ssl_match_hostname.py-116-    except ValueError:
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/urllib3/util/ssl_match_hostname.py-117-        # Not an IP address (common case)
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/urllib3/util/ssl_match_hostname.py-118-        host_ip = None
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/urllib3/util/ssl_match_hostname.py-119-    dnsnames = []
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/urllib3/util/ssl_match_hostname.py:120:    san: tuple[tuple[str, str], ...] = cert.get("subjectAltName", ())
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/urllib3/util/ssl_match_hostname.py-121-    key: str
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/urllib3/util/ssl_match_hostname.py-122-    value: str
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/urllib3/util/ssl_match_hostname.py-123-    for key, value in san:
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/urllib3/util/ssl_match_hostname.py-124-        if key == "DNS":
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/urllib3/util/ssl_match_hostname.py-125-            if host_ip is None and _dnsname_match(value, hostname):
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/urllib3/util/ssl_match_hostname.py-126-                return
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/urllib3/util/ssl_match_hostname.py-127-            dnsnames.append(value)
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/urllib3/util/ssl_match_hostname.py-128-        elif key == "IP Address":
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/urllib3/util/ssl_match_hostname.py-129-            if host_ip is not None and _ipaddress_match(value, host_ip):
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/urllib3/util/ssl_match_hostname.py-130-                return
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/urllib3/util/ssl_match_hostname.py-131-            dnsnames.append(value)
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/urllib3/util/ssl_match_hostname.py-132-
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/urllib3/util/ssl_match_hostname.py-133-    # We only check 'commonName' if it's enabled and we're not verifying
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/urllib3/util/ssl_match_hostname.py-134-    # an IP address. IP addresses aren't valid within 'commonName'.
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/urllib3/util/ssl_match_hostname.py-135-    if hostname_checks_common_name and host_ip is None and not dnsnames:
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/urllib3/util/ssl_match_hostname.py:136:        for sub in cert.get("subject", ()):
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/urllib3/util/ssl_match_hostname.py-137-            for key, value in sub:
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/urllib3/util/ssl_match_hostname.py-138-                if key == "commonName":
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/urllib3/util/ssl_match_hostname.py-139-                    if _dnsname_match(value, hostname):
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/urllib3/util/ssl_match_hostname.py-140-                        return
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/urllib3/util/ssl_match_hostname.py-141-                    dnsnames.append(
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/urllib3/util/ssl_match_hostname.py-142-                        value
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/urllib3/util/ssl_match_hostname.py-143-                    )  # Defensive: for older PyPy and OpenSSL versions
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/urllib3/util/ssl_match_hostname.py-144-
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/urllib3/util/ssl_match_hostname.py-145-    if len(dnsnames) > 1:
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/urllib3/util/ssl_match_hostname.py-146-        raise CertificateError(
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/urllib3/util/ssl_match_hostname.py-147-            "hostname %r "
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/urllib3/util/ssl_match_hostname.py-148-            "doesn't match either of %s" % (hostname, ", ".join(map(repr, dnsnames)))
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/urllib3/util/ssl_match_hostname.py-149-        )
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/urllib3/util/ssl_match_hostname.py-150-    elif len(dnsnames) == 1:
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/urllib3/util/ssl_match_hostname.py-151-        raise CertificateError(f"hostname {hostname!r} doesn't match {dnsnames[0]!r}")
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/urllib3/util/ssl_match_hostname.py-152-    else:
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/urllib3/util/ssl_match_hostname.py:153:        raise CertificateError("no appropriate subjectAltName fields were found")
+--
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/urllib3/util/ssl_.py-39-
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/urllib3/util/ssl_.py-40-if typing.TYPE_CHECKING:
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/urllib3/util/ssl_.py-41-    from ssl import VerifyMode
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/urllib3/util/ssl_.py-42-    from typing import TypedDict
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/urllib3/util/ssl_.py-43-
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/urllib3/util/ssl_.py-44-    from .ssltransport import SSLTransport as SSLTransportType
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/urllib3/util/ssl_.py-45-
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/urllib3/util/ssl_.py-46-    class _TYPE_PEER_CERT_RET_DICT(TypedDict, total=False):
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/urllib3/util/ssl_.py:47:        subjectAltName: tuple[tuple[str, str], ...]
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/urllib3/util/ssl_.py:48:        subject: tuple[tuple[tuple[str, str], ...], ...]
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/urllib3/util/ssl_.py-49-        serialNumber: str
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/urllib3/util/ssl_.py-50-
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/urllib3/util/ssl_.py-51-
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/urllib3/util/ssl_.py-52-# Mapping from 'ssl.PROTOCOL_TLSX' to 'TLSVersion.X'
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/urllib3/util/ssl_.py-53-_SSL_VERSION_TO_TLS_VERSION: dict[int, int] = {}
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/urllib3/util/ssl_.py-54-
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/urllib3/util/ssl_.py-55-try:  # Do we have ssl at all?
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/urllib3/util/ssl_.py-56-    import ssl
+--
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/urllib3/contrib/pyopenssl.py-178-        raise ImportError(
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/urllib3/contrib/pyopenssl.py-179-            "'pyOpenSSL' module missing required functionality. "
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/urllib3/contrib/pyopenssl.py-180-            "Try upgrading to v0.14 or newer."
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/urllib3/contrib/pyopenssl.py-181-        )
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/urllib3/contrib/pyopenssl.py-182-
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/urllib3/contrib/pyopenssl.py-183-
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/urllib3/contrib/pyopenssl.py-184-def _dnsname_to_stdlib(name: str) -> str | None:
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/urllib3/contrib/pyopenssl.py-185-    """
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/urllib3/contrib/pyopenssl.py:186:    Converts a dNSName SubjectAlternativeName field to the form used by the
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/urllib3/contrib/pyopenssl.py-187-    standard library on the given Python version.
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/urllib3/contrib/pyopenssl.py-188-
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/urllib3/contrib/pyopenssl.py-189-    Cryptography produces a dNSName as a unicode string that was idna-decoded
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/urllib3/contrib/pyopenssl.py-190-    from ASCII bytes. We need to idna-encode that string to get it back, and
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/urllib3/contrib/pyopenssl.py-191-    then on Python 3 we also need to convert to unicode via UTF-8 (the stdlib
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/urllib3/contrib/pyopenssl.py-192-    uses PyUnicode_FromStringAndSize on it, which decodes via UTF-8).
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/urllib3/contrib/pyopenssl.py-193-
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/urllib3/contrib/pyopenssl.py-194-    If the name cannot be idna-encoded then we return None signalling that
+--
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/urllib3/contrib/pyopenssl.py-219-    encoded_name = idna_encode(name)
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/urllib3/contrib/pyopenssl.py-220-    if encoded_name is None:
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/urllib3/contrib/pyopenssl.py-221-        return None
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/urllib3/contrib/pyopenssl.py-222-    return encoded_name.decode("utf-8")
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/urllib3/contrib/pyopenssl.py-223-
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/urllib3/contrib/pyopenssl.py-224-
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/urllib3/contrib/pyopenssl.py-225-def get_subj_alt_name(peer_cert: X509) -> list[tuple[str, str]]:
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/urllib3/contrib/pyopenssl.py-226-    """
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/urllib3/contrib/pyopenssl.py:227:    Given an PyOpenSSL certificate, provides all the subject alternative names.
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/urllib3/contrib/pyopenssl.py-228-    """
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/urllib3/contrib/pyopenssl.py-229-    cert = peer_cert.to_cryptography()
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/urllib3/contrib/pyopenssl.py-230-
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/urllib3/contrib/pyopenssl.py-231-    # We want to find the SAN extension. Ask Cryptography to locate it (it's
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/urllib3/contrib/pyopenssl.py-232-    # faster than looping in Python)
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/urllib3/contrib/pyopenssl.py-233-    try:
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/urllib3/contrib/pyopenssl.py:234:        ext = cert.extensions.get_extension_for_class(x509.SubjectAlternativeName).value
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/urllib3/contrib/pyopenssl.py-235-    except x509.ExtensionNotFound:
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/urllib3/contrib/pyopenssl.py-236-        # No such extension, return the empty list.
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/urllib3/contrib/pyopenssl.py-237-        return []
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/urllib3/contrib/pyopenssl.py-238-    except (
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/urllib3/contrib/pyopenssl.py-239-        x509.DuplicateExtension,
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/urllib3/contrib/pyopenssl.py-240-        UnsupportedExtension,
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/urllib3/contrib/pyopenssl.py-241-        x509.UnsupportedGeneralNameType,
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/urllib3/contrib/pyopenssl.py-242-        UnicodeError,
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/urllib3/contrib/pyopenssl.py-243-    ) as e:
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/urllib3/contrib/pyopenssl.py-244-        # A problem has been found with the quality of the certificate. Assume
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/urllib3/contrib/pyopenssl.py-245-        # no SAN field is present.
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/urllib3/contrib/pyopenssl.py-246-        log.warning(
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/urllib3/contrib/pyopenssl.py-247-            "A problem was encountered with the certificate that prevented "
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/urllib3/contrib/pyopenssl.py:248:            "urllib3 from finding the SubjectAlternativeName field. This can "
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/urllib3/contrib/pyopenssl.py-249-            "affect certificate validation. The error was %s",
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/urllib3/contrib/pyopenssl.py-250-            e,
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/urllib3/contrib/pyopenssl.py-251-        )
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/urllib3/contrib/pyopenssl.py-252-        return []
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/urllib3/contrib/pyopenssl.py-253-
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/urllib3/contrib/pyopenssl.py-254-    # We want to return dNSName and iPAddress fields. We need to cast the IPs
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/urllib3/contrib/pyopenssl.py-255-    # back to strings because the match_hostname function wants them as
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/urllib3/contrib/pyopenssl.py-256-    # strings.
+--
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/urllib3/contrib/pyopenssl.py-389-
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/urllib3/contrib/pyopenssl.py-390-        if not x509:
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/urllib3/contrib/pyopenssl.py-391-            return x509  # type: ignore[no-any-return]
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/urllib3/contrib/pyopenssl.py-392-
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/urllib3/contrib/pyopenssl.py-393-        if binary_form:
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/urllib3/contrib/pyopenssl.py-394-            return OpenSSL.crypto.dump_certificate(OpenSSL.crypto.FILETYPE_ASN1, x509)  # type: ignore[no-any-return]
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/urllib3/contrib/pyopenssl.py-395-
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/urllib3/contrib/pyopenssl.py-396-        return {
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/urllib3/contrib/pyopenssl.py:397:            "subject": ((("commonName", x509.get_subject().CN),),),  # type: ignore[dict-item]
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/urllib3/contrib/pyopenssl.py:398:            "subjectAltName": get_subj_alt_name(x509),
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/urllib3/contrib/pyopenssl.py-399-        }
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/urllib3/contrib/pyopenssl.py-400-
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/urllib3/contrib/pyopenssl.py-401-    def version(self) -> str:
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/urllib3/contrib/pyopenssl.py-402-        return self.connection.get_protocol_version_name()  # type: ignore[no-any-return]
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/urllib3/contrib/pyopenssl.py-403-
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/urllib3/contrib/pyopenssl.py-404-    def selected_alpn_protocol(self) -> str | None:
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/urllib3/contrib/pyopenssl.py-405-        alpn_proto = self.connection.get_alpn_proto_negotiated()
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/urllib3/contrib/pyopenssl.py-406-        return alpn_proto.decode() if alpn_proto else None
+--
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/cachecontrol/__init__.py-9-
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/cachecontrol/__init__.py-10-import importlib.metadata
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/cachecontrol/__init__.py-11-
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/cachecontrol/__init__.py-12-from pip._vendor.cachecontrol.adapter import CacheControlAdapter
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/cachecontrol/__init__.py-13-from pip._vendor.cachecontrol.controller import CacheController
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/cachecontrol/__init__.py-14-from pip._vendor.cachecontrol.wrapper import CacheControl
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/cachecontrol/__init__.py-15-
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/cachecontrol/__init__.py-16-__author__ = "Eric Larson"
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/cachecontrol/__init__.py:17:__email__ = "eric@ionrock.org"
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/cachecontrol/__init__.py-18-# pip patch: this won't work when vendored, so just patch it out as it's unused
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/cachecontrol/__init__.py-19-# __version__ = importlib.metadata.version("cachecontrol")
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/cachecontrol/__init__.py-20-
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/cachecontrol/__init__.py-21-__all__ = [
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/cachecontrol/__init__.py-22-    "__author__",
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/cachecontrol/__init__.py:23:    "__email__",
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/cachecontrol/__init__.py-24-    "__version__",
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/cachecontrol/__init__.py-25-    "CacheControlAdapter",
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/cachecontrol/__init__.py-26-    "CacheController",
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/cachecontrol/__init__.py-27-    "CacheControl",
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/cachecontrol/__init__.py-28-]
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/cachecontrol/__init__.py-29-
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/cachecontrol/__init__.py-30-import logging
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/cachecontrol/__init__.py-31-
+--
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/requests/__version__.py-3-# ' ' `-' `-`.`-' `-' `-'  '  `-'
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/requests/__version__.py-4-
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/requests/__version__.py-5-__title__ = "requests"
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/requests/__version__.py-6-__description__ = "Python HTTP for Humans."
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/requests/__version__.py-7-__url__ = "https://requests.readthedocs.io"
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/requests/__version__.py-8-__version__ = "2.34.2"
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/requests/__version__.py-9-__build__ = 0x023402
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/requests/__version__.py-10-__author__ = "Kenneth Reitz"
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/requests/__version__.py:11:__author_email__ = "me@kennethreitz.org"
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/requests/__version__.py-12-__license__ = "Apache-2.0"
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/requests/__version__.py-13-__copyright__ = "Copyright Kenneth Reitz"
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/requests/__version__.py-14-__cake__ = "\u2728 \U0001f370 \u2728"
+--
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/requests/__init__.py-148-
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/requests/__init__.py-149-# Set default logging handler to avoid "No handler found" warnings.
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/requests/__init__.py-150-import logging
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/requests/__init__.py-151-from logging import NullHandler
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/requests/__init__.py-152-
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/requests/__init__.py-153-from . import packages, utils
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/requests/__init__.py-154-from .__version__ import (
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/requests/__init__.py-155-    __author__,
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/requests/__init__.py:156:    __author_email__,
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/requests/__init__.py-157-    __build__,
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/requests/__init__.py-158-    __cake__,
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/requests/__init__.py-159-    __copyright__,
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/requests/__init__.py-160-    __description__,
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/requests/__init__.py-161-    __license__,
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/requests/__init__.py-162-    __title__,
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/requests/__init__.py-163-    __url__,
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/requests/__init__.py-164-    __version__,
+--
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/rich/_timer.py-5-
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/rich/_timer.py-6-from time import time
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/rich/_timer.py-7-
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/rich/_timer.py-8-import contextlib
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/rich/_timer.py-9-from typing import Generator
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/rich/_timer.py-10-
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/rich/_timer.py-11-
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/rich/_timer.py-12-@contextlib.contextmanager
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/rich/_timer.py:13:def timer(subject: str = "time") -> Generator[None, None, None]:
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/rich/_timer.py-14-    """print the elapsed time. (only used in debugging)"""
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/rich/_timer.py-15-    start = time()
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/rich/_timer.py-16-    yield
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/rich/_timer.py-17-    elapsed = time() - start
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/rich/_timer.py-18-    elapsed_ms = elapsed * 1000
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/rich/_timer.py:19:    print(f"{subject} elapsed {elapsed_ms:.1f}ms")
+--
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/rich/_spinners.py-3-* cli-spinners:
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/rich/_spinners.py-4-    MIT License
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/rich/_spinners.py-5-    Copyright (c) Sindre Sorhus <sindresorhus@gmail.com> (sindresorhus.com)
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/rich/_spinners.py-6-    Permission is hereby granted, free of charge, to any person obtaining a copy
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/rich/_spinners.py-7-    of this software and associated documentation files (the "Software"), to deal
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/rich/_spinners.py-8-    in the Software without restriction, including without limitation the rights to
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/rich/_spinners.py-9-    use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/rich/_spinners.py-10-    the Software, and to permit persons to whom the Software is furnished to do so,
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/rich/_spinners.py:11:    subject to the following conditions:
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/rich/_spinners.py-12-    The above copyright notice and this permission notice shall be included
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/rich/_spinners.py-13-    in all copies or substantial portions of the Software.
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/rich/_spinners.py-14-    THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/rich/_spinners.py-15-    INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/rich/_spinners.py-16-    PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/rich/_spinners.py-17-    FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/rich/_spinners.py-18-    ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_vendor/rich/_spinners.py-19-    IN THE SOFTWARE.
+--
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_internal/utils/_jaraco_text.py-10-
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_internal/utils/_jaraco_text.py-11-Copyright Jason R. Coombs
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_internal/utils/_jaraco_text.py-12-
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_internal/utils/_jaraco_text.py-13-Permission is hereby granted, free of charge, to any person obtaining a copy
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_internal/utils/_jaraco_text.py-14-of this software and associated documentation files (the "Software"), to
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_internal/utils/_jaraco_text.py-15-deal in the Software without restriction, including without limitation the
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_internal/utils/_jaraco_text.py-16-rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_internal/utils/_jaraco_text.py-17-sell copies of the Software, and to permit persons to whom the Software is
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_internal/utils/_jaraco_text.py:18:furnished to do so, subject to the following conditions:
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_internal/utils/_jaraco_text.py-19-
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_internal/utils/_jaraco_text.py-20-The above copyright notice and this permission notice shall be included in
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_internal/utils/_jaraco_text.py-21-all copies or substantial portions of the Software.
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_internal/utils/_jaraco_text.py-22-
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_internal/utils/_jaraco_text.py-23-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_internal/utils/_jaraco_text.py-24-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_internal/utils/_jaraco_text.py-25-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_internal/utils/_jaraco_text.py-26-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+--
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_internal/cli/main.py-8-import sys
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_internal/cli/main.py-9-import warnings
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_internal/cli/main.py-10-
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_internal/cli/main.py-11-logger = logging.getLogger(__name__)
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_internal/cli/main.py-12-
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_internal/cli/main.py-13-
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_internal/cli/main.py-14-# Do not import and use main() directly! Using it directly is actively
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_internal/cli/main.py-15-# discouraged by pip's maintainers. The name, location and behavior of
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_internal/cli/main.py:16:# this function is subject to change, so calling it directly is not
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_internal/cli/main.py-17-# portable across different pip versions.
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_internal/cli/main.py-18-
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_internal/cli/main.py-19-# In addition, running pip in-process is unsupported and unsafe. This is
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_internal/cli/main.py-20-# elaborated in detail at
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_internal/cli/main.py-21-# https://pip.pypa.io/en/stable/user_guide/#using-pip-from-your-program.
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_internal/cli/main.py-22-# That document also provides suggestions that should work for nearly
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_internal/cli/main.py-23-# all users that are considering importing and using main() directly.
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/pip/_internal/cli/main.py-24-
+--
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/utils/_pprint.py-16-# PYTHON SOFTWARE FOUNDATION LICENSE VERSION 2
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/utils/_pprint.py-17-# --------------------------------------------
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/utils/_pprint.py-18-
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/utils/_pprint.py-19-# 1. This LICENSE AGREEMENT is between the Python Software Foundation ("PSF"),
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/utils/_pprint.py-20-# and the Individual or Organization ("Licensee") accessing and otherwise
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/utils/_pprint.py-21-# using this software ("Python") in source or binary form and its associated
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/utils/_pprint.py-22-# documentation.
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/utils/_pprint.py-23-
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/utils/_pprint.py:24:# 2. Subject to the terms and conditions of this License Agreement, PSF hereby
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/utils/_pprint.py-25-# grants Licensee a nonexclusive, royalty-free, world-wide license to
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/utils/_pprint.py-26-# reproduce, analyze, test, perform and/or display publicly, prepare
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/utils/_pprint.py-27-# derivative works, distribute, and otherwise use Python alone or in any
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/utils/_pprint.py-28-# derivative version, provided, however, that PSF's License Agreement and
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/utils/_pprint.py-29-# PSF's notice of copyright, i.e., "Copyright (c) 2001, 2002, 2003, 2004,
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/utils/_pprint.py-30-# 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016,
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/utils/_pprint.py-31-# 2017, 2018 Python Software Foundation; All Rights Reserved" are retained in
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/utils/_pprint.py-32-# Python alone or in any derivative version prepared by Licensee.
+--
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/linear_model/_logistic.py-321-        and `self.fit_intercept` is set to `True`. In this case, `x` becomes
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/linear_model/_logistic.py-322-        `[x, self.intercept_scaling]`,
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/linear_model/_logistic.py-323-        i.e. a "synthetic" feature with constant value equal to
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/linear_model/_logistic.py-324-        `intercept_scaling` is appended to the instance vector.
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/linear_model/_logistic.py-325-        The intercept becomes
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/linear_model/_logistic.py-326-        ``intercept_scaling * synthetic_feature_weight``.
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/linear_model/_logistic.py-327-
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/linear_model/_logistic.py-328-        .. note::
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/linear_model/_logistic.py:329:            The synthetic feature weight is subject to L1 or L2
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/linear_model/_logistic.py-330-            regularization as all other features.
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/linear_model/_logistic.py-331-            To lessen the effect of regularization on synthetic feature weight
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/linear_model/_logistic.py-332-            (and therefore on the intercept) `intercept_scaling` has to be increased.
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/linear_model/_logistic.py-333-
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/linear_model/_logistic.py-334-    random_state : int, RandomState instance, default=None
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/linear_model/_logistic.py-335-        Used when ``solver`` == 'sag', 'saga' or 'liblinear' to shuffle the
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/linear_model/_logistic.py-336-        data. See :term:`Glossary <random_state>` for details.
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/linear_model/_logistic.py-337-
+--
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/linear_model/_logistic.py-817-        and `self.fit_intercept` is set to `True`. In this case, `x` becomes
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/linear_model/_logistic.py-818-        `[x, self.intercept_scaling]`,
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/linear_model/_logistic.py-819-        i.e. a "synthetic" feature with constant value equal to
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/linear_model/_logistic.py-820-        `intercept_scaling` is appended to the instance vector.
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/linear_model/_logistic.py-821-        The intercept becomes
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/linear_model/_logistic.py-822-        ``intercept_scaling * synthetic_feature_weight``.
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/linear_model/_logistic.py-823-
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/linear_model/_logistic.py-824-        .. note::
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/linear_model/_logistic.py:825:            The synthetic feature weight is subject to L1 or L2
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/linear_model/_logistic.py-826-            regularization as all other features.
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/linear_model/_logistic.py-827-            To lessen the effect of regularization on synthetic feature weight
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/linear_model/_logistic.py-828-            (and therefore on the intercept) `intercept_scaling` has to be increased.
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/linear_model/_logistic.py-829-
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/linear_model/_logistic.py-830-    random_state : int, RandomState instance
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/linear_model/_logistic.py-831-        Used when ``solver`` == 'sag', 'saga' or 'liblinear' to shuffle the
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/linear_model/_logistic.py-832-        data. See :term:`Glossary <random_state>` for details.
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/linear_model/_logistic.py-833-
+--
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/linear_model/_logistic.py-1064-        and `self.fit_intercept` is set to `True`. In this case, `x` becomes
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/linear_model/_logistic.py-1065-        `[x, self.intercept_scaling]`,
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/linear_model/_logistic.py-1066-        i.e. a "synthetic" feature with constant value equal to
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/linear_model/_logistic.py-1067-        `intercept_scaling` is appended to the instance vector.
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/linear_model/_logistic.py-1068-        The intercept becomes
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/linear_model/_logistic.py-1069-        ``intercept_scaling * synthetic_feature_weight``.
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/linear_model/_logistic.py-1070-
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/linear_model/_logistic.py-1071-        .. note::
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/linear_model/_logistic.py:1072:            The synthetic feature weight is subject to L1 or L2
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/linear_model/_logistic.py-1073-            regularization as all other features.
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/linear_model/_logistic.py-1074-            To lessen the effect of regularization on synthetic feature weight
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/linear_model/_logistic.py-1075-            (and therefore on the intercept) `intercept_scaling` has to be increased.
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/linear_model/_logistic.py-1076-
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/linear_model/_logistic.py-1077-    class_weight : dict or 'balanced', default=None
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/linear_model/_logistic.py-1078-        Weights associated with classes in the form ``{class_label: weight}``.
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/linear_model/_logistic.py-1079-        If not given, all classes are supposed to have weight one.
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/linear_model/_logistic.py-1080-
+--
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/linear_model/_logistic.py-1829-        and `self.fit_intercept` is set to `True`. In this case, `x` becomes
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/linear_model/_logistic.py-1830-        `[x, self.intercept_scaling]`,
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/linear_model/_logistic.py-1831-        i.e. a "synthetic" feature with constant value equal to
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/linear_model/_logistic.py-1832-        `intercept_scaling` is appended to the instance vector.
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/linear_model/_logistic.py-1833-        The intercept becomes
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/linear_model/_logistic.py-1834-        ``intercept_scaling * synthetic_feature_weight``.
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/linear_model/_logistic.py-1835-
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/linear_model/_logistic.py-1836-        .. note::
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/linear_model/_logistic.py:1837:            The synthetic feature weight is subject to L1 or L2
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/linear_model/_logistic.py-1838-            regularization as all other features.
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/linear_model/_logistic.py-1839-            To lessen the effect of regularization on synthetic feature weight
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/linear_model/_logistic.py-1840-            (and therefore on the intercept) `intercept_scaling` has to be increased.
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/linear_model/_logistic.py-1841-
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/linear_model/_logistic.py-1842-    random_state : int, RandomState instance, default=None
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/linear_model/_logistic.py-1843-        Only used for `solver` == 'sag', 'saga' or 'liblinear' to shuffle the
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/linear_model/_logistic.py-1844-        data. It has no effect on the other solvers.
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/linear_model/_logistic.py-1845-        Note that this only applies to the solver and not the cross-validation
+--
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/linear_model/_omp.py-316-
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/linear_model/_omp.py-317-    Solves `n_targets` Orthogonal Matching Pursuit problems.
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/linear_model/_omp.py-318-    Each instance of the problem fits a linear model with constraints
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/linear_model/_omp.py-319-    imposed on the number of non-zero coefficients
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/linear_model/_omp.py-320-    (i.e. the :math:`\\ell_0` pseudo-norm) using `n_nonzero_coefs`:
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/linear_model/_omp.py-321-
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/linear_model/_omp.py-322-    .. math::
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/linear_model/_omp.py-323-        \underset{w}{\operatorname{arg\,min\,}} ||y - Xw||^2_2
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/linear_model/_omp.py:324:            \text{ subject to } ||w||_0 \leq n_{\text{nonzero_coefs}}
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/linear_model/_omp.py-325-
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/linear_model/_omp.py-326-    When parametrized by error using the parameter `tol`:
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/linear_model/_omp.py-327-
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/linear_model/_omp.py-328-    .. math::
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/linear_model/_omp.py-329-        \underset{w}{\operatorname{arg\,min\,}} ||w||_0
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/linear_model/_omp.py:330:            \text{ subject to } ||y - Xw||^2_2 \leq tol
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/linear_model/_omp.py-331-
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/linear_model/_omp.py-332-    Read more in the :ref:`User Guide <omp>`.
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/linear_model/_omp.py-333-
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/linear_model/_omp.py-334-    Parameters
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/linear_model/_omp.py-335-    ----------
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/linear_model/_omp.py-336-    X : array-like of shape (n_samples, n_features)
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/linear_model/_omp.py-337-        Input data. Columns are assumed to have unit norm.
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/linear_model/_omp.py-338-
+--
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/linear_model/_omp.py-658-class OrthogonalMatchingPursuit(RegressorMixin, MultiOutputLinearModel):
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/linear_model/_omp.py-659-    """Orthogonal Matching Pursuit model (OMP).
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/linear_model/_omp.py-660-
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/linear_model/_omp.py-661-    Fits a linear model with constraints imposed on the number of non-zero coefficients
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/linear_model/_omp.py-662-    (i.e. the :math:`\\ell_0` pseudo-norm) using `n_nonzero_coefs`:
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/linear_model/_omp.py-663-
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/linear_model/_omp.py-664-    .. math::
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/linear_model/_omp.py-665-        \\underset{w}{\\operatorname{arg\\,min\\,}} ||y - Xw||^2_2
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/linear_model/_omp.py:666:            \\text{ subject to } ||w||_0 \\leq n_{\\text{nonzero_coefs}}
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/linear_model/_omp.py-667-
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/linear_model/_omp.py-668-    When parametrized by error using the parameter `tol`:
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/linear_model/_omp.py-669-
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/linear_model/_omp.py-670-    .. math::
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/linear_model/_omp.py-671-        \\underset{w}{\\operatorname{arg\\,min\\,}} ||w||_0
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/linear_model/_omp.py:672:            \\text{ subject to } ||y - Xw||^2_2 \\leq tol
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/linear_model/_omp.py-673-
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/linear_model/_omp.py-674-    Read more in the :ref:`User Guide <omp>`.
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/linear_model/_omp.py-675-
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/linear_model/_omp.py-676-    Parameters
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/linear_model/_omp.py-677-    ----------
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/linear_model/_omp.py-678-    n_nonzero_coefs : int, default=None
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/linear_model/_omp.py-679-        Maximum number of non-zero entries in the solution. Ignored if `tol` is set.
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/linear_model/_omp.py-680-        When `None` and `tol` is also `None`, this value is either set to 10% of
+--
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/linear_model/tests/test_ridge.py-102-    Parameters
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/linear_model/tests/test_ridge.py-103-    ----------
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/linear_model/tests/test_ridge.py-104-    type : {"long", "wide"}
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/linear_model/tests/test_ridge.py-105-        If "long", then n_samples > n_features.
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/linear_model/tests/test_ridge.py-106-        If "wide", then n_features > n_samples.
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/linear_model/tests/test_ridge.py-107-
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/linear_model/tests/test_ridge.py-108-    For "wide", we return the minimum norm solution w = X' (XX')^-1 y:
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/linear_model/tests/test_ridge.py-109-
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/linear_model/tests/test_ridge.py:110:        min ||w||_2 subject to X w = y
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/linear_model/tests/test_ridge.py-111-
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/linear_model/tests/test_ridge.py-112-    Returns
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/linear_model/tests/test_ridge.py-113-    -------
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/linear_model/tests/test_ridge.py-114-    X : ndarray
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/linear_model/tests/test_ridge.py-115-        Last column of 1, i.e. intercept.
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/linear_model/tests/test_ridge.py-116-    y : ndarray
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/linear_model/tests/test_ridge.py-117-    coef_ols : ndarray of shape
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/linear_model/tests/test_ridge.py-118-        Minimum norm OLS solutions, i.e. min ||X w - y||_2_2 (with minimum ||w||_2 in
+--
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/linear_model/tests/test_ridge.py-297-def test_ridge_regression_unpenalized(
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/linear_model/tests/test_ridge.py-298-    solver, fit_intercept, ols_ridge_dataset, global_random_seed
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/linear_model/tests/test_ridge.py-299-):
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/linear_model/tests/test_ridge.py-300-    """Test that unpenalized Ridge = OLS converges for all solvers to correct solution.
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/linear_model/tests/test_ridge.py-301-
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/linear_model/tests/test_ridge.py-302-    We work with a simple constructed data set with known solution.
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/linear_model/tests/test_ridge.py-303-    Note: This checks the minimum norm solution for wide X, i.e.
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/linear_model/tests/test_ridge.py-304-    n_samples < n_features:
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/linear_model/tests/test_ridge.py:305:        min ||w||_2 subject to X w = y
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/linear_model/tests/test_ridge.py-306-    """
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/linear_model/tests/test_ridge.py-307-    X, y, coef, _ = ols_ridge_dataset
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/linear_model/tests/test_ridge.py-308-    n_samples, n_features = X.shape
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/linear_model/tests/test_ridge.py-309-    alpha = 0  # OLS
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/linear_model/tests/test_ridge.py-310-    params = dict(
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/linear_model/tests/test_ridge.py-311-        alpha=alpha,
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/linear_model/tests/test_ridge.py-312-        fit_intercept=fit_intercept,
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/linear_model/tests/test_ridge.py-313-        solver=solver,
+--
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/linear_model/tests/test_ridge.py-353-    solver, fit_intercept, ols_ridge_dataset, global_random_seed
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/linear_model/tests/test_ridge.py-354-):
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/linear_model/tests/test_ridge.py-355-    """Test that unpenalized Ridge = OLS converges for all solvers to correct solution.
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/linear_model/tests/test_ridge.py-356-
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/linear_model/tests/test_ridge.py-357-    We work with a simple constructed data set with known solution.
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/linear_model/tests/test_ridge.py-358-    OLS fit on [X] is the same as fit on [X, X]/2.
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/linear_model/tests/test_ridge.py-359-    For long X, [X, X] is a singular matrix and we check against the minimum norm
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/linear_model/tests/test_ridge.py-360-    solution:
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/linear_model/tests/test_ridge.py:361:        min ||w||_2 subject to min ||X w - y||_2
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/linear_model/tests/test_ridge.py-362-    """
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/linear_model/tests/test_ridge.py-363-    X, y, coef, _ = ols_ridge_dataset
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/linear_model/tests/test_ridge.py-364-    n_samples, n_features = X.shape
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/linear_model/tests/test_ridge.py-365-    alpha = 0  # OLS
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/linear_model/tests/test_ridge.py-366-
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/linear_model/tests/test_ridge.py-367-    model = Ridge(
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/linear_model/tests/test_ridge.py-368-        alpha=alpha,
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/linear_model/tests/test_ridge.py-369-        fit_intercept=fit_intercept,
+--
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/linear_model/tests/test_ridge.py-409-):
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/linear_model/tests/test_ridge.py-410-    """Test that unpenalized Ridge = OLS converges for all solvers to correct solution.
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/linear_model/tests/test_ridge.py-411-
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/linear_model/tests/test_ridge.py-412-    We work with a simple constructed data set with known solution.
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/linear_model/tests/test_ridge.py-413-    OLS fit on [X] is the same as fit on [X], [y]
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/linear_model/tests/test_ridge.py-414-                                         [X], [y].
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/linear_model/tests/test_ridge.py-415-    For wide X, [X', X'] is a singular matrix and we check against the minimum norm
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/linear_model/tests/test_ridge.py-416-    solution:
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/linear_model/tests/test_ridge.py:417:        min ||w||_2 subject to X w = y
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/linear_model/tests/test_ridge.py-418-    """
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/linear_model/tests/test_ridge.py-419-    X, y, coef, _ = ols_ridge_dataset
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/linear_model/tests/test_ridge.py-420-    n_samples, n_features = X.shape
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/linear_model/tests/test_ridge.py-421-    alpha = 0  # OLS
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/linear_model/tests/test_ridge.py-422-
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/linear_model/tests/test_ridge.py-423-    model = Ridge(
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/linear_model/tests/test_ridge.py-424-        alpha=alpha,
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/linear_model/tests/test_ridge.py-425-        fit_intercept=fit_intercept,
+--
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/linear_model/_glm/tests/test_glm.py-95-    ----------
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/linear_model/_glm/tests/test_glm.py-96-    type : {"long", "wide"}
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/linear_model/_glm/tests/test_glm.py-97-        If "long", then n_samples > n_features.
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/linear_model/_glm/tests/test_glm.py-98-        If "wide", then n_features > n_samples.
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/linear_model/_glm/tests/test_glm.py-99-    model : a GLM model
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/linear_model/_glm/tests/test_glm.py-100-
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/linear_model/_glm/tests/test_glm.py-101-    For "wide", we return the minimum norm solution:
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/linear_model/_glm/tests/test_glm.py-102-
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/linear_model/_glm/tests/test_glm.py:103:        min ||w||_2 subject to w = argmin deviance(X, y, w)
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/linear_model/_glm/tests/test_glm.py-104-
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/linear_model/_glm/tests/test_glm.py-105-    Note that the deviance is always minimized if y = inverse_link(X w) is possible to
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/linear_model/_glm/tests/test_glm.py-106-    achieve, which it is in the wide data case. Therefore, we can construct the
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/linear_model/_glm/tests/test_glm.py-107-    solution with minimum norm like (wide) OLS:
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/linear_model/_glm/tests/test_glm.py-108-
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/linear_model/_glm/tests/test_glm.py:109:        min ||w||_2 subject to link(y) = raw_prediction = X w
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/linear_model/_glm/tests/test_glm.py-110-
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/linear_model/_glm/tests/test_glm.py-111-    Returns
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/linear_model/_glm/tests/test_glm.py-112-    -------
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/linear_model/_glm/tests/test_glm.py-113-    model : GLM model
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/linear_model/_glm/tests/test_glm.py-114-    X : ndarray
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/linear_model/_glm/tests/test_glm.py-115-        Last column of 1, i.e. intercept.
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/linear_model/_glm/tests/test_glm.py-116-    y : ndarray
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/linear_model/_glm/tests/test_glm.py-117-    coef_unpenalized : ndarray
+--
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/linear_model/_glm/tests/test_glm.py-344-@pytest.mark.parametrize("solver", SOLVERS)
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/linear_model/_glm/tests/test_glm.py-345-@pytest.mark.parametrize("fit_intercept", [True, False])
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/linear_model/_glm/tests/test_glm.py-346-def test_glm_regression_unpenalized(solver, fit_intercept, glm_dataset):
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/linear_model/_glm/tests/test_glm.py-347-    """Test that unpenalized GLM converges for all solvers to correct solution.
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/linear_model/_glm/tests/test_glm.py-348-
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/linear_model/_glm/tests/test_glm.py-349-    We work with a simple constructed data set with known solution.
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/linear_model/_glm/tests/test_glm.py-350-    Note: This checks the minimum norm solution for wide X, i.e.
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/linear_model/_glm/tests/test_glm.py-351-    n_samples < n_features:
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/linear_model/_glm/tests/test_glm.py:352:        min ||w||_2 subject to w = argmin deviance(X, y, w)
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/linear_model/_glm/tests/test_glm.py-353-    """
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/linear_model/_glm/tests/test_glm.py-354-    model, X, y, coef, _, _, _ = glm_dataset
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/linear_model/_glm/tests/test_glm.py-355-    n_samples, n_features = X.shape
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/linear_model/_glm/tests/test_glm.py-356-    alpha = 0  # unpenalized
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/linear_model/_glm/tests/test_glm.py-357-    params = dict(
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/linear_model/_glm/tests/test_glm.py-358-        alpha=alpha,
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/linear_model/_glm/tests/test_glm.py-359-        fit_intercept=fit_intercept,
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/linear_model/_glm/tests/test_glm.py-360-        solver=solver,
+--
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/linear_model/_glm/tests/test_glm.py-427-@pytest.mark.parametrize("fit_intercept", [True, False])
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/linear_model/_glm/tests/test_glm.py-428-def test_glm_regression_unpenalized_hstacked_X(solver, fit_intercept, glm_dataset):
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/linear_model/_glm/tests/test_glm.py-429-    """Test that unpenalized GLM converges for all solvers to correct solution.
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/linear_model/_glm/tests/test_glm.py-430-
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/linear_model/_glm/tests/test_glm.py-431-    We work with a simple constructed data set with known solution.
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/linear_model/_glm/tests/test_glm.py-432-    GLM fit on [X] is the same as fit on [X, X]/2.
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/linear_model/_glm/tests/test_glm.py-433-    For long X, [X, X] is a singular matrix and we check against the minimum norm
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/linear_model/_glm/tests/test_glm.py-434-    solution:
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/linear_model/_glm/tests/test_glm.py:435:        min ||w||_2 subject to w = argmin deviance(X, y, w)
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/linear_model/_glm/tests/test_glm.py-436-    """
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/linear_model/_glm/tests/test_glm.py-437-    model, X, y, coef, _, _, _ = glm_dataset
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/linear_model/_glm/tests/test_glm.py-438-    n_samples, n_features = X.shape
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/linear_model/_glm/tests/test_glm.py-439-    alpha = 0  # unpenalized
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/linear_model/_glm/tests/test_glm.py-440-    params = dict(
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/linear_model/_glm/tests/test_glm.py-441-        alpha=alpha,
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/linear_model/_glm/tests/test_glm.py-442-        fit_intercept=fit_intercept,
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/linear_model/_glm/tests/test_glm.py-443-        solver=solver,
+--
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/linear_model/_glm/tests/test_glm.py-513-def test_glm_regression_unpenalized_vstacked_X(solver, fit_intercept, glm_dataset):
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/linear_model/_glm/tests/test_glm.py-514-    """Test that unpenalized GLM converges for all solvers to correct solution.
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/linear_model/_glm/tests/test_glm.py-515-
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/linear_model/_glm/tests/test_glm.py-516-    We work with a simple constructed data set with known solution.
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/linear_model/_glm/tests/test_glm.py-517-    GLM fit on [X] is the same as fit on [X], [y]
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/linear_model/_glm/tests/test_glm.py-518-                                         [X], [y].
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/linear_model/_glm/tests/test_glm.py-519-    For wide X, [X', X'] is a singular matrix and we check against the minimum norm
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/linear_model/_glm/tests/test_glm.py-520-    solution:
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/linear_model/_glm/tests/test_glm.py:521:        min ||w||_2 subject to w = argmin deviance(X, y, w)
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/linear_model/_glm/tests/test_glm.py-522-    """
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/linear_model/_glm/tests/test_glm.py-523-    model, X, y, coef, _, _, _ = glm_dataset
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/linear_model/_glm/tests/test_glm.py-524-    n_samples, n_features = X.shape
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/linear_model/_glm/tests/test_glm.py-525-    alpha = 0  # unpenalized
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/linear_model/_glm/tests/test_glm.py-526-    params = dict(
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/linear_model/_glm/tests/test_glm.py-527-        alpha=alpha,
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/linear_model/_glm/tests/test_glm.py-528-        fit_intercept=fit_intercept,
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/linear_model/_glm/tests/test_glm.py-529-        solver=solver,
+--
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/externals/_arff.py-5-# =============================================================================
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/externals/_arff.py-6-# Copyright (c) 2011 Renato de Pontes Pereira, renato.ppontes at gmail dot com
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/externals/_arff.py-7-#
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/externals/_arff.py-8-# Permission is hereby granted, free of charge, to any person obtaining a copy
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/externals/_arff.py-9-# of this software and associated documentation files (the "Software"), to deal
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/externals/_arff.py-10-# in the Software without restriction, including without limitation the rights
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/externals/_arff.py-11-# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/externals/_arff.py-12-# copies of the Software, and to permit persons to whom the Software is
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/externals/_arff.py:13:# furnished to do so, subject to the following conditions:
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/externals/_arff.py-14-#
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/externals/_arff.py-15-# The above copyright notice and this permission notice shall be included in
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/externals/_arff.py-16-# all copies or substantial portions of the Software.
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/externals/_arff.py-17-#
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/externals/_arff.py-18-# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/externals/_arff.py-19-# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/externals/_arff.py-20-# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/externals/_arff.py-21-# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+--
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/externals/_arff.py-137-- Supports read and write the descriptions of files;
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/externals/_arff.py-138-- Supports missing values and names with spaces;
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/externals/_arff.py-139-- Supports unicode values and names;
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/externals/_arff.py-140-- Fully compatible with Python 2.7+, Python 3.5+, pypy and pypy3;
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/externals/_arff.py-141-- Under `MIT License <http://opensource.org/licenses/MIT>`_
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/externals/_arff.py-142-
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/externals/_arff.py-143-'''
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/externals/_arff.py-144-__author__ = 'Renato de Pontes Pereira, Matthias Feurer, Joel Nothman'
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/externals/_arff.py:145:__author_email__ = ('renato.ppontes@gmail.com, '
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/externals/_arff.py-146-                    'feurerm@informatik.uni-freiburg.de, '
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/externals/_arff.py-147-                    'joel.nothman@gmail.com')
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/externals/_arff.py-148-__version__ = '2.4.0'
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/externals/_arff.py-149-
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/externals/_arff.py-150-import re
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/externals/_arff.py-151-import csv
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/externals/_arff.py-152-from typing import TYPE_CHECKING
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/externals/_arff.py-153-from typing import Optional, List, Dict, Any, Iterator, Union, Tuple
+--
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/experimental/__init__.py-1-"""Importable modules that enable the use of experimental features or estimators.
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/experimental/__init__.py-2-
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/experimental/__init__.py-3-.. warning::
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/experimental/__init__.py-4-
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/experimental/__init__.py:5:    The features and estimators that are experimental aren't subject to
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/experimental/__init__.py-6-    deprecation cycles. Use them at your own risks!
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/experimental/__init__.py-7-"""
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/experimental/__init__.py-8-
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/experimental/__init__.py-9-# Authors: The scikit-learn developers
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/experimental/__init__.py-10-# SPDX-License-Identifier: BSD-3-Clause
+--
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/preprocessing/_data.py-2335-    See Also
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/preprocessing/_data.py-2336-    --------
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/preprocessing/_data.py-2337-    binarize : Equivalent function without the estimator API.
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/preprocessing/_data.py-2338-    KBinsDiscretizer : Bin continuous data into intervals.
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/preprocessing/_data.py-2339-    OneHotEncoder : Encode categorical features as a one-hot numeric array.
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/preprocessing/_data.py-2340-
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/preprocessing/_data.py-2341-    Notes
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/preprocessing/_data.py-2342-    -----
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/preprocessing/_data.py:2343:    If the input is a sparse matrix, only the non-zero values are subject
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/preprocessing/_data.py-2344-    to update by the :class:`Binarizer` class.
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/preprocessing/_data.py-2345-
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/preprocessing/_data.py-2346-    This estimator is :term:`stateless` and does not need to be fitted.
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/preprocessing/_data.py-2347-    However, we recommend to call :meth:`fit_transform` instead of
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/preprocessing/_data.py-2348-    :meth:`transform`, as parameter validation is only performed in
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/preprocessing/_data.py-2349-    :meth:`fit`.
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/preprocessing/_data.py-2350-
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/preprocessing/_data.py-2351-    Examples
+--
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/datasets/_olivetti_faces.py-115-    data : :class:`~sklearn.utils.Bunch`
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/datasets/_olivetti_faces.py-116-        Dictionary-like object, with the following attributes.
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/datasets/_olivetti_faces.py-117-
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/datasets/_olivetti_faces.py-118-        data: ndarray, shape (400, 4096)
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/datasets/_olivetti_faces.py-119-            Each row corresponds to a ravelled
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/datasets/_olivetti_faces.py-120-            face image of original size 64 x 64 pixels.
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/datasets/_olivetti_faces.py-121-        images : ndarray, shape (400, 64, 64)
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/datasets/_olivetti_faces.py-122-            Each row is a face image
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/datasets/_olivetti_faces.py:123:            corresponding to one of the 40 subjects of the dataset.
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/datasets/_olivetti_faces.py-124-        target : ndarray, shape (400,)
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/datasets/_olivetti_faces.py-125-            Labels associated to each face image.
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/datasets/_olivetti_faces.py-126-            Those labels are ranging from 0-39 and correspond to the
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/datasets/_olivetti_faces.py:127:            Subject IDs.
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/datasets/_olivetti_faces.py-128-        DESCR : str
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/datasets/_olivetti_faces.py-129-            Description of the modified Olivetti Faces Dataset.
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/datasets/_olivetti_faces.py-130-
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/datasets/_olivetti_faces.py-131-    (data, target) : tuple if `return_X_y=True`
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/datasets/_olivetti_faces.py-132-        Tuple with the `data` and `target` objects described above.
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/datasets/_olivetti_faces.py-133-
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/datasets/_olivetti_faces.py-134-        .. versionadded:: 0.22
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/datasets/_olivetti_faces.py-135-
+--
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/model_selection/_split.py-995-    """
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/model_selection/_split.py-996-
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/model_selection/_split.py-997-    def __init__(self, n_splits=5, shuffle=False, random_state=None):
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/model_selection/_split.py-998-        super().__init__(n_splits=n_splits, shuffle=shuffle, random_state=random_state)
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/model_selection/_split.py-999-
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/model_selection/_split.py-1000-    def _iter_test_indices(self, X, y, groups):
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/model_selection/_split.py-1001-        # Implementation is based on this kaggle kernel:
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/model_selection/_split.py-1002-        # https://www.kaggle.com/jakubwasikowski/stratified-group-k-fold-cross-validation
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/model_selection/_split.py:1003:        # and is a subject to Apache 2.0 License. You may obtain a copy of the
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/model_selection/_split.py-1004-        # License at http://www.apache.org/licenses/LICENSE-2.0
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/model_selection/_split.py-1005-        # Changelist:
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/model_selection/_split.py-1006-        # - Refactored function to a class following scikit-learn KFold
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/model_selection/_split.py-1007-        #   interface.
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/model_selection/_split.py-1008-        # - Added heuristic for assigning group to the least populated fold in
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/model_selection/_split.py-1009-        #   cases when all other criteria are equal
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/model_selection/_split.py-1010-        # - Swtch from using python ``Counter`` to ``np.unique`` to get class
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/model_selection/_split.py-1011-        #   distribution
+--
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/model_selection/_classification_threshold.py-550-        * An iterable yielding train, test splits;
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/model_selection/_classification_threshold.py-551-        * `"prefit"`, to bypass the cross-validation.
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/model_selection/_classification_threshold.py-552-
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/model_selection/_classification_threshold.py-553-        Refer :ref:`User Guide <cross_validation>` for the various
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/model_selection/_classification_threshold.py-554-        cross-validation strategies that can be used here.
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/model_selection/_classification_threshold.py-555-
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/model_selection/_classification_threshold.py-556-        .. warning::
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/model_selection/_classification_threshold.py-557-            Using `cv="prefit"` and passing the same dataset for fitting `estimator`
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/model_selection/_classification_threshold.py:558:            and tuning the cut-off point is subject to undesired overfitting. You can
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/model_selection/_classification_threshold.py-559-            refer to :ref:`TunedThresholdClassifierCV_no_cv` for an example.
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/model_selection/_classification_threshold.py-560-
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/model_selection/_classification_threshold.py-561-            This option should only be used when the set used to fit `estimator` is
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/model_selection/_classification_threshold.py-562-            different from the one used to tune the cut-off point (by calling
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/model_selection/_classification_threshold.py-563-            :meth:`TunedThresholdClassifierCV.fit`).
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/model_selection/_classification_threshold.py-564-
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/model_selection/_classification_threshold.py-565-    refit : bool, default=True
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/sklearn/model_selection/_classification_threshold.py-566-        Whether or not to refit the classifier on the entire training set once
+--
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/bs4/element.py-1683-        interesting in a given context.
+/home/anestishkurti92/ufc-predictor-v1/venv.google-original/lib/python3.12/site-packages/bs4/element.py-1684-
+=== SERVICES/TIMERS ===
+actions.runner.maxxw71-ufc-feed.ubuntu-4gb-fsn1-1.service enabled         enabled
+nfl-home-opener.service                                   static          -
+ufc-model-watcher.service                                 static          -
+nfl-home-opener.timer                                     enabled         enabled
+ufc-model-watcher.timer                                   enabled         enabled
