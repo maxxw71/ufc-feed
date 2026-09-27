@@ -59,7 +59,9 @@ reach=load(PROFILE/'cross_source_reach_report.json')
 pros=load(ODDS/'coverage.json')
 settle=load(ODDS/'settled_bouts.json')
 db=load(PHASE2/'database_status.json')
-hist_valid=load(REPORTS/'HISTORICAL_ODDS_VALIDATED_ROWS.json')
+hist_valid=load(REPORTS/'HISTORICAL_ODDS_STRICT_UNION_ROWS.json')
+if not (hist_valid.get('rows') or []):
+    hist_valid=load(REPORTS/'HISTORICAL_ODDS_VALIDATED_ROWS.json')
 hist_valid_rows=hist_valid.get('rows') or []
 hist_valid_bouts=sorted({str(x.get('bout_id') or '') for x in hist_valid_rows if str(x.get('bout_id') or '')})
 hist_valid_events=sorted({str(x.get('event_url') or '') for x in hist_valid_rows if str(x.get('event_url') or '')})
@@ -136,7 +138,7 @@ out={
     'validated_bookmakers':hist_valid_books,
     'status':'independently_verified_pre_event_subset_available' if hist_valid_rows else 'no_independently_verified_historical_rows',
     'policy':hist_valid.get('policy'),
-    'note':'Only this verified subset has independently proven pre-event archived prices; the remaining historical archive stays exploratory.'
+    'note':'Only this strict union of independently proven pre-event archived prices is treated as validated; remaining historical archive rows stay exploratory.'
   },
   'prospective_pricing':{
     'generated_at':pros.get('generated_at'),
