@@ -88,15 +88,15 @@ def method_key():
         ('U4','Age + Reach Premium','Higher-confidence overlap of age and reach: market support plus both a younger and longer favorite.'),
         ('U5','Wrestling Mismatch','High takedown/control wrestler facing an opponent with very low wrestling volume and control.'),
         ('U6','Pace + Defense','Favorite has both a striking-output advantage and a significant-strike defense advantage.'),
-        ('U7','Striking + TD Defense','Favorite owns a large striking-differential and takedown-defense edge; the live version also applies the age/power risk gate.'),
-        ('U8','Striking Differential','Strong market favorite with a large striking-differential advantage and positive own striking differential.'),
+        ('U7','Striking + TD Defense · Risk Gated','Favorite owns a large striking-differential and takedown-defense edge; the live rule also requires the validated age/power risk gate to clear.'),
+        ('U8','Striking Differential + Opponent Context','Strong striking-differential favorite, but now explicitly checks the opponent: favorites >3 years older are vetoed, and >2 years older are vetoed when the younger opponent carries meaningful wrestling pressure.'),
         ('U9','Experience + Veteran Health','Battle-tested favorite versus a thin UFC sample, with minimum win-rate edge and veteran-health veto.'),
-        ('U10','KO/TKO Recovery Gap','Both fighters have prior UFC KO/TKO losses; favors the fighter whose latest KO/TKO loss is substantially farther in the past.'),
+        ('U10','KO/TKO Recovery + Opponent Age Guard','Both fighters have prior UFC KO/TKO losses; the recovery-gap edge must clear and the favorite cannot be more than 2 years older than the opponent.'),
         ('U11','Veteran Age/Defense Decline','U9-style veteran matchup with a five-factor decline screen; four or more risks veto the selection.'),
         ('U12','Veteran Balanced Decline','U9-style veteran matchup with a broader six-factor decline screen including recent form; four or more risks veto it.'),
     ]
     rows=''.join('<div class="method-key-item"><span class="method-code">'+esc(mid)+'</span><div><strong>'+esc(title)+'</strong><p>'+esc(desc)+'</p></div></div>' for mid,title,desc in methods)
-    return '<details class="method-key" id="method-key"><summary><span>Method Key · U1–U12</span></summary><p class="method-key-intro">Brief guide to the official UFC methods that can create a live selection. “Strong” is a tighter tier of the same method, not a separate bet.</p><div class="method-key-grid">'+rows+'</div></details>'
+    return '<details class="method-key" id="method-key"><summary><span>Method Key · U1–U12</span></summary><p class="method-key-intro">Brief guide to the official UFC methods that can create a live selection. Every live method must pass the shared opponent-context publication guard; unregistered future methods fail closed. “Strong” is a tighter tier of the same method, not a separate bet.</p><div class="method-key-grid">'+rows+'</div></details>'
 
 def downloads(sp):
     raw=sp.downloads_html('ufc') or ''
