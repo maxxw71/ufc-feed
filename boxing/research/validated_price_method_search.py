@@ -3,8 +3,8 @@
 
 This pass is deliberately separate from the all-archive exploratory research.
 A quote is eligible only when its quote_rowid appears in
-HISTORICAL_ODDS_VALIDATED_ROWS.json, whose validator requires an exact pre-event
-Wayback event/bookmaker/bout/selection/price match.
+HISTORICAL_ODDS_STRICT_UNION_ROWS.json, whose inputs require exact pre-event
+Wayback event-page or homepage bookmaker/bout/selection/price matches.
 
 Important: verified prices improve price provenance, but do NOT make these
 rules pristine out-of-sample discoveries because the rule families were
@@ -20,7 +20,7 @@ from phase2_interaction_scan import feature_rows,metrics,rule_universe,matches,p
 from candidate_method_validation import RULES as CANDIDATE_RULES, match as candidate_match
 
 ROOT=Path(__file__).resolve().parent
-VALID=ROOT/'HISTORICAL_ODDS_VALIDATED_ROWS.json'
+VALID=ROOT/'HISTORICAL_ODDS_STRICT_UNION_ROWS.json'
 
 def wilson_safe(m):
     return m.get('wilson95_lower_pct') if m.get('wilson95_lower_pct') is not None else -999
