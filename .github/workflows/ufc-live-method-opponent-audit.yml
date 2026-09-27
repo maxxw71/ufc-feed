@@ -1,0 +1,83 @@
+name: UFC Live Method Opponent Audit
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/ufc-live-method-opponent-audit.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  audit:
+    runs-on: [self-hosted, Linux, X64, appwiza]
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - name: Audit live method logic for opponent context
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          KEY=/home/appwiza-runner/.ssh/appwiza_vps
+          HOST=anestishkurti92@127.0.0.1
+          OUTDIR="$GITHUB_WORKSPACE/ufc_live_method_opponent_audit"
+          mkdir -p "$OUTDIR"
+          ssh -i "$KEY" -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=accept-new "$HOST" 'bash -s' > "$OUTDIR/report.txt" <<'EOF'
+          set -Eeuo pipefail
+          ROOT=/home/anestishkurti92/ufc-predictor-v1
+          PY="$ROOT/venv/bin/python"
+          cd "$ROOT"
+          "$PY" - <<'PY'
+          import ast,re
+          from pathlib import Path
+
+          files=[Path('ufc_email_watcher.py')]
+          for p in [Path('/opt/sports-publisher/ufc_email_design.py'),Path('/opt/sports-publisher/sports_publish.py'),Path('/home/anestishkurti92/betting-ledger/code/bet_tracker.py')]:
+              if p.exists(): files.append(p)
+
+          print('UFC LIVE METHOD OPPONENT-CONTEXT AUDIT')
+          print('='*140)
+          for p in files:
+              print('\n### FILE',p)
+              s=p.read_text(errors='ignore')
+              for m in re.finditer(r"['\"]id['\"]\s*:\s*['\"](U\d+|[A-Z][A-Z0-9_ -]+)['\"]",s):
+                  lo=max(0,m.start()-1200); hi=min(len(s),m.end()+2600)
+                  print('\n--- METHOD CARD CONTEXT ---')
+                  print(s[lo:hi])
+
+          s=Path('ufc_email_watcher.py').read_text(errors='ignore')
+          print('\n\n### QUALIFICATION FUNCTIONS')
+          print('='*140)
+          tree=ast.parse(s)
+          wanted=[]
+          for n in tree.body:
+              if isinstance(n,(ast.FunctionDef,ast.AsyncFunctionDef)):
+                  nm=n.name.lower()
+                  if any(k in nm for k in ['compute_','method','qualif','predict_bout','risk_gate']):
+                      seg=ast.get_source_segment(s,n)
+                      if seg and ('qualif' in seg.lower() or 'return r' in seg.lower()):
+                          wanted.append((n.name,seg))
+          for name,seg in wanted:
+              print(f'\n--- {name} ---')
+              print(seg[:10000])
+
+          print('\n\n### DIRECT RULE ASSIGNMENTS / KEYS')
+          print('='*140)
+          for i,line in enumerate(s.splitlines(),1):
+              if re.search(r"(qualifies|striking_differential|pace_defense|striking_td_defense|age_reach|reach_hybrid|structural_edge|wrestling_mismatch|ko_recovery|experience_health|veteran_decline)",line,re.I):
+                  print(f'{i}: {line}')
+          PY
+          EOF
+          cat "$OUTDIR/report.txt"
+      - name: Commit report
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add ufc_live_method_opponent_audit/report.txt
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m "Audit UFC live methods for opponent context"
+          git push
