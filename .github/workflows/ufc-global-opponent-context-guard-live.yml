@@ -1,0 +1,29 @@
+name: UFC Global Opponent Context Guard Live
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/apply_live_global_opponent_context_guard.sh'
+      - '.github/workflows/ufc-global-opponent-context-guard-live.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  deploy:
+    runs-on: [self-hosted, Linux, X64, appwiza]
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - name: Deploy global UFC opponent context guard and publish
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          KEY=/home/appwiza-runner/.ssh/appwiza_vps
+          HOST=anestishkurti92@127.0.0.1
+          cat scripts/apply_live_global_opponent_context_guard.sh | ssh -i "$KEY" -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=accept-new "$HOST" 'export HOME=/home/anestishkurti92; bash -s'
+      - name: Verify guard marker
+        shell: bash
+        run: |
+          KEY=/home/appwiza-runner/.ssh/appwiza_vps
+          HOST=anestishkurti92@127.0.0.1
+          ssh -i "$KEY" -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=accept-new "$HOST" "grep -q UFC_GLOBAL_OPPONENT_CONTEXT_GUARD_V1 /home/anestishkurti92/ufc-predictor-v1/ufc_email_watcher.py"
