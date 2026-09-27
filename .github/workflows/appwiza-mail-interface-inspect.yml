@@ -1,0 +1,48 @@
+name: Appwiza mail interface inspect
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/appwiza-mail-interface-inspect.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  inspect:
+    runs-on: [self-hosted, Linux, X64, appwiza]
+    timeout-minutes: 6
+    steps:
+      - uses: actions/checkout@v4
+      - name: Capture mail function signatures only
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p crypto
+          python3 - <<'PY' > crypto/mail_interface.txt
+          import ast
+          from pathlib import Path
+          files=[
+            Path('/home/anestishkurti92/ufc-predictor-v1/ufc_email_watcher.py'),
+            Path('/home/anestishkurti92/ufc-predictor-v1/ufc_historical_backtest.py'),
+          ]
+          for p in files:
+            print('FILE',p)
+            if not p.exists():
+              print('missing'); continue
+            t=ast.parse(p.read_text(encoding='utf-8',errors='ignore'))
+            for n in t.body:
+              if isinstance(n,(ast.FunctionDef,ast.AsyncFunctionDef)):
+                name=n.name.lower()
+                if any(x in name for x in ('mail','email','send','notify')):
+                  print('FUNC',n.name,'ARGS',[a.arg for a in n.args.args])
+            print()
+          PY
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add crypto/mail_interface.txt
+          if ! git diff --cached --quiet; then
+            git commit -m 'Capture Appwiza mail interface signatures'
+            git push
+          fi
