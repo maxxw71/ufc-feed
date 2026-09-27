@@ -277,6 +277,33 @@ def parse_pair(text,a,b):
                 if m:
                     setv(f,'total_landed_per_round',m.group(1));setv(o,'total_landed_per_round',m.group(2))
 
+    # Cordina-Quiroz style completed-fight total where the opponent clause
+    # uses "was X-of-Y on his attempts".
+    for f,o in ((a,b),(b,a)):
+        for fa in sorted({clean(f),clean(f).split()[-1]},key=len,reverse=True):
+            for oa in sorted({clean(o),clean(o).split()[-1]},key=len,reverse=True):
+                m=re.search(
+                    r'(?<![A-Za-z0-9])'+re.escape(fa)+
+                    r'(?![A-Za-z0-9])[^.!?]{0,100}?landed\s+(\d{1,4})\s+of\s+(\d{1,4})\s+total\s+punches'
+                    r'[^.!?]{0,120}?while\s+'+re.escape(oa)+
+                    r'\s+was\s+(\d{1,4})\s*[-–]?\s*of\s*[-–]?\s*(\d{1,4})\s+on\s+(?:his|her)\s+attempts',
+                    text,re.I)
+                if m:
+                    setv(f,'total_landed',m.group(1));setv(f,'total_thrown',m.group(2))
+                    setv(o,'total_landed',m.group(3));setv(o,'total_thrown',m.group(4))
+
+    # Explicit completed-fight category edge:
+    # "Melikuziev held a 44-33 edge in body punches landed."
+    for f,o in ((a,b),(b,a)):
+        for fa in sorted({clean(f),clean(f).split()[-1]},key=len,reverse=True):
+            m=re.search(
+                r'(?<![A-Za-z0-9])'+re.escape(fa)+
+                r'(?![A-Za-z0-9])[^.!?]{0,80}?(?:held|had)\s+a?\s*'
+                r'(\d{1,4})\s*[-–]\s*(\d{1,4})\s+edge\s+in\s+body\s+punches\s+landed',
+                text,re.I)
+            if m:
+                setv(f,'body_landed',m.group(1));setv(o,'body_landed',m.group(2))
+
     # Simple exact overall landed comparison: "Roach outlanded Davis 112 to 103 in the fight."
     for f,o in ((a,b),(b,a)):
         fa=clean(f).split()[-1];oa=clean(o).split()[-1]
