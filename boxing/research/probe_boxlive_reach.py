@@ -13,6 +13,7 @@ ROOT=Path(__file__).resolve().parents[1]
 AUDIT=ROOT/'public_phase2'/'PROFILE_GAP_AUDIT.json'
 OUT=ROOT/'profile_supplements'/'boxlive_reach_probe.json'
 ADD=ROOT/'profile_supplements'/'boxlive_reach_additions.jsonl'
+MB=ROOT/'profile_supplements'/'martialbot_missing_reach_inventory.json'
 BASE='https://box.live/boxers/'
 UA='Mozilla/5.0 AppwizaBoxLiveReach/1.0'
 
@@ -50,6 +51,8 @@ def parse(raw):
 def main():
     audit=json.loads(AUDIT.read_text())
     targets=[x for x in audit.get('fighters',[]) if 'reach_cm' in set(x.get('missing') or [])]
+    mbobj=json.loads(MB.read_text()) if MB.exists() else {}
+    mb={nk(x['name']):x for x in mbobj.get('leads',[])}
     def one(t):
         u=BASE+slug(t['name'])+'/'
         rec={'id':t['id'],'name':t['name'],'strict_bout_appearances':t.get('strict_bout_appearances'),'url':u}
@@ -59,20 +62,29 @@ def main():
             clean=re.sub(r'\s+boxer\s*$','',name,flags=re.I).strip()
             if nk(clean)!=nk(t['name']):rec['status']='identity_mismatch'
             elif reach is None:rec['status']='no_reach'
-            else:rec['status']='accepted'
+            else:
+                rec['status']='lead'
+                m=mb.get(nk(t['name']))
+                if m and m.get('reach_cm') is not None:
+                    rec['martialbot_reach_cm']=m['reach_cm']
+                    rec['agrees_martialbot']=abs(float(m['reach_cm'])-float(reach))<=1
         except urllib.error.HTTPError as e:rec['status']=f'http_{e.code}'
         except Exception as e:rec.update({'status':'fetch_error','error':type(e).__name__+': '+str(e)[:160]})
         return rec
     with cf.ThreadPoolExecutor(max_workers=8) as ex:rows=list(ex.map(one,targets))
-    accepted=[x for x in rows if x['status']=='accepted']
+    leads=[x for x in rows if x['status']=='lead']
+    accepted=[x for x in leads if x.get('agrees_martialbot') is True]
     additions=[]
     for x in accepted:
         t=next(t for t in targets if t['id']==x['id']);reach=x['reach_cm']
         if float(reach).is_integer():reach=int(reach)
         additions.append({'target_source_id':t['id'],'name':t['name'],'career_source':t.get('career_source'),
           'fields':{'reach_cm':reach},
-          'evidence':[{'source':'boxlive_public_profile','url':x['url'],'fields':{'reach_cm':reach},'exact_identity':True}],
-          'conflicts':{},'quality':'public_boxing_profile_exact_identity_missing_reach_only',
+          'evidence':[{'source':'boxlive_martialbot_reach_consensus','fields':{'reach_cm':reach},
+            'exact_identity':True,'agreement_tolerance_cm':1,
+            'sources':[{'source':'boxlive','url':x['url'],'reported_reach_cm':x['reach_cm']},
+                       {'source':'martialbot','url':mb[nk(x['name'])]['url'],'reported_reach_cm':mb[nk(x['name'])]['reach_cm']}]}],
+          'conflicts':{},'quality':'two_source_reach_consensus_boxlive_martialbot_exact_identity',
           'collected_at':dt.datetime.now(dt.timezone.utc).isoformat()})
     ADD.parent.mkdir(parents=True,exist_ok=True)
     with ADD.open('w') as f:
@@ -80,10 +92,10 @@ def main():
     counts={}
     for x in rows:counts[x['status']]=counts.get(x['status'],0)+1
     out={'generated_at':dt.datetime.now(dt.timezone.utc).isoformat(),'targets':len(targets),
-      'status_counts':counts,'accepted':len(additions),
+      'status_counts':counts,'lead_count':len(leads),'accepted':len(additions),
       'accepted_profiles':[{'name':x['name'],'reach_cm':x['fields']['reach_cm'],'url':x['evidence'][0]['url']} for x in additions],
       'rows':rows,
-      'policy':'Box.Live public boxer profile exact identity + explicit plausible Reach; missing reach only; never overwrite.'}
+      'policy':'Box.Live exact public profile + plausible Reach; automatic addition only when independent exact-identity MartialBot agrees within 1 cm; missing reach only; never overwrite.'}
     OUT.write_text(json.dumps(out,indent=2,ensure_ascii=False))
     print(json.dumps({k:out[k] for k in ('targets','status_counts','accepted')},indent=2))
 if __name__=='__main__':main()
