@@ -1,0 +1,601 @@
+   300	        raise RuntimeError(
+   301	            f"Missing master hybrid stats file: {MASTER_HYBRID_STATS_PATH}. "
+   302	            "Run the 2006-2026 live email upgrade first."
+   303	        )
+   304	    return json.loads(MASTER_HYBRID_STATS_PATH.read_text(encoding="utf-8"))
+   305	
+   306	_MASTER_HYBRID_STATS = load_master_hybrid_stats()
+   307	HYBRID_PRICE_BANDS = _MASTER_HYBRID_STATS["price_bands"]
+   308	HYBRID_MARKET_BANDS = _MASTER_HYBRID_STATS["market_bands"]
+   309	
+   310	
+   311	def historical_price_band(american_odds):
+   312	    if american_odds is None or pd.isna(american_odds):
+   313	        return None
+   314	    o = float(american_odds)
+   315	
+   316	    # Historical qualifying favorites were overwhelmingly in negative-moneyline
+   317	    # territory. If a future hybrid signal is -199 or better, label it as
+   318	    # outside the historical buckets rather than inventing a statistic.
+   319	    if o > -200:
+   320	        return {
+   321	            "name": "-199 or better",
+   322	            "bets": 0,
+   323	            "win_rate": None,
+   324	            "roi": None,
+   325	            "profit_50": None,
+   326	            "rating": "OUTSIDE TESTED HISTORICAL BANDS",
+   327	        }
+   328	
+   329	    for band in HYBRID_PRICE_BANDS:
+   330	        if band["min_odds"] <= o <= band["max_odds"]:
+   331	            return dict(band)
+   332	    return None
+   333	
+   334	def historical_market_band(prob):
+   335	    if prob is None or pd.isna(prob):
+   336	        return None
+   337	    p = float(prob)
+   338	    for band in HYBRID_MARKET_BANDS:
+   339	        if band["lo"] <= p < band["hi"]:
+   340	            return dict(band)
+   341	    if p >= 0.95:
+   342	        return {
+   343	            "name": "95%+",
+   344	            "bets": 0,
+   345	            "win_rate": None,
+   346	            "roi": None,
+   347	            "profit_50": None,
+   348	        }
+   349	    return None
+   350	
+   351	def hybrid_price_info(p):
+   352	    h = p.get("hybrid") or {}
+   353	    if h.get("tier") not in {"qualifies", "strong"}:
+   354	        return {"status": "none"}
+   355	
+   356	    side = h.get("favorite_side")
+   357	    if side == "a":
+   358	        odds = p.get("best_odds_a")
+   359	        book = p.get("best_book_a")
+   360	    elif side == "b":
+   361	        odds = p.get("best_odds_b")
+   362	        book = p.get("best_book_b")
+   363	    else:
+   364	        return {"status": "none"}
+   365	
+   366	    market_prob = float(h.get("market_prob"))
+   367	    market_band = historical_market_band(market_prob)
+   368	
+   369	    if odds is None or pd.isna(odds):
+   370	        return {
+   371	            "status": "no_odds",
+   372	            "market_prob": market_prob,
+   373	            "market_band": market_band,
+   374	            "price_band": None,
+   375	        }
+   376	
+   377	    odds = float(odds)
+   378	    price_band = historical_price_band(odds)
+   379	
+   380	    return {
+   381	        "status": "historical_band",
+   382	        "current_odds": odds,
+   383	        "book": book,
+   384	        "market_prob": market_prob,
+   385	        "price_band": price_band,
+   386	        "market_band": market_band,
+   387	    }
+   388	
+   389	def fmt_american(o):
+   390	    if o is None or pd.isna(o):
+   391	        return "N/A"
+   392	    return f"{float(o):+.0f}"
+   393	
+   394	
+   395	HYBRID_HISTORY = _MASTER_HYBRID_STATS["history"]
+   396	
+   397	def compute_hybrid_signal(p):
+   398	    """
+   399	    Live hybrid rule derived from the historical robustness test:
+   400	      sportsbook no-vig favorite >= 70%
+   401	      AND favorite is >= 3.0 years younger.
+   402	    Strong tier: favorite is >= 4.0 years younger.
+   403	
+   404	    Historical win rate/ROI shown in email are properties of the historical
+   405	    RULE, not a prediction that this individual fight has an 82.91% chance.
+   406	    """
+   407	    if not p.get("market_ok"):
+   408	        return {"tier": "none"}
+   409	
+   410	    age_a = p.get("age_a")
+   411	    age_b = p.get("age_b")
+   412	    if age_a is None or age_b is None or pd.isna(age_a) or pd.isna(age_b):
+   413	        return {"tier": "none"}
+   414	
+   415	    ma = float(p["market_a"])
+   416	    mb = float(p["market_b"])
+   417	
+   418	    if ma >= mb:
+   419	        favorite = str(p.get("fighter_a") or "")
+   420	        underdog = str(p.get("fighter_b") or "")
+   421	        favorite_side = "a"
+   422	        market_prob = ma
+   423	        favorite_age = float(age_a)
+   424	        underdog_age = float(age_b)
+   425	    else:
+   426	        favorite = str(p.get("fighter_b") or "")
+   427	        underdog = str(p.get("fighter_a") or "")
+   428	        favorite_side = "b"
+   429	        market_prob = mb
+   430	        favorite_age = float(age_b)
+   431	        underdog_age = float(age_a)
+   432	
+   433	    younger_advantage = underdog_age - favorite_age
+   434	
+   435	    tier = "none"
+   436	    if market_prob >= 0.70 and younger_advantage >= 4.0:
+   437	        tier = "strong"
+   438	    elif market_prob >= 0.70 and younger_advantage >= 3.0:
+   439	        tier = "qualifies"
+   440	
+   441	    return {
+   442	        "tier": tier,
+   443	        "favorite": favorite,
+   444	        "underdog": underdog,
+   445	        "favorite_side": favorite_side,
+   446	        "market_prob": market_prob,
+   447	        "favorite_age": favorite_age,
+   448	        "underdog_age": underdog_age,
+   449	        "younger_advantage_years": younger_advantage,
+   450	    }
+   451	
+   452	def hybrid_snapshot(p):
+   453	    h = p.get("hybrid") or {"tier": "none"}
+   454	    price = hybrid_price_info(p)
+   455	    pb = price.get("price_band") or {}
+   456	    mb = price.get("market_band") or {}
+   457	    return {
+   458	        "tier": h.get("tier", "none"),
+   459	        "favorite": h.get("favorite"),
+   460	        "market_prob": round(float(h.get("market_prob", 0.0)), 4) if h.get("market_prob") is not None else None,
+   461	        "younger_advantage_years": round(float(h.get("younger_advantage_years", 0.0)), 2)
+   462	            if h.get("younger_advantage_years") is not None else None,
+   463	        "price_band": pb.get("name"),
+   464	        "market_band": mb.get("name"),
+   465	        "current_odds": price.get("current_odds"),
+   466	        "age_reach_premium": bool((p.get("age_reach_premium") or {}).get("qualifies")),
+   467	        "reach_advantage_in": round(float((p.get("age_reach_premium") or {}).get("reach_advantage_in")), 2)
+   468	            if (p.get("age_reach_premium") or {}).get("reach_advantage_in") is not None else None,
+   469	        "reach_tier": (p.get("reach_hybrid") or {}).get("tier"),
+   470	        "standalone_reach_advantage_in": round(float((p.get("reach_hybrid") or {}).get("reach_advantage_in")), 2)
+   471	            if (p.get("reach_hybrid") or {}).get("reach_advantage_in") is not None else None,
+   472	        "structural_edge": bool((p.get("structural_edge") or {}).get("qualifies")),
+   473	        "skill_veto": bool((p.get("skill_veto") or {}).get("veto")),
+   474	    }
+   475	
+   476	def hybrid_changed(old, new):
+   477	    old = old or {"tier": "none"}
+   478	    new = new or {"tier": "none"}
+   479	    return (
+   480	        old.get("tier", "none") != new.get("tier", "none")
+   481	        or (
+   482	            new.get("tier") in {"qualifies", "strong"}
+   483	            and old.get("favorite") != new.get("favorite")
+   484	        )
+   485	        or (
+   486	            new.get("tier") in {"qualifies", "strong"}
+   487	            and old.get("price_band") != new.get("price_band")
+   488	        )
+   489	        or (
+   490	            new.get("tier") in {"qualifies", "strong"}
+   491	            and old.get("market_band") != new.get("market_band")
+   492	        )
+   493	        or old.get("age_reach_premium", False) != new.get("age_reach_premium", False)
+   494	        or old.get("reach_tier") != new.get("reach_tier")
+   495	        or old.get("structural_edge", False) != new.get("structural_edge", False)
+   496	        or old.get("skill_veto", False) != new.get("skill_veto", False)
+   497	    )
+   498	
+   499	def structural_edge_badge(p):
+   500	    s = p.get("structural_edge") or {}
+   501	    if not s.get("qualifies"):
+   502	        return ""
+   503	
+   504	    h = STRUCTURAL_EDGE_HISTORY
+   505	    favorite = html.escape(str(s.get("favorite") or ""))
+   506	    market_prob = float(s.get("market_prob") or 0) * 100
+   507	    age_adv = float(s.get("younger_advantage_years") or 0)
+   508	    reach_adv = float(s.get("reach_advantage_in") or 0)
+   509	
+   510	    return f"""
+   511	    <div style="margin-top:8px;padding:9px;border:2px solid #222;border-radius:6px;font-size:12px">
+   512	      <b>STRUCTURAL EDGE</b><br>
+   513	      <b>{favorite}</b>: market {market_prob:.1f}% · {age_adv:.1f} years younger · {reach_adv:.1f}" longer reach<br>
+   514	      Historical core:
+   515	      {h['bets']} bets · {h['wins']} wins / {h['losses']} losses ·
+   516	      {h['win_rate']*100:.1f}% wins · {h['roi']*100:+.2f}% ROI<br>
+   517	      <span style="color:#555">
+   518	        Pre-2020 ROI {h['pre2020_roi']*100:+.2f}% ·
+   519	        2020+ ROI {h['recent_roi']*100:+.2f}% ·
+   520	        nearby-threshold mean ROI {h['neighbor_mean_roi']*100:+.2f}% ·
+   521	        worst tested neighbor {h['neighbor_min_roi']*100:+.2f}%.
+   522	        Historical results are not a guarantee of future performance.
+   523	      </span>
+   524	    </div>
+   525	    """
+   526	
+   527	def reach_badge(p):
+   528	    rh = p.get("reach_hybrid") or {}
+   529	    tier = rh.get("tier")
+   530	    if tier not in {"qualifies", "strong"}:
+   531	        return ""
+   532	
+   533	    hist = REACH_HYBRID_HISTORY[tier]
+   534	    favorite = html.escape(str(rh.get("favorite") or ""))
+   535	    market_prob = float(rh.get("market_prob") or 0.0) * 100
+   536	    reach_adv = float(rh.get("reach_advantage_in") or 0.0)
+   537	
+   538	    return f"""
+   539	    <div style="margin-top:8px;padding:8px;border:1px solid #555;border-radius:6px;font-size:12px">
+   540	      <b>{hist['label']}</b><br>
+   541	      {favorite}: market {market_prob:.1f}% · reach advantage {reach_adv:.1f}"<br>
+   542	      Historical standalone reach sample:
+   543	      {hist['bets']} bets · {hist['wins']} wins / {hist['losses']} losses ·
+   544	      {hist['win_rate']*100:.1f}% wins · {hist['roi']*100:+.2f}% ROI ·
+   545	      ${hist['profit_100']:+,.2f} at $100/bet<br>
+   546	      <span style="color:#555">
+   547	        2006–2019 ROI {hist['old_roi']*100:+.2f}% ·
+   548	        2020+ ROI {hist['recent_roi']*100:+.2f}%.
+   549	        This signal is independent of age.
+   550	      </span>
+   551	    </div>
+   552	    """
+   553	
+   554	def hybrid_badge(p):
+   555	    h = p.get("hybrid") or {}
+   556	    tier = h.get("tier")
+   557	    if tier not in {"qualifies", "strong"}:
+   558	        return ""
+   559	
+   560	    label = "AGE HYBRID" if tier == "strong" else "AGE HYBRID"
+   561	    market_prob = float(h.get("market_prob", 0.0)) * 100
+   562	    advantage = float(h.get("younger_advantage_years", 0.0))
+   563	    favorite = html.escape(str(h.get("favorite") or ""))
+   564	    price = hybrid_price_info(p)
+   565	    pb = price.get("price_band")
+   566	    mb = price.get("market_band")
+   567	
+   568	    if pb and pb.get("bets", 0) > 0:
+   569	        price_section = (
+   570	            f"<b>HISTORICAL PRICE BAND: {html.escape(pb['rating'])}</b><br>"
+   571	            f"Current best: {fmt_american(price.get('current_odds'))} @ "
+   572	            f"{html.escape(str(price.get('book') or ''))}<br>"
+   573	            f"2006–2026 line band {html.escape(pb['name'])}: "
+   574	            f"{int(pb['bets'])} bets · {pb['win_rate']*100:.2f}% wins · "
+   575	            f"{pb['roi']*100:+.2f}% ROI · ${pb['profit_50']:+,.2f} at $50/bet"
+   576	        )
+   577	    elif pb:
+   578	        price_section = (
+   579	            f"<b>HISTORICAL PRICE BAND: {html.escape(pb['rating'])}</b><br>"
+   580	            f"Current best: {fmt_american(price.get('current_odds'))} @ "
+   581	            f"{html.escape(str(price.get('book') or ''))}<br>"
+   582	            f"No reliable historical bucket for this exact price range."
+   583	        )
+   584	    else:
+   585	        price_section = "<b>HISTORICAL PRICE BAND: WAITING FOR ODDS</b>"
+   586	
+   587	    if mb and mb.get("bets", 0) > 0:
+   588	        market_section = (
+   589	            f"<br><b>2006–2026 market-probability band {html.escape(mb['name'])}:</b> "
+   590	            f"{int(mb['bets'])} bets · {mb['win_rate']*100:.2f}% wins · "
+   591	            f"{mb['roi']*100:+.2f}% ROI"
+   592	        )
+   593	    else:
+   594	        market_section = ""
+   595	
+   596	    premium = p.get("age_reach_premium") or {}
+   597	    premium_html = ""
+   598	    if premium.get("qualifies"):
+   599	        ph = AGE_REACH_PREMIUM_HISTORY
+   600	        premium_html = (
+   601	            "<div style='margin-top:8px;padding:8px;border:2px solid #222;border-radius:6px'>"
+   602	            "<b>AGE + REACH PREMIUM</b><br>"
+   603	            f"{favorite}: ≥70% market · ≥3 years younger · "
+   604	            f"{float(premium['reach_advantage_in']):.1f}\" longer reach<br>"
+   605	            f"Historical matched sample: {ph['bets']} bets · "
+   606	            f"{ph['wins']}–{ph['losses']} · {ph['win_rate']*100:.1f}% wins · "
+   607	            f"{ph['roi']*100:+.2f}% ROI · ${ph['profit_100']:+,.2f} at $100/bet<br>"
+   608	            f"2006–2019: {ph['old_bets']} bets · {ph['old_win_rate']*100:.1f}% wins · "
+   609	            f"{ph['old_roi']*100:+.2f}% ROI &nbsp; | &nbsp; "
+   610	            f"2020+: {ph['recent_bets']} bets · {ph['recent_win_rate']*100:.1f}% wins · "
+   611	            f"{ph['recent_roi']*100:+.2f}% ROI"
+   612	            "</div>"
+   613	        )
+   614	
+   615	    return f"""
+   616	    <div style="margin-top:8px;padding:8px;border:1px solid #999;border-radius:6px;font-size:12px">
+   617	      <b>{label}</b><br>
+   618	      {favorite}: market {market_prob:.1f}% · {advantage:.1f} years younger<br>
+   619	      <div style="margin-top:6px">{price_section}{market_section}</div>
+   620	      <span style="color:#555">
+   621	        Full 2006–2026 hybrid master:
+   622	        {HYBRID_HISTORY['all_bets']} bets ·
+   623	        {HYBRID_HISTORY['all_wins']} wins / {HYBRID_HISTORY['all_losses']} losses ·
+   624	        {HYBRID_HISTORY['all_win_rate']*100:.2f}% wins ·
+   625	        {HYBRID_HISTORY['all_roi']*100:+.2f}% ROI ·
+   626	        95% bootstrap ROI CI {HYBRID_HISTORY['all_ci_low']*100:+.2f}% to {HYBRID_HISTORY['all_ci_high']*100:+.2f}%<br>
+   627	        Recent 2024–2026 extension:
+   628	        {HYBRID_HISTORY['recent_bets']} bets ·
+   629	        {HYBRID_HISTORY['recent_wins']} wins / {HYBRID_HISTORY['recent_losses']} losses ·
+   630	        {HYBRID_HISTORY['recent_win_rate']*100:.2f}% wins ·
+   631	        {HYBRID_HISTORY['recent_roi']*100:+.2f}% ROI ·
+   632	        95% bootstrap ROI CI {HYBRID_HISTORY['recent_ci_low']*100:+.2f}% to {HYBRID_HISTORY['recent_ci_high']*100:+.2f}%.
+   633	        Historical results describe groups of past fights, not this fight's guaranteed outcome.
+   634	      </span>
+   635	      {premium_html}
+   636	    </div>
+   637	    """
+   638	
+   639	def predict_bout(bout, event_date, bundle, reach_index=None, skill_index=None):
+   640	    a = str(bout.get("fighter_a") or "").strip()
+   641	    b = str(bout.get("fighter_b") or "").strip()
+   642	    division = str(bout.get("division") or "Unknown").strip()
+   643	    ida, idb = resolve(a, bundle), resolve(b, bundle)
+   644	
+   645	    if ida is None or idb is None:
+   646	        return {**bout, "status": "unavailable",
+   647	                "reason": "fighter not yet in historical model: " +
+   648	                          ", ".join(x for x, fid in [(a, ida), (b, idb)] if fid is None)}
+   649	
+   650	    fab = feat_for(ida, idb, a, b, event_date, division, bundle)
+   651	    fba = feat_for(idb, ida, b, a, event_date, division, bundle)
+   652	    pab = model_prob(bundle["age_model"], bundle["age_calibrator"], fab, bundle["age_cols"])
+   653	    pba = model_prob(bundle["age_model"], bundle["age_calibrator"], fba, bundle["age_cols"])
+   654	    pa = min(max((pab + (1-pba))/2, .01), .99)
+   655	
+   656	    out = {
+   657	        **bout, "status": "ok",
+   658	        "p_a": pa, "p_b": 1-pa,
+   659	        "fair_a": fair_american(pa), "fair_b": fair_american(1-pa),
+   660	        "age_a": fab.get("age_a"), "age_b": fab.get("age_b"),
+   661	        "age_gap": fab.get("age_gap"),
+   662	    }
+   663	
+   664	    market = bout.get("market") or {}
+   665	    if market.get("status") == "ok":
+   666	        ma = float(market["consensus_no_vig_a"])
+   667	        mb = float(market["consensus_no_vig_b"])
+   668	        boa = float(market["best_odds_a"])
+   669	        bob = float(market["best_odds_b"])
+   670	        out.update({
+   671	            "market_ok": True,
+   672	            "market_a": ma, "market_b": mb,
+   673	            "edge_a_pp": (pa-ma)*100,
+   674	            "edge_b_pp": ((1-pa)-mb)*100,
+   675	            "best_odds_a": boa, "best_book_a": market.get("best_book_a"),
+   676	            "best_odds_b": bob, "best_book_b": market.get("best_book_b"),
+   677	            "ev_a_pct": (pa * decimal_from_american(boa) - 1) * 100,
+   678	            "ev_b_pct": ((1-pa) * decimal_from_american(bob) - 1) * 100,
+   679	            "books": market.get("bookmakers"),
+   680	        })
+   681	    else:
+   682	        out["market_ok"] = False
+   683	
+   684	    out["hybrid"] = compute_hybrid_signal(out)
+   685	
+   686	    reach_index = reach_index or {}
+   687	    reach_a = resolve_reach(a, reach_index)
+   688	    reach_b = resolve_reach(b, reach_index)
+   689	    out["reach_a"] = reach_a
+   690	    out["reach_b"] = reach_b
+   691	
+   692	    reach_hybrid = {
+   693	        "tier": None,
+   694	        "favorite": None,
+   695	        "favorite_reach": None,
+   696	        "opponent_reach": None,
+   697	        "reach_advantage_in": None,
+   698	        "market_prob": None,
+   699	    }
+   700	
+   701	    market_prob = None
+   702	    favorite = None
+   703	    if out.get("market_ok"):
+   704	        ma = float(out.get("market_a"))
+   705	        mb = float(out.get("market_b"))
+   706	        if ma >= mb:
+   707	            market_prob = ma
+   708	            favorite = a
+   709	        else:
+   710	            market_prob = mb
+   711	            favorite = b
+   712	
+   713	    if market_prob is not None and favorite and reach_a is not None and reach_b is not None:
+   714	        if favorite == a:
+   715	            fav_reach, opp_reach = reach_a, reach_b
+   716	        elif favorite == b:
+   717	            fav_reach, opp_reach = reach_b, reach_a
+   718	        else:
+   719	            fav_reach = opp_reach = None
+   720	
+   721	        if fav_reach is not None and opp_reach is not None:
+   722	            reach_adv = float(fav_reach) - float(opp_reach)
+   723	            tier = None
+   724	            if float(market_prob) >= 0.65 and reach_adv >= 6.0:
+   725	                tier = "strong"
+   726	            elif float(market_prob) >= 0.65 and reach_adv >= 4.0:
+   727	                tier = "qualifies"
+   728	
+   729	            reach_hybrid.update({
+   730	                "tier": tier,
+   731	                "favorite": favorite,
+   732	                "favorite_reach": float(fav_reach),
+   733	                "opponent_reach": float(opp_reach),
+   734	                "reach_advantage_in": reach_adv,
+   735	                "market_prob": float(market_prob),
+   736	            })
+   737	    out["reach_hybrid"] = reach_hybrid
+   738	
+   739	    structural_edge = {
+   740	        "qualifies": False,
+   741	        "favorite": None,
+   742	        "market_prob": None,
+   743	        "younger_advantage_years": None,
+   744	        "reach_advantage_in": None,
+   745	    }
+   746	
+   747	    # Structural Edge:
+   748	    # market favorite >=65%, >=2 years younger, >=6" longer reach.
+   749	    if market_prob is not None and favorite and reach_a is not None and reach_b is not None:
+   750	        h = out.get("hybrid") or {}
+   751	        age_adv = None
+   752	        # compute favorite's age advantage directly from bout ages so this signal is independent
+   753	        # of whether the stricter AGE HYBRID rule qualifies.
+   754	        try:
+   755	            if favorite == a:
+   756	                fav_age = float(out.get("age_a"))
+   757	                opp_age = float(out.get("age_b"))
+   758	                fav_reach, opp_reach = reach_a, reach_b
+   759	            elif favorite == b:
+   760	                fav_age = float(out.get("age_b"))
+   761	                opp_age = float(out.get("age_a"))
+   762	                fav_reach, opp_reach = reach_b, reach_a
+   763	            else:
+   764	                fav_age = opp_age = fav_reach = opp_reach = None
+   765	
+   766	            if fav_age is not None and opp_age is not None:
+   767	                age_adv = opp_age - fav_age
+   768	            reach_adv = float(fav_reach) - float(opp_reach) if fav_reach is not None and opp_reach is not None else None
+   769	
+   770	            structural_edge.update({
+   771	                "favorite": favorite,
+   772	                "market_prob": float(market_prob),
+   773	                "younger_advantage_years": age_adv,
+   774	                "reach_advantage_in": reach_adv,
+   775	                "qualifies": (
+   776	                    float(market_prob) >= 0.65
+   777	                    and age_adv is not None and age_adv >= 2.0
+   778	                    and reach_adv is not None and reach_adv >= 6.0
+   779	                ),
+   780	            })
+   781	        except Exception:
+   782	            pass
+   783	
+   784	    out["structural_edge"] = structural_edge
+   785	
+   786	    premium = {
+   787	        "qualifies": False,
+   788	        "favorite": None,
+   789	        "favorite_reach": None,
+   790	        "opponent_reach": None,
+   791	        "reach_advantage_in": None,
+   792	        "market_prob": None,
+   793	    }
+   794	    h = out.get("hybrid") or {}
+   795	    if h.get("tier") in {"qualifies", "strong"} and reach_a is not None and reach_b is not None:
+   796	        favorite = h.get("favorite")
+   797	        if favorite == a:
+   798	            fav_reach, opp_reach = reach_a, reach_b
+   799	        elif favorite == b:
+   800	            fav_reach, opp_reach = reach_b, reach_a
+   801	        else:
+   802	            fav_reach = opp_reach = None
+   803	        if fav_reach is not None and opp_reach is not None:
+   804	            adv = float(fav_reach) - float(opp_reach)
+   805	            premium.update({
+   806	                "favorite": favorite,
+   807	                "favorite_reach": float(fav_reach),
+   808	                "opponent_reach": float(opp_reach),
+   809	                "reach_advantage_in": adv,
+   810	                "market_prob": h.get("market_prob"),
+   811	                "qualifies": adv >= 4.0,
+   812	            })
+   813	    out["age_reach_premium"] = premium
+   814	    skill={"available":False,"veto":False}
+   815	    if favorite:
+   816	        skill=compute_skill_veto(favorite, b if favorite==a else a, skill_index or {})
+   817	    out["skill_veto"]=skill
+   818	    if skill.get("veto"):
+   819	        h=out.get("hybrid") or {}
+   820	        if h.get("tier") in {"qualifies","strong"}: h["raw_tier"]=h["tier"]; h["tier"]="none"; h["skill_vetoed"]=True
+   821	        rh=out.get("reach_hybrid") or {}
+   822	        if rh.get("tier") in {"qualifies","strong"}: rh["raw_tier"]=rh["tier"]; rh["tier"]=None; rh["skill_vetoed"]=True
+   823	        pr=out.get("age_reach_premium") or {}
+   824	        if pr.get("qualifies"): pr["raw_qualifies"]=True; pr["qualifies"]=False; pr["skill_vetoed"]=True
+   825	        se=out.get("structural_edge") or {}
+   826	        if se.get("qualifies"): se["raw_qualifies"]=True; se["qualifies"]=False; se["skill_vetoed"]=True
+   827	    return out
+   828	
+   829	def event_key(e):
+   830	    return str(e.get("event_id") or e.get("name") or "")
+   831	
+   832	def fight_key(e, b):
+   833	    return "|".join([event_key(e), norm_name(b.get("fighter_a","")), norm_name(b.get("fighter_b",""))])
+   834	
+   835	def fight_signature(e, b):
+   836	    raw = "|".join([event_key(e), str(e.get("date","")), b.get("fighter_a",""),
+   837	                    b.get("fighter_b",""), b.get("division","")])
+   838	    return hashlib.sha256(raw.encode()).hexdigest()
+   839	
+   840	def market_snapshot(p):
+   841	    if not p.get("market_ok"):
+   842	        return None
+   843	    return {
+   844	        "a": round(float(p["market_a"]), 4),
+   845	        "b": round(float(p["market_b"]), 4),
+   846	        "oa": float(p["best_odds_a"]),
+   847	        "ob": float(p["best_odds_b"]),
+   848	    }
+   849	
+   850	def market_changed(old, new):
+   851	    if new is None:
+   852	        return False
+   853	    if old is None:
+   854	        return True
+   855	    if abs(new["a"] - old.get("a", new["a"])) >= .02:
+   856	        return True
+   857	    if abs(new["b"] - old.get("b", new["b"])) >= .02:
+   858	        return True
+   859	    if abs(new["oa"] - old.get("oa", new["oa"])) >= 20:
+   860	        return True
+   861	    if abs(new["ob"] - old.get("ob", new["ob"])) >= 20:
+   862	        return True
+   863	    return False
+   864	
+   865	def fmt_age(x):
+   866	    return "N/A" if x is None or pd.isna(x) else f"{float(x):.1f}"
+   867	
+   868	def row_html(p):
+   869	    a_raw = str(p.get("fighter_a",""))
+   870	    b_raw = str(p.get("fighter_b",""))
+   871	    a, b = html.escape(a_raw), html.escape(b_raw)
+   872	    div = html.escape(p.get("division","Unknown"))
+   873	
+   874	    favorite_side = None
+   875	    if p.get("market_ok"):
+   876	        try:
+   877	            favorite_side = "a" if float(p.get("market_a")) >= float(p.get("market_b")) else "b"
+   878	        except Exception:
+   879	            favorite_side = None
+   880	
+   881	    a_name_html = f"<b>{a}</b>" if favorite_side == "a" else a
+   882	    b_name_html = f"<b>{b}</b>" if favorite_side == "b" else b
+   883	    if p.get("status") != "ok":
+   884	        return f"<tr><td style='padding:10px;border-bottom:1px solid #ddd'>{a}<br>vs. {b}<br><small>{div}</small></td><td colspan='5' style='padding:10px;color:#9b1c1c;border-bottom:1px solid #ddd'>{html.escape(p.get('reason','unavailable'))}</td></tr>"
+   885	
+   886	    if p.get("market_ok"):
+   887	        market = (
+   888	            f"<br><span style='font-size:12px;color:#555'>Market {p['market_a']*100:.1f}%<br>"
+   889	            f"Best {p['best_odds_a']:+.0f} @ {html.escape(str(p['best_book_a']))}</span>"
+   890	        )
+   891	        market_b = (
+   892	            f"<br><span style='font-size:12px;color:#555'>Market {p['market_b']*100:.1f}%<br>"
+   893	            f"Best {p['best_odds_b']:+.0f} @ {html.escape(str(p['best_book_b']))}</span>"
+   894	        )
+   895	    else:
+   896	        market = "<br><span style='font-size:12px;color:#999'>No market odds yet</span>"
+   897	        market_b = market
+   898	
+   899	    return f"""
+   900	    <tr>
