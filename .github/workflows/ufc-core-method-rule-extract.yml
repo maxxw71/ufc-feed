@@ -1,0 +1,46 @@
+name: UFC Core Method Rule Extract
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/ufc-core-method-rule-extract.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  audit:
+    runs-on: [self-hosted, Linux, X64, appwiza]
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - shell: bash
+        run: |
+          set -Eeuo pipefail
+          KEY=/home/appwiza-runner/.ssh/appwiza_vps
+          HOST=anestishkurti92@127.0.0.1
+          mkdir -p ufc_core_method_rule_extract
+          ssh -i "$KEY" -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=accept-new "$HOST" 'bash -s' > ufc_core_method_rule_extract/report.txt <<'EOF'
+          set -Eeuo pipefail
+          ROOT=/home/anestishkurti92/ufc-predictor-v1
+          echo '=== WATCHER CORE RULES 300-850 ==='
+          nl -ba "$ROOT/ufc_email_watcher.py" | sed -n '300,850p'
+          echo '=== EMAIL DESIGN LOCATIONS ==='
+          "$ROOT/venv/bin/python" - <<'PY'
+          import importlib.util,inspect
+          from pathlib import Path
+          p=Path('/home/anestishkurti92/ufc-predictor-v1/ufc_email_watcher.py')
+          spec=importlib.util.spec_from_file_location('w',p);w=importlib.util.module_from_spec(spec);spec.loader.exec_module(w)
+          print('module',getattr(w.ufc_email_design,'__file__',None))
+          try: print(inspect.getsource(w.ufc_email_design.method_cards))
+          except Exception as e: print('method_cards_source_error',e)
+          PY
+          EOF
+          cat ufc_core_method_rule_extract/report.txt
+      - shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add ufc_core_method_rule_extract/report.txt
+          git diff --cached --quiet && exit 0
+          git commit -m "Extract UFC core method rules"
+          git push
