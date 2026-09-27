@@ -1,0 +1,27 @@
+name: UFC U8 Opponent Context V2 Live
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/apply_live_u8_opponent_context_v2.sh'
+      - '.github/workflows/ufc-u8-opponent-context-v2-live.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  deploy:
+    runs-on: [self-hosted, Linux, X64, appwiza]
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - shell: bash
+        run: |
+          set -Eeuo pipefail
+          KEY=/home/appwiza-runner/.ssh/appwiza_vps
+          HOST=anestishkurti92@127.0.0.1
+          cat scripts/apply_live_u8_opponent_context_v2.sh | ssh -i "$KEY" -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=accept-new "$HOST" 'export HOME=/home/anestishkurti92; bash -s'
+      - shell: bash
+        run: |
+          KEY=/home/appwiza-runner/.ssh/appwiza_vps
+          HOST=anestishkurti92@127.0.0.1
+          ssh -i "$KEY" -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=accept-new "$HOST" "grep -q U8_OPPONENT_CONTEXT_GATE_V2 /home/anestishkurti92/ufc-predictor-v1/ufc_email_watcher.py"
