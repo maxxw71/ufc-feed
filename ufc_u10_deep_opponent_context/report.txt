@@ -1,0 +1,40 @@
+candidate feature_expansion/prefight_favorite_features_v2.csv rows 3322 u10 330
+candidate feature_expansion/prefight_favorite_features_v5.csv rows 3322 u10 330
+candidate feature_expansion/prefight_favorite_features_v6.csv rows 3322 u10 330
+candidate new_category_discovery/prefight_favorite_features.csv rows 3322 u10 -1
+age available 330 / 330
+BASE U10                                                   n=330 235-95 win= 71.2% ROI=  +7.80% pre=  +5.65% recent=  +9.99%
+
+AGE ONLY
+KEEP favorite <= 1y older                                  n=229 169-60 win= 73.8% ROI= +10.14% pre=  +6.11% recent= +14.00%
+KEEP favorite <= 2y older                                  n=246 182-64 win= 74.0% ROI= +11.01% pre=  +6.38% recent= +15.50%
+KEEP favorite <= 3y older                                  n=270 197-73 win= 73.0% ROI=  +9.45% pre=  +6.60% recent= +12.35%
+KEEP favorite <= 4y older                                  n=287 207-80 win= 72.1% ROI=  +8.39% pre=  +6.65% recent= +10.20%
+KEEP favorite <= 5y older                                  n=298 214-84 win= 71.8% ROI=  +7.96% pre=  +7.39% recent=  +8.54%
+
+AGE + CONTROL
+KEEP veto older>1 + opp ctrladv>=0.5                       n=290 211-79 win= 72.8% ROI=  +9.72% pre=  +8.18% recent= +11.30%
+KEEP veto older>1 + opp ctrladv>=1                         n=294 213-81 win= 72.4% ROI=  +9.49% pre=  +7.96% recent= +11.05%
+KEEP veto older>1 + opp ctrladv>=2                         n=306 219-87 win= 71.6% ROI=  +8.25% pre=  +5.49% recent= +11.04%
+KEEP veto older>2 + opp ctrladv>=0.5                       n=295 214-81 win= 72.5% ROI=  +9.53% pre=  +8.34% recent= +10.77%
+KEEP veto older>2 + opp ctrladv>=1                         n=298 215-83 win= 72.1% ROI=  +9.06% pre=  +7.62% recent= +10.53%
+KEEP veto older>2 + opp ctrladv>=2                         n=308 220-88 win= 71.4% ROI=  +8.08% pre=  +5.19% recent= +11.04%
+KEEP veto older>3 + opp ctrladv>=0.5                       n=301 217-84 win= 72.1% ROI=  +8.80% pre=  +7.48% recent= +10.18%
+KEEP veto older>3 + opp ctrladv>=1                         n=303 218-85 win= 71.9% ROI=  +8.70% pre=  +7.48% recent=  +9.96%
+KEEP veto older>3 + opp ctrladv>=2                         n=312 223-89 win= 71.5% ROI=  +8.09% pre=  +5.77% recent= +10.48%
+
+AGE + WRESTLING PRESSURE
+KEEP veto older>1 + wrestling pressure                     n=276 203-73 win= 73.6% ROI= +10.72% pre=  +8.94% recent= +12.45%
+KEEP veto older>2 + wrestling pressure                     n=282 207-75 win= 73.4% ROI= +10.58% pre=  +9.25% recent= +11.90%
+KEEP veto older>3 + wrestling pressure                     n=292 213-79 win= 72.9% ROI=  +9.94% pre=  +8.90% recent= +10.99%
+
+OPPONENT STRIKING THREAT
+KEEP opponent sig-diff advantage < 0.5                     n=241 176-65 win= 73.0% ROI=  +9.27% pre= +11.38% recent=  +7.03%
+KEEP opponent sig-diff advantage < 1.0                     n=274 197-77 win= 71.9% ROI=  +8.57% pre=  +8.27% recent=  +8.88%
+KEEP opponent sig-diff advantage < 1.5                     n=295 210-85 win= 71.2% ROI=  +7.18% pre=  +7.31% recent=  +7.05%
+
+COMBINED OPPONENT THREAT
+KEEP veto older>2 + ctrl>=.5 or sigadv>=0.5                n=283 206-77 win= 72.8% ROI=  +9.37% pre=  +7.30% recent= +11.51%
+KEEP veto older>2 + ctrl>=.5 or sigadv>=1.0                n=289 211-78 win= 73.0% ROI= +10.17% pre=  +8.07% recent= +12.32%
+KEEP veto older>3 + ctrl>=.5 or sigadv>=0.5                n=294 213-81 win= 72.4% ROI=  +8.88% pre=  +7.25% recent= +10.59%
+KEEP veto older>3 + ctrl>=.5 or sigadv>=1.0                n=298 216-82 win= 72.5% ROI=  +9.26% pre=  +7.64% recent= +10.94%
