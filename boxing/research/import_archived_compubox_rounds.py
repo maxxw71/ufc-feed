@@ -149,6 +149,29 @@ def resolve_fight(db,text,payload):
         pair=unique_from_rows(rows)
         if pair:
             return (*pair,rounds,title,'title_method_round_plus_unique_verified_bout')
+    # Legacy PunchStat header fallback: exact "A vs B MM/DD/YYYY" identity.
+    # This is stronger than surname-only inference because the archived page
+    # itself supplies both full names and the full fight date. Observed rounds
+    # are taken from matching total-punch rows, never inferred from scheduled rounds.
+    m=re.search(
+        r'PunchStat Report\s+([A-Za-zÀ-ÿ0-9 .,’\'\-]{2,80}?)\s+vs\s+'
+        r'([A-Za-zÀ-ÿ0-9 .,’\'\-]{2,80}?)\s+'
+        r'(\d{1,2}/\d{1,2}/\d{4})',text,re.I)
+    if m:
+        a_raw,b_raw,date_raw=m.group(1).strip(),m.group(2).strip(),m.group(3)
+        date=parse_date(date_raw)
+        sa,sb=surname(a_raw),surname(b_raw)
+        pair=canonical_pair(db,date,sa,sb) if date and sa and sb and sa!=sb else None
+        if pair:
+            tsec=section(text,'total')
+            counts=[]
+            for last in (sa,sb):
+                mm=re.search(r'\b'+re.escape(last)+r'\b\s+((?:\d{1,3}\s*/\s*\d{1,3}\s+)+)',tsec or '',re.I)
+                vals=re.findall(r'\d{1,3}\s*/\s*\d{1,3}',mm.group(1)) if mm else []
+                counts.append(len(vals))
+            if len(counts)==2 and counts[0]==counts[1] and 1<=counts[0]<=15:
+                return (*pair,counts[0],m.group(0),'explicit_punchstat_names_full_date_plus_round_rows')
+
     # Fallback for legacy stat_file pages whose title/header lacks an explicit
     # result/date. Infer only from the two round-table row labels, and accept
     # only when those two surnames map to exactly one verified finished bout.
