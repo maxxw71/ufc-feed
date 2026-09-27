@@ -1,0 +1,41 @@
+name: Boxing MartialBot Missing Reach Inventory
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'boxing/research/inventory_martialbot_missing_reach.py'
+      - '.github/workflows/boxing-martialbot-missing-reach.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  inventory:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install -q beautifulsoup4 lxml
+      - run: python boxing/research/inventory_martialbot_missing_reach.py
+      - name: Persist inventory
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          cp boxing/profile_supplements/martialbot_missing_reach_inventory.json /tmp/martialbot_missing_reach_inventory.json
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          for attempt in 1 2 3; do
+            git fetch origin main
+            git reset --hard origin/main
+            cp /tmp/martialbot_missing_reach_inventory.json boxing/profile_supplements/
+            git add boxing/profile_supplements/martialbot_missing_reach_inventory.json
+            if git diff --cached --quiet; then exit 0; fi
+            git commit -m 'Publish MartialBot missing reach inventory'
+            if git push origin HEAD:main; then exit 0; fi
+            sleep $((attempt * 2))
+          done
+          exit 1
