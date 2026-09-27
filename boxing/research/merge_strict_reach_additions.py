@@ -21,6 +21,7 @@ FILES=[
  ROOT/'profile_supplements'/'fitequant_reach_additions.jsonl',
  ROOT/'profile_supplements'/'boxrec_wayback_reach_additions.jsonl',
  ROOT/'profile_supplements'/'boxrec_wiki_reach_additions.jsonl',
+ ROOT/'profile_supplements'/'ready_to_fight_reach_additions.jsonl',
  ROOT/'profile_supplements'/'sofascore_reach_additions.jsonl',
 ]
 
