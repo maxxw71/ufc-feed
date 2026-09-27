@@ -101,6 +101,22 @@ def canonical_pair(db,date,sa,sb):
     ).fetchall()
     return unique_from_rows([r for r in rows if sorted([surname(r['boxer_a']),surname(r['boxer_b'])])==sorted([sa,sb])])
 
+def canonical_pair_fullnames(db,date,a,b):
+    """Resolve an exact full-name/date pair across duplicate source rows.
+
+    Diacritics/punctuation are normalized, but no nickname/surname-only inference
+    is permitted here. Multiple source rows for the same canonical date+pair
+    collapse through unique_from_rows.
+    """
+    want=sorted([norm(a),norm(b)])
+    rows=db.execute(
+        "select date,boxer_a,boxer_b,source,source_id,method,rounds from bouts where date=? and status='FINISHED'",
+        (date,)
+    ).fetchall()
+    exact=[r for r in rows if sorted([norm(r['boxer_a']),norm(r['boxer_b'])])==want]
+    return unique_from_rows(exact)
+
+
 def resolve_fight(db,text,payload):
     full=[]
     for m in HEADER_FULL.finditer(text):
@@ -161,7 +177,9 @@ def resolve_fight(db,text,payload):
         a_raw,b_raw,date_raw=m.group(1).strip(),m.group(2).strip(),m.group(3)
         date=parse_date(date_raw)
         sa,sb=surname(a_raw),surname(b_raw)
-        pair=canonical_pair(db,date,sa,sb) if date and sa and sb and sa!=sb else None
+        pair=canonical_pair_fullnames(db,date,a_raw,b_raw) if date else None
+        if not pair and date and sa and sb and sa!=sb:
+            pair=canonical_pair(db,date,sa,sb)
         if pair:
             tsec=section(text,'total')
             counts=[]
