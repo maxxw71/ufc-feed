@@ -5,18 +5,17 @@ source_error BIS https://www.bis.org/press/index.htm HTTPError
 source_error Mastercard https://www.mastercard.com/news/ HTTPError
 discovered 264
 qualifying 0 prime True
-email_result None
 APPWIZA CRYPTO PRESS SCANNER DEPLOY
-Sun Sep 27 01:58:41 AM UTC 2026
+Sun Sep 27 01:59:10 AM UTC 2026
 compile=ok
 prime=ok
-test_email=attempted_via_live_appwiza_send_email
 --- cron ---
 CRON_TZ=America/New_York
 CRON_TZ=America/New_York
 CRON_TZ=UTC
 CRON_TZ=America/New_York
+CRON_TZ=America/New_York
 7 9,21 * * * cd /home/anestishkurti92/crypto-press-scanner && /home/anestishkurti92/ufc-predictor-v1/venv/bin/python /home/anestishkurti92/crypto-press-scanner/crypto_press_scanner.py run >> /home/anestishkurti92/crypto-press-scanner/scanner.log 2>&1
 --- files ---
--rwxr-xr-x 1 anestishkurti92 anestishkurti92 12114 Sep 27 01:58 /home/anestishkurti92/crypto-press-scanner/crypto_press_scanner.py
--rw-rw-r-- 1 anestishkurti92 anestishkurti92 23936 Sep 27 01:58 /home/anestishkurti92/crypto-press-scanner/seen.json
+-rwxr-xr-x 1 anestishkurti92 anestishkurti92 12114 Sep 27 01:59 /home/anestishkurti92/crypto-press-scanner/crypto_press_scanner.py
+-rw-rw-r-- 1 anestishkurti92 anestishkurti92 23936 Sep 27 01:59 /home/anestishkurti92/crypto-press-scanner/seen.json
