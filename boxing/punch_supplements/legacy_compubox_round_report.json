@@ -1,8 +1,8 @@
 {
-  "generated_at": "2026-09-27T11:21:45.539336+00:00",
+  "generated_at": "2026-09-27T11:35:23.320391+00:00",
   "staged_fetched_pages": 41,
-  "strict_parser_accepts_before_dedup": 31,
-  "unique_full_round_fights": 22,
+  "strict_parser_accepts_before_dedup": 32,
+  "unique_full_round_fights": 23,
   "duplicate_variants_collapsed": 9,
   "date_min": "2007-12-08",
   "date_max": "2011-05-07",
@@ -218,6 +218,16 @@
       "url": "https://web.archive.org/web/20101004040536id_/http://compuboxonline.com:80/stat_files/MOS-MOR.htm"
     },
     {
+      "date": "2010-12-18",
+      "fighters": [
+        "Jean Pascal",
+        "Bernard Hopkins"
+      ],
+      "rounds": 12,
+      "available_from_date": "2011-08-10",
+      "url": "https://web.archive.org/web/20110810030347id_/http://compuboxonline.com:80/stat_files/PAS-HOP.htm"
+    },
+    {
       "date": "2011-05-07",
       "fighters": [
         "Manny Pacquiao",
@@ -229,7 +239,7 @@
     }
   ],
   "rejection_reasons": {
-    "no safely resolved fight identity/date": 8,
+    "no safely resolved fight identity/date": 7,
     "missing power round row for Hasim Rahman": 1,
     "missing jab round row for Antonio Margarito": 1
   },
@@ -278,11 +288,6 @@
       "canonical_key": "compuboxonline.com:80/stat_files/mar-mos.htm",
       "url": "https://web.archive.org/web/20090303104058id_/http://compuboxonline.com:80/stat_files/MAR-MOS.htm",
       "reason": "missing jab round row for Antonio Margarito"
-    },
-    {
-      "canonical_key": "compuboxonline.com:80/stat_files/pas-hop.htm",
-      "url": "https://web.archive.org/web/20110810030347id_/http://compuboxonline.com:80/stat_files/PAS-HOP.htm",
-      "reason": "no safely resolved fight identity/date"
     }
   ],
   "policy": "Existing strict archived CompuBox resolver; exact fight identity/date; total+jab+power for both fighters every observed round; landed<=thrown; total==jab+power; duplicate date+pair variants collapsed."
