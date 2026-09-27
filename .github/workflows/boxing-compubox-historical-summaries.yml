@@ -40,7 +40,7 @@ jobs:
           shutil.copy2(db,'boxing/research/boxing.sqlite3')
           PY
       - name: Collect CompuBox-authored historical summaries
-        run: python boxing/research/collect_boxingscene_compubox_summaries.py --articles 450
+        run: python boxing/research/collect_boxingscene_compubox_summaries.py --articles 1200
       - name: Remove temporary DB
         if: always()
         run: rm -f boxing/research/boxing.sqlite3
