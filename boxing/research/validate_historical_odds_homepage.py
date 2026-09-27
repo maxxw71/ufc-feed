@@ -62,6 +62,7 @@ def main():
 
     validated=[]
     audits=[]
+    snapshot_cache={}
     for event_day,qrows in sorted(bydate.items()):
         ymd=event_day.strftime('%Y%m%d')
         # Homepage odds change frequently. Use up to the five newest captures in
@@ -77,13 +78,22 @@ def main():
         parsed=[]
         attempts=[]
         for c in eligible:
-            try:
-                final,raw_html,used,prior=fetch_exact_snapshot(c['snapshot_url'],c['timestamp'])
-                cells=parse_snapshot(raw_html)
-                attempts.append({'timestamp':c['timestamp'],'cells':len(cells),'used':used})
+            cache_key=(c['timestamp'],c['digest'])
+            cached=snapshot_cache.get(cache_key)
+            if cached is None:
+                try:
+                    final,raw_html,used,prior=fetch_exact_snapshot(c['snapshot_url'],c['timestamp'])
+                    cells=parse_snapshot(raw_html)
+                    cached={'cells':cells,'used':used,'error':None}
+                except Exception as e:
+                    cached={'cells':{},'used':None,'error':type(e).__name__+': '+str(e)[:240]}
+                snapshot_cache[cache_key]=cached
+            if cached['error']:
+                attempts.append({'timestamp':c['timestamp'],'error':cached['error'],'cached':cache_key in snapshot_cache})
+            else:
+                cells=cached['cells'];used=cached['used']
+                attempts.append({'timestamp':c['timestamp'],'cells':len(cells),'used':used,'cached':True})
                 if cells:parsed.append((c,cells,used))
-            except Exception as e:
-                attempts.append({'timestamp':c['timestamp'],'error':type(e).__name__+': '+str(e)[:240]})
         if not parsed:
             audits.append({'event_date':event_day.isoformat(),'quotes':len(qrows),'validated':0,'attempts':attempts})
             continue
@@ -111,7 +121,7 @@ def main():
     validated=list(uniq.values())
     report={
       'generated_at':dt.datetime.now(dt.timezone.utc).isoformat(),
-      'cdx_rows':len(raw),'cdx_errors':errors,'stored_quote_dates':len(bydate),
+      'cdx_rows':len(raw),'cdx_errors':errors,'stored_quote_dates':len(bydate),'unique_snapshots_fetched':len(snapshot_cache),
       'validated_price_rows':len(validated),
       'distinct_validated_bouts':len({x['bout_id'] for x in validated}),
       'distinct_validated_events':len({x['event_url'] for x in validated if x.get('event_url')}),
