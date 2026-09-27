@@ -13,69 +13,56 @@ permissions:
 jobs:
   deploy:
     runs-on: [self-hosted, Linux, X64, appwiza]
-    timeout-minutes: 10
+    timeout-minutes: 12
     steps:
       - uses: actions/checkout@v4
-      - name: Deploy scanner and hourly timer
+      - name: Deploy scanner over existing Appwiza SSH path
         shell: bash
         run: |
-          set -euo pipefail
+          set -Eeuo pipefail
+          KEY=/home/appwiza-runner/.ssh/appwiza_vps
+          HOST=anestishkurti92@127.0.0.1
+          REMOTE=/home/anestishkurti92/crypto-press-scanner
+
+          scp -i "$KEY" -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=accept-new             crypto/crypto_press_scanner.py "$HOST:/home/anestishkurti92/crypto_press_scanner.deploy.py"
+
+          ssh -i "$KEY" -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=accept-new "$HOST" 'bash -s' <<'EOF' | tee crypto/press_scanner_deploy_report.txt
+          set -Eeuo pipefail
           ROOT=/home/anestishkurti92/crypto-press-scanner
-          mkdir -p "$ROOT" "$HOME/.config/systemd/user" crypto
-          install -m 755 crypto/crypto_press_scanner.py "$ROOT/crypto_press_scanner.py"
-          python3 -m py_compile "$ROOT/crypto_press_scanner.py"
+          PY=/home/anestishkurti92/ufc-predictor-v1/venv/bin/python
+          mkdir -p "$ROOT"
+          install -m 755 /home/anestishkurti92/crypto_press_scanner.deploy.py "$ROOT/crypto_press_scanner.py"
+          rm -f /home/anestishkurti92/crypto_press_scanner.deploy.py
+          "$PY" -m py_compile "$ROOT/crypto_press_scanner.py"
 
-          cat > "$HOME/.config/systemd/user/appwiza-crypto-press.service" <<'UNIT'
-          [Unit]
-          Description=Appwiza crypto primary-source press scanner
-          After=network-online.target
+          # Prime current archive links without sending a backlog.
+          "$PY" "$ROOT/crypto_press_scanner.py" prime
 
-          [Service]
-          Type=oneshot
-          WorkingDirectory=/home/anestishkurti92/crypto-press-scanner
-          ExecStart=/usr/bin/python3 /home/anestishkurti92/crypto-press-scanner/crypto_press_scanner.py run
-          Nice=10
-          UNIT
+          # Use the live UFC/Appwiza send_email(subject, body) interface for one end-to-end test.
+          "$PY" "$ROOT/crypto_press_scanner.py" test-quant
 
-          cat > "$HOME/.config/systemd/user/appwiza-crypto-press.timer" <<'UNIT'
-          [Unit]
-          Description=Run Appwiza crypto press scanner hourly
+          # Install an isolated hourly user cron. Keep sports jobs untouched.
+          TMP=$(mktemp)
+          crontab -l 2>/dev/null | grep -v '/crypto-press-scanner/crypto_press_scanner.py' > "$TMP" || true
+          echo '7 * * * * cd /home/anestishkurti92/crypto-press-scanner && /home/anestishkurti92/ufc-predictor-v1/venv/bin/python /home/anestishkurti92/crypto-press-scanner/crypto_press_scanner.py run >> /home/anestishkurti92/crypto-press-scanner/scanner.log 2>&1' >> "$TMP"
+          crontab "$TMP"
+          rm -f "$TMP"
 
-          [Timer]
-          OnBootSec=5m
-          OnUnitActiveSec=1h
-          RandomizedDelaySec=3m
-          Persistent=true
-
-          [Install]
-          WantedBy=timers.target
-          UNIT
-
-          systemctl --user daemon-reload
-          systemctl --user enable --now appwiza-crypto-press.timer
-
-          # Prime existing archive items without emailing historical backlog.
-          python3 "$ROOT/crypto_press_scanner.py" prime
-
-          # End-to-end proof through the exact existing UFC/Appwiza send_email() function.
-          python3 "$ROOT/crypto_press_scanner.py" test-quant
-
-          REPORT=crypto/press_scanner_deploy_report.txt
-          {
-            echo "APPWIZA CRYPTO PRESS SCANNER"
-            date -u
-            echo "compile=ok"
-            echo "timer_enabled=$(systemctl --user is-enabled appwiza-crypto-press.timer || true)"
-            echo "timer_active=$(systemctl --user is-active appwiza-crypto-press.timer || true)"
-            systemctl --user list-timers appwiza-crypto-press.timer --no-pager || true
-            echo "--- files ---"
-            ls -l "$ROOT/crypto_press_scanner.py" "$ROOT/seen.json" 2>/dev/null || true
-          } > "$REPORT"
+          echo 'APPWIZA CRYPTO PRESS SCANNER DEPLOY'
+          date -u
+          echo 'compile=ok'
+          echo 'prime=ok'
+          echo 'test_email=attempted_via_live_appwiza_send_email'
+          echo '--- cron ---'
+          crontab -l | grep 'crypto-press-scanner/crypto_press_scanner.py'
+          echo '--- files ---'
+          ls -l "$ROOT/crypto_press_scanner.py" "$ROOT/seen.json"
+          EOF
 
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add "$REPORT"
+          git add crypto/press_scanner_deploy_report.txt
           if ! git diff --cached --quiet; then
-            git commit -m 'Record crypto scanner deployment status'
+            git commit -m 'Record live crypto scanner deployment'
             git push
           fi
