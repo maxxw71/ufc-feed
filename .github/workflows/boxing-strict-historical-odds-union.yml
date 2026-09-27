@@ -1,0 +1,44 @@
+name: Boxing Strict Historical Odds Union
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'boxing/research/combine_strict_historical_odds.py'
+      - 'boxing/public_reports/HISTORICAL_ODDS_VALIDATED_ROWS.json'
+      - 'boxing/public_reports/HISTORICAL_ODDS_HOME_VALIDATED_ROWS.json'
+      - '.github/workflows/boxing-strict-historical-odds-union.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  combine:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python boxing/research/combine_strict_historical_odds.py
+      - name: Persist strict union
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          mkdir -p /tmp/odds-union
+          cp boxing/public_reports/HISTORICAL_ODDS_STRICT_UNION_ROWS.json /tmp/odds-union/
+          cp boxing/public_reports/HISTORICAL_ODDS_STRICT_UNION_REPORT.json /tmp/odds-union/
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          for attempt in 1 2 3 4; do
+            git fetch origin main
+            git reset --hard origin/main
+            cp /tmp/odds-union/* boxing/public_reports/
+            git add boxing/public_reports/HISTORICAL_ODDS_STRICT_UNION_ROWS.json boxing/public_reports/HISTORICAL_ODDS_STRICT_UNION_REPORT.json
+            if git diff --cached --quiet; then exit 0; fi
+            git commit -m 'Publish strict historical boxing odds union'
+            if git push origin HEAD:main; then exit 0; fi
+            sleep $((attempt * 2))
+          done
+          exit 1
