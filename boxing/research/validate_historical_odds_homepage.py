@@ -6,10 +6,10 @@ Wayback homepage capture is strictly before the bout date and contains the exact
 bout id, bookmaker, selection, and equivalent displayed price.
 """
 from __future__ import annotations
-import datetime as dt, json, os, sqlite3, urllib.parse, urllib.request
+import concurrent.futures as cf, datetime as dt, json, os, sqlite3, urllib.parse, urllib.request
 from collections import defaultdict
 from pathlib import Path
-from validate_historical_odds_snapshot import parse_snapshot, fetch_exact_snapshot
+from validate_historical_odds_snapshot import parse_snapshot, wayback_timestamp
 
 DB=Path(os.environ.get('BOXING_DB','/tmp/boxing_research.sqlite3'))
 OUT=Path('boxing/public_reports/HISTORICAL_ODDS_HOME_VALIDATION_REPORT.json')
@@ -30,6 +30,26 @@ def cdx(root):
 def nk_date(x):
     try:return dt.date.fromisoformat(str(x)[:10])
     except Exception:return None
+
+def fetch_home_cap(cap):
+    """Fetch exactly the CDX-preserved homepage snapshot once.
+
+    Homepage validation does not need event-page host/scheme variant expansion:
+    CDX already gives the exact original URL and timestamp. Fail closed on
+    timestamp drift or a page without an odds table.
+    """
+    req=urllib.request.Request(cap['snapshot_url'],headers={
+      'User-Agent':UA,'Accept-Language':'en-US,en;q=0.8'
+    })
+    with urllib.request.urlopen(req,timeout=25) as r:
+        raw=r.read(4_000_001);final=r.geturl()
+    if len(raw)>4_000_000:raise ValueError('snapshot too large')
+    if wayback_timestamp(final)!=cap['timestamp']:
+        raise ValueError('wayback timestamp drift: '+str(final)[:180])
+    if b'odds-table' not in raw.lower():
+        raise ValueError('no odds table')
+    return {'cells':parse_snapshot(raw),'used':cap['snapshot_url'],'final':final,'error':None}
+
 
 def main():
     db=sqlite3.connect(f'file:{DB}?mode=ro',uri=True);db.row_factory=sqlite3.Row
@@ -62,11 +82,12 @@ def main():
 
     validated=[]
     audits=[]
-    snapshot_cache={}
-    for event_day,qrows in sorted(bydate.items()):
-        ymd=event_day.strftime('%Y%m%d')
-        # Homepage odds change frequently. Use up to the five newest captures in
-        # the 14 days strictly preceding the event.
+
+    # Determine exactly which homepage captures are relevant to at least one
+    # stored event date, then fetch each unique snapshot once in parallel.
+    needed={}
+    eligible_by_date={}
+    for event_day in sorted(bydate):
         eligible=[]
         for c in caps:
             try:cd=dt.datetime.strptime(c['timestamp'][:8],'%Y%m%d').date()
@@ -74,22 +95,32 @@ def main():
             if cd<event_day and (event_day-cd).days<=14:
                 eligible.append(c)
         eligible=eligible[-5:][::-1]
+        eligible_by_date[event_day]=eligible
+        for c in eligible:needed[(c['timestamp'],c['digest'])]=c
+
+    snapshot_cache={}
+    def fetch_one(item):
+        key,cap=item
+        try:return key,fetch_home_cap(cap)
+        except Exception as e:return key,{'cells':{},'used':cap['snapshot_url'],'final':None,
+          'error':type(e).__name__+': '+str(e)[:240]}
+    with cf.ThreadPoolExecutor(max_workers=8) as ex:
+        for key,val in ex.map(fetch_one,needed.items()):
+            snapshot_cache[key]=val
+
+    for event_day,qrows in sorted(bydate.items()):
+        ymd=event_day.strftime('%Y%m%d')
+        # Homepage odds change frequently. Use up to the five newest captures in
+        # the 14 days strictly preceding the event.
+        eligible=eligible_by_date.get(event_day) or []
         if not eligible:continue
         parsed=[]
         attempts=[]
         for c in eligible:
             cache_key=(c['timestamp'],c['digest'])
-            cached=snapshot_cache.get(cache_key)
-            if cached is None:
-                try:
-                    final,raw_html,used,prior=fetch_exact_snapshot(c['snapshot_url'],c['timestamp'])
-                    cells=parse_snapshot(raw_html)
-                    cached={'cells':cells,'used':used,'error':None}
-                except Exception as e:
-                    cached={'cells':{},'used':None,'error':type(e).__name__+': '+str(e)[:240]}
-                snapshot_cache[cache_key]=cached
+            cached=snapshot_cache.get(cache_key) or {'cells':{},'used':c['snapshot_url'],'error':'snapshot not prefetched'}
             if cached['error']:
-                attempts.append({'timestamp':c['timestamp'],'error':cached['error'],'cached':cache_key in snapshot_cache})
+                attempts.append({'timestamp':c['timestamp'],'error':cached['error'],'cached':True})
             else:
                 cells=cached['cells'];used=cached['used']
                 attempts.append({'timestamp':c['timestamp'],'cells':len(cells),'used':used,'cached':True})
@@ -121,7 +152,7 @@ def main():
     validated=list(uniq.values())
     report={
       'generated_at':dt.datetime.now(dt.timezone.utc).isoformat(),
-      'cdx_rows':len(raw),'cdx_errors':errors,'stored_quote_dates':len(bydate),'unique_snapshots_fetched':len(snapshot_cache),
+      'cdx_rows':len(raw),'cdx_errors':errors,'stored_quote_dates':len(bydate),'needed_unique_snapshots':len(needed),'unique_snapshots_fetched':len(snapshot_cache),'successful_snapshot_parses':sum(not x.get('error') for x in snapshot_cache.values()),
       'validated_price_rows':len(validated),
       'distinct_validated_bouts':len({x['bout_id'] for x in validated}),
       'distinct_validated_events':len({x['event_url'] for x in validated if x.get('event_url')}),
