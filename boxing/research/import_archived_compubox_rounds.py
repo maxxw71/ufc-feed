@@ -149,6 +149,55 @@ def resolve_fight(db,text,payload):
         pair=unique_from_rows(rows)
         if pair:
             return (*pair,rounds,title,'title_method_round_plus_unique_verified_bout')
+    # Fallback for legacy stat_file pages whose title/header lacks an explicit
+    # result/date. Infer only from the two round-table row labels, and accept
+    # only when those two surnames map to exactly one verified finished bout.
+    total_text=None
+    for pat in (r'Total Punches Landed\\s*/\\s*Thrown',r'Total Punches Landed/Thrown'):
+        z=re.search(pat,text,re.I)
+        if z:
+            total_text=text[z.end():]
+            break
+    if total_text:
+        stop=len(total_text)
+        for pat in (r'(?:Total )?Jabs Landed\\s*/\\s*Thrown',r'Total Jabs Thrown/Landed',
+                    r'(?:Total )?Power Punches Landed\\s*/\\s*Thrown',r'Final Punch'):
+            z=re.search(pat,total_text,re.I)
+            if z:stop=min(stop,z.start())
+        total_text=total_text[:stop]
+        found=[]
+        rowpat=re.compile(r'([A-Za-zÀ-ÿ][A-Za-zÀ-ÿ0-9 .,\'’\\-]{1,50}?)\\s+((?:\\d{1,3}\\s*/\\s*\\d{1,3}\\s+){3,}\\d{1,3}\\s*/\\s*\\d{1,3})',re.I)
+        for z in rowpat.finditer(total_text):
+            label=z.group(1).strip()
+            pairs=re.findall(r'\\d{1,3}\\s*/\\s*\\d{1,3}',z.group(2))
+            last=surname(label)
+            if last and 4<=len(pairs)<=15:
+                found.append((last,len(pairs),label))
+        # Preserve first occurrence per surname/round count and try every pair.
+        uniq=[]
+        seen=set()
+        for x in found:
+            k=(x[0],x[1])
+            if k not in seen:
+                seen.add(k);uniq.append(x)
+        candidates=[]
+        for i,a in enumerate(uniq):
+            for b in uniq[i+1:]:
+                if a[1]!=b[1] or a[0]==b[0]:continue
+                rows=[
+                    r for r in pair_candidates(db,a[0],b[0])
+                    if round_terminal(r['rounds'])==a[1]
+                ]
+                pair=unique_from_rows(rows)
+                if pair:
+                    candidates.append((pair,a[1],a[2],b[2]))
+        unique_candidates={}
+        for pair,rounds,la,lb in candidates:
+            key=(pair[0],tuple(sorted([norm(pair[1]),norm(pair[2])])))
+            unique_candidates[key]=(pair,rounds,la,lb)
+        if len(unique_candidates)==1:
+            pair,rounds,la,lb=next(iter(unique_candidates.values()))
+            return (*pair,rounds,f'{la} / {lb}','unique_round_row_labels_plus_verified_bout')
     return None
 
 def section(text,kind):
