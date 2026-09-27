@@ -124,14 +124,25 @@ def evaluate(url, raw):
         return None
     title = page_title(raw)
     text = clean_text(raw)
-    low = (title + " " + text[:14000]).lower()
+    title_low = title.lower()
+    lead_low = text[:5500].lower()
+    low = (title + " " + text[:5500]).lower()
 
+    # Require crypto/tokenisation relevance in the title/lead, not just footer/nav text.
     crypto_hit = any(x in low for x in CRYPTO_TERMS)
-    if not crypto_hit:
-        if not src["tokens"]:
-            return None
-        if not any(x in low for x in ("bank","payment","settlement","institution","custody","token","mainnet","network")):
-            return None
+    token_hit = any(t.lower() in low for t in src["tokens"])
+    institution_hit = any(x in low for x in NAMED_INSTITUTIONS)
+    if not crypto_hit and not (src["tokens"] and token_hit and institution_hit):
+        return None
+
+    # Require a concrete action/catalyst; generic educational posts should not alert.
+    action_terms = (
+        "live","production","launch","launched","selected","adopt","adoption","approved",
+        "integrates","integration","partners with","partnership","settlement","clearing",
+        "custody","license","licensed","mainnet","token utility","staking","burn"
+    )
+    if not any(x in low for x in action_terms):
+        return None
 
     score = 0
     reasons = []
@@ -147,10 +158,11 @@ def evaluate(url, raw):
             if term not in reasons and len(reasons) < 7:
                 reasons.append(term)
 
-    if any(x in low for x in LOW_VALUE):
-        score -= 4
+    if any(x in title_low for x in LOW_VALUE):
+        score -= 6
 
-    if score < 7:
+    # Strict threshold: this is an alert feed, not a general news digest.
+    if score < 10:
         return None
 
     tokens = list(src["tokens"])
@@ -166,6 +178,16 @@ def evaluate(url, raw):
     }
 
 def appwiza_send(subject, body):
+    # Load the same environment file used by the live UFC watcher, without
+    # copying, logging, or persisting any credential elsewhere.
+    env_path = Path("/home/anestishkurti92/.config/ufc-watcher.env")
+    if env_path.exists():
+        for line in env_path.read_text(encoding="utf-8").splitlines():
+            line = line.strip()
+            if not line or line.startswith("#") or "=" not in line:
+                continue
+            k, v = line.split("=", 1)
+            os.environ.setdefault(k.strip(), v.strip().strip('"').strip("'"))
     mail_root = "/home/anestishkurti92/ufc-predictor-v1"
     if mail_root not in sys.path:
         sys.path.insert(0, mail_root)
