@@ -3,10 +3,18 @@ source_error Avalanche https://www.avax.network/blog HTTPError
 source_error Swift https://www.swift.com/news-events/news HTTPError
 source_error BIS https://www.bis.org/press/index.htm HTTPError
 source_error Mastercard https://www.mastercard.com/news/ HTTPError
-discovered 264
-qualifying 0 prime True
+source_error OCC https://www.occ.treas.gov/news-issuances/news-releases/index-news-releases.html HTTPError
+source_error HKMA https://www.hkma.gov.hk/eng/news-and-media/press-releases/ HTTPError
+source_error NYDFS https://www.dfs.ny.gov/reports_and_publications/press_releases HTTPError
+source_error WisdomTree https://www.wisdomtree.com/investments/blog HTTPError
+source_error Grayscale https://www.grayscale.com/press HTTPError
+source_error VanEck https://www.vaneck.com/us/en/blogs/digital-assets/ HTTPError
+source_error Standard Chartered https://www.sc.com/en/media/press-release/ TimeoutError
+source_error UBS https://www.ubs.com/global/en/media/display-page-ndp/en-2026.html HTTPError
+discovered 350 fresh 115
+qualifying 27 prime True
 APPWIZA CRYPTO PRESS SCANNER DEPLOY
-Sun Sep 27 01:59:10 AM UTC 2026
+Sun Sep 27 02:24:09 AM UTC 2026
 compile=ok
 prime=ok
 --- cron ---
@@ -15,7 +23,8 @@ CRON_TZ=America/New_York
 CRON_TZ=UTC
 CRON_TZ=America/New_York
 CRON_TZ=America/New_York
+CRON_TZ=America/New_York
 7 9,21 * * * cd /home/anestishkurti92/crypto-press-scanner && /home/anestishkurti92/ufc-predictor-v1/venv/bin/python /home/anestishkurti92/crypto-press-scanner/crypto_press_scanner.py run >> /home/anestishkurti92/crypto-press-scanner/scanner.log 2>&1
 --- files ---
--rwxr-xr-x 1 anestishkurti92 anestishkurti92 12114 Sep 27 01:59 /home/anestishkurti92/crypto-press-scanner/crypto_press_scanner.py
--rw-rw-r-- 1 anestishkurti92 anestishkurti92 23936 Sep 27 01:59 /home/anestishkurti92/crypto-press-scanner/seen.json
+-rwxr-xr-x 1 anestishkurti92 anestishkurti92 21211 Sep 27 02:23 /home/anestishkurti92/crypto-press-scanner/crypto_press_scanner.py
+-rw-rw-r-- 1 anestishkurti92 anestishkurti92 39116 Sep 27 02:24 /home/anestishkurti92/crypto-press-scanner/seen.json
