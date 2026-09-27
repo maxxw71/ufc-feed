@@ -20,6 +20,8 @@ on:
       - 'boxing/rankings/wbo_monthly_rankings_meta.json'
       - 'boxing/rankings/ibf_monthly_rankings_meta.json'
       - 'boxing/public_reports/HISTORICAL_ODDS_VALIDATED_ROWS.json'
+      - 'boxing/public_reports/HISTORICAL_ODDS_STRICT_UNION_ROWS.json'
+      - 'boxing/public_reports/HISTORICAL_ODDS_STRICT_UNION_REPORT.json'
       - 'boxing/public_reports/HISTORICAL_ODDS_VALIDATION_REPORT.json'
       - 'boxing/prospective_odds/coverage.json'
       - 'boxing/prospective_odds/settled_bouts.json'
@@ -80,3 +82,5 @@ jobs:
           exit 1
 
 # status-refresh: 2026-09-23T22:23-04:00
+
+# status-refresh-after-latest-phase2: 2026-09-27T12:04Z
