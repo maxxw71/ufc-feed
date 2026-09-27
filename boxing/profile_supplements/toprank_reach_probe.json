@@ -1,0 +1,43 @@
+{
+  "generated_at": "2026-09-27T12:46:04.870641+00:00",
+  "missing_targets": 266,
+  "discovered_fighter_urls": 36,
+  "exact_slug_targets": 1,
+  "status_counts": {
+    "no_reach": 1
+  },
+  "accepted": 0,
+  "accepted_profiles": [],
+  "discovery_diagnostics": [
+    {
+      "url": "https://toprank.com/sitemap.xml",
+      "status": "ok",
+      "locs": 281,
+      "bytes": 58870,
+      "content_type": "text/xml; charset=UTF-8"
+    },
+    {
+      "url": "https://toprank.com/sitemap_index.xml",
+      "status": "error",
+      "error": "HTTPError: HTTP Error 404: Page Not Found"
+    },
+    {
+      "url": "https://toprank.com/sitemap-index.xml",
+      "status": "error",
+      "error": "HTTPError: HTTP Error 404: Page Not Found"
+    }
+  ],
+  "rows": [
+    {
+      "id": "https://en.wikipedia.org/wiki/Abass_Baraou",
+      "name": "Abass Baraou",
+      "url": "https://toprank.com/fighters/abass-baraou",
+      "strict_bout_appearances": 3,
+      "h1": "Abass Baraou",
+      "reach_cm": null,
+      "reach_values": [],
+      "status": "no_reach"
+    }
+  ],
+  "policy": "Official Top Rank public fighter profile only; exact normalized H1 identity; plausible explicit reach; missing reach only; never overwrite."
+}
