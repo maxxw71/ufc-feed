@@ -1,0 +1,96 @@
+name: UFC U10 Deep Opponent Context
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/ufc-u10-deep-opponent-context.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  validate:
+    runs-on: [self-hosted, Linux, X64, appwiza]
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - shell: bash
+        run: |
+          set -Eeuo pipefail
+          KEY=/home/appwiza-runner/.ssh/appwiza_vps
+          HOST=anestishkurti92@127.0.0.1
+          mkdir -p ufc_u10_deep_opponent_context
+          ssh -i "$KEY" -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=accept-new "$HOST" 'bash -s' > ufc_u10_deep_opponent_context/report.txt <<'EOF'
+          set -Eeuo pipefail
+          ROOT=/home/anestishkurti92/ufc-predictor-v1
+          cd "$ROOT"
+          venv/bin/python - <<'PY'
+          import io,re,unicodedata,requests
+          import pandas as pd, numpy as np
+          from pathlib import Path
+
+          candidates=['feature_expansion/prefight_favorite_features_v2.csv','feature_expansion/prefight_favorite_features_v5.csv','feature_expansion/prefight_favorite_features_v6.csv','new_category_discovery/prefight_favorite_features.csv']
+          for p in candidates:
+              if Path(p).exists():
+                  d=pd.read_csv(p,low_memory=False)
+                  key=next((c for c in d.columns if 'diff_days_since_ko_loss' in c.lower()),None)
+                  n=int((pd.to_numeric(d[key],errors='coerce')>=105).sum()) if key else -1
+                  print('candidate',p,'rows',len(d),'u10',n)
+          p='feature_expansion/prefight_favorite_features_v2.csv'
+          d=pd.read_csv(p,low_memory=False)
+          d['event_date']=pd.to_datetime(d.event_date,errors='coerce')
+          key=next(c for c in d.columns if 'diff_days_since_ko_loss' in c.lower())
+          x=d[pd.to_numeric(d[key],errors='coerce')>=105].copy()
+
+          def norm(s):
+              s=unicodedata.normalize('NFKD',str(s)).encode('ascii','ignore').decode().lower()
+              return re.sub(r'[^a-z0-9]+',' ',s).strip()
+          ids=pd.read_csv(io.StringIO(requests.get('https://raw.githubusercontent.com/DanMcInerney/mma-ai/main/data/raw/ufcstats/individuals.csv',timeout=45).text),low_memory=False)
+          dob={}
+          for _,r in ids[['name','dob']].dropna().iterrows():
+              k=norm(r['name'])
+              if k and k not in dob: dob[k]=pd.to_datetime(r['dob'],errors='coerce')
+          x['fav_dob']=x.favorite.map(lambda z:dob.get(norm(z),pd.NaT));x['opp_dob']=x.opponent.map(lambda z:dob.get(norm(z),pd.NaT))
+          x['fav_age']=(x.event_date-x.fav_dob).dt.days/365.2425;x['opp_age']=(x.event_date-x.opp_dob).dt.days/365.2425
+          x['fav_older_by']=x.fav_age-x.opp_age
+          for c in ['profit100','won','f_ctrl15','o_ctrl15','f_td_a15','o_td_a15','f_sig_diff_pm','o_sig_diff_pm','market_prob']:
+              if c in x.columns:x[c]=pd.to_numeric(x[c],errors='coerce')
+          x['opp_ctrl_adv']=x.o_ctrl15-x.f_ctrl15
+          x['opp_tdatt_adv']=x.o_td_a15-x.f_td_a15
+          x['opp_sig_adv']=x.o_sig_diff_pm-x.f_sig_diff_pm
+          def roi(z): return z.profit100.sum()/(100*len(z)) if len(z) else np.nan
+          def show(label,z):
+              w=pd.to_numeric(z.won,errors='coerce').fillna(0)
+              pre=z[z.event_date<'2020-01-01']; rec=z[z.event_date>='2020-01-01']
+              print(f"{label:<58} n={len(z):3d} {int(w.sum())}-{int(len(z)-w.sum())} win={(w.mean()*100 if len(z) else np.nan):5.1f}% ROI={(roi(z)*100 if len(z) else np.nan):+7.2f}% pre={(roi(pre)*100 if len(pre) else np.nan):+7.2f}% recent={(roi(rec)*100 if len(rec) else np.nan):+7.2f}%")
+          print('age available',x.fav_older_by.notna().sum(),'/',len(x))
+          show('BASE U10',x)
+          print('\nAGE ONLY')
+          for a in [1,2,3,4,5]: show(f'KEEP favorite <= {a}y older',x[~(x.fav_older_by>a)])
+          print('\nAGE + CONTROL')
+          for a in [1,2,3]:
+              for gap in [.5,1,2]:
+                  veto=(x.fav_older_by>a)&(x.opp_ctrl_adv>=gap)
+                  show(f'KEEP veto older>{a} + opp ctrladv>={gap}',x[~veto])
+          print('\nAGE + WRESTLING PRESSURE')
+          for a in [1,2,3]:
+              veto=(x.fav_older_by>a)&((x.o_td_a15>=4)|(x.opp_tdatt_adv>=2)|(x.opp_ctrl_adv>=1))
+              show(f'KEEP veto older>{a} + wrestling pressure',x[~veto])
+          print('\nOPPONENT STRIKING THREAT')
+          for sg in [.5,1.0,1.5]:
+              show(f'KEEP opponent sig-diff advantage < {sg}',x[~(x.opp_sig_adv>=sg)])
+          print('\nCOMBINED OPPONENT THREAT')
+          for a in [2,3]:
+              for sg in [.5,1.0]:
+                  veto=(x.fav_older_by>a)&((x.opp_ctrl_adv>=.5)|(x.opp_sig_adv>=sg))
+                  show(f'KEEP veto older>{a} + ctrl>=.5 or sigadv>={sg}',x[~veto])
+          PY
+          EOF
+          cat ufc_u10_deep_opponent_context/report.txt
+      - shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add ufc_u10_deep_opponent_context/report.txt
+          git diff --cached --quiet && exit 0
+          git commit -m "Deep validate U10 opponent context"
+          git push
