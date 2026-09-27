@@ -1,0 +1,34 @@
+name: Boxing Legacy CompuBox Archive Discovery
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'boxing/research/discover_legacy_compubox_cdx.py'
+      - '.github/workflows/boxing-legacy-compubox-cdx.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  discover:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python boxing/research/discover_legacy_compubox_cdx.py
+      - name: Persist discovery
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          cp boxing/public_punch_audit/legacy_compubox_cdx_index.json /tmp/legacy_compubox_cdx_index.json
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git fetch origin main
+          git reset --hard origin/main
+          cp /tmp/legacy_compubox_cdx_index.json boxing/public_punch_audit/legacy_compubox_cdx_index.json
+          git add boxing/public_punch_audit/legacy_compubox_cdx_index.json
+          git diff --cached --quiet || (git commit -m 'Index legacy CompuBox archive candidates' && git push origin HEAD:main)
