@@ -368,24 +368,40 @@ def parse_pair(text,a,b):
 
     # "more power punches for Pacquiao (81 of 259 to 75 of 235)"
     # or "Muratalla ... power punches (112 of 296 to 99 of 251)".
+    # For subject-led wording, parse only a subject segment that stops before
+    # an explicit opponent mention. This prevents a Muratalla clause from
+    # crossing "whereas Cruz..." and reversing the later jab pair.
     for f,o in ((a,b),(b,a)):
-        for fa in sorted({clean(f),clean(f).split()[-1]},key=len,reverse=True):
+        falias=sorted({clean(f),clean(f).split()[-1]},key=len,reverse=True)
+        for fa in falias:
             for cat,label in [('jab',r'jabs?'),('power',r'power\s+punches')]:
-                patterns=[
+                # "more power punches for Pacquiao (...)" is self-contained.
+                pat=(
                     r'more\s+'+label+r'\s+for\s+'+re.escape(fa)+
                     r'\s*\((\d{1,4})\s*(?:of|[-–])\s*(\d{1,4})\s+to\s+'
-                    r'(\d{1,4})\s*(?:of|[-–])\s*(\d{1,4})\)',
-                    r'(?<![A-Za-z0-9])'+re.escape(fa)+
-                    r'(?![A-Za-z0-9])[^.!?]{0,160}?'+label+
-                    r'\s*\((\d{1,4})\s*(?:of|[-–])\s*(\d{1,4})\s+to\s+'
                     r'(\d{1,4})\s*(?:of|[-–])\s*(\d{1,4})\)'
-                ]
-                for pat in patterns:
-                    m=re.search(pat,text,re.I)
-                    if m:
-                        setv(f,cat+'_landed',m.group(1));setv(f,cat+'_thrown',m.group(2))
-                        setv(o,cat+'_landed',m.group(3));setv(o,cat+'_thrown',m.group(4))
-                        break
+                )
+                m=re.search(pat,text,re.I)
+                if m:
+                    setv(f,cat+'_landed',m.group(1));setv(f,cat+'_thrown',m.group(2))
+                    setv(o,cat+'_landed',m.group(3));setv(o,cat+'_thrown',m.group(4))
+                    continue
+                # Subject-led category pair must stay inside an exact
+                # fighter-attributed segment.
+                hit=None
+                for sent in segments(text,f,o):
+                    for local in subject_segments(sent,f,o):
+                        m=re.search(
+                            r'^[^.!?]{0,160}?'+label+
+                            r'\s*\((\d{1,4})\s*(?:of|[-–])\s*(\d{1,4})\s+to\s+'
+                            r'(\d{1,4})\s*(?:of|[-–])\s*(\d{1,4})\)',
+                            local,re.I)
+                        if m:
+                            hit=m;break
+                    if hit:break
+                if hit:
+                    setv(f,cat+'_landed',hit.group(1));setv(f,cat+'_thrown',hit.group(2))
+                    setv(o,cat+'_landed',hit.group(3));setv(o,cat+'_thrown',hit.group(4))
 
     # Exact per-fighter patterns. Numeric extraction is constrained to the
     # fighter's subject clause and cannot cross an exact opponent mention.
