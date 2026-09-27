@@ -1,0 +1,964 @@
+UFC LIVE METHOD OPPONENT-CONTEXT AUDIT
+============================================================================================================================================
+
+### FILE ufc_email_watcher.py
+
+--- METHOD CARD CONTEXT ---
+ else b; mp=max(ma,mb)
+    except Exception: pass
+    opp=b if fav==a else (a if fav==b else '')
+    out['experience_health']=compute_experience_health(fav,opp,mp) if fav and opp else {'available':False,'qualifies':False}
+    return out
+
+# Add U9 to the canonical email/site method-card builder.
+_orig_method_cards_eh=ufc_email_design.method_cards
+def _eh_method_cards(p,w):
+    cards=list(_orig_method_cards_eh(p,w))
+    h=p.get('experience_health') or {}
+    if h.get('qualifies'):
+        fp=h.get('fav_profile') or {}; op=h.get('opp_profile') or {}
+        checks=[
+          f"Market probability {float(h.get('market_prob',0))*100:.1f}% (required 57.5%–75.0%)",
+          f"Prior UFC fights: favorite {fp.get('fights','N/A')} (≥8), opponent {op.get('fights','N/A')} (≤3)",
+          f"Favorite UFC win-rate edge {float(h.get('win_pct_gap',0))*100:.1f} percentage points (≥5)",
+          f"Finish-loss vulnerability gap {float(h.get('finish_loss_gap',0))*100:+.1f} percentage points (≤60)",
+          f"Veteran-health veto clear: control allowed {float(fp.get('ctrl_allowed15',0)):.2f} min/15; prior losses by finish {float(fp.get('finish_loss_pct',0))*100:.1f}%"
+        ]
+        cards.append({'id':'U9','title':'Experience Mismatch + Veteran Health Veto','favorite':h.get('favorite'),
+                      'history':dict(bets=34,wins=33,win_rate=33/34,roi=.4442),'checks':checks,
+                      'note':'Pre-2020 ROI +48.50%; 2020+ ROI +40.79%. Health veto excludes veterans only when both control allowed is ≥3.0 min/15 and prior loss-by-finish rate is ≥40%.'})
+    return cards
+ufc_email_design.method_cards=_eh_method_cards
+
+# Add U9-only qualifiers to the canonical tracker without guessing tracker schema.
+# We ask the existing tracker to build the pick by temporarily marking a recognized
+# method on a copy of the prediction, then retain the real U9 method metadata above.
+_orig_ufc_picks_eh=bet_tracker.ufc_picks
+def _eh_ufc_picks(event,preds):
+    import copy as _copy
+    base=list(_orig_ufc_picks_eh(event,preds))
+    for p in preds or []:
+        h=p.get('experience_health') or {}
+        if not h.get('qualifies'): continue
+        fav=h.get('favorite'); opp=h.get('opponent')
+        if any(x.get('selection')==fav and x.get('opponent')==opp for x in base): continue
+        q=_copy.deepcopy(p)
+        sm=q.setdefault('striking_methods',{})
+        sm.update({'available':True,'favorite':fav,'opponent':opp,'striking_differential':True})
+        generated=list(_orig_ufc_picks_eh(event,[q]))
+        pick=next((x for x in generated if x.get('selection')==fav), None)
+        if pick is not None: base.append(pick)
+    return base
+bet_tracker.ufc_picks=_eh_ufc_picks
+
+# Make U9 visible in the full-digest fight block as well.
+_orig_event_block_eh=event_block
+def event_block(e,preds):
+    import html as _html
+    base=_orig_event_block_eh(e,preds); cards=[]
+    for p in preds or []:
+        h=p.get('experience_health') or {}
+        if not h.get('qualifies'): continue
+        fp=h.get('fav_profile') or {}; op=h.get('opp_profile') or {}
+        fav=_html.escape(str(h.get('favorite') or '')); opp=_html.escape(str(h.get('opponent') or ''))
+        cards.append('<div style="margin:14px 18px;padding:14px;border:1px solid #aaa;border-radius:10px;">'
+          '<div style="font-weight:700;font-size:18px;">U9 · EXPERIENCE MISMATCH + VETERAN HEALTH VETO</div>'
+          f'<div style="margin-top:6px;"><b>{fav}</b> vs. {opp}</div>'
+          f'<div style="margin-top:6px;">Market {float(h.get("market_prob",0))*100:.1f}% · UFC experience {fp.get("fights",0)} vs {op.get("fights",0)} · win-rate edge {float(h.get("win_pct_gap",0))*100:+.1f}pp</div>'
+          f'<div>Favorite control allowed {float(fp.get("ctrl_allowed15",0)):.2f} min/15 · losses by finish {float(fp.get("finish
+
+--- METHOD CARD CONTEXT ---
+get('event_date')
+    a=str((bout or {}).get('fighter_a') or out.get('fighter_a') or '').strip(); b=str((bout or {}).get('fighter_b') or out.get('fighter_b') or '').strip()
+    m=(bout or {}).get('market') or {}; fav=str(out.get('favorite') or '').strip()
+    if not fav and a and b:
+        try:
+            pa=float(out.get('market_a',m.get('consensus_no_vig_a')));pb=float(out.get('market_b',m.get('consensus_no_vig_b')));fav=a if pa>=pb else b
+        except Exception:fav=''
+    opp=b if fav==a else (a if fav==b else str(out.get('underdog') or '').strip())
+    out['ko_recovery']=compute_ko_recovery(fav,opp,event_date) if fav and opp and event_date is not None else {'available':False,'qualifies':False}
+    return out
+
+_orig_method_cards_kr=ufc_email_design.method_cards
+def _kr_method_cards(p,w):
+    cards=list(_orig_method_cards_kr(p,w));k=p.get('ko_recovery') or {}
+    if k.get('qualifies'):
+        checks=[f"Favorite last KO/TKO loss: {k.get('favorite_last_ko_loss')} ({k.get('favorite_days')} days ago)",f"Opponent last KO/TKO loss: {k.get('opponent_last_ko_loss')} ({k.get('opponent_days')} days ago)",f"Recovery gap: {k.get('gap_days')} days (required ≥105)"]
+        cards.append({'id':'U10','title':'KO/TKO Recovery Gap','favorite':k.get('favorite'),'history':dict(bets=333,wins=238,win_rate=238/333,roi=.08244202474944022),'checks':checks,'note':'Pre-2020 ROI +5.65%; 2020+ ROI +10.85%. Both fighters must have a prior UFC KO/TKO loss.'})
+    return cards
+ufc_email_design.method_cards=_kr_method_cards
+
+_orig_ufc_picks_kr=bet_tracker.ufc_picks
+def _kr_ufc_picks(event,preds):
+    import copy as _copy
+    base=list(_orig_ufc_picks_kr(event,preds))
+    for p in preds or []:
+        k=p.get('ko_recovery') or {}
+        if not k.get('qualifies'):continue
+        fav=k.get('favorite');opp=k.get('opponent')
+        if any(x.get('selection')==fav and x.get('opponent')==opp for x in base):continue
+        q=_copy.deepcopy(p);sm=q.setdefault('striking_methods',{});sm.update({'available':True,'favorite':fav,'opponent':opp,'striking_differential':True})
+        generated=list(_orig_ufc_picks_kr(event,[q]));pick=next((x for x in generated if x.get('selection')==fav),None)
+        if pick is not None:base.append(pick)
+    return base
+bet_tracker.ufc_picks=_kr_ufc_picks
+
+_orig_event_block_kr=event_block
+def event_block(e,preds):
+    import html as _html
+    base=_orig_event_block_kr(e,preds);cards=[]
+    for p in preds or []:
+        k=p.get('ko_recovery') or {}
+        if not k.get('qualifies'):continue
+        cards.append('<div style="margin:14px 18px;padding:14px;border:1px solid #aaa;border-radius:10px;">'
+          '<div style="font-weight:700;font-size:18px;">U10 · KO/TKO RECOVERY GAP</div>'
+          f'<div style="margin-top:6px;"><b>{_html.escape(str(k.get("favorite") or ""))}</b> vs. {_html.escape(str(k.get("opponent") or ""))}</div>'
+          f'<div style="margin-top:6px;">Favorite: {k.get("favorite_days")} days since last KO/TKO loss · Opponent: {k.get("opponent_days")} days · Gap: <b>{k.get("gap_days")} days</b></div>'
+          '<div style="margin-top:6px;"><b>Historical:</b> 333 bets · 238-95 · 71.5% wins · <b>+8.24% ROI</b></div>'
+          '<div>Pre-2020 +5.65% ROI · 2020+ +10.85% ROI</div></div>')
+    if not cards:return base
+    section='<div style="margin-top:18px;"><div style="font-weight:700;font-size:19px;margin:0 18px 8px;">Recovery Signal</div>'+''.join(cards)+'</div>'
+    pos=base.rfind('</div>');return base[:pos]+section+base[pos:] if pos>=0 else base+section
+
+
+# UFC_CONFLUENCE_LAYER_V1
+# Research/telemetry layer only. Does not create or veto bets.
+_UFC_METHOD_FAMILIES={
+ 'U1':'structural','U2':'structural','U3':'structural','U4':'structural',
+ 'U5':'wrestling','U6':'striking','U7':'striking','U8':'striking',
+ 'U9':'experience','U1
+
+--- METHOD CARD CONTEXT ---
+f fav and opp and event_date is not None else {'available':False,'u11_qualifies':False,'u12_qualifies':False}
+    return out
+
+_orig_method_cards_vd=ufc_email_design.method_cards
+def _vd_method_cards(p,w):
+    cards=list(_orig_method_cards_vd(p,w))
+    h=p.get('veteran_decline') or {}
+    if not (h.get('u11_qualifies') or h.get('u12_qualifies')):
+        return cards
+    fp=h.get('fav_profile') or {}
+    op=h.get('opp_profile') or {}
+    shared=[
+        f"Market probability {float(h.get('market_prob',0))*100:.1f}% (57.5%–75.0%)",
+        f"Prior UFC fights: favorite {fp.get('fights','N/A')} (>=8), opponent {op.get('fights','N/A')} (<=3)",
+        f"Favorite UFC win-rate edge {float(h.get('win_pct_gap',0))*100:+.1f}pp (>=5)",
+        f"Finish-loss vulnerability gap {float(h.get('finish_loss_gap',0))*100:+.1f}pp (<=60)",
+    ]
+    if h.get('u11_qualifies'):
+        hist=VETERAN_DECLINE_HISTORY['U11']
+        risks=h.get('u11_risks') or {}
+        checks=shared+[
+            f"Decline risk score {int(h.get('u11_score',0))}/5; veto at >=4",
+            "Risks: "+", ".join(k for k,v in risks.items() if v) if any(risks.values()) else "Risks: none active",
+        ]
+        cards.append({'id':'U11','title':'Veteran Age/Defense Decline Filter','favorite':h.get('favorite'),
+                      'history':dict(bets=hist['bets'],wins=hist['wins'],win_rate=hist['win_rate'],roi=hist['roi']),
+                      'checks':checks,
+                      'note':'Historical 34-1. Pre-2020 ROI +47.44%; 2020+ ROI +39.28%. Overlaps the U9 parent family; method confluence is not an independent wager.'})
+    if h.get('u12_qualifies'):
+        hist=VETERAN_DECLINE_HISTORY['U12']
+        risks=h.get('u12_risks') or {}
+        checks=shared+[
+            f"Balanced decline risk score {int(h.get('u12_score',0))}/6; veto at >=4",
+            f"Favorite recent-5 UFC win rate {(float(fp.get('recent5'))*100 if fp.get('recent5') is not None else float('nan')):.1f}%",
+            "Risks: "+", ".join(k for k,v in risks.items() if v) if any(risks.values()) else "Risks: none active",
+        ]
+        cards.append({'id':'U12','title':'Veteran Balanced Decline Filter','favorite':h.get('favorite'),
+                      'history':dict(bets=hist['bets'],wins=hist['wins'],win_rate=hist['win_rate'],roi=hist['roi']),
+                      'checks':checks,
+                      'note':'Historical 31-1. Pre-2020 ROI +48.67%; 2020+ ROI +40.02%. Overlaps U9/U11; method confluence is not an independent wager.'})
+    return cards
+ufc_email_design.method_cards=_vd_method_cards
+
+_orig_ufc_picks_vd=bet_tracker.ufc_picks
+def _vd_ufc_picks(event,preds):
+    import copy as _copy
+    base=list(_orig_ufc_picks_vd(event,preds))
+    for p in preds or []:
+        h=p.get('veteran_decline') or {}
+        if not (h.get('u11_qualifies') or h.get('u12_qualifies')):
+            continue
+        fav=h.get('favorite')
+        opp=h.get('opponent')
+        if any(x.get('selection')==fav and x.get('opponent')==opp for x in base):
+            continue
+        q=_copy.deepcopy(p)
+        sm=q.setdefault('striking_methods',{})
+        sm.update({'available':True,'favorite':fav,'opponent':opp,'striking_differential':True})
+        generated=list(_orig_ufc_picks_vd(event,[q]))
+        pick=next((x for x in generated if x.get('selection')==fav),None)
+        if pick is not None:
+            base.append(pick)
+    return base
+bet_tracker.ufc_picks=_vd_ufc_picks
+
+_orig_event_block_vd=event_block
+def event_block(e,preds):
+    import html as _html
+    base=_orig_event_block_vd(e,preds)
+    cards=[]
+    for p in preds or []:
+        h=p.get('veteran_decline') or {}
+        if not (h.get('u11_qualifies') or h.get('u12_qualifies')):
+            continue
+        fp=h.get('fav_profile') or {}
+        fav=_html.escape(str
+
+--- METHOD CARD CONTEXT ---
+ risks=h.get('u11_risks') or {}
+        checks=shared+[
+            f"Decline risk score {int(h.get('u11_score',0))}/5; veto at >=4",
+            "Risks: "+", ".join(k for k,v in risks.items() if v) if any(risks.values()) else "Risks: none active",
+        ]
+        cards.append({'id':'U11','title':'Veteran Age/Defense Decline Filter','favorite':h.get('favorite'),
+                      'history':dict(bets=hist['bets'],wins=hist['wins'],win_rate=hist['win_rate'],roi=hist['roi']),
+                      'checks':checks,
+                      'note':'Historical 34-1. Pre-2020 ROI +47.44%; 2020+ ROI +39.28%. Overlaps the U9 parent family; method confluence is not an independent wager.'})
+    if h.get('u12_qualifies'):
+        hist=VETERAN_DECLINE_HISTORY['U12']
+        risks=h.get('u12_risks') or {}
+        checks=shared+[
+            f"Balanced decline risk score {int(h.get('u12_score',0))}/6; veto at >=4",
+            f"Favorite recent-5 UFC win rate {(float(fp.get('recent5'))*100 if fp.get('recent5') is not None else float('nan')):.1f}%",
+            "Risks: "+", ".join(k for k,v in risks.items() if v) if any(risks.values()) else "Risks: none active",
+        ]
+        cards.append({'id':'U12','title':'Veteran Balanced Decline Filter','favorite':h.get('favorite'),
+                      'history':dict(bets=hist['bets'],wins=hist['wins'],win_rate=hist['win_rate'],roi=hist['roi']),
+                      'checks':checks,
+                      'note':'Historical 31-1. Pre-2020 ROI +48.67%; 2020+ ROI +40.02%. Overlaps U9/U11; method confluence is not an independent wager.'})
+    return cards
+ufc_email_design.method_cards=_vd_method_cards
+
+_orig_ufc_picks_vd=bet_tracker.ufc_picks
+def _vd_ufc_picks(event,preds):
+    import copy as _copy
+    base=list(_orig_ufc_picks_vd(event,preds))
+    for p in preds or []:
+        h=p.get('veteran_decline') or {}
+        if not (h.get('u11_qualifies') or h.get('u12_qualifies')):
+            continue
+        fav=h.get('favorite')
+        opp=h.get('opponent')
+        if any(x.get('selection')==fav and x.get('opponent')==opp for x in base):
+            continue
+        q=_copy.deepcopy(p)
+        sm=q.setdefault('striking_methods',{})
+        sm.update({'available':True,'favorite':fav,'opponent':opp,'striking_differential':True})
+        generated=list(_orig_ufc_picks_vd(event,[q]))
+        pick=next((x for x in generated if x.get('selection')==fav),None)
+        if pick is not None:
+            base.append(pick)
+    return base
+bet_tracker.ufc_picks=_vd_ufc_picks
+
+_orig_event_block_vd=event_block
+def event_block(e,preds):
+    import html as _html
+    base=_orig_event_block_vd(e,preds)
+    cards=[]
+    for p in preds or []:
+        h=p.get('veteran_decline') or {}
+        if not (h.get('u11_qualifies') or h.get('u12_qualifies')):
+            continue
+        fp=h.get('fav_profile') or {}
+        fav=_html.escape(str(h.get('favorite') or ''))
+        opp=_html.escape(str(h.get('opponent') or ''))
+        if h.get('u11_qualifies'):
+            cards.append(
+              '<div style="margin:14px 18px;padding:14px;border:1px solid #aaa;border-radius:10px;">'
+              '<div style="font-weight:700;font-size:18px;">U11 · VETERAN AGE/DEFENSE DECLINE FILTER</div>'
+              f'<div style="margin-top:6px;"><b>{fav}</b> vs. {opp}</div>'
+              f'<div style="margin-top:6px;">Market {float(h.get("market_prob",0))*100:.1f}% · UFC experience {fp.get("fights",0)} vs {(h.get("opp_profile") or {}).get("fights",0)} · decline score {int(h.get("u11_score",0))}/5</div>'
+              '<div style="margin-top:6px;"><b>Historical:</b> 35 bets · 34-1 · 97.1% wins · <b>+43.48% ROI</b></div>'
+              '<div>Pre-2020 +47.44% · 2020+ +39.28%</div></div>')
+        if h.get('u12_qualifies'):
+            cards.append(
+          
+
+### FILE /opt/sports-publisher/sports_publish.py
+
+### FILE /home/anestishkurti92/betting-ledger/code/bet_tracker.py
+
+
+### QUALIFICATION FUNCTIONS
+============================================================================================================================================
+
+--- compute_skill_veto ---
+def compute_skill_veto(favorite,opponent,idx):
+    fp,op=resolve_skill(favorite,idx or {}),resolve_skill(opponent,idx or {})
+    r={"available":bool(fp and op),"veto":False,"sig_diff_gap":None,"td_def_gap":None,"striking_veto":False,"wrestling_veto":False}
+    if not fp or not op: return r
+    if fp.get("sig_diff_pm") is not None and op.get("sig_diff_pm") is not None:
+        r["sig_diff_gap"]=float(fp["sig_diff_pm"])-float(op["sig_diff_pm"])
+        r["striking_veto"]=r["sig_diff_gap"]<=SKILL_VETO_SIG_DIFF
+    if fp.get("td_def") is not None and op.get("td_def") is not None:
+        r["td_def_gap"]=float(fp["td_def"])-float(op["td_def"])
+        r["wrestling_veto"]=r["td_def_gap"]<=SKILL_VETO_TD_DEF_DIFF
+    r["veto"]=bool(r["striking_veto"] or r["wrestling_veto"])
+    return r
+
+--- compute_hybrid_signal ---
+def compute_hybrid_signal(p):
+    """
+    Live hybrid rule derived from the historical robustness test:
+      sportsbook no-vig favorite >= 70%
+      AND favorite is >= 3.0 years younger.
+    Strong tier: favorite is >= 4.0 years younger.
+
+    Historical win rate/ROI shown in email are properties of the historical
+    RULE, not a prediction that this individual fight has an 82.91% chance.
+    """
+    if not p.get("market_ok"):
+        return {"tier": "none"}
+
+    age_a = p.get("age_a")
+    age_b = p.get("age_b")
+    if age_a is None or age_b is None or pd.isna(age_a) or pd.isna(age_b):
+        return {"tier": "none"}
+
+    ma = float(p["market_a"])
+    mb = float(p["market_b"])
+
+    if ma >= mb:
+        favorite = str(p.get("fighter_a") or "")
+        underdog = str(p.get("fighter_b") or "")
+        favorite_side = "a"
+        market_prob = ma
+        favorite_age = float(age_a)
+        underdog_age = float(age_b)
+    else:
+        favorite = str(p.get("fighter_b") or "")
+        underdog = str(p.get("fighter_a") or "")
+        favorite_side = "b"
+        market_prob = mb
+        favorite_age = float(age_b)
+        underdog_age = float(age_a)
+
+    younger_advantage = underdog_age - favorite_age
+
+    tier = "none"
+    if market_prob >= 0.70 and younger_advantage >= 4.0:
+        tier = "strong"
+    elif market_prob >= 0.70 and younger_advantage >= 3.0:
+        tier = "qualifies"
+
+    return {
+        "tier": tier,
+        "favorite": favorite,
+        "underdog": underdog,
+        "favorite_side": favorite_side,
+        "market_prob": market_prob,
+        "favorite_age": favorite_age,
+        "underdog_age": underdog_age,
+        "younger_advantage_years": younger_advantage,
+    }
+
+--- predict_bout ---
+def predict_bout(bout, event_date, bundle, reach_index=None, skill_index=None):
+    a = str(bout.get("fighter_a") or "").strip()
+    b = str(bout.get("fighter_b") or "").strip()
+    division = str(bout.get("division") or "Unknown").strip()
+    ida, idb = resolve(a, bundle), resolve(b, bundle)
+
+    if ida is None or idb is None:
+        return {**bout, "status": "unavailable",
+                "reason": "fighter not yet in historical model: " +
+                          ", ".join(x for x, fid in [(a, ida), (b, idb)] if fid is None)}
+
+    fab = feat_for(ida, idb, a, b, event_date, division, bundle)
+    fba = feat_for(idb, ida, b, a, event_date, division, bundle)
+    pab = model_prob(bundle["age_model"], bundle["age_calibrator"], fab, bundle["age_cols"])
+    pba = model_prob(bundle["age_model"], bundle["age_calibrator"], fba, bundle["age_cols"])
+    pa = min(max((pab + (1-pba))/2, .01), .99)
+
+    out = {
+        **bout, "status": "ok",
+        "p_a": pa, "p_b": 1-pa,
+        "fair_a": fair_american(pa), "fair_b": fair_american(1-pa),
+        "age_a": fab.get("age_a"), "age_b": fab.get("age_b"),
+        "age_gap": fab.get("age_gap"),
+    }
+
+    market = bout.get("market") or {}
+    if market.get("status") == "ok":
+        ma = float(market["consensus_no_vig_a"])
+        mb = float(market["consensus_no_vig_b"])
+        boa = float(market["best_odds_a"])
+        bob = float(market["best_odds_b"])
+        out.update({
+            "market_ok": True,
+            "market_a": ma, "market_b": mb,
+            "edge_a_pp": (pa-ma)*100,
+            "edge_b_pp": ((1-pa)-mb)*100,
+            "best_odds_a": boa, "best_book_a": market.get("best_book_a"),
+            "best_odds_b": bob, "best_book_b": market.get("best_book_b"),
+            "ev_a_pct": (pa * decimal_from_american(boa) - 1) * 100,
+            "ev_b_pct": ((1-pa) * decimal_from_american(bob) - 1) * 100,
+            "books": market.get("bookmakers"),
+        })
+    else:
+        out["market_ok"] = False
+
+    out["hybrid"] = compute_hybrid_signal(out)
+
+    reach_index = reach_index or {}
+    reach_a = resolve_reach(a, reach_index)
+    reach_b = resolve_reach(b, reach_index)
+    out["reach_a"] = reach_a
+    out["reach_b"] = reach_b
+
+    reach_hybrid = {
+        "tier": None,
+        "favorite": None,
+        "favorite_reach": None,
+        "opponent_reach": None,
+        "reach_advantage_in": None,
+        "market_prob": None,
+    }
+
+    market_prob = None
+    favorite = None
+    if out.get("market_ok"):
+        ma = float(out.get("market_a"))
+        mb = float(out.get("market_b"))
+        if ma >= mb:
+            market_prob = ma
+            favorite = a
+        else:
+            market_prob = mb
+            favorite = b
+
+    if market_prob is not None and favorite and reach_a is not None and reach_b is not None:
+        if favorite == a:
+            fav_reach, opp_reach = reach_a, reach_b
+        elif favorite == b:
+            fav_reach, opp_reach = reach_b, reach_a
+        else:
+            fav_reach = opp_reach = None
+
+        if fav_reach is not None and opp_reach is not None:
+            reach_adv = float(fav_reach) - float(opp_reach)
+            tier = None
+            if float(market_prob) >= 0.65 and reach_adv >= 6.0:
+                tier = "strong"
+            elif float(market_prob) >= 0.65 and reach_adv >= 4.0:
+                tier = "qualifies"
+
+            reach_hybrid.update({
+                "tier": tier,
+                "favorite": favorite,
+                "favorite_reach": float(fav_reach),
+                "opponent_reach": float(opp_reach),
+                "reach_advantage_in": reach_adv,
+                "market_prob": float(market_prob),
+            })
+    out["reach_hybrid"] = reach_hybrid
+
+    structural_edge = {
+        "qualifies": False,
+        "favorite": None,
+        "market_prob": None,
+        "younger_advantage_years": None,
+        "reach_advantage_in": None,
+    }
+
+    # Structural Edge:
+    # market favorite >=65%, >=2 years younger, >=6" longer reach.
+    if market_prob is not None and favorite and reach_a is not None and reach_b is not None:
+        h = out.get("hybrid") or {}
+        age_adv = None
+        # compute favorite's age advantage directly from bout ages so this signal is independent
+        # of whether the stricter AGE HYBRID rule qualifies.
+        try:
+            if favorite == a:
+                fav_age = float(out.get("age_a"))
+                opp_age = float(out.get("age_b"))
+                fav_reach, opp_reach = reach_a, reach_b
+            elif favorite == b:
+                fav_age = float(out.get("age_b"))
+                opp_age = float(out.get("age_a"))
+                fav_reach, opp_reach = reach_b, reach_a
+            else:
+                fav_age = opp_age = fav_reach = opp_reach = None
+
+            if fav_age is not None and opp_age is not None:
+                age_adv = opp_age - fav_age
+            reach_adv = float(fav_reach) - float(opp_reach) if fav_reach is not None and opp_reach is not None else None
+
+            structural_edge.update({
+                "favorite": favorite,
+                "market_prob": float(market_prob),
+                "younger_advantage_years": age_adv,
+                "reach_advantage_in": reach_adv,
+                "qualifies": (
+                    float(market_prob) >= 0.65
+                    and age_adv is not None and age_adv >= 2.0
+                    and reach_adv is not None and reach_adv >= 6.0
+                ),
+            })
+        except Exception:
+            pass
+
+    out["structural_edge"] = structural_edge
+
+    premium = {
+        "qualifies": False,
+        "favorite": None,
+        "favorite_reach": None,
+        "opponent_reach": None,
+        "reach_advantage_in": None,
+        "market_prob": None,
+    }
+    h = out.get("hybrid") or {}
+    if h.get("tier") in {"qualifies", "strong"} and reach_a is not None and reach_b is not None:
+        favorite = h.get("favorite")
+        if favorite == a:
+            fav_reach, opp_reach = reach_a, reach_b
+        elif favorite == b:
+            fav_reach, opp_reach = reach_b, reach_a
+        else:
+            fav_reach = opp_reach = None
+        if fav_reach is not None and opp_reach is not None:
+            adv = float(fav_reach) - float(opp_reach)
+            premium.update({
+                "favorite": favorite,
+                "favorite_reach": float(fav_reach),
+                "opponent_reach": float(opp_reach),
+                "reach_advantage_in": adv,
+                "market_prob": h.get("market_prob"),
+                "qualifies": adv >= 4.0,
+            })
+    out["age_reach_premium"] = premium
+    skill={"available":False,"veto":False}
+    if favorite:
+        skill=compute_skill_veto(favorite, b if favorite==a else a, skill_index or {})
+    out["skill_veto"]=skill
+    if skill.get("veto"):
+        h=out.get("hybrid") or {}
+        if h.get("tier") in {"qualifies","strong"}: h["raw_tier"]=h["tier"]; h["tier"]="none"; h["skill_vetoed"]=True
+        rh=out.get("reach_hybrid") or {}
+        if rh.get("tier") in {"qualifies","strong"}: rh["raw_tier"]=rh["tier"]; rh["tier"]=None; rh["skill_vetoed"]=True
+        pr=out.get("age_reach_premium") or {}
+        if pr.get("qualifies"): pr["raw_qualifies"]=True; pr["qualifies"]=False; pr["skill_vetoed"]=True
+        se=out.get("structural_edge") or {}
+        if se.get("qualifies"): se["raw_qualifies"]=True; se["qualifies"]=False; se["skill_vetoed"]=True
+    return out
+
+--- compute_wrestling_mismatch ---
+def compute_wrestling_mismatch(favorite,opponent):
+    idx=load_wrestling_index()
+    fp=_wm_resolve(favorite,idx or {}); op=_wm_resolve(opponent,idx or {})
+    r={'available':bool(fp and op),'qualifies':False,'strong':False,'tier':None,'favorite':favorite,'opponent':opponent,'fav_profile':fp,'opp_profile':op}
+    if not fp or not op: return r
+    base=(fp.get('fights',0)>=2 and op.get('fights',0)>=2 and
+          fp.get('td_a15',0)>=5.0 and fp.get('td_l15',0)>=1.0 and fp.get('ctrl15',0)>=1.0)
+    if not base: return r
+    broad=(op.get('td_a15',999)<=2.0 and op.get('ctrl15',999)<=0.75)
+    strong=(op.get('td_a15',999)<=1.0 and op.get('ctrl15',999)<=0.50)
+    r['qualifies']=bool(broad)
+    r['strong']=bool(strong)
+    if strong:
+        r['tier']='strong'; r.update({'hist_n':38,'hist_wins':31,'hist_losses':7,'hist_win_rate':0.816,'hist_roi':0.2007,'hist_pre_roi':0.1882,'hist_recent_roi':0.2132})
+    elif broad:
+        r['tier']='qualifies'; r.update({'hist_n':72,'hist_wins':56,'hist_losses':16,'hist_win_rate':0.778,'hist_roi':0.1624,'hist_pre_roi':0.0950,'hist_recent_roi':0.2261})
+    return r
+
+--- predict_bout ---
+def predict_bout(*args,**kwargs):
+    out=_orig_predict_bout_wm(*args,**kwargs)
+    bout=args[0] if args else kwargs.get('bout',{})
+    a=str((bout or {}).get('fighter_a') or out.get('fighter_a') or out.get('a') or '').strip()
+    b=str((bout or {}).get('fighter_b') or out.get('fighter_b') or out.get('b') or '').strip()
+    fav=str(out.get('favorite') or '').strip()
+    if not fav and a and b:
+        m=(bout or {}).get('market') or {}
+        pa=m.get('consensus_no_vig_a'); pb=m.get('consensus_no_vig_b')
+        try: fav=a if float(pa)>=float(pb) else b
+        except Exception: fav=''
+    opp=''
+    if fav:
+        if a and fav==a: opp=b
+        elif b and fav==b: opp=a
+        else: opp=str(out.get('underdog') or '').strip()
+    out['wrestling_mismatch']=compute_wrestling_mismatch(fav,opp) if fav and opp else {'available':False,'qualifies':False,'strong':False,'tier':None}
+    return out
+
+--- compute_striking_methods ---
+def compute_striking_methods(favorite,opponent,market_prob):
+    idx=load_striking_method_index(); fp=_sm_resolve(favorite,idx or {}); op=_sm_resolve(opponent,idx or {})
+    r={'available':bool(fp and op),'favorite':favorite,'opponent':opponent,'fav_profile':fp,'opp_profile':op,
+       'pace_defense':False,'striking_td_defense':False,'striking_differential':False}
+    if not fp or not op: return r
+    try: mp=float(market_prob)
+    except Exception: mp=0.0
+    landed_gap=fp.get('sig_l_pm',0)-op.get('sig_l_pm',0)
+    diff_gap=fp.get('sig_diff_pm',0)-op.get('sig_diff_pm',0)
+    fdef,odef=fp.get('sig_def'),op.get('sig_def'); ftd,otd=fp.get('td_def'),op.get('td_def')
+    def_gap=(fdef-odef) if fdef is not None and odef is not None else None
+    td_gap=(ftd-otd) if ftd is not None and otd is not None else None
+    r.update({'market_prob':mp,'landed_gap':landed_gap,'sig_diff_gap':diff_gap,'sig_def_gap':def_gap,'td_def_gap':td_gap})
+    r['pace_defense']=bool(mp>=.65 and fp.get('fights',0)>=3 and op.get('fights',0)>=3 and landed_gap>=.25 and def_gap is not None and def_gap>=.15)
+    r['striking_td_defense']=bool(mp>=.70 and fp.get('fights',0)>=4 and op.get('fights',0)>=4 and diff_gap>=1.0 and td_gap is not None and td_gap>=.10)
+    r['striking_differential']=bool(mp>=.75 and fp.get('fights',0)>=4 and op.get('fights',0)>=4 and diff_gap>=1.0 and fp.get('sig_diff_pm',-999)>=.5)
+    return r
+
+--- compute_u7_risk_gate ---
+def compute_u7_risk_gate(favorite,opponent,event_date):
+    idx=load_u7_risk_index(); fp=_u7_resolve(favorite,idx or {}); op=_u7_resolve(opponent,idx or {})
+    r={'available':False,'pass':False,'age_adv':None,'opponent_kd15':None,'favorite_kd_abs15':None,
+       'power_risk_product':None,'age_pass':False,'power_pass':False,
+       'age_min':_U7_MIN_AGE_ADV,'power_max':_U7_MAX_POWER_PRODUCT}
+    if not fp or not op or not fp.get('dob') or not op.get('dob'):return r
+    try:
+        ed=pd.Timestamp(event_date).normalize()
+        fd=pd.Timestamp(fp['dob']).normalize(); od=pd.Timestamp(op['dob']).normalize()
+        fav_age=(ed-fd).days/365.2425; opp_age=(ed-od).days/365.2425
+        age_adv=opp_age-fav_age
+        okd=float(op.get('kd15')); fabs=float(fp.get('kd_abs15')); product=okd*fabs
+    except Exception:return r
+    r.update({'available':True,'favorite_age':fav_age,'opponent_age':opp_age,'age_adv':age_adv,
+              'opponent_kd15':okd,'favorite_kd_abs15':fabs,'power_risk_product':product,
+              'age_pass':age_adv>=_U7_MIN_AGE_ADV,'power_pass':product<_U7_MAX_POWER_PRODUCT})
+    r['pass']=bool(r['age_pass'] and r['power_pass'])
+    return r
+
+--- compute_experience_health ---
+def compute_experience_health(favorite,opponent,market_prob):
+    idx=load_experience_health_index(); fp=_eh_resolve(favorite,idx or {}); op=_eh_resolve(opponent,idx or {})
+    r={'available':bool(fp and op),'qualifies':False,'favorite':favorite,'opponent':opponent,
+       'market_prob':None,'fav_profile':fp,'opp_profile':op,'health_veto':False,'win_pct_gap':None,'finish_loss_gap':None}
+    try: mp=float(market_prob); r['market_prob']=mp
+    except Exception: return r
+    if not fp or not op: return r
+    wg=float(fp.get('win_pct',0))-float(op.get('win_pct',0))
+    fg=float(fp.get('finish_loss_pct',0))-float(op.get('finish_loss_pct',0))
+    veto=bool(float(fp.get('ctrl_allowed15',0))>=3.0 and float(fp.get('finish_loss_pct',0))>=0.40)
+    r.update({'win_pct_gap':wg,'finish_loss_gap':fg,'health_veto':veto})
+    r['qualifies']=bool(.575<=mp<=.75 and fp.get('fights',0)>=8 and op.get('fights',0)<=3 and wg>=.05 and fg<=.60 and not veto)
+    return r
+
+--- predict_bout ---
+def predict_bout(*args,**kwargs):
+    out=_orig_predict_bout_eh(*args,**kwargs)
+    bout=args[0] if args else kwargs.get('bout',{})
+    a=str((bout or {}).get('fighter_a') or out.get('fighter_a') or '').strip(); b=str((bout or {}).get('fighter_b') or out.get('fighter_b') or '').strip()
+    m=(bout or {}).get('market') or {}
+    fav=''; mp=None
+    try:
+        ma=float(out.get('market_a',m.get('consensus_no_vig_a'))); mb=float(out.get('market_b',m.get('consensus_no_vig_b')))
+        fav=a if ma>=mb else b; mp=max(ma,mb)
+    except Exception: pass
+    opp=b if fav==a else (a if fav==b else '')
+    out['experience_health']=compute_experience_health(fav,opp,mp) if fav and opp else {'available':False,'qualifies':False}
+    return out
+
+--- _eh_method_cards ---
+def _eh_method_cards(p,w):
+    cards=list(_orig_method_cards_eh(p,w))
+    h=p.get('experience_health') or {}
+    if h.get('qualifies'):
+        fp=h.get('fav_profile') or {}; op=h.get('opp_profile') or {}
+        checks=[
+          f"Market probability {float(h.get('market_prob',0))*100:.1f}% (required 57.5%–75.0%)",
+          f"Prior UFC fights: favorite {fp.get('fights','N/A')} (≥8), opponent {op.get('fights','N/A')} (≤3)",
+          f"Favorite UFC win-rate edge {float(h.get('win_pct_gap',0))*100:.1f} percentage points (≥5)",
+          f"Finish-loss vulnerability gap {float(h.get('finish_loss_gap',0))*100:+.1f} percentage points (≤60)",
+          f"Veteran-health veto clear: control allowed {float(fp.get('ctrl_allowed15',0)):.2f} min/15; prior losses by finish {float(fp.get('finish_loss_pct',0))*100:.1f}%"
+        ]
+        cards.append({'id':'U9','title':'Experience Mismatch + Veteran Health Veto','favorite':h.get('favorite'),
+                      'history':dict(bets=34,wins=33,win_rate=33/34,roi=.4442),'checks':checks,
+                      'note':'Pre-2020 ROI +48.50%; 2020+ ROI +40.79%. Health veto excludes veterans only when both control allowed is ≥3.0 min/15 and prior loss-by-finish rate is ≥40%.'})
+    return cards
+
+--- compute_ko_recovery ---
+def compute_ko_recovery(favorite,opponent,event_date):
+    idx=load_ko_recovery_index();fd=_kr_dates(favorite,idx or {});od=_kr_dates(opponent,idx or {})
+    r={'available':False,'qualifies':False,'favorite':favorite,'opponent':opponent,'favorite_days':None,'opponent_days':None,'gap_days':None,'threshold_days':105}
+    if not fd or not od:return r
+    try: ed=pd.Timestamp(event_date).normalize()
+    except Exception:return r
+    fprior=[pd.Timestamp(x) for x in fd if pd.Timestamp(x)<ed]; oprior=[pd.Timestamp(x) for x in od if pd.Timestamp(x)<ed]
+    if not fprior or not oprior:return r
+    fl=max(fprior);ol=max(oprior); fdays=(ed-fl).days; odays=(ed-ol).days; gap=fdays-odays
+    r.update({'available':True,'favorite_last_ko_loss':fl.date().isoformat(),'opponent_last_ko_loss':ol.date().isoformat(),'favorite_days':fdays,'opponent_days':odays,'gap_days':gap,'qualifies':bool(gap>=105)})
+    return r
+
+--- predict_bout ---
+def predict_bout(*args,**kwargs):
+    out=_orig_predict_bout_kr(*args,**kwargs)
+    bout=args[0] if args else kwargs.get('bout',{})
+    event_date=args[1] if len(args)>1 else kwargs.get('event_date')
+    a=str((bout or {}).get('fighter_a') or out.get('fighter_a') or '').strip(); b=str((bout or {}).get('fighter_b') or out.get('fighter_b') or '').strip()
+    m=(bout or {}).get('market') or {}; fav=str(out.get('favorite') or '').strip()
+    if not fav and a and b:
+        try:
+            pa=float(out.get('market_a',m.get('consensus_no_vig_a')));pb=float(out.get('market_b',m.get('consensus_no_vig_b')));fav=a if pa>=pb else b
+        except Exception:fav=''
+    opp=b if fav==a else (a if fav==b else str(out.get('underdog') or '').strip())
+    out['ko_recovery']=compute_ko_recovery(fav,opp,event_date) if fav and opp and event_date is not None else {'available':False,'qualifies':False}
+    return out
+
+--- _kr_method_cards ---
+def _kr_method_cards(p,w):
+    cards=list(_orig_method_cards_kr(p,w));k=p.get('ko_recovery') or {}
+    if k.get('qualifies'):
+        checks=[f"Favorite last KO/TKO loss: {k.get('favorite_last_ko_loss')} ({k.get('favorite_days')} days ago)",f"Opponent last KO/TKO loss: {k.get('opponent_last_ko_loss')} ({k.get('opponent_days')} days ago)",f"Recovery gap: {k.get('gap_days')} days (required ≥105)"]
+        cards.append({'id':'U10','title':'KO/TKO Recovery Gap','favorite':k.get('favorite'),'history':dict(bets=333,wins=238,win_rate=238/333,roi=.08244202474944022),'checks':checks,'note':'Pre-2020 ROI +5.65%; 2020+ ROI +10.85%. Both fighters must have a prior UFC KO/TKO loss.'})
+    return cards
+
+--- compute_veteran_decline ---
+def compute_veteran_decline(favorite,opponent,market_prob,event_date):
+    idx=load_veteran_decline_index()
+    fp=_vd_resolve(favorite,idx or {})
+    op=_vd_resolve(opponent,idx or {})
+    r={'available':bool(fp and op),'favorite':favorite,'opponent':opponent,'market_prob':None,
+       'fav_profile':fp,'opp_profile':op,'base_qualifies':False,
+       'u11_qualifies':False,'u12_qualifies':False,'u11_score':None,'u12_score':None,
+       'u11_risks':{},'u12_risks':{}}
+    try:
+        mp=float(market_prob)
+        r['market_prob']=mp
+    except Exception:
+        return r
+    if not fp or not op:
+        return r
+    wg=float(fp.get('win_pct',0))-float(op.get('win_pct',0))
+    fg=float(fp.get('finish_loss_pct',0))-float(op.get('finish_loss_pct',0))
+    r['win_pct_gap']=wg
+    r['finish_loss_gap']=fg
+    base=bool(.575<=mp<=.75 and fp.get('fights',0)>=8 and op.get('fights',0)<=3 and wg>=.05 and fg<=.60)
+    r['base_qualifies']=base
+    if not base:
+        return r
+
+    age_gap=None
+    try:
+        ed=pd.Timestamp(event_date).normalize()
+        fd=pd.Timestamp(fp.get('dob')).normalize()
+        od=pd.Timestamp(op.get('dob')).normalize()
+        fav_age=(ed-fd).days/365.2425
+        opp_age=(ed-od).days/365.2425
+        age_gap=fav_age-opp_age
+        r['favorite_age']=fav_age
+        r['opponent_age']=opp_age
+        r['favorite_older_by']=age_gap
+    except Exception:
+        pass
+
+    common={
+        'older_2plus': bool(age_gap is not None and age_gap>=2.0),
+        'negative_sig_diff': bool(fp.get('sig_diff_pm') is not None and float(fp.get('sig_diff_pm'))<0.0),
+        'low_td_def_60': bool(fp.get('td_def') is not None and float(fp.get('td_def'))<0.60),
+        'high_ctrl_allowed_3': bool(float(fp.get('ctrl_allowed15',0))>=3.0),
+        'finish_vuln_40': bool(float(fp.get('finish_loss_pct',0))>=0.40),
+    }
+    u11={k:common[k] for k in ['older_2plus','low_td_def_60','high_ctrl_allowed_3','negative_sig_diff','finish_vuln_40']}
+    recent5=fp.get('recent5')
+    u12=dict(common)
+    u12['recent5_below_500']=bool(recent5 is not None and float(recent5)<0.50)
+
+    s11=sum(int(v) for v in u11.values())
+    s12=sum(int(v) for v in u12.values())
+    r.update({'u11_risks':u11,'u12_risks':u12,'u11_score':s11,'u12_score':s12,
+              'u11_qualifies':bool(s11<4),'u12_qualifies':bool(s12<4)})
+    return r
+
+--- predict_bout ---
+def predict_bout(*args,**kwargs):
+    out=_orig_predict_bout_vd(*args,**kwargs)
+    bout=args[0] if args else kwargs.get('bout',{})
+    event_date=args[1] if len(args)>1 else kwargs.get('event_date')
+    a=str((bout or {}).get('fighter_a') or out.get('fighter_a') or '').strip()
+    b=str((bout or {}).get('fighter_b') or out.get('fighter_b') or '').strip()
+    m=(bout or {}).get('market') or {}
+    fav=''
+    mp=None
+    try:
+        ma=float(out.get('market_a',m.get('consensus_no_vig_a')))
+        mb=float(out.get('market_b',m.get('consensus_no_vig_b')))
+        fav=a if ma>=mb else b
+        mp=max(ma,mb)
+    except Exception:
+        pass
+    opp=b if fav==a else (a if fav==b else '')
+    out['veteran_decline']=compute_veteran_decline(fav,opp,mp,event_date) if fav and opp and event_date is not None else {'available':False,'u11_qualifies':False,'u12_qualifies':False}
+    return out
+
+--- _vd_method_cards ---
+def _vd_method_cards(p,w):
+    cards=list(_orig_method_cards_vd(p,w))
+    h=p.get('veteran_decline') or {}
+    if not (h.get('u11_qualifies') or h.get('u12_qualifies')):
+        return cards
+    fp=h.get('fav_profile') or {}
+    op=h.get('opp_profile') or {}
+    shared=[
+        f"Market probability {float(h.get('market_prob',0))*100:.1f}% (57.5%–75.0%)",
+        f"Prior UFC fights: favorite {fp.get('fights','N/A')} (>=8), opponent {op.get('fights','N/A')} (<=3)",
+        f"Favorite UFC win-rate edge {float(h.get('win_pct_gap',0))*100:+.1f}pp (>=5)",
+        f"Finish-loss vulnerability gap {float(h.get('finish_loss_gap',0))*100:+.1f}pp (<=60)",
+    ]
+    if h.get('u11_qualifies'):
+        hist=VETERAN_DECLINE_HISTORY['U11']
+        risks=h.get('u11_risks') or {}
+        checks=shared+[
+            f"Decline risk score {int(h.get('u11_score',0))}/5; veto at >=4",
+            "Risks: "+", ".join(k for k,v in risks.items() if v) if any(risks.values()) else "Risks: none active",
+        ]
+        cards.append({'id':'U11','title':'Veteran Age/Defense Decline Filter','favorite':h.get('favorite'),
+                      'history':dict(bets=hist['bets'],wins=hist['wins'],win_rate=hist['win_rate'],roi=hist['roi']),
+                      'checks':checks,
+                      'note':'Historical 34-1. Pre-2020 ROI +47.44%; 2020+ ROI +39.28%. Overlaps the U9 parent family; method confluence is not an independent wager.'})
+    if h.get('u12_qualifies'):
+        hist=VETERAN_DECLINE_HISTORY['U12']
+        risks=h.get('u12_risks') or {}
+        checks=shared+[
+            f"Balanced decline risk score {int(h.get('u12_score',0))}/6; veto at >=4",
+            f"Favorite recent-5 UFC win rate {(float(fp.get('recent5'))*100 if fp.get('recent5') is not None else float('nan')):.1f}%",
+            "Risks: "+", ".join(k for k,v in risks.items() if v) if any(risks.values()) else "Risks: none active",
+        ]
+        cards.append({'id':'U12','title':'Veteran Balanced Decline Filter','favorite':h.get('favorite'),
+                      'history':dict(bets=hist['bets'],wins=hist['wins'],win_rate=hist['win_rate'],roi=hist['roi']),
+                      'checks':checks,
+                      'note':'Historical 31-1. Pre-2020 ROI +48.67%; 2020+ ROI +40.02%. Overlaps U9/U11; method confluence is not an independent wager.'})
+    return cards
+
+
+### DIRECT RULE ASSIGNMENTS / KEYS
+============================================================================================================================================
+39: AGE_REACH_PREMIUM_HISTORY = {
+54: REACH_HYBRID_HISTORY = {
+55:     "qualifies": {
+56:         "label": "REACH QUALIFIES",
+84: STRUCTURAL_EDGE_HISTORY = {
+353:     if h.get("tier") not in {"qualifies", "strong"}:
+439:         tier = "qualifies"
+466:         "age_reach_premium": bool((p.get("age_reach_premium") or {}).get("qualifies")),
+467:         "reach_advantage_in": round(float((p.get("age_reach_premium") or {}).get("reach_advantage_in")), 2)
+468:             if (p.get("age_reach_premium") or {}).get("reach_advantage_in") is not None else None,
+469:         "reach_tier": (p.get("reach_hybrid") or {}).get("tier"),
+470:         "standalone_reach_advantage_in": round(float((p.get("reach_hybrid") or {}).get("reach_advantage_in")), 2)
+471:             if (p.get("reach_hybrid") or {}).get("reach_advantage_in") is not None else None,
+472:         "structural_edge": bool((p.get("structural_edge") or {}).get("qualifies")),
+482:             new.get("tier") in {"qualifies", "strong"}
+486:             new.get("tier") in {"qualifies", "strong"}
+490:             new.get("tier") in {"qualifies", "strong"}
+493:         or old.get("age_reach_premium", False) != new.get("age_reach_premium", False)
+495:         or old.get("structural_edge", False) != new.get("structural_edge", False)
+499: def structural_edge_badge(p):
+500:     s = p.get("structural_edge") or {}
+501:     if not s.get("qualifies"):
+504:     h = STRUCTURAL_EDGE_HISTORY
+528:     rh = p.get("reach_hybrid") or {}
+530:     if tier not in {"qualifies", "strong"}:
+533:     hist = REACH_HYBRID_HISTORY[tier]
+557:     if tier not in {"qualifies", "strong"}:
+596:     premium = p.get("age_reach_premium") or {}
+598:     if premium.get("qualifies"):
+599:         ph = AGE_REACH_PREMIUM_HISTORY
+692:     reach_hybrid = {
+727:                 tier = "qualifies"
+729:             reach_hybrid.update({
+737:     out["reach_hybrid"] = reach_hybrid
+739:     structural_edge = {
+740:         "qualifies": False,
+753:         # of whether the stricter AGE HYBRID rule qualifies.
+770:             structural_edge.update({
+775:                 "qualifies": (
+784:     out["structural_edge"] = structural_edge
+787:         "qualifies": False,
+795:     if h.get("tier") in {"qualifies", "strong"} and reach_a is not None and reach_b is not None:
+811:                 "qualifies": adv >= 4.0,
+813:     out["age_reach_premium"] = premium
+820:         if h.get("tier") in {"qualifies","strong"}: h["raw_tier"]=h["tier"]; h["tier"]="none"; h["skill_vetoed"]=True
+821:         rh=out.get("reach_hybrid") or {}
+822:         if rh.get("tier") in {"qualifies","strong"}: rh["raw_tier"]=rh["tier"]; rh["tier"]=None; rh["skill_vetoed"]=True
+823:         pr=out.get("age_reach_premium") or {}
+824:         if pr.get("qualifies"): pr["raw_qualifies"]=True; pr["qualifies"]=False; pr["skill_vetoed"]=True
+825:         se=out.get("structural_edge") or {}
+826:         if se.get("qualifies"): se["raw_qualifies"]=True; se["qualifies"]=False; se["skill_vetoed"]=True
+901:       <td style="padding:10px;border-bottom:1px solid #ddd">{a_name_html}<br>vs. {b_name_html}<br><small>{div}</small>{structural_edge_badge(p)}{hybrid_badge(p)}{reach_badge(p)}</td>
+1097:                 "age_reach_premium": bool((p.get("age_reach_premium") or {}).get("qualifies")),
+1098:                 "reach_advantage_in": (p.get("age_reach_premium") or {}).get("reach_advantage_in"),
+1099:                 "reach_tier": (p.get("reach_hybrid") or {}).get("tier"),
+1100:                 "standalone_reach_advantage_in": (p.get("reach_hybrid") or {}).get("reach_advantage_in"),
+1101:                 "structural_edge": bool((p.get("structural_edge") or {}).get("qualifies")),
+1102:                 "structural_edge_age_advantage": (p.get("structural_edge") or {}).get("younger_advantage_years"),
+1103:                 "structural_edge_reach_advantage": (p.get("structural_edge") or {}).get("reach_advantage_in"),
+1107:             if (p.get("hybrid") or {}).get("tier") in {"qualifies", "strong"}
+1127: # WRESTLING_MISMATCH_RULE_V1
+1188: def compute_wrestling_mismatch(favorite,opponent):
+1191:     r={'available':bool(fp and op),'qualifies':False,'strong':False,'tier':None,'favorite':favorite,'opponent':opponent,'fav_profile':fp,'opp_profile':op}
+1198:     r['qualifies']=bool(broad)
+1203:         r['tier']='qualifies'; r.update({'hist_n':72,'hist_wins':56,'hist_losses':16,'hist_win_rate':0.778,'hist_roi':0.1624,'hist_pre_roi':0.0950,'hist_recent_roi':0.2261})
+1224:     out['wrestling_mismatch']=compute_wrestling_mismatch(fav,opp) if fav and opp else {'available':False,'qualifies':False,'strong':False,'tier':None}
+1234:         w=p.get('wrestling_mismatch') or {}
+1235:         if not w.get('qualifies'): continue
+1334:        'pace_defense':False,'striking_td_defense':False,'striking_differential':False}
+1344:     r['pace_defense']=bool(mp>=.65 and fp.get('fights',0)>=3 and op.get('fights',0)>=3 and landed_gap>=.25 and def_gap is not None and def_gap>=.15)
+1345:     r['striking_td_defense']=bool(mp>=.70 and fp.get('fights',0)>=4 and op.get('fights',0)>=4 and diff_gap>=1.0 and td_gap is not None and td_gap>=.10)
+1346:     r['striking_differential']=bool(mp>=.75 and fp.get('fights',0)>=4 and op.get('fights',0)>=4 and diff_gap>=1.0 and fp.get('sig_diff_pm',-999)>=.5)
+1365:     out['striking_methods']=compute_striking_methods(fav,opp,mp) if fav and opp else {'available':False,'pace_defense':False,'striking_td_defense':False,'striking_differential':False}
+1372:     specs=[('pace_defense','PACE + DEFENSE',53,49,4,.925,.2041,.2043,.2038),
+1373:            ('striking_td_defense','STRIKING + TD DEFENSE — RISK GATED',40,40,0,1.000,.2308,.2382,.2218),
+1374:            ('striking_differential','STRIKING DIFFERENTIAL',68,66,2,.971,.1734,.1623,.1902)]
+1505:     if not sm.get('striking_td_defense'):
+1511:     sm['striking_td_defense_raw']=True
+1514:         sm['striking_td_defense']=False
+1522: # EXPERIENCE_HEALTH_RULE_V1
+1530: _EXP_CACHE=ROOT/'experience_health_index.json'
+1548: def load_experience_health_index():
+1601: def compute_experience_health(favorite,opponent,market_prob):
+1602:     idx=load_experience_health_index(); fp=_eh_resolve(favorite,idx or {}); op=_eh_resolve(opponent,idx or {})
+1603:     r={'available':bool(fp and op),'qualifies':False,'favorite':favorite,'opponent':opponent,
+1612:     r['qualifies']=bool(.575<=mp<=.75 and fp.get('fights',0)>=8 and op.get('fights',0)<=3 and wg>=.05 and fg<=.60 and not veto)
+1627:     out['experience_health']=compute_experience_health(fav,opp,mp) if fav and opp else {'available':False,'qualifies':False}
+1634:     h=p.get('experience_health') or {}
+1635:     if h.get('qualifies'):
+1658:         h=p.get('experience_health') or {}
+1659:         if not h.get('qualifies'): continue
+1664:         sm.update({'available':True,'favorite':fav,'opponent':opp,'striking_differential':True})
+1677:         h=p.get('experience_health') or {}
+1678:         if not h.get('qualifies'): continue
+1694: # KO_RECOVERY_RULE_V1
+1701: _KR_CACHE=ROOT/'ko_recovery_index.json'
+1703: KO_RECOVERY_HISTORY={'bets':333,'wins':238,'losses':95,'win_rate':238/333,'roi':0.08244202474944022,'pre_roi':0.05652570342971997,'recent_roi':0.10851446848674913}
+1705: def load_ko_recovery_index():
+1748: def compute_ko_recovery(favorite,opponent,event_date):
+1749:     idx=load_ko_recovery_index();fd=_kr_dates(favorite,idx or {});od=_kr_dates(opponent,idx or {})
+1750:     r={'available':False,'qualifies':False,'favorite':favorite,'opponent':opponent,'favorite_days':None,'opponent_days':None,'gap_days':None,'threshold_days':105}
+1757:     r.update({'available':True,'favorite_last_ko_loss':fl.date().isoformat(),'opponent_last_ko_loss':ol.date().isoformat(),'favorite_days':fdays,'opponent_days':odays,'gap_days':gap,'qualifies':bool(gap>=105)})
+1772:     out['ko_recovery']=compute_ko_recovery(fav,opp,event_date) if fav and opp and event_date is not None else {'available':False,'qualifies':False}
+1777:     cards=list(_orig_method_cards_kr(p,w));k=p.get('ko_recovery') or {}
+1778:     if k.get('qualifies'):
+1789:         k=p.get('ko_recovery') or {}
+1790:         if not k.get('qualifies'):continue
+1793:         q=_copy.deepcopy(p);sm=q.setdefault('striking_methods',{});sm.update({'available':True,'favorite':fav,'opponent':opp,'striking_differential':True})
+1804:         k=p.get('ko_recovery') or {}
+1805:         if not k.get('qualifies'):continue
+1885: # VETERAN_DECLINE_LIVE_V1
+1915: _VD_CACHE=ROOT/'veteran_decline_live_index.json'
+1918: VETERAN_DECLINE_HISTORY={
+1941: def load_veteran_decline_index():
+2056: def compute_veteran_decline(favorite,opponent,market_prob,event_date):
+2057:     idx=load_veteran_decline_index()
+2061:        'fav_profile':fp,'opp_profile':op,'base_qualifies':False,
+2062:        'u11_qualifies':False,'u12_qualifies':False,'u11_score':None,'u12_score':None,
+2076:     r['base_qualifies']=base
+2109:               'u11_qualifies':bool(s11<4),'u12_qualifies':bool(s12<4)})
+2130:     out['veteran_decline']=compute_veteran_decline(fav,opp,mp,event_date) if fav and opp and event_date is not None else {'available':False,'u11_qualifies':False,'u12_qualifies':False}
+2136:     h=p.get('veteran_decline') or {}
+2137:     if not (h.get('u11_qualifies') or h.get('u12_qualifies')):
+2147:     if h.get('u11_qualifies'):
+2148:         hist=VETERAN_DECLINE_HISTORY['U11']
+2158:     if h.get('u12_qualifies'):
+2159:         hist=VETERAN_DECLINE_HISTORY['U12']
+2178:         h=p.get('veteran_decline') or {}
+2179:         if not (h.get('u11_qualifies') or h.get('u12_qualifies')):
+2187:         sm.update({'available':True,'favorite':fav,'opponent':opp,'striking_differential':True})
+2201:         h=p.get('veteran_decline') or {}
+2202:         if not (h.get('u11_qualifies') or h.get('u12_qualifies')):
+2207:         if h.get('u11_qualifies'):
+2215:         if h.get('u12_qualifies'):
