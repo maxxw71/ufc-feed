@@ -1,0 +1,51 @@
+name: Appwiza crypto mailer inspect
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/appwiza-crypto-mailer-inspect.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  inspect:
+    if: github.repository == 'maxxw71/ufc-feed' && github.ref == 'refs/heads/main'
+    runs-on: [self-hosted, Linux, X64, appwiza]
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - name: Inspect existing Appwiza mailer safely
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p crypto
+          REPORT=crypto/appwiza_mailer_report.txt
+          : > "$REPORT"
+
+          echo 'APPWIZA MAILER INSPECTION' >> "$REPORT"
+          date -u >> "$REPORT"
+          echo >> "$REPORT"
+
+          for ROOT in /home/anestishkurti92/ufc-predictor-v1 /home/anestishkurti92/nfl-predictor-v1 /srv/appwiza-sports /opt/sports-publisher; do
+            if [ -e "$ROOT" ]; then
+              echo "=== $ROOT ===" >> "$REPORT"
+              find "$ROOT" -maxdepth 4 -type f \( -iname '*email*.py' -o -iname '*mail*.py' -o -iname '*email*.sh' -o -iname '*mail*.sh' \) -print 2>/dev/null | head -80 >> "$REPORT" || true
+            fi
+          done
+
+          echo '=== MAILER STRUCTURE / CALLS (SECRETS REDACTED) ===' >> "$REPORT"
+          timeout 45s grep -RniE -C 8             'smtplib|SMTP\(|SMTP_SSL|EmailMessage|MIMEText|send_message|sendmail\(|Subject|MAIL_|SMTP_|EMAIL_'             /home/anestishkurti92/ufc-predictor-v1 /home/anestishkurti92/nfl-predictor-v1 /srv/appwiza-sports /opt/sports-publisher             --include='*.py' --include='*.sh' --include='*.service' --include='*.timer'             --exclude-dir=.git --exclude-dir=node_modules --exclude-dir=.venv --exclude-dir=venv             2>/dev/null |           sed -E 's/(password|passwd|secret|token|api[_-]?key|authorization)([^=:"'\'' ]*)[=:][^ ,)]*/\1\2=<REDACTED>/Ig' |           sed -E 's/(SMTP_PASS|SMTP_PASSWORD|MAIL_PASSWORD|EMAIL_PASSWORD)=.*/\1=<REDACTED>/Ig' |           head -1200 >> "$REPORT" || true
+
+          echo '=== SERVICES/TIMERS ===' >> "$REPORT"
+          systemctl list-unit-files --type=service --type=timer 2>/dev/null | grep -Ei 'ufc|nfl|appwiza|email|mail' | head -120 >> "$REPORT" || true
+
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add "$REPORT"
+          if ! git diff --cached --quiet; then
+            git commit -m 'Capture Appwiza mailer structure for crypto scanner'
+            git push
+          fi
