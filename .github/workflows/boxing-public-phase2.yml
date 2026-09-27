@@ -94,6 +94,7 @@ jobs:
           if [ -d boxing/punch_supplements ]; then rm -rf /tmp/punch_supplements && cp -R boxing/punch_supplements /tmp/punch_supplements; fi
           if [ -d boxing/rankings ]; then cp -R boxing/rankings /tmp/boxing-research/rankings; fi
           if [ -d boxing/official_bouts ]; then rm -rf /tmp/official_bouts && cp -R boxing/official_bouts /tmp/official_bouts; fi
+          if [ -f boxing/public_reports/HISTORICAL_ODDS_STRICT_UNION_ROWS.json ]; then cp boxing/public_reports/HISTORICAL_ODDS_STRICT_UNION_ROWS.json /tmp/boxing-research/; fi
           if [ -f boxing/public_reports/HISTORICAL_ODDS_VALIDATED_ROWS.json ]; then cp boxing/public_reports/HISTORICAL_ODDS_VALIDATED_ROWS.json /tmp/boxing-research/; fi
       - name: Build chronological master and run research passes
         run: |
