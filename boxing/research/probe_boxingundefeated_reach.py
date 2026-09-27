@@ -59,7 +59,7 @@ def parse(name,raw):
 def main():
     gap=json.loads(GAP.read_text())
     targets=(gap.get('missing_ranked') or {}).get('reach_cm') or []
-    targets=targets[:80]
+    targets=targets[:300]
     rows=[]
     for t in targets:
         name=t.get('name')
