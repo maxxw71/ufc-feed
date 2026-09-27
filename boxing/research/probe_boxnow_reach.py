@@ -6,7 +6,7 @@ No guessed numeric IDs are used. A reach lead requires an exact normalized page
 heading match and a plausible numeric reach. Discovery only; no automatic merge.
 """
 from __future__ import annotations
-import datetime as dt,json,re,unicodedata,urllib.parse,urllib.request,xml.etree.ElementTree as ET
+import datetime as dt,json,re,subprocess,unicodedata,urllib.parse,urllib.request,xml.etree.ElementTree as ET
 from pathlib import Path
 from bs4 import BeautifulSoup
 ROOT=Path(__file__).resolve().parents[1]
@@ -24,12 +24,46 @@ def nk(s):
     x=unicodedata.normalize('NFKD',str(s or '')).encode('ascii','ignore').decode().lower()
     return re.sub(r'[^a-z0-9]+','',x)
 
+_BOXNOW_IP=None
+
+def doh_boxnow_ip():
+    global _BOXNOW_IP
+    if _BOXNOW_IP:return _BOXNOW_IP
+    q='https://dns.google/resolve?'+urllib.parse.urlencode({'name':'boxnow.live','type':'A'})
+    req=urllib.request.Request(q,headers={'User-Agent':UA})
+    with urllib.request.urlopen(req,timeout=20) as r:
+        obj=json.loads(r.read().decode('utf-8','replace'))
+    ips=[str(x.get('data') or '') for x in obj.get('Answer') or [] if int(x.get('type') or 0)==1]
+    if not ips:raise RuntimeError('DoH returned no A record for boxnow.live')
+    _BOXNOW_IP=ips[0]
+    return _BOXNOW_IP
+
 def fetch(url,limit=8_000_000):
     req=urllib.request.Request(url,headers={'User-Agent':UA,'Accept-Language':'en-US,en;q=0.8'})
-    with urllib.request.urlopen(req,timeout=35) as r:
-        raw=r.read(limit+1)
-        if len(raw)>limit:raise ValueError('response too large')
-        return r.geturl(),raw,r.headers.get('content-type','')
+    try:
+        with urllib.request.urlopen(req,timeout=35) as r:
+            raw=r.read(limit+1)
+            if len(raw)>limit:raise ValueError('response too large')
+            return r.geturl(),raw,r.headers.get('content-type','')
+    except Exception as first:
+        host=urllib.parse.urlsplit(url).hostname
+        if host not in {'boxnow.live','www.boxnow.live'}:raise
+        ip=doh_boxnow_ip()
+        cmd=['curl','-L','--compressed','--silent','--show-error','--fail',
+             '--connect-timeout','15','--max-time','35',
+             '--resolve',f'{host}:443:{ip}','-A',UA,
+             '-H','Accept-Language: en-US,en;q=0.8',
+             '-w','\\n__APPWIZA_META__:%{http_code}|%{url_effective}|%{content_type}\\n',url]
+        p=subprocess.run(cmd,capture_output=True,timeout=45)
+        raw=p.stdout;marker=b'\\n__APPWIZA_META__:'
+        if marker not in raw:
+            raise RuntimeError('direct='+type(first).__name__+'; doh-curl='+p.stderr.decode('utf-8','replace')[:160])
+        body,meta=raw.rsplit(marker,1)
+        parts=meta.decode('utf-8','replace').strip().split('|',2)
+        code=int(parts[0]) if parts and parts[0].isdigit() else 0
+        if code!=200:raise RuntimeError(f'DoH curl HTTP {code}')
+        if len(body)>limit:raise ValueError('response too large')
+        return (parts[1] if len(parts)>1 else url),body,(parts[2] if len(parts)>2 else '')
 
 def xml_locs(raw):
     try:root=ET.fromstring(raw)
