@@ -1,0 +1,183 @@
+name: UFC Striking Differential Age Validation
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/ufc-striking-differential-age-validation.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  validate:
+    runs-on: [self-hosted, Linux, X64, appwiza]
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Test age gates on Striking Differential
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          KEY=/home/appwiza-runner/.ssh/appwiza_vps
+          HOST=anestishkurti92@127.0.0.1
+          OUTDIR="$GITHUB_WORKSPACE/ufc_striking_differential_age_validation"
+          mkdir -p "$OUTDIR"
+
+          ssh -i "$KEY" -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=accept-new "$HOST" 'bash -s' > "$OUTDIR/report.txt" <<'EOF'
+          set -Eeuo pipefail
+          export HOME=/home/anestishkurti92
+          ROOT=/home/anestishkurti92/ufc-predictor-v1
+          PY="$ROOT/venv/bin/python"
+          IN="$ROOT/new_category_discovery/prefight_favorite_features.csv"
+          test -s "$IN"
+
+          "$PY" - "$IN" <<'PY'
+          import io, math, sys, requests
+          import numpy as np
+          import pandas as pd
+
+          inp=sys.argv[1]
+          t=pd.read_csv(inp,low_memory=False)
+          t['event_date']=pd.to_datetime(t['event_date'],errors='coerce')
+          for c in t.columns:
+              if c not in {'event_date','favorite','opponent','division','division_label'}:
+                  t[c]=pd.to_numeric(t[c],errors='ignore')
+
+          # Exact live U8 / Striking Differential rule.
+          base=(
+              (pd.to_numeric(t['market_prob'],errors='coerce')>=0.75) &
+              (pd.to_numeric(t['f_fights'],errors='coerce')>=4) &
+              (pd.to_numeric(t['o_fights'],errors='coerce')>=4) &
+              ((pd.to_numeric(t['f_sig_diff_pm'],errors='coerce')-pd.to_numeric(t['o_sig_diff_pm'],errors='coerce'))>=1.00) &
+              (pd.to_numeric(t['f_sig_diff_pm'],errors='coerce')>=0.50)
+          )
+          g=t[base].copy()
+          g=g.dropna(subset=['event_date','favorite','opponent','profit100','won','market_prob']).copy()
+
+          # Pull DOBs from the same mma-ai individuals source already used elsewhere in UFC risk-gate research.
+          url='https://raw.githubusercontent.com/DanMcInerney/mma-ai/main/data/raw/ufcstats/individuals.csv'
+          r=requests.get(url,timeout=45,headers={'User-Agent':'appwiza-u8-age-validation'})
+          r.raise_for_status()
+          ids=pd.read_csv(io.StringIO(r.text),low_memory=False)
+
+          def norm(s):
+              import re, unicodedata
+              s=unicodedata.normalize('NFKD',str(s)).encode('ascii','ignore').decode().lower()
+              return re.sub(r'[^a-z0-9]+',' ',s).strip()
+
+          dob={}
+          if 'name' in ids.columns and 'dob' in ids.columns:
+              for _,row in ids[['name','dob']].dropna().iterrows():
+                  k=norm(row['name'])
+                  if k and k not in dob:
+                      dob[k]=pd.to_datetime(row['dob'],errors='coerce')
+
+          g['fav_dob']=g['favorite'].map(lambda x: dob.get(norm(x),pd.NaT))
+          g['opp_dob']=g['opponent'].map(lambda x: dob.get(norm(x),pd.NaT))
+          g['fav_age']=(g['event_date']-g['fav_dob']).dt.days/365.2425
+          g['opp_age']=(g['event_date']-g['opp_dob']).dt.days/365.2425
+          g['age_adv']=g['opp_age']-g['fav_age']  # negative => favorite older
+
+          def roi(z):
+              return float(pd.to_numeric(z['profit100'],errors='coerce').sum()/(100*len(z))) if len(z) else np.nan
+
+          def row(label,z):
+              old=z[z.event_date<pd.Timestamp('2020-01-01')]
+              rec=z[z.event_date>=pd.Timestamp('2020-01-01')]
+              r22=z[z.event_date>=pd.Timestamp('2022-01-01')]
+              return {
+                  'label':label,'n':len(z),'wins':int(pd.to_numeric(z['won'],errors='coerce').fillna(0).sum()),
+                  'losses':int(len(z)-pd.to_numeric(z['won'],errors='coerce').fillna(0).sum()),
+                  'win_rate':float(pd.to_numeric(z['won'],errors='coerce').mean()) if len(z) else np.nan,
+                  'roi':roi(z),'pre2020_n':len(old),'pre2020_roi':roi(old),
+                  'recent_n':len(rec),'recent_roi':roi(rec),'y2022_n':len(r22),'y2022_roi':roi(r22)
+              }
+
+          print('UFC STRIKING DIFFERENTIAL — AGE GAP VALIDATION')
+          print('='*118)
+          print(f'Original U8 historical matches: {len(g)}')
+          print(f'Age available: {g.age_adv.notna().sum()}/{len(g)}')
+          print()
+
+          rows=[]
+          rows.append(row('NO AGE GATE',g))
+          ga=g[g.age_adv.notna()].copy()
+          for k in [0,1,2,3,4,5,6]:
+              rows.append(row(f'favorite <= {k}y older',ga[ga.age_adv>=-float(k)]))
+
+          print('NEIGHBORING HARD AGE GATES')
+          print('-'*118)
+          for x in rows:
+              print(f"{x['label']:<24} n={x['n']:3d} {x['wins']:3d}-{x['losses']:<2d} "
+                    f"win={x['win_rate']*100:5.1f}% ROI={x['roi']*100:+6.2f}% | "
+                    f"pre n={x['pre2020_n']:2d} {x['pre2020_roi']*100:+6.2f}% | "
+                    f"2020+ n={x['recent_n']:2d} {x['recent_roi']*100:+6.2f}% | "
+                    f"2022+ n={x['y2022_n']:2d} {x['y2022_roi']*100:+6.2f}%")
+
+          print('\nAGE BUCKETS')
+          print('-'*118)
+          buckets=[
+              ('favorite younger/same', lambda x:x>=0),
+              ('fav 0-1y older', lambda x:(x<0)&(x>=-1)),
+              ('fav 1-2y older', lambda x:(x<-1)&(x>=-2)),
+              ('fav 2-3y older', lambda x:(x<-2)&(x>=-3)),
+              ('fav 3-4y older', lambda x:(x<-3)&(x>=-4)),
+              ('fav 4+y older', lambda x:x<-4),
+          ]
+          for label,fn in buckets:
+              z=ga[fn(ga.age_adv)]
+              x=row(label,z)
+              print(f"{label:<24} n={x['n']:3d} {x['wins']:3d}-{x['losses']:<2d} "
+                    f"win={x['win_rate']*100:5.1f}% ROI={x['roi']*100:+6.2f}% | "
+                    f"pre={x['pre2020_roi']*100:+6.2f}% recent={x['recent_roi']*100:+6.2f}% 2022+={x['y2022_roi']*100:+6.2f}%")
+
+          # Check whether older-favorite risk worsens when the opponent is wrestling-heavy.
+          oa='o_td_a15' if 'o_td_a15' in ga.columns else None
+          if oa:
+              ga[oa]=pd.to_numeric(ga[oa],errors='coerce')
+              print('\nOLDER FAVORITE x OPPONENT WRESTLING VOLUME')
+              print('-'*118)
+              for agek in [2,3,4]:
+                  for tdmin in [2,4,6]:
+                      z=ga[(ga.age_adv < -agek) & (ga[oa] >= tdmin)]
+                      x=row(f'>{agek}y older & opp TDatt>={tdmin}',z)
+                      print(f"{x['label']:<32} n={x['n']:3d} {x['wins']:3d}-{x['losses']:<2d} "
+                            f"win={x['win_rate']*100:5.1f}% ROI={x['roi']*100:+6.2f}%")
+          else:
+              print('\nNo o_td_a15 column available; skipped wrestling-volume interaction.')
+
+          # Price interaction for expensive favorites.
+          print('\nOLDER FAVORITE x PRICE')
+          print('-'*118)
+          for agek in [2,3,4]:
+              for mp in [0.75,0.80,0.85]:
+                  z=ga[(ga.age_adv < -agek) & (pd.to_numeric(ga.market_prob,errors='coerce')>=mp)]
+                  x=row(f'>{agek}y older & mkt>={mp:.2f}',z)
+                  print(f"{x['label']:<30} n={x['n']:3d} {x['wins']:3d}-{x['losses']:<2d} "
+                        f"win={x['win_rate']*100:5.1f}% ROI={x['roi']*100:+6.2f}%")
+
+          # Machine-readable block.
+          print('\nCSV_BEGIN')
+          print(pd.DataFrame(rows).to_csv(index=False).strip())
+          print('CSV_END')
+          PY
+          EOF
+
+          cat "$OUTDIR/report.txt"
+
+      - name: Commit validation report
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add ufc_striking_differential_age_validation/report.txt
+          if git diff --cached --quiet; then
+            echo "No report changes"
+            exit 0
+          fi
+          git commit -m "Validate age gates for UFC striking differential"
+          git push
