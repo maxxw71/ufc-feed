@@ -104,6 +104,22 @@ class RingCompuBoxSummaryTests(unittest.TestCase):
         self.assertEqual(out['Naoya Inoue']['total_landed_per_round'],27)
         self.assertEqual(out['Alan Picasso']['total_landed_per_round'],14)
 
+    def test_cordina_quiroz_total_attempts_wording(self):
+        out=parse_pair(
+            "Joe Cordina landed 146 of 498 total punches over 10 rounds, while Jaret Gonzalez Quiroz was 83-of-422 on his attempts.",
+            'Joe Cordina','Jaret Gonzalez Quiroz')
+        self.assertEqual(out['Joe Cordina']['total_landed'],146)
+        self.assertEqual(out['Joe Cordina']['total_thrown'],498)
+        self.assertEqual(out['Jaret Gonzalez Quiroz']['total_landed'],83)
+        self.assertEqual(out['Jaret Gonzalez Quiroz']['total_thrown'],422)
+
+    def test_melikuziev_fulghum_body_edge(self):
+        out=parse_pair(
+            "Melikuziev held a 44-33 edge in body punches landed.",
+            'Bektemir Melikuziev','Darius Fulghum')
+        self.assertEqual(out['Bektemir Melikuziev']['body_landed'],44)
+        self.assertEqual(out['Darius Fulghum']['body_landed'],33)
+
     def test_simple_outlanded_total_pair(self):
         out=parse_pair("Roach outlanded Davis 112 to 103 in the fight.",'Lamont Roach','Gervonta Davis')
         self.assertEqual(out['Lamont Roach']['total_landed'],112)
