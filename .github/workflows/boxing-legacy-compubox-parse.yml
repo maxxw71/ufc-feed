@@ -34,7 +34,9 @@ jobs:
           print(os.path.getsize('/tmp/boxing_research.sqlite3'))
           PY
       - name: Strict parse legacy round tables
-        run: python boxing/research/parse_legacy_compubox_candidates.py --db /tmp/boxing_research.sqlite3
+        run: |
+          python boxing/research/parse_legacy_compubox_candidates.py --db /tmp/boxing_research.sqlite3
+          python boxing/research/audit_legacy_compubox_identity.py --db /tmp/boxing_research.sqlite3
       - name: Persist strict legacy reports
         shell: bash
         run: |
@@ -42,6 +44,7 @@ jobs:
           mkdir -p /tmp/legacy-parse
           cp boxing/punch_supplements/legacy_compubox_round_reports.jsonl /tmp/legacy-parse/
           cp boxing/punch_supplements/legacy_compubox_round_report.json /tmp/legacy-parse/
+          cp boxing/public_punch_audit/legacy_compubox_identity_audit.json /tmp/legacy-parse/
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           for attempt in 1 2 3 4; do
@@ -49,7 +52,8 @@ jobs:
             git reset --hard origin/main
             cp /tmp/legacy-parse/legacy_compubox_round_reports.jsonl boxing/punch_supplements/
             cp /tmp/legacy-parse/legacy_compubox_round_report.json boxing/punch_supplements/
-            git add boxing/punch_supplements/legacy_compubox_round_reports.jsonl boxing/punch_supplements/legacy_compubox_round_report.json
+            cp /tmp/legacy-parse/legacy_compubox_identity_audit.json boxing/public_punch_audit/
+            git add boxing/punch_supplements/legacy_compubox_round_reports.jsonl boxing/punch_supplements/legacy_compubox_round_report.json boxing/public_punch_audit/legacy_compubox_identity_audit.json
             if git diff --cached --quiet; then exit 0; fi
             git commit -m 'Add strict legacy CompuBox round reports'
             if git push origin HEAD:main; then exit 0; fi
