@@ -35,16 +35,13 @@ jobs:
           test -s "$IN"
 
           "$PY" - "$IN" <<'PY'
-          import io, math, sys, requests
+          import io, sys, requests
           import numpy as np
           import pandas as pd
 
           inp=sys.argv[1]
           t=pd.read_csv(inp,low_memory=False)
           t['event_date']=pd.to_datetime(t['event_date'],errors='coerce')
-          for c in t.columns:
-              if c not in {'event_date','favorite','opponent','division','division_label'}:
-                  t[c]=pd.to_numeric(t[c],errors='ignore')
 
           # Exact live U8 / Striking Differential rule.
           base=(
@@ -57,7 +54,6 @@ jobs:
           g=t[base].copy()
           g=g.dropna(subset=['event_date','favorite','opponent','profit100','won','market_prob']).copy()
 
-          # Pull DOBs from the same mma-ai individuals source already used elsewhere in UFC risk-gate research.
           url='https://raw.githubusercontent.com/DanMcInerney/mma-ai/main/data/raw/ufcstats/individuals.csv'
           r=requests.get(url,timeout=45,headers={'User-Agent':'appwiza-u8-age-validation'})
           r.raise_for_status()
@@ -70,10 +66,10 @@ jobs:
 
           dob={}
           if 'name' in ids.columns and 'dob' in ids.columns:
-              for _,row in ids[['name','dob']].dropna().iterrows():
-                  k=norm(row['name'])
+              for _,rr in ids[['name','dob']].dropna().iterrows():
+                  k=norm(rr['name'])
                   if k and k not in dob:
-                      dob[k]=pd.to_datetime(row['dob'],errors='coerce')
+                      dob[k]=pd.to_datetime(rr['dob'],errors='coerce')
 
           g['fav_dob']=g['favorite'].map(lambda x: dob.get(norm(x),pd.NaT))
           g['opp_dob']=g['opponent'].map(lambda x: dob.get(norm(x),pd.NaT))
@@ -85,13 +81,14 @@ jobs:
               return float(pd.to_numeric(z['profit100'],errors='coerce').sum()/(100*len(z))) if len(z) else np.nan
 
           def row(label,z):
+              w=pd.to_numeric(z['won'],errors='coerce').fillna(0)
               old=z[z.event_date<pd.Timestamp('2020-01-01')]
               rec=z[z.event_date>=pd.Timestamp('2020-01-01')]
               r22=z[z.event_date>=pd.Timestamp('2022-01-01')]
               return {
-                  'label':label,'n':len(z),'wins':int(pd.to_numeric(z['won'],errors='coerce').fillna(0).sum()),
-                  'losses':int(len(z)-pd.to_numeric(z['won'],errors='coerce').fillna(0).sum()),
-                  'win_rate':float(pd.to_numeric(z['won'],errors='coerce').mean()) if len(z) else np.nan,
+                  'label':label,'n':len(z),'wins':int(w.sum()),
+                  'losses':int(len(z)-w.sum()),
+                  'win_rate':float(w.mean()) if len(z) else np.nan,
                   'roi':roi(z),'pre2020_n':len(old),'pre2020_roi':roi(old),
                   'recent_n':len(rec),'recent_roi':roi(rec),'y2022_n':len(r22),'y2022_roi':roi(r22)
               }
@@ -102,8 +99,7 @@ jobs:
           print(f'Age available: {g.age_adv.notna().sum()}/{len(g)}')
           print()
 
-          rows=[]
-          rows.append(row('NO AGE GATE',g))
+          rows=[row('NO AGE GATE',g)]
           ga=g[g.age_adv.notna()].copy()
           for k in [0,1,2,3,4,5,6]:
               rows.append(row(f'favorite <= {k}y older',ga[ga.age_adv>=-float(k)]))
@@ -130,11 +126,11 @@ jobs:
           for label,fn in buckets:
               z=ga[fn(ga.age_adv)]
               x=row(label,z)
+              def pct(v): return 'nan' if pd.isna(v) else f'{v*100:+.2f}%'
               print(f"{label:<24} n={x['n']:3d} {x['wins']:3d}-{x['losses']:<2d} "
-                    f"win={x['win_rate']*100:5.1f}% ROI={x['roi']*100:+6.2f}% | "
-                    f"pre={x['pre2020_roi']*100:+6.2f}% recent={x['recent_roi']*100:+6.2f}% 2022+={x['y2022_roi']*100:+6.2f}%")
+                    f"win={(x['win_rate']*100 if not pd.isna(x['win_rate']) else float('nan')):5.1f}% ROI={pct(x['roi'])} | "
+                    f"pre={pct(x['pre2020_roi'])} recent={pct(x['recent_roi'])} 2022+={pct(x['y2022_roi'])}")
 
-          # Check whether older-favorite risk worsens when the opponent is wrestling-heavy.
           oa='o_td_a15' if 'o_td_a15' in ga.columns else None
           if oa:
               ga[oa]=pd.to_numeric(ga[oa],errors='coerce')
@@ -145,11 +141,11 @@ jobs:
                       z=ga[(ga.age_adv < -agek) & (ga[oa] >= tdmin)]
                       x=row(f'>{agek}y older & opp TDatt>={tdmin}',z)
                       print(f"{x['label']:<32} n={x['n']:3d} {x['wins']:3d}-{x['losses']:<2d} "
-                            f"win={x['win_rate']*100:5.1f}% ROI={x['roi']*100:+6.2f}%")
+                            f"win={(x['win_rate']*100 if not pd.isna(x['win_rate']) else float('nan')):5.1f}% "
+                            f"ROI={(x['roi']*100 if not pd.isna(x['roi']) else float('nan')):+6.2f}%")
           else:
               print('\nNo o_td_a15 column available; skipped wrestling-volume interaction.')
 
-          # Price interaction for expensive favorites.
           print('\nOLDER FAVORITE x PRICE')
           print('-'*118)
           for agek in [2,3,4]:
@@ -157,9 +153,9 @@ jobs:
                   z=ga[(ga.age_adv < -agek) & (pd.to_numeric(ga.market_prob,errors='coerce')>=mp)]
                   x=row(f'>{agek}y older & mkt>={mp:.2f}',z)
                   print(f"{x['label']:<30} n={x['n']:3d} {x['wins']:3d}-{x['losses']:<2d} "
-                        f"win={x['win_rate']*100:5.1f}% ROI={x['roi']*100:+6.2f}%")
+                        f"win={(x['win_rate']*100 if not pd.isna(x['win_rate']) else float('nan')):5.1f}% "
+                        f"ROI={(x['roi']*100 if not pd.isna(x['roi']) else float('nan')):+6.2f}%")
 
-          # Machine-readable block.
           print('\nCSV_BEGIN')
           print(pd.DataFrame(rows).to_csv(index=False).strip())
           print('CSV_END')
