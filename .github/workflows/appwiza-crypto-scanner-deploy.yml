@@ -44,7 +44,8 @@ jobs:
           # Install an isolated hourly user cron. Keep sports jobs untouched.
           TMP=$(mktemp)
           crontab -l 2>/dev/null | grep -v '/crypto-press-scanner/crypto_press_scanner.py' > "$TMP" || true
-          echo '7 * * * * cd /home/anestishkurti92/crypto-press-scanner && /home/anestishkurti92/ufc-predictor-v1/venv/bin/python /home/anestishkurti92/crypto-press-scanner/crypto_press_scanner.py run >> /home/anestishkurti92/crypto-press-scanner/scanner.log 2>&1' >> "$TMP"
+          echo 'CRON_TZ=America/New_York' >> "$TMP"
+          echo '7 9,21 * * * cd /home/anestishkurti92/crypto-press-scanner && /home/anestishkurti92/ufc-predictor-v1/venv/bin/python /home/anestishkurti92/crypto-press-scanner/crypto_press_scanner.py run >> /home/anestishkurti92/crypto-press-scanner/scanner.log 2>&1' >> "$TMP"
           crontab "$TMP"
           rm -f "$TMP"
 
@@ -54,7 +55,7 @@ jobs:
           echo 'prime=ok'
           echo 'test_email=attempted_via_live_appwiza_send_email'
           echo '--- cron ---'
-          crontab -l | grep 'crypto-press-scanner/crypto_press_scanner.py'
+          crontab -l | grep -E 'CRON_TZ|crypto-press-scanner/crypto_press_scanner.py'
           echo '--- files ---'
           ls -l "$ROOT/crypto_press_scanner.py" "$ROOT/seen.json"
           EOF
