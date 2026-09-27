@@ -158,6 +158,7 @@ class RingCompuBoxSummaryTests(unittest.TestCase):
             "Muratalla was credited for landing 13 more power punches (112 of 296 to 99 of 251), "
             "whereas Cruz landed 14 more jabs (77 of 286 to 63 of 215).",
             'Raymond Muratalla','Andy Cruz')
+        print('DEBUG_MURATALLA',out)
         self.assertEqual(out['Andy Cruz']['total_landed'],176)
         self.assertEqual(out['Andy Cruz']['total_thrown'],537)
         self.assertEqual(out['Raymond Muratalla']['total_landed'],175)
