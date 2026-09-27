@@ -82,3 +82,5 @@ jobs:
           echo '=== WATCHER METHOD SYMBOLS ==='
           grep -nE "def method_cards|def ufc_picks|hybrid|reach_hybrid|structural_edge|age_reach|wrestling_mismatch|striking_methods|U[0-9]+|KO_RECOVERY|EXPERIENCE_HEALTH|VETERAN_DECLINE" "$ROOT/ufc_email_watcher.py" | head -420 || true
           EOF
+
+# opponent-context audit refresh
