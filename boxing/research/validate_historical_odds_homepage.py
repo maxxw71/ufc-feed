@@ -40,7 +40,7 @@ def main():
     bydate=defaultdict(list)
     import re
     for q in quotes:
-        m=re.search(r'/events/(\\d{4}-\\d{2}-\\d{2})-',str(q.get('url') or ''))
+        m=re.search(r'/events/(\d{4}-\d{2}-\d{2})-',str(q.get('url') or ''))
         d=nk_date(m.group(1)) if m else None
         if d:
             q['derived_event_date']=d.isoformat()
