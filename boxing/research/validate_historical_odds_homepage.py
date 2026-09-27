@@ -34,13 +34,17 @@ def nk_date(x):
 def main():
     db=sqlite3.connect(f'file:{DB}?mode=ro',uri=True);db.row_factory=sqlite3.Row
     quotes=[dict(r) for r in db.execute(
-      "select rowid as quote_rowid,* from odds where source='proboxingodds' and event_date is not null order by event_date,rowid"
+      "select rowid as quote_rowid,* from odds where source='proboxingodds' order by rowid"
     )]
     db.close()
     bydate=defaultdict(list)
+    import re
     for q in quotes:
-        d=nk_date(q.get('event_date'))
-        if d:bydate[d].append(q)
+        m=re.search(r'/events/(\\d{4}-\\d{2}-\\d{2})-',str(q.get('url') or ''))
+        d=nk_date(m.group(1)) if m else None
+        if d:
+            q['derived_event_date']=d.isoformat()
+            bydate[d].append(q)
 
     raw=[]
     errors=[]
