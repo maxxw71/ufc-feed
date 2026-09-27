@@ -150,6 +150,29 @@ def resolve_fight(db,text,payload):
         pair=unique_from_rows(rows)
         if pair:
             return (*pair,rounds,m.group(0),'month_day_plus_unique_verified_bout')
+        # Some legacy pages let the location abbreviation bleed into fighter A
+        # (e.g. "CA Oscar De La Hoya"). Recover only when the exact calendar
+        # date, fighter-B surname, round count/method, and a normalized suffix
+        # match identify one canonical verified pair.
+        try:
+            raw_a=m.group(2).strip(); raw_b=m.group(5).strip()
+            date_candidates=[]
+            for r in db.execute(
+                "select date,boxer_a,boxer_b,source,source_id,method,rounds from bouts where status='FINISHED'"
+            ):
+                if int(r['date'][5:7])!=mm or int(r['date'][8:10])!=dd:continue
+                if round_terminal(r['rounds'])!=rounds or not method_match(method,r['method']):continue
+                names=[r['boxer_a'],r['boxer_b']]
+                if surname(raw_b) not in [surname(x) for x in names]:continue
+                other=next((x for x in names if surname(x)!=surname(raw_b)),None)
+                if not other:continue
+                if norm(raw_a).endswith(norm(other)) or norm(other).endswith(norm(raw_a)):
+                    date_candidates.append(r)
+            pair=unique_from_rows(date_candidates)
+            if pair:
+                return (*pair,rounds,m.group(0),'month_day_location_prefix_suffix_plus_unique_verified_bout')
+        except Exception:
+            pass
 
     title=str(payload.get('title') or '').strip()
     m=TITLE_FIGHT.search(title)
