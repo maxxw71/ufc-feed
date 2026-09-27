@@ -28,6 +28,7 @@ FILES=[
  ROOT/'profile_supplements'/'sofascore_reach_additions.jsonl',
  ROOT/'profile_supplements'/'foxsports_reach_additions.jsonl',
  ROOT/'profile_supplements'/'boxlive_wayback_reach_additions.jsonl',
+ ROOT/'profile_supplements'/'boxnow_reach_additions.jsonl',
 ]
 
 def readjsonl(path):
