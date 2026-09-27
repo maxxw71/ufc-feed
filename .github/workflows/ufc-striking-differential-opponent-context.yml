@@ -1,0 +1,123 @@
+name: UFC Striking Differential Opponent Context Validation
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/ufc-striking-differential-opponent-context.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  validate:
+    runs-on: [self-hosted, Linux, X64, appwiza]
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Test older favorite versus younger wrestling opponent
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          KEY=/home/appwiza-runner/.ssh/appwiza_vps
+          HOST=anestishkurti92@127.0.0.1
+          OUTDIR="$GITHUB_WORKSPACE/ufc_striking_differential_opponent_context"
+          mkdir -p "$OUTDIR"
+
+          ssh -i "$KEY" -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=accept-new "$HOST" 'bash -s' > "$OUTDIR/report.txt" <<'EOF'
+          set -Eeuo pipefail
+          export HOME=/home/anestishkurti92
+          ROOT=/home/anestishkurti92/ufc-predictor-v1
+          PY="$ROOT/venv/bin/python"
+          IN="$ROOT/new_category_discovery/prefight_favorite_features.csv"
+          test -s "$IN"
+
+          "$PY" - "$IN" <<'PY'
+          import io, sys, requests, re, unicodedata
+          import numpy as np, pandas as pd
+          t=pd.read_csv(sys.argv[1],low_memory=False)
+          t['event_date']=pd.to_datetime(t['event_date'],errors='coerce')
+          num=lambda c: pd.to_numeric(t[c],errors='coerce') if c in t.columns else pd.Series(np.nan,index=t.index)
+          base=(num('market_prob')>=.75)&(num('f_fights')>=4)&(num('o_fights')>=4)&((num('f_sig_diff_pm')-num('o_sig_diff_pm'))>=1.0)&(num('f_sig_diff_pm')>=.5)
+          g=t[base].dropna(subset=['event_date','favorite','opponent','profit100','won']).copy()
+
+          # DOB enrichment
+          url='https://raw.githubusercontent.com/DanMcInerney/mma-ai/main/data/raw/ufcstats/individuals.csv'
+          ids=pd.read_csv(io.StringIO(requests.get(url,timeout=45,headers={'User-Agent':'appwiza-u8-context'}).text),low_memory=False)
+          def norm(s):
+              s=unicodedata.normalize('NFKD',str(s)).encode('ascii','ignore').decode().lower()
+              return re.sub(r'[^a-z0-9]+',' ',s).strip()
+          dob={}
+          for _,r in ids[['name','dob']].dropna().iterrows():
+              k=norm(r['name'])
+              if k and k not in dob: dob[k]=pd.to_datetime(r['dob'],errors='coerce')
+          g['fav_dob']=g.favorite.map(lambda x:dob.get(norm(x),pd.NaT)); g['opp_dob']=g.opponent.map(lambda x:dob.get(norm(x),pd.NaT))
+          g['fav_age']=(g.event_date-g.fav_dob).dt.days/365.2425; g['opp_age']=(g.event_date-g.opp_dob).dt.days/365.2425
+          g['age_adv']=g.opp_age-g.fav_age
+
+          # normalize likely wrestling columns
+          cols=['f_td_a15','o_td_a15','f_td_l15','o_td_l15','f_ctrl15','o_ctrl15','f_td_def','o_td_def']
+          for c in cols:
+              if c in g.columns: g[c]=pd.to_numeric(g[c],errors='coerce')
+              else: g[c]=np.nan
+          g['opp_tdatt_adv']=g.o_td_a15-g.f_td_a15
+          g['opp_tdland_adv']=g.o_td_l15-g.f_td_l15
+          g['opp_ctrl_adv']=g.o_ctrl15-g.f_ctrl15
+
+          def roi(z): return z.profit100.astype(float).sum()/(100*len(z)) if len(z) else np.nan
+          def out(label,z):
+              w=pd.to_numeric(z.won,errors='coerce').fillna(0)
+              pre=z[z.event_date<'2020-01-01']; rec=z[z.event_date>='2020-01-01']; y22=z[z.event_date>='2022-01-01']
+              print(f"{label:<54} n={len(z):2d} {int(w.sum())}-{int(len(z)-w.sum())} win={(w.mean()*100 if len(z) else np.nan):5.1f}% ROI={(roi(z)*100 if len(z) else np.nan):+7.2f}% | pre={(roi(pre)*100 if len(pre) else np.nan):+7.2f}% recent={(roi(rec)*100 if len(rec) else np.nan):+7.2f}% 2022+={(roi(y22)*100 if len(y22) else np.nan):+7.2f}%")
+
+          print('U8 STRIKING DIFFERENTIAL — OPPONENT CONTEXT')
+          print('='*130)
+          out('ALL U8',g)
+          print('\nOLDER FAVORITE + YOUNGER OPPONENT')
+          for a in [1,2,3]:
+              out(f'favorite >{a}y older',g[g.age_adv < -a])
+
+          print('\nOLDER FAVORITE + OPPONENT WRESTLING VOLUME')
+          for a in [1,2,3]:
+              for td in [2,4,6]:
+                  out(f'fav >{a}y older + opp TD attempts/15 >= {td}',g[(g.age_adv < -a)&(g.o_td_a15>=td)])
+
+          print('\nOLDER FAVORITE + OPPONENT WRESTLING ADVANTAGE VS FAVORITE')
+          for a in [1,2,3]:
+              for gap in [1,2,4]:
+                  out(f'fav >{a}y older + opp TDatt advantage >= {gap}/15',g[(g.age_adv < -a)&(g.opp_tdatt_adv>=gap)])
+          for a in [1,2,3]:
+              for gap in [.5,1,2]:
+                  out(f'fav >{a}y older + opp control advantage >= {gap} min/15',g[(g.age_adv < -a)&(g.opp_ctrl_adv>=gap)])
+
+          print('\nCOMBINED WRESTLING-PRESSURE PROXIES')
+          for a in [1,2,3]:
+              z=g[(g.age_adv < -a)&((g.o_td_a15>=4)|(g.opp_tdatt_adv>=2)|(g.opp_ctrl_adv>=1))]
+              out(f'fav >{a}y older + opponent wrestling-pressure flag',z)
+
+          print('\nCOUNTERFACTUAL KEEP RULES')
+          # Keep unless older favorite is facing materially more wrestling pressure.
+          for a in [1,2,3]:
+              veto=(g.age_adv < -a)&((g.o_td_a15>=4)|(g.opp_tdatt_adv>=2)|(g.opp_ctrl_adv>=1))
+              out(f'KEEP after veto: >{a}y older + wrestling-pressure',g[~veto])
+
+          print('\nMATCHES: favorite >2y older + wrestling-pressure flag')
+          z=g[(g.age_adv < -2)&((g.o_td_a15>=4)|(g.opp_tdatt_adv>=2)|(g.opp_ctrl_adv>=1))]
+          show=['event_date','favorite','opponent','market_prob','profit100','won','age_adv','f_td_a15','o_td_a15','opp_tdatt_adv','f_ctrl15','o_ctrl15','opp_ctrl_adv']
+          print(z[[c for c in show if c in z.columns]].to_string(index=False))
+          PY
+          EOF
+          cat "$OUTDIR/report.txt"
+
+      - name: Commit report
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add ufc_striking_differential_opponent_context/report.txt
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m "Test UFC striking differential opponent context"
+          git push
