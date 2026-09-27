@@ -1,0 +1,45 @@
+name: Boxing MartialBot Calibrated Reach Tier
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'boxing/research/build_martialbot_calibrated_reach_tier.py'
+      - 'boxing/profile_supplements/martialbot_missing_reach_inventory.json'
+      - 'boxing/profile_supplements/martialbot_reach_calibration.json'
+      - '.github/workflows/boxing-martialbot-calibrated-reach.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install -q beautifulsoup4 lxml
+      - run: python boxing/research/build_martialbot_calibrated_reach_tier.py
+      - name: Persist calibrated tier
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          mkdir -p /tmp/mb-tier
+          cp boxing/profile_supplements/martialbot_calibrated_reach_tier.json /tmp/mb-tier/
+          cp boxing/profile_supplements/martialbot_calibrated_reach_rows.jsonl /tmp/mb-tier/
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          for attempt in 1 2 3 4; do
+            git fetch origin main
+            git reset --hard origin/main
+            cp /tmp/mb-tier/* boxing/profile_supplements/
+            git add boxing/profile_supplements/martialbot_calibrated_reach_tier.json boxing/profile_supplements/martialbot_calibrated_reach_rows.jsonl
+            if git diff --cached --quiet; then exit 0; fi
+            git commit -m 'Publish calibrated boxing reach research tier'
+            if git push origin HEAD:main; then exit 0; fi
+            sleep $((attempt * 2))
+          done
+          exit 1
