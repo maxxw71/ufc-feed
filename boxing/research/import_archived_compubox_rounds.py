@@ -8,7 +8,7 @@ Acceptance gates:
 - total, jab and power rows for both fighters for every observed round;
 - landed/thrown validity and total == jab + power for every round.
 
-No ambiguous identity/date match is accepted.
+One missing trailing jab/power cell may be restored only when the observed total and other category force that cell to exactly 0/0. No ambiguous identity/date match or non-zero punch value is inferred.
 """
 from __future__ import annotations
 import argparse,datetime as dt,json,re,sqlite3,unicodedata
@@ -43,6 +43,12 @@ HEADER_FULL=re.compile(
 
 HEADER_MD=re.compile(
     r"(\d{1,2}/\d{1,2})\s*-\s*.{0,100}?"
+    r"([A-Za-zÀ-ÿ0-9 .,'’\-]{2,70}?)\s+"
+    r"(W|L|D|DRAW|UD|SD|MD|KO|TKO|RTD|TD)\s+(\d{1,2})\s+"
+    r"([A-Za-zÀ-ÿ0-9 .,'’\-]{2,70}?)(?=\s+(?:Total Punches|CompuBox|Final|$))",re.I)
+
+HEADER_DATE_PREFIX=re.compile(
+    r"(\d{1,2}/\d{1,2}/\d{2,4})\s*-\s*.{0,100}?"
     r"([A-Za-zÀ-ÿ0-9 .,'’\-]{2,70}?)\s+"
     r"(W|L|D|DRAW|UD|SD|MD|KO|TKO|RTD|TD)\s+(\d{1,2})\s+"
     r"([A-Za-zÀ-ÿ0-9 .,'’\-]{2,70}?)(?=\s+(?:Total Punches|CompuBox|Final|$))",re.I)
@@ -174,6 +180,29 @@ def resolve_fight(db,text,payload):
         except Exception:
             pass
 
+    # Older stat pages can begin with a full date plus venue, for example
+    # "5/3/08 - Carson, CA Oscar De La Hoya W 12 Steve Forbes".
+    m=HEADER_DATE_PREFIX.search(text)
+    if m:
+        date=parse_date(m.group(1))
+        raw_a,raw_b=m.group(2).strip(),m.group(5).strip()
+        sa,sb=surname(raw_a),surname(raw_b)
+        method=m.group(3).upper()
+        rounds=int(m.group(4))
+        if date and sa and sb and sa!=sb:
+            rows=[
+                r for r in db.execute(
+                    "select date,boxer_a,boxer_b,source,source_id,method,rounds from bouts where date=? and status='FINISHED'",
+                    (date,)
+                )
+                if sorted([surname(r['boxer_a']),surname(r['boxer_b'])])==sorted([sa,sb])
+                and round_terminal(r['rounds'])==rounds
+                and method_match(method,r['method'])
+            ]
+            pair=unique_from_rows(rows)
+            if pair:
+                return (*pair,rounds,m.group(0),'full_date_prefix_plus_unique_verified_bout')
+
     title=str(payload.get('title') or '').strip()
     m=TITLE_FIGHT.search(title)
     if m:
@@ -290,18 +319,19 @@ def section(text,kind):
             stop=min(stop,m.end()+z.start())
     return text[m.end():stop]
 
-def pairs_for(section_text,last,rounds):
+def pairs_for(section_text,last,rounds,allow_one_trailing_missing=False):
     if not section_text:
         return None
+    minimum=rounds-1 if allow_one_trailing_missing and rounds>1 else rounds
     pat=re.compile(
         r'\b'+re.escape(last)+r'\b\s+((?:\d{1,3}\s*/\s*\d{1,3}\s+){'
-        +str(rounds-1)+r'}\d{1,3}\s*/\s*\d{1,3})',re.I
+        +str(max(0,minimum-1))+r','+str(max(0,rounds-1))+r'}\d{1,3}\s*/\s*\d{1,3})',re.I
     )
     m=pat.search(section_text)
     if not m:
         return None
     vals=[tuple(map(int,re.split(r'\s*/\s*',x))) for x in re.findall(r'\d{1,3}\s*/\s*\d{1,3}',m.group(1))]
-    if len(vals)!=rounds or any(l<0 or t<l for l,t in vals):
+    if not minimum<=len(vals)<=rounds or any(l<0 or t<l for l,t in vals):
         return None
     return vals
 
@@ -322,10 +352,36 @@ def parse_candidate(db,url,payload):
             return None,f'missing {kind} section'
         cats[kind]={}
         for last,full in bysurname.items():
-            vals=pairs_for(s,last,rounds)
+            vals=pairs_for(s,last,rounds,allow_one_trailing_missing=(kind in {'jab','power'}))
             if not vals:
                 return None,f'missing {kind} round row for {full}'
+            if kind=='total' and len(vals)!=rounds:
+                return None,f'missing total round row for {full}'
             cats[kind][full]=vals
+
+    # Some archived HTML tables omit the final category cell when it is 0/0.
+    # Restore only that exact deterministic case; never infer a non-zero value.
+    for full in (a,b):
+        jabs=cats['jab'][full]
+        power=cats['power'][full]
+        total=cats['total'][full]
+        short=[kind for kind,vals in (('jab',jabs),('power',power)) if len(vals)==rounds-1]
+        if len(short)>1:
+            return None,f'multiple incomplete category rows for {full}'
+        if short:
+            missing=short[0]
+            other=power if missing=='jab' else jabs
+            if len(other)!=rounds:
+                return None,f'missing {missing} round row for {full}'
+            tl,tt=total[-1]
+            ol,ot=other[-1]
+            derived=(tl-ol,tt-ot)
+            if derived!=(0,0):
+                return None,f'missing {missing} round row for {full}'
+            cats[missing][full].append(derived)
+        elif len(jabs)!=rounds or len(power)!=rounds:
+            return None,f'incomplete category rows for {full}'
+
     for full in (a,b):
         for i in range(rounds):
             tl,tt=cats['total'][full][i]
