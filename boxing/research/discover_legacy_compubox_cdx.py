@@ -5,7 +5,7 @@ Discovery only. Finds archived stat_files / featured_stats URLs and records
 candidate snapshots for later strict identity/date parsing.
 """
 from __future__ import annotations
-import datetime as dt,json,re,urllib.parse,urllib.request
+import datetime as dt,json,os,re,urllib.parse,urllib.request
 from collections import defaultdict
 from pathlib import Path
 OUT=Path('boxing/public_punch_audit/legacy_compubox_cdx_index.json')
@@ -48,7 +48,7 @@ def query(prefix):
       ('fl','timestamp,original,statuscode,mimetype,digest'),('limit','10000')
     ])
     req=urllib.request.Request(q,headers={'User-Agent':UA})
-    with urllib.request.urlopen(req,timeout=90) as r:
+    with urllib.request.urlopen(req,timeout=25) as r:
         x=json.loads(r.read().decode('utf-8','replace'))
     return q,(x[1:] if isinstance(x,list) and x else [])
 
@@ -58,7 +58,7 @@ def query_exact(url):
       ('fl','timestamp,original,statuscode,mimetype,digest'),('limit','1000')
     ])
     req=urllib.request.Request(q,headers={'User-Agent':UA})
-    with urllib.request.urlopen(req,timeout=90) as r:
+    with urllib.request.urlopen(req,timeout=18) as r:
         x=json.loads(r.read().decode('utf-8','replace'))
     return q,(x[1:] if isinstance(x,list) and x else [])
 
@@ -77,21 +77,52 @@ def exact_variants(url):
 
 
 def main():
-    rows=[];queries=[]
-    for p in PREFIXES:
+    queries=[]
+    grouped=defaultdict(list)
+
+    # Preserve already discovered candidates. Automatic exact-seed passes
+    # should not re-run every expensive wildcard query just to rediscover the
+    # same 50 legacy URLs. Set COMPUBOX_REFRESH_WILDCARDS=1 for a full sweep.
+    preserved=0
+    if OUT.exists():
         try:
-            q,x=query(p);queries.append({'prefix':p,'query':q,'rows':len(x),'error':None});rows.extend(x)
-        except Exception as e:
-            queries.append({'prefix':p,'rows':0,'error':type(e).__name__+': '+str(e)[:200]})
+            old=json.loads(OUT.read_text())
+            for item in old.get('items') or []:
+                key=item.get('canonical_key')
+                if not key:continue
+                caps=item.get('captures') or []
+                grouped[key].extend(caps)
+                preserved+=1
+        except Exception:
+            pass
+
+    rows=[]
+    if os.environ.get('COMPUBOX_REFRESH_WILDCARDS')=='1' or not preserved:
+        for p in PREFIXES:
+            try:
+                q,x=query(p)
+                queries.append({'prefix':p,'query':q,'rows':len(x),'error':None})
+                rows.extend(x)
+            except Exception as e:
+                queries.append({'prefix':p,'rows':0,'error':type(e).__name__+': '+str(e)[:200]})
+
+    # Exact seeds are cheap and high-value. Try the historically most likely
+    # http host variants first and stop as soon as one variant has captures.
     for seed in KNOWN_URLS:
+        found=False
         for url in exact_variants(seed):
             try:
                 q,x=query_exact(url)
                 queries.append({'seed_url':seed,'exact_url':url,'query':q,'rows':len(x),'error':None})
-                rows.extend(x)
+                if x:
+                    rows.extend(x)
+                    found=True
+                    break
             except Exception as e:
                 queries.append({'seed_url':seed,'exact_url':url,'rows':0,'error':type(e).__name__+': '+str(e)[:200]})
-    grouped=defaultdict(list)
+        if not found:
+            queries.append({'seed_url':seed,'status':'no_capture_found_across_variants'})
+
     for r in rows:
         if len(r)<5:continue
         ts,orig,status,mime,digest=map(str,r[:5])
@@ -101,20 +132,26 @@ def main():
         key=re.sub(r'^https?://(?:www\.)?','',orig,flags=re.I).lower()
         grouped[key].append({'timestamp':ts,'original':orig,'mimetype':mime,'digest':digest,
           'snapshot_url':f'https://web.archive.org/web/{ts}id_/{orig}'})
+
     items=[]
     for key,caps in grouped.items():
         uniq={}
-        for c in caps:uniq[(c['timestamp'],c['digest'],c['original'])]=c
+        for cap in caps:
+            if not cap.get('timestamp') or not cap.get('original'):continue
+            uniq[(cap.get('timestamp'),cap.get('digest'),cap.get('original'))]=cap
         caps=sorted(uniq.values(),key=lambda x:x['timestamp'])
+        if not caps:continue
         items.append({'canonical_key':key,'capture_count':len(caps),'first_timestamp':caps[0]['timestamp'],
           'last_timestamp':caps[-1]['timestamp'],'captures':caps[-5:]})
     items.sort(key=lambda x:x['canonical_key'])
     report={'generated_at':dt.datetime.now(dt.timezone.utc).isoformat(),'queries':queries,
-      'raw_cdx_rows':len(rows),'unique_candidate_urls':len(items),
+      'preserved_candidate_urls':preserved,'raw_cdx_rows':len(rows),'unique_candidate_urls':len(items),
       'html_candidates':sum('.htm' in x['canonical_key'] for x in items),
       'pdf_candidates':sum('.pdf' in x['canonical_key'] for x in items),
       'items':items,
-      'policy':'Discovery only. No punch values imported until exact archived snapshot, fight identity/date, both fighters, round sequence, and arithmetic checks pass.'}
-    OUT.parent.mkdir(parents=True,exist_ok=True);OUT.write_text(json.dumps(report,indent=2,ensure_ascii=False))
-    print(json.dumps({k:report[k] for k in ('raw_cdx_rows','unique_candidate_urls','html_candidates','pdf_candidates')},indent=2))
+      'policy':'Discovery only. Existing candidates are preserved; exact documented URLs are probed by host/scheme variant. No punch values imported until exact archived snapshot, fight identity/date, both fighters, round sequence, and arithmetic checks pass.'}
+    OUT.parent.mkdir(parents=True,exist_ok=True)
+    OUT.write_text(json.dumps(report,indent=2,ensure_ascii=False))
+    print(json.dumps({k:report[k] for k in ('preserved_candidate_urls','raw_cdx_rows','unique_candidate_urls','html_candidates','pdf_candidates')},indent=2))
+
 if __name__=='__main__':main()
