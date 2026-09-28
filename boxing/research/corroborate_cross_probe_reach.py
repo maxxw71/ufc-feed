@@ -103,6 +103,7 @@ def main():
       ('boxingshowtimes_reach_probe.json','boxingshowtimes'),
       ('sofascore_reach_probe.json','sofascore'),
       ('ring_reach_probe.json','the_ring'),
+      ('sportsbetlistings_reach_probe.json','sportsbetlistings'),
     ]:
         obj=load(fname)
         candidates=(obj.get('rows') or []) + (obj.get('leads') or [])
