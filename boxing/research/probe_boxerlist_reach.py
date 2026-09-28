@@ -113,12 +113,18 @@ def parse(raw):
     vals=[]
     for i,s in enumerate(strings):
         if s.casefold().rstrip(':')!='reach':continue
-        for j in (i+1,i-1):
-            if 0<=j<len(strings):
-                v=cm_measure(strings[j])
+        # BoxerList renders fields as Height VALUE, Reach VALUE. Never inspect
+        # the previous string here: that is the height and caused false
+        # "reach == height" fills whenever Reach was "-".
+        if i+1<len(strings):
+            nxt=strings[i+1]
+            if nxt not in {'-','—','N/A','n/a'}:
+                v=cm_measure(nxt)
                 if v is not None:vals.append(v)
     text=' '.join(strings)
-    for m in re.finditer(r'\bReach\s*:?\s*([^|;]{1,32})',text,re.I):
+    # Inline fallback must have a numeric value immediately after Reach; do not
+    # scan forward across subsequent fields.
+    for m in re.finditer(r'\bReach\s*:?\s*(\d+(?:\.\d+)?\s*(?:cm|["″]|in(?:ches)?))',text,re.I):
         v=cm_measure(m.group(1))
         if v is not None:vals.append(v)
     vals=sorted(set(round(v,2) for v in vals))
