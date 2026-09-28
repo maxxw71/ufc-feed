@@ -27,6 +27,7 @@ FILES=[
  ROOT/'profile_supplements'/'toprank_reach_additions.jsonl',
  ROOT/'profile_supplements'/'pbc_reach_additions.jsonl',
  ROOT/'profile_supplements'/'wba_direct_reach_additions.jsonl',
+ ROOT/'profile_supplements'/'wba_wayback_reach_additions.jsonl',
  ROOT/'profile_supplements'/'salita_reach_additions.jsonl',
  ROOT/'profile_supplements'/'boxingdata_reach_additions.jsonl',
  ROOT/'profile_supplements'/'queensberry_reach_additions.jsonl',
