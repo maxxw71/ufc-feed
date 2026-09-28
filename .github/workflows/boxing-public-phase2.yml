@@ -135,6 +135,7 @@ jobs:
           python phase4_dynamic_factors.py
           python full_method_discovery_sweep.py
           python audit_strict_profile_gaps.py
+          python audit_reach_integrity.py
       - name: Collect compact results
         if: success()
         run: |
@@ -168,7 +169,7 @@ jobs:
                   else: shutil.copy2(src,out/name)
           punch=root/'punch_profiles'/'coverage.json'
           if punch.exists():shutil.copy2(punch,out/'punch_profile_coverage.json')
-          for name in ['IDENTITY_LINKS_V2.json','PRICE_MATCH_COVERAGE.json','SUPPLEMENT_APPLY_REPORT.json','PROFILE_SUPPLEMENT_APPLY_REPORT.json','PROFILE_GAP_AUDIT.json']:
+          for name in ['IDENTITY_LINKS_V2.json','PRICE_MATCH_COVERAGE.json','SUPPLEMENT_APPLY_REPORT.json','PROFILE_SUPPLEMENT_APPLY_REPORT.json','PROFILE_GAP_AUDIT.json','REACH_INTEGRITY_AUDIT.json']:
               src=root/name
               if src.exists():shutil.copy2(src,out/name)
           dbstat={}
@@ -198,6 +199,7 @@ jobs:
           if [ -f /tmp/boxing-research/SUPPLEMENT_APPLY_REPORT.json ]; then cp /tmp/boxing-research/SUPPLEMENT_APPLY_REPORT.json boxing/public_phase2/SUPPLEMENT_APPLY_REPORT.json; fi
           if [ -f /tmp/boxing-research/PROFILE_SUPPLEMENT_APPLY_REPORT.json ]; then cp /tmp/boxing-research/PROFILE_SUPPLEMENT_APPLY_REPORT.json boxing/public_phase2/PROFILE_SUPPLEMENT_APPLY_REPORT.json; fi
           if [ -f /tmp/boxing-research/PROFILE_GAP_AUDIT.json ]; then cp /tmp/boxing-research/PROFILE_GAP_AUDIT.json boxing/public_phase2/PROFILE_GAP_AUDIT.json; fi
+          if [ -f /tmp/boxing-research/REACH_INTEGRITY_AUDIT.json ]; then cp /tmp/boxing-research/REACH_INTEGRITY_AUDIT.json boxing/public_phase2/REACH_INTEGRITY_AUDIT.json; fi
       - name: Upload research artifact
         if: always()
         uses: actions/upload-artifact@v4
