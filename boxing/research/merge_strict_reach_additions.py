@@ -26,6 +26,7 @@ FILES=[
  ROOT/'profile_supplements'/'ready_to_fight_reach_additions.jsonl',
  ROOT/'profile_supplements'/'toprank_reach_additions.jsonl',
  ROOT/'profile_supplements'/'pbc_reach_additions.jsonl',
+ ROOT/'profile_supplements'/'wba_direct_reach_additions.jsonl',
  ROOT/'profile_supplements'/'queensberry_reach_additions.jsonl',
  ROOT/'profile_supplements'/'sofascore_reach_additions.jsonl',
  ROOT/'profile_supplements'/'foxsports_reach_additions.jsonl',
