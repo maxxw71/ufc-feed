@@ -14,7 +14,7 @@ Policy:
 - conflicting values are quarantined; existing strict reach is never overwritten.
 """
 from __future__ import annotations
-import concurrent.futures as cf,datetime as dt,json,re,statistics,unicodedata,urllib.parse,urllib.request
+import concurrent.futures as cf,datetime as dt,json,re,statistics,subprocess,unicodedata,urllib.parse,urllib.request
 from pathlib import Path
 from bs4 import BeautifulSoup
 
@@ -29,7 +29,7 @@ DIRECTORIES=[
  'https://sitemap.boxingshowtimes.com/boxers',
  'https://ofbiz.boxingshowtimes.com/boxers'
 ]
-UA='Mozilla/5.0 AppwizaBoxingShowtimesReach/1.0'
+UA='Mozilla/5.0 AppwizaBoxingShowtimesReach/2.0'
 
 def nk(s):
     x=unicodedata.normalize('NFKD',str(s or '')).encode('ascii','ignore').decode().casefold()
@@ -37,10 +37,25 @@ def nk(s):
 
 def fetch(url,limit=5_000_000):
     req=urllib.request.Request(url,headers={'User-Agent':UA,'Accept-Language':'en-US,en;q=0.8'})
-    with urllib.request.urlopen(req,timeout=35) as r:
-        raw=r.read(limit+1)
+    try:
+        with urllib.request.urlopen(req,timeout=35) as r:
+            raw=r.read(limit+1)
+            if len(raw)>limit:raise ValueError('response too large')
+            return r.geturl(),raw
+    except Exception as first:
+        # The sitemap subdomain intermittently rejects Python/OpenSSL while
+        # normal browser/curl clients work. Fall back to curl without disabling
+        # certificate verification.
+        p=subprocess.run([
+          'curl','-L','--compressed','--silent','--show-error','--fail',
+          '--connect-timeout','12','--max-time','35','-A',UA,
+          '-H','Accept-Language: en-US,en;q=0.8',url
+        ],capture_output=True,timeout=45)
+        if p.returncode!=0:
+            raise RuntimeError(type(first).__name__+': '+str(first)[:100]+'; curl: '+p.stderr.decode('utf-8','replace')[:140])
+        raw=p.stdout
         if len(raw)>limit:raise ValueError('response too large')
-        return r.geturl(),raw
+        return url,raw
 
 def profile_links(raw,base):
     soup=BeautifulSoup(raw,'lxml');out=[]
@@ -54,7 +69,7 @@ def profile_links(raw,base):
         out.append(u.rstrip('/'))
     return list(dict.fromkeys(out))
 
-def discover():
+def discover(targets):
     urls=[];diag=[]
     for d in DIRECTORIES:
         try:
@@ -62,6 +77,24 @@ def discover():
             diag.append({'url':d,'status':'ok','links':len(xs),'bytes':len(raw)})
         except Exception as e:
             diag.append({'url':d,'status':'error','error':type(e).__name__+': '+str(e)[:180]})
+
+    # The public fighter directory supports a name search even when the main
+    # page is client-rendered. Probe exact missing names against the sitemap
+    # directory; only discovered profile links are later trusted.
+    def search_one(item):
+        key,t=item
+        u='https://sitemap.boxingshowtimes.com/boxers?search='+urllib.parse.quote(t['name'])
+        try:
+            final,raw=fetch(u,2_000_000);xs=profile_links(raw,final)
+            return {'url':u,'status':'ok_search','links':len(xs),'profile_urls':xs}
+        except Exception as e:
+            return {'url':u,'status':'search_error','error':type(e).__name__+': '+str(e)[:160],'profile_urls':[]}
+    with cf.ThreadPoolExecutor(max_workers=8) as ex:
+        searched=list(ex.map(search_one,targets.items()))
+    for x in searched:
+        urls.extend(x.pop('profile_urls',[]))
+    diag.extend(searched)
+
     # Normalize duplicate subdomain versions by path; prefer primary host.
     bypath={}
     for u in urls:
@@ -90,12 +123,14 @@ def parse(raw):
     # Inline/profile text: Reach: 76 cm or Reach 76
     for m in re.finditer(r'\bReach\s*:\s*(\d+(?:\.\d+)?)\s*(?:cm|in(?:ches)?|["″])?',text,re.I):
         rawvals.append(float(m.group(1)))
-    # Label/value DOM split.
+    # Label/value DOM split. Only the value AFTER Reach belongs to reach;
+    # the previous DOM string is commonly the fighter's height.
     for i,x in enumerate(strings):
         if x.casefold().rstrip(':')!='reach':continue
-        for j in (i+1,i-1):
-            if 0<=j<len(strings):
-                m=re.search(r'(\d+(?:\.\d+)?)',strings[j])
+        if i+1<len(strings):
+            nxt=strings[i+1]
+            if nxt not in {'-','—','N/A','n/a'}:
+                m=re.search(r'(\d+(?:\.\d+)?)',nxt)
                 if m:rawvals.append(float(m.group(1)))
 
     converted=[]
@@ -118,7 +153,7 @@ def main():
     targets={nk(x['name']):x for x in audit.get('fighters',[]) if 'reach_cm' in set(x.get('missing') or [])}
     mbobj=json.loads(MB.read_text()) if MB.exists() else {}
     mb={nk(x['name']):x for x in mbobj.get('leads',[]) if x.get('reach_cm') is not None}
-    urls,diag=discover()
+    urls,diag=discover(targets)
 
     def one(u):
         rec={'url':u}
