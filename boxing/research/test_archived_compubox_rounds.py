@@ -41,6 +41,7 @@ class ArchivedCompuboxTests(unittest.TestCase):
     def test_full_date_prefix_header_accept(self):
         d=self.db()
         d.execute("insert into bouts values('2008-05-03','FINISHED','Oscar De La Hoya','Steve Forbes','test','2','UD','12')")
+        d.execute("insert into bouts values('2008-05-03','FINISHED','Steve Forbes','Oscar De La Hoya','test','2b','UD','12 (12)')")
         payload={'tables':[[[
           '5/3/08 - Carson, CA Oscar De La Hoya W 12 Steve Forbes '
           'Total Punches Landed/Thrown Round 1 2 3 4 5 6 7 8 9 10 11 12 '
