@@ -123,6 +123,30 @@ def canonical_pair_fullnames(db,date,a,b):
     return unique_from_rows(exact)
 
 
+def unique_date_surname_pair(rows,sa,sb):
+    """Collapse reciprocal/alias duplicate source rows for one exact dated surname pair.
+
+    This helper is intentionally narrower than unique_from_rows: it is used only
+    when the archived CompuBox page itself supplies the full calendar date and
+    both fighter surnames. All candidate rows must agree on that dated surname
+    pair; no cross-date or surname inference is allowed.
+    """
+    rows=list(rows)
+    if not rows:
+        return None
+    wanted=tuple(sorted([sa,sb]))
+    keys={(r['date'],tuple(sorted([surname(r['boxer_a']),surname(r['boxer_b'])]))) for r in rows}
+    if len(keys)!=1:
+        return None
+    date,pair_key=next(iter(keys))
+    if pair_key!=wanted:
+        return None
+    # Prefer the row with the most complete display names, but preserve every
+    # corroborating source row in provenance.
+    r=max(rows,key=lambda x:len(norm(x['boxer_a']))+len(norm(x['boxer_b'])))
+    return (date,r['boxer_a'],r['boxer_b'],[(x['source'],x['source_id']) for x in rows])
+
+
 def resolve_fight(db,text,payload):
     full=[]
     for m in HEADER_FULL.finditer(text):
@@ -199,7 +223,7 @@ def resolve_fight(db,text,payload):
                 and round_terminal(r['rounds'])==rounds
                 and method_match(method,r['method'])
             ]
-            pair=unique_from_rows(rows)
+            pair=unique_date_surname_pair(rows,sa,sb)
             if pair:
                 return (*pair,rounds,m.group(0),'full_date_prefix_plus_unique_verified_bout')
 
