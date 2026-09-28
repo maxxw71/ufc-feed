@@ -574,6 +574,139 @@
     },
     {
       "phase": "phase3",
+      "rule": "FORM_REACH__price1.2__form1__reach5",
+      "family": "FORM_REACH",
+      "spec": {
+        "family": "FORM_REACH",
+        "price": 1.2,
+        "form": 1,
+        "reach": 5
+      },
+      "metrics": {
+        "bets": 26,
+        "wins": 22,
+        "losses": 4,
+        "win_pct": 84.61538461538461,
+        "wilson95_lower_pct": 66.46841558168643,
+        "profit_median_units": 5.556479287710525,
+        "roi_median_pct": 21.37107418350202,
+        "profit_best_units": 6.522379878917848,
+        "roi_best_pct": 25.086076457376336,
+        "avg_market_prob": 0.6705444256277017,
+        "avg_book_count": 4.769230769230769
+      },
+      "dev_2021_2023": {
+        "bets": 10,
+        "wins": 8,
+        "losses": 2,
+        "win_pct": 80.0,
+        "wilson95_lower_pct": 49.01568467207235,
+        "profit_median_units": 2.2864142844049855,
+        "roi_median_pct": 22.864142844049855,
+        "profit_best_units": 2.724811824811825,
+        "roi_best_pct": 27.24811824811825,
+        "avg_market_prob": 0.6329643790639145,
+        "avg_book_count": 5.7
+      },
+      "later_2024_2026": {
+        "bets": 16,
+        "wins": 14,
+        "losses": 2,
+        "win_pct": 87.5,
+        "wilson95_lower_pct": 63.976668563251714,
+        "profit_median_units": 3.2700650033055396,
+        "roi_median_pct": 20.437906270659624,
+        "profit_best_units": 3.797568054106023,
+        "roi_best_pct": 23.734800338162643,
+        "avg_market_prob": 0.6940319547300688,
+        "avg_book_count": 4.1875
+      },
+      "losses": [
+        {
+          "year": 2022,
+          "favorite": "Michael Conlan",
+          "opponent": "Leigh Wood",
+          "median_price": 1.5406827215337855,
+          "market_prob": 0.6206813860673849,
+          "book_count": 8,
+          "younger_by": 3.299100000000003,
+          "form_gap": 1.0,
+          "experience_gap": -11.0,
+          "reach_gap": 5.0,
+          "height_gap": 3.0,
+          "rest_edge": 6.0,
+          "opponent_strength_gap": -0.06912000988752931,
+          "favorite_ko_rate": 0.5,
+          "opponent_stoppage_loss_rate": 0.037037037037037035,
+          "opponent_last5_stoppage_losses": 0.0
+        },
+        {
+          "year": 2022,
+          "favorite": "Issac Hardman",
+          "opponent": "Michael Zerafa",
+          "median_price": 1.526315789473684,
+          "market_prob": 0.6255648805681084,
+          "book_count": 3,
+          "younger_by": 3.446999999999999,
+          "form_gap": 1.0,
+          "experience_gap": -21.0,
+          "reach_gap": 7.0,
+          "height_gap": 6.0,
+          "rest_edge": -16.0,
+          "opponent_strength_gap": -0.14335680379399585,
+          "favorite_ko_rate": 0.8333333333333334,
+          "opponent_stoppage_loss_rate": 0.030303030303030304,
+          "opponent_last5_stoppage_losses": 0.0
+        },
+        {
+          "year": 2024,
+          "favorite": "Raymond Ford",
+          "opponent": "Nick Ball",
+          "median_price": 1.625,
+          "market_prob": 0.5881383855024712,
+          "book_count": 5,
+          "younger_by": 2.0425000000000004,
+          "form_gap": 1.0,
+          "experience_gap": -4.0,
+          "reach_gap": 10.0,
+          "height_gap": 11.0,
+          "rest_edge": -6.0,
+          "opponent_strength_gap": -0.03435467810467807,
+          "favorite_ko_rate": 0.5,
+          "opponent_stoppage_loss_rate": 0.0,
+          "opponent_last5_stoppage_losses": 0.0
+        },
+        {
+          "year": 2025,
+          "favorite": "Tenshin Nasukawa",
+          "opponent": "Takuma Inoue",
+          "median_price": 1.25,
+          "market_prob": 0.7619047619047619,
+          "book_count": 5,
+          "younger_by": 2.6448,
+          "form_gap": 1.0,
+          "experience_gap": -15.0,
+          "reach_gap": 12.0,
+          "height_gap": 1.0,
+          "rest_edge": 238.0,
+          "opponent_strength_gap": 0.02414584258642971,
+          "favorite_ko_rate": 0.2857142857142857,
+          "opponent_stoppage_loss_rate": 0.0,
+          "opponent_last5_stoppage_losses": 0.0
+        }
+      ],
+      "bootstrap": {
+        "lo": -1.7708127176296917,
+        "median": 21.353259245366505,
+        "hi": 41.16278980790268,
+        "p_gt_0": 0.9616666666666667
+      },
+      "stable_family_variants": 3,
+      "neighborhood_support": 0.6,
+      "score": 77.69618412756193
+    },
+    {
+      "phase": "phase3",
       "rule": "AGE_HEIGHT__price1.2__age3__height3",
       "family": "AGE_HEIGHT",
       "spec": {
@@ -909,139 +1042,6 @@
       "stable_family_variants": 2,
       "neighborhood_support": 0.4,
       "score": 76.68864967896646
-    },
-    {
-      "phase": "phase3",
-      "rule": "FORM_REACH__price1.2__form1__reach5",
-      "family": "FORM_REACH",
-      "spec": {
-        "family": "FORM_REACH",
-        "price": 1.2,
-        "form": 1,
-        "reach": 5
-      },
-      "metrics": {
-        "bets": 25,
-        "wins": 21,
-        "losses": 4,
-        "win_pct": 84.0,
-        "wilson95_lower_pct": 65.34598601976184,
-        "profit_median_units": 5.306479287710525,
-        "roi_median_pct": 21.2259171508421,
-        "profit_best_units": 6.236665593203561,
-        "roi_best_pct": 24.946662372814245,
-        "avg_market_prob": 0.6668900121766194,
-        "avg_book_count": 4.76
-      },
-      "dev_2021_2023": {
-        "bets": 10,
-        "wins": 8,
-        "losses": 2,
-        "win_pct": 80.0,
-        "wilson95_lower_pct": 49.01568467207235,
-        "profit_median_units": 2.2864142844049855,
-        "roi_median_pct": 22.864142844049855,
-        "profit_best_units": 2.724811824811825,
-        "roi_best_pct": 27.24811824811825,
-        "avg_market_prob": 0.6329643790639145,
-        "avg_book_count": 5.7
-      },
-      "later_2024_2026": {
-        "bets": 15,
-        "wins": 13,
-        "losses": 2,
-        "win_pct": 86.66666666666667,
-        "wilson95_lower_pct": 62.11750079348376,
-        "profit_median_units": 3.0200650033055396,
-        "roi_median_pct": 20.1337666887036,
-        "profit_best_units": 3.5118537683917372,
-        "roi_best_pct": 23.412358455944915,
-        "avg_market_prob": 0.6895071009184226,
-        "avg_book_count": 4.133333333333334
-      },
-      "losses": [
-        {
-          "year": 2022,
-          "favorite": "Michael Conlan",
-          "opponent": "Leigh Wood",
-          "median_price": 1.5406827215337855,
-          "market_prob": 0.6206813860673849,
-          "book_count": 8,
-          "younger_by": 3.299100000000003,
-          "form_gap": 1.0,
-          "experience_gap": -11.0,
-          "reach_gap": 5.0,
-          "height_gap": 3.0,
-          "rest_edge": 6.0,
-          "opponent_strength_gap": -0.06912000988752931,
-          "favorite_ko_rate": 0.5,
-          "opponent_stoppage_loss_rate": 0.037037037037037035,
-          "opponent_last5_stoppage_losses": 0.0
-        },
-        {
-          "year": 2022,
-          "favorite": "Issac Hardman",
-          "opponent": "Michael Zerafa",
-          "median_price": 1.526315789473684,
-          "market_prob": 0.6255648805681084,
-          "book_count": 3,
-          "younger_by": 3.446999999999999,
-          "form_gap": 1.0,
-          "experience_gap": -21.0,
-          "reach_gap": 7.0,
-          "height_gap": 6.0,
-          "rest_edge": -16.0,
-          "opponent_strength_gap": -0.14335680379399585,
-          "favorite_ko_rate": 0.8333333333333334,
-          "opponent_stoppage_loss_rate": 0.030303030303030304,
-          "opponent_last5_stoppage_losses": 0.0
-        },
-        {
-          "year": 2024,
-          "favorite": "Raymond Ford",
-          "opponent": "Nick Ball",
-          "median_price": 1.625,
-          "market_prob": 0.5881383855024712,
-          "book_count": 5,
-          "younger_by": 2.0425000000000004,
-          "form_gap": 1.0,
-          "experience_gap": -4.0,
-          "reach_gap": 10.0,
-          "height_gap": 11.0,
-          "rest_edge": -6.0,
-          "opponent_strength_gap": -0.03435467810467807,
-          "favorite_ko_rate": 0.5,
-          "opponent_stoppage_loss_rate": 0.0,
-          "opponent_last5_stoppage_losses": 0.0
-        },
-        {
-          "year": 2025,
-          "favorite": "Tenshin Nasukawa",
-          "opponent": "Takuma Inoue",
-          "median_price": 1.25,
-          "market_prob": 0.7619047619047619,
-          "book_count": 5,
-          "younger_by": 2.6448,
-          "form_gap": 1.0,
-          "experience_gap": -15.0,
-          "reach_gap": 12.0,
-          "height_gap": 1.0,
-          "rest_edge": 238.0,
-          "opponent_strength_gap": 0.02414584258642971,
-          "favorite_ko_rate": 0.2857142857142857,
-          "opponent_stoppage_loss_rate": 0.0,
-          "opponent_last5_stoppage_losses": 0.0
-        }
-      ],
-      "bootstrap": {
-        "lo": -1.4375465395480083,
-        "median": 21.454217733474717,
-        "hi": 40.433992892286746,
-        "p_gt_0": 0.965
-      },
-      "stable_family_variants": 3,
-      "neighborhood_support": 0.6,
-      "score": 76.54746530747236
     },
     {
       "phase": "phase2",
@@ -1597,6 +1597,65 @@
     },
     {
       "phase": "phase3",
+      "rule": "FORM_REACH__price1.2__form1__reach5",
+      "family": "FORM_REACH",
+      "spec": {
+        "family": "FORM_REACH",
+        "price": 1.2,
+        "form": 1,
+        "reach": 5
+      },
+      "metrics": {
+        "bets": 26,
+        "wins": 22,
+        "losses": 4,
+        "win_pct": 84.61538461538461,
+        "wilson95_lower_pct": 66.46841558168643,
+        "profit_median_units": 5.556479287710525,
+        "roi_median_pct": 21.37107418350202,
+        "profit_best_units": 6.522379878917848,
+        "roi_best_pct": 25.086076457376336,
+        "avg_market_prob": 0.6705444256277017,
+        "avg_book_count": 4.769230769230769
+      },
+      "dev_2021_2023": {
+        "bets": 10,
+        "wins": 8,
+        "losses": 2,
+        "win_pct": 80.0,
+        "wilson95_lower_pct": 49.01568467207235,
+        "profit_median_units": 2.2864142844049855,
+        "roi_median_pct": 22.864142844049855,
+        "profit_best_units": 2.724811824811825,
+        "roi_best_pct": 27.24811824811825,
+        "avg_market_prob": 0.6329643790639145,
+        "avg_book_count": 5.7
+      },
+      "later_2024_2026": {
+        "bets": 16,
+        "wins": 14,
+        "losses": 2,
+        "win_pct": 87.5,
+        "wilson95_lower_pct": 63.976668563251714,
+        "profit_median_units": 3.2700650033055396,
+        "roi_median_pct": 20.437906270659624,
+        "profit_best_units": 3.797568054106023,
+        "roi_best_pct": 23.734800338162643,
+        "avg_market_prob": 0.6940319547300688,
+        "avg_book_count": 4.1875
+      },
+      "bootstrap": {
+        "lo": -1.7708127176296917,
+        "median": 21.353259245366505,
+        "hi": 41.16278980790268,
+        "p_gt_0": 0.9616666666666667
+      },
+      "stable_family_variants": 3,
+      "neighborhood_support": 0.6,
+      "score": 77.69618412756193
+    },
+    {
+      "phase": "phase3",
       "rule": "AGE_HEIGHT__price1.2__age3__height3",
       "family": "AGE_HEIGHT",
       "spec": {
@@ -1712,65 +1771,6 @@
       "stable_family_variants": 2,
       "neighborhood_support": 0.4,
       "score": 76.68864967896646
-    },
-    {
-      "phase": "phase3",
-      "rule": "FORM_REACH__price1.2__form1__reach5",
-      "family": "FORM_REACH",
-      "spec": {
-        "family": "FORM_REACH",
-        "price": 1.2,
-        "form": 1,
-        "reach": 5
-      },
-      "metrics": {
-        "bets": 25,
-        "wins": 21,
-        "losses": 4,
-        "win_pct": 84.0,
-        "wilson95_lower_pct": 65.34598601976184,
-        "profit_median_units": 5.306479287710525,
-        "roi_median_pct": 21.2259171508421,
-        "profit_best_units": 6.236665593203561,
-        "roi_best_pct": 24.946662372814245,
-        "avg_market_prob": 0.6668900121766194,
-        "avg_book_count": 4.76
-      },
-      "dev_2021_2023": {
-        "bets": 10,
-        "wins": 8,
-        "losses": 2,
-        "win_pct": 80.0,
-        "wilson95_lower_pct": 49.01568467207235,
-        "profit_median_units": 2.2864142844049855,
-        "roi_median_pct": 22.864142844049855,
-        "profit_best_units": 2.724811824811825,
-        "roi_best_pct": 27.24811824811825,
-        "avg_market_prob": 0.6329643790639145,
-        "avg_book_count": 5.7
-      },
-      "later_2024_2026": {
-        "bets": 15,
-        "wins": 13,
-        "losses": 2,
-        "win_pct": 86.66666666666667,
-        "wilson95_lower_pct": 62.11750079348376,
-        "profit_median_units": 3.0200650033055396,
-        "roi_median_pct": 20.1337666887036,
-        "profit_best_units": 3.5118537683917372,
-        "roi_best_pct": 23.412358455944915,
-        "avg_market_prob": 0.6895071009184226,
-        "avg_book_count": 4.133333333333334
-      },
-      "bootstrap": {
-        "lo": -1.4375465395480083,
-        "median": 21.454217733474717,
-        "hi": 40.433992892286746,
-        "p_gt_0": 0.965
-      },
-      "stable_family_variants": 3,
-      "neighborhood_support": 0.6,
-      "score": 76.54746530747236
     },
     {
       "phase": "phase2",
@@ -2194,9 +2194,9 @@
       "OPP_LAYOFF__pmin1.2__pmax1.6__opprest270": 0.0811,
       "AGE_LONG__price1.2__age5__rounds10": 0.1,
       "AGING_OPP__pmin1.2__pmax1.6__oppage34__age3": 0.0676,
+      "FORM_REACH__price1.2__form1__reach5": 0.1136,
       "AGE_HEIGHT__price1.2__age3__height3": 0.0333,
       "AGE_WORLD_TITLE__price1.2__age5__world1": 0.0189,
-      "FORM_REACH__price1.2__form1__reach5": 0.1163,
       "AGE_FORM__price1.2__younger3__form1": 0.1184
     },
     "OPP_LAYOFF__pmin1.2__pmax1.6__opprest270": {
@@ -2204,9 +2204,9 @@
       "OPP_LAYOFF__pmin1.2__pmax1.6__opprest270": 1.0,
       "AGE_LONG__price1.2__age5__rounds10": 0.1143,
       "AGING_OPP__pmin1.2__pmax1.6__oppage34__age3": 0.1649,
+      "FORM_REACH__price1.2__form1__reach5": 0.0779,
       "AGE_HEIGHT__price1.2__age3__height3": 0.1034,
       "AGE_WORLD_TITLE__price1.2__age5__world1": 0.0602,
-      "FORM_REACH__price1.2__form1__reach5": 0.0789,
       "AGE_FORM__price1.2__younger3__form1": 0.1121
     },
     "AGE_LONG__price1.2__age5__rounds10": {
@@ -2214,9 +2214,9 @@
       "OPP_LAYOFF__pmin1.2__pmax1.6__opprest270": 0.1143,
       "AGE_LONG__price1.2__age5__rounds10": 1.0,
       "AGING_OPP__pmin1.2__pmax1.6__oppage34__age3": 0.2419,
+      "FORM_REACH__price1.2__form1__reach5": 0.0217,
       "AGE_HEIGHT__price1.2__age3__height3": 0.0714,
       "AGE_WORLD_TITLE__price1.2__age5__world1": 0.3,
-      "FORM_REACH__price1.2__form1__reach5": 0.0222,
       "AGE_FORM__price1.2__younger3__form1": 0.137
     },
     "AGING_OPP__pmin1.2__pmax1.6__oppage34__age3": {
@@ -2224,19 +2224,29 @@
       "OPP_LAYOFF__pmin1.2__pmax1.6__opprest270": 0.1649,
       "AGE_LONG__price1.2__age5__rounds10": 0.2419,
       "AGING_OPP__pmin1.2__pmax1.6__oppage34__age3": 1.0,
+      "FORM_REACH__price1.2__form1__reach5": 0.038,
       "AGE_HEIGHT__price1.2__age3__height3": 0.25,
       "AGE_WORLD_TITLE__price1.2__age5__world1": 0.2254,
-      "FORM_REACH__price1.2__form1__reach5": 0.0385,
       "AGE_FORM__price1.2__younger3__form1": 0.3882
+    },
+    "FORM_REACH__price1.2__form1__reach5": {
+      "FORM_LONG__price1.3__form1__rounds10": 0.1136,
+      "OPP_LAYOFF__pmin1.2__pmax1.6__opprest270": 0.0779,
+      "AGE_LONG__price1.2__age5__rounds10": 0.0217,
+      "AGING_OPP__pmin1.2__pmax1.6__oppage34__age3": 0.038,
+      "FORM_REACH__price1.2__form1__reach5": 1.0,
+      "AGE_HEIGHT__price1.2__age3__height3": 0.1017,
+      "AGE_WORLD_TITLE__price1.2__age5__world1": 0.0179,
+      "AGE_FORM__price1.2__younger3__form1": 0.1579
     },
     "AGE_HEIGHT__price1.2__age3__height3": {
       "FORM_LONG__price1.3__form1__rounds10": 0.0333,
       "OPP_LAYOFF__pmin1.2__pmax1.6__opprest270": 0.1034,
       "AGE_LONG__price1.2__age5__rounds10": 0.0714,
       "AGING_OPP__pmin1.2__pmax1.6__oppage34__age3": 0.25,
+      "FORM_REACH__price1.2__form1__reach5": 0.1017,
       "AGE_HEIGHT__price1.2__age3__height3": 1.0,
       "AGE_WORLD_TITLE__price1.2__age5__world1": 0.1111,
-      "FORM_REACH__price1.2__form1__reach5": 0.1034,
       "AGE_FORM__price1.2__younger3__form1": 0.2785
     },
     "AGE_WORLD_TITLE__price1.2__age5__world1": {
@@ -2244,29 +2254,19 @@
       "OPP_LAYOFF__pmin1.2__pmax1.6__opprest270": 0.0602,
       "AGE_LONG__price1.2__age5__rounds10": 0.3,
       "AGING_OPP__pmin1.2__pmax1.6__oppage34__age3": 0.2254,
+      "FORM_REACH__price1.2__form1__reach5": 0.0179,
       "AGE_HEIGHT__price1.2__age3__height3": 0.1111,
       "AGE_WORLD_TITLE__price1.2__age5__world1": 1.0,
-      "FORM_REACH__price1.2__form1__reach5": 0.0182,
       "AGE_FORM__price1.2__younger3__form1": 0.1772
-    },
-    "FORM_REACH__price1.2__form1__reach5": {
-      "FORM_LONG__price1.3__form1__rounds10": 0.1163,
-      "OPP_LAYOFF__pmin1.2__pmax1.6__opprest270": 0.0789,
-      "AGE_LONG__price1.2__age5__rounds10": 0.0222,
-      "AGING_OPP__pmin1.2__pmax1.6__oppage34__age3": 0.0385,
-      "AGE_HEIGHT__price1.2__age3__height3": 0.1034,
-      "AGE_WORLD_TITLE__price1.2__age5__world1": 0.0182,
-      "FORM_REACH__price1.2__form1__reach5": 1.0,
-      "AGE_FORM__price1.2__younger3__form1": 0.16
     },
     "AGE_FORM__price1.2__younger3__form1": {
       "FORM_LONG__price1.3__form1__rounds10": 0.1184,
       "OPP_LAYOFF__pmin1.2__pmax1.6__opprest270": 0.1121,
       "AGE_LONG__price1.2__age5__rounds10": 0.137,
       "AGING_OPP__pmin1.2__pmax1.6__oppage34__age3": 0.3882,
+      "FORM_REACH__price1.2__form1__reach5": 0.1579,
       "AGE_HEIGHT__price1.2__age3__height3": 0.2785,
       "AGE_WORLD_TITLE__price1.2__age5__world1": 0.1772,
-      "FORM_REACH__price1.2__form1__reach5": 0.16,
       "AGE_FORM__price1.2__younger3__form1": 1.0
     }
   },
