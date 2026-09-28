@@ -19,7 +19,7 @@ RTF=ROOT/'profile_supplements'/'ready_to_fight_reach_probe.json'
 OUT=ROOT/'profile_supplements'/'boxingdata_reach_probe.json'
 ADD=ROOT/'profile_supplements'/'boxingdata_reach_additions.jsonl'
 BLOG='https://boxing-data.com/blog/'
-UA='Mozilla/5.0 AppwizaBoxingDataReach/1.0'
+UA='Mozilla/5.0 AppwizaBoxingDataReach/2.0'
 
 def nk(s):
     x=unicodedata.normalize('NFKD',str(s or '')).encode('ascii','ignore').decode().casefold()
@@ -68,24 +68,35 @@ def independent_leads():
     return out
 
 def discover(targets):
-    final,raw=fetch(BLOG)
-    soup=BeautifulSoup(raw,'lxml')
-    jobs={}
-    for a in soup.find_all('a',href=True):
-        u=urllib.parse.urljoin(final,a['href']).split('#')[0]
-        p=urllib.parse.urlsplit(u)
-        if p.hostname not in {'boxing-data.com','www.boxing-data.com'} or not p.path.startswith('/blog/'):
-            continue
-        if p.path.rstrip('/')=='/blog':continue
-        label=re.sub(r'\s+',' ',a.get_text(' ',strip=True)).strip()
-        lk=nk(label)
-        hits=[]
-        for key,t in targets.items():
-            # Fight-preview titles generally contain full fighter names.
-            if key and key in lk:hits.append(key)
-        if hits:
-            jobs[u]={'label':label,'target_keys':sorted(set(hits))}
-    return jobs
+    """Crawl the public blog index/pagination and collect fight-preview URLs."""
+    queue=[BLOG];seen_pages=set();articles={};diag=[]
+    while queue and len(seen_pages)<25 and len(articles)<1200:
+        page=queue.pop(0)
+        if page in seen_pages:continue
+        seen_pages.add(page)
+        try:
+            final,raw=fetch(page);soup=BeautifulSoup(raw,'lxml');found=0
+            for a in soup.find_all('a',href=True):
+                u=urllib.parse.urljoin(final,a['href']).split('#')[0]
+                p=urllib.parse.urlsplit(u)
+                if p.hostname not in {'boxing-data.com','www.boxing-data.com'}:continue
+                path=p.path.rstrip('/')
+                label=re.sub(r'\s+',' ',a.get_text(' ',strip=True)).strip()
+                if path=='/blog':continue
+                if path.startswith('/blog/') and not re.search(r'/blog/(?:page|tag|category)/',path,re.I):
+                    # Keep article-like pages; duplicate navigation/card links collapse.
+                    articles.setdefault(u.rstrip('/'),{'label':label})
+                    found+=1
+                if (re.search(r'/blog/page/\d+',path,re.I) or 'page=' in p.query) and u not in seen_pages and u not in queue:
+                    queue.append(u)
+            # Also follow rel=next pagination.
+            for a in soup.select('a[rel="next"]'):
+                u=urllib.parse.urljoin(final,a.get('href','')).split('#')[0]
+                if u and u not in seen_pages and u not in queue:queue.append(u)
+            diag.append({'page':page,'status':'ok','article_links_seen':found,'unique_articles':len(articles)})
+        except Exception as e:
+            diag.append({'page':page,'status':'error','error':type(e).__name__+': '+str(e)[:180]})
+    return articles,diag
 
 def section_text(soup,target_name):
     """Return sections whose heading begins with the exact target identity."""
@@ -108,12 +119,26 @@ def section_text(soup,target_name):
 
 def parse_article(job,targets):
     url,meta=job
-    rec={'url':url,'index_label':meta['label'],'target_keys':meta['target_keys'],'rows':[]}
+    rec={'url':url,'index_label':meta.get('label'),'target_keys':[],'rows':[]}
     try:
         final,raw=fetch(url);soup=BeautifulSoup(raw,'lxml');rec['url']=final
         h1=soup.find('h1')
         rec['h1']=re.sub(r'\s+',' ',h1.get_text(' ',strip=True)).strip() if h1 else ''
-        for key in meta['target_keys']:
+
+        # Resolve missing fighters from actual fighter-section headings, not
+        # from the blog index title. Preview articles may mention only one name
+        # in a card/index label but contain structured sections for both sides.
+        heading_keys=set()
+        target_keys_sorted=sorted(targets,key=len,reverse=True)
+        for h in soup.find_all(['h2','h3']):
+            ht=re.sub(r'\s+',' ',h.get_text(' ',strip=True)).strip()
+            hk=nk(ht)
+            for key in target_keys_sorted:
+                if hk.startswith(key):
+                    heading_keys.add(key)
+                    break
+        rec['target_keys']=sorted(heading_keys)
+        for key in rec['target_keys']:
             t=targets[key]
             secs=section_text(soup,t['name'])
             values=[]
@@ -145,8 +170,8 @@ def main():
     audit=json.loads(AUDIT.read_text())
     targets={nk(x['name']):x for x in audit.get('fighters',[]) if 'reach_cm' in set(x.get('missing') or [])}
     indep=independent_leads()
-    jobs=discover(targets)
-    with cf.ThreadPoolExecutor(max_workers=10) as ex:
+    jobs,discovery_diag=discover(targets)
+    with cf.ThreadPoolExecutor(max_workers=12) as ex:
         articles=list(ex.map(lambda x:parse_article(x,targets),jobs.items()))
 
     leads=[];conflicts=[];additions=[]
@@ -194,13 +219,14 @@ def main():
         for x in additions:f.write(json.dumps(x,ensure_ascii=False)+'\n')
     report={
       'generated_at':dt.datetime.now(dt.timezone.utc).isoformat(),'missing_targets':len(targets),
-      'indexed_matching_articles':len(jobs),'articles_scanned':len(articles),'lead_count':len(leads),
-      'corroborated_additions':len(additions),'conflicts_quarantined':len(conflicts),
-      'leads':leads,'conflicts':conflicts,
+      'indexed_blog_articles':len(jobs),'articles_scanned':len(articles),
+      'articles_with_missing_fighter_sections':sum(1 for a in articles if a.get('target_keys')),
+      'lead_count':len(leads),'corroborated_additions':len(additions),'conflicts_quarantined':len(conflicts),
+      'discovery_diagnostics':discovery_diag,'leads':leads,'conflicts':conflicts,
       'additions':[{'name':x['name'],'reach_cm':x['fields']['reach_cm']} for x in additions],
       'policy':'Public Boxing Data fight previews are lead-tier only. Exact fighter-specific section plus explicit Reach required. Automatic merge only with independent exact-identity MartialBot or Ready To Fight agreement within 1 cm; conflicts quarantined.'
     }
     OUT.write_text(json.dumps(report,indent=2,ensure_ascii=False))
-    print(json.dumps({k:report[k] for k in ('missing_targets','indexed_matching_articles','articles_scanned','lead_count','corroborated_additions','conflicts_quarantined')},indent=2))
+    print(json.dumps({k:report[k] for k in ('missing_targets','indexed_blog_articles','articles_scanned','articles_with_missing_fighter_sections','lead_count','corroborated_additions','conflicts_quarantined')},indent=2))
 
 if __name__=='__main__':main()
