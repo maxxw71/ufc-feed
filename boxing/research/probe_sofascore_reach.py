@@ -15,9 +15,11 @@ MB=ROOT/'profile_supplements'/'martialbot_missing_reach_inventory.json'
 OUT=ROOT/'profile_supplements'/'sofascore_reach_probe.json'
 ADD=ROOT/'profile_supplements'/'sofascore_reach_additions.jsonl'
 UA='Mozilla/5.0 AppwizaSofaScoreReach/1.0'
-SEARCH_ROOTS=[
- 'https://www.sofascore.com/api/v1/search/all?q=',
- 'https://api.sofascore.com/api/v1/search/all?q='
+SEARCH_PATTERNS=[
+ 'https://www.sofascore.com/api/v1/search/all/?q={q}&page=0',
+ 'https://api.sofascore.com/api/v1/search/all/?q={q}&page=0',
+ 'https://www.sofascore.com/api/v1/search/player-team-persons/?q={q}&page=0',
+ 'https://api.sofascore.com/api/v1/search/player-team-persons/?q={q}&page=0',
 ]
 DETAIL_PATTERNS=[
  'https://www.sofascore.com/api/v1/player/{id}',
@@ -52,23 +54,27 @@ def entity_candidates(payload,target):
     out=[]
     want=nk(target)
     for path,d in walk(payload):
-        names=[]
-        for k in ('name','fullName','slug','shortName'):
-            if isinstance(d.get(k),str):names.append(d[k])
-        if not any(nk(x)==want for x in names):continue
-        ident=d.get('id')
-        if ident is None:
-            for k in ('player','fighter','entity'):
-                sub=d.get(k)
-                if isinstance(sub,dict) and sub.get('id') is not None and nk(sub.get('name'))==want:
-                    ident=sub.get('id');d=sub;break
-        try:ident=int(ident)
-        except Exception:continue
-        sport=''
-        sp=d.get('sport')
-        if isinstance(sp,dict):sport=str(sp.get('name') or sp.get('slug') or '')
-        out.append({'id':ident,'name':next((x for x in names if nk(x)==want),target),
-                    'sport':sport,'path':path,'raw':d})
+        # Standard search payloads wrap the actual person in {"type":...,"entity":{...}}.
+        candidates=[d]
+        if isinstance(d.get('entity'),dict):candidates.append(d['entity'])
+        if isinstance(d.get('player'),dict):candidates.append(d['player'])
+        if isinstance(d.get('fighter'),dict):candidates.append(d['fighter'])
+        for obj in candidates:
+            names=[]
+            for k in ('name','fullName','slug','shortName'):
+                if isinstance(obj.get(k),str):names.append(obj[k])
+            if not any(nk(x)==want for x in names):continue
+            ident=obj.get('id')
+            try:ident=int(ident)
+            except Exception:continue
+            sport=''
+            sp=obj.get('sport')
+            if isinstance(sp,dict):sport=str(sp.get('name') or sp.get('slug') or '')
+            team=obj.get('team')
+            if not sport and isinstance(team,dict) and isinstance(team.get('sport'),dict):
+                sport=str(team['sport'].get('name') or team['sport'].get('slug') or '')
+            out.append({'id':ident,'name':next((x for x in names if nk(x)==want),target),
+                        'sport':sport,'path':path,'raw':obj})
     # de-dup IDs
     uniq={}
     for x in out:uniq.setdefault(x['id'],x)
@@ -96,13 +102,18 @@ def reach_from_payload(obj):
 
 def search(name):
     errors=[]
-    for root in SEARCH_ROOTS:
-        u=root+urllib.parse.quote(name)
+    q=urllib.parse.quote(name)
+    for pat in SEARCH_PATTERNS:
+        u=pat.format(q=q)
         try:
             final,payload=fetch_json(u)
             c=entity_candidates(payload,name)
             if c:return final,c,payload,errors
-            errors.append({'url':u,'reason':'no_exact_name_candidate'})
+            result_types=[]
+            if isinstance(payload,dict):
+                for row in payload.get('results') or []:
+                    if isinstance(row,dict):result_types.append(str(row.get('type') or ''))
+            errors.append({'url':u,'reason':'no_exact_name_candidate','result_types':result_types[:20]})
         except Exception as e:errors.append({'url':u,'reason':type(e).__name__+': '+str(e)[:160]})
     return None,[],None,errors
 
