@@ -15,12 +15,18 @@ AUDIT=ROOT/'public_phase2'/'PROFILE_GAP_AUDIT.json'
 OUT=ROOT/'profile_supplements'/'pbc_reach_probe.json'
 ADD=ROOT/'profile_supplements'/'pbc_reach_additions.jsonl'
 BASE='https://www.premierboxingchampions.com'
-UA='Mozilla/5.0 AppwizaPBCReach/1.0'
+ORIGIN='https://origin.premierboxingchampions.com'
+UA='Mozilla/5.0 AppwizaPBCReach/1.1'
 SEEDS=[BASE+'/FIGHTERS',BASE+'/fighters',BASE+'/sitemap.xml',BASE+'/sitemap_index.xml']
 
 def nk(s):
     x=unicodedata.normalize('NFKD',str(s or '')).encode('ascii','ignore').decode().casefold()
     return re.sub(r'[^a-z0-9]+','',x)
+
+def slug(s):
+    x=unicodedata.normalize('NFKD',str(s or '')).encode('ascii','ignore').decode().casefold()
+    x=re.sub(r"\b(?:jr|sr|ii|iii|iv)\.?\b",' ',x)
+    return re.sub(r'[^a-z0-9]+','-',x).strip('-')
 
 def fetch(url,limit=8_000_000):
     req=urllib.request.Request(url,headers={'User-Agent':UA,'Accept-Language':'en-US,en;q=0.8'})
@@ -99,40 +105,90 @@ def match_target(names,targets):
 def main():
     audit=json.loads(AUDIT.read_text())
     targets={nk(x['name']):x for x in audit.get('fighters',[]) if 'reach_cm' in set(x.get('missing') or [])}
-    urls,diag=discover()
-    def one(u):
-        rec={'url':u}
+
+    # Keep directory/sitemap discovery, but also probe the official origin
+    # profile host directly by deterministic name slug. The origin host serves
+    # structured Stats blocks even when the public directory route fails.
+    discovered,diag=discover()
+    jobs={}
+    for u in discovered:
+        jobs.setdefault(u,{'mode':'directory'})
+    for key,t in targets.items():
+        s=slug(t['name'])
+        if not s:continue
+        jobs.setdefault(ORIGIN+'/'+s,{'mode':'origin_exact_slug','target_key':key})
+        jobs.setdefault(BASE+'/'+s,{'mode':'public_exact_slug','target_key':key})
+
+    def one(item):
+        u,meta=item
+        rec={'url':u,'mode':meta.get('mode'),'expected_target_key':meta.get('target_key')}
         try:
             final,raw,ct=fetch(u,2_500_000);names,reach,sample=parse(raw)
             hits=match_target(names,targets)
+            expected=meta.get('target_key')
+            if expected and expected not in hits:
+                # Direct-slug jobs are accepted only when the rendered heading
+                # resolves back to exactly the expected dataset fighter.
+                rec.update({'url':final,'headings':names[:12],'target_keys':hits,'reach_cm':reach,
+                            'text_sample':sample,'status':'identity_mismatch'})
+                return rec
             rec.update({'url':final,'headings':names[:12],'target_keys':hits,'reach_cm':reach,'text_sample':sample})
             if len(hits)!=1:rec['status']='no_unique_target_identity'
             elif reach is None:rec['status']='no_reach'
             elif not 120<=reach<=270:rec['status']='implausible_reach'
             else:rec['status']='accepted'
-        except Exception as e:rec.update({'status':'fetch_error','error':type(e).__name__+': '+str(e)[:180]})
+        except Exception as e:
+            rec.update({'status':'fetch_error','error':type(e).__name__+': '+str(e)[:180]})
         return rec
-    with cf.ThreadPoolExecutor(max_workers=8) as ex:rows=list(ex.map(one,urls))
-    accepted=[x for x in rows if x.get('status')=='accepted']
+
+    with cf.ThreadPoolExecutor(max_workers=16) as ex:
+        rows=list(ex.map(one,jobs.items()))
+
+    # Deduplicate multiple official PBC host variants for the same target.
+    accepted_by_target={}
+    conflicts=[]
+    for x in rows:
+        if x.get('status')!='accepted':continue
+        key=x['target_keys'][0]
+        val=float(x['reach_cm'])
+        old=accepted_by_target.get(key)
+        if old and abs(float(old['reach_cm'])-val)>1:
+            conflicts.append({'target_key':key,'values':[old['reach_cm'],val],
+                              'urls':[old['url'],x['url']]})
+            accepted_by_target[key]=None
+        elif old is None and key not in accepted_by_target:
+            accepted_by_target[key]=x
+        elif old is not None:
+            # Prefer the origin host because it consistently exposes the full
+            # structured Stats block.
+            if urllib.parse.urlsplit(x['url']).hostname=='origin.premierboxingchampions.com':
+                accepted_by_target[key]=x
+
     additions=[]
-    for x in accepted:
-        key=x['target_keys'][0];t=targets[key];reach=x['reach_cm']
+    for key,x in sorted(accepted_by_target.items()):
+        if not x:continue
+        t=targets[key];reach=x['reach_cm']
         if float(reach).is_integer():reach=int(reach)
         additions.append({'target_source_id':t['id'],'name':t['name'],'career_source':t.get('career_source'),
           'fields':{'reach_cm':reach},
-          'evidence':[{'source':'pbc_official_fighter_profile','url':x['url'],'fields':{'reach_cm':reach},'exact_identity':True}],
+          'evidence':[{'source':'pbc_official_fighter_profile','url':x['url'],
+                       'fields':{'reach_cm':reach},'exact_identity':True,
+                       'discovery_mode':x.get('mode')}],
           'conflicts':{},'quality':'official_promoter_structured_profile_exact_identity_missing_reach_only',
           'collected_at':dt.datetime.now(dt.timezone.utc).isoformat()})
+
     ADD.parent.mkdir(parents=True,exist_ok=True)
     with ADD.open('w') as f:
         for x in additions:f.write(json.dumps(x,ensure_ascii=False)+'\n')
     counts={}
     for x in rows:counts[x.get('status')]=counts.get(x.get('status'),0)+1
     report={'generated_at':dt.datetime.now(dt.timezone.utc).isoformat(),'missing_targets':len(targets),
-      'discovered_candidate_pages':len(urls),'status_counts':counts,'accepted':len(additions),
+      'directory_candidates':len(discovered),'total_probe_jobs':len(jobs),
+      'status_counts':counts,'accepted':len(additions),
       'accepted_profiles':[{'name':x['name'],'reach_cm':x['fields']['reach_cm'],'url':x['evidence'][0]['url']} for x in additions],
-      'discovery_diagnostics':diag,'rows':rows,
-      'policy':'Official Premier Boxing Champions fighter page only; exact target identity from page heading and explicit plausible Reach stat; missing reach only; never overwrite.'}
+      'conflicts_quarantined':conflicts,'discovery_diagnostics':diag,'rows':rows,
+      'policy':'Official PBC fighter pages only; deterministic exact-name slug or official directory discovery; exact rendered fighter identity; explicit plausible Reach; missing reach only; never overwrite.'}
     OUT.write_text(json.dumps(report,indent=2,ensure_ascii=False))
-    print(json.dumps({k:report[k] for k in ('missing_targets','discovered_candidate_pages','status_counts','accepted')},indent=2))
+    print(json.dumps({k:report[k] for k in ('missing_targets','directory_candidates','total_probe_jobs','status_counts','accepted')},indent=2))
+
 if __name__=='__main__':main()
