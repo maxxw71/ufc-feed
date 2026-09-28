@@ -1,0 +1,44 @@
+name: Boxing Cross-Probe Reach Consensus
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'boxing/research/corroborate_cross_probe_reach.py'
+      - 'boxing/profile_supplements/*_reach_probe.json'
+      - 'boxing/profile_supplements/martialbot_missing_reach_inventory.json'
+      - '.github/workflows/boxing-cross-probe-reach.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  corroborate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python boxing/research/corroborate_cross_probe_reach.py
+      - name: Persist cross-probe consensus
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          mkdir -p /tmp/cross-probe-reach
+          cp boxing/profile_supplements/cross_probe_reach_additions.jsonl /tmp/cross-probe-reach/
+          cp boxing/profile_supplements/cross_probe_reach_report.json /tmp/cross-probe-reach/
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          for attempt in 1 2 3 4; do
+            git fetch origin main
+            git reset --hard origin/main
+            cp /tmp/cross-probe-reach/* boxing/profile_supplements/
+            git add boxing/profile_supplements/cross_probe_reach_additions.jsonl boxing/profile_supplements/cross_probe_reach_report.json
+            if git diff --cached --quiet; then exit 0; fi
+            git commit -m 'Publish cross-probe reach consensus'
+            if git push origin HEAD:main; then exit 0; fi
+            sleep $((attempt * 2))
+          done
+          exit 1
