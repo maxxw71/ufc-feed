@@ -1,5 +1,5 @@
 import unittest
-from export_archived_compubox_summaries import parse_summary_metrics,archive_date
+from export_archived_compubox_summaries import parse_summary_metrics,archive_date,parse_final_table_metrics
 
 class ArchivedCompuBoxSummaryTests(unittest.TestCase):
     def test_garcia_burgos_current_fight_rates_only(self):
@@ -53,6 +53,25 @@ class ArchivedCompuBoxSummaryTests(unittest.TestCase):
             'Danny Garcia','Amir Khan')
         self.assertEqual(out['Danny Garcia']['power_landed'],44.0)
         self.assertEqual(out['Amir Khan']['power_landed'],23.0)
+
+    def test_final_total_table_exact_arithmetic(self):
+        text=("Final PunchStat Report Punches Landed / Thrown Total Punches Jabs Power Punches "
+              "John 344 / 1190 157 / 628 187 / 562 29% 25% 33% "
+              "Juarez 206 / 797 84 / 358 122 / 439 26% 23% 28%")
+        out=parse_final_table_metrics(text,'Chris John','Rocky Juarez',12)
+        self.assertEqual(out['Chris John']['total_landed'],344)
+        self.assertEqual(out['Chris John']['total_thrown'],1190)
+        self.assertEqual(out['Rocky Juarez']['power_landed'],122)
+        self.assertAlmostEqual(out['Rocky Juarez']['total_thrown_per_round'],797/12)
+
+    def test_final_total_table_bad_arithmetic_rejected(self):
+        text=("Final Punch Stats Total Punches Jabs Power Punches "
+              "John 344 / 1190 157 / 628 180 / 562 "
+              "Juarez 206 / 797 84 / 358 122 / 439")
+        out=parse_final_table_metrics(text,'Chris John','Rocky Juarez',12)
+        self.assertEqual(out['Chris John'],{})
+        self.assertEqual(out['Rocky Juarez']['total_landed'],206)
+
 
     def test_wayback_capture_date(self):
         self.assertEqual(archive_date('https://web.archive.org/web/20151208081612/http://compuboxonline.com/x/'),'2015-12-08')
