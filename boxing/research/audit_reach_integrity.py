@@ -21,6 +21,15 @@ ROOT=Path(__file__).resolve().parent
 MASTER_POINTER=ROOT/'LATEST_CHRONOLOGICAL_MASTER.txt'
 OUT=ROOT/'REACH_INTEGRITY_AUDIT.json'
 SUP=ROOT.parent/'profile_supplements'/'verified_profiles.jsonl'
+PROBE_DIR=ROOT.parent/'profile_supplements'
+EXTERNAL_PROBES=[
+ ('martialbot_missing_reach_inventory.json','martialbot'),
+ ('ready_to_fight_reach_probe.json','ready_to_fight'),
+ ('boxnow_reach_probe.json','boxnow'),
+ ('boxingdata_reach_probe.json','boxingdata'),
+ ('wba_direct_reach_probe.json','wba'),
+ ('boxlive_wayback_reach_probe.json','boxlive_wayback'),
+]
 
 OFFICIAL_MARKERS=(
     'official','wba_','wbc_','bkfc','matchroom','top_rank','toprank','pbc_',
@@ -93,6 +102,39 @@ def evidence_summary(x):
       'families':sorted(families),'numeric_values_cm':vals,'banned':banned,
       'exact_identity_false':exact_false
     }
+
+def external_leads():
+    out=defaultdict(list)
+    def add(name,source,value,url=None):
+        v=parse_measure(value)
+        if not name or v is None:return
+        key=norm(name)
+        sig=(source,round(v,2),str(url or ''))
+        if sig not in {(x['source'],round(x['reach_cm'],2),str(x.get('url') or '')) for x in out[key]}:
+            out[key].append({'source':source,'reach_cm':round(v,2),'url':url})
+
+    for filename,source in EXTERNAL_PROBES:
+        path=PROBE_DIR/filename
+        if not path.exists():continue
+        try:j=json.loads(path.read_text())
+        except Exception:continue
+        if filename.startswith('martialbot_'):
+            for x in j.get('leads') or []:add(x.get('name'),source,x.get('reach_cm'),x.get('url'))
+        elif filename.startswith('ready_to_fight_'):
+            for x in j.get('rows') or []:
+                if x.get('status')=='lead':add(x.get('name'),source,x.get('reach_cm'),x.get('url'))
+        elif filename.startswith('boxnow_'):
+            for x in j.get('rows') or []:
+                if x.get('status')=='lead':add(x.get('name') or x.get('h1'),source,x.get('reach_cm'),x.get('url'))
+        elif filename.startswith('boxingdata_'):
+            for x in j.get('leads') or []:add(x.get('name'),source,x.get('reach_cm'),x.get('url'))
+        elif filename.startswith('wba_direct_'):
+            for x in j.get('rows') or []:
+                if x.get('status')=='accepted':add(x.get('target_name') or x.get('name'),source,x.get('reach_cm'),x.get('url'))
+        elif filename.startswith('boxlive_wayback_'):
+            for x in j.get('rows') or []:
+                if x.get('status')=='lead':add(x.get('name'),source,x.get('reach_cm'),x.get('snapshot_url') or x.get('live_url'))
+    return out
 
 def main():
     critical=[];warnings=[]
@@ -167,6 +209,23 @@ def main():
         else:
             critical.append({'type':'weak_reach_provenance','target_source_id':sid,'name':name,'reach_cm':rv,
                              'quality':x.get('quality'),'families':ev['families']})
+
+    # Compare accepted supplemental reaches against every persisted numeric
+    # external lead we currently hold. A discrepancy is a warning, not an
+    # automatic deletion: official/two-source consensus can legitimately
+    # overrule a weaker outlier. This makes those cases permanently visible.
+    ext=external_leads()
+    for x in supplements:
+        r=(x.get('fields') or {}).get('reach_cm')
+        if r in (None,''):continue
+        try:rv=float(r)
+        except Exception:continue
+        leads=ext.get(norm(x.get('name'))) or []
+        bad=[z for z in leads if abs(float(z['reach_cm'])-rv)>2.0]
+        if bad:
+            warnings.append({'type':'external_reach_disagreement','target_source_id':x.get('target_source_id'),
+                             'name':x.get('name'),'verified_reach_cm':rv,'quality':x.get('quality'),
+                             'conflicting_leads':bad})
 
     report={
       'generated_at':dt.datetime.now(dt.timezone.utc).isoformat(),
