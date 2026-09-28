@@ -525,11 +525,17 @@ def parse_explicit_stats(text,a,b):
         for m in rx.finditer(txt):
             setv(f,'jab_landed_per_round',m.group(1));setv(f,'jab_thrown_per_round',m.group(2))
 
-    # Simple explicit post-fight total output, e.g.
-    # "Brant ... by throwing 1,262 punches". This function is used for
-    # current-fight observations only outside historical-review mode.
+    # Simple explicit post-fight total output. Keep subject attribution
+    # strict: finite "X threw N punches", or "X ... upset/beat Y ... by
+    # throwing N punches". A trailing opponent mention must never inherit the
+    # winner's number (e.g. "Brant upset Murata ... by throwing 1,262").
     for f,p in [(a,pa),(b,pb)]:
-        rx=re.compile(p+r'[^.!?]{0,140}?(?:threw|throwing)\s+(\d{1,4}(?:,\d{3})?)\s+(?:total\s+)?punches\b',re.I)
+        rx=re.compile(p+r'[^.!?]{0,80}?\bthrew\s+(\d{1,4}(?:,\d{3})?)\s+(?:total\s+)?punches\b',re.I)
+        for m in rx.finditer(txt):
+            setv(f,'total_thrown',m.group(1).replace(',',''))
+        rx=re.compile(
+            p+r'[^.!?]{0,120}?\b(?:upset|beat|defeated|outworked|overwhelmed)\b'
+            r'[^.!?]{0,180}?\bby\s+throwing\s+(\d{1,4}(?:,\d{3})?)\s+(?:total\s+)?punches\b',re.I)
         for m in rx.finditer(txt):
             setv(f,'total_thrown',m.group(1).replace(',',''))
 
