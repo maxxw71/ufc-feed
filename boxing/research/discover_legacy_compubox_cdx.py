@@ -7,6 +7,7 @@ candidate snapshots for later strict identity/date parsing.
 from __future__ import annotations
 import datetime as dt,json,os,re,urllib.parse,urllib.request
 from collections import defaultdict
+from concurrent.futures import ThreadPoolExecutor,as_completed
 from pathlib import Path
 OUT=Path('boxing/public_punch_audit/legacy_compubox_cdx_index.json')
 UA='Mozilla/5.0 AppwizaLegacyCompuBoxDiscovery/1.0'
@@ -58,7 +59,7 @@ def query_exact(url):
       ('fl','timestamp,original,statuscode,mimetype,digest'),('limit','1000')
     ])
     req=urllib.request.Request(q,headers={'User-Agent':UA})
-    with urllib.request.urlopen(req,timeout=18) as r:
+    with urllib.request.urlopen(req,timeout=8) as r:
         x=json.loads(r.read().decode('utf-8','replace'))
     return q,(x[1:] if isinstance(x,list) and x else [])
 
@@ -106,21 +107,25 @@ def main():
             except Exception as e:
                 queries.append({'prefix':p,'rows':0,'error':type(e).__name__+': '+str(e)[:200]})
 
-    # Exact seeds are cheap and high-value. Try the historically most likely
-    # http host variants first and stop as soon as one variant has captures.
-    for seed in KNOWN_URLS:
-        found=False
-        for url in exact_variants(seed):
+    # Exact documented seeds are high-value but Wayback host variants can
+    # individually stall. Probe variants concurrently with bounded workers,
+    # then keep captures from every successful variant (dedupe happens below).
+    jobs=[]
+    with ThreadPoolExecutor(max_workers=12) as pool:
+        for seed in KNOWN_URLS:
+            for url in exact_variants(seed):
+                jobs.append((seed,url,pool.submit(query_exact,url)))
+        found_seeds=set()
+        for seed,url,fut in jobs:
             try:
-                q,x=query_exact(url)
+                q,x=fut.result()
                 queries.append({'seed_url':seed,'exact_url':url,'query':q,'rows':len(x),'error':None})
                 if x:
-                    rows.extend(x)
-                    found=True
-                    break
+                    rows.extend(x);found_seeds.add(seed)
             except Exception as e:
                 queries.append({'seed_url':seed,'exact_url':url,'rows':0,'error':type(e).__name__+': '+str(e)[:200]})
-        if not found:
+    for seed in KNOWN_URLS:
+        if seed not in found_seeds:
             queries.append({'seed_url':seed,'status':'no_capture_found_across_variants'})
 
     for r in rows:
