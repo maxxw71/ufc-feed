@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-28T11:55:35.843967+00:00",
+  "generated_at": "2026-09-28T11:59:25.214979+00:00",
   "source_counts": {
     "cross_source_reach_additions.jsonl": 5,
     "third_source_reach_additions.jsonl": 12,
@@ -7,7 +7,7 @@
     "fitequant_reach_additions.jsonl": 0,
     "boxrec_wayback_reach_additions.jsonl": 0,
     "boxrec_wiki_reach_additions.jsonl": 0,
-    "public_search_reach_additions.jsonl": 23,
+    "public_search_reach_additions.jsonl": 26,
     "ring_reach_additions.jsonl": 0,
     "ready_to_fight_reach_additions.jsonl": 1,
     "toprank_reach_additions.jsonl": 0,
@@ -22,21 +22,37 @@
     "boxnow_reach_additions.jsonl": 8,
     "ringside24_reach_additions.jsonl": 0,
     "boxingshowtimes_reach_additions.jsonl": 0,
-    "boxerlist_reach_additions.jsonl": 39
+    "boxerlist_reach_additions.jsonl": 0
   },
-  "candidate_fighters": 88,
-  "merged": 1,
+  "candidate_fighters": 55,
+  "merged": 3,
   "merged_profiles": [
     {
-      "target_source_id": "https://champinon.info/boxing/raiko-santana/",
-      "name": "Raiko Santana",
-      "reach_cm": 177.5,
+      "target_source_id": "https://champinon.info/boxing/bryan-flores/",
+      "name": "Bryan Flores",
+      "reach_cm": 191,
+      "addition_files": [
+        "public_search_reach_additions.jsonl"
+      ]
+    },
+    {
+      "target_source_id": "https://champinon.info/boxing/jorge-silva/",
+      "name": "Jorge Silva",
+      "reach_cm": 183,
+      "addition_files": [
+        "public_search_reach_additions.jsonl"
+      ]
+    },
+    {
+      "target_source_id": "https://champinon.info/boxing/steve-robinson/",
+      "name": "Steve Robinson",
+      "reach_cm": 178,
       "addition_files": [
         "public_search_reach_additions.jsonl"
       ]
     }
   ],
-  "skipped_existing_reach": 87,
+  "skipped_existing_reach": 52,
   "conflicts_quarantined": 0,
   "conflicts": [],
   "policy": "Whitelisted strict corroboration files only; never overwrite existing reach; candidate sources must agree within 1 cm or fighter is quarantined."
