@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-28T10:21:15.817571+00:00",
+  "generated_at": "2026-09-28T10:24:33.405583+00:00",
   "source_counts": {
     "cross_source_reach_additions.jsonl": 5,
     "third_source_reach_additions.jsonl": 12,
@@ -19,10 +19,11 @@
     "sofascore_reach_additions.jsonl": 0,
     "foxsports_reach_additions.jsonl": 0,
     "boxlive_wayback_reach_additions.jsonl": 1,
-    "boxnow_reach_additions.jsonl": 8
+    "boxnow_reach_additions.jsonl": 8,
+    "ringside24_reach_additions.jsonl": 0
   },
   "candidate_fighters": 41,
-  "merged": 1,
+  "merged": 9,
   "merged_profiles": [
     {
       "target_source_id": "https://en.wikipedia.org/wiki/Patrick_Brown_%28boxer%29",
@@ -31,9 +32,73 @@
       "addition_files": [
         "public_search_reach_additions.jsonl"
       ]
+    },
+    {
+      "target_source_id": "https://en.wikipedia.org/wiki/Abass_Baraou",
+      "name": "Abass Baraou",
+      "reach_cm": 176,
+      "addition_files": [
+        "boxnow_reach_additions.jsonl"
+      ]
+    },
+    {
+      "target_source_id": "https://champinon.info/boxing/sean-hemphill/",
+      "name": "Sean Hemphill",
+      "reach_cm": 185,
+      "addition_files": [
+        "boxnow_reach_additions.jsonl"
+      ]
+    },
+    {
+      "target_source_id": "https://en.wikipedia.org/wiki/Uisma_Lima",
+      "name": "Uisma Lima",
+      "reach_cm": 187.5,
+      "addition_files": [
+        "boxnow_reach_additions.jsonl"
+      ]
+    },
+    {
+      "target_source_id": "https://champinon.info/boxing/antonio-moran/",
+      "name": "Antonio Moran",
+      "reach_cm": 180,
+      "addition_files": [
+        "boxnow_reach_additions.jsonl"
+      ]
+    },
+    {
+      "target_source_id": "https://champinon.info/boxing/ben-vaughan/",
+      "name": "Ben Vaughan",
+      "reach_cm": 176,
+      "addition_files": [
+        "boxnow_reach_additions.jsonl"
+      ]
+    },
+    {
+      "target_source_id": "https://champinon.info/boxing/daniel-lugo/",
+      "name": "Daniel Lugo",
+      "reach_cm": 171,
+      "addition_files": [
+        "boxnow_reach_additions.jsonl"
+      ]
+    },
+    {
+      "target_source_id": "https://champinon.info/boxing/dario-morello/",
+      "name": "Dario Morello",
+      "reach_cm": 178,
+      "addition_files": [
+        "boxnow_reach_additions.jsonl"
+      ]
+    },
+    {
+      "target_source_id": "https://en.wikipedia.org/wiki/Osleys_Iglesias",
+      "name": "Osleys Iglesias",
+      "reach_cm": 189.5,
+      "addition_files": [
+        "boxnow_reach_additions.jsonl"
+      ]
     }
   ],
-  "skipped_existing_reach": 40,
+  "skipped_existing_reach": 32,
   "conflicts_quarantined": 0,
   "conflicts": [],
   "policy": "Whitelisted strict corroboration files only; never overwrite existing reach; candidate sources must agree within 1 cm or fighter is quarantined."
