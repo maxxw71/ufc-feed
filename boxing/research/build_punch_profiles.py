@@ -347,17 +347,44 @@ def fight_observations(reports):
 
 
 def load_total_supplement_observations():
-    path=Path(__file__).resolve().parent.parent/'punch_supplements'/'ready_to_fight_punch_observations.jsonl'
-    if not path.exists():return []
+    """Load strict two-sided fight-total supplements from separate source tiers.
+
+    These rows improve chronological punch history but never count as full
+    round-level observations. Exact date+pair round reports always outrank them.
+    """
+    specs=[
+      (Path(__file__).resolve().parent.parent/'punch_supplements'/'ready_to_fight_punch_observations.jsonl',
+       {'structured_fight_total_table_ready_to_fight'}),
+      (Path(__file__).resolve().parent.parent/'punch_supplements'/'legacy_compubox_final_totals.jsonl',
+       {'archived_compubox_final_total_table_strict'}),
+    ]
     rows=[]
-    for line in path.read_text().splitlines():
-        if not line.strip():continue
-        try:r=json.loads(line)
-        except Exception:continue
-        if r.get('source_quality')!='structured_fight_total_table_ready_to_fight':continue
-        if not r.get('bout_date') or not r.get('fighter_key') or not r.get('opponent_key'):continue
-        if not r.get('rounds_observed'):continue
-        rows.append(r)
+    for path,qualities in specs:
+        if not path.exists():continue
+        for line in path.read_text().splitlines():
+            if not line.strip():continue
+            try:r=json.loads(line)
+            except Exception:continue
+            if r.get('source_quality') not in qualities:continue
+            if not r.get('bout_date') or not r.get('fighter_key') or not r.get('opponent_key'):continue
+            if not r.get('rounds_observed'):continue
+            # Fight-total tiers must provide complete Total/Jab/Power counts.
+            valid=True
+            for cat in CATEGORIES:
+                landed=r.get(f'{cat}_landed');thrown=r.get(f'{cat}_thrown')
+                if landed is None or thrown is None:
+                    valid=False;break
+                try:landed=float(landed);thrown=float(thrown)
+                except Exception:
+                    valid=False;break
+                if landed<0 or thrown<landed:
+                    valid=False;break
+            if not valid:continue
+            if (float(r['total_landed']),float(r['total_thrown'])) != (
+                float(r['jab_landed'])+float(r['power_landed']),
+                float(r['jab_thrown'])+float(r['power_thrown'])
+            ):continue
+            rows.append(r)
     # Require reciprocal two-sided observations for every supplement fight.
     grouped=defaultdict(list)
     for r in rows:
@@ -425,7 +452,13 @@ def pre_fight_profiles(observations):
                   'fighter_full_name':row.get('fighter_full_name'),'opponent_key':row.get('opponent_key'),
                   'opponent_label':row['opponent_label'],'opponent_full_name':row.get('opponent_full_name'),
                   'identity_quality':row.get('identity_quality'),
-                  'prior_punch_fights':len(h),'prior_punch_rounds':sum(x['rounds_observed'] for x in h)}
+                  'prior_punch_fights':len(h),'prior_punch_rounds':sum(x['rounds_observed'] for x in h),
+                  'prior_full_round_punch_fights':sum(
+                    x.get('source_quality') not in {
+                      'structured_fight_total_table_ready_to_fight',
+                      'archived_compubox_final_total_table_strict'
+                    } for x in h
+                  )}
             for cat in CATEGORIES:
                 for metric in ('landed_per_round','thrown_per_round','accuracy_pct','avoidance_pct','net_landed_per_round','round_edge_rate','landed_diff_slope','late_vs_early_net_delta'):
                     key=f'{cat}_{metric}'
@@ -479,7 +512,9 @@ def main():
         'source_quality_counts':dict(__import__('collections').Counter(r.get('source_quality') or 'unknown' for r in obs)),
         'prefight_snapshots':len(snaps),
         'fighters_with_any_prior_punch_fight':len({r['fighter_key'] for r in snaps if r['prior_punch_fights']>0}),
+        'fighters_with_any_prior_full_round_punch_fight':len({r['fighter_key'] for r in snaps if r.get('prior_full_round_punch_fights',0)>0}),
         'snapshots_with_3plus_prior_punch_fights':sum(r['prior_punch_fights']>=3 for r in snaps),
+        'snapshots_with_3plus_prior_full_round_punch_fights':sum(r.get('prior_full_round_punch_fights',0)>=3 for r in snaps),
         'date_min':min((r['bout_date'] for r in obs),default=None),'date_max':max((r['bout_date'] for r in obs),default=None),
         'leakage_policy':'historical observations require bout_date < target date and available_from_date (or bout_date) < target date; strict same-day exclusion',
         'avoidance_definition':'100 - opponent connect percentage; not literal slips/blocks/parries',
