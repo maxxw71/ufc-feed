@@ -13,7 +13,7 @@ import datetime as dt,json,re,sqlite3,unicodedata
 from collections import defaultdict
 from pathlib import Path
 
-from import_archived_compubox_rounds import resolve_fight,norm,surname
+from import_archived_compubox_rounds import resolve_fight,norm,surname,fighter_row_aliases
 
 DB=Path('/home/anestishkurti92/boxing-research/boxing.sqlite3')
 ROOT=Path(__file__).resolve().parents[1]
@@ -33,6 +33,34 @@ def clean(s):
 
 def paragraphs(payload):
     return [clean(x) for x in (payload.get('relevant_paragraphs') or []) if clean(x)]
+
+def flatten_payload_text(payload):
+    """Flatten captured table/text payload for identity and final-total parsing."""
+    vals=[]
+    def walk(x):
+        if isinstance(x,str):
+            y=clean(x)
+            if y:vals.append(y)
+        elif isinstance(x,list):
+            for v in x:walk(v)
+        elif isinstance(x,dict):
+            for k,v in x.items():
+                if k in {'tables','text_sample','full_text','page_text'}:walk(v)
+    walk(payload)
+    return clean(' '.join(vals))
+
+def legacy_full_round_pairs():
+    path=ROOT/'punch_supplements'/'legacy_compubox_round_reports.jsonl'
+    out=set()
+    if not path.exists():return out
+    for line in path.read_text().splitlines():
+        if not line.strip():continue
+        try:x=json.loads(line)
+        except Exception:continue
+        fs=x.get('fighters') or []
+        if len(fs)==2 and x.get('bout_date'):
+            out.add((str(x['bout_date']),tuple(sorted(norm(v) for v in fs))))
+    return out
 
 def archive_date(url):
     m=re.search(r'/web/(\d{8})\d*/',str(url or ''))
@@ -219,15 +247,77 @@ def parse_summary_metrics(text,a,b):
             out[fighter]={'_invalid_conflict':True,'_conflict_details':conflicts[fighter]}
     return out
 
+
+def parse_final_table_metrics(text,a,b,rounds=None):
+    """Parse a legacy CompuBox final Total/Jab/Power table with exact arithmetic.
+
+    This is intentionally fight-total only. It never synthesizes round rows.
+    """
+    s=clean(text)
+    m=re.search(r'Final\s+Punch(?:Stat)?\s+(?:Report|Stats)',s,re.I)
+    if not m:
+        return {a:{},b:{}}
+    tail=s[m.end():]
+    out={a:{},b:{}}
+    used_spans=[]
+    for fighter in (a,b):
+        labels=fighter_row_aliases(fighter,surname(fighter))
+        label_pat='(?:'+'|'.join(re.escape(x) for x in labels)+')'
+        # Final tables are: Fighter TOTAL_L/T JAB_L/T POWER_L/T [percentages].
+        fm=re.search(
+            r'(?<![A-Za-z0-9])'+label_pat+r'(?![A-Za-z0-9])\s+'
+            r'(\d{1,4})\s*/\s*(\d{1,4})\s+'
+            r'(\d{1,4})\s*/\s*(\d{1,4})\s+'
+            r'(\d{1,4})\s*/\s*(\d{1,4})(?:\s+\d{1,3}%\s+\d{1,3}%\s+\d{1,3}%)?',
+            tail,re.I)
+        if not fm:
+            continue
+        span=fm.span()
+        if any(not (span[1]<=a0 or span[0]>=b0) for a0,b0 in used_spans):
+            continue
+        used_spans.append(span)
+        tl,tt,jl,jt,pl,pt=map(int,fm.groups())
+        if min(tl,tt,jl,jt,pl,pt)<0 or tl>tt or jl>jt or pl>pt:
+            continue
+        if (tl,tt)!=(jl+pl,jt+pt):
+            continue
+        d={'total_landed':tl,'total_thrown':tt,'jab_landed':jl,'jab_thrown':jt,
+           'power_landed':pl,'power_thrown':pt}
+        if rounds:
+            d.update({
+              'total_landed_per_round':tl/rounds,'total_thrown_per_round':tt/rounds,
+              'jab_landed_per_round':jl/rounds,'jab_thrown_per_round':jt/rounds,
+              'power_landed_per_round':pl/rounds,'power_thrown_per_round':pt/rounds
+            })
+        d['total_accuracy_pct']=100*tl/tt if tt else None
+        d['power_accuracy_pct']=100*pl/pt if pt else None
+        out[fighter]=d
+    return out
+
+def merge_metric_sources(base,extra):
+    out={k:dict(v) for k,v in base.items()}
+    for fighter,vals in extra.items():
+        dst=out.setdefault(fighter,{})
+        if dst.get('_invalid_conflict'):continue
+        conflicts=[]
+        for k,v in vals.items():
+            if k in dst and dst[k] is not None and v is not None and abs(float(dst[k])-float(v))>1e-9:
+                conflicts.append({'field':k,'values':[dst[k],v]})
+            elif v is not None:
+                dst[k]=v
+        if conflicts:
+            out[fighter]={'_invalid_conflict':True,'_conflict_details':conflicts}
+    return out
+
 def merge_rows(rows):
     groups=defaultdict(list)
     for r in rows:
         groups[(r['bout_date'],norm(r['fighter']),norm(r['opponent']))].append(r)
     merged=[];quarantined=[]
     metric_fields=(
-      'total_landed','total_thrown_per_round','total_accuracy_pct','body_landed',
-      'jab_landed_per_round','jab_thrown_per_round',
-      'power_landed','power_landed_per_round','power_thrown_per_round','power_accuracy_pct'
+      'total_landed','total_thrown','total_landed_per_round','total_thrown_per_round','total_accuracy_pct','body_landed',
+      'jab_landed','jab_thrown','jab_landed_per_round','jab_thrown_per_round',
+      'power_landed','power_thrown','power_landed_per_round','power_thrown_per_round','power_accuracy_pct'
     )
     for key,items in groups.items():
         base=dict(items[0]);bad=[]
@@ -252,6 +342,7 @@ def main():
         raise SystemExit(f'missing server boxing database: {DB}')
     d=sqlite3.connect(f'file:{DB}?mode=ro',uri=True,timeout=120);d.row_factory=sqlite3.Row
     rows=[];captured=resolved=with_numeric=0;rejections=defaultdict(int);no_numeric_samples=[]
+    full_round_pairs=legacy_full_round_pairs()
     for row in d.execute("select source_id,data from source_rows where source='external_evidence' and kind='punch' order by source_id"):
         captured+=1
         url=str(row['source_id'] or '')
@@ -260,15 +351,24 @@ def main():
         try:payload=json.loads(row['data'])
         except Exception:
             rejections['invalid_payload']+=1;continue
-        text=' '.join(paragraphs(payload))
-        if not text:
-            rejections['no_relevant_paragraphs']+=1;continue
-        fight=resolve_fight(d,text,payload)
+        prose=' '.join(paragraphs(payload))
+        raw_text=flatten_payload_text(payload)
+        identity_text=clean(' '.join(x for x in (prose,raw_text) if x))
+        if not identity_text:
+            rejections['no_relevant_text_or_tables']+=1;continue
+        fight=resolve_fight(d,identity_text,payload)
         if not fight:
             rejections['unresolved_fight']+=1;continue
         resolved+=1
         date,a,b,sources,rounds,header,resolution=fight
-        parsed=parse_summary_metrics(text,a,b)
+        parsed=parse_summary_metrics(prose,a,b) if prose else {a:{},b:{}}
+        pair_key=(date,tuple(sorted((norm(a),norm(b)))))
+        final_stats=parse_final_table_metrics(raw_text,a,b,rounds)
+        if pair_key in full_round_pairs:
+            if any(final_stats.get(x) for x in (a,b)):
+                rejections['final_table_duplicate_full_round']+=1
+            final_stats={a:{},b:{}}
+        parsed=merge_metric_sources(parsed,final_stats)
         added=0
         for fighter,opponent in ((a,b),(b,a)):
             st=parsed.get(fighter) or {}
@@ -280,7 +380,9 @@ def main():
               'source_url':url,'bout_date':date,'available_from_date':archive_date(url),'fighter':fighter,'opponent':opponent,
               'rounds_observed':rounds,'date_identity_resolution':resolution,
               **numeric,
-              'quality':'compubox_owned_archived_explicit_numeric_summary_exact_verified_bout',
+              'quality':('compubox_owned_archived_final_total_table_exact_arithmetic_verified_bout'
+                         if final_stats.get(fighter) else
+                         'compubox_owned_archived_explicit_numeric_summary_exact_verified_bout'),
               'source_tier':'historical_summary_separate_from_full_round_reports'
             })
             added+=1
@@ -313,7 +415,7 @@ def main():
       'resolved_no_safe_numeric_sample':no_numeric_samples,
       'quarantined_conflicts':len(quarantined),
       'quarantined_conflict_sample':quarantined[:30],
-      'policy':'Archived CompuBox-owned captures only; strict verified bout resolution; explicit fighter-attributed rates/percentages only; historical-reference sentences excluded; duplicate captures must agree; research availability begins at earliest verified Wayback capture date, never the fight date.'
+      'policy':'Archived CompuBox-owned captures only; strict verified bout resolution; explicit fighter-attributed prose metrics or exact-arithmetic Final Total/Jab/Power tables; full-round legacy pairs are deduplicated from the lower-resolution final-table tier; historical-reference sentences excluded; duplicate captures must agree; research availability begins at earliest verified Wayback capture date, never the fight date.'
     }
     REPORT.write_text(json.dumps(report,indent=2,ensure_ascii=False),encoding='utf-8')
     print(json.dumps(report,indent=2,ensure_ascii=False))
