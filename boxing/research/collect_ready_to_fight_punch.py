@@ -27,7 +27,7 @@ ROOT=Path(__file__).resolve().parents[1]
 DB=ROOT/'research'/'boxing.sqlite3'
 OUT=ROOT/'punch_supplements'/'ready_to_fight_punch_observations.jsonl'
 REPORT=ROOT/'punch_supplements'/'ready_to_fight_punch_report.json'
-UA='Mozilla/5.0 AppwizaBoxingRTFPunch/1.0'
+UA='Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36'
 
 SEEDS=[
  # Current indexed Ready To Fight pages verified to expose structured fight
@@ -56,13 +56,27 @@ SEEDS=[
  'https://rtfight.com/fights/baraou-vs-eggington',
  'https://rtfight.com/fights/rea-vs-arthur',
  'https://rtfight.com/fights/catterall-vs-foley',
+ 'https://rtfight.com/fights/3437/analytics', # Dacres-Webster I, 2023
+ 'https://rtfight.com/fights/3438/analytics', # Dacres-Webster II, 2024
+ 'https://rtfight.com/fights/2097/analytics', # Russell-Cruz, 2023
+ 'https://rtfight.com/fights/2358/analytics', # Kholmatov-Ford, 2024
+ 'https://rtfight.com/fights/2032/analytics', # Schofield-Tellez Giron, 2024
+ 'https://rtfight.com/fights/3100/analytics', # De Los Santos-Adorno, 2023
+ 'https://rtfight.com/fights/3304/analytics', # Murtazaliev-Tszyu, 2024
+ 'https://rtfight.com/fights/1123/analytics', # Rodriguez-Guevara, 2024
+ 'https://rtfight.com/fights/2454/analytics', # Taylor-Lopez, 2023
+ 'https://rtfight.com/fights/3266/analytics', # Daniels-Mohammed, 2023
+ 'https://rtfight.com/fights/3246/analytics', # Tanaka-Cafu, 2024
+ 'https://rtfight.com/fights/1597/analytics', # Figueroa-Fulton, 2021
+ 'https://rtfight.com/fights/teraji-vs-budler', # Teraji-Budler, 2023
+ 'https://rtfight.com/fights/figueroa-vs-magsayo', # Figueroa-Magsayo, 2023
 ]
 def norm(s):
     x=unicodedata.normalize('NFKD',str(s or '')).encode('ascii','ignore').decode().lower()
     return re.sub(r'[^a-z0-9]+','',x)
 
 def fetch(url,limit=5_000_000):
-    req=urllib.request.Request(url,headers={'User-Agent':UA,'Accept-Language':'en-US,en;q=0.8'})
+    req=urllib.request.Request(url,headers={'User-Agent':UA,'Accept':'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8','Accept-Language':'en-US,en;q=0.8','Cache-Control':'no-cache'})
     with urllib.request.urlopen(req,timeout=40) as r:
         raw=r.read(limit+1)
         if len(raw)>limit:raise ValueError('response too large')
