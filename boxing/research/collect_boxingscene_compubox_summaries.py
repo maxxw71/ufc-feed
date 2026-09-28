@@ -783,6 +783,13 @@ def parse_prefight_baselines(text,a,b):
             r"(\d+(?:\.\d+)?)\s+(?:punches\s+)?(?:thrown\s+)?per\s+round",re.I)
         for m in rx.finditer(txt):setv(f,'total_thrown_per_round',m.group(1))
 
+        # Relative-clause variant: "Gonzalez, whose opponents landed just
+        # 17% of their total punches." Exact fighter subject is still required.
+        rx=re.compile(
+            p+r"\s*,?\s*whose\s+opponents?"+SENTENCE_CHAR+r"{0,120}?landed\s+"
+            r"(?:just\s+)?(\d+(?:\.\d+)?)%\s+of\s+(?:their\s+)?(?:total\s+)?punches",re.I)
+        for m in rx.finditer(txt):setv(f,'opponent_total_accuracy_pct',m.group(1))
+
         # Explicit opponent-history defense rates.
         rx=re.compile(
             p+r"(?:['’]s)?\s+opponents?"+SENTENCE_CHAR+r"{0,120}?(?:landed|land)\s+"
