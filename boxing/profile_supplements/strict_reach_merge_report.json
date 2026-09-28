@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-28T12:26:16.495344+00:00",
+  "generated_at": "2026-09-28T12:44:36.148431+00:00",
   "source_counts": {
     "cross_source_reach_additions.jsonl": 5,
     "third_source_reach_additions.jsonl": 12,
@@ -25,36 +25,38 @@
     "boxerlist_reach_additions.jsonl": 0,
     "cross_probe_reach_additions.jsonl": 0
   },
+  "validated_source_counts": {
+    "cross_source_reach_additions.jsonl": 5,
+    "third_source_reach_additions.jsonl": 12,
+    "boxingscene_wayback_reach_additions.jsonl": 0,
+    "fitequant_reach_additions.jsonl": 0,
+    "boxrec_wayback_reach_additions.jsonl": 0,
+    "boxrec_wiki_reach_additions.jsonl": 0,
+    "public_search_reach_additions.jsonl": 32,
+    "ring_reach_additions.jsonl": 0,
+    "ready_to_fight_reach_additions.jsonl": 0,
+    "toprank_reach_additions.jsonl": 0,
+    "pbc_reach_additions.jsonl": 0,
+    "wba_direct_reach_additions.jsonl": 2,
+    "salita_reach_additions.jsonl": 0,
+    "boxingdata_reach_additions.jsonl": 0,
+    "queensberry_reach_additions.jsonl": 0,
+    "sofascore_reach_additions.jsonl": 0,
+    "foxsports_reach_additions.jsonl": 0,
+    "boxlive_wayback_reach_additions.jsonl": 1,
+    "boxnow_reach_additions.jsonl": 8,
+    "ringside24_reach_additions.jsonl": 0,
+    "boxingshowtimes_reach_additions.jsonl": 0,
+    "boxerlist_reach_additions.jsonl": 0,
+    "cross_probe_reach_additions.jsonl": 0
+  },
+  "rejected_candidate_rows": 0,
+  "rejected_candidates": [],
   "candidate_fighters": 60,
-  "merged": 3,
-  "merged_profiles": [
-    {
-      "target_source_id": "https://champinon.info/boxing/conor-wallace/",
-      "name": "Conor Wallace",
-      "reach_cm": 174,
-      "addition_files": [
-        "public_search_reach_additions.jsonl"
-      ]
-    },
-    {
-      "target_source_id": "https://champinon.info/boxing/david-zegarra/",
-      "name": "David Zegarra",
-      "reach_cm": 178,
-      "addition_files": [
-        "public_search_reach_additions.jsonl"
-      ]
-    },
-    {
-      "target_source_id": "https://champinon.info/boxing/sho-ishida/",
-      "name": "Sho Ishida",
-      "reach_cm": 177,
-      "addition_files": [
-        "public_search_reach_additions.jsonl"
-      ]
-    }
-  ],
-  "skipped_existing_reach": 57,
+  "merged": 0,
+  "merged_profiles": [],
+  "skipped_existing_reach": 60,
   "conflicts_quarantined": 0,
   "conflicts": [],
-  "policy": "Whitelisted strict corroboration files only; never overwrite existing reach; candidate sources must agree within 1 cm or fighter is quarantined."
+  "policy": "A whitelisted file is not sufficient by itself. Each row must have exact-identity first-party/official evidence or >=2 independent numeric reach sources agreeing within 1.01 cm. Existing reach is never overwritten; cross-file disagreements >1 cm are quarantined."
 }
