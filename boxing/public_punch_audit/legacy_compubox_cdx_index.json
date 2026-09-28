@@ -1,6 +1,53 @@
 {
-  "generated_at": "2026-09-27T10:18:52.342148+00:00",
+  "generated_at": "2026-09-28T03:48:00.444908+00:00",
   "queries": [
+    {
+      "prefix": "http://www.compuboxonline.com:80/stat_files/",
+      "query": "https://web.archive.org/cdx/search/cdx?url=http%3A%2F%2Fwww.compuboxonline.com%3A80%2Fstat_files%2F%2A&output=json&filter=statuscode%3A200&fl=timestamp%2Coriginal%2Cstatuscode%2Cmimetype%2Cdigest&limit=10000",
+      "rows": 90,
+      "error": null
+    },
+    {
+      "prefix": "https://www.compuboxonline.com:80/stat_files/",
+      "query": "https://web.archive.org/cdx/search/cdx?url=https%3A%2F%2Fwww.compuboxonline.com%3A80%2Fstat_files%2F%2A&output=json&filter=statuscode%3A200&fl=timestamp%2Coriginal%2Cstatuscode%2Cmimetype%2Cdigest&limit=10000",
+      "rows": 90,
+      "error": null
+    },
+    {
+      "prefix": "http://compuboxonline.com:80/stat_files/",
+      "query": "https://web.archive.org/cdx/search/cdx?url=http%3A%2F%2Fcompuboxonline.com%3A80%2Fstat_files%2F%2A&output=json&filter=statuscode%3A200&fl=timestamp%2Coriginal%2Cstatuscode%2Cmimetype%2Cdigest&limit=10000",
+      "rows": 90,
+      "error": null
+    },
+    {
+      "prefix": "https://compuboxonline.com:80/stat_files/",
+      "rows": 0,
+      "error": "URLError: <urlopen error timed out>"
+    },
+    {
+      "prefix": "http://www.compuboxonline.com:80/featured_stats/",
+      "query": "https://web.archive.org/cdx/search/cdx?url=http%3A%2F%2Fwww.compuboxonline.com%3A80%2Ffeatured_stats%2F%2A&output=json&filter=statuscode%3A200&fl=timestamp%2Coriginal%2Cstatuscode%2Cmimetype%2Cdigest&limit=10000",
+      "rows": 0,
+      "error": null
+    },
+    {
+      "prefix": "https://www.compuboxonline.com:80/featured_stats/",
+      "query": "https://web.archive.org/cdx/search/cdx?url=https%3A%2F%2Fwww.compuboxonline.com%3A80%2Ffeatured_stats%2F%2A&output=json&filter=statuscode%3A200&fl=timestamp%2Coriginal%2Cstatuscode%2Cmimetype%2Cdigest&limit=10000",
+      "rows": 0,
+      "error": null
+    },
+    {
+      "prefix": "http://compuboxonline.com:80/featured_stats/",
+      "query": "https://web.archive.org/cdx/search/cdx?url=http%3A%2F%2Fcompuboxonline.com%3A80%2Ffeatured_stats%2F%2A&output=json&filter=statuscode%3A200&fl=timestamp%2Coriginal%2Cstatuscode%2Cmimetype%2Cdigest&limit=10000",
+      "rows": 0,
+      "error": null
+    },
+    {
+      "prefix": "https://compuboxonline.com:80/featured_stats/",
+      "query": "https://web.archive.org/cdx/search/cdx?url=https%3A%2F%2Fcompuboxonline.com%3A80%2Ffeatured_stats%2F%2A&output=json&filter=statuscode%3A200&fl=timestamp%2Coriginal%2Cstatuscode%2Cmimetype%2Cdigest&limit=10000",
+      "rows": 0,
+      "error": null
+    },
     {
       "prefix": "http://www.compuboxonline.com/stat_files/",
       "query": "https://web.archive.org/cdx/search/cdx?url=http%3A%2F%2Fwww.compuboxonline.com%2Fstat_files%2F%2A&output=json&filter=statuscode%3A200&fl=timestamp%2Coriginal%2Cstatuscode%2Cmimetype%2Cdigest&limit=10000",
@@ -9,15 +56,13 @@
     },
     {
       "prefix": "https://www.compuboxonline.com/stat_files/",
-      "query": "https://web.archive.org/cdx/search/cdx?url=https%3A%2F%2Fwww.compuboxonline.com%2Fstat_files%2F%2A&output=json&filter=statuscode%3A200&fl=timestamp%2Coriginal%2Cstatuscode%2Cmimetype%2Cdigest&limit=10000",
-      "rows": 90,
-      "error": null
+      "rows": 0,
+      "error": "URLError: <urlopen error timed out>"
     },
     {
       "prefix": "http://compuboxonline.com/stat_files/",
-      "query": "https://web.archive.org/cdx/search/cdx?url=http%3A%2F%2Fcompuboxonline.com%2Fstat_files%2F%2A&output=json&filter=statuscode%3A200&fl=timestamp%2Coriginal%2Cstatuscode%2Cmimetype%2Cdigest&limit=10000",
-      "rows": 90,
-      "error": null
+      "rows": 0,
+      "error": "URLError: <urlopen error _ssl.c:993: The handshake operation timed out>"
     },
     {
       "prefix": "https://compuboxonline.com/stat_files/",
@@ -27,28 +72,28 @@
     },
     {
       "prefix": "http://www.compuboxonline.com/featured_stats/",
+      "query": "https://web.archive.org/cdx/search/cdx?url=http%3A%2F%2Fwww.compuboxonline.com%2Ffeatured_stats%2F%2A&output=json&filter=statuscode%3A200&fl=timestamp%2Coriginal%2Cstatuscode%2Cmimetype%2Cdigest&limit=10000",
       "rows": 0,
-      "error": "URLError: <urlopen error timed out>"
+      "error": null
     },
     {
       "prefix": "https://www.compuboxonline.com/featured_stats/",
-      "query": "https://web.archive.org/cdx/search/cdx?url=https%3A%2F%2Fwww.compuboxonline.com%2Ffeatured_stats%2F%2A&output=json&filter=statuscode%3A200&fl=timestamp%2Coriginal%2Cstatuscode%2Cmimetype%2Cdigest&limit=10000",
       "rows": 0,
-      "error": null
+      "error": "URLError: <urlopen error timed out>"
     },
     {
       "prefix": "http://compuboxonline.com/featured_stats/",
-      "query": "https://web.archive.org/cdx/search/cdx?url=http%3A%2F%2Fcompuboxonline.com%2Ffeatured_stats%2F%2A&output=json&filter=statuscode%3A200&fl=timestamp%2Coriginal%2Cstatuscode%2Cmimetype%2Cdigest&limit=10000",
       "rows": 0,
-      "error": null
+      "error": "HTTPError: HTTP Error 504: Gateway Time-out"
     },
     {
       "prefix": "https://compuboxonline.com/featured_stats/",
+      "query": "https://web.archive.org/cdx/search/cdx?url=https%3A%2F%2Fcompuboxonline.com%2Ffeatured_stats%2F%2A&output=json&filter=statuscode%3A200&fl=timestamp%2Coriginal%2Cstatuscode%2Cmimetype%2Cdigest&limit=10000",
       "rows": 0,
-      "error": "URLError: <urlopen error timed out>"
+      "error": null
     }
   ],
-  "raw_cdx_rows": 360,
+  "raw_cdx_rows": 450,
   "unique_candidate_urls": 50,
   "html_candidates": 50,
   "pdf_candidates": 0,
