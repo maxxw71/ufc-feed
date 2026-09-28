@@ -29,6 +29,17 @@ PREFIXES=[
  'https://compuboxonline.com/featured_stats/',
 ]
 
+KNOWN_URLS=[
+ # Exact historical CompuBox URLs documented by contemporaneous external
+ # references. These are discovery seeds only; no stats are trusted from the
+ # referring page. Every capture still has to pass the normal strict parser.
+ 'http://compuboxonline.com/stat_files/ARR-ADA.htm',
+ 'http://compuboxonline.com/stat_files/DIA-MAL3.htm',
+ 'http://compuboxonline.com/stat_files/KLI-JOH.htm',
+ 'http://www.compuboxonline.com/featured_stats/V_Klitschko_KO_10_Arreola.pdf',
+]
+
+
 def query(prefix):
     q='https://web.archive.org/cdx/search/cdx?'+urllib.parse.urlencode([
       ('url',prefix+'*'),('output','json'),('filter','statuscode:200'),
@@ -39,6 +50,17 @@ def query(prefix):
         x=json.loads(r.read().decode('utf-8','replace'))
     return q,(x[1:] if isinstance(x,list) and x else [])
 
+def query_exact(url):
+    q='https://web.archive.org/cdx/search/cdx?'+urllib.parse.urlencode([
+      ('url',url),('output','json'),('filter','statuscode:200'),
+      ('fl','timestamp,original,statuscode,mimetype,digest'),('limit','1000')
+    ])
+    req=urllib.request.Request(q,headers={'User-Agent':UA})
+    with urllib.request.urlopen(req,timeout=90) as r:
+        x=json.loads(r.read().decode('utf-8','replace'))
+    return q,(x[1:] if isinstance(x,list) and x else [])
+
+
 def main():
     rows=[];queries=[]
     for p in PREFIXES:
@@ -46,6 +68,11 @@ def main():
             q,x=query(p);queries.append({'prefix':p,'query':q,'rows':len(x),'error':None});rows.extend(x)
         except Exception as e:
             queries.append({'prefix':p,'rows':0,'error':type(e).__name__+': '+str(e)[:200]})
+    for url in KNOWN_URLS:
+        try:
+            q,x=query_exact(url);queries.append({'exact_url':url,'query':q,'rows':len(x),'error':None});rows.extend(x)
+        except Exception as e:
+            queries.append({'exact_url':url,'rows':0,'error':type(e).__name__+': '+str(e)[:200]})
     grouped=defaultdict(list)
     for r in rows:
         if len(r)<5:continue
