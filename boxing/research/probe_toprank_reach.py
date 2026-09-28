@@ -74,15 +74,33 @@ def slug_key(url):
 def parse(raw):
     soup=BeautifulSoup(raw,'lxml');h=soup.find('h1')
     name=' '.join(h.stripped_strings) if h else ''
-    text=' '.join(soup.stripped_strings)
+    strings=[re.sub(r'\s+',' ',x).strip() for x in soup.stripped_strings if re.sub(r'\s+',' ',x).strip()]
+    text=' '.join(strings)
     vals=[]
-    # Prefer explicit inch value from "Reach 73"" etc.
-    for m in re.finditer(r'\bReach\s+(\d+(?:\.\d+)?)\s*(?:["″]|in(?:ches)?)\b',text,re.I):
-        cm=round(float(m.group(1))*2.54,2)
-        if 120<=cm<=270:vals.append(cm)
-    for m in re.finditer(r'\bReach\s+(\d+(?:\.\d+)?)\s*cm\b',text,re.I):
-        cm=float(m.group(1))
-        if 120<=cm<=270:vals.append(cm)
+
+    def add_measure(value):
+        s=str(value or '').replace('”','"').replace('″','"').replace('“','"')
+        m=re.search(r'(\d+(?:\.\d+)?)\s*(?:\"|in(?:ches)?)\b',s,re.I)
+        if m:
+            cm=round(float(m.group(1))*2.54,2)
+            if 120<=cm<=270:vals.append(cm)
+        m=re.search(r'(\d+(?:\.\d+)?)\s*cm\b',s,re.I)
+        if m:
+            cm=float(m.group(1))
+            if 120<=cm<=270:vals.append(cm)
+
+    # Current Top Rank cards may render Reach and its value as separate DOM
+    # strings; support both label->value and inline "Reach 73\"" layouts.
+    for i,s in enumerate(strings):
+        if s.casefold().rstrip(':')=='reach':
+            for j in (i+1,i-1):
+                if 0<=j<len(strings):add_measure(strings[j])
+    for m in re.finditer(r'\bReach\s+([^A-Za-z]{0,5}\d[^A-Za-z]{0,12}(?:\"|″|in(?:ches)?|cm))',text,re.I):
+        add_measure(m.group(1))
+    # Simple inline fallback.
+    for m in re.finditer(r'\bReach\s+(\d+(?:\.\d+)?)\s*(?:[\"″]|in(?:ches)?)',text,re.I):
+        add_measure(m.group(0))
+
     vals=sorted(set(round(v,2) for v in vals))
     return name,(vals[0] if len(vals)==1 else None),vals
 
