@@ -1,49 +1,284 @@
 {
-  "generated_at": "2026-09-27T22:43:51.841208+00:00",
-  "missing_reach_targets": 265,
-  "discovered_boxer_urls": 0,
-  "matched_target_urls": 0,
-  "status_counts": {},
-  "lead_count": 0,
-  "martialbot_corroborated": 0,
-  "leads": [],
-  "discovery_diagnostics": [
+  "generated_at": "2026-09-28T10:19:50.207583+00:00",
+  "missing_reach_targets": 251,
+  "discovered_boxer_urls": 167,
+  "matched_target_urls": 15,
+  "status_counts": {
+    "lead": 13,
+    "no_reach": 2
+  },
+  "lead_count": 13,
+  "martialbot_corroborated": 8,
+  "leads": [
     {
-      "url": "https://boxnow.live/sitemap.xml",
-      "status": "error",
-      "error": "RuntimeError: DoH returned no A record for boxnow.live"
+      "id": "https://en.wikipedia.org/wiki/Abass_Baraou",
+      "name": "Abass Baraou",
+      "reach_cm": 176.0,
+      "url": "https://boxnow.biz/boxers/abass-baraou-91",
+      "strict_bout_appearances": 3,
+      "martialbot_reach_cm": 176.0,
+      "agrees_martialbot": true
     },
     {
-      "url": "https://boxnow.live/sitemap_index.xml",
-      "status": "error",
-      "error": "RuntimeError: DoH returned no A record for boxnow.live"
+      "id": "https://champinon.info/boxing/john-hedges/",
+      "name": "John Hedges",
+      "reach_cm": 195.0,
+      "url": "https://boxnow.biz/boxers/john-hedges-84",
+      "strict_bout_appearances": 3,
+      "martialbot_reach_cm": null,
+      "agrees_martialbot": null
     },
     {
-      "url": "https://boxnow.live/sitemap-index.xml",
-      "status": "error",
-      "error": "RuntimeError: DoH returned no A record for boxnow.live"
+      "id": "https://en.wikipedia.org/wiki/Bilal_Fawaz",
+      "name": "Bilal Fawaz",
+      "reach_cm": 181.0,
+      "url": "https://boxnow.biz/boxers/bilal-fawaz-167",
+      "strict_bout_appearances": 2,
+      "martialbot_reach_cm": null,
+      "agrees_martialbot": null
     },
     {
-      "url": "https://boxnow.live/sitemaps.xml",
-      "status": "error",
-      "error": "RuntimeError: DoH returned no A record for boxnow.live"
+      "id": "https://champinon.info/boxing/sean-hemphill/",
+      "name": "Sean Hemphill",
+      "reach_cm": 185.0,
+      "url": "https://boxnow.biz/boxers/sean-hemphill-23",
+      "strict_bout_appearances": 2,
+      "martialbot_reach_cm": 185.0,
+      "agrees_martialbot": true
     },
     {
-      "url": "https://boxnow.live/sitemap/sitemap.xml",
-      "status": "error",
-      "error": "RuntimeError: DoH returned no A record for boxnow.live"
+      "id": "https://champinon.info/boxing/ellie-hellewell/",
+      "name": "Ellie Hellewell",
+      "reach_cm": 162.56,
+      "url": "https://boxnow.biz/boxers/ellie-hellewell-117",
+      "strict_bout_appearances": 1,
+      "martialbot_reach_cm": null,
+      "agrees_martialbot": null
     },
     {
-      "url": "https://boxnow.live/boxers",
-      "status": "error",
-      "error": "RuntimeError: DoH returned no A record for boxnow.live"
+      "id": "https://en.wikipedia.org/wiki/Uisma_Lima",
+      "name": "Uisma Lima",
+      "reach_cm": 188.0,
+      "url": "https://boxnow.biz/boxers/uisma-lima-155",
+      "strict_bout_appearances": 1,
+      "martialbot_reach_cm": 187.0,
+      "agrees_martialbot": true
     },
     {
-      "url": "https://boxnow.live/fighters",
-      "status": "error",
-      "error": "RuntimeError: DoH returned no A record for boxnow.live"
+      "id": "https://champinon.info/boxing/antonio-moran/",
+      "name": "Antonio Moran",
+      "reach_cm": 180.0,
+      "url": "https://boxnow.biz/boxers/antonio-moran-61",
+      "strict_bout_appearances": 1,
+      "martialbot_reach_cm": 180.0,
+      "agrees_martialbot": true
+    },
+    {
+      "id": "https://champinon.info/boxing/ben-vaughan/",
+      "name": "Ben Vaughan",
+      "reach_cm": 176.0,
+      "url": "https://boxnow.biz/boxers/ben-vaughan-47",
+      "strict_bout_appearances": 1,
+      "martialbot_reach_cm": 176.0,
+      "agrees_martialbot": true
+    },
+    {
+      "id": "https://champinon.info/boxing/daniel-lugo/",
+      "name": "Daniel Lugo",
+      "reach_cm": 171.0,
+      "url": "https://boxnow.biz/boxers/daniel-lugo-93",
+      "strict_bout_appearances": 1,
+      "martialbot_reach_cm": 171.0,
+      "agrees_martialbot": true
+    },
+    {
+      "id": "https://champinon.info/boxing/dario-morello/",
+      "name": "Dario Morello",
+      "reach_cm": 178.0,
+      "url": "https://boxnow.biz/boxers/dario-morello-27",
+      "strict_bout_appearances": 1,
+      "martialbot_reach_cm": 178.0,
+      "agrees_martialbot": true
+    },
+    {
+      "id": "https://en.wikipedia.org/wiki/Osleys_Iglesias",
+      "name": "Osleys Iglesias",
+      "reach_cm": 190.0,
+      "url": "https://boxnow.biz/boxers/osleys-iglesias-126",
+      "strict_bout_appearances": 1,
+      "martialbot_reach_cm": 189.0,
+      "agrees_martialbot": true
+    },
+    {
+      "id": "https://en.wikipedia.org/wiki/Patrick_Brown_%28boxer%29",
+      "name": "Pat Brown",
+      "reach_cm": 193.0,
+      "url": "https://boxnow.biz/boxers/pat-brown-85",
+      "strict_bout_appearances": 1,
+      "martialbot_reach_cm": null,
+      "agrees_martialbot": null
+    },
+    {
+      "id": "https://en.wikipedia.org/wiki/Regie_Suganob",
+      "name": "Regie Suganob",
+      "reach_cm": 165.0,
+      "url": "https://boxnow.biz/boxers/regie-suganob-68",
+      "strict_bout_appearances": 1,
+      "martialbot_reach_cm": null,
+      "agrees_martialbot": null
     }
   ],
-  "rows": [],
+  "discovery_diagnostics": [
+    {
+      "url": "https://boxnow.biz/sitemap.xml",
+      "status": "ok",
+      "content_type": "application/xml; charset=utf-8",
+      "locs": 257,
+      "bytes": 43664
+    },
+    {
+      "url": "https://boxnow.biz/sitemap_index.xml",
+      "status": "error",
+      "error": "RuntimeError: direct=HTTPError; doh-curl=curl: (22) The requested URL returned error: 404\n"
+    },
+    {
+      "url": "https://boxnow.biz/sitemap-index.xml",
+      "status": "error",
+      "error": "RuntimeError: direct=HTTPError; doh-curl=curl: (22) The requested URL returned error: 404\n"
+    },
+    {
+      "url": "https://boxnow.biz/sitemaps.xml",
+      "status": "error",
+      "error": "RuntimeError: direct=HTTPError; doh-curl=curl: (22) The requested URL returned error: 404\n"
+    },
+    {
+      "url": "https://boxnow.biz/sitemap/sitemap.xml",
+      "status": "error",
+      "error": "RuntimeError: direct=HTTPError; doh-curl=curl: (22) The requested URL returned error: 404\n"
+    }
+  ],
+  "rows": [
+    {
+      "name": "Abass Baraou",
+      "url": "https://boxnow.biz/boxers/abass-baraou-91",
+      "h1": "Abass Baraou",
+      "reach_cm": 176.0,
+      "status": "lead",
+      "martialbot_reach_cm": 176.0,
+      "agrees_martialbot": true
+    },
+    {
+      "name": "John Hedges",
+      "url": "https://boxnow.biz/boxers/john-hedges-84",
+      "h1": "John Hedges",
+      "reach_cm": 195.0,
+      "status": "lead"
+    },
+    {
+      "name": "Bilal Fawaz",
+      "url": "https://boxnow.biz/boxers/bilal-fawaz-167",
+      "h1": "Bilal Fawaz",
+      "reach_cm": 181.0,
+      "status": "lead"
+    },
+    {
+      "name": "Padraig McCrory",
+      "url": "https://boxnow.biz/boxers/padraig-mccrory-131",
+      "h1": "Padraig McCrory",
+      "reach_cm": null,
+      "status": "no_reach"
+    },
+    {
+      "name": "Sean Hemphill",
+      "url": "https://boxnow.biz/boxers/sean-hemphill-23",
+      "h1": "Sean Hemphill",
+      "reach_cm": 185.0,
+      "status": "lead",
+      "martialbot_reach_cm": 185.0,
+      "agrees_martialbot": true
+    },
+    {
+      "name": "Ellie Hellewell",
+      "url": "https://boxnow.biz/boxers/ellie-hellewell-117",
+      "h1": "Ellie Hellewell",
+      "reach_cm": 162.56,
+      "status": "lead"
+    },
+    {
+      "name": "Uisma Lima",
+      "url": "https://boxnow.biz/boxers/uisma-lima-155",
+      "h1": "Uisma Lima",
+      "reach_cm": 188.0,
+      "status": "lead",
+      "martialbot_reach_cm": 187.0,
+      "agrees_martialbot": true
+    },
+    {
+      "name": "Antonio Moran",
+      "url": "https://boxnow.biz/boxers/antonio-moran-61",
+      "h1": "Antonio Moran",
+      "reach_cm": 180.0,
+      "status": "lead",
+      "martialbot_reach_cm": 180.0,
+      "agrees_martialbot": true
+    },
+    {
+      "name": "Ben Vaughan",
+      "url": "https://boxnow.biz/boxers/ben-vaughan-47",
+      "h1": "Ben Vaughan",
+      "reach_cm": 176.0,
+      "status": "lead",
+      "martialbot_reach_cm": 176.0,
+      "agrees_martialbot": true
+    },
+    {
+      "name": "Conor Wallace",
+      "url": "https://boxnow.biz/boxers/conor-wallace-125",
+      "h1": "Conor Wallace",
+      "reach_cm": null,
+      "status": "no_reach"
+    },
+    {
+      "name": "Daniel Lugo",
+      "url": "https://boxnow.biz/boxers/daniel-lugo-93",
+      "h1": "Daniel Lugo",
+      "reach_cm": 171.0,
+      "status": "lead",
+      "martialbot_reach_cm": 171.0,
+      "agrees_martialbot": true
+    },
+    {
+      "name": "Dario Morello",
+      "url": "https://boxnow.biz/boxers/dario-morello-27",
+      "h1": "Dario Morello",
+      "reach_cm": 178.0,
+      "status": "lead",
+      "martialbot_reach_cm": 178.0,
+      "agrees_martialbot": true
+    },
+    {
+      "name": "Osleys Iglesias",
+      "url": "https://boxnow.biz/boxers/osleys-iglesias-126",
+      "h1": "Osleys Iglesias",
+      "reach_cm": 190.0,
+      "status": "lead",
+      "martialbot_reach_cm": 189.0,
+      "agrees_martialbot": true
+    },
+    {
+      "name": "Pat Brown",
+      "url": "https://boxnow.biz/boxers/pat-brown-85",
+      "h1": "Pat Brown",
+      "reach_cm": 193.0,
+      "status": "lead"
+    },
+    {
+      "name": "Regie Suganob",
+      "url": "https://boxnow.biz/boxers/regie-suganob-68",
+      "h1": "Regie Suganob",
+      "reach_cm": 165.0,
+      "status": "lead"
+    }
+  ],
   "policy": "Public sitemap/listing discovery, exact H1 identity and plausible numeric reach. Automatic additions require independent exact-identity MartialBot agreement within 1 cm; no guessed IDs."
 }
