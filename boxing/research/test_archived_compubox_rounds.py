@@ -45,13 +45,13 @@ class ArchivedCompuboxTests(unittest.TestCase):
         payload={'tables':[[[
           '5/3/08 - Carson, CA Oscar De La Hoya W 12 Steve Forbes '
           'Total Punches Landed/Thrown Round 1 2 3 4 5 6 7 8 9 10 11 12 '
-          'Hoya 1/2 1/2 1/2 1/2 1/2 1/2 1/2 1/2 1/2 1/2 1/2 1/2 '
+          'Delahoya 1/2 1/2 1/2 1/2 1/2 1/2 1/2 1/2 1/2 1/2 1/2 1/2 '
           'Forbes 1/3 1/3 1/3 1/3 1/3 1/3 1/3 1/3 1/3 1/3 1/3 1/3 '
           'Total Jabs Thrown/Landed Round 1 2 3 4 5 6 7 8 9 10 11 12 '
-          'Hoya 1/1 1/1 1/1 1/1 1/1 1/1 1/1 1/1 1/1 1/1 1/1 1/1 '
+          'Delahoya 1/1 1/1 1/1 1/1 1/1 1/1 1/1 1/1 1/1 1/1 1/1 1/1 '
           'Forbes 0/1 0/1 0/1 0/1 0/1 0/1 0/1 0/1 0/1 0/1 0/1 0/1 '
           'Total Power Punches Landed/Thrown Round 1 2 3 4 5 6 7 8 9 10 11 12 '
-          'Hoya 0/1 0/1 0/1 0/1 0/1 0/1 0/1 0/1 0/1 0/1 0/1 0/1 '
+          'Delahoya 0/1 0/1 0/1 0/1 0/1 0/1 0/1 0/1 0/1 0/1 0/1 0/1 '
           'Forbes 1/2 1/2 1/2 1/2 1/2 1/2 1/2 1/2 1/2 1/2 1/2 1/2 Final Punch Stats'
         ]]]}
         out,err=parse_candidate(d,'https://web.archive.org/web/20080704/http://compuboxonline.com/stat_files/delahoya-forbes.html',payload)
