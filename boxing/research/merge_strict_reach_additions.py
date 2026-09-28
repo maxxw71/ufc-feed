@@ -49,6 +49,57 @@ def readjsonl(path):
         except Exception:pass
     return out
 
+OFFICIAL_MARKERS=(
+ 'official','wba_','wbc_','bkfc','matchroom','top_rank','toprank','premier_boxing_champions',
+ 'pbc_','queensberry','salita','world_boxing_council','ibf_','wbo_'
+)
+
+def _source_name(v):
+    return str(v or '').strip().casefold()
+
+def validate_candidate(x):
+    """Require real provenance, not merely presence in a whitelisted file."""
+    reach=(x.get('fields') or {}).get('reach_cm')
+    try:r=float(reach)
+    except Exception:return False,'missing_or_non_numeric_reach'
+    if not 120<=r<=270:return False,'implausible_reach'
+
+    evidence=x.get('evidence') or []
+    if not isinstance(evidence,list) or not evidence:
+        return False,'missing_evidence'
+
+    # First-party structured sources can stand alone when exact identity is
+    # explicit. Everything else must demonstrate independent numeric consensus.
+    for e in evidence:
+        if not isinstance(e,dict):continue
+        src=_source_name(e.get('source'))
+        q=_source_name(x.get('quality'))
+        if any(m in src or m in q for m in OFFICIAL_MARKERS):
+            if e.get('exact_identity') is False:
+                return False,'official_evidence_identity_not_exact'
+            return True,'official_exact_identity'
+
+    for e in evidence:
+        if not isinstance(e,dict):continue
+        sources=e.get('sources')
+        if not isinstance(sources,list):continue
+        vals=[];families=set()
+        for s in sources:
+            if not isinstance(s,dict):continue
+            fam=_source_name(s.get('source'))
+            try:v=float(s.get('reported_reach_cm'))
+            except Exception:continue
+            if not 120<=v<=270:continue
+            if fam:
+                families.add(fam)
+                vals.append(v)
+        if len(families)>=2 and len(vals)>=2 and max(vals)-min(vals)<=1.01:
+            if e.get('exact_identity') is False:
+                return False,'consensus_evidence_identity_not_exact'
+            return True,'independent_numeric_consensus'
+
+    return False,'no_official_or_two_source_numeric_consensus'
+
 def main():
     existing={}
     for x in readjsonl(SUP):
@@ -56,14 +107,20 @@ def main():
         if sid:existing[sid]=x
 
     groups=defaultdict(list)
-    source_counts={}
+    source_counts={};validated_source_counts={};rejected_candidates=[]
     for path in FILES:
-        rows=readjsonl(path);source_counts[path.name]=len(rows)
+        rows=readjsonl(path);source_counts[path.name]=len(rows);validated_source_counts[path.name]=0
         for x in rows:
+            ok,reason=validate_candidate(x)
+            if not ok:
+                rejected_candidates.append({'addition_file':path.name,'target_source_id':x.get('target_source_id'),
+                                            'name':x.get('name'),'reason':reason})
+                continue
             sid=x.get('target_source_id');reach=(x.get('fields') or {}).get('reach_cm')
             try:r=float(reach)
             except Exception:continue
-            if sid and 120<=r<=270:groups[sid].append((path.name,x,r))
+            if sid and 120<=r<=270:
+                groups[sid].append((path.name,x,r));validated_source_counts[path.name]+=1
 
     merged=[];skipped_existing=[];conflicts=[]
     for sid,items in groups.items():
@@ -101,10 +158,12 @@ def main():
         for x in sorted(existing.values(),key=lambda z:(z.get('name',''),z.get('target_source_id',''))):
             f.write(json.dumps(x,ensure_ascii=False)+'\n')
     report={'generated_at':dt.datetime.now(dt.timezone.utc).isoformat(),'source_counts':source_counts,
+            'validated_source_counts':validated_source_counts,
+            'rejected_candidate_rows':len(rejected_candidates),'rejected_candidates':rejected_candidates,
             'candidate_fighters':len(groups),'merged':len(merged),'merged_profiles':merged,
             'skipped_existing_reach':len(skipped_existing),'conflicts_quarantined':len(conflicts),
             'conflicts':conflicts,
-            'policy':'Whitelisted strict corroboration files only; never overwrite existing reach; candidate sources must agree within 1 cm or fighter is quarantined.'}
+            'policy':'A whitelisted file is not sufficient by itself. Each row must have exact-identity first-party/official evidence or >=2 independent numeric reach sources agreeing within 1.01 cm. Existing reach is never overwritten; cross-file disagreements >1 cm are quarantined.'}
     REPORT.write_text(json.dumps(report,indent=2,ensure_ascii=False))
     print(json.dumps({k:report[k] for k in ('source_counts','candidate_fighters','merged','skipped_existing_reach','conflicts_quarantined')},indent=2))
 
