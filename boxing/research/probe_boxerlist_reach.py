@@ -12,7 +12,7 @@ addition requires:
 Conflicts are quarantined and existing strict reach is never overwritten.
 """
 from __future__ import annotations
-import concurrent.futures as cf,datetime as dt,json,re,statistics,unicodedata,urllib.parse,urllib.request,xml.etree.ElementTree as ET
+import concurrent.futures as cf,datetime as dt,gzip,json,re,statistics,unicodedata,urllib.parse,urllib.request,xml.etree.ElementTree as ET
 from pathlib import Path
 from bs4 import BeautifulSoup
 
@@ -40,6 +40,11 @@ def fetch(url,limit=12_000_000):
         return r.geturl(),raw
 
 def xml_locs(raw):
+    # BoxerList's boxer sitemap shards are served as .xml.gz.  Decompress by
+    # magic bytes rather than trusting content-type/extension.
+    if raw[:2]==b'\x1f\x8b':
+        try:raw=gzip.decompress(raw)
+        except Exception:return []
     try:root=ET.fromstring(raw)
     except Exception:return []
     return [(x.text or '').strip() for x in root.iter() if x.tag.endswith('loc') and (x.text or '').strip()]
