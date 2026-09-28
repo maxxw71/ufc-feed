@@ -37,6 +37,8 @@ KNOWN_URLS=[
  'http://compuboxonline.com/stat_files/DIA-MAL3.htm',
  'http://compuboxonline.com/stat_files/KLI-JOH.htm',
  'http://www.compuboxonline.com/featured_stats/V_Klitschko_KO_10_Arreola.pdf',
+ 'http://www.compuboxonline.com/stat_files/COT-MOS.htm',
+ 'http://compuboxonline.com/stat_files/MOS-MOR.htm',
 ]
 
 
@@ -60,6 +62,19 @@ def query_exact(url):
         x=json.loads(r.read().decode('utf-8','replace'))
     return q,(x[1:] if isinstance(x,list) and x else [])
 
+def exact_variants(url):
+    p=urllib.parse.urlsplit(url)
+    host=(p.hostname or 'compuboxonline.com').lower()
+    path=p.path
+    variants=[]
+    for scheme in ('http','https'):
+        for www in (False,True):
+            for port in (False,True):
+                h=('www.' if www else '')+'compuboxonline.com'+(':80' if port else '')
+                v=urllib.parse.urlunsplit((scheme,h,path,'',''))
+                if v not in variants:variants.append(v)
+    return variants
+
 
 def main():
     rows=[];queries=[]
@@ -68,11 +83,14 @@ def main():
             q,x=query(p);queries.append({'prefix':p,'query':q,'rows':len(x),'error':None});rows.extend(x)
         except Exception as e:
             queries.append({'prefix':p,'rows':0,'error':type(e).__name__+': '+str(e)[:200]})
-    for url in KNOWN_URLS:
-        try:
-            q,x=query_exact(url);queries.append({'exact_url':url,'query':q,'rows':len(x),'error':None});rows.extend(x)
-        except Exception as e:
-            queries.append({'exact_url':url,'rows':0,'error':type(e).__name__+': '+str(e)[:200]})
+    for seed in KNOWN_URLS:
+        for url in exact_variants(seed):
+            try:
+                q,x=query_exact(url)
+                queries.append({'seed_url':seed,'exact_url':url,'query':q,'rows':len(x),'error':None})
+                rows.extend(x)
+            except Exception as e:
+                queries.append({'seed_url':seed,'exact_url':url,'rows':0,'error':type(e).__name__+': '+str(e)[:200]})
     grouped=defaultdict(list)
     for r in rows:
         if len(r)<5:continue
