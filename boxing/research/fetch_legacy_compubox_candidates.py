@@ -40,28 +40,42 @@ def main():
     for item in items:
         caps=item.get('captures') or []
         if not caps:continue
-        # Prefer newest distinct capture available in the index.
-        cap=caps[-1]
-        url=cap.get('snapshot_url')
-        rec={'canonical_key':item.get('canonical_key'),'snapshot_url':url,'timestamp':cap.get('timestamp')}
-        try:
-            raw=fetch(url)
-            soup=BeautifulSoup(raw,'lxml')
-            title=' '.join((soup.title.stripped_strings if soup.title else []))
-            text=' '.join(soup.stripped_strings)
-            tabs=tables(soup)
-            pair_density=len(re.findall(r'\b\d{1,3}\s*/\s*\d{1,3}\b',text))
-            rec.update({
-              'status':'fetched','title':title,'tables':tabs,
-              'table_count':len(tabs),'pair_density':pair_density,
-              'has_round_sequence':bool(re.search(r'\bRound\s+1\s+2(?:\s+3)?',text,re.I)),
-              'has_total':bool(re.search(r'Total\s+Punch',text,re.I)),
-              'has_jab':bool(re.search(r'\bJabs?\b',text,re.I)),
-              'has_power':bool(re.search(r'Power\s+Punch',text,re.I)),
-              'text_sample':text[:8000]
-            })
-        except Exception as e:
-            rec.update({'status':'fetch_error','error':type(e).__name__+': '+str(e)[:200]})
+        # Try the newest indexed captures first, but fall back through older
+        # distinct snapshots. Legacy Wayback pages are often degraded in the
+        # newest capture while an earlier snapshot still contains the tables.
+        rec={'canonical_key':item.get('canonical_key')}
+        attempts=[];best=None
+        for cap in reversed(caps):
+            url=cap.get('snapshot_url')
+            try:
+                raw=fetch(url)
+                soup=BeautifulSoup(raw,'lxml')
+                title=' '.join((soup.title.stripped_strings if soup.title else []))
+                text=' '.join(soup.stripped_strings)
+                tabs=tables(soup)
+                pair_density=len(re.findall(r'\b\d{1,3}\s*/\s*\d{1,3}\b',text))
+                candidate={
+                  'status':'fetched','snapshot_url':url,'timestamp':cap.get('timestamp'),
+                  'title':title,'tables':tabs,'table_count':len(tabs),'pair_density':pair_density,
+                  'has_round_sequence':bool(re.search(r'\bRound\s+1\s+2(?:\s+3)?',text,re.I)),
+                  'has_total':bool(re.search(r'Total\s+Punch',text,re.I)),
+                  'has_jab':bool(re.search(r'\bJabs?\b',text,re.I)),
+                  'has_power':bool(re.search(r'Power\s+Punch',text,re.I)),
+                  'text_sample':text[:8000]
+                }
+                attempts.append({'timestamp':cap.get('timestamp'),'status':'fetched','pair_density':pair_density})
+                if best is None or candidate['pair_density']>best['pair_density']:
+                    best=candidate
+                if pair_density>=12 and candidate['has_total'] and candidate['has_jab'] and candidate['has_power']:
+                    best=candidate;break
+            except Exception as e:
+                attempts.append({'timestamp':cap.get('timestamp'),'status':'fetch_error',
+                                 'error':type(e).__name__+': '+str(e)[:160]})
+        if best:
+            rec.update(best);rec['capture_attempts']=attempts
+        else:
+            rec.update({'status':'fetch_error','capture_attempts':attempts,
+                        'error':'all indexed captures failed'})
         rows.append(rec)
     likely=[r for r in rows if r.get('status')=='fetched' and r.get('pair_density',0)>=12 and r.get('has_total') and r.get('has_jab') and r.get('has_power')]
     out={'generated_at':dt.datetime.now(dt.timezone.utc).isoformat(),'candidates':len(items),
