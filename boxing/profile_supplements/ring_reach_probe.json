@@ -1,14 +1,109 @@
 {
-  "generated_at": "2026-09-28T01:58:28.438253+00:00",
-  "missing_targets": 265,
-  "directory_name_keys": 0,
-  "exact_directory_targets": 0,
+  "generated_at": "2026-09-28T11:02:48.107844+00:00",
+  "missing_targets": 241,
+  "sitemap_fighter_urls": 1002,
+  "directory_fighter_urls": 0,
+  "candidate_fighter_urls": 1002,
+  "profiles_fetched": 1002,
+  "matched_target_profiles": 0,
   "status_counts": {},
   "lead_count": 0,
   "martialbot_corroborated": 0,
   "martialbot_conflicts": 0,
   "corroborated_profiles": [],
   "conflicting_profiles": [],
+  "discovery_diagnostics": [
+    {
+      "url": "https://www.ringmagazine.com/sitemap.xml",
+      "final_url": "https://www.ringmagazine.com/sitemap.xml",
+      "status": "ok",
+      "locs": 6,
+      "robots_sitemaps": [],
+      "bytes": 994
+    },
+    {
+      "url": "https://www.ringmagazine.com/sitemap_index.xml",
+      "status": "error",
+      "error": "HTTPError: HTTP Error 404: Not Found"
+    },
+    {
+      "url": "https://www.ringmagazine.com/sitemap-index.xml",
+      "status": "error",
+      "error": "HTTPError: HTTP Error 404: Not Found"
+    },
+    {
+      "url": "https://www.ringmagazine.com/robots.txt",
+      "final_url": "https://www.ringmagazine.com/robots.txt",
+      "status": "ok",
+      "locs": 0,
+      "robots_sitemaps": [
+        "https://www.ringmagazine.com/sitemap.xml"
+      ],
+      "bytes": 74
+    },
+    {
+      "url": "https://www.ringmagazine.com/api/sitemap/sitemap-static",
+      "final_url": "https://www.ringmagazine.com/api/sitemap/sitemap-static",
+      "status": "ok",
+      "locs": 37,
+      "robots_sitemaps": [],
+      "bytes": 5726
+    },
+    {
+      "url": "https://www.ringmagazine.com/api/sitemap/sitemap-pages",
+      "final_url": "https://www.ringmagazine.com/api/sitemap/sitemap-pages",
+      "status": "ok",
+      "locs": 21,
+      "robots_sitemaps": [],
+      "bytes": 3213
+    },
+    {
+      "url": "https://www.ringmagazine.com/api/sitemap/sitemap-articles-1",
+      "final_url": "https://www.ringmagazine.com/api/sitemap/sitemap-articles-1",
+      "status": "ok",
+      "locs": 5000,
+      "robots_sitemaps": [],
+      "bytes": 1167286
+    },
+    {
+      "url": "https://www.ringmagazine.com/api/sitemap/sitemap-articles-2",
+      "final_url": "https://www.ringmagazine.com/api/sitemap/sitemap-articles-2",
+      "status": "ok",
+      "locs": 4771,
+      "robots_sitemaps": [],
+      "bytes": 1152255
+    },
+    {
+      "url": "https://www.ringmagazine.com/api/sitemap/sitemap-fighters",
+      "final_url": "https://www.ringmagazine.com/api/sitemap/sitemap-fighters",
+      "status": "ok",
+      "locs": 1000,
+      "robots_sitemaps": [],
+      "bytes": 169980
+    },
+    {
+      "url": "https://www.ringmagazine.com/api/sitemap/sitemap-events",
+      "final_url": "https://www.ringmagazine.com/api/sitemap/sitemap-events",
+      "status": "ok",
+      "locs": 333,
+      "robots_sitemaps": [],
+      "bytes": 61751
+    },
+    {
+      "url": "https://www.ringmagazine.com/sitemap",
+      "final_url": "https://www.ringmagazine.com/sitemap",
+      "status": "ok",
+      "locs": 0,
+      "robots_sitemaps": [],
+      "bytes": 1487208
+    },
+    {
+      "url": "https://www.ringmagazine.com/fighters",
+      "status": "ok",
+      "links": 0,
+      "bytes": 1663458
+    }
+  ],
   "rows": [],
-  "policy": "Explicit public The Ring directory profile + exact H1 identity. Automatic addition only when independent exact-identity MartialBot agrees within 1 cm."
+  "policy": "Explicit public The Ring fighter profile discovered from Ring sitemap/directory; exact rendered H1 identity. Automatic addition only when independent exact-identity MartialBot agrees within 1 cm."
 }
