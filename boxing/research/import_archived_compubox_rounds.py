@@ -343,12 +343,26 @@ def section(text,kind):
             stop=min(stop,m.end()+z.start())
     return text[m.end():stop]
 
-def pairs_for(section_text,last,rounds,allow_one_trailing_missing=False):
+def fighter_row_aliases(full,last):
+    """Strict table-label aliases derived only from the resolved fighter name."""
+    toks=re.findall(r"[A-Za-zÀ-ÿ0-9]+",str(full or ""))
+    vals={str(last or "").strip()}
+    # Legacy CompuBox sometimes compacts multipart surnames: "De La Hoya"
+    # appears as "Delahoya". Generate only suffixes of the already-resolved
+    # canonical fighter name, never arbitrary nicknames.
+    for n in (2,3):
+        if len(toks)>=n:
+            vals.add(''.join(toks[-n:]))
+    return sorted((v for v in vals if v),key=len,reverse=True)
+
+def pairs_for(section_text,last,rounds,allow_one_trailing_missing=False,aliases=None):
     if not section_text:
         return None
     minimum=rounds-1 if allow_one_trailing_missing and rounds>1 else rounds
+    labels=list(aliases or [last])
+    label_pat='(?:'+'|'.join(re.escape(x) for x in sorted(set(labels),key=len,reverse=True))+')'
     pat=re.compile(
-        r'\b'+re.escape(last)+r'\b\s+((?:\d{1,3}\s*/\s*\d{1,3}\s+){'
+        r'\b'+label_pat+r'\b\s+((?:\d{1,3}\s*/\s*\d{1,3}\s+){'
         +str(max(0,minimum-1))+r','+str(max(0,rounds-1))+r'}\d{1,3}\s*/\s*\d{1,3})',re.I
     )
     m=pat.search(section_text)
@@ -376,7 +390,7 @@ def parse_candidate(db,url,payload):
             return None,f'missing {kind} section'
         cats[kind]={}
         for last,full in bysurname.items():
-            vals=pairs_for(s,last,rounds,allow_one_trailing_missing=(kind in {'jab','power'}))
+            vals=pairs_for(s,last,rounds,allow_one_trailing_missing=(kind in {'jab','power'}),aliases=fighter_row_aliases(full,last))
             if not vals:
                 return None,f'missing {kind} round row for {full}'
             if kind=='total' and len(vals)!=rounds:
