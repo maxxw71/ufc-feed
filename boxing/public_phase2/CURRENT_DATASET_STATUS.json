@@ -1,9 +1,9 @@
 {
-  "generated_at": "2026-09-28T03:32:22.707493+00:00",
+  "generated_at": "2026-09-28T03:49:27.212039+00:00",
   "authoritative_for_current_strict_research_coverage": true,
   "scope": "strict/research-relevant boxing dataset and current prospective price collection",
   "do_not_use_as_current_strict_coverage": "boxing/public_reports/DATA_GAP_AUDIT.json",
-  "phase2_build_at": "20260928T021237Z",
+  "phase2_build_at": "20260928T034515Z",
   "database": {
     "status": "database_ready",
     "tables": [
@@ -93,25 +93,25 @@
       }
     },
     "height_cm": {
-      "fighters_present": 658,
+      "fighters_present": 662,
       "fighters_total": 723,
-      "fighter_coverage_pct": 91.01,
-      "missing_fighters": 65,
+      "fighter_coverage_pct": 91.56,
+      "missing_fighters": 61,
       "priced_bout_both_sides": {
-        "both_sides": 628,
-        "both_sides_pct": 86.03,
-        "at_least_one_side": 728
+        "both_sides": 640,
+        "both_sides_pct": 87.67,
+        "at_least_one_side": 730
       }
     },
     "reach_cm": {
-      "fighters_present": 466,
+      "fighters_present": 469,
       "fighters_total": 723,
-      "fighter_coverage_pct": 64.45,
-      "missing_fighters": 257,
+      "fighter_coverage_pct": 64.87,
+      "missing_fighters": 254,
       "priced_bout_both_sides": {
-        "both_sides": 404,
-        "both_sides_pct": 55.34,
-        "at_least_one_side": 655
+        "both_sides": 412,
+        "both_sides_pct": 56.44,
+        "at_least_one_side": 663
       }
     },
     "stance": {
@@ -226,10 +226,14 @@
     }
   },
   "punch_data": {
-    "full_round_reports": 40,
-    "full_round_fighter_observations": 80,
-    "fighters_with_any_prior_full_punch_fight": 13,
-    "snapshots_with_3plus_prior_full_punch_fights": 0,
+    "full_round_reports": 44,
+    "full_round_fighter_observations": 88,
+    "fight_total_supplement_observations": 2,
+    "fight_total_supplement_fights": 1,
+    "fighters_with_any_prior_punch_fight": 14,
+    "fighters_with_any_prior_full_round_punch_fight": 14,
+    "snapshots_with_3plus_prior_punch_fights": 1,
+    "snapshots_with_3plus_prior_full_round_punch_fights": 1,
     "summary_articles_discovered": 158,
     "summary_rows": 32,
     "summary_distinct_bouts": 24,
