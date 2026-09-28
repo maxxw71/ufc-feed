@@ -219,9 +219,10 @@ class BoxingSceneCompuBoxResolutionTests(unittest.TestCase):
         self.assertEqual(out['Jhonny Gonzalez']['opponent_total_accuracy_pct'],17.0)
 
     def test_postfight_simple_total_thrown(self):
-        text='Rob Brant upset Ryota Murata by throwing 1,262 punches in the fight.'
+        text='Rob Brant upset Ryota Murata to win the title by throwing 1,262 punches in the fight.'
         out=parse_explicit_stats(text,'Rob Brant','Ryota Murata')
         self.assertEqual(out['Rob Brant']['total_thrown'],1262)
+        self.assertNotIn('total_thrown',out['Ryota Murata'])
 
 
 if __name__=='__main__':
