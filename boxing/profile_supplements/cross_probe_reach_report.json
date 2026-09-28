@@ -1,22 +1,40 @@
 {
-  "generated_at": "2026-09-28T12:04:53.916135+00:00",
-  "missing_targets": 229,
-  "targets_with_any_explicit_lead": 70,
+  "generated_at": "2026-09-28T12:14:23.977861+00:00",
+  "missing_targets": 224,
+  "targets_with_any_explicit_lead": 69,
   "agreement_candidates": 0,
   "accepted_additions": 0,
-  "conflicts_quarantined": 0,
-  "singleton_leads": 67,
+  "conflicts_quarantined": 1,
+  "singleton_leads": 63,
   "additions": [],
   "agreements": [],
-  "conflicts": [],
+  "conflicts": [
+    {
+      "name": "Ezra Taylor",
+      "target_source_id": "https://en.wikipedia.org/wiki/Ezra_Taylor_%28boxer%29",
+      "reason": "source_internal_conflict",
+      "conflicts": [
+        {
+          "source": "boxingnews",
+          "values": [
+            177.8,
+            187.96
+          ]
+        }
+      ]
+    }
+  ],
   "singletons": [
     {
-      "name": "Tyrone McKenna",
+      "name": "Ezra Taylor",
       "sources": [
         {
-          "source": "martialbot",
-          "reach_cm": 185.0,
-          "url": "https://www.martialbot.com/boxing/boxers/tyrone-mckenna-5f0af8cf438e26cd498baa2677a888bb"
+          "source": "boxing_showtimes",
+          "reach_cm": 190.5,
+          "url": "https://m.boxingshowtimes.com/boxers/ezra-the-cannon-taylor",
+          "source_detail": "boxing_showtimes_public_profile",
+          "raw_display": "75",
+          "quality": "explicit_public_profile_lead_only"
         }
       ]
     },
@@ -31,12 +49,28 @@
       ]
     },
     {
-      "name": "John Hedges",
+      "name": "Ivan Zucco",
       "sources": [
         {
-          "source": "boxnow",
-          "reach_cm": 195.0,
-          "url": "https://boxnow.biz/boxers/john-hedges-84"
+          "source": "boxing_showtimes",
+          "reach_cm": 185.42,
+          "url": "https://boxingshowtimes.com/boxers/ivan-zucco",
+          "source_detail": "boxing_showtimes_public_profile",
+          "raw_display": "73",
+          "quality": "explicit_public_profile_lead_only"
+        }
+      ]
+    },
+    {
+      "name": "Rhiannon Dixon",
+      "sources": [
+        {
+          "source": "reddit_fight_thread",
+          "reach_cm": 167.64,
+          "url": "https://www.reddit.com/r/Boxing/comments/1friv2x",
+          "source_detail": "reddit_tale_of_tape",
+          "raw_display": "66 in",
+          "quality": "community_tale_of_tape_lead_only"
         }
       ]
     },
@@ -121,16 +155,6 @@
       ]
     },
     {
-      "name": "Ema Kozin",
-      "sources": [
-        {
-          "source": "martialbot",
-          "reach_cm": 174.0,
-          "url": "https://www.martialbot.com/boxing/boxers/ema-kozin-a651228bb00809cf70e183ffb9ec07b1"
-        }
-      ]
-    },
-    {
       "name": "Gavin Gwynne",
       "sources": [
         {
@@ -157,16 +181,6 @@
           "source": "martialbot",
           "reach_cm": 165.0,
           "url": "https://www.martialbot.com/boxing/boxers/jordan-gill-4f9578c4ecb42e364f5bc929179a98a1"
-        }
-      ]
-    },
-    {
-      "name": "Jorge Silva",
-      "sources": [
-        {
-          "source": "boxerlist",
-          "reach_cm": 183.0,
-          "url": "https://boxerlist.com/boxer/jorge-silva/335418"
         }
       ]
     },
@@ -287,16 +301,6 @@
           "source": "martialbot",
           "reach_cm": 183.0,
           "url": "https://www.martialbot.com/boxing/boxers/braian-nahuel-suarez-6da92e0debe8779475c334da700205ed"
-        }
-      ]
-    },
-    {
-      "name": "Bryan Flores",
-      "sources": [
-        {
-          "source": "boxerlist",
-          "reach_cm": 191.0,
-          "url": "https://boxerlist.com/boxer/bryan-flores/528090"
         }
       ]
     },
@@ -541,16 +545,6 @@
       ]
     },
     {
-      "name": "Raiko Santana",
-      "sources": [
-        {
-          "source": "ready_to_fight",
-          "reach_cm": 178.0,
-          "url": "https://rtfight.com/boxing-profiles/boxer-professional-Raiko-Santana-02ovb"
-        }
-      ]
-    },
-    {
       "name": "Ramla Ali",
       "sources": [
         {
@@ -577,16 +571,6 @@
           "source": "martialbot",
           "reach_cm": 163.0,
           "url": "https://www.martialbot.com/boxing/boxers/samuel-carmona-ac39742c83db4e8049d305cdd386ad83"
-        }
-      ]
-    },
-    {
-      "name": "Steve Robinson",
-      "sources": [
-        {
-          "source": "boxerlist",
-          "reach_cm": 178.0,
-          "url": "https://boxerlist.com/boxer/steve-robinson/1466"
         }
       ]
     },
