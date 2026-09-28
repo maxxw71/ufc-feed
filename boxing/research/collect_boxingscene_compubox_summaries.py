@@ -721,6 +721,15 @@ def parse_prefight_baselines(text,a,b):
         # Exact-name historical-review metrics. These avoid ambiguity from
         # surname aliases and allow decimal punctuation inside the sentence.
         ef=re.escape(f)
+
+        # Exact full-name opponent accuracy. This avoids alias-group edge cases
+        # in possessive phrases such as "Jhonny Gonzalez's opponents landed
+        # just 17% of their total punches."
+        rx=re.compile(
+            ef+r"['’]s\s+opponents?[^!?]{0,140}?landed\s+"
+            r"(?:just\s+)?(\d+(?:\.\d+)?)%\s+of\s+(?:their\s+)?(?:total\s+)?punches",re.I)
+        for m in rx.finditer(txt):setv(f,'opponent_total_accuracy_pct',m.group(1))
+
         rx=re.compile(
             ef+r"(?:['’]s)?[^!?]{0,100}?\+\s*(\d+(?:\.\d+)?)\s+"
             r"(?:compubox\s+)?plus\s*/?\s*minus(?:\s+rating)?",re.I)
