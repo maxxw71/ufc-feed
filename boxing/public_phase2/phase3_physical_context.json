@@ -2,7 +2,7 @@
   "status": "EXPLORATORY_STATIC_PHYSICAL_PROXIES_AND_UNVERIFIED_PRICES",
   "coverage": {
     "bouts": 730,
-    "reach_pair": 415,
+    "reach_pair": 426,
     "height_pair": 643,
     "stance_pair": 730,
     "title_bouts": 377,
@@ -1715,6 +1715,22 @@
             "avg_book_count": 4.365384615384615
           }
         },
+        "REACH": {
+          "rule": "REACH__price1.2__reach3",
+          "validation": {
+            "bets": 51,
+            "wins": 37,
+            "losses": 14,
+            "win_pct": 72.54901960784314,
+            "wilson95_lower_pct": 59.05308805092127,
+            "profit_median_units": 0.8795504016975242,
+            "roi_median_pct": 1.7246086307794593,
+            "profit_best_units": 2.6503453844029483,
+            "roi_best_pct": 5.196755655692056,
+            "avg_market_prob": 0.6748307076676215,
+            "avg_book_count": 4.647058823529412
+          }
+        },
         "AGE_HEIGHT": {
           "rule": "AGE_HEIGHT__price1.2__age3__height3",
           "validation": {
@@ -1729,22 +1745,6 @@
             "roi_best_pct": 16.313959631844398,
             "avg_market_prob": 0.6759907664939345,
             "avg_book_count": 3.9
-          }
-        },
-        "REACH": {
-          "rule": "REACH__price1.2__reach3",
-          "validation": {
-            "bets": 50,
-            "wins": 36,
-            "losses": 14,
-            "win_pct": 72.0,
-            "wilson95_lower_pct": 58.334612854010324,
-            "profit_median_units": 0.4943652165123391,
-            "roi_median_pct": 0.9887304330246782,
-            "profit_best_units": 2.224813469509331,
-            "roi_best_pct": 4.449626939018662,
-            "avg_market_prob": 0.6744075778003621,
-            "avg_book_count": 4.66
           }
         },
         "AGE_REACH": {
