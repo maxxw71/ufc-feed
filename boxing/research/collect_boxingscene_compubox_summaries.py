@@ -525,6 +525,14 @@ def parse_explicit_stats(text,a,b):
         for m in rx.finditer(txt):
             setv(f,'jab_landed_per_round',m.group(1));setv(f,'jab_thrown_per_round',m.group(2))
 
+    # Simple explicit post-fight total output, e.g.
+    # "Brant ... by throwing 1,262 punches". This function is used for
+    # current-fight observations only outside historical-review mode.
+    for f,p in [(a,pa),(b,pb)]:
+        rx=re.compile(p+r'[^.!?]{0,140}?(?:threw|throwing)\s+(\d{1,4}(?:,\d{3})?)\s+(?:total\s+)?punches\b',re.I)
+        for m in rx.finditer(txt):
+            setv(f,'total_thrown',m.group(1).replace(',',''))
+
     for f in (a,b):
         if out[f].pop('_conflict',False):
             details=out[f].get('_conflict_details',[])
@@ -567,6 +575,36 @@ def parse_prefight_baselines(text,a,b):
 
     for f in (a,b):
         p=fighter_patterns(f)
+
+        # "In his last 4 fights Anthony Joshua ... (18.2 landed/49.2 thrown ... jab- 7.3 per round)"
+        rx=re.compile(
+            r'(?:in\s+)?(?:his|her)\s+last\s+(\d+)\s+fights?\s+'+p+
+            r'[^.!?]{0,220}?\(\s*(\d+(?:\.\d+)?)\s+landed\s*/\s*(\d+(?:\.\d+)?)\s+thrown'
+            r'[^)]{0,140}?jab[^0-9]{0,20}(\d+(?:\.\d+)?)\s+per\s+round',re.I)
+        for m in rx.finditer(txt):
+            setv(f,'history_window_fights',m.group(1))
+            setv(f,'total_landed_per_round',m.group(2))
+            setv(f,'total_thrown_per_round',m.group(3))
+            setv(f,'jab_landed_per_round',m.group(4))
+
+        # Historical-review exact per-round output:
+        # "Ponce De Leon ... landing an average of 52 of 136 punches per round."
+        rx=re.compile(
+            p+SENTENCE_CHAR+r'{0,180}?(?:landed|landing)\s+(?:an?\s+)?(?:average|avg\.?)(?:\s+of)?\s+'
+            r'(\d+(?:\.\d+)?)\s+of\s+(\d+(?:\.\d+)?)\s+(?:total\s+)?punches?\s+per\s+round',re.I)
+        for m in rx.finditer(txt):
+            setv(f,'total_landed_per_round',m.group(1))
+            setv(f,'total_thrown_per_round',m.group(2))
+
+        # "De Leon averaged 12 of 52 per round" (article is already gated to
+        # historical-review mode, so this remains a historical aggregate).
+        rx=re.compile(
+            p+SENTENCE_CHAR+r'{0,120}?(?:averaged|avg\.?d?)\s+'
+            r'(\d+(?:\.\d+)?)\s+of\s+(\d+(?:\.\d+)?)\s+per\s+round',re.I)
+        for m in rx.finditer(txt):
+            setv(f,'total_landed_per_round',m.group(1))
+            setv(f,'total_thrown_per_round',m.group(2))
+
         # "Charlo (last 5 fights) averaged just 13.6 landed/43.1 thrown"
         rx=re.compile(
             p+r'\s*\(\s*last\s+(\d+)\s+fights?\s*\)[^.!?]{0,90}?'
