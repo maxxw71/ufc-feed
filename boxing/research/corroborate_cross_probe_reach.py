@@ -82,6 +82,21 @@ def main():
             add(x.get('target_name') or x.get('name'),'wba_official',
                 x.get('reach_cm'),x.get('url'))
 
+    # Manually discovered public leads are persisted so web-indexed tale-of-
+    # the-tape/profile evidence is not lost between runs. Group by source_family:
+    # multiple disagreeing values from the same publisher are an internal
+    # conflict and can never count as two independent sources.
+    manual=SUP/'manual_public_reach_leads.jsonl'
+    if manual.exists():
+        for line in manual.read_text().splitlines():
+            if not line.strip():continue
+            try:x=json.loads(line)
+            except Exception:continue
+            add(x.get('name'),x.get('source_family') or x.get('source') or 'manual_public',
+                x.get('reported_reach_cm'),x.get('url'),
+                {'source_detail':x.get('source'),'raw_display':x.get('raw_display'),
+                 'quality':x.get('quality')})
+
     # Additional public probe families when they expose raw lead rows.
     for fname,source in [
       ('ringside24_reach_probe.json','ringside24'),
