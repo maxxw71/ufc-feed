@@ -11,6 +11,14 @@ from pathlib import Path
 OUT=Path('boxing/public_punch_audit/legacy_compubox_cdx_index.json')
 UA='Mozilla/5.0 AppwizaLegacyCompuBoxDiscovery/1.0'
 PREFIXES=[
+ 'http://www.compuboxonline.com:80/stat_files/',
+ 'https://www.compuboxonline.com:80/stat_files/',
+ 'http://compuboxonline.com:80/stat_files/',
+ 'https://compuboxonline.com:80/stat_files/',
+ 'http://www.compuboxonline.com:80/featured_stats/',
+ 'https://www.compuboxonline.com:80/featured_stats/',
+ 'http://compuboxonline.com:80/featured_stats/',
+ 'https://compuboxonline.com:80/featured_stats/',
  'http://www.compuboxonline.com/stat_files/',
  'https://www.compuboxonline.com/stat_files/',
  'http://compuboxonline.com/stat_files/',
