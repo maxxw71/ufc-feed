@@ -7,9 +7,10 @@ a review file so the existing strict archived CompuBox importer can validate
 identity/date/full-round completeness before any use.
 """
 from __future__ import annotations
-import datetime as dt,json,re,urllib.request
+import datetime as dt,io,json,re,urllib.request
 from pathlib import Path
 from bs4 import BeautifulSoup
+from pypdf import PdfReader
 
 ROOT=Path(__file__).resolve().parents[1]
 INDEX=ROOT/'public_punch_audit'/'legacy_compubox_cdx_index.json'
@@ -49,19 +50,30 @@ def main():
             url=cap.get('snapshot_url')
             try:
                 raw=fetch(url)
-                soup=BeautifulSoup(raw,'lxml')
-                title=' '.join((soup.title.stripped_strings if soup.title else []))
-                text=' '.join(soup.stripped_strings)
-                tabs=tables(soup)
+                is_pdf=raw.lstrip().startswith(b'%PDF')
+                if is_pdf:
+                    pdf=PdfReader(io.BytesIO(raw))
+                    text=' '.join((p.extract_text() or '') for p in pdf.pages)
+                    text=re.sub(r'\s+',' ',text).strip()
+                    title='PDF: '+str(item.get('canonical_key') or '')
+                    tabs=[]
+                    pages=len(pdf.pages)
+                else:
+                    soup=BeautifulSoup(raw,'lxml')
+                    title=' '.join((soup.title.stripped_strings if soup.title else []))
+                    text=' '.join(soup.stripped_strings)
+                    tabs=tables(soup)
+                    pages=None
                 pair_density=len(re.findall(r'\b\d{1,3}\s*/\s*\d{1,3}\b',text))
                 candidate={
                   'status':'fetched','snapshot_url':url,'timestamp':cap.get('timestamp'),
                   'title':title,'tables':tabs,'table_count':len(tabs),'pair_density':pair_density,
+                  'is_pdf':is_pdf,'pdf_pages':pages,
                   'has_round_sequence':bool(re.search(r'\bRound\s+1\s+2(?:\s+3)?',text,re.I)),
                   'has_total':bool(re.search(r'Total\s+Punch',text,re.I)),
                   'has_jab':bool(re.search(r'\bJabs?\b',text,re.I)),
                   'has_power':bool(re.search(r'Power\s+Punch',text,re.I)),
-                  'text_sample':text[:8000]
+                  'text_sample':text[:30000 if is_pdf else 8000]
                 }
                 attempts.append({'timestamp':cap.get('timestamp'),'status':'fetched','pair_density':pair_density})
                 if best is None or candidate['pair_density']>best['pair_density']:
