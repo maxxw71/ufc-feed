@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-28T11:11:30.127095+00:00",
+  "generated_at": "2026-09-28T11:15:00.831908+00:00",
   "source_counts": {
     "cross_source_reach_additions.jsonl": 5,
     "third_source_reach_additions.jsonl": 12,
@@ -7,7 +7,7 @@
     "fitequant_reach_additions.jsonl": 0,
     "boxrec_wayback_reach_additions.jsonl": 0,
     "boxrec_wiki_reach_additions.jsonl": 0,
-    "public_search_reach_additions.jsonl": 17,
+    "public_search_reach_additions.jsonl": 19,
     "ring_reach_additions.jsonl": 0,
     "ready_to_fight_reach_additions.jsonl": 1,
     "toprank_reach_additions.jsonl": 0,
@@ -23,27 +23,35 @@
     "ringside24_reach_additions.jsonl": 0,
     "boxingshowtimes_reach_additions.jsonl": 0
   },
-  "candidate_fighters": 46,
-  "merged": 2,
+  "candidate_fighters": 48,
+  "merged": 3,
   "merged_profiles": [
     {
-      "target_source_id": "https://en.wikipedia.org/wiki/Hannah_Rankin",
-      "name": "Hannah Rankin",
-      "reach_cm": 177.8,
+      "target_source_id": "https://champinon.info/boxing/claudio-squeo/",
+      "name": "Claudio Squeo",
+      "reach_cm": 177.9,
       "addition_files": [
         "public_search_reach_additions.jsonl"
       ]
     },
     {
-      "target_source_id": "https://en.wikipedia.org/wiki/Simon_Kean",
-      "name": "Simon Kean",
-      "reach_cm": 195.79,
+      "target_source_id": "https://champinon.info/boxing/franck-petitjean/",
+      "name": "Franck Petitjean",
+      "reach_cm": 170.97,
+      "addition_files": [
+        "public_search_reach_additions.jsonl"
+      ]
+    },
+    {
+      "target_source_id": "https://champinon.info/boxing/peter-dobson/",
+      "name": "Peter Dobson",
+      "reach_cm": 177.9,
       "addition_files": [
         "public_search_reach_additions.jsonl"
       ]
     }
   ],
-  "skipped_existing_reach": 44,
+  "skipped_existing_reach": 45,
   "conflicts_quarantined": 0,
   "conflicts": [],
   "policy": "Whitelisted strict corroboration files only; never overwrite existing reach; candidate sources must agree within 1 cm or fighter is quarantined."
