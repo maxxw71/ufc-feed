@@ -14,8 +14,8 @@ AUDIT=ROOT/'public_phase2'/'PROFILE_GAP_AUDIT.json'
 OUT=ROOT/'profile_supplements'/'boxnow_reach_probe.json'
 ADD=ROOT/'profile_supplements'/'boxnow_reach_additions.jsonl'
 MB=ROOT/'profile_supplements'/'martialbot_missing_reach_inventory.json'
-UA='Mozilla/5.0 AppwizaBoxNowReach/1.0'
-BASE='https://boxnow.live'
+UA='Mozilla/5.0 AppwizaBoxNowReach/2.0'
+BASE='https://boxnow.biz'
 SITEMAPS=[
  BASE+'/sitemap.xml',BASE+'/sitemap_index.xml',BASE+'/sitemap-index.xml',
  BASE+'/sitemaps.xml',BASE+'/sitemap/sitemap.xml'
@@ -31,12 +31,12 @@ _BOXNOW_IP=None
 def doh_boxnow_ip():
     global _BOXNOW_IP
     if _BOXNOW_IP:return _BOXNOW_IP
-    q='https://dns.google/resolve?'+urllib.parse.urlencode({'name':'boxnow.live','type':'A'})
+    q='https://dns.google/resolve?'+urllib.parse.urlencode({'name':'boxnow.biz','type':'A'})
     req=urllib.request.Request(q,headers={'User-Agent':UA})
     with urllib.request.urlopen(req,timeout=20) as r:
         obj=json.loads(r.read().decode('utf-8','replace'))
     ips=[str(x.get('data') or '') for x in obj.get('Answer') or [] if int(x.get('type') or 0)==1]
-    if not ips:raise RuntimeError('DoH returned no A record for boxnow.live')
+    if not ips:raise RuntimeError('DoH returned no A record for boxnow.biz')
     _BOXNOW_IP=ips[0]
     return _BOXNOW_IP
 
@@ -49,7 +49,7 @@ def fetch(url,limit=8_000_000):
             return r.geturl(),raw,r.headers.get('content-type','')
     except Exception as first:
         host=urllib.parse.urlsplit(url).hostname
-        if host not in {'boxnow.live','www.boxnow.live'}:raise
+        if host not in {'boxnow.biz','www.boxnow.biz'}:raise
         ip=doh_boxnow_ip()
         cmd=['curl','-L','--compressed','--silent','--show-error','--fail',
              '--connect-timeout','15','--max-time','35',
