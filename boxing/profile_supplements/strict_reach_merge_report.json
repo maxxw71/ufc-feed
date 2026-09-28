@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-28T12:56:27.960370+00:00",
+  "generated_at": "2026-09-28T13:08:19.633868+00:00",
   "source_counts": {
     "cross_source_reach_additions.jsonl": 5,
     "third_source_reach_additions.jsonl": 12,
@@ -13,6 +13,7 @@
     "toprank_reach_additions.jsonl": 0,
     "pbc_reach_additions.jsonl": 0,
     "wba_direct_reach_additions.jsonl": 2,
+    "wba_wayback_reach_additions.jsonl": 0,
     "salita_reach_additions.jsonl": 0,
     "boxingdata_reach_additions.jsonl": 0,
     "queensberry_reach_additions.jsonl": 0,
@@ -38,6 +39,7 @@
     "toprank_reach_additions.jsonl": 0,
     "pbc_reach_additions.jsonl": 0,
     "wba_direct_reach_additions.jsonl": 2,
+    "wba_wayback_reach_additions.jsonl": 0,
     "salita_reach_additions.jsonl": 0,
     "boxingdata_reach_additions.jsonl": 0,
     "queensberry_reach_additions.jsonl": 0,
@@ -53,18 +55,9 @@
   "rejected_candidate_rows": 0,
   "rejected_candidates": [],
   "candidate_fighters": 63,
-  "merged": 1,
-  "merged_profiles": [
-    {
-      "target_source_id": "https://en.wikipedia.org/wiki/Yomar_%C3%81lamo",
-      "name": "Yomar Álamo",
-      "reach_cm": 173,
-      "addition_files": [
-        "public_search_reach_additions.jsonl"
-      ]
-    }
-  ],
-  "skipped_existing_reach": 62,
+  "merged": 0,
+  "merged_profiles": [],
+  "skipped_existing_reach": 63,
   "conflicts_quarantined": 0,
   "conflicts": [],
   "policy": "A whitelisted file is not sufficient by itself. Each row must have exact-identity first-party/official evidence or >=2 independent numeric reach sources agreeing within 1.01 cm. Existing reach is never overwritten; cross-file disagreements >1 cm are quarantined."
