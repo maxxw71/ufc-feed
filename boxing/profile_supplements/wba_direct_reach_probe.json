@@ -1,17 +1,38 @@
 {
-  "generated_at": "2026-09-27T11:37:14.699333+00:00",
-  "missing_reach_targets": 266,
-  "targets_with_direct_wba_profile_link": 40,
+  "generated_at": "2026-09-28T10:03:10.950491+00:00",
+  "missing_reach_targets": 254,
+  "targets_with_current_direct_link": 37,
+  "targets_with_exact_name_in_wba_index": 85,
+  "candidate_profile_pages": 112,
   "status_counts": {
-    "no_reach": 40
+    "no_reach": 91,
+    "identity_mismatch": 19,
+    "accepted": 2
   },
-  "accepted": 0,
-  "accepted_profiles": [],
+  "accepted": 2,
+  "conflicts_quarantined": 0,
+  "accepted_profiles": [
+    {
+      "name": "Eri Matsuda",
+      "reach_cm": 157.48,
+      "profile_ids": [
+        5733
+      ]
+    },
+    {
+      "name": "Shannon Courtenay",
+      "reach_cm": 162.56,
+      "profile_ids": [
+        9838
+      ]
+    }
+  ],
+  "conflicts": [],
   "page_diagnostics": [
     {
       "page": "https://www.wbaboxing.com/wba-ranking",
       "status": "ok",
-      "target_links": 16
+      "target_links": 13
     },
     {
       "page": "https://www.wbaboxing.com/current-wba-champions",
@@ -46,325 +67,1437 @@
   ],
   "rows": [
     {
-      "name": "Abass Baraou",
-      "profile_id": 9801,
-      "url": "https://www.wbaboxing.com/wba-boxer-profile?id=9801",
-      "profile_name": "ABASS BARAOU",
-      "reach_cm": null,
-      "status": "no_reach"
-    },
-    {
-      "name": "Anahí Ester Sánchez",
-      "profile_id": 5248,
-      "url": "https://www.wbaboxing.com/wba-boxer-profile?id=5248",
-      "profile_name": "ANAHI ESTER SANCHEZ",
-      "reach_cm": null,
-      "status": "no_reach"
-    },
-    {
-      "name": "Andrew Cain",
-      "profile_id": 19615,
-      "url": "https://www.wbaboxing.com/wba-boxer-profile?id=19615",
-      "profile_name": "ANDREW CAIN",
-      "reach_cm": null,
-      "status": "no_reach"
-    },
-    {
-      "name": "Austine Nnamdi",
-      "profile_id": 17238,
-      "url": "https://www.wbaboxing.com/wba-boxer-profile?id=17238",
-      "profile_name": "AUSTINE NNAMDI",
-      "reach_cm": null,
-      "status": "no_reach"
-    },
-    {
-      "name": "Bradley Rea",
-      "profile_id": 21193,
-      "url": "https://www.wbaboxing.com/wba-boxer-profile?id=21193",
-      "profile_name": "BRADLEY REA",
-      "reach_cm": null,
-      "status": "no_reach"
-    },
-    {
-      "name": "Conah Walker",
-      "profile_id": 16956,
-      "url": "https://www.wbaboxing.com/wba-boxer-profile?id=16956",
-      "profile_name": "CONAH WALKER",
-      "reach_cm": null,
-      "status": "no_reach"
-    },
-    {
-      "name": "Dainier Pero",
+      "target_key": "dainierpero",
+      "target_name": "Dainier Pero",
       "profile_id": 18860,
       "url": "https://www.wbaboxing.com/wba-boxer-profile?id=18860",
+      "discovery": "current_direct_link",
+      "source_page": "https://www.wbaboxing.com/wba-ranking",
       "profile_name": "DAINIER PERO",
       "reach_cm": null,
+      "label_diagnostics": null,
       "status": "no_reach"
     },
     {
-      "name": "Dina Thorslund",
-      "profile_id": 5375,
-      "url": "https://www.wbaboxing.com/wba-boxer-profile?id=5375",
-      "profile_name": "DINA THORSLUND",
-      "reach_cm": null,
-      "status": "no_reach"
-    },
-    {
-      "name": "Ebenezer Tetteh",
-      "profile_id": 3068,
-      "url": "https://www.wbaboxing.com/wba-boxer-profile?id=3068",
-      "profile_name": "EBENEZER TETTEH",
-      "reach_cm": null,
-      "status": "no_reach"
-    },
-    {
-      "name": "Ellie Scotney",
-      "profile_id": 12152,
-      "url": "https://www.wbaboxing.com/wba-boxer-profile?id=12152",
-      "profile_name": "ELLIE SCOTNEY",
-      "reach_cm": null,
-      "status": "no_reach"
-    },
-    {
-      "name": "Elvis Ahorgah",
-      "profile_id": 18156,
-      "url": "https://www.wbaboxing.com/wba-boxer-profile?id=18156",
-      "profile_name": "ELVIS AHORGAH",
-      "reach_cm": null,
-      "status": "no_reach"
-    },
-    {
-      "name": "Eri Matsuda",
-      "profile_id": 5733,
-      "url": "https://www.wbaboxing.com/wba-boxer-profile?id=5733",
-      "profile_name": "ERI MATSUDA",
-      "reach_cm": null,
-      "status": "no_reach"
-    },
-    {
-      "name": "Gavin Gwynne",
-      "profile_id": 8493,
-      "url": "https://www.wbaboxing.com/wba-boxer-profile?id=8493",
-      "profile_name": "GAVIN GWYNNE",
-      "reach_cm": null,
-      "status": "no_reach"
-    },
-    {
-      "name": "Gerome Warburton",
-      "profile_id": 19631,
-      "url": "https://www.wbaboxing.com/wba-boxer-profile?id=19631",
-      "profile_name": "GEROME WARBURTON",
-      "reach_cm": null,
-      "status": "no_reach"
-    },
-    {
-      "name": "Gradus Kraus",
-      "profile_id": 21671,
-      "url": "https://www.wbaboxing.com/wba-boxer-profile?id=21671",
-      "profile_name": "GRADUS KRAUS",
-      "reach_cm": null,
-      "status": "no_reach"
-    },
-    {
-      "name": "Hayato Tsutsumi",
-      "profile_id": 13261,
-      "url": "https://www.wbaboxing.com/wba-boxer-profile?id=13261",
-      "profile_name": "HAYATO TSUTSUMI",
-      "reach_cm": null,
-      "status": "no_reach"
-    },
-    {
-      "name": "Isabel Rivero",
-      "profile_id": 17631,
-      "url": "https://www.wbaboxing.com/wba-boxer-profile?id=17631",
-      "profile_name": "ISABEL RIVERO",
-      "reach_cm": null,
-      "status": "no_reach"
-    },
-    {
-      "name": "Jack Rafferty",
-      "profile_id": 19091,
-      "url": "https://www.wbaboxing.com/wba-boxer-profile?id=19091",
-      "profile_name": "JACK RAFFERTY",
-      "reach_cm": null,
-      "status": "no_reach"
-    },
-    {
-      "name": "Jasmina Zapotoczna",
-      "profile_id": 17319,
-      "url": "https://www.wbaboxing.com/wba-boxer-profile?id=17319",
-      "profile_name": "JASMINA ZAPOTOCZNA",
-      "reach_cm": null,
-      "status": "no_reach"
-    },
-    {
-      "name": "Karen Elizabeth Carabajal",
-      "profile_id": 5396,
-      "url": "https://www.wbaboxing.com/wba-boxer-profile?id=5396",
-      "profile_name": "KAREN ELIZABETH CARABAJAL",
-      "reach_cm": null,
-      "status": "no_reach"
-    },
-    {
-      "name": "Kirstie Bavington",
-      "profile_id": 12401,
-      "url": "https://www.wbaboxing.com/wba-boxer-profile?id=12401",
-      "profile_name": "KIRSTIE BAVINGTON",
-      "reach_cm": null,
-      "status": "no_reach"
-    },
-    {
-      "name": "Lerato Dlamini",
-      "profile_id": 13714,
-      "url": "https://www.wbaboxing.com/wba-boxer-profile?id=13714",
-      "profile_name": "LERATO DLAMINI",
-      "reach_cm": null,
-      "status": "no_reach"
-    },
-    {
-      "name": "Lewis Edmondson",
-      "profile_id": 18505,
-      "url": "https://www.wbaboxing.com/wba-boxer-profile?id=18505",
-      "profile_name": "LEWIS EDMONDSON",
-      "reach_cm": null,
-      "status": "no_reach"
-    },
-    {
-      "name": "Lolita Muzeya",
-      "profile_id": 5235,
-      "url": "https://www.wbaboxing.com/wba-boxer-profile?id=5235",
-      "profile_name": "LOLITA MUZEYA",
-      "reach_cm": null,
-      "status": "no_reach"
-    },
-    {
-      "name": "Magomed Kurbanov",
-      "profile_id": 4684,
-      "url": "https://www.wbaboxing.com/wba-boxer-profile?id=4684",
-      "profile_name": "MAGOMED KURBANOV",
-      "reach_cm": null,
-      "status": "no_reach"
-    },
-    {
-      "name": "Malik Zinad",
-      "profile_id": 15367,
-      "url": "https://www.wbaboxing.com/wba-boxer-profile?id=15367",
-      "profile_name": "MALIK ZINAD",
-      "reach_cm": null,
-      "status": "no_reach"
-    },
-    {
-      "name": "Melissa Mortensen",
-      "profile_id": 19497,
-      "url": "https://www.wbaboxing.com/wba-boxer-profile?id=19497",
-      "profile_name": "MELISSA MORTENSEN",
-      "reach_cm": null,
-      "status": "no_reach"
-    },
-    {
-      "name": "Nina Hughes",
-      "profile_id": 13064,
-      "url": "https://www.wbaboxing.com/wba-boxer-profile?id=13064",
-      "profile_name": "NINA HUGHES",
-      "reach_cm": null,
-      "status": "no_reach"
-    },
-    {
-      "name": "Ogleidis Suárez",
-      "profile_id": 2717,
-      "url": "https://www.wbaboxing.com/wba-boxer-profile?id=2717",
-      "profile_name": "OGLEIDIS SUAREZ",
-      "reach_cm": null,
-      "status": "no_reach"
-    },
-    {
-      "name": "Otar Eranosyan",
-      "profile_id": 10518,
-      "url": "https://www.wbaboxing.com/wba-boxer-profile?id=10518",
-      "profile_name": "OTAR ERANOSYAN",
-      "reach_cm": null,
-      "status": "no_reach"
-    },
-    {
-      "name": "Pat Brown",
+      "target_key": "patbrown",
+      "target_name": "Pat Brown",
       "profile_id": 20352,
       "url": "https://www.wbaboxing.com/wba-boxer-profile?id=20352",
+      "discovery": "current_direct_link",
+      "source_page": "https://www.wbaboxing.com/wba-ranking",
       "profile_name": "PAT BROWN",
       "reach_cm": null,
+      "label_diagnostics": null,
       "status": "no_reach"
     },
     {
-      "name": "Ramla Ali",
-      "profile_id": 16915,
-      "url": "https://www.wbaboxing.com/wba-boxer-profile?id=16915",
-      "profile_name": "RAMLA ALI",
+      "target_key": "bradleyrea",
+      "target_name": "Bradley Rea",
+      "profile_id": 21193,
+      "url": "https://www.wbaboxing.com/wba-boxer-profile?id=21193",
+      "discovery": "current_direct_link",
+      "source_page": "https://www.wbaboxing.com/wba-ranking",
+      "profile_name": "BRADLEY REA",
       "reach_cm": null,
+      "label_diagnostics": null,
       "status": "no_reach"
     },
     {
-      "name": "Rima Ayadi",
-      "profile_id": 10572,
-      "url": "https://www.wbaboxing.com/wba-boxer-profile?id=10572",
-      "profile_name": "RIMA AYADI",
+      "target_key": "lewisedmondson",
+      "target_name": "Lewis Edmondson",
+      "profile_id": 18505,
+      "url": "https://www.wbaboxing.com/wba-boxer-profile?id=18505",
+      "discovery": "current_direct_link",
+      "source_page": "https://www.wbaboxing.com/wba-ranking",
+      "profile_name": "LEWIS EDMONDSON",
       "reach_cm": null,
+      "label_diagnostics": null,
       "status": "no_reach"
     },
     {
-      "name": "Sam Gilley",
+      "target_key": "samgilley",
+      "target_name": "Sam Gilley",
       "profile_id": 17169,
       "url": "https://www.wbaboxing.com/wba-boxer-profile?id=17169",
+      "discovery": "current_direct_link",
+      "source_page": "https://www.wbaboxing.com/wba-ranking",
       "profile_name": "SAM GILLEY",
       "reach_cm": null,
+      "label_diagnostics": null,
       "status": "no_reach"
     },
     {
-      "name": "Samuel Carmona",
+      "target_key": "abassbaraou",
+      "target_name": "Abass Baraou",
+      "profile_id": 9801,
+      "url": "https://www.wbaboxing.com/wba-boxer-profile?id=9801",
+      "discovery": "current_direct_link",
+      "source_page": "https://www.wbaboxing.com/wba-ranking",
+      "profile_name": "ABASS BARAOU",
+      "reach_cm": null,
+      "label_diagnostics": null,
+      "status": "no_reach"
+    },
+    {
+      "target_key": "abassbaraou",
+      "target_name": "Abass Baraou",
+      "profile_id": 11164,
+      "url": "https://www.wbaboxing.com/wba-boxer-profile?id=11164",
+      "discovery": "wba_profile_index_exact_name_key",
+      "source_page": null,
+      "profile_name": "XANDER ZAYAS",
+      "reach_cm": 187.96,
+      "label_diagnostics": {
+        "candidates": [
+          [
+            "previous",
+            187.96,
+            "74″"
+          ]
+        ]
+      },
+      "status": "identity_mismatch"
+    },
+    {
+      "target_key": "magomedkurbanov",
+      "target_name": "Magomed Kurbanov",
+      "profile_id": 4684,
+      "url": "https://www.wbaboxing.com/wba-boxer-profile?id=4684",
+      "discovery": "current_direct_link",
+      "source_page": "https://www.wbaboxing.com/wba-ranking",
+      "profile_name": "MAGOMED KURBANOV",
+      "reach_cm": null,
+      "label_diagnostics": null,
+      "status": "no_reach"
+    },
+    {
+      "target_key": "magomedkurbanov",
+      "target_name": "Magomed Kurbanov",
+      "profile_id": 19051,
+      "url": "https://www.wbaboxing.com/wba-boxer-profile?id=19051",
+      "discovery": "wba_profile_index_exact_name_key",
+      "source_page": null,
+      "profile_name": "PAVEL SOSULIN",
+      "reach_cm": null,
+      "label_diagnostics": null,
+      "status": "identity_mismatch"
+    },
+    {
+      "target_key": "jackrafferty",
+      "target_name": "Jack Rafferty",
+      "profile_id": 19091,
+      "url": "https://www.wbaboxing.com/wba-boxer-profile?id=19091",
+      "discovery": "current_direct_link",
+      "source_page": "https://www.wbaboxing.com/wba-ranking",
+      "profile_name": "JACK RAFFERTY",
+      "reach_cm": null,
+      "label_diagnostics": null,
+      "status": "no_reach"
+    },
+    {
+      "target_key": "gavingwynne",
+      "target_name": "Gavin Gwynne",
+      "profile_id": 8493,
+      "url": "https://www.wbaboxing.com/wba-boxer-profile?id=8493",
+      "discovery": "current_direct_link",
+      "source_page": "https://www.wbaboxing.com/wba-ranking",
+      "profile_name": "GAVIN GWYNNE",
+      "reach_cm": null,
+      "label_diagnostics": null,
+      "status": "no_reach"
+    },
+    {
+      "target_key": "hayatotsutsumi",
+      "target_name": "Hayato Tsutsumi",
+      "profile_id": 13261,
+      "url": "https://www.wbaboxing.com/wba-boxer-profile?id=13261",
+      "discovery": "current_direct_link",
+      "source_page": "https://www.wbaboxing.com/wba-ranking",
+      "profile_name": "HAYATO TSUTSUMI",
+      "reach_cm": null,
+      "label_diagnostics": null,
+      "status": "no_reach"
+    },
+    {
+      "target_key": "otareranosyan",
+      "target_name": "Otar Eranosyan",
+      "profile_id": 10518,
+      "url": "https://www.wbaboxing.com/wba-boxer-profile?id=10518",
+      "discovery": "current_direct_link",
+      "source_page": "https://www.wbaboxing.com/wba-ranking",
+      "profile_name": "OTAR ERANOSYAN",
+      "reach_cm": null,
+      "label_diagnostics": null,
+      "status": "no_reach"
+    },
+    {
+      "target_key": "andrewcain",
+      "target_name": "Andrew Cain",
+      "profile_id": 19615,
+      "url": "https://www.wbaboxing.com/wba-boxer-profile?id=19615",
+      "discovery": "current_direct_link",
+      "source_page": "https://www.wbaboxing.com/wba-ranking",
+      "profile_name": "ANDREW CAIN",
+      "reach_cm": null,
+      "label_diagnostics": null,
+      "status": "no_reach"
+    },
+    {
+      "target_key": "samuelcarmona",
+      "target_name": "Samuel Carmona",
       "profile_id": 6518,
       "url": "https://www.wbaboxing.com/wba-boxer-profile?id=6518",
+      "discovery": "current_direct_link",
+      "source_page": "https://www.wbaboxing.com/wba-ranking",
       "profile_name": "SAMUEL CARMONA",
       "reach_cm": null,
+      "label_diagnostics": null,
       "status": "no_reach"
     },
     {
-      "name": "Shannon Courtenay",
-      "profile_id": 9838,
-      "url": "https://www.wbaboxing.com/wba-boxer-profile?id=9838",
-      "profile_name": "SHANNON COURTENAY",
+      "target_key": "samuelcarmona",
+      "target_name": "Samuel Carmona",
+      "profile_id": 5334,
+      "url": "https://www.wbaboxing.com/wba-boxer-profile?id=5334",
+      "discovery": "wba_profile_index_exact_name_key",
+      "source_page": null,
+      "profile_name": "RODRIGO RAMIREZ",
+      "reach_cm": 166.37,
+      "label_diagnostics": {
+        "candidates": [
+          [
+            "previous",
+            166.37,
+            "65½″"
+          ]
+        ]
+      },
+      "status": "identity_mismatch"
+    },
+    {
+      "target_key": "lolitamuzeya",
+      "target_name": "Lolita Muzeya",
+      "profile_id": 5235,
+      "url": "https://www.wbaboxing.com/wba-boxer-profile?id=5235",
+      "discovery": "current_direct_link",
+      "source_page": "https://www.wbaboxing.com/wba-female-ranking",
+      "profile_name": "LOLITA MUZEYA",
       "reach_cm": null,
+      "label_diagnostics": null,
       "status": "no_reach"
     },
     {
-      "name": "Shannon Ryan",
-      "profile_id": 17318,
-      "url": "https://www.wbaboxing.com/wba-boxer-profile?id=17318",
-      "profile_name": "SHANNON RYAN",
+      "target_key": "ogleidissuarez",
+      "target_name": "Ogleidis Suárez",
+      "profile_id": 2717,
+      "url": "https://www.wbaboxing.com/wba-boxer-profile?id=2717",
+      "discovery": "current_direct_link",
+      "source_page": "https://www.wbaboxing.com/wba-female-ranking",
+      "profile_name": "OGLEIDIS SUAREZ",
       "reach_cm": null,
+      "label_diagnostics": null,
       "status": "no_reach"
     },
     {
-      "name": "Taylah Gentzen",
+      "target_key": "kirstiebavington",
+      "target_name": "Kirstie Bavington",
+      "profile_id": 12401,
+      "url": "https://www.wbaboxing.com/wba-boxer-profile?id=12401",
+      "discovery": "current_direct_link",
+      "source_page": "https://www.wbaboxing.com/wba-female-ranking",
+      "profile_name": "KIRSTIE BAVINGTON",
+      "reach_cm": null,
+      "label_diagnostics": null,
+      "status": "no_reach"
+    },
+    {
+      "target_key": "anahiestersanchez",
+      "target_name": "Anahí Ester Sánchez",
+      "profile_id": 5248,
+      "url": "https://www.wbaboxing.com/wba-boxer-profile?id=5248",
+      "discovery": "current_direct_link",
+      "source_page": "https://www.wbaboxing.com/wba-female-ranking",
+      "profile_name": "ANAHI ESTER SANCHEZ",
+      "reach_cm": null,
+      "label_diagnostics": null,
+      "status": "no_reach"
+    },
+    {
+      "target_key": "karenelizabethcarabajal",
+      "target_name": "Karen Elizabeth Carabajal",
+      "profile_id": 5396,
+      "url": "https://www.wbaboxing.com/wba-boxer-profile?id=5396",
+      "discovery": "current_direct_link",
+      "source_page": "https://www.wbaboxing.com/wba-female-ranking",
+      "profile_name": "KAREN ELIZABETH CARABAJAL",
+      "reach_cm": null,
+      "label_diagnostics": null,
+      "status": "no_reach"
+    },
+    {
+      "target_key": "taylahgentzen",
+      "target_name": "Taylah Gentzen",
       "profile_id": 17768,
       "url": "https://www.wbaboxing.com/wba-boxer-profile?id=17768",
+      "discovery": "current_direct_link",
+      "source_page": "https://www.wbaboxing.com/wba-female-ranking",
       "profile_name": "TAYLAH GENTZEN",
       "reach_cm": null,
+      "label_diagnostics": null,
       "status": "no_reach"
     },
     {
-      "name": "Tulani Mbenge",
-      "profile_id": 13099,
-      "url": "https://www.wbaboxing.com/wba-boxer-profile?id=13099",
-      "profile_name": "TULANI MBENGE",
+      "target_key": "rimaayadi",
+      "target_name": "Rima Ayadi",
+      "profile_id": 10572,
+      "url": "https://www.wbaboxing.com/wba-boxer-profile?id=10572",
+      "discovery": "current_direct_link",
+      "source_page": "https://www.wbaboxing.com/wba-female-ranking",
+      "profile_name": "RIMA AYADI",
       "reach_cm": null,
+      "label_diagnostics": null,
       "status": "no_reach"
     },
     {
-      "name": "Uisma Lima",
+      "target_key": "elliescotney",
+      "target_name": "Ellie Scotney",
+      "profile_id": 12152,
+      "url": "https://www.wbaboxing.com/wba-boxer-profile?id=12152",
+      "discovery": "current_direct_link",
+      "source_page": "https://www.wbaboxing.com/wba-female-ranking",
+      "profile_name": "ELLIE SCOTNEY",
+      "reach_cm": null,
+      "label_diagnostics": null,
+      "status": "no_reach"
+    },
+    {
+      "target_key": "melissamortensen",
+      "target_name": "Melissa Mortensen",
+      "profile_id": 19497,
+      "url": "https://www.wbaboxing.com/wba-boxer-profile?id=19497",
+      "discovery": "current_direct_link",
+      "source_page": "https://www.wbaboxing.com/wba-female-ranking",
+      "profile_name": "MELISSA MORTENSEN",
+      "reach_cm": null,
+      "label_diagnostics": null,
+      "status": "no_reach"
+    },
+    {
+      "target_key": "dinathorslund",
+      "target_name": "Dina Thorslund",
+      "profile_id": 5375,
+      "url": "https://www.wbaboxing.com/wba-boxer-profile?id=5375",
+      "discovery": "current_direct_link",
+      "source_page": "https://www.wbaboxing.com/wba-female-ranking",
+      "profile_name": "DINA THORSLUND",
+      "reach_cm": null,
+      "label_diagnostics": null,
+      "status": "no_reach"
+    },
+    {
+      "target_key": "ramlaali",
+      "target_name": "Ramla Ali",
+      "profile_id": 16915,
+      "url": "https://www.wbaboxing.com/wba-boxer-profile?id=16915",
+      "discovery": "current_direct_link",
+      "source_page": "https://www.wbaboxing.com/wba-female-ranking",
+      "profile_name": "RAMLA ALI",
+      "reach_cm": null,
+      "label_diagnostics": null,
+      "status": "no_reach"
+    },
+    {
+      "target_key": "ninahughes",
+      "target_name": "Nina Hughes",
+      "profile_id": 13064,
+      "url": "https://www.wbaboxing.com/wba-boxer-profile?id=13064",
+      "discovery": "current_direct_link",
+      "source_page": "https://www.wbaboxing.com/wba-female-ranking",
+      "profile_name": "NINA HUGHES",
+      "reach_cm": null,
+      "label_diagnostics": null,
+      "status": "no_reach"
+    },
+    {
+      "target_key": "shannonryan",
+      "target_name": "Shannon Ryan",
+      "profile_id": 17318,
+      "url": "https://www.wbaboxing.com/wba-boxer-profile?id=17318",
+      "discovery": "current_direct_link",
+      "source_page": "https://www.wbaboxing.com/wba-female-ranking",
+      "profile_name": "SHANNON RYAN",
+      "reach_cm": null,
+      "label_diagnostics": null,
+      "status": "no_reach"
+    },
+    {
+      "target_key": "shannoncourtenay",
+      "target_name": "Shannon Courtenay",
+      "profile_id": 9838,
+      "url": "https://www.wbaboxing.com/wba-boxer-profile?id=9838",
+      "discovery": "current_direct_link",
+      "source_page": "https://www.wbaboxing.com/wba-female-ranking",
+      "profile_name": "SHANNON COURTENAY",
+      "reach_cm": 162.56,
+      "label_diagnostics": {
+        "candidates": [
+          [
+            "previous",
+            162.56,
+            "64″"
+          ]
+        ]
+      },
+      "status": "accepted"
+    },
+    {
+      "target_key": "jasminazapotoczna",
+      "target_name": "Jasmina Zapotoczna",
+      "profile_id": 17319,
+      "url": "https://www.wbaboxing.com/wba-boxer-profile?id=17319",
+      "discovery": "current_direct_link",
+      "source_page": "https://www.wbaboxing.com/wba-female-ranking",
+      "profile_name": "JASMINA ZAPOTOCZNA",
+      "reach_cm": null,
+      "label_diagnostics": null,
+      "status": "no_reach"
+    },
+    {
+      "target_key": "isabelrivero",
+      "target_name": "Isabel Rivero",
+      "profile_id": 17631,
+      "url": "https://www.wbaboxing.com/wba-boxer-profile?id=17631",
+      "discovery": "current_direct_link",
+      "source_page": "https://www.wbaboxing.com/wba-female-ranking",
+      "profile_name": "ISABEL RIVERO",
+      "reach_cm": null,
+      "label_diagnostics": null,
+      "status": "no_reach"
+    },
+    {
+      "target_key": "erimatsuda",
+      "target_name": "Eri Matsuda",
+      "profile_id": 5733,
+      "url": "https://www.wbaboxing.com/wba-boxer-profile?id=5733",
+      "discovery": "current_direct_link",
+      "source_page": "https://www.wbaboxing.com/wba-female-ranking",
+      "profile_name": "ERI MATSUDA",
+      "reach_cm": 157.48,
+      "label_diagnostics": {
+        "candidates": [
+          [
+            "previous",
+            157.48,
+            "62″"
+          ]
+        ]
+      },
+      "status": "accepted"
+    },
+    {
+      "target_key": "ebenezertetteh",
+      "target_name": "Ebenezer Tetteh",
+      "profile_id": 3068,
+      "url": "https://www.wbaboxing.com/wba-boxer-profile?id=3068",
+      "discovery": "current_direct_link",
+      "source_page": "https://www.wbaboxing.com/wba-africa-ranking",
+      "profile_name": "EBENEZER TETTEH",
+      "reach_cm": null,
+      "label_diagnostics": null,
+      "status": "no_reach"
+    },
+    {
+      "target_key": "austinennamdi",
+      "target_name": "Austine Nnamdi",
+      "profile_id": 17238,
+      "url": "https://www.wbaboxing.com/wba-boxer-profile?id=17238",
+      "discovery": "current_direct_link",
+      "source_page": "https://www.wbaboxing.com/wba-africa-ranking",
+      "profile_name": "AUSTINE NNAMDI",
+      "reach_cm": null,
+      "label_diagnostics": null,
+      "status": "no_reach"
+    },
+    {
+      "target_key": "malikzinad",
+      "target_name": "Malik Zinad",
+      "profile_id": 15367,
+      "url": "https://www.wbaboxing.com/wba-boxer-profile?id=15367",
+      "discovery": "current_direct_link",
+      "source_page": "https://www.wbaboxing.com/wba-africa-ranking",
+      "profile_name": "MALIK ZINAD",
+      "reach_cm": null,
+      "label_diagnostics": null,
+      "status": "no_reach"
+    },
+    {
+      "target_key": "elvisahorgah",
+      "target_name": "Elvis Ahorgah",
+      "profile_id": 18156,
+      "url": "https://www.wbaboxing.com/wba-boxer-profile?id=18156",
+      "discovery": "current_direct_link",
+      "source_page": "https://www.wbaboxing.com/wba-africa-ranking",
+      "profile_name": "ELVIS AHORGAH",
+      "reach_cm": null,
+      "label_diagnostics": null,
+      "status": "no_reach"
+    },
+    {
+      "target_key": "uismalima",
+      "target_name": "Uisma Lima",
       "profile_id": 18175,
       "url": "https://www.wbaboxing.com/wba-boxer-profile?id=18175",
+      "discovery": "current_direct_link",
+      "source_page": "https://www.wbaboxing.com/wba-africa-ranking",
       "profile_name": "UISMA LIMA",
       "reach_cm": null,
+      "label_diagnostics": null,
+      "status": "no_reach"
+    },
+    {
+      "target_key": "tulanimbenge",
+      "target_name": "Tulani Mbenge",
+      "profile_id": 13099,
+      "url": "https://www.wbaboxing.com/wba-boxer-profile?id=13099",
+      "discovery": "current_direct_link",
+      "source_page": "https://www.wbaboxing.com/wba-africa-ranking",
+      "profile_name": "TULANI MBENGE",
+      "reach_cm": null,
+      "label_diagnostics": null,
+      "status": "no_reach"
+    },
+    {
+      "target_key": "leratodlamini",
+      "target_name": "Lerato Dlamini",
+      "profile_id": 13714,
+      "url": "https://www.wbaboxing.com/wba-boxer-profile?id=13714",
+      "discovery": "current_direct_link",
+      "source_page": "https://www.wbaboxing.com/wba-africa-ranking",
+      "profile_name": "LERATO DLAMINI",
+      "reach_cm": null,
+      "label_diagnostics": null,
+      "status": "no_reach"
+    },
+    {
+      "target_key": "tyronemckenna",
+      "target_name": "Tyrone McKenna",
+      "profile_id": 10697,
+      "url": "https://www.wbaboxing.com/wba-boxer-profile?id=10697",
+      "discovery": "wba_profile_index_exact_name_key",
+      "source_page": null,
+      "profile_name": "TYRONE MCKENNA",
+      "reach_cm": null,
+      "label_diagnostics": null,
+      "status": "no_reach"
+    },
+    {
+      "target_key": "tyronemckenna",
+      "target_name": "Tyrone McKenna",
+      "profile_id": 11279,
+      "url": "https://www.wbaboxing.com/wba-boxer-profile?id=11279",
+      "discovery": "wba_profile_index_exact_name_key",
+      "source_page": null,
+      "profile_name": "MOHAMED MIMOUNE",
+      "reach_cm": 180.34,
+      "label_diagnostics": {
+        "candidates": [
+          [
+            "previous",
+            180.34,
+            "71″"
+          ]
+        ]
+      },
+      "status": "identity_mismatch"
+    },
+    {
+      "target_key": "ezrataylor",
+      "target_name": "Ezra Taylor",
+      "profile_id": 17939,
+      "url": "https://www.wbaboxing.com/wba-boxer-profile?id=17939",
+      "discovery": "wba_profile_index_exact_name_key",
+      "source_page": null,
+      "profile_name": "WILLY HUTCHINSON",
+      "reach_cm": null,
+      "label_diagnostics": null,
+      "status": "identity_mismatch"
+    },
+    {
+      "target_key": "joelmcintyre",
+      "target_name": "Joel McIntyre",
+      "profile_id": 13227,
+      "url": "https://www.wbaboxing.com/wba-boxer-profile?id=13227",
+      "discovery": "wba_profile_index_exact_name_key",
+      "source_page": null,
+      "profile_name": "JOEL MCINTYRE",
+      "reach_cm": null,
+      "label_diagnostics": null,
+      "status": "no_reach"
+    },
+    {
+      "target_key": "dylanbregeon",
+      "target_name": "Dylan Bregeon",
+      "profile_id": 11986,
+      "url": "https://www.wbaboxing.com/wba-boxer-profile?id=11986",
+      "discovery": "wba_profile_index_exact_name_key",
+      "source_page": null,
+      "profile_name": "DYLAN BREGEON",
+      "reach_cm": null,
+      "label_diagnostics": null,
+      "status": "no_reach"
+    },
+    {
+      "target_key": "courtneypennington",
+      "target_name": "Courtney Pennington",
+      "profile_id": 10774,
+      "url": "https://www.wbaboxing.com/wba-boxer-profile?id=10774",
+      "discovery": "wba_profile_index_exact_name_key",
+      "source_page": null,
+      "profile_name": "COURTNEY PENNINGTON",
+      "reach_cm": null,
+      "label_diagnostics": null,
+      "status": "no_reach"
+    },
+    {
+      "target_key": "harryscarff",
+      "target_name": "Harry Scarff",
+      "profile_id": 6204,
+      "url": "https://www.wbaboxing.com/wba-boxer-profile?id=6204",
+      "discovery": "wba_profile_index_exact_name_key",
+      "source_page": null,
+      "profile_name": "HARRY SCARFF",
+      "reach_cm": null,
+      "label_diagnostics": null,
+      "status": "no_reach"
+    },
+    {
+      "target_key": "patrickkorte",
+      "target_name": "Patrick Korte",
+      "profile_id": 15322,
+      "url": "https://www.wbaboxing.com/wba-boxer-profile?id=15322",
+      "discovery": "wba_profile_index_exact_name_key",
+      "source_page": null,
+      "profile_name": "PATRICK KORTE",
+      "reach_cm": null,
+      "label_diagnostics": null,
+      "status": "no_reach"
+    },
+    {
+      "target_key": "ryanwalsh",
+      "target_name": "Ryan Walsh",
+      "profile_id": 6111,
+      "url": "https://www.wbaboxing.com/wba-boxer-profile?id=6111",
+      "discovery": "wba_profile_index_exact_name_key",
+      "source_page": null,
+      "profile_name": "RYAN WALSH",
+      "reach_cm": null,
+      "label_diagnostics": null,
+      "status": "no_reach"
+    },
+    {
+      "target_key": "seanmccomb",
+      "target_name": "Seán McComb",
+      "profile_id": 12625,
+      "url": "https://www.wbaboxing.com/wba-boxer-profile?id=12625",
+      "discovery": "wba_profile_index_exact_name_key",
+      "source_page": null,
+      "profile_name": "SEAN MCCOMB",
+      "reach_cm": null,
+      "label_diagnostics": null,
+      "status": "no_reach"
+    },
+    {
+      "target_key": "yomaralamo",
+      "target_name": "Yomar Álamo",
+      "profile_id": 5888,
+      "url": "https://www.wbaboxing.com/wba-boxer-profile?id=5888",
+      "discovery": "wba_profile_index_exact_name_key",
+      "source_page": null,
+      "profile_name": "YOMAR ALAMO",
+      "reach_cm": null,
+      "label_diagnostics": null,
+      "status": "no_reach"
+    },
+    {
+      "target_key": "jaouadbelmehdi",
+      "target_name": "Jaouad Belmehdi",
+      "profile_id": 10582,
+      "url": "https://www.wbaboxing.com/wba-boxer-profile?id=10582",
+      "discovery": "wba_profile_index_exact_name_key",
+      "source_page": null,
+      "profile_name": "JAOUAD BELMEHDI",
+      "reach_cm": null,
+      "label_diagnostics": null,
+      "status": "no_reach"
+    },
+    {
+      "target_key": "liamtaylor",
+      "target_name": "Liam Taylor",
+      "profile_id": 20640,
+      "url": "https://www.wbaboxing.com/wba-boxer-profile?id=20640",
+      "discovery": "wba_profile_index_exact_name_key",
+      "source_page": null,
+      "profile_name": "LIAM TAYLOR",
+      "reach_cm": null,
+      "label_diagnostics": null,
+      "status": "no_reach"
+    },
+    {
+      "target_key": "macaulaymcgowan",
+      "target_name": "Macaulay McGowan",
+      "profile_id": 10062,
+      "url": "https://www.wbaboxing.com/wba-boxer-profile?id=10062",
+      "discovery": "wba_profile_index_exact_name_key",
+      "source_page": null,
+      "profile_name": "MACAULAY MCGOWAN",
+      "reach_cm": null,
+      "label_diagnostics": null,
+      "status": "no_reach"
+    },
+    {
+      "target_key": "ryanfarrag",
+      "target_name": "Ryan Farrag",
+      "profile_id": 17393,
+      "url": "https://www.wbaboxing.com/wba-boxer-profile?id=17393",
+      "discovery": "wba_profile_index_exact_name_key",
+      "source_page": null,
+      "profile_name": "RYAN FARRAG",
+      "reach_cm": null,
+      "label_diagnostics": null,
+      "status": "no_reach"
+    },
+    {
+      "target_key": "silviabortot",
+      "target_name": "Silvia Bortot",
+      "profile_id": 5559,
+      "url": "https://www.wbaboxing.com/wba-boxer-profile?id=5559",
+      "discovery": "wba_profile_index_exact_name_key",
+      "source_page": null,
+      "profile_name": "SILVIA BORTOT",
+      "reach_cm": null,
+      "label_diagnostics": null,
+      "status": "no_reach"
+    },
+    {
+      "target_key": "darraghfoley",
+      "target_name": "Darragh Foley",
+      "profile_id": 4657,
+      "url": "https://www.wbaboxing.com/wba-boxer-profile?id=4657",
+      "discovery": "wba_profile_index_exact_name_key",
+      "source_page": null,
+      "profile_name": "DARRAGH FOLEY",
+      "reach_cm": null,
+      "label_diagnostics": null,
+      "status": "no_reach"
+    },
+    {
+      "target_key": "jayharris",
+      "target_name": "Jay Harris",
+      "profile_id": 5724,
+      "url": "https://www.wbaboxing.com/wba-boxer-profile?id=5724",
+      "discovery": "wba_profile_index_exact_name_key",
+      "source_page": null,
+      "profile_name": "JAY HARRIS",
+      "reach_cm": null,
+      "label_diagnostics": null,
+      "status": "no_reach"
+    },
+    {
+      "target_key": "kaiishizawa",
+      "target_name": "Kai Ishizawa",
+      "profile_id": 16773,
+      "url": "https://www.wbaboxing.com/wba-boxer-profile?id=16773",
+      "discovery": "wba_profile_index_exact_name_key",
+      "source_page": null,
+      "profile_name": "KAI ISHIZAWA",
+      "reach_cm": null,
+      "label_diagnostics": null,
+      "status": "no_reach"
+    },
+    {
+      "target_key": "luislebron",
+      "target_name": "Luis Lebron",
+      "profile_id": 4795,
+      "url": "https://www.wbaboxing.com/wba-boxer-profile?id=4795",
+      "discovery": "wba_profile_index_exact_name_key",
+      "source_page": null,
+      "profile_name": "LUIS LEBRON",
+      "reach_cm": null,
+      "label_diagnostics": null,
+      "status": "no_reach"
+    },
+    {
+      "target_key": "padraigmccrory",
+      "target_name": "Padraig McCrory",
+      "profile_id": 11731,
+      "url": "https://www.wbaboxing.com/wba-boxer-profile?id=11731",
+      "discovery": "wba_profile_index_exact_name_key",
+      "source_page": null,
+      "profile_name": "PADRAIG MCCRORY",
+      "reach_cm": null,
+      "label_diagnostics": null,
+      "status": "no_reach"
+    },
+    {
+      "target_key": "patmccormack",
+      "target_name": "Pat McCormack",
+      "profile_id": 16956,
+      "url": "https://www.wbaboxing.com/wba-boxer-profile?id=16956",
+      "discovery": "wba_profile_index_exact_name_key",
+      "source_page": null,
+      "profile_name": "CONAH WALKER",
+      "reach_cm": null,
+      "label_diagnostics": null,
+      "status": "identity_mismatch"
+    },
+    {
+      "target_key": "qaisashfaq",
+      "target_name": "Qais Ashfaq",
+      "profile_id": 9490,
+      "url": "https://www.wbaboxing.com/wba-boxer-profile?id=9490",
+      "discovery": "wba_profile_index_exact_name_key",
+      "source_page": null,
+      "profile_name": "QAIS ASHFAQ",
+      "reach_cm": null,
+      "label_diagnostics": null,
+      "status": "no_reach"
+    },
+    {
+      "target_key": "ricardonunez",
+      "target_name": "Ricardo Nunez",
+      "profile_id": 1986,
+      "url": "https://www.wbaboxing.com/wba-boxer-profile?id=1986",
+      "discovery": "wba_profile_index_exact_name_key",
+      "source_page": null,
+      "profile_name": "RICARDO NUÑEZ",
+      "reach_cm": null,
+      "label_diagnostics": null,
+      "status": "no_reach"
+    },
+    {
+      "target_key": "robertoarriaza",
+      "target_name": "Roberto Arriaza",
+      "profile_id": 3888,
+      "url": "https://www.wbaboxing.com/wba-boxer-profile?id=3888",
+      "discovery": "wba_profile_index_exact_name_key",
+      "source_page": null,
+      "profile_name": "ROBERTO ARRIAZA",
+      "reach_cm": null,
+      "label_diagnostics": null,
+      "status": "no_reach"
+    },
+    {
+      "target_key": "seanhemphill",
+      "target_name": "Sean Hemphill",
+      "profile_id": 11464,
+      "url": "https://www.wbaboxing.com/wba-boxer-profile?id=11464",
+      "discovery": "wba_profile_index_exact_name_key",
+      "source_page": null,
+      "profile_name": "SEAN HEMPHILL",
+      "reach_cm": null,
+      "label_diagnostics": null,
+      "status": "no_reach"
+    },
+    {
+      "target_key": "shakanpitters",
+      "target_name": "Shakan Pitters",
+      "profile_id": 10127,
+      "url": "https://www.wbaboxing.com/wba-boxer-profile?id=10127",
+      "discovery": "wba_profile_index_exact_name_key",
+      "source_page": null,
+      "profile_name": "SHAKAN PITTERS",
+      "reach_cm": null,
+      "label_diagnostics": null,
+      "status": "no_reach"
+    },
+    {
+      "target_key": "shoishida",
+      "target_name": "Sho Ishida",
+      "profile_id": 10519,
+      "url": "https://www.wbaboxing.com/wba-boxer-profile?id=10519",
+      "discovery": "wba_profile_index_exact_name_key",
+      "source_page": null,
+      "profile_name": "VICTOR SANTILLAN",
+      "reach_cm": 166.37,
+      "label_diagnostics": {
+        "candidates": [
+          [
+            "previous",
+            166.37,
+            "65½″"
+          ]
+        ]
+      },
+      "status": "identity_mismatch"
+    },
+    {
+      "target_key": "argicortes",
+      "target_name": "Argi Cortes",
+      "profile_id": 5554,
+      "url": "https://www.wbaboxing.com/wba-boxer-profile?id=5554",
+      "discovery": "wba_profile_index_exact_name_key",
+      "source_page": null,
+      "profile_name": "JUNTO NAKATANI",
+      "reach_cm": 173.99,
+      "label_diagnostics": {
+        "candidates": [
+          [
+            "previous",
+            173.99,
+            "68½″"
+          ]
+        ]
+      },
+      "status": "identity_mismatch"
+    },
+    {
+      "target_key": "cameronvuong",
+      "target_name": "Cameron Vuong",
+      "profile_id": 8493,
+      "url": "https://www.wbaboxing.com/wba-boxer-profile?id=8493",
+      "discovery": "wba_profile_index_exact_name_key",
+      "source_page": null,
+      "profile_name": "GAVIN GWYNNE",
+      "reach_cm": null,
+      "label_diagnostics": null,
+      "status": "identity_mismatch"
+    },
+    {
+      "target_key": "cameronvuong",
+      "target_name": "Cameron Vuong",
+      "profile_id": 20098,
+      "url": "https://www.wbaboxing.com/wba-boxer-profile?id=20098",
+      "discovery": "wba_profile_index_exact_name_key",
+      "source_page": null,
+      "profile_name": "CAMERON VUONG",
+      "reach_cm": null,
+      "label_diagnostics": null,
+      "status": "no_reach"
+    },
+    {
+      "target_key": "davidzegarra",
+      "target_name": "David Zegarra",
+      "profile_id": 2626,
+      "url": "https://www.wbaboxing.com/wba-boxer-profile?id=2626",
+      "discovery": "wba_profile_index_exact_name_key",
+      "source_page": null,
+      "profile_name": "DAVID ZEGARRA",
+      "reach_cm": null,
+      "label_diagnostics": null,
+      "status": "no_reach"
+    },
+    {
+      "target_key": "franckpetitjean",
+      "target_name": "Franck Petitjean",
+      "profile_id": 11279,
+      "url": "https://www.wbaboxing.com/wba-boxer-profile?id=11279",
+      "discovery": "wba_profile_index_exact_name_key",
+      "source_page": null,
+      "profile_name": "MOHAMED MIMOUNE",
+      "reach_cm": 180.34,
+      "label_diagnostics": {
+        "candidates": [
+          [
+            "previous",
+            180.34,
+            "71″"
+          ]
+        ]
+      },
+      "status": "identity_mismatch"
+    },
+    {
+      "target_key": "agronsmakici",
+      "target_name": "Agron Smakici",
+      "profile_id": 10354,
+      "url": "https://www.wbaboxing.com/wba-boxer-profile?id=10354",
+      "discovery": "wba_profile_index_exact_name_key",
+      "source_page": null,
+      "profile_name": "AGRON SMAKICI",
+      "reach_cm": null,
+      "label_diagnostics": null,
+      "status": "no_reach"
+    },
+    {
+      "target_key": "amineboucetta",
+      "target_name": "Amine Boucetta",
+      "profile_id": 19919,
+      "url": "https://www.wbaboxing.com/wba-boxer-profile?id=19919",
+      "discovery": "wba_profile_index_exact_name_key",
+      "source_page": null,
+      "profile_name": "AMINE BOUCETTA",
+      "reach_cm": null,
+      "label_diagnostics": null,
+      "status": "no_reach"
+    },
+    {
+      "target_key": "antoniomoran",
+      "target_name": "Antonio Moran",
+      "profile_id": 5699,
+      "url": "https://www.wbaboxing.com/wba-boxer-profile?id=5699",
+      "discovery": "wba_profile_index_exact_name_key",
+      "source_page": null,
+      "profile_name": "ANTONIO MORAN",
+      "reach_cm": null,
+      "label_diagnostics": null,
+      "status": "no_reach"
+    },
+    {
+      "target_key": "bakhodurusmonov",
+      "target_name": "Bakhodur Usmonov",
+      "profile_id": 17048,
+      "url": "https://www.wbaboxing.com/wba-boxer-profile?id=17048",
+      "discovery": "wba_profile_index_exact_name_key",
+      "source_page": null,
+      "profile_name": "VILDAN MINASOV",
+      "reach_cm": null,
+      "label_diagnostics": null,
+      "status": "identity_mismatch"
+    },
+    {
+      "target_key": "bakhodurusmonov",
+      "target_name": "Bakhodur Usmonov",
+      "profile_id": 19544,
+      "url": "https://www.wbaboxing.com/wba-boxer-profile?id=19544",
+      "discovery": "wba_profile_index_exact_name_key",
+      "source_page": null,
+      "profile_name": "BAKHODUR USMONOV",
+      "reach_cm": null,
+      "label_diagnostics": null,
+      "status": "no_reach"
+    },
+    {
+      "target_key": "braiannahuelsuarez",
+      "target_name": "Braian Nahuel Suarez",
+      "profile_id": 7641,
+      "url": "https://www.wbaboxing.com/wba-boxer-profile?id=7641",
+      "discovery": "wba_profile_index_exact_name_key",
+      "source_page": null,
+      "profile_name": "BRAIAN NAHUEL SUAREZ",
+      "reach_cm": null,
+      "label_diagnostics": null,
+      "status": "no_reach"
+    },
+    {
+      "target_key": "cesarfrancis",
+      "target_name": "Cesar Francis",
+      "profile_id": 17961,
+      "url": "https://www.wbaboxing.com/wba-boxer-profile?id=17961",
+      "discovery": "wba_profile_index_exact_name_key",
+      "source_page": null,
+      "profile_name": "CESAR FRANCIS",
+      "reach_cm": null,
+      "label_diagnostics": null,
+      "status": "no_reach"
+    },
+    {
+      "target_key": "claudiosqueo",
+      "target_name": "Claudio Squeo",
+      "profile_id": 18121,
+      "url": "https://www.wbaboxing.com/wba-boxer-profile?id=18121",
+      "discovery": "wba_profile_index_exact_name_key",
+      "source_page": null,
+      "profile_name": "CLAUDIO SQUEO",
+      "reach_cm": null,
+      "label_diagnostics": null,
+      "status": "no_reach"
+    },
+    {
+      "target_key": "cyruspattinson",
+      "target_name": "Cyrus Pattinson",
+      "profile_id": 16956,
+      "url": "https://www.wbaboxing.com/wba-boxer-profile?id=16956",
+      "discovery": "wba_profile_index_exact_name_key",
+      "source_page": null,
+      "profile_name": "CONAH WALKER",
+      "reach_cm": null,
+      "label_diagnostics": null,
+      "status": "identity_mismatch"
+    },
+    {
+      "target_key": "danilocreati",
+      "target_name": "Danilo Creati",
+      "profile_id": 13090,
+      "url": "https://www.wbaboxing.com/wba-boxer-profile?id=13090",
+      "discovery": "wba_profile_index_exact_name_key",
+      "source_page": null,
+      "profile_name": "DANILO CREATI",
+      "reach_cm": null,
+      "label_diagnostics": null,
+      "status": "no_reach"
+    },
+    {
+      "target_key": "dominicboesel",
+      "target_name": "Dominic Boesel",
+      "profile_id": 4055,
+      "url": "https://www.wbaboxing.com/wba-boxer-profile?id=4055",
+      "discovery": "wba_profile_index_exact_name_key",
+      "source_page": null,
+      "profile_name": "DOMINIC BOESEL",
+      "reach_cm": null,
+      "label_diagnostics": null,
+      "status": "no_reach"
+    },
+    {
+      "target_key": "emilianomarsili",
+      "target_name": "Emiliano Marsili",
+      "profile_id": 2757,
+      "url": "https://www.wbaboxing.com/wba-boxer-profile?id=2757",
+      "discovery": "wba_profile_index_exact_name_key",
+      "source_page": null,
+      "profile_name": "EMILIANO MARSILI",
+      "reach_cm": null,
+      "label_diagnostics": null,
+      "status": "no_reach"
+    },
+    {
+      "target_key": "evgenytishchenko",
+      "target_name": "Evgeny Tishchenko",
+      "profile_id": 6941,
+      "url": "https://www.wbaboxing.com/wba-boxer-profile?id=6941",
+      "discovery": "wba_profile_index_exact_name_key",
+      "source_page": null,
+      "profile_name": "LEON HARTH",
+      "reach_cm": null,
+      "label_diagnostics": null,
+      "status": "identity_mismatch"
+    },
+    {
+      "target_key": "gakuyafuruhashi",
+      "target_name": "Gakuya Furuhashi",
+      "profile_id": 3704,
+      "url": "https://www.wbaboxing.com/wba-boxer-profile?id=3704",
+      "discovery": "wba_profile_index_exact_name_key",
+      "source_page": null,
+      "profile_name": "GAKUYA FURUHASHI",
+      "reach_cm": null,
+      "label_diagnostics": null,
+      "status": "no_reach"
+    },
+    {
+      "target_key": "giemelmagramo",
+      "target_name": "Giemel Magramo",
+      "profile_id": 4064,
+      "url": "https://www.wbaboxing.com/wba-boxer-profile?id=4064",
+      "discovery": "wba_profile_index_exact_name_key",
+      "source_page": null,
+      "profile_name": "GIEMEL MAGRAMO",
+      "reach_cm": null,
+      "label_diagnostics": null,
+      "status": "no_reach"
+    },
+    {
+      "target_key": "gustavodaniellemos",
+      "target_name": "Gustavo Daniel Lemos",
+      "profile_id": 5895,
+      "url": "https://www.wbaboxing.com/wba-boxer-profile?id=5895",
+      "discovery": "wba_profile_index_exact_name_key",
+      "source_page": null,
+      "profile_name": "GUSTAVO DANIEL LEMOS",
+      "reach_cm": null,
+      "label_diagnostics": null,
+      "status": "no_reach"
+    },
+    {
+      "target_key": "hiroakiteshigawara",
+      "target_name": "Hiroaki Teshigawara",
+      "profile_id": 15155,
+      "url": "https://www.wbaboxing.com/wba-boxer-profile?id=15155",
+      "discovery": "wba_profile_index_exact_name_key",
+      "source_page": null,
+      "profile_name": "HIROAKI TESHIGAWARA",
+      "reach_cm": null,
+      "label_diagnostics": null,
+      "status": "no_reach"
+    },
+    {
+      "target_key": "istvanbernath",
+      "target_name": "István Bernáth",
+      "profile_id": 20954,
+      "url": "https://www.wbaboxing.com/wba-boxer-profile?id=20954",
+      "discovery": "wba_profile_index_exact_name_key",
+      "source_page": null,
+      "profile_name": "ISTVAN BERNATH",
+      "reach_cm": null,
+      "label_diagnostics": null,
+      "status": "no_reach"
+    },
+    {
+      "target_key": "joeljulio",
+      "target_name": "Joel Julio",
+      "profile_id": 7319,
+      "url": "https://www.wbaboxing.com/wba-boxer-profile?id=7319",
+      "discovery": "wba_profile_index_exact_name_key",
+      "source_page": null,
+      "profile_name": "JOEL JULIO",
+      "reach_cm": null,
+      "label_diagnostics": null,
+      "status": "no_reach"
+    },
+    {
+      "target_key": "josberperez",
+      "target_name": "Josber Perez",
+      "profile_id": 4920,
+      "url": "https://www.wbaboxing.com/wba-boxer-profile?id=4920",
+      "discovery": "wba_profile_index_exact_name_key",
+      "source_page": null,
+      "profile_name": "JOSBER PEREZ",
+      "reach_cm": null,
+      "label_diagnostics": null,
+      "status": "no_reach"
+    },
+    {
+      "target_key": "josephgoodall",
+      "target_name": "Joseph Goodall",
+      "profile_id": 6640,
+      "url": "https://www.wbaboxing.com/wba-boxer-profile?id=6640",
+      "discovery": "wba_profile_index_exact_name_key",
+      "source_page": null,
+      "profile_name": "EFE AJAGBA",
+      "reach_cm": 215.9,
+      "label_diagnostics": {
+        "candidates": [
+          [
+            "previous",
+            215.9,
+            "85″"
+          ]
+        ]
+      },
+      "status": "identity_mismatch"
+    },
+    {
+      "target_key": "joshwagner",
+      "target_name": "Josh Wagner",
+      "profile_id": 19718,
+      "url": "https://www.wbaboxing.com/wba-boxer-profile?id=19718",
+      "discovery": "wba_profile_index_exact_name_key",
+      "source_page": null,
+      "profile_name": "JOSH WAGNER",
+      "reach_cm": null,
+      "label_diagnostics": null,
+      "status": "no_reach"
+    },
+    {
+      "target_key": "juliansmith",
+      "target_name": "Julian Smith",
+      "profile_id": 16890,
+      "url": "https://www.wbaboxing.com/wba-boxer-profile?id=16890",
+      "discovery": "wba_profile_index_exact_name_key",
+      "source_page": null,
+      "profile_name": "JULIAN SMITH",
+      "reach_cm": null,
+      "label_diagnostics": null,
+      "status": "no_reach"
+    },
+    {
+      "target_key": "laszlototh",
+      "target_name": "Laszlo Toth",
+      "profile_id": 5030,
+      "url": "https://www.wbaboxing.com/wba-boxer-profile?id=5030",
+      "discovery": "wba_profile_index_exact_name_key",
+      "source_page": null,
+      "profile_name": "LASZLO TOTH",
+      "reach_cm": null,
+      "label_diagnostics": null,
+      "status": "no_reach"
+    },
+    {
+      "target_key": "lennoxclarke",
+      "target_name": "Lennox Clarke",
+      "profile_id": 20759,
+      "url": "https://www.wbaboxing.com/wba-boxer-profile?id=20759",
+      "discovery": "wba_profile_index_exact_name_key",
+      "source_page": null,
+      "profile_name": "LENNOX CLARKE",
+      "reach_cm": null,
+      "label_diagnostics": null,
+      "status": "no_reach"
+    },
+    {
+      "target_key": "leonbunn",
+      "target_name": "Leon Bunn",
+      "profile_id": 6941,
+      "url": "https://www.wbaboxing.com/wba-boxer-profile?id=6941",
+      "discovery": "wba_profile_index_exact_name_key",
+      "source_page": null,
+      "profile_name": "LEON HARTH",
+      "reach_cm": null,
+      "label_diagnostics": null,
+      "status": "identity_mismatch"
+    },
+    {
+      "target_key": "manuelgallegos",
+      "target_name": "Manuel Gallegos",
+      "profile_id": 5846,
+      "url": "https://www.wbaboxing.com/wba-boxer-profile?id=5846",
+      "discovery": "wba_profile_index_exact_name_key",
+      "source_page": null,
+      "profile_name": "MANUEL GALLEGOS",
+      "reach_cm": null,
+      "label_diagnostics": null,
+      "status": "no_reach"
+    },
+    {
+      "target_key": "manuelgallegos",
+      "target_name": "Manuel Gallegos",
+      "profile_id": 17831,
+      "url": "https://www.wbaboxing.com/wba-boxer-profile?id=17831",
+      "discovery": "wba_profile_index_exact_name_key",
+      "source_page": null,
+      "profile_name": "NAJEE LOPEZ",
+      "reach_cm": null,
+      "label_diagnostics": null,
+      "status": "identity_mismatch"
+    },
+    {
+      "target_key": "marioskollias",
+      "target_name": "Marios Kollias",
+      "profile_id": 16921,
+      "url": "https://www.wbaboxing.com/wba-boxer-profile?id=16921",
+      "discovery": "wba_profile_index_exact_name_key",
+      "source_page": null,
+      "profile_name": "MARIOS KOLLIAS",
+      "reach_cm": null,
+      "label_diagnostics": null,
+      "status": "no_reach"
+    },
+    {
+      "target_key": "miguelparra",
+      "target_name": "Miguel Parra",
+      "profile_id": 18406,
+      "url": "https://www.wbaboxing.com/wba-boxer-profile?id=18406",
+      "discovery": "wba_profile_index_exact_name_key",
+      "source_page": null,
+      "profile_name": "MIGUEL PARRA",
+      "reach_cm": null,
+      "label_diagnostics": null,
+      "status": "no_reach"
+    },
+    {
+      "target_key": "mikebalogun",
+      "target_name": "Mike Balogun",
+      "profile_id": 4439,
+      "url": "https://www.wbaboxing.com/wba-boxer-profile?id=4439",
+      "discovery": "wba_profile_index_exact_name_key",
+      "source_page": null,
+      "profile_name": "MURAT GASSIEV",
+      "reach_cm": 193.04,
+      "label_diagnostics": {
+        "candidates": [
+          [
+            "previous",
+            193.04,
+            "76″"
+          ]
+        ]
+      },
+      "status": "identity_mismatch"
+    },
+    {
+      "target_key": "mikebalogun",
+      "target_name": "Mike Balogun",
+      "profile_id": 10747,
+      "url": "https://www.wbaboxing.com/wba-boxer-profile?id=10747",
+      "discovery": "wba_profile_index_exact_name_key",
+      "source_page": null,
+      "profile_name": "MIKE BALOGUN",
+      "reach_cm": null,
+      "label_diagnostics": null,
+      "status": "no_reach"
+    },
+    {
+      "target_key": "ralfsvilcans",
+      "target_name": "Ralfs Vilcans",
+      "profile_id": 17595,
+      "url": "https://www.wbaboxing.com/wba-boxer-profile?id=17595",
+      "discovery": "wba_profile_index_exact_name_key",
+      "source_page": null,
+      "profile_name": "RALFS VILCANS",
+      "reach_cm": null,
+      "label_diagnostics": null,
+      "status": "no_reach"
+    },
+    {
+      "target_key": "regiesuganob",
+      "target_name": "Regie Suganob",
+      "profile_id": 14151,
+      "url": "https://www.wbaboxing.com/wba-boxer-profile?id=14151",
+      "discovery": "wba_profile_index_exact_name_key",
+      "source_page": null,
+      "profile_name": "REGIE SUGANOB",
+      "reach_cm": null,
+      "label_diagnostics": null,
+      "status": "no_reach"
+    },
+    {
+      "target_key": "stevenward",
+      "target_name": "Steven Ward",
+      "profile_id": 11222,
+      "url": "https://www.wbaboxing.com/wba-boxer-profile?id=11222",
+      "discovery": "wba_profile_index_exact_name_key",
+      "source_page": null,
+      "profile_name": "STEVEN WARD",
+      "reach_cm": null,
+      "label_diagnostics": null,
+      "status": "no_reach"
+    },
+    {
+      "target_key": "thomaspatrickward",
+      "target_name": "Thomas Patrick Ward",
+      "profile_id": 2828,
+      "url": "https://www.wbaboxing.com/wba-boxer-profile?id=2828",
+      "discovery": "wba_profile_index_exact_name_key",
+      "source_page": null,
+      "profile_name": "JAMES DICKENS",
+      "reach_cm": 160.02,
+      "label_diagnostics": {
+        "candidates": [
+          [
+            "previous",
+            160.02,
+            "63″"
+          ]
+        ]
+      },
+      "status": "identity_mismatch"
+    },
+    {
+      "target_key": "thomaspatrickward",
+      "target_name": "Thomas Patrick Ward",
+      "profile_id": 11913,
+      "url": "https://www.wbaboxing.com/wba-boxer-profile?id=11913",
+      "discovery": "wba_profile_index_exact_name_key",
+      "source_page": null,
+      "profile_name": "OTABEK KHOLMATOV",
+      "reach_cm": null,
+      "label_diagnostics": null,
+      "status": "identity_mismatch"
+    },
+    {
+      "target_key": "vaughnalexander",
+      "target_name": "Vaughn Alexander",
+      "profile_id": 7168,
+      "url": "https://www.wbaboxing.com/wba-boxer-profile?id=7168",
+      "discovery": "wba_profile_index_exact_name_key",
+      "source_page": null,
+      "profile_name": "VAUGHN ALEXANDER",
+      "reach_cm": null,
+      "label_diagnostics": null,
+      "status": "no_reach"
+    },
+    {
+      "target_key": "yohanvasquez",
+      "target_name": "Yohan Vasquez",
+      "profile_id": 4647,
+      "url": "https://www.wbaboxing.com/wba-boxer-profile?id=4647",
+      "discovery": "wba_profile_index_exact_name_key",
+      "source_page": null,
+      "profile_name": "YOHAN VASQUEZ",
+      "reach_cm": null,
+      "label_diagnostics": null,
       "status": "no_reach"
     }
   ],
-  "policy": "Official WBA direct profile links from current ranking/champion/results/schedule pages only; exact profile-title identity; plausible numeric reach; no guessed IDs or opponent-link propagation."
+  "policy": "Official WBA profile IDs discovered from current direct links or existing official WBA profile index only; no guessed IDs; fetched official profile title must exactly match target; value-before-label and label-before-value REACH layouts supported; multiple exact profiles must agree within 1 cm; missing reach only."
 }
