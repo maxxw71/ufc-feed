@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-28T11:10:22.305507+00:00",
+  "generated_at": "2026-09-28T11:11:30.127095+00:00",
   "source_counts": {
     "cross_source_reach_additions.jsonl": 5,
     "third_source_reach_additions.jsonl": 12,
@@ -7,7 +7,7 @@
     "fitequant_reach_additions.jsonl": 0,
     "boxrec_wayback_reach_additions.jsonl": 0,
     "boxrec_wiki_reach_additions.jsonl": 0,
-    "public_search_reach_additions.jsonl": 15,
+    "public_search_reach_additions.jsonl": 17,
     "ring_reach_additions.jsonl": 0,
     "ready_to_fight_reach_additions.jsonl": 1,
     "toprank_reach_additions.jsonl": 0,
@@ -23,19 +23,27 @@
     "ringside24_reach_additions.jsonl": 0,
     "boxingshowtimes_reach_additions.jsonl": 0
   },
-  "candidate_fighters": 44,
-  "merged": 1,
+  "candidate_fighters": 46,
+  "merged": 2,
   "merged_profiles": [
     {
-      "target_source_id": "https://en.wikipedia.org/wiki/Ryad_Merhy",
-      "name": "Ryad Merhy",
-      "reach_cm": 180.67,
+      "target_source_id": "https://en.wikipedia.org/wiki/Hannah_Rankin",
+      "name": "Hannah Rankin",
+      "reach_cm": 177.8,
+      "addition_files": [
+        "public_search_reach_additions.jsonl"
+      ]
+    },
+    {
+      "target_source_id": "https://en.wikipedia.org/wiki/Simon_Kean",
+      "name": "Simon Kean",
+      "reach_cm": 195.79,
       "addition_files": [
         "public_search_reach_additions.jsonl"
       ]
     }
   ],
-  "skipped_existing_reach": 43,
+  "skipped_existing_reach": 44,
   "conflicts_quarantined": 0,
   "conflicts": [],
   "policy": "Whitelisted strict corroboration files only; never overwrite existing reach; candidate sources must agree within 1 cm or fighter is quarantined."
