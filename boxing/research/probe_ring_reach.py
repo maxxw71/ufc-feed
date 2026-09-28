@@ -133,58 +133,80 @@ def directory_urls():
 
 def parse(raw):
     soup=BeautifulSoup(raw,'lxml')
-    h=soup.find('h1')
-    name=' '.join(h.stripped_strings).strip() if h else ''
     strings=[
         re.sub(r'\s+',' ',x).strip()
         for x in soup.stripped_strings
         if re.sub(r'\s+',' ',x).strip()
     ]
-    text=' '.join(strings)
-    vals=[]
 
-    # Inline Ring forms such as:
-    # "Reach 68\" 173 cm", "Reach 173 cm", or "Reach 68\"".
+    # Ring fighter pages expose the canonical fighter identity in the
+    # structured "Name" field. The page H1 is not reliable for this layout.
+    name=''
+    for i,s in enumerate(strings[:-1]):
+        if s.casefold().rstrip(':')=='name':
+            candidate=strings[i+1]
+            if candidate and candidate.casefold() not in {'natl.','nationality','division'}:
+                name=candidate
+                break
+    if not name:
+        h=soup.find('h1')
+        name=' '.join(h.stripped_strings).strip() if h else ''
+
+    text=' '.join(strings)
+    cm_vals=[];inch_vals=[]
+
+    # Inline Ring forms such as "Reach 68\" 173 cm".
     for m in re.finditer(
         r'\bReach\s*:?[ ]*(\d+(?:\.\d+)?)\s*[\"″]\s*'
         r'(?:[/|,-]\s*)?(\d+(?:\.\d+)?)\s*cm\b',
         text,re.I
     ):
-        cm=float(m.group(2))
-        if 120<=cm<=270:
-            vals.append(round(cm,2))
+        inches=float(m.group(1));cm=float(m.group(2))
+        if 120<=cm<=270:cm_vals.append(round(cm,2))
+        converted=round(inches*2.54,2)
+        if 120<=converted<=270:inch_vals.append(converted)
 
     for m in re.finditer(r'\bReach\s*:?[ ]*(\d+(?:\.\d+)?)\s*cm\b',text,re.I):
         cm=float(m.group(1))
-        if 120<=cm<=270:
-            vals.append(round(cm,2))
+        if 120<=cm<=270:cm_vals.append(round(cm,2))
 
     for m in re.finditer(r'\bReach\s*:?[ ]*(\d+(?:\.\d+)?)\s*[\"″]',text,re.I):
         cm=round(float(m.group(1))*2.54,2)
-        if 120<=cm<=270:
-            vals.append(cm)
+        if 120<=cm<=270:inch_vals.append(cm)
 
-    # Label/value DOM split fallback.
+    # Structured DOM fallback. Ring often splits "Reach", "68\"", "173",
+    # "cm" into separate text nodes. Read only values AFTER the Reach label
+    # until the next profile field; never inspect the preceding field.
+    stop_labels={'name','natl.','nationality','division','weight','stance','age','record'}
     for i,s in enumerate(strings):
-        if s.casefold().rstrip(':')!='reach':
-            continue
-        for j in (i+1,i-1):
-            if not (0<=j<len(strings)):
-                continue
-            v=strings[j].replace('”','"').replace('″','"').replace('“','"')
-            m=re.search(r'(\d+(?:\.\d+)?)\s*cm\b',v,re.I)
-            if m:
-                cm=float(m.group(1))
-                if 120<=cm<=270:
-                    vals.append(round(cm,2))
-            m=re.search(r'(\d+(?:\.\d+)?)\s*(?:\"|in(?:ches)?)',v,re.I)
-            if m:
-                cm=round(float(m.group(1))*2.54,2)
-                if 120<=cm<=270:
-                    vals.append(cm)
+        if s.casefold().rstrip(':')!='reach':continue
+        chunk=[]
+        for j in range(i+1,min(len(strings),i+6)):
+            token=strings[j]
+            if token.casefold().rstrip(':') in stop_labels:break
+            chunk.append(token)
+        joined=' '.join(chunk).replace('”','"').replace('″','"').replace('“','"')
+        for m in re.finditer(r'(\d+(?:\.\d+)?)\s*cm\b',joined,re.I):
+            cm=float(m.group(1))
+            if 120<=cm<=270:cm_vals.append(round(cm,2))
+        for m in re.finditer(r'(\d+(?:\.\d+)?)\s*(?:\"|in(?:ches)?)',joined,re.I):
+            cm=round(float(m.group(1))*2.54,2)
+            if 120<=cm<=270:inch_vals.append(cm)
 
-    vals=sorted(set(round(v,2) for v in vals))
-    return name,(vals[0] if len(vals)==1 else None),vals
+    cm_vals=sorted(set(round(v,2) for v in cm_vals))
+    inch_vals=sorted(set(round(v,2) for v in inch_vals))
+    all_vals=cm_vals+inch_vals
+    if not all_vals:return name,None,[]
+    # Metric is explicitly rendered by Ring and is preferred when present.
+    # Inch conversion is a consistency check; ordinary rounding (68" = 172.72
+    # vs rendered 173 cm) must not create a false conflict.
+    if max(all_vals)-min(all_vals)>1.01:
+        return name,None,sorted(set(all_vals))
+    if cm_vals:
+        reach=round(sum(cm_vals)/len(cm_vals),2)
+    else:
+        reach=round(sum(inch_vals)/len(inch_vals),2)
+    return name,reach,sorted(set(all_vals))
 
 
 def main():
