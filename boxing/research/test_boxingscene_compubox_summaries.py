@@ -195,5 +195,35 @@ class BoxingSceneCompuBoxResolutionTests(unittest.TestCase):
         self.assertEqual(out['Paddy Donovan']['power_landed'],86)
         self.assertEqual(out['Lewis Crocker']['power_landed'],49)
 
+    def test_historical_review_last_n_before_name_and_parenthetical_rates(self):
+        text=(
+          "In his last 4 fights Anthony Joshua threw/landed slightly above heavyweight average "
+          "for total punches (18.2 landed/49.2 thrown and landed above avg. with his jab- 7.3 per round). "
+          "Wladimir Klitschko has a +10.6 plus/minus rating in his last 14 fights."
+        )
+        out=parse_prefight_baselines(text,'Anthony Joshua','Wladimir Klitschko')
+        self.assertEqual(out['Anthony Joshua']['history_window_fights'],4.0)
+        self.assertEqual(out['Anthony Joshua']['total_landed_per_round'],18.2)
+        self.assertEqual(out['Anthony Joshua']['total_thrown_per_round'],49.2)
+        self.assertEqual(out['Anthony Joshua']['jab_landed_per_round'],7.3)
+
+    def test_historical_review_explicit_landed_thrown_per_round(self):
+        text=(
+          "Daniel Ponce De Leon racked up huge numbers vs. Lazcano, landing an average of 52 of 136 punches per round. "
+          "De Leon averaged 12 of 52 per round vs. Gamboa and Broner. "
+          "Jhonny Gonzalez's opponents landed just 17% of their total punches."
+        )
+        out=parse_prefight_baselines(text,'Daniel Ponce de Leon','Jhonny Gonzalez')
+        # Conflicting historical contexts for the same fighter are quarantined
+        # rather than silently averaged.
+        self.assertTrue(out['Daniel Ponce de Leon'].get('_invalid_conflict'))
+        self.assertEqual(out['Jhonny Gonzalez']['opponent_total_accuracy_pct'],17.0)
+
+    def test_postfight_simple_total_thrown(self):
+        text='Rob Brant upset Ryota Murata by throwing 1,262 punches in the fight.'
+        out=parse_explicit_stats(text,'Rob Brant','Ryota Murata')
+        self.assertEqual(out['Rob Brant']['total_thrown'],1262)
+
+
 if __name__=='__main__':
     unittest.main()
