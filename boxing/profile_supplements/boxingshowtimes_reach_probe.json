@@ -1,0 +1,33 @@
+{
+  "generated_at": "2026-09-28T10:57:46.750370+00:00",
+  "missing_targets": 241,
+  "discovered_profiles": 0,
+  "profiles_fetched": 0,
+  "matched_missing_targets": 0,
+  "status_counts": {},
+  "lead_count": 0,
+  "martialbot_corroborated": 0,
+  "martialbot_conflicts": 0,
+  "corroborated_profiles": [],
+  "conflicting_profiles": [],
+  "discovery_diagnostics": [
+    {
+      "url": "https://boxingshowtimes.com/boxers",
+      "status": "ok",
+      "links": 0,
+      "bytes": 30562
+    },
+    {
+      "url": "https://sitemap.boxingshowtimes.com/boxers",
+      "status": "error",
+      "error": "URLError: <urlopen error [SSL: TLSV1_ALERT_INTERNAL_ERROR] tlsv1 alert internal error (_ssl.c:1010)>"
+    },
+    {
+      "url": "https://ofbiz.boxingshowtimes.com/boxers",
+      "status": "error",
+      "error": "URLError: <urlopen error [SSL: TLSV1_ALERT_INTERNAL_ERROR] tlsv1 alert internal error (_ssl.c:1010)>"
+    }
+  ],
+  "rows": [],
+  "policy": "Boxing Showtimes is corroboration-only because current profile UI mislabels inch values as cm. Exact H1 identity plus plausible normalized value and independent MartialBot agreement within 1 cm required. Same-page prose conflicts and cross-source conflicts quarantined."
+}
