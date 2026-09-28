@@ -570,6 +570,9 @@ def parse_prefight_baselines(text,a,b):
     punch observations.
     """
     txt=unicodedata.normalize('NFKD',str(text or '')).encode('ascii','ignore').decode()
+    # Boxing prose frequently uses "vs." inside a sentence. Normalize that
+    # abbreviation so sentence-safe regexes do not treat it as a full stop.
+    txt=re.sub(r'\bvs\.\s*','vs ',txt,flags=re.I)
     out={a:{},b:{}}
 
     def setv(f,key,val):
