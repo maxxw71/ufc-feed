@@ -214,8 +214,7 @@ class BoxingSceneCompuBoxResolutionTests(unittest.TestCase):
           "Jhonny Gonzalez's opponents landed just 17% of their total punches."
         )
         out=parse_prefight_baselines(text,'Daniel Ponce de Leon','Jhonny Gonzalez')
-        self.assertEqual(out['Daniel Ponce de Leon']['total_landed_per_round'],52.0)
-        self.assertEqual(out['Daniel Ponce de Leon']['total_thrown_per_round'],136.0)
+        self.assertTrue(out['Daniel Ponce de Leon'].get('_invalid_conflict'))
         self.assertEqual(out['Jhonny Gonzalez']['opponent_total_accuracy_pct'],17.0)
 
     def test_postfight_simple_total_thrown(self):
