@@ -1,12 +1,14 @@
 {
-  "generated_at": "2026-09-28T11:02:48.107844+00:00",
-  "missing_targets": 241,
+  "generated_at": "2026-09-28T13:06:39.173305+00:00",
+  "missing_targets": 217,
   "sitemap_fighter_urls": 1002,
   "directory_fighter_urls": 0,
   "candidate_fighter_urls": 1002,
   "profiles_fetched": 1002,
   "matched_target_profiles": 0,
-  "status_counts": {},
+  "status_counts": {
+    "fetch_error": 1
+  },
   "lead_count": 0,
   "martialbot_corroborated": 0,
   "martialbot_conflicts": 0,
@@ -95,15 +97,21 @@
       "status": "ok",
       "locs": 0,
       "robots_sitemaps": [],
-      "bytes": 1487208
+      "bytes": 1487220
     },
     {
       "url": "https://www.ringmagazine.com/fighters",
       "status": "ok",
       "links": 0,
-      "bytes": 1663458
+      "bytes": 1663457
     }
   ],
-  "rows": [],
+  "rows": [
+    {
+      "url": "https://www.ringmagazine.com/fighters/5YaIlXiemDqMV8wTgPTwDi",
+      "status": "fetch_error",
+      "error": "URLError: <urlopen error [Errno 104] Connection reset by peer>"
+    }
+  ],
   "policy": "Explicit public The Ring fighter profile discovered from Ring sitemap/directory; exact rendered H1 identity. Automatic addition only when independent exact-identity MartialBot agrees within 1 cm."
 }
