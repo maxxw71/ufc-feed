@@ -1,0 +1,44 @@
+name: Boxing BoxerList Reach Probe
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'boxing/research/probe_boxerlist_reach.py'
+      - '.github/workflows/boxing-boxerlist-reach.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install -q beautifulsoup4 lxml
+      - run: python boxing/research/probe_boxerlist_reach.py
+      - name: Persist BoxerList reach probe
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          mkdir -p /tmp/boxerlist-reach
+          cp boxing/profile_supplements/boxerlist_reach_probe.json /tmp/boxerlist-reach/
+          cp boxing/profile_supplements/boxerlist_reach_additions.jsonl /tmp/boxerlist-reach/
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          for attempt in 1 2 3 4; do
+            git fetch origin main
+            git reset --hard origin/main
+            cp /tmp/boxerlist-reach/boxerlist_reach_probe.json boxing/profile_supplements/
+            cp /tmp/boxerlist-reach/boxerlist_reach_additions.jsonl boxing/profile_supplements/
+            git add boxing/profile_supplements/boxerlist_reach_probe.json boxing/profile_supplements/boxerlist_reach_additions.jsonl
+            if git diff --cached --quiet; then exit 0; fi
+            git commit -m 'Publish BoxerList reach probe'
+            if git push origin HEAD:main; then exit 0; fi
+            sleep $((attempt * 2))
+          done
+          exit 1
