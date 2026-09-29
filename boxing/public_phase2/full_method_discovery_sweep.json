@@ -978,52 +978,52 @@
     },
     {
       "phase": "phase3",
-      "rule": "FORM_REACH__price1.2__form1__reach5",
+      "rule": "FORM_REACH__price1.2__form1__reach3",
       "family": "FORM_REACH",
       "spec": {
         "family": "FORM_REACH",
         "price": 1.2,
         "form": 1,
-        "reach": 5
+        "reach": 3
       },
       "metrics": {
-        "bets": 28,
-        "wins": 23,
-        "losses": 5,
-        "win_pct": 82.14285714285714,
-        "wilson95_lower_pct": 64.4082084514089,
-        "profit_median_units": 5.227650458881696,
-        "roi_median_pct": 18.670180210291768,
-        "profit_best_units": 6.263120619658588,
-        "roi_best_pct": 22.3682879273521,
-        "avg_market_prob": 0.6624424408676726,
-        "avg_book_count": 4.714285714285714
+        "bets": 36,
+        "wins": 29,
+        "losses": 7,
+        "win_pct": 80.55555555555556,
+        "wilson95_lower_pct": 64.9716379364848,
+        "profit_median_units": 6.132684212313619,
+        "roi_median_pct": 17.035233923093386,
+        "profit_best_units": 7.787817164943368,
+        "roi_best_pct": 21.632825458176022,
+        "avg_market_prob": 0.6569615508972344,
+        "avg_book_count": 4.722222222222222
       },
       "dev_2021_2023": {
-        "bets": 12,
-        "wins": 9,
-        "losses": 3,
-        "win_pct": 75.0,
-        "wilson95_lower_pct": 46.76896608793401,
-        "profit_median_units": 1.9575854555761565,
-        "roi_median_pct": 16.313212129801304,
-        "profit_best_units": 2.4655525655525654,
-        "roi_best_pct": 20.54627137960471,
-        "avg_market_prob": 0.6203230890511441,
-        "avg_book_count": 5.416666666666667
+        "bets": 15,
+        "wins": 11,
+        "losses": 4,
+        "win_pct": 73.33333333333333,
+        "wilson95_lower_pct": 48.04911034231324,
+        "profit_median_units": 1.5810058947860695,
+        "roi_median_pct": 10.540039298573795,
+        "profit_best_units": 2.143423714011949,
+        "roi_best_pct": 14.289491426746327,
+        "avg_market_prob": 0.63393566189494,
+        "avg_book_count": 5.333333333333333
       },
       "later_2024_2026": {
-        "bets": 16,
-        "wins": 14,
-        "losses": 2,
-        "win_pct": 87.5,
-        "wilson95_lower_pct": 63.976668563251714,
-        "profit_median_units": 3.2700650033055396,
-        "roi_median_pct": 20.437906270659624,
-        "profit_best_units": 3.797568054106023,
-        "roi_best_pct": 23.734800338162643,
-        "avg_market_prob": 0.6940319547300688,
-        "avg_book_count": 4.1875
+        "bets": 21,
+        "wins": 18,
+        "losses": 3,
+        "win_pct": 85.71428571428571,
+        "wilson95_lower_pct": 65.36350585077048,
+        "profit_median_units": 4.55167831752755,
+        "roi_median_pct": 21.674658654893094,
+        "profit_best_units": 5.644393450931419,
+        "roi_best_pct": 26.878064052054377,
+        "avg_market_prob": 0.6734086144703018,
+        "avg_book_count": 4.285714285714286
       },
       "losses": [
         {
@@ -1081,6 +1081,24 @@
           "opponent_last5_stoppage_losses": 2.0
         },
         {
+          "year": 2022,
+          "favorite": "Hiroto Kyoguchi",
+          "opponent": "Kenshiro Teraji",
+          "median_price": 1.5195681511470984,
+          "market_prob": 0.6210128953946938,
+          "book_count": 6,
+          "younger_by": 1.8918999999999997,
+          "form_gap": 1.0,
+          "experience_gap": -4.0,
+          "reach_gap": 4.0,
+          "height_gap": 0.0,
+          "rest_edge": 83.0,
+          "opponent_strength_gap": 0.11343774829048847,
+          "favorite_ko_rate": 0.6875,
+          "opponent_stoppage_loss_rate": 0.05,
+          "opponent_last5_stoppage_losses": 1.0
+        },
+        {
           "year": 2024,
           "favorite": "Raymond Ford",
           "opponent": "Nick Ball",
@@ -1115,17 +1133,35 @@
           "favorite_ko_rate": 0.2857142857142857,
           "opponent_stoppage_loss_rate": 0.0,
           "opponent_last5_stoppage_losses": 0.0
+        },
+        {
+          "year": 2026,
+          "favorite": "Errol Spence Jr.",
+          "opponent": "Tim Tszyu",
+          "median_price": 1.7092198581560285,
+          "market_prob": 0.5477320922551466,
+          "book_count": 3,
+          "younger_by": -4.668099999999999,
+          "form_gap": 1.0,
+          "experience_gap": -1.0,
+          "reach_gap": 4.0,
+          "height_gap": 0.0,
+          "rest_edge": -980.0,
+          "opponent_strength_gap": 0.021995003460769103,
+          "favorite_ko_rate": 0.7586206896551724,
+          "opponent_stoppage_loss_rate": 0.06666666666666667,
+          "opponent_last5_stoppage_losses": 2.0
         }
       ],
       "bootstrap": {
-        "lo": -4.067773842936185,
-        "median": 19.138224540958703,
-        "hi": 38.979699934690416,
-        "p_gt_0": 0.9493333333333334
+        "lo": -4.480428856286076,
+        "median": 17.393119647424314,
+        "hi": 36.03460067644027,
+        "p_gt_0": 0.949
       },
       "stable_family_variants": 3,
       "neighborhood_support": 0.6,
-      "score": 74.92375350398184
+      "score": 75.07744641725814
     },
     {
       "phase": "phase2",
@@ -1687,62 +1723,62 @@
     },
     {
       "phase": "phase3",
-      "rule": "FORM_REACH__price1.2__form1__reach5",
+      "rule": "FORM_REACH__price1.2__form1__reach3",
       "family": "FORM_REACH",
       "spec": {
         "family": "FORM_REACH",
         "price": 1.2,
         "form": 1,
-        "reach": 5
+        "reach": 3
       },
       "metrics": {
-        "bets": 28,
-        "wins": 23,
-        "losses": 5,
-        "win_pct": 82.14285714285714,
-        "wilson95_lower_pct": 64.4082084514089,
-        "profit_median_units": 5.227650458881696,
-        "roi_median_pct": 18.670180210291768,
-        "profit_best_units": 6.263120619658588,
-        "roi_best_pct": 22.3682879273521,
-        "avg_market_prob": 0.6624424408676726,
-        "avg_book_count": 4.714285714285714
+        "bets": 36,
+        "wins": 29,
+        "losses": 7,
+        "win_pct": 80.55555555555556,
+        "wilson95_lower_pct": 64.9716379364848,
+        "profit_median_units": 6.132684212313619,
+        "roi_median_pct": 17.035233923093386,
+        "profit_best_units": 7.787817164943368,
+        "roi_best_pct": 21.632825458176022,
+        "avg_market_prob": 0.6569615508972344,
+        "avg_book_count": 4.722222222222222
       },
       "dev_2021_2023": {
-        "bets": 12,
-        "wins": 9,
-        "losses": 3,
-        "win_pct": 75.0,
-        "wilson95_lower_pct": 46.76896608793401,
-        "profit_median_units": 1.9575854555761565,
-        "roi_median_pct": 16.313212129801304,
-        "profit_best_units": 2.4655525655525654,
-        "roi_best_pct": 20.54627137960471,
-        "avg_market_prob": 0.6203230890511441,
-        "avg_book_count": 5.416666666666667
+        "bets": 15,
+        "wins": 11,
+        "losses": 4,
+        "win_pct": 73.33333333333333,
+        "wilson95_lower_pct": 48.04911034231324,
+        "profit_median_units": 1.5810058947860695,
+        "roi_median_pct": 10.540039298573795,
+        "profit_best_units": 2.143423714011949,
+        "roi_best_pct": 14.289491426746327,
+        "avg_market_prob": 0.63393566189494,
+        "avg_book_count": 5.333333333333333
       },
       "later_2024_2026": {
-        "bets": 16,
-        "wins": 14,
-        "losses": 2,
-        "win_pct": 87.5,
-        "wilson95_lower_pct": 63.976668563251714,
-        "profit_median_units": 3.2700650033055396,
-        "roi_median_pct": 20.437906270659624,
-        "profit_best_units": 3.797568054106023,
-        "roi_best_pct": 23.734800338162643,
-        "avg_market_prob": 0.6940319547300688,
-        "avg_book_count": 4.1875
+        "bets": 21,
+        "wins": 18,
+        "losses": 3,
+        "win_pct": 85.71428571428571,
+        "wilson95_lower_pct": 65.36350585077048,
+        "profit_median_units": 4.55167831752755,
+        "roi_median_pct": 21.674658654893094,
+        "profit_best_units": 5.644393450931419,
+        "roi_best_pct": 26.878064052054377,
+        "avg_market_prob": 0.6734086144703018,
+        "avg_book_count": 4.285714285714286
       },
       "bootstrap": {
-        "lo": -4.067773842936185,
-        "median": 19.138224540958703,
-        "hi": 38.979699934690416,
-        "p_gt_0": 0.9493333333333334
+        "lo": -4.480428856286076,
+        "median": 17.393119647424314,
+        "hi": 36.03460067644027,
+        "p_gt_0": 0.949
       },
       "stable_family_variants": 3,
       "neighborhood_support": 0.6,
-      "score": 74.92375350398184
+      "score": 75.07744641725814
     },
     {
       "phase": "phase2",
@@ -2168,7 +2204,7 @@
       "AGING_OPP__pmin1.2__pmax1.6__oppage34__age3": 0.0676,
       "AGE_WORLD_TITLE__price1.2__age5__world1": 0.0189,
       "AGE_FORM__price1.2__younger3__form1": 0.1184,
-      "FORM_REACH__price1.2__form1__reach5": 0.1087,
+      "FORM_REACH__price1.2__form1__reach3": 0.1346,
       "AGE_POWER__price1.2__younger3__ko0.4": 0.087
     },
     "OPP_LAYOFF__pmin1.2__pmax1.6__opprest270": {
@@ -2178,7 +2214,7 @@
       "AGING_OPP__pmin1.2__pmax1.6__oppage34__age3": 0.1649,
       "AGE_WORLD_TITLE__price1.2__age5__world1": 0.0602,
       "AGE_FORM__price1.2__younger3__form1": 0.1121,
-      "FORM_REACH__price1.2__form1__reach5": 0.0759,
+      "FORM_REACH__price1.2__form1__reach3": 0.069,
       "AGE_POWER__price1.2__younger3__ko0.4": 0.05
     },
     "AGE_LONG__price1.2__age5__rounds10": {
@@ -2188,7 +2224,7 @@
       "AGING_OPP__pmin1.2__pmax1.6__oppage34__age3": 0.2419,
       "AGE_WORLD_TITLE__price1.2__age5__world1": 0.3,
       "AGE_FORM__price1.2__younger3__form1": 0.137,
-      "FORM_REACH__price1.2__form1__reach5": 0.0208,
+      "FORM_REACH__price1.2__form1__reach3": 0.0364,
       "AGE_POWER__price1.2__younger3__ko0.4": 0.1429
     },
     "AGING_OPP__pmin1.2__pmax1.6__oppage34__age3": {
@@ -2198,7 +2234,7 @@
       "AGING_OPP__pmin1.2__pmax1.6__oppage34__age3": 1.0,
       "AGE_WORLD_TITLE__price1.2__age5__world1": 0.2254,
       "AGE_FORM__price1.2__younger3__form1": 0.3882,
-      "FORM_REACH__price1.2__form1__reach5": 0.037,
+      "FORM_REACH__price1.2__form1__reach3": 0.0455,
       "AGE_POWER__price1.2__younger3__ko0.4": 0.2206
     },
     "AGE_WORLD_TITLE__price1.2__age5__world1": {
@@ -2208,7 +2244,7 @@
       "AGING_OPP__pmin1.2__pmax1.6__oppage34__age3": 0.2254,
       "AGE_WORLD_TITLE__price1.2__age5__world1": 1.0,
       "AGE_FORM__price1.2__younger3__form1": 0.1772,
-      "FORM_REACH__price1.2__form1__reach5": 0.0172,
+      "FORM_REACH__price1.2__form1__reach3": 0.0152,
       "AGE_POWER__price1.2__younger3__ko0.4": 0.1373
     },
     "AGE_FORM__price1.2__younger3__form1": {
@@ -2218,18 +2254,18 @@
       "AGING_OPP__pmin1.2__pmax1.6__oppage34__age3": 0.3882,
       "AGE_WORLD_TITLE__price1.2__age5__world1": 0.1772,
       "AGE_FORM__price1.2__younger3__form1": 1.0,
-      "FORM_REACH__price1.2__form1__reach5": 0.1688,
+      "FORM_REACH__price1.2__form1__reach3": 0.1951,
       "AGE_POWER__price1.2__younger3__ko0.4": 0.3284
     },
-    "FORM_REACH__price1.2__form1__reach5": {
-      "FORM_LONG__price1.3__form1__rounds10": 0.1087,
-      "OPP_LAYOFF__pmin1.2__pmax1.6__opprest270": 0.0759,
-      "AGE_LONG__price1.2__age5__rounds10": 0.0208,
-      "AGING_OPP__pmin1.2__pmax1.6__oppage34__age3": 0.037,
-      "AGE_WORLD_TITLE__price1.2__age5__world1": 0.0172,
-      "AGE_FORM__price1.2__younger3__form1": 0.1688,
-      "FORM_REACH__price1.2__form1__reach5": 1.0,
-      "AGE_POWER__price1.2__younger3__ko0.4": 0.1
+    "FORM_REACH__price1.2__form1__reach3": {
+      "FORM_LONG__price1.3__form1__rounds10": 0.1346,
+      "OPP_LAYOFF__pmin1.2__pmax1.6__opprest270": 0.069,
+      "AGE_LONG__price1.2__age5__rounds10": 0.0364,
+      "AGING_OPP__pmin1.2__pmax1.6__oppage34__age3": 0.0455,
+      "AGE_WORLD_TITLE__price1.2__age5__world1": 0.0152,
+      "AGE_FORM__price1.2__younger3__form1": 0.1951,
+      "FORM_REACH__price1.2__form1__reach3": 1.0,
+      "AGE_POWER__price1.2__younger3__ko0.4": 0.1053
     },
     "AGE_POWER__price1.2__younger3__ko0.4": {
       "FORM_LONG__price1.3__form1__rounds10": 0.087,
@@ -2238,7 +2274,7 @@
       "AGING_OPP__pmin1.2__pmax1.6__oppage34__age3": 0.2206,
       "AGE_WORLD_TITLE__price1.2__age5__world1": 0.1373,
       "AGE_FORM__price1.2__younger3__form1": 0.3284,
-      "FORM_REACH__price1.2__form1__reach5": 0.1,
+      "FORM_REACH__price1.2__form1__reach3": 0.1053,
       "AGE_POWER__price1.2__younger3__ko0.4": 1.0
     }
   },
