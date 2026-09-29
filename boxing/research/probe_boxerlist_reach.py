@@ -108,7 +108,7 @@ def parse(raw):
     soup=BeautifulSoup(raw,'lxml')
     h=soup.find('h1')
     name=re.sub(r"\s*\([^)]*\)\s*boxer\s*$",'',h.get_text(' ',strip=True),flags=re.I).strip() if h else ''
-    name=re.sub(r'\s+boxer\s*,'',name,flags=re.I).strip()
+    name=re.sub(r'\s+boxer\s*$','',name,flags=re.I).strip()
     strings=[re.sub(r'\s+',' ',x).strip() for x in soup.stripped_strings if re.sub(r'\s+',' ',x).strip()]
     vals=[];height=None
     for i,s in enumerate(strings):
