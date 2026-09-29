@@ -14,6 +14,7 @@ from pathlib import Path
 ROOT=Path(__file__).resolve().parents[1]
 SUP=ROOT/'profile_supplements'/'verified_profiles.jsonl'
 REPORT=ROOT/'profile_supplements'/'strict_reach_merge_report.json'
+QUAR=ROOT/'profile_supplements'/'profile_field_quarantine.jsonl'
 FILES=[
  ROOT/'profile_supplements'/'cross_source_reach_additions.jsonl',
  ROOT/'profile_supplements'/'third_source_reach_additions.jsonl',
@@ -108,6 +109,12 @@ def main():
         sid=x.get('target_source_id')
         if sid:existing[sid]=x
 
+    quarantined_reach=set()
+    for q in readjsonl(QUAR):
+        sid=q.get('target_source_id')
+        if sid and 'reach_cm' in set(q.get('fields') or []):
+            quarantined_reach.add(sid)
+
     groups=defaultdict(list)
     source_counts={};validated_source_counts={};rejected_candidates=[]
     for path in FILES:
@@ -124,9 +131,14 @@ def main():
             if sid and 120<=r<=270:
                 groups[sid].append((path.name,x,r));validated_source_counts[path.name]+=1
 
-    merged=[];skipped_existing=[];conflicts=[]
+    merged=[];skipped_existing=[];skipped_quarantined=[];conflicts=[]
     for sid,items in groups.items():
         old=existing.get(sid)
+        if sid in quarantined_reach:
+            skipped_quarantined.append({'target_source_id':sid,
+                                        'name':(old or items[0][1]).get('name'),
+                                        'sources':[a for a,_,_ in items]})
+            continue
         oldreach=((old or {}).get('fields') or {}).get('reach_cm')
         if oldreach not in (None,''):
             skipped_existing.append({'target_source_id':sid,'name':(old or {}).get('name'),'reach_cm':oldreach})
@@ -163,10 +175,13 @@ def main():
             'validated_source_counts':validated_source_counts,
             'rejected_candidate_rows':len(rejected_candidates),'rejected_candidates':rejected_candidates,
             'candidate_fighters':len(groups),'merged':len(merged),'merged_profiles':merged,
-            'skipped_existing_reach':len(skipped_existing),'conflicts_quarantined':len(conflicts),
+            'skipped_existing_reach':len(skipped_existing),
+            'skipped_explicit_quarantine':len(skipped_quarantined),
+            'skipped_quarantined_profiles':skipped_quarantined,
+            'conflicts_quarantined':len(conflicts),
             'conflicts':conflicts,
-            'policy':'A whitelisted file is not sufficient by itself. Each row must have exact-identity first-party/official evidence or >=2 independent numeric reach sources agreeing within 1.01 cm. Existing reach is never overwritten; cross-file disagreements >1 cm are quarantined.'}
+            'policy':'A whitelisted file is not sufficient by itself. Each row must have exact-identity first-party/official evidence or >=2 independent numeric reach sources agreeing within 1.01 cm. Explicit profile-field reach quarantines always block stale addition files. Existing reach is never overwritten; cross-file disagreements >1 cm are quarantined.'}
     REPORT.write_text(json.dumps(report,indent=2,ensure_ascii=False))
-    print(json.dumps({k:report[k] for k in ('source_counts','candidate_fighters','merged','skipped_existing_reach','conflicts_quarantined')},indent=2))
+    print(json.dumps({k:report[k] for k in ('source_counts','candidate_fighters','merged','skipped_existing_reach','skipped_explicit_quarantine','conflicts_quarantined')},indent=2))
 
 if __name__=='__main__':main()
