@@ -21,6 +21,7 @@ ROOT=Path(__file__).resolve().parent
 MASTER_POINTER=ROOT/'LATEST_CHRONOLOGICAL_MASTER.txt'
 OUT=ROOT/'REACH_INTEGRITY_AUDIT.json'
 SUP=ROOT.parent/'profile_supplements'/'verified_profiles.jsonl'
+QUAR=ROOT.parent/'profile_supplements'/'profile_field_quarantine.jsonl'
 PROBE_DIR=ROOT.parent/'profile_supplements'
 EXTERNAL_PROBES=[
  ('martialbot_missing_reach_inventory.json','martialbot'),
@@ -178,12 +179,35 @@ def main():
             elif delta < -20 or delta > 30:
                 warnings.append({'type':'extreme_reach_height_delta','fighter_id':fid,'name':name,'height_cm':h,'reach_cm':r,'delta_cm':delta})
 
+    # Explicit field quarantines must survive all downstream rebuilds. If a
+    # quarantined value reappears in the final strict master, publication fails.
+    quarantines=readjsonl(QUAR)
+    quarantine_map={}
+    for q in quarantines:
+        sid=q.get('target_source_id')
+        if not sid:continue
+        quarantine_map.setdefault(sid,set()).update(q.get('fields') or [])
+    for sid,fields in quarantine_map.items():
+        d=vals.get(sid)
+        if not d:continue
+        if 'reach_cm' in fields and d.get('reach'):
+            critical.append({'type':'quarantined_reach_survived_final_master','fighter_id':sid,
+                             'name':sorted(d['names'])[0] if d.get('names') else sid,
+                             'values':sorted(d['reach'])})
+        if 'height_cm' in fields and d.get('height'):
+            critical.append({'type':'quarantined_height_survived_final_master','fighter_id':sid,
+                             'name':sorted(d['names'])[0] if d.get('names') else sid,
+                             'values':sorted(d['height'])})
+
     # Supplemental provenance.
     supplements=readjsonl(SUP)
     supplement_reach=0;official_count=0;numeric_consensus_count=0;legacy_multi_count=0
     for x in supplements:
         r=(x.get('fields') or {}).get('reach_cm')
         if r in (None,''):continue
+        if 'reach_cm' in quarantine_map.get(x.get('target_source_id'),set()):
+            critical.append({'type':'quarantined_reach_still_present_in_supplement',
+                             'target_source_id':x.get('target_source_id'),'name':x.get('name'),'reach_cm':r})
         supplement_reach+=1
         name=x.get('name');sid=x.get('target_source_id')
         try:rv=float(r)
