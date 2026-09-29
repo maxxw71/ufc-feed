@@ -1,16 +1,23 @@
 {
-  "generated_at": "2026-09-28T16:55:58.166668+00:00",
+  "generated_at": "2026-09-29T11:23:05.447566+00:00",
   "strict_consensus_bouts": 730,
   "strict_fighters_seen": 723,
-  "supplement_reach_rows": 150,
+  "supplement_reach_rows": 147,
   "supplement_provenance": {
     "official_or_first_party": 91,
-    "independent_numeric_consensus": 59,
+    "independent_numeric_consensus": 56,
     "legacy_multi_source_claim_warning": 0
   },
-  "critical_issue_count": 0,
-  "warning_count": 118,
-  "critical_issues": [],
+  "critical_issue_count": 1,
+  "warning_count": 113,
+  "critical_issues": [
+    {
+      "type": "quarantined_reach_still_present_in_supplement",
+      "target_source_id": "https://champinon.info/boxing/steve-robinson/",
+      "name": "Steve Robinson",
+      "reach_cm": 178
+    }
+  ],
   "warnings": [
     {
       "type": "reach_equals_height",
@@ -74,13 +81,6 @@
       "name": "Maxim Prodan",
       "height_cm": 173.0,
       "reach_cm": 173.0
-    },
-    {
-      "type": "reach_equals_height",
-      "fighter_id": "https://en.wikipedia.org/wiki/Kieron_Conway",
-      "name": "Kieron Conway",
-      "height_cm": 182.0,
-      "reach_cm": 182.0
     },
     {
       "type": "reach_equals_height",
@@ -447,24 +447,9 @@
       "reach_cm": 185.0
     },
     {
-      "type": "extreme_reach_height_delta",
-      "fighter_id": "https://en.wikipedia.org/wiki/Lewis_Ritson",
-      "name": "Lewis Ritson",
-      "height_cm": 178.0,
-      "reach_cm": 212.0,
-      "delta_cm": 34.0
-    },
-    {
       "type": "reach_equals_height",
       "fighter_id": "https://en.wikipedia.org/wiki/Otabek_Kholmatov",
       "name": "Otabek Kholmatov",
-      "height_cm": 170.0,
-      "reach_cm": 170.0
-    },
-    {
-      "type": "reach_equals_height",
-      "fighter_id": "https://en.wikipedia.org/wiki/Jack_Catterall",
-      "name": "Jack Catterall",
       "height_cm": 170.0,
       "reach_cm": 170.0
     },
@@ -593,14 +578,6 @@
       "name": "Tyron Zeuge",
       "height_cm": 179.0,
       "reach_cm": 179.0
-    },
-    {
-      "type": "extreme_reach_height_delta",
-      "fighter_id": "https://champinon.info/boxing/steve-robinson/",
-      "name": "Steve Robinson",
-      "height_cm": 201.0,
-      "reach_cm": 178.0,
-      "delta_cm": -23.0
     },
     {
       "type": "reach_equals_height",
@@ -737,13 +714,6 @@
     },
     {
       "type": "reach_equals_height",
-      "fighter_id": "https://champinon.info/boxing/sean-hemphill/",
-      "name": "Sean Hemphill",
-      "height_cm": 185.0,
-      "reach_cm": 185.0
-    },
-    {
-      "type": "reach_equals_height",
       "fighter_id": "https://en.wikipedia.org/wiki/Edgar_Berlanga",
       "name": "Edgar Berlanga",
       "height_cm": 185.0,
@@ -776,20 +746,6 @@
       "name": "Kaye Scott",
       "height_cm": 178.0,
       "reach_cm": 178.0
-    },
-    {
-      "type": "reach_equals_height",
-      "fighter_id": "https://champinon.info/boxing/dario-morello/",
-      "name": "Dario Morello",
-      "height_cm": 178.0,
-      "reach_cm": 178.0
-    },
-    {
-      "type": "reach_equals_height",
-      "fighter_id": "https://champinon.info/boxing/daniel-lugo/",
-      "name": "Daniel Lugo",
-      "height_cm": 171.0,
-      "reach_cm": 171.0
     },
     {
       "type": "external_reach_disagreement",
@@ -863,6 +819,25 @@
     },
     {
       "type": "external_reach_disagreement",
+      "target_source_id": "https://champinon.info/boxing/sean-hemphill/",
+      "name": "Sean Hemphill",
+      "verified_reach_cm": 193.0,
+      "quality": "verified_reach_correction_exact_identity",
+      "conflicting_leads": [
+        {
+          "source": "martialbot",
+          "reach_cm": 185.0,
+          "url": "https://www.martialbot.com/boxing/boxers/sean-hemphill-926ed60e178195936148b0656107b67f"
+        },
+        {
+          "source": "boxnow",
+          "reach_cm": 185.0,
+          "url": "https://boxnow.biz/boxers/sean-hemphill-23"
+        }
+      ]
+    },
+    {
+      "type": "external_reach_disagreement",
       "target_source_id": "https://en.wikipedia.org/wiki/Shannon_O%27Connell",
       "name": "Shannon O'Connell",
       "verified_reach_cm": 159.0,
@@ -886,6 +861,25 @@
           "source": "martialbot",
           "reach_cm": 173.0,
           "url": "https://www.martialbot.com/boxing/boxers/sho-ishida-fa2cbd92d832b77f198f4c51a0a12b56"
+        }
+      ]
+    },
+    {
+      "type": "external_reach_disagreement",
+      "target_source_id": "https://en.wikipedia.org/wiki/Uisma_Lima",
+      "name": "Uisma Lima",
+      "verified_reach_cm": 180.0,
+      "quality": "official_wba_structured_profile_exact_identity_missing_fields_only;verified_reach_correction_exact_identity",
+      "conflicting_leads": [
+        {
+          "source": "martialbot",
+          "reach_cm": 187.0,
+          "url": "https://www.martialbot.com/boxing/boxers/uisma-lima-f0947f78af2313a07a8d8f8456621a4e"
+        },
+        {
+          "source": "boxnow",
+          "reach_cm": 188.0,
+          "url": "https://boxnow.biz/boxers/uisma-lima-155"
         }
       ]
     }
