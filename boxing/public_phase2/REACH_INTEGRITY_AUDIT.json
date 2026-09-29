@@ -1,15 +1,15 @@
 {
-  "generated_at": "2026-09-29T20:37:50.290784+00:00",
+  "generated_at": "2026-09-29T21:06:30.134736+00:00",
   "strict_consensus_bouts": 730,
   "strict_fighters_seen": 723,
-  "supplement_reach_rows": 158,
+  "supplement_reach_rows": 161,
   "supplement_provenance": {
-    "official_or_first_party": 98,
+    "official_or_first_party": 101,
     "independent_numeric_consensus": 60,
     "legacy_multi_source_claim_warning": 0
   },
   "critical_issue_count": 0,
-  "warning_count": 114,
+  "warning_count": 116,
   "critical_issues": [],
   "warnings": [
     {
@@ -532,6 +532,13 @@
     },
     {
       "type": "reach_equals_height",
+      "fighter_id": "https://en.wikipedia.org/wiki/Rhiannon_Dixon",
+      "name": "Rhiannon Dixon",
+      "height_cm": 168.0,
+      "reach_cm": 168.0
+    },
+    {
+      "type": "reach_equals_height",
       "fighter_id": "https://en.wikipedia.org/wiki/Brian_Mendoza",
       "name": "Brian Mendoza",
       "height_cm": 178.0,
@@ -758,6 +765,20 @@
           "source": "martialbot",
           "reach_cm": 163.0,
           "url": "https://www.martialbot.com/boxing/boxers/argi-cortes-56db9f987637937a0455e1f003ad707e"
+        }
+      ]
+    },
+    {
+      "type": "external_reach_disagreement",
+      "target_source_id": "https://champinon.info/boxing/cesar-francis/",
+      "name": "Cesar Francis",
+      "verified_reach_cm": 191.0,
+      "quality": "strict_multi_source_reach_consensus",
+      "conflicting_leads": [
+        {
+          "source": "martialbot",
+          "reach_cm": 180.0,
+          "url": "https://www.martialbot.com/boxing/boxers/cesar-francis-2e3acf5a428d3e14b7d17c0cc51e6263"
         }
       ]
     },
