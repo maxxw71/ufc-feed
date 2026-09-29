@@ -107,8 +107,32 @@ def cm_measure(s):
 def parse(raw):
     soup=BeautifulSoup(raw,'lxml')
     h=soup.find('h1')
-    name=re.sub(r"\s*\([^)]*\)\s*boxer\s*$",'',h.get_text(' ',strip=True),flags=re.I).strip() if h else ''
-    name=re.sub(r'\s+boxer\s*
+    name=re.sub(r"\\s*\\([^)]*\\)\\s*boxer\\s*$",'',h.get_text(' ',strip=True),flags=re.I).strip() if h else ''
+    name=re.sub(r'\\s+boxer\\s*$','',name,flags=re.I).strip()
+    strings=[re.sub(r'\\s+',' ',x).strip() for x in soup.stripped_strings if re.sub(r'\\s+',' ',x).strip()]
+    vals=[];height=None
+    for i,s in enumerate(strings):
+        key=s.casefold().rstrip(':')
+        if key=='height' and i+1<len(strings):
+            v=cm_measure(strings[i+1])
+            if v is not None and 120<=v<=250:height=v
+        if key!='reach':continue
+        # BoxerList renders fields as Height VALUE, Reach VALUE. Never inspect
+        # the previous string: that is the height and caused false reach values
+        # whenever Reach was "-".
+        if i+1<len(strings):
+            nxt=strings[i+1]
+            if nxt not in {'-','—','N/A','n/a'}:
+                v=cm_measure(nxt)
+                if v is not None:vals.append(v)
+    text=' '.join(strings)
+    # Inline fallback must have a numeric value immediately after Reach.
+    for m in re.finditer(r'\\bReach\\s*:?\\s*(\\d+(?:\\.\\d+)?\\s*(?:cm|["″]|in(?:ches)?))',text,re.I):
+        v=cm_measure(m.group(1))
+        if v is not None:vals.append(v)
+    vals=sorted(set(round(v,2) for v in vals))
+    return name,height,(vals[0] if len(vals)==1 else None),vals
+
 def main():
     audit=json.loads(AUDIT.read_text())
     targets={nk(x['name']):x for x in audit.get('fighters',[]) if 'reach_cm' in set(x.get('missing') or [])}
