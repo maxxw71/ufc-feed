@@ -38,6 +38,7 @@ FILES=[
  ROOT/'profile_supplements'/'ringside24_reach_additions.jsonl',
  ROOT/'profile_supplements'/'boxingshowtimes_reach_additions.jsonl',
  ROOT/'profile_supplements'/'boxerlist_reach_additions.jsonl',
+ ROOT/'profile_supplements'/'nextknockout_reach_additions.jsonl',
  ROOT/'profile_supplements'/'cross_probe_reach_additions.jsonl',
 ]
 
