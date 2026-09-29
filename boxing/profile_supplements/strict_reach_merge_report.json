@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-29T01:07:35.678449+00:00",
+  "generated_at": "2026-09-29T12:53:05.812901+00:00",
   "source_counts": {
     "cross_source_reach_additions.jsonl": 5,
     "third_source_reach_additions.jsonl": 12,
@@ -24,6 +24,7 @@
     "ringside24_reach_additions.jsonl": 0,
     "boxingshowtimes_reach_additions.jsonl": 0,
     "boxerlist_reach_additions.jsonl": 0,
+    "nextknockout_reach_additions.jsonl": 0,
     "cross_probe_reach_additions.jsonl": 0
   },
   "validated_source_counts": {
@@ -50,14 +51,48 @@
     "ringside24_reach_additions.jsonl": 0,
     "boxingshowtimes_reach_additions.jsonl": 0,
     "boxerlist_reach_additions.jsonl": 0,
+    "nextknockout_reach_additions.jsonl": 0,
     "cross_probe_reach_additions.jsonl": 0
   },
   "rejected_candidate_rows": 0,
   "rejected_candidates": [],
   "candidate_fighters": 63,
-  "merged": 0,
-  "merged_profiles": [],
-  "skipped_existing_reach": 63,
+  "merged": 4,
+  "merged_profiles": [
+    {
+      "target_source_id": "https://champinon.info/boxing/steve-robinson/",
+      "name": "Steve Robinson",
+      "reach_cm": 178,
+      "addition_files": [
+        "public_search_reach_additions.jsonl"
+      ]
+    },
+    {
+      "target_source_id": "https://champinon.info/boxing/daniel-lugo/",
+      "name": "Daniel Lugo",
+      "reach_cm": 171,
+      "addition_files": [
+        "boxnow_reach_additions.jsonl"
+      ]
+    },
+    {
+      "target_source_id": "https://en.wikipedia.org/wiki/Abass_Baraou",
+      "name": "Abass Baraou",
+      "reach_cm": 176,
+      "addition_files": [
+        "boxnow_reach_additions.jsonl"
+      ]
+    },
+    {
+      "target_source_id": "https://champinon.info/boxing/dario-morello/",
+      "name": "Dario Morello",
+      "reach_cm": 178,
+      "addition_files": [
+        "boxnow_reach_additions.jsonl"
+      ]
+    }
+  ],
+  "skipped_existing_reach": 59,
   "conflicts_quarantined": 0,
   "conflicts": [],
   "policy": "A whitelisted file is not sufficient by itself. Each row must have exact-identity first-party/official evidence or >=2 independent numeric reach sources agreeing within 1.01 cm. Existing reach is never overwritten; cross-file disagreements >1 cm are quarantined."
