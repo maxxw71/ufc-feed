@@ -6,6 +6,7 @@ from pathlib import Path
 ROOT=Path(__file__).resolve().parent
 DB=ROOT/'boxing.sqlite3'
 SUP=Path(os.environ.get('BOXING_PROFILE_SUPPLEMENTS',str(ROOT.parent/'profile_supplements'/'verified_profiles.jsonl')))
+EXTRA_SUP=ROOT.parent/'profile_supplements'/'manual_verified_profiles_20260929.jsonl'
 QUAR=Path(os.environ.get('BOXING_PROFILE_QUARANTINE',str(ROOT.parent/'profile_supplements'/'profile_field_quarantine.jsonl')))
 REPORT=ROOT/'PROFILE_SUPPLEMENT_APPLY_REPORT.json'
 FIELDS=('born','height_cm','reach_cm','stance','nationality')
@@ -15,10 +16,15 @@ def main():
             'quarantine_rows':0,'quarantined_profiles':0,'quarantined_fields':{k:0 for k in FIELDS},
             'corrected_profiles':0,'corrected_fields':{k:0 for k in FIELDS},
             'missing_quarantine_targets':0}
-    if not SUP.exists():
+    supplement_paths=[SUP]
+    if EXTRA_SUP!=SUP and EXTRA_SUP.exists():supplement_paths.append(EXTRA_SUP)
+    if not any(p.exists() for p in supplement_paths):
         REPORT.write_text(json.dumps(report,indent=2));print(json.dumps(report));return
     con=sqlite3.connect(DB);con.row_factory=sqlite3.Row
-    for line in SUP.read_text().splitlines():
+    lines=[]
+    for p in supplement_paths:
+        if p.exists():lines.extend(p.read_text().splitlines())
+    for line in lines:
         if not line.strip():continue
         report['rows']+=1;x=json.loads(line);sid=x.get('target_source_id')
         row=con.execute('SELECT * FROM normalized_fighters WHERE source_id=?',(sid,)).fetchone()
