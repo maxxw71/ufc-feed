@@ -23,8 +23,8 @@
       "at_least_one_side": 737
     },
     "nationality": {
-      "both_sides": 736,
-      "both_sides_pct": 99.86,
+      "both_sides": 737,
+      "both_sides_pct": 100.0,
       "at_least_one_side": 737
     }
   },
@@ -33,7 +33,7 @@
     "height_cm": 51,
     "reach_cm": 224,
     "stance": 0,
-    "nationality": 1
+    "nationality": 0
   },
   "missing_ranked": {
     "born": [],
@@ -135,12 +135,6 @@
         "career_source": "champinon"
       },
       {
-        "id": "https://en.wikipedia.org/wiki/Elijah_Garcia_%28boxer%29",
-        "name": "Elijah Garcia",
-        "strict_bout_appearances": 1,
-        "career_source": "wikipedia"
-      },
-      {
         "id": "https://en.wikipedia.org/wiki/Anah%C3%AD_Ester_S%C3%A1nchez",
         "name": "Anahí Ester Sánchez",
         "strict_bout_appearances": 1,
@@ -167,6 +161,12 @@
       {
         "id": "https://en.wikipedia.org/wiki/Cameron_Vuong",
         "name": "Cameron Vuong",
+        "strict_bout_appearances": 1,
+        "career_source": "wikipedia"
+      },
+      {
+        "id": "https://en.wikipedia.org/wiki/Elijah_Garcia_%28boxer%29",
+        "name": "Elijah Garcia",
         "strict_bout_appearances": 1,
         "career_source": "wikipedia"
       },
@@ -809,12 +809,6 @@
         "career_source": "champinon"
       },
       {
-        "id": "https://en.wikipedia.org/wiki/Elijah_Garcia_%28boxer%29",
-        "name": "Elijah Garcia",
-        "strict_bout_appearances": 1,
-        "career_source": "wikipedia"
-      },
-      {
         "id": "https://en.wikipedia.org/wiki/Anah%C3%AD_Ester_S%C3%A1nchez",
         "name": "Anahí Ester Sánchez",
         "strict_bout_appearances": 1,
@@ -841,6 +835,12 @@
       {
         "id": "https://en.wikipedia.org/wiki/Cameron_Vuong",
         "name": "Cameron Vuong",
+        "strict_bout_appearances": 1,
+        "career_source": "wikipedia"
+      },
+      {
+        "id": "https://en.wikipedia.org/wiki/Elijah_Garcia_%28boxer%29",
+        "name": "Elijah Garcia",
         "strict_bout_appearances": 1,
         "career_source": "wikipedia"
       },
@@ -1692,14 +1692,7 @@
       }
     ],
     "stance": [],
-    "nationality": [
-      {
-        "id": "https://en.wikipedia.org/wiki/Elijah_Garcia_%28boxer%29",
-        "name": "Elijah Garcia",
-        "strict_bout_appearances": 1,
-        "career_source": "wikipedia"
-      }
-    ]
+    "nationality": []
   },
   "fighters": [
     {
@@ -6555,21 +6548,6 @@
       "career_source": "wikipedia"
     },
     {
-      "id": "https://en.wikipedia.org/wiki/Elijah_Garcia_%28boxer%29",
-      "name": "Elijah Garcia",
-      "strict_bout_appearances": 1,
-      "missing": [
-        "height_cm",
-        "reach_cm",
-        "nationality"
-      ],
-      "present": {
-        "born": 21.1394,
-        "stance": "southpaw"
-      },
-      "career_source": "wikipedia"
-    },
-    {
       "id": "https://en.wikipedia.org/wiki/Anah%C3%AD_Ester_S%C3%A1nchez",
       "name": "Anahí Ester Sánchez",
       "strict_bout_appearances": 1,
@@ -6641,6 +6619,21 @@
         "born": 22.3222,
         "stance": "orthodox",
         "nationality": "United Kingdom"
+      },
+      "career_source": "wikipedia"
+    },
+    {
+      "id": "https://en.wikipedia.org/wiki/Elijah_Garcia_%28boxer%29",
+      "name": "Elijah Garcia",
+      "strict_bout_appearances": 1,
+      "missing": [
+        "height_cm",
+        "reach_cm"
+      ],
+      "present": {
+        "born": 21.1394,
+        "stance": "southpaw",
+        "nationality": "United States"
       },
       "career_source": "wikipedia"
     },
