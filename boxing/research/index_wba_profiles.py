@@ -78,6 +78,9 @@ def main():
     index={};seed_by_id={};fail=[]
     seeds=[
       BASE+'/wba-ranking',
+      BASE+'/wba-female-ranking',
+      BASE+'/wba-europe-ranking',
+      BASE+'/wba-africa-ranking',
       BASE+'/boxing-results',
       BASE+'/boxing-schedule',
       BASE+'/current-wba-champions',
