@@ -1,6 +1,6 @@
 BOXING FULL METHOD-DISCOVERY SWEEP
 ====================================================================================================================
-Consensus-priced bouts: 730 | stable opponent-aware rules: 37
+Consensus-priced bouts: 737 | stable opponent-aware rules: 39
 STATUS: RESEARCH/SHADOW ONLY — NOTHING PROMOTED LIVE
 
 INDEPENDENT SHORTLIST
@@ -17,18 +17,18 @@ INDEPENDENT SHORTLIST
 4. AGING_OPP | AGING_OPP__pmin1.2__pmax1.6__oppage34__age3
    n=56 46-10 win=82.1% ROI=+10.36% | dev=+17.25% later=+5.20%
    bootstrap 95% ROI [-4.57, +23.39] P(ROI>0)=92.1% | stable family variants=8 | losses=10
-5. AGE_WORLD_TITLE | AGE_WORLD_TITLE__price1.2__age5__world1
+5. SCHEDULE_STRENGTH | SCHEDULE_STRENGTH__pmin1.2__pmax1.6__strength0.15
+   n=46 38-8 win=82.6% ROI=+11.35% | dev=+1.20% later=+19.88%
+   bootstrap 95% ROI [-4.83, +25.13] P(ROI>0)=91.7% | stable family variants=2 | losses=8
+6. AGE_WORLD_TITLE | AGE_WORLD_TITLE__price1.2__age5__world1
    n=31 26-5 win=83.9% ROI=+17.83% | dev=+23.75% later=+12.29%
    bootstrap 95% ROI [-2.53, +35.41] P(ROI>0)=95.5% | stable family variants=2 | losses=5
-6. AGE_FORM | AGE_FORM__price1.2__younger3__form1
+7. AGE_FORM | AGE_FORM__price1.2__younger3__form1
    n=62 50-12 win=80.6% ROI=+9.95% | dev=+6.34% later=+12.93%
    bootstrap 95% ROI [-4.24, +23.63] P(ROI>0)=91.8% | stable family variants=1 | losses=12
-7. FORM_REACH | FORM_REACH__price1.2__form1__reach5
+8. FORM_REACH | FORM_REACH__price1.2__form1__reach5
    n=28 23-5 win=82.1% ROI=+18.67% | dev=+16.31% later=+20.44%
    bootstrap 95% ROI [-4.07, +38.98] P(ROI>0)=94.9% | stable family variants=3 | losses=5
-8. AGE_POWER | AGE_POWER__price1.2__younger3__ko0.4
-   n=27 22-5 win=81.5% ROI=+11.94% | dev=+10.57% later=+13.41%
-   bootstrap 95% ROI [-10.70, +31.57] P(ROI>0)=86.3% | stable family variants=3 | losses=5
 
 TOP FAMILY REPRESENTATIVES
 --------------------------------------------------------------------------------------------------------------------
@@ -37,6 +37,7 @@ OPP_LAYOFF             n= 57  49-8   win= 86.0% ROI=+17.29% variants= 2 score=83
 AGE_LONG               n= 21  19-2   win= 90.5% ROI=+30.10% variants= 2 score=83.60
 ACTIVITY_LAYOFF        n= 39  34-5   win= 87.2% ROI=+18.09% variants= 2 score=82.78
 AGING_OPP              n= 56  46-10  win= 82.1% ROI=+10.36% variants= 8 score=80.51
+SCHEDULE_STRENGTH      n= 46  38-8   win= 82.6% ROI=+11.35% variants= 2 score=76.87
 AGE_WORLD_TITLE        n= 31  26-5   win= 83.9% ROI=+17.83% variants= 2 score=76.69
 AGE_FORM               n= 62  50-12  win= 80.6% ROI= +9.95% variants= 1 score=75.39
 FORM_REACH             n= 28  23-5   win= 82.1% ROI=+18.67% variants= 3 score=74.92
@@ -76,6 +77,15 @@ AGING_OPP / AGING_OPP__pmin1.2__pmax1.6__oppage34__age3:
   {"book_count": 5, "fav_age": 23.6364, "fav_rest": 253.0, "favorite": "Junaid Bostan", "market_prob": 0.6472184531886025, "median_price": 1.4444444444444444, "opp_age": 37.523, "opp_rest": 253.0, "opponent": "Bilal Fawaz", "strength_gap": -0.09999999999999998, "year": 2025, "younger_by": 13.886600000000005}
   {"book_count": 3, "fav_age": 30.3661, "fav_rest": 114.0, "favorite": "Mikito Nakano", "market_prob": 0.6870882740447958, "median_price": 1.3571428571428572, "opp_age": 35.4285, "opp_rest": 204.0, "opponent": "Ra'eese Aleem", "strength_gap": null, "year": 2025, "younger_by": 5.0624}
   {"book_count": 4, "fav_age": 30.8945, "fav_rest": 98.0, "favorite": "Ishmael Davis", "market_prob": 0.6656774621871022, "median_price": 1.4263038548752833, "opp_age": 37.8872, "opp_rest": 133.0, "opponent": "Bilal Fawaz", "strength_gap": -0.05511593669488413, "year": 2026, "younger_by": 6.992699999999999}
+SCHEDULE_STRENGTH / SCHEDULE_STRENGTH__pmin1.2__pmax1.6__strength0.15:
+  {"book_count": 3, "fav_age": 33.6516, "fav_rest": 71.0, "favorite": "Efetobor Apochi", "market_prob": 0.7663157894736843, "median_price": 1.2197802197802199, "opp_age": 29.3641, "opp_rest": 183.0, "opponent": "Brandon Glanton", "strength_gap": 0.36454008954008954, "year": 2021, "younger_by": -4.287500000000001}
+  {"book_count": 8, "fav_age": 28.2689, "fav_rest": 182.0, "favorite": "Shannon Courtenay", "market_prob": 0.6972884525479196, "median_price": 1.3571428571428572, "opp_age": 36.688, "opp_rest": 218.0, "opponent": "Jamie Mitchell", "strength_gap": 0.41666666666666674, "year": 2021, "younger_by": 8.419100000000004}
+  {"book_count": 4, "fav_age": 25.594, "fav_rest": 140.0, "favorite": "Zak Chelli", "market_prob": 0.7091803583031653, "median_price": 1.3484848484848486, "opp_age": 25.3859, "opp_rest": 56.0, "opponent": "Mark Jeffers", "strength_gap": 0.6728421278560739, "year": 2023, "younger_by": -0.20810000000000173}
+  {"book_count": 3, "fav_age": 32.2389, "fav_rest": 224.0, "favorite": "Tomoki Kameda", "market_prob": 0.7598550067965564, "median_price": 1.2325581395348837, "opp_age": 29.6433, "opp_rest": 84.0, "opponent": "Lerato Dlamini", "strength_gap": 0.16800760001856485, "year": 2023, "younger_by": -2.595600000000001}
+  {"book_count": 6, "fav_age": 34.6373, "fav_rest": 301.0, "favorite": "Ekow Essuman", "market_prob": 0.7245535143429521, "median_price": 1.3114404727307951, "opp_age": 30.3634, "opp_rest": 232.0, "opponent": "Harry Scarff", "strength_gap": 0.4422088680001652, "year": 2023, "younger_by": -4.273900000000005}
+  {"book_count": 2, "fav_age": 24.2825, "fav_rest": 242.0, "favorite": "Miel Fajardo", "market_prob": 0.7411761688782725, "median_price": 1.2829131652661063, "opp_age": 23.8225, "opp_rest": 119.0, "opponent": "Thanongsak Simsri", "strength_gap": 0.23529411764705888, "year": 2024, "younger_by": -0.4599999999999973}
+  {"book_count": 4, "fav_age": 31.2477, "fav_rest": 155.0, "favorite": "Masood Abdulah", "market_prob": 0.7831121403758796, "median_price": 1.2094298245614035, "opp_age": 27.8883, "opp_rest": 70.0, "opponent": "Zak Miller", "strength_gap": 0.5547174581343293, "year": 2025, "younger_by": -3.3593999999999973}
+  {"book_count": 5, "fav_age": 37.2766, "fav_rest": 231.0, "favorite": "Steven Nelson", "market_prob": 0.7123287671232876, "median_price": 1.3333333333333333, "opp_age": 32.2361, "opp_rest": 210.0, "opponent": "Raiko Santana", "strength_gap": 0.23713759007876656, "year": 2025, "younger_by": -5.0405000000000015}
 AGE_WORLD_TITLE / AGE_WORLD_TITLE__price1.2__age5__world1:
   {"book_count": 6, "experience_gap": -19.0, "favorite": "Brad Foster", "favorite_ko_rate": 0.3125, "form_gap": -1.0, "height_gap": -18.0, "market_prob": 0.5896520904206143, "median_price": 1.5988023952095807, "opponent": "Jason Cunningham", "opponent_last5_stoppage_losses": 0.0, "opponent_stoppage_loss_rate": 0.02857142857142857, "opponent_strength_gap": -0.03487886382623229, "reach_gap": null, "rest_edge": -50.0, "year": 2021, "younger_by": 8.0713}
   {"book_count": 5, "experience_gap": 0.0, "favorite": "Mauricio Lara", "favorite_ko_rate": 0.6551724137931034, "form_gap": 1.0, "height_gap": 0.0, "market_prob": 0.7085889570552147, "median_price": 1.3571428571428572, "opponent": "Leigh Wood", "opponent_last5_stoppage_losses": 1.0, "opponent_stoppage_loss_rate": 0.06896551724137931, "opponent_strength_gap": 0.01804382147124084, "reach_gap": 0.0, "rest_edge": 0.0, "year": 2023, "younger_by": 9.563499999999998}
@@ -101,9 +111,3 @@ FORM_REACH / FORM_REACH__price1.2__form1__reach5:
   {"book_count": 2, "experience_gap": 4.0, "favorite": "Sam Eggington", "favorite_ko_rate": 0.46153846153846156, "form_gap": 2.0, "height_gap": 7.0, "market_prob": 0.5459773376111747, "median_price": 1.7424657534246575, "opponent": "Dennis Hogan", "opponent_last5_stoppage_losses": 2.0, "opponent_stoppage_loss_rate": 0.05714285714285714, "opponent_strength_gap": -0.05721138738466358, "reach_gap": 8.0, "rest_edge": 115.0, "year": 2022, "younger_by": 8.624500000000005}
   {"book_count": 5, "experience_gap": -4.0, "favorite": "Raymond Ford", "favorite_ko_rate": 0.5, "form_gap": 1.0, "height_gap": 11.0, "market_prob": 0.5881383855024712, "median_price": 1.625, "opponent": "Nick Ball", "opponent_last5_stoppage_losses": 0.0, "opponent_stoppage_loss_rate": 0.0, "opponent_strength_gap": -0.03435467810467807, "reach_gap": 10.0, "rest_edge": -6.0, "year": 2024, "younger_by": 2.0425000000000004}
   {"book_count": 5, "experience_gap": -15.0, "favorite": "Tenshin Nasukawa", "favorite_ko_rate": 0.2857142857142857, "form_gap": 1.0, "height_gap": 1.0, "market_prob": 0.7619047619047619, "median_price": 1.25, "opponent": "Takuma Inoue", "opponent_last5_stoppage_losses": 0.0, "opponent_stoppage_loss_rate": 0.0, "opponent_strength_gap": 0.02414584258642971, "reach_gap": 12.0, "rest_edge": 238.0, "year": 2025, "younger_by": 2.6448}
-AGE_POWER / AGE_POWER__price1.2__younger3__ko0.4:
-  {"book_count": 5, "experience_gap": 12.0, "favorite": "Kerman Lejarraga", "favorite_ko_rate": 0.7222222222222222, "form_gap": 2.0, "market_prob": 0.6255648805681084, "median_price": 1.5128205128205128, "opponent": "James Metcalf", "opponent_last5_stoppage_losses": 1.0, "opponent_stoppage_loss_rate": 0.041666666666666664, "opponent_strength_gap": 0.012857564109197028, "rest_edge": -134.0, "year": 2022, "younger_by": 3.5648000000000017}
-  {"book_count": 2, "experience_gap": 4.0, "favorite": "Sam Eggington", "favorite_ko_rate": 0.46153846153846156, "form_gap": 2.0, "market_prob": 0.5459773376111747, "median_price": 1.7424657534246575, "opponent": "Dennis Hogan", "opponent_last5_stoppage_losses": 2.0, "opponent_stoppage_loss_rate": 0.05714285714285714, "opponent_strength_gap": -0.05721138738466358, "rest_edge": 115.0, "year": 2022, "younger_by": 8.624500000000005}
-  {"book_count": 5, "experience_gap": 0.0, "favorite": "Mauricio Lara", "favorite_ko_rate": 0.6551724137931034, "form_gap": 1.0, "market_prob": 0.7085889570552147, "median_price": 1.3571428571428572, "opponent": "Leigh Wood", "opponent_last5_stoppage_losses": 1.0, "opponent_stoppage_loss_rate": 0.06896551724137931, "opponent_strength_gap": 0.01804382147124084, "rest_edge": 0.0, "year": 2023, "younger_by": 9.563499999999998}
-  {"book_count": 5, "experience_gap": -6.0, "favorite": "Sivenathi Nontshinga", "favorite_ko_rate": 0.7142857142857143, "form_gap": 0.0, "market_prob": 0.5942571785268415, "median_price": 1.625, "opponent": "Masamichi Yabuki", "opponent_last5_stoppage_losses": 1.0, "opponent_stoppage_loss_rate": 0.1, "opponent_strength_gap": -0.06259050403787247, "rest_edge": -29.0, "year": 2024, "younger_by": 6.401300000000003}
-  {"book_count": 4, "experience_gap": -16.0, "favorite": "Yudai Shigeoka", "favorite_ko_rate": 0.5, "form_gap": 0.0, "market_prob": 0.6165371103374823, "median_price": 1.5051020408163265, "opponent": "Melvin Jerusalem", "opponent_last5_stoppage_losses": 1.0, "opponent_stoppage_loss_rate": 0.038461538461538464, "opponent_strength_gap": 0.07199363764711975, "rest_edge": -25.0, "year": 2025, "younger_by": 3.145900000000001}

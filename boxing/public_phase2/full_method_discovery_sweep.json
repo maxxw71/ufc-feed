@@ -1,7 +1,7 @@
 {
   "status": "RESEARCH_SHADOW_ONLY_NOT_LIVE",
-  "eligible_consensus_bouts": 730,
-  "stable_opponent_aware_rules": 37,
+  "eligible_consensus_bouts": 737,
+  "stable_opponent_aware_rules": 39,
   "independent_shortlist": [
     {
       "phase": "phase3",
@@ -573,6 +573,179 @@
       "score": 80.51347067844476
     },
     {
+      "phase": "phase4",
+      "rule": "SCHEDULE_STRENGTH__pmin1.2__pmax1.6__strength0.15",
+      "family": "SCHEDULE_STRENGTH",
+      "spec": {
+        "family": "SCHEDULE_STRENGTH",
+        "pmin": 1.2,
+        "pmax": 1.6,
+        "strength": 0.15
+      },
+      "metrics": {
+        "bets": 46,
+        "wins": 38,
+        "losses": 8,
+        "win_pct": 82.6086956521739,
+        "wilson95_lower_pct": 69.27636765607747,
+        "profit_median_units": 5.222845100361366,
+        "roi_median_pct": 11.3540110877421,
+        "profit_best_units": 6.44571280598716,
+        "roi_best_pct": 14.012419143450348,
+        "avg_market_prob": 0.7143349793268507,
+        "avg_book_count": 4.369565217391305
+      },
+      "dev_2021_2023": {
+        "bets": 21,
+        "wins": 16,
+        "losses": 5,
+        "win_pct": 76.19047619047619,
+        "wilson95_lower_pct": 54.90841802765406,
+        "profit_median_units": 0.25206215039955415,
+        "roi_median_pct": 1.2002959542835914,
+        "profit_best_units": 0.7908737604986198,
+        "roi_best_pct": 3.7660655261839033,
+        "avg_market_prob": 0.7222388489689904,
+        "avg_book_count": 4.619047619047619
+      },
+      "later_2024_2026": {
+        "bets": 25,
+        "wins": 22,
+        "losses": 3,
+        "win_pct": 88.0,
+        "wilson95_lower_pct": 70.04380781662651,
+        "profit_median_units": 4.970782949961812,
+        "roi_median_pct": 19.88313179984725,
+        "profit_best_units": 5.654839045488541,
+        "roi_best_pct": 22.619356181954164,
+        "avg_market_prob": 0.7076957288274535,
+        "avg_book_count": 4.16
+      },
+      "losses": [
+        {
+          "year": 2021,
+          "favorite": "Efetobor Apochi",
+          "opponent": "Brandon Glanton",
+          "median_price": 1.2197802197802199,
+          "market_prob": 0.7663157894736843,
+          "book_count": 3,
+          "younger_by": -4.287500000000001,
+          "fav_age": 33.6516,
+          "opp_age": 29.3641,
+          "fav_rest": 71.0,
+          "opp_rest": 183.0,
+          "strength_gap": 0.36454008954008954
+        },
+        {
+          "year": 2021,
+          "favorite": "Shannon Courtenay",
+          "opponent": "Jamie Mitchell",
+          "median_price": 1.3571428571428572,
+          "market_prob": 0.6972884525479196,
+          "book_count": 8,
+          "younger_by": 8.419100000000004,
+          "fav_age": 28.2689,
+          "opp_age": 36.688,
+          "fav_rest": 182.0,
+          "opp_rest": 218.0,
+          "strength_gap": 0.41666666666666674
+        },
+        {
+          "year": 2023,
+          "favorite": "Zak Chelli",
+          "opponent": "Mark Jeffers",
+          "median_price": 1.3484848484848486,
+          "market_prob": 0.7091803583031653,
+          "book_count": 4,
+          "younger_by": -0.20810000000000173,
+          "fav_age": 25.594,
+          "opp_age": 25.3859,
+          "fav_rest": 140.0,
+          "opp_rest": 56.0,
+          "strength_gap": 0.6728421278560739
+        },
+        {
+          "year": 2023,
+          "favorite": "Tomoki Kameda",
+          "opponent": "Lerato Dlamini",
+          "median_price": 1.2325581395348837,
+          "market_prob": 0.7598550067965564,
+          "book_count": 3,
+          "younger_by": -2.595600000000001,
+          "fav_age": 32.2389,
+          "opp_age": 29.6433,
+          "fav_rest": 224.0,
+          "opp_rest": 84.0,
+          "strength_gap": 0.16800760001856485
+        },
+        {
+          "year": 2023,
+          "favorite": "Ekow Essuman",
+          "opponent": "Harry Scarff",
+          "median_price": 1.3114404727307951,
+          "market_prob": 0.7245535143429521,
+          "book_count": 6,
+          "younger_by": -4.273900000000005,
+          "fav_age": 34.6373,
+          "opp_age": 30.3634,
+          "fav_rest": 301.0,
+          "opp_rest": 232.0,
+          "strength_gap": 0.4422088680001652
+        },
+        {
+          "year": 2024,
+          "favorite": "Miel Fajardo",
+          "opponent": "Thanongsak Simsri",
+          "median_price": 1.2829131652661063,
+          "market_prob": 0.7411761688782725,
+          "book_count": 2,
+          "younger_by": -0.4599999999999973,
+          "fav_age": 24.2825,
+          "opp_age": 23.8225,
+          "fav_rest": 242.0,
+          "opp_rest": 119.0,
+          "strength_gap": 0.23529411764705888
+        },
+        {
+          "year": 2025,
+          "favorite": "Masood Abdulah",
+          "opponent": "Zak Miller",
+          "median_price": 1.2094298245614035,
+          "market_prob": 0.7831121403758796,
+          "book_count": 4,
+          "younger_by": -3.3593999999999973,
+          "fav_age": 31.2477,
+          "opp_age": 27.8883,
+          "fav_rest": 155.0,
+          "opp_rest": 70.0,
+          "strength_gap": 0.5547174581343293
+        },
+        {
+          "year": 2025,
+          "favorite": "Steven Nelson",
+          "opponent": "Raiko Santana",
+          "median_price": 1.3333333333333333,
+          "market_prob": 0.7123287671232876,
+          "book_count": 5,
+          "younger_by": -5.0405000000000015,
+          "fav_age": 37.2766,
+          "opp_age": 32.2361,
+          "fav_rest": 231.0,
+          "opp_rest": 210.0,
+          "strength_gap": 0.23713759007876656
+        }
+      ],
+      "bootstrap": {
+        "lo": -4.828284219184467,
+        "median": 11.28187350645111,
+        "hi": 25.126458584027468,
+        "p_gt_0": 0.917
+      },
+      "stable_family_variants": 2,
+      "neighborhood_support": 0.4,
+      "score": 76.865870428013
+    },
+    {
       "phase": "phase3",
       "rule": "AGE_WORLD_TITLE__price1.2__age5__world1",
       "family": "AGE_WORLD_TITLE",
@@ -1126,147 +1299,6 @@
       "stable_family_variants": 3,
       "neighborhood_support": 0.6,
       "score": 74.92375350398184
-    },
-    {
-      "phase": "phase2",
-      "rule": "AGE_POWER__price1.2__younger3__ko0.4",
-      "family": "AGE_POWER",
-      "spec": {
-        "family": "AGE_POWER",
-        "price": 1.2,
-        "younger": 3,
-        "ko": 0.4
-      },
-      "metrics": {
-        "bets": 27,
-        "wins": 22,
-        "losses": 5,
-        "win_pct": 81.48148148148148,
-        "wilson95_lower_pct": 63.30094349480825,
-        "profit_median_units": 3.2238104125171625,
-        "roi_median_pct": 11.940038564878378,
-        "profit_best_units": 4.360454399152438,
-        "roi_best_pct": 16.149831107971995,
-        "avg_market_prob": 0.6868277891847042,
-        "avg_book_count": 3.888888888888889
-      },
-      "dev_2021_2023": {
-        "bets": 14,
-        "wins": 11,
-        "losses": 3,
-        "win_pct": 78.57142857142857,
-        "wilson95_lower_pct": 52.410276226791716,
-        "profit_median_units": 1.4800182325462674,
-        "roi_median_pct": 10.57155880390191,
-        "profit_best_units": 1.9471910162094213,
-        "roi_best_pct": 13.908507258638723,
-        "avg_market_prob": 0.6782227009752386,
-        "avg_book_count": 4.214285714285714
-      },
-      "later_2024_2026": {
-        "bets": 13,
-        "wins": 11,
-        "losses": 2,
-        "win_pct": 84.61538461538461,
-        "wilson95_lower_pct": 57.764829491368985,
-        "profit_median_units": 1.743792179970895,
-        "roi_median_pct": 13.413785999776117,
-        "profit_best_units": 2.4132633829430166,
-        "roi_best_pct": 18.56356448417705,
-        "avg_market_prob": 0.6960948072564364,
-        "avg_book_count": 3.5384615384615383
-      },
-      "losses": [
-        {
-          "year": 2022,
-          "favorite": "Kerman Lejarraga",
-          "opponent": "James Metcalf",
-          "median_price": 1.5128205128205128,
-          "market_prob": 0.6255648805681084,
-          "book_count": 5,
-          "younger_by": 3.5648000000000017,
-          "form_gap": 2.0,
-          "experience_gap": 12.0,
-          "rest_edge": -134.0,
-          "opponent_strength_gap": 0.012857564109197028,
-          "favorite_ko_rate": 0.7222222222222222,
-          "opponent_stoppage_loss_rate": 0.041666666666666664,
-          "opponent_last5_stoppage_losses": 1.0
-        },
-        {
-          "year": 2022,
-          "favorite": "Sam Eggington",
-          "opponent": "Dennis Hogan",
-          "median_price": 1.7424657534246575,
-          "market_prob": 0.5459773376111747,
-          "book_count": 2,
-          "younger_by": 8.624500000000005,
-          "form_gap": 2.0,
-          "experience_gap": 4.0,
-          "rest_edge": 115.0,
-          "opponent_strength_gap": -0.05721138738466358,
-          "favorite_ko_rate": 0.46153846153846156,
-          "opponent_stoppage_loss_rate": 0.05714285714285714,
-          "opponent_last5_stoppage_losses": 2.0
-        },
-        {
-          "year": 2023,
-          "favorite": "Mauricio Lara",
-          "opponent": "Leigh Wood",
-          "median_price": 1.3571428571428572,
-          "market_prob": 0.7085889570552147,
-          "book_count": 5,
-          "younger_by": 9.563499999999998,
-          "form_gap": 1.0,
-          "experience_gap": 0.0,
-          "rest_edge": 0.0,
-          "opponent_strength_gap": 0.01804382147124084,
-          "favorite_ko_rate": 0.6551724137931034,
-          "opponent_stoppage_loss_rate": 0.06896551724137931,
-          "opponent_last5_stoppage_losses": 1.0
-        },
-        {
-          "year": 2024,
-          "favorite": "Sivenathi Nontshinga",
-          "opponent": "Masamichi Yabuki",
-          "median_price": 1.625,
-          "market_prob": 0.5942571785268415,
-          "book_count": 5,
-          "younger_by": 6.401300000000003,
-          "form_gap": 0.0,
-          "experience_gap": -6.0,
-          "rest_edge": -29.0,
-          "opponent_strength_gap": -0.06259050403787247,
-          "favorite_ko_rate": 0.7142857142857143,
-          "opponent_stoppage_loss_rate": 0.1,
-          "opponent_last5_stoppage_losses": 1.0
-        },
-        {
-          "year": 2025,
-          "favorite": "Yudai Shigeoka",
-          "opponent": "Melvin Jerusalem",
-          "median_price": 1.5051020408163265,
-          "market_prob": 0.6165371103374823,
-          "book_count": 4,
-          "younger_by": 3.145900000000001,
-          "form_gap": 0.0,
-          "experience_gap": -16.0,
-          "rest_edge": -25.0,
-          "opponent_strength_gap": 0.07199363764711975,
-          "favorite_ko_rate": 0.5,
-          "opponent_stoppage_loss_rate": 0.038461538461538464,
-          "opponent_last5_stoppage_losses": 1.0
-        }
-      ],
-      "bootstrap": {
-        "lo": -10.701300113733028,
-        "median": 12.676849816668504,
-        "hi": 31.574905121969326,
-        "p_gt_0": 0.863
-      },
-      "stable_family_variants": 3,
-      "neighborhood_support": 0.6,
-      "score": 71.87495313602784
     }
   ],
   "best_per_family": [
@@ -1566,6 +1598,65 @@
       "stable_family_variants": 8,
       "neighborhood_support": 1.0,
       "score": 80.51347067844476
+    },
+    {
+      "phase": "phase4",
+      "rule": "SCHEDULE_STRENGTH__pmin1.2__pmax1.6__strength0.15",
+      "family": "SCHEDULE_STRENGTH",
+      "spec": {
+        "family": "SCHEDULE_STRENGTH",
+        "pmin": 1.2,
+        "pmax": 1.6,
+        "strength": 0.15
+      },
+      "metrics": {
+        "bets": 46,
+        "wins": 38,
+        "losses": 8,
+        "win_pct": 82.6086956521739,
+        "wilson95_lower_pct": 69.27636765607747,
+        "profit_median_units": 5.222845100361366,
+        "roi_median_pct": 11.3540110877421,
+        "profit_best_units": 6.44571280598716,
+        "roi_best_pct": 14.012419143450348,
+        "avg_market_prob": 0.7143349793268507,
+        "avg_book_count": 4.369565217391305
+      },
+      "dev_2021_2023": {
+        "bets": 21,
+        "wins": 16,
+        "losses": 5,
+        "win_pct": 76.19047619047619,
+        "wilson95_lower_pct": 54.90841802765406,
+        "profit_median_units": 0.25206215039955415,
+        "roi_median_pct": 1.2002959542835914,
+        "profit_best_units": 0.7908737604986198,
+        "roi_best_pct": 3.7660655261839033,
+        "avg_market_prob": 0.7222388489689904,
+        "avg_book_count": 4.619047619047619
+      },
+      "later_2024_2026": {
+        "bets": 25,
+        "wins": 22,
+        "losses": 3,
+        "win_pct": 88.0,
+        "wilson95_lower_pct": 70.04380781662651,
+        "profit_median_units": 4.970782949961812,
+        "roi_median_pct": 19.88313179984725,
+        "profit_best_units": 5.654839045488541,
+        "roi_best_pct": 22.619356181954164,
+        "avg_market_prob": 0.7076957288274535,
+        "avg_book_count": 4.16
+      },
+      "bootstrap": {
+        "lo": -4.828284219184467,
+        "median": 11.28187350645111,
+        "hi": 25.126458584027468,
+        "p_gt_0": 0.917
+      },
+      "stable_family_variants": 2,
+      "neighborhood_support": 0.4,
+      "score": 76.865870428013
     },
     {
       "phase": "phase3",
@@ -2166,80 +2257,80 @@
       "OPP_LAYOFF__pmin1.2__pmax1.6__opprest270": 0.0811,
       "AGE_LONG__price1.2__age5__rounds10": 0.1,
       "AGING_OPP__pmin1.2__pmax1.6__oppage34__age3": 0.0676,
+      "SCHEDULE_STRENGTH__pmin1.2__pmax1.6__strength0.15": 0.0147,
       "AGE_WORLD_TITLE__price1.2__age5__world1": 0.0189,
       "AGE_FORM__price1.2__younger3__form1": 0.1184,
-      "FORM_REACH__price1.2__form1__reach5": 0.1087,
-      "AGE_POWER__price1.2__younger3__ko0.4": 0.087
+      "FORM_REACH__price1.2__form1__reach5": 0.1087
     },
     "OPP_LAYOFF__pmin1.2__pmax1.6__opprest270": {
       "FORM_LONG__price1.3__form1__rounds10": 0.0811,
       "OPP_LAYOFF__pmin1.2__pmax1.6__opprest270": 1.0,
       "AGE_LONG__price1.2__age5__rounds10": 0.1143,
       "AGING_OPP__pmin1.2__pmax1.6__oppage34__age3": 0.1649,
+      "SCHEDULE_STRENGTH__pmin1.2__pmax1.6__strength0.15": 0.1075,
       "AGE_WORLD_TITLE__price1.2__age5__world1": 0.0602,
       "AGE_FORM__price1.2__younger3__form1": 0.1121,
-      "FORM_REACH__price1.2__form1__reach5": 0.0759,
-      "AGE_POWER__price1.2__younger3__ko0.4": 0.05
+      "FORM_REACH__price1.2__form1__reach5": 0.0759
     },
     "AGE_LONG__price1.2__age5__rounds10": {
       "FORM_LONG__price1.3__form1__rounds10": 0.1,
       "OPP_LAYOFF__pmin1.2__pmax1.6__opprest270": 0.1143,
       "AGE_LONG__price1.2__age5__rounds10": 1.0,
       "AGING_OPP__pmin1.2__pmax1.6__oppage34__age3": 0.2419,
+      "SCHEDULE_STRENGTH__pmin1.2__pmax1.6__strength0.15": 0.0152,
       "AGE_WORLD_TITLE__price1.2__age5__world1": 0.3,
       "AGE_FORM__price1.2__younger3__form1": 0.137,
-      "FORM_REACH__price1.2__form1__reach5": 0.0208,
-      "AGE_POWER__price1.2__younger3__ko0.4": 0.1429
+      "FORM_REACH__price1.2__form1__reach5": 0.0208
     },
     "AGING_OPP__pmin1.2__pmax1.6__oppage34__age3": {
       "FORM_LONG__price1.3__form1__rounds10": 0.0676,
       "OPP_LAYOFF__pmin1.2__pmax1.6__opprest270": 0.1649,
       "AGE_LONG__price1.2__age5__rounds10": 0.2419,
       "AGING_OPP__pmin1.2__pmax1.6__oppage34__age3": 1.0,
+      "SCHEDULE_STRENGTH__pmin1.2__pmax1.6__strength0.15": 0.0303,
       "AGE_WORLD_TITLE__price1.2__age5__world1": 0.2254,
       "AGE_FORM__price1.2__younger3__form1": 0.3882,
-      "FORM_REACH__price1.2__form1__reach5": 0.037,
-      "AGE_POWER__price1.2__younger3__ko0.4": 0.2206
+      "FORM_REACH__price1.2__form1__reach5": 0.037
+    },
+    "SCHEDULE_STRENGTH__pmin1.2__pmax1.6__strength0.15": {
+      "FORM_LONG__price1.3__form1__rounds10": 0.0147,
+      "OPP_LAYOFF__pmin1.2__pmax1.6__opprest270": 0.1075,
+      "AGE_LONG__price1.2__age5__rounds10": 0.0152,
+      "AGING_OPP__pmin1.2__pmax1.6__oppage34__age3": 0.0303,
+      "SCHEDULE_STRENGTH__pmin1.2__pmax1.6__strength0.15": 1.0,
+      "AGE_WORLD_TITLE__price1.2__age5__world1": 0.0405,
+      "AGE_FORM__price1.2__younger3__form1": 0.0286,
+      "FORM_REACH__price1.2__form1__reach5": 0.0
     },
     "AGE_WORLD_TITLE__price1.2__age5__world1": {
       "FORM_LONG__price1.3__form1__rounds10": 0.0189,
       "OPP_LAYOFF__pmin1.2__pmax1.6__opprest270": 0.0602,
       "AGE_LONG__price1.2__age5__rounds10": 0.3,
       "AGING_OPP__pmin1.2__pmax1.6__oppage34__age3": 0.2254,
+      "SCHEDULE_STRENGTH__pmin1.2__pmax1.6__strength0.15": 0.0405,
       "AGE_WORLD_TITLE__price1.2__age5__world1": 1.0,
       "AGE_FORM__price1.2__younger3__form1": 0.1772,
-      "FORM_REACH__price1.2__form1__reach5": 0.0172,
-      "AGE_POWER__price1.2__younger3__ko0.4": 0.1373
+      "FORM_REACH__price1.2__form1__reach5": 0.0172
     },
     "AGE_FORM__price1.2__younger3__form1": {
       "FORM_LONG__price1.3__form1__rounds10": 0.1184,
       "OPP_LAYOFF__pmin1.2__pmax1.6__opprest270": 0.1121,
       "AGE_LONG__price1.2__age5__rounds10": 0.137,
       "AGING_OPP__pmin1.2__pmax1.6__oppage34__age3": 0.3882,
+      "SCHEDULE_STRENGTH__pmin1.2__pmax1.6__strength0.15": 0.0286,
       "AGE_WORLD_TITLE__price1.2__age5__world1": 0.1772,
       "AGE_FORM__price1.2__younger3__form1": 1.0,
-      "FORM_REACH__price1.2__form1__reach5": 0.1688,
-      "AGE_POWER__price1.2__younger3__ko0.4": 0.3284
+      "FORM_REACH__price1.2__form1__reach5": 0.1688
     },
     "FORM_REACH__price1.2__form1__reach5": {
       "FORM_LONG__price1.3__form1__rounds10": 0.1087,
       "OPP_LAYOFF__pmin1.2__pmax1.6__opprest270": 0.0759,
       "AGE_LONG__price1.2__age5__rounds10": 0.0208,
       "AGING_OPP__pmin1.2__pmax1.6__oppage34__age3": 0.037,
+      "SCHEDULE_STRENGTH__pmin1.2__pmax1.6__strength0.15": 0.0,
       "AGE_WORLD_TITLE__price1.2__age5__world1": 0.0172,
       "AGE_FORM__price1.2__younger3__form1": 0.1688,
-      "FORM_REACH__price1.2__form1__reach5": 1.0,
-      "AGE_POWER__price1.2__younger3__ko0.4": 0.1
-    },
-    "AGE_POWER__price1.2__younger3__ko0.4": {
-      "FORM_LONG__price1.3__form1__rounds10": 0.087,
-      "OPP_LAYOFF__pmin1.2__pmax1.6__opprest270": 0.05,
-      "AGE_LONG__price1.2__age5__rounds10": 0.1429,
-      "AGING_OPP__pmin1.2__pmax1.6__oppage34__age3": 0.2206,
-      "AGE_WORLD_TITLE__price1.2__age5__world1": 0.1373,
-      "AGE_FORM__price1.2__younger3__form1": 0.3284,
-      "FORM_REACH__price1.2__form1__reach5": 0.1,
-      "AGE_POWER__price1.2__younger3__ko0.4": 1.0
+      "FORM_REACH__price1.2__form1__reach5": 1.0
     }
   },
   "promotion_gate": [
