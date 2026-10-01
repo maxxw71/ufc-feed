@@ -540,6 +540,33 @@ def parse_pair(text,a,b):
                     setv(f,'total_landed',m.group(1));setv(f,'total_thrown',m.group(2))
                     setv(o,'total_landed',m.group(3));setv(o,'total_thrown',m.group(4))
 
+    # Exact verified-pair subject/pronoun landed comparisons from Ring result prose.
+    # The bout pair/date is already resolved before parsing, so "him"/"his man"
+    # safely maps the second number to the verified opponent.
+    for f,o in ((a,b),(b,a)):
+        for fa in name_aliases(f):
+            m=re.search(
+                r'(?<![A-Za-z0-9])'+re.escape(fa)+
+                r'(?![A-Za-z0-9])[^.!?]{0,120}?out[- ]?landed\s+(?:him|his\s+man)\s+'
+                r'(\d{1,4})\s*(?:to|[-–])\s*(\d{1,4})[^.!?]{0,100}?CompuBox',
+                text,re.I)
+            if m:
+                setv(f,'total_landed',m.group(1));setv(o,'total_landed',m.group(2))
+
+    # "Zepeda ... outlanding Roach 218-153 ... while throwing 884 punches ... according to CompuBox."
+    for f,o in ((a,b),(b,a)):
+        for fa in name_aliases(f):
+            for oa in name_aliases(o):
+                m=re.search(
+                    r'(?<![A-Za-z0-9])'+re.escape(fa)+
+                    r'(?![A-Za-z0-9])[^.!?]{0,180}?outlanding\s+'+re.escape(oa)+
+                    r'\s+(\d{1,4})\s*[-–]\s*(\d{1,4})[^.!?]{0,180}?'
+                    r'throwing\s+(\d{1,4})\s+punches[^.!?]{0,120}?CompuBox',
+                    text,re.I)
+                if m:
+                    setv(f,'total_landed',m.group(1));setv(o,'total_landed',m.group(2))
+                    setv(f,'total_thrown',m.group(3))
+
     # "Overall in the fight, Roach outlanded Cruz 191 to 159."
     for f,o in ((a,b),(b,a)):
         fa=clean(f).split()[-1];oa=clean(o).split()[-1]
