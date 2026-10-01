@@ -13,6 +13,8 @@ from bs4 import BeautifulSoup
 from collect import db,fetch,fail,ROOT,now,public_feed_ipv6
 BASES=['https://app2.compuboxdata.com/','https://beta.compuboxdata.com/','https://api2.compuboxdata.com/']
 DISCOVERY_PAGES=[
+ 'https://app2.compuboxdata.com/reports/round-stats',
+ 'https://beta.compuboxdata.com/reports/round-stats',
  'https://app2.compuboxdata.com/reports/49',
  'https://app2.compuboxdata.com/reports/76',
  'https://app2.compuboxdata.com/reports/79',
