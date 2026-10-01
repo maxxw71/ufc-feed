@@ -519,6 +519,128 @@ def load_ring_partial_total_observations():
     return out
 
 
+
+def load_ring_landed_only_observations():
+    """Load exact two-sided Ring/CompuBox landed-only fight summaries.
+
+    This is a deliberately weaker tier than full round data and than Ring
+    summaries with total landed+thrown for both fighters. It requires:
+    - exact verified date/pair from the Ring collector;
+    - reciprocal two-sided rows from the same source article;
+    - explicit total_landed for both fighters;
+    - positive rounds_observed;
+    - at least one side missing total_thrown, so stronger complete totals stay
+      in the existing Ring partial-total tier.
+
+    Only explicitly printed landed/category counts are retained. Thrown counts,
+    accuracy, avoidance and other derived metrics are never inferred.
+    """
+    path=Path(__file__).resolve().parent.parent/'punch_supplements'/'ring_compubox_summaries.jsonl'
+    if not path.exists():return []
+    by_url=defaultdict(list)
+    for line in path.read_text().splitlines():
+        if not line.strip():continue
+        try:r=json.loads(line)
+        except Exception:continue
+        if r.get('source_tier')!='modern_publisher_compubox_summary_separate_from_full_round_reports':continue
+        if not r.get('bout_date') or not r.get('source_url') or not r.get('fighter') or not r.get('opponent'):continue
+        try:
+            rounds=int(r.get('rounds_observed') or 0)
+            landed=float(r.get('total_landed'))
+        except Exception:
+            continue
+        if rounds<1 or landed<0:continue
+        avail=str(r.get('available_from_date') or r.get('article_date') or '')
+        if not avail:continue
+        fk=norm_name(r['fighter']);ok=norm_name(r['opponent'])
+        if not fk or not ok or fk==ok:continue
+        key=(str(r['bout_date']),str(r['source_url']),tuple(sorted([fk,ok])))
+        by_url[key].append(r)
+
+    candidates=defaultdict(list)
+    for (date,url,pair),items in by_url.items():
+        if len(items)!=2:continue
+        a,b=items
+        if norm_name(a['fighter'])!=norm_name(b['opponent']) or norm_name(a['opponent'])!=norm_name(b['fighter']):continue
+        # Complete two-sided total landed+thrown belongs to the stronger tier.
+        if all(x.get('total_thrown') is not None for x in items):continue
+        completeness=sum(
+            int(x.get(k) is not None)
+            for x in items
+            for k in ('total_landed','total_thrown','jab_landed','jab_thrown',
+                      'power_landed','power_thrown','body_landed')
+        )
+        avail=max(str(x.get('available_from_date') or x.get('article_date') or '') for x in items)
+        candidates[(date,pair)].append((completeness,avail,url,items))
+
+    chosen=[]
+    for key,opts in candidates.items():
+        opts=sorted(opts,key=lambda x:(-x[0],x[1],x[2]))
+        chosen.append((key,opts[0]))
+
+    out=[]
+    for (date,pair),(score,avail,url,items) in chosen:
+        a,b=items
+        for r,o in ((a,b),(b,a)):
+            rounds=int(r['rounds_observed'])
+            result={
+              'report_url':url,
+              'report_id':'ring-landed-only:'+url+'#'+norm_name(r['fighter']),
+              'bout_date':date,
+              'report_title':f"{r['fighter']} vs {r['opponent']} Ring CompuBox landed-only summary",
+              'available_from_date':str(r.get('available_from_date') or r.get('article_date') or ''),
+              'fighter_label':r['fighter'],'fighter_full_name':r['fighter'],'fighter_key':norm_name(r['fighter']),
+              'opponent_label':r['opponent'],'opponent_full_name':r['opponent'],'opponent_key':norm_name(r['opponent']),
+              'identity_quality':'ring_exact_verified_date_pair',
+              'rounds_observed':rounds,
+              'source_quality':'ring_published_compubox_landed_only_totals',
+              'round_edge_note':'unavailable for landed-only summary tier',
+              'avoidance_note':'unavailable without explicit opponent thrown counts'
+            }
+            for cat in CATEGORIES:
+                fl=r.get(f'{cat}_landed');ol=o.get(f'{cat}_landed')
+                ft=r.get(f'{cat}_thrown');ot=o.get(f'{cat}_thrown')
+                try:fl=float(fl) if fl is not None else None
+                except Exception:fl=None
+                try:ol=float(ol) if ol is not None else None
+                except Exception:ol=None
+                try:ft=float(ft) if ft is not None else None
+                except Exception:ft=None
+                try:ot=float(ot) if ot is not None else None
+                except Exception:ot=None
+                if fl is not None:
+                    result[f'{cat}_landed']=fl
+                    result[f'{cat}_landed_per_round']=div(fl,rounds)
+                if ol is not None:
+                    result[f'opp_{cat}_landed']=ol
+                    result[f'opp_{cat}_landed_per_round']=div(ol,rounds)
+                if fl is not None and ol is not None:
+                    result[f'net_{cat}_landed_per_round']=div(fl-ol,rounds)
+                # Preserve an explicitly printed thrown value on one side, but
+                # do not derive accuracy unless that same fighter's denominator
+                # was actually published.
+                if ft is not None:
+                    if ft<fl if fl is not None else ft<0:continue
+                    result[f'{cat}_thrown']=ft
+                    result[f'{cat}_thrown_per_round']=div(ft,rounds)
+                    if fl is not None and ft:result[f'{cat}_accuracy_pct']=pct(div(fl,ft))
+                if ot is not None:
+                    if ot<ol if ol is not None else ot<0:continue
+                    result[f'opp_{cat}_thrown']=ot
+                    if ol is not None and ot:result[f'opp_{cat}_accuracy_pct']=pct(div(ol,ot))
+                    if ol is not None and ot:result[f'{cat}_avoidance_pct']=pct(1-div(ol,ot))
+                result[f'{cat}_round_edge_rate']=None
+                result[f'{cat}_landed_diff_slope']=None
+                result[f'{cat}_late_vs_early_net_delta']=None
+            body=r.get('body_landed')
+            try:body=float(body) if body is not None else None
+            except Exception:body=None
+            result['body_landed']=body
+            result['body_landed_share_pct']=pct(div(body,result.get('total_landed'))) if body is not None and result.get('total_landed') else None
+            out.append(result)
+    return out
+
+
 def merge_observation_tiers(round_rows,total_rows):
     """Prefer round-level observations when the same exact date+pair exists."""
     strong=set()
@@ -578,7 +700,8 @@ def pre_fight_profiles(observations):
                     x.get('source_quality') not in {
                       'structured_fight_total_table_ready_to_fight',
                       'archived_compubox_final_total_table_strict',
-                      'ring_published_compubox_partial_fight_totals'
+                      'ring_published_compubox_partial_fight_totals',
+                      'ring_published_compubox_landed_only_totals'
                     } for x in h
                   )}
             for cat in CATEGORIES:
@@ -610,6 +733,8 @@ def main():
     obs,supplement_obs_accepted,supplement_obs_skipped=merge_observation_tiers(round_obs,total_obs)
     ring_partial_obs=load_ring_partial_total_observations()
     obs,ring_partial_obs_accepted,ring_partial_obs_skipped=merge_observation_tiers(obs,ring_partial_obs)
+    ring_landed_obs=load_ring_landed_only_observations()
+    obs,ring_landed_obs_accepted,ring_landed_obs_skipped=merge_observation_tiers(obs,ring_landed_obs)
     snaps=pre_fight_profiles(obs)
     with (out/'fight_punch_observations.jsonl').open('w') as f:
         for row in obs:f.write(json.dumps(row,sort_keys=True)+'\n')
@@ -637,6 +762,10 @@ def main():
         'ring_partial_total_observations_accepted':ring_partial_obs_accepted,
         'ring_partial_total_observations_skipped_due_to_stronger_or_invalid_pair':ring_partial_obs_skipped,
         'ring_partial_total_fights_accepted':ring_partial_obs_accepted//2,
+        'ring_landed_only_observations_loaded':len(ring_landed_obs),
+        'ring_landed_only_observations_accepted':ring_landed_obs_accepted,
+        'ring_landed_only_observations_skipped_due_to_stronger_or_invalid_pair':ring_landed_obs_skipped,
+        'ring_landed_only_fights_accepted':ring_landed_obs_accepted//2,
         'source_quality_counts':dict(__import__('collections').Counter(r.get('source_quality') or 'unknown' for r in obs)),
         'prefight_snapshots':len(snaps),
         'fighters_with_any_prior_punch_fight':len({r['fighter_key'] for r in snaps if r['prior_punch_fights']>0}),
