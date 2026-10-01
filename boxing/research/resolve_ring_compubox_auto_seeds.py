@@ -8,7 +8,7 @@ pair/date must exist in the local bouts table within article date or the prior
 read or trusted here.
 """
 from __future__ import annotations
-import datetime as dt,json,re,sqlite3,unicodedata,urllib.request
+import datetime as dt,json,re,sqlite3,unicodedata,urllib.parse,urllib.request
 from pathlib import Path
 from bs4 import BeautifulSoup
 ROOT=Path(__file__).resolve().parents[1]
@@ -38,7 +38,7 @@ def article_date(soup):
         try:return dt.datetime.strptime(m.group(0).title(),'%b %d, %Y').date().isoformat()
         except Exception:pass
     return None
-def title_pair(soup):
+def title_pair(soup,url=''):
     h=soup.find('h1')
     title=' '.join(h.stripped_strings).strip() if h else ''
     # Require an explicit completed-fight stats title, not CompuBox Corner,
@@ -51,6 +51,16 @@ def title_pair(soup):
     for pat in pats:
         m=re.search(pat,title,re.I)
         if m:return title,m.group(1).strip(),m.group(2).strip()
+    # Ring is client-rendered on some requests, leaving H1 blank. Allow only
+    # the explicit post-fight stats URL grammar as a discovery fallback.
+    path=urllib.parse.urlsplit(url).path
+    m=re.search(
+        r'/news/(.+?)-vs-(.+?)-(?:compubox|compu-box)-(?:punch-)?stats(?:-|$)',
+        path,re.I)
+    if m:
+        a=urllib.parse.unquote(m.group(1)).replace('-',' ').strip()
+        b=urllib.parse.unquote(m.group(2)).replace('-',' ').strip()
+        return title or path.rsplit('/',1)[-1],a,b
     return title,None,None
 def local_match(con,a,b,pub):
     want=sorted([nk(a),nk(b)])
@@ -72,14 +82,19 @@ def local_match(con,a,b,pub):
 def main():
     disc=json.loads(DISC.read_text()) if DISC.exists() else {}
     manual=json.loads(MANUAL.read_text()) if MANUAL.exists() else {}
-    existing={x.get('url') for x in manual.get('pages') or []}
+    manual_pages=manual.get('pages') or []
+    existing={x.get('url') for x in manual_pages}
+    existing_pairs={
+      (str(x.get('bout_date') or ''),tuple(sorted(nk(n) for n in (x.get('fighters') or []))))
+      for x in manual_pages if x.get('bout_date') and len(x.get('fighters') or [])==2
+    }
     urls=disc.get('new_candidate_urls') or []
     con=sqlite3.connect(DB);con.row_factory=sqlite3.Row
     pages=[];diag=[]
     for u in urls:
         rec={'url':u}
         try:
-            final,raw=fetch(u);soup=BeautifulSoup(raw,'lxml');title,a,b=title_pair(soup);pub=article_date(soup)
+            final,raw=fetch(u);soup=BeautifulSoup(raw,'lxml');title,a,b=title_pair(soup,final);pub=article_date(soup)
             rec.update({'final_url':final,'title':title,'article_date':pub,'fighters':[a,b] if a and b else None})
             if not a or not b:
                 rec['status']='not_explicit_postfight_stats_title';diag.append(rec);continue
@@ -90,9 +105,12 @@ def main():
             if not match:
                 rec['status']='no_unique_exact_local_pair_date';diag.append(rec);continue
             page={'url':final,'bout_date':match['bout_date'],'fighters':[a,b],'rounds':match['rounds'],
-                  'auto_resolution':'explicit_ring_compubox_stats_title_plus_unique_local_date_pair'}
+                  'auto_resolution':'explicit_ring_compubox_stats_slug_or_title_plus_unique_local_date_pair'}
+            pairkey=(match['bout_date'],tuple(sorted([nk(a),nk(b)])))
             if final in existing:
-                rec['status']='already_seeded'
+                rec['status']='already_seeded_url'
+            elif pairkey in existing_pairs:
+                rec['status']='already_seeded_pair'
             else:
                 pages.append(page);rec['status']='accepted_auto_seed';rec['resolved_seed']=page
         except Exception as e:
@@ -104,7 +122,7 @@ def main():
     pages=sorted(uniq.values(),key=lambda x:(x['bout_date'],x['url']))
     out={'generated_at':dt.datetime.now(dt.timezone.utc).isoformat(),
          'discovered_new_urls':len(urls),'accepted_auto_seeds':len(pages),'pages':pages,'diagnostics':diag,
-         'policy':'Explicit A-vs-B CompuBox Punch Stats title only; unique exact normalized local bout pair on article date or prior two days; rounds from local verified bout row. No punch values trusted by resolver.'}
+         'policy':'Explicit A-vs-B CompuBox/Compu-Box Punch Stats rendered title or URL slug only; unique exact normalized local bout pair on article date or prior two days; rounds from local verified bout row; existing manual date+pair skipped. No punch values trusted by resolver.'}
     OUT.write_text(json.dumps(out,indent=2,ensure_ascii=False))
     print(json.dumps({'discovered_new_urls':len(urls),'accepted_auto_seeds':len(pages),'pages':pages},indent=2))
 if __name__=='__main__':main()
