@@ -241,19 +241,34 @@ def parse_pair(text,a,b):
                     setv(f,'total_landed',m.group(1));setv(f,'total_thrown',m.group(2))
                     setv(o,'total_landed',m.group(3));setv(o,'total_thrown',m.group(4))
 
-    # Exact verified-pair parenthetical final totals:
-    # "Figueroa ... Gonzalez (282 of 1,071 to 265 of 821)."
-    # "Parker ... Buatsi ... overall (100-of-326 to 76-of-368)."
-    # The named fighter immediately preceding the pair owns the first landed/thrown pair.
+    # Exact post-fight total grammar:
+    # "Figueroa landed 17 more punches overall than Gonzalez (282 of 1,071 to 265 of 821)."
     for f,o in ((a,b),(b,a)):
         for fa in name_aliases(f):
             for oa in name_aliases(o):
                 m=re.search(
                     r'(?<![A-Za-z0-9])'+re.escape(fa)+
-                    r'(?![A-Za-z0-9])[^.!?]{0,220}?'+re.escape(oa)+
-                    r'[^.!?]{0,180}?\('
-                    r'(\d{1,4})\s*(?:[-–]\s*)?of\s*(?:[-–]\s*)?([\d,]{1,6})\s+to\s+'
-                    r'(\d{1,4})\s*(?:[-–]\s*)?of\s*(?:[-–]\s*)?([\d,]{1,6})\)',
+                    r'(?![A-Za-z0-9])\s+landed\s+\d{1,4}\s+more\s+punches\s+overall\s+than\s+'+
+                    re.escape(oa)+r'\s*\('
+                    r'(\d{1,4})\s+of\s+([\d,]{1,6})\s+to\s+'
+                    r'(\d{1,4})\s+of\s+([\d,]{1,6})\)',
+                    text,re.I)
+                if m:
+                    setv(f,'total_landed',m.group(1));setv(f,'total_thrown',m.group(2).replace(',',''))
+                    setv(o,'total_landed',m.group(3));setv(o,'total_thrown',m.group(4).replace(',',''))
+
+    # Exact CompuBox "more connections/out-landed" grammar:
+    # "CompuBox counted more connections for Parker, who ... out-landed Buatsi
+    # by 24 punches overall (100-of-326 to 76-of-368)."
+    for f,o in ((a,b),(b,a)):
+        for fa in name_aliases(f):
+            for oa in name_aliases(o):
+                m=re.search(
+                    r'CompuBox\s+counted\s+more\s+connections\s+for\s+'+re.escape(fa)+
+                    r'[^.!?]{0,140}?out[-\s]?landed\s+'+re.escape(oa)+
+                    r'\s+by\s+\d{1,4}\s+punches\s+overall\s*\('
+                    r'(\d{1,4})\s*-\s*of\s*-\s*([\d,]{1,6})\s+to\s+'
+                    r'(\d{1,4})\s*-\s*of\s*-\s*([\d,]{1,6})\)',
                     text,re.I)
                 if m:
                     setv(f,'total_landed',m.group(1));setv(f,'total_thrown',m.group(2).replace(',',''))
