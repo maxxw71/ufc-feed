@@ -574,6 +574,81 @@ def parse_pair(text,a,b):
                     setv(f,'total_landed',m.group(1));setv(f,'total_thrown',m.group(2))
                     setv(o,'total_landed',m.group(3));setv(o,'total_thrown',m.group(4))
 
+    # Exact CompuBox-prefixed pronoun comparison:
+    # "According to CompuBox, Fury out-landed his man 199-59."
+    for f,o in ((a,b),(b,a)):
+        for fa in name_aliases(f):
+            m=re.search(
+                r'According\s+to\s+CompuBox\s*,?\s*'+re.escape(fa)+
+                r'(?![A-Za-z0-9])[^.!?]{0,80}?out[- ]?landed\s+(?:him|his\s+man)\s+'
+                r'(\d{1,4})\s*(?:to|[-–])\s*(\d{1,4})',
+                text,re.I)
+            if m:
+                setv(f,'total_landed',m.group(1));setv(o,'total_landed',m.group(2))
+
+    # Exact subject comparison with trailing CompuBox attribution:
+    # "Adames ... outlanded him 254 to 127, according to CompuBox."
+    for f,o in ((a,b),(b,a)):
+        for fa in name_aliases(f):
+            m=re.search(
+                r'(?<![A-Za-z0-9])'+re.escape(fa)+
+                r'(?![A-Za-z0-9])[^.!?]{0,220}?outlanded\s+(?:him|his\s+man)\s+'
+                r'(\d{1,4})\s*(?:to|[-–])\s*(\d{1,4})[^.!?]{0,80}?according\s+to\s+CompuBox',
+                text,re.I)
+            if m:
+                setv(f,'total_landed',m.group(1));setv(o,'total_landed',m.group(2))
+
+    # Exact CompuBox counted pair with verified surnames/names.
+    # "CompuBox counted 115 of 534 punches for Crawford and 99 of 338 for Alvarez."
+    for f,o in ((a,b),(b,a)):
+        for fa in name_aliases(f):
+            for oa in name_aliases(o):
+                m=re.search(
+                    r'CompuBox\s+counted\s+(\d{1,4})\s+of\s+([\d,]{1,6})\s+punches\s+for\s+'+
+                    re.escape(fa)+r'(?![A-Za-z0-9])\s+and\s+(\d{1,4})\s+of\s+([\d,]{1,6})\s+for\s+'+
+                    re.escape(oa)+r'(?![A-Za-z0-9])',
+                    text,re.I)
+                if m:
+                    setv(f,'total_landed',m.group(1));setv(f,'total_thrown',m.group(2).replace(',',''))
+                    setv(o,'total_landed',m.group(3));setv(o,'total_thrown',m.group(4).replace(',',''))
+
+    # Full-fight category edges that exhaust total landed categories.
+    # "Inoue ... 161-63 edge in jabs landed, ... power shots (167-107)".
+    for f,o in ((a,b),(b,a)):
+        for fa in name_aliases(f):
+            m=re.search(
+                r'(?<![A-Za-z0-9])'+re.escape(fa)+
+                r'(?![A-Za-z0-9])[^.!?]{0,220}?(\d{1,4})\s*[-–]\s*(\d{1,4})\s+edge\s+in\s+jabs\s+landed'
+                r'[^.!?]{0,140}?(?:power\s+(?:shots|punches))\s*\((\d{1,4})\s*[-–]\s*(\d{1,4})\)',
+                text,re.I)
+            if m:
+                fj,oj,fp,op=map(int,m.groups())
+                setv(f,'jab_landed',fj);setv(o,'jab_landed',oj)
+                setv(f,'power_landed',fp);setv(o,'power_landed',op)
+                setv(f,'total_landed',fj+fp);setv(o,'total_landed',oj+op)
+
+    # Exact two-half landed totals spanning all 12 rounds.
+    # "Nakatani ... outlanded Hernandez 142-94 over the first six rounds ...
+    #  Hernandez ... outlanded ... 179-155 over the final six rounds."
+    for f,o in ((a,b),(b,a)):
+        for fa in name_aliases(f):
+            for oa in name_aliases(o):
+                m1=re.search(
+                    r'(?<![A-Za-z0-9])'+re.escape(fa)+
+                    r'(?![A-Za-z0-9])[^.!?]{0,160}?outlanded\s+'+re.escape(oa)+
+                    r'\s+(\d{1,4})\s*[-–]\s*(\d{1,4})\s+over\s+the\s+first\s+six\s+rounds',
+                    text,re.I)
+                m2=re.search(
+                    r'(?<![A-Za-z0-9])'+re.escape(oa)+
+                    r'(?![A-Za-z0-9])[^.!?]{0,220}?outlanded(?:\s+(?:the\s+)?(?:Japanese\s+star|'+re.escape(fa)+r'))?\s*'
+                    r'(\d{1,4})\s*[-–]\s*(\d{1,4})\s+over\s+the\s+(?:final|last)\s+six\s+rounds',
+                    text,re.I)
+                if m1 and m2:
+                    f_first,o_first=map(int,m1.groups())
+                    o_last,f_last=map(int,m2.groups())
+                    setv(f,'total_landed',f_first+f_last)
+                    setv(o,'total_landed',o_first+o_last)
+
     # Exact verified-pair subject/pronoun landed comparisons from Ring result prose.
     # The bout pair/date is already resolved before parsing, so "him"/"his man"
     # safely maps the second number to the verified opponent.
