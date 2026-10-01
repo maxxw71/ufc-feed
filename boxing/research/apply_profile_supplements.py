@@ -7,6 +7,7 @@ ROOT=Path(__file__).resolve().parent
 DB=ROOT/'boxing.sqlite3'
 SUP=Path(os.environ.get('BOXING_PROFILE_SUPPLEMENTS',str(ROOT.parent/'profile_supplements'/'verified_profiles.jsonl')))
 EXTRA_SUP=ROOT.parent/'profile_supplements'/'manual_verified_profiles_20260929.jsonl'
+HEIGHT_SUP=ROOT.parent/'profile_supplements'/'strict_height_additions.jsonl'
 QUAR=Path(os.environ.get('BOXING_PROFILE_QUARANTINE',str(ROOT.parent/'profile_supplements'/'profile_field_quarantine.jsonl')))
 REPORT=ROOT/'PROFILE_SUPPLEMENT_APPLY_REPORT.json'
 FIELDS=('born','height_cm','reach_cm','stance','nationality')
@@ -18,6 +19,7 @@ def main():
             'missing_quarantine_targets':0}
     supplement_paths=[SUP]
     if EXTRA_SUP!=SUP and EXTRA_SUP.exists():supplement_paths.append(EXTRA_SUP)
+    if HEIGHT_SUP not in supplement_paths and HEIGHT_SUP.exists():supplement_paths.append(HEIGHT_SUP)
     if not any(p.exists() for p in supplement_paths):
         REPORT.write_text(json.dumps(report,indent=2));print(json.dumps(report));return
     con=sqlite3.connect(DB);con.row_factory=sqlite3.Row
