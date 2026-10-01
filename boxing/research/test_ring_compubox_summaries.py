@@ -269,4 +269,17 @@ class RingCompuBoxSummaryTests(unittest.TestCase):
         self.assertEqual(out['Sebastian Hernandez']['total_landed'],273)
 
 
+
+    def test_inoue_picasso_alternate_category_edges(self):
+        out=parse_pair(
+            "Picasso was game, but Inoue bested him in every statistical category tracked by CompuBox. "
+            "Inoue landed 158 more punches than Picasso, holding a 161-63 edge in jabs landed, "
+            "a 167-107 edge in power punches landed, and a 96-66 edge in body shots.",
+            'Naoya Inoue','Alan Picasso')
+        self.assertEqual(out['Naoya Inoue']['total_landed'],328)
+        self.assertEqual(out['Alan Picasso']['total_landed'],170)
+        self.assertEqual(out['Naoya Inoue']['jab_landed'],161)
+        self.assertEqual(out['Alan Picasso']['power_landed'],107)
+
+
 if __name__=='__main__':unittest.main()
