@@ -403,6 +403,79 @@ def parse_pair(text,a,b):
             if m:
                 setv(o,'total_landed',m.group(1));setv(f,'total_landed',m.group(2))
 
+    # Exact verified-pair "credited/returning" total:
+    # "Pacheco was credited with landing 266 of 602 punches, with Aleem returning 91 of 377, according to CompuBox."
+    for f,o in ((a,b),(b,a)):
+        for fa in sorted({clean(f),clean(f).split()[-1]},key=len,reverse=True):
+            for oa in sorted({clean(o),clean(o).split()[-1]},key=len,reverse=True):
+                m=re.search(
+                    r'(?<![A-Za-z0-9])'+re.escape(fa)+
+                    r'(?![A-Za-z0-9])[^.!?]{0,80}?credited\s+with\s+landing\s+'
+                    r'(\d{1,4})\s+of\s+(\d{1,4})\s+punches[^.!?]{0,50}?with\s+'+
+                    re.escape(oa)+r'\s+returning\s+(\d{1,4})\s+of\s+(\d{1,4})'
+                    r'[^.!?]{0,50}?according\s+to\s+CompuBox',
+                    text,re.I)
+                if m:
+                    setv(f,'total_landed',m.group(1));setv(f,'total_thrown',m.group(2))
+                    setv(o,'total_landed',m.group(3));setv(o,'total_thrown',m.group(4))
+
+    # Exact verified-pair parenthetical total:
+    # "CompuBox counted more punches landed for Dobson (131 of 422) than Davis (109 of 301)."
+    for f,o in ((a,b),(b,a)):
+        for fa in sorted({clean(f),clean(f).split()[-1]},key=len,reverse=True):
+            for oa in sorted({clean(o),clean(o).split()[-1]},key=len,reverse=True):
+                m=re.search(
+                    r'CompuBox[^.!?]{0,100}?punches\s+landed\s+for\s+'+re.escape(fa)+
+                    r'\s*\((\d{1,4})\s+of\s+(\d{1,4})\)\s+than\s+'+
+                    re.escape(oa)+r'\s*\((\d{1,4})\s+of\s+(\d{1,4})\)',
+                    text,re.I)
+                if m:
+                    setv(f,'total_landed',m.group(1));setv(f,'total_thrown',m.group(2))
+                    setv(o,'total_landed',m.group(3));setv(o,'total_thrown',m.group(4))
+
+    # Exact verified-pair total with "was X-for-Y":
+    # "According to CompuBox, Usyk landed 112 of 499 total punches and Verhoeven was 113-for-508."
+    for f,o in ((a,b),(b,a)):
+        for fa in sorted({clean(f),clean(f).split()[-1]},key=len,reverse=True):
+            for oa in sorted({clean(o),clean(o).split()[-1]},key=len,reverse=True):
+                m=re.search(
+                    r'According\s+to\s+CompuBox[^.!?]{0,40}?'+re.escape(fa)+
+                    r'\s+landed\s+(\d{1,4})\s+of\s+(\d{1,4})\s+total\s+punches\s+and\s+'+
+                    re.escape(oa)+r'\s+was\s+(\d{1,4})\s*[-–]\s*for\s*[-–]\s*(\d{1,4})',
+                    text,re.I)
+                if m:
+                    setv(f,'total_landed',m.group(1));setv(f,'total_thrown',m.group(2))
+                    setv(o,'total_landed',m.group(3));setv(o,'total_thrown',m.group(4))
+
+    # Exact category connect edge:
+    # "Verhoeven had a 93-89 edge in power punches landed."
+    for f,o in ((a,b),(b,a)):
+        for fa in sorted({clean(f),clean(f).split()[-1]},key=len,reverse=True):
+            m=re.search(
+                r'(?<![A-Za-z0-9])'+re.escape(fa)+
+                r'(?![A-Za-z0-9])[^.!?]{0,60}?(?:had|held)\s+a?\s*'
+                r'(\d{1,4})\s*[-–]\s*(\d{1,4})\s+(?:connect\s+)?(?:advantage|edge)\s+in\s+'
+                r'(jabs?|power(?:\s+punches|\s+shots)?)\s+(?:landed)?',
+                text,re.I)
+            if m:
+                cat='jab' if m.group(3).casefold().startswith('jab') else 'power'
+                setv(f,cat+'_landed',m.group(1));setv(o,cat+'_landed',m.group(2))
+
+    # Exact final landed comparison with category follow-on:
+    # "Garcia outlanded Barrios 185 to 106 in total punches and 103 to 43 in power shots, according to CompuBox."
+    for f,o in ((a,b),(b,a)):
+        fa=clean(f).split()[-1];oa=clean(o).split()[-1]
+        m=re.search(
+            re.escape(fa)+r'\s+outlanded\s+'+re.escape(oa)+
+            r'\s+(\d{1,4})\s*(?:to|[-–])\s*(\d{1,4})\s+in\s+total\s+punches'
+            r'(?:\s*,?\s*(?:and\s+)?(\d{1,4})\s*(?:to|[-–])\s*(\d{1,4})\s+in\s+power\s+(?:shots|punches))?'
+            r'[^.!?]{0,50}?according\s+to\s+CompuBox',
+            text,re.I)
+        if m:
+            setv(f,'total_landed',m.group(1));setv(o,'total_landed',m.group(2))
+            if m.group(3):
+                setv(f,'power_landed',m.group(3));setv(o,'power_landed',m.group(4))
+
     # "Overall in the fight, Roach outlanded Cruz 191 to 159."
     for f,o in ((a,b),(b,a)):
         fa=clean(f).split()[-1];oa=clean(o).split()[-1]
