@@ -1,90 +1,170 @@
 {
-  "generated_at": "2026-09-28T08:17:32.738041+00:00",
+  "generated_at": "2026-10-01T00:25:48.694447+00:00",
   "queries": [
+    {
+      "prefix": "http://www.compuboxonline.com:80/stat_files/",
+      "query": "https://web.archive.org/cdx/search/cdx?url=http%3A%2F%2Fwww.compuboxonline.com%3A80%2Fstat_files%2F%2A&output=json&filter=statuscode%3A200&fl=timestamp%2Coriginal%2Cstatuscode%2Cmimetype%2Cdigest&limit=10000",
+      "rows": 90,
+      "error": null
+    },
+    {
+      "prefix": "https://www.compuboxonline.com:80/stat_files/",
+      "rows": 0,
+      "error": "TimeoutError: The read operation timed out"
+    },
+    {
+      "prefix": "http://compuboxonline.com:80/stat_files/",
+      "rows": 0,
+      "error": "URLError: <urlopen error [Errno 111] Connection refused>"
+    },
+    {
+      "prefix": "https://compuboxonline.com:80/stat_files/",
+      "rows": 0,
+      "error": "TimeoutError: The read operation timed out"
+    },
+    {
+      "prefix": "http://www.compuboxonline.com:80/featured_stats/",
+      "rows": 0,
+      "error": "URLError: <urlopen error [Errno 111] Connection refused>"
+    },
+    {
+      "prefix": "https://www.compuboxonline.com:80/featured_stats/",
+      "rows": 0,
+      "error": "URLError: <urlopen error [Errno 111] Connection refused>"
+    },
+    {
+      "prefix": "http://compuboxonline.com:80/featured_stats/",
+      "rows": 0,
+      "error": "URLError: <urlopen error [Errno 111] Connection refused>"
+    },
+    {
+      "prefix": "https://compuboxonline.com:80/featured_stats/",
+      "rows": 0,
+      "error": "URLError: <urlopen error [Errno 111] Connection refused>"
+    },
+    {
+      "prefix": "http://www.compuboxonline.com/stat_files/",
+      "rows": 0,
+      "error": "URLError: <urlopen error [Errno 111] Connection refused>"
+    },
+    {
+      "prefix": "https://www.compuboxonline.com/stat_files/",
+      "rows": 0,
+      "error": "URLError: <urlopen error [Errno 111] Connection refused>"
+    },
+    {
+      "prefix": "http://compuboxonline.com/stat_files/",
+      "query": "https://web.archive.org/cdx/search/cdx?url=http%3A%2F%2Fcompuboxonline.com%2Fstat_files%2F%2A&output=json&filter=statuscode%3A200&fl=timestamp%2Coriginal%2Cstatuscode%2Cmimetype%2Cdigest&limit=10000",
+      "rows": 90,
+      "error": null
+    },
+    {
+      "prefix": "https://compuboxonline.com/stat_files/",
+      "rows": 0,
+      "error": "URLError: <urlopen error [Errno 111] Connection refused>"
+    },
+    {
+      "prefix": "http://www.compuboxonline.com/featured_stats/",
+      "rows": 0,
+      "error": "URLError: <urlopen error [Errno 111] Connection refused>"
+    },
+    {
+      "prefix": "https://www.compuboxonline.com/featured_stats/",
+      "rows": 0,
+      "error": "URLError: <urlopen error _ssl.c:993: The handshake operation timed out>"
+    },
+    {
+      "prefix": "http://compuboxonline.com/featured_stats/",
+      "rows": 0,
+      "error": "TimeoutError: The read operation timed out"
+    },
+    {
+      "prefix": "https://compuboxonline.com/featured_stats/",
+      "query": "https://web.archive.org/cdx/search/cdx?url=https%3A%2F%2Fcompuboxonline.com%2Ffeatured_stats%2F%2A&output=json&filter=statuscode%3A200&fl=timestamp%2Coriginal%2Cstatuscode%2Cmimetype%2Cdigest&limit=10000",
+      "rows": 0,
+      "error": null
+    },
     {
       "seed_url": "http://compuboxonline.com/stat_files/ARR-ADA.htm",
       "exact_url": "http://compuboxonline.com/stat_files/ARR-ADA.htm",
+      "query": "https://web.archive.org/cdx/search/cdx?url=http%3A%2F%2Fcompuboxonline.com%2Fstat_files%2FARR-ADA.htm&output=json&filter=statuscode%3A200&fl=timestamp%2Coriginal%2Cstatuscode%2Cmimetype%2Cdigest&limit=1000",
+      "rows": 0,
+      "error": null
+    },
+    {
+      "seed_url": "http://compuboxonline.com/stat_files/ARR-ADA.htm",
+      "exact_url": "http://compuboxonline.com:80/stat_files/ARR-ADA.htm",
       "rows": 0,
       "error": "TimeoutError: The read operation timed out"
     },
     {
       "seed_url": "http://compuboxonline.com/stat_files/ARR-ADA.htm",
-      "exact_url": "http://compuboxonline.com:80/stat_files/ARR-ADA.htm",
-      "query": "https://web.archive.org/cdx/search/cdx?url=http%3A%2F%2Fcompuboxonline.com%3A80%2Fstat_files%2FARR-ADA.htm&output=json&filter=statuscode%3A200&fl=timestamp%2Coriginal%2Cstatuscode%2Cmimetype%2Cdigest&limit=1000",
-      "rows": 0,
-      "error": null
-    },
-    {
-      "seed_url": "http://compuboxonline.com/stat_files/ARR-ADA.htm",
       "exact_url": "http://www.compuboxonline.com/stat_files/ARR-ADA.htm",
-      "query": "https://web.archive.org/cdx/search/cdx?url=http%3A%2F%2Fwww.compuboxonline.com%2Fstat_files%2FARR-ADA.htm&output=json&filter=statuscode%3A200&fl=timestamp%2Coriginal%2Cstatuscode%2Cmimetype%2Cdigest&limit=1000",
       "rows": 0,
-      "error": null
+      "error": "TimeoutError: The read operation timed out"
     },
     {
       "seed_url": "http://compuboxonline.com/stat_files/ARR-ADA.htm",
       "exact_url": "http://www.compuboxonline.com:80/stat_files/ARR-ADA.htm",
       "rows": 0,
-      "error": "URLError: <urlopen error [Errno 111] Connection refused>"
+      "error": "TimeoutError: The read operation timed out"
     },
     {
       "seed_url": "http://compuboxonline.com/stat_files/ARR-ADA.htm",
       "exact_url": "https://compuboxonline.com/stat_files/ARR-ADA.htm",
+      "query": "https://web.archive.org/cdx/search/cdx?url=https%3A%2F%2Fcompuboxonline.com%2Fstat_files%2FARR-ADA.htm&output=json&filter=statuscode%3A200&fl=timestamp%2Coriginal%2Cstatuscode%2Cmimetype%2Cdigest&limit=1000",
       "rows": 0,
-      "error": "URLError: <urlopen error [Errno 111] Connection refused>"
+      "error": null
     },
     {
       "seed_url": "http://compuboxonline.com/stat_files/ARR-ADA.htm",
       "exact_url": "https://compuboxonline.com:80/stat_files/ARR-ADA.htm",
       "rows": 0,
-      "error": "URLError: <urlopen error timed out>"
+      "error": "TimeoutError: The read operation timed out"
     },
     {
       "seed_url": "http://compuboxonline.com/stat_files/ARR-ADA.htm",
       "exact_url": "https://www.compuboxonline.com/stat_files/ARR-ADA.htm",
       "rows": 0,
-      "error": "URLError: <urlopen error timed out>"
+      "error": "TimeoutError: The read operation timed out"
     },
     {
       "seed_url": "http://compuboxonline.com/stat_files/ARR-ADA.htm",
       "exact_url": "https://www.compuboxonline.com:80/stat_files/ARR-ADA.htm",
       "rows": 0,
-      "error": "URLError: <urlopen error [Errno 111] Connection refused>"
-    },
-    {
-      "seed_url": "http://compuboxonline.com/stat_files/ARR-ADA.htm",
-      "status": "no_capture_found_across_variants"
+      "error": "TimeoutError: The read operation timed out"
     },
     {
       "seed_url": "http://compuboxonline.com/stat_files/DIA-MAL3.htm",
       "exact_url": "http://compuboxonline.com/stat_files/DIA-MAL3.htm",
       "rows": 0,
-      "error": "URLError: <urlopen error [Errno 111] Connection refused>"
+      "error": "TimeoutError: The read operation timed out"
     },
     {
       "seed_url": "http://compuboxonline.com/stat_files/DIA-MAL3.htm",
       "exact_url": "http://compuboxonline.com:80/stat_files/DIA-MAL3.htm",
       "rows": 0,
-      "error": "URLError: <urlopen error [Errno 111] Connection refused>"
+      "error": "TimeoutError: The read operation timed out"
     },
     {
       "seed_url": "http://compuboxonline.com/stat_files/DIA-MAL3.htm",
       "exact_url": "http://www.compuboxonline.com/stat_files/DIA-MAL3.htm",
+      "query": "https://web.archive.org/cdx/search/cdx?url=http%3A%2F%2Fwww.compuboxonline.com%2Fstat_files%2FDIA-MAL3.htm&output=json&filter=statuscode%3A200&fl=timestamp%2Coriginal%2Cstatuscode%2Cmimetype%2Cdigest&limit=1000",
       "rows": 0,
-      "error": "URLError: <urlopen error [Errno 111] Connection refused>"
+      "error": null
     },
     {
       "seed_url": "http://compuboxonline.com/stat_files/DIA-MAL3.htm",
       "exact_url": "http://www.compuboxonline.com:80/stat_files/DIA-MAL3.htm",
+      "query": "https://web.archive.org/cdx/search/cdx?url=http%3A%2F%2Fwww.compuboxonline.com%3A80%2Fstat_files%2FDIA-MAL3.htm&output=json&filter=statuscode%3A200&fl=timestamp%2Coriginal%2Cstatuscode%2Cmimetype%2Cdigest&limit=1000",
       "rows": 0,
-      "error": "URLError: <urlopen error [Errno 111] Connection refused>"
+      "error": null
     },
     {
       "seed_url": "http://compuboxonline.com/stat_files/DIA-MAL3.htm",
       "exact_url": "https://compuboxonline.com/stat_files/DIA-MAL3.htm",
-      "query": "https://web.archive.org/cdx/search/cdx?url=https%3A%2F%2Fcompuboxonline.com%2Fstat_files%2FDIA-MAL3.htm&output=json&filter=statuscode%3A200&fl=timestamp%2Coriginal%2Cstatuscode%2Cmimetype%2Cdigest&limit=1000",
       "rows": 0,
-      "error": null
+      "error": "TimeoutError: The read operation timed out"
     },
     {
       "seed_url": "http://compuboxonline.com/stat_files/DIA-MAL3.htm",
@@ -101,20 +181,14 @@
     {
       "seed_url": "http://compuboxonline.com/stat_files/DIA-MAL3.htm",
       "exact_url": "https://www.compuboxonline.com:80/stat_files/DIA-MAL3.htm",
-      "query": "https://web.archive.org/cdx/search/cdx?url=https%3A%2F%2Fwww.compuboxonline.com%3A80%2Fstat_files%2FDIA-MAL3.htm&output=json&filter=statuscode%3A200&fl=timestamp%2Coriginal%2Cstatuscode%2Cmimetype%2Cdigest&limit=1000",
       "rows": 0,
-      "error": null
-    },
-    {
-      "seed_url": "http://compuboxonline.com/stat_files/DIA-MAL3.htm",
-      "status": "no_capture_found_across_variants"
+      "error": "TimeoutError: The read operation timed out"
     },
     {
       "seed_url": "http://compuboxonline.com/stat_files/KLI-JOH.htm",
       "exact_url": "http://compuboxonline.com/stat_files/KLI-JOH.htm",
-      "query": "https://web.archive.org/cdx/search/cdx?url=http%3A%2F%2Fcompuboxonline.com%2Fstat_files%2FKLI-JOH.htm&output=json&filter=statuscode%3A200&fl=timestamp%2Coriginal%2Cstatuscode%2Cmimetype%2Cdigest&limit=1000",
       "rows": 0,
-      "error": null
+      "error": "TimeoutError: The read operation timed out"
     },
     {
       "seed_url": "http://compuboxonline.com/stat_files/KLI-JOH.htm",
@@ -156,11 +230,7 @@
       "seed_url": "http://compuboxonline.com/stat_files/KLI-JOH.htm",
       "exact_url": "https://www.compuboxonline.com:80/stat_files/KLI-JOH.htm",
       "rows": 0,
-      "error": "HTTPError: HTTP Error 503: Service Unavailable"
-    },
-    {
-      "seed_url": "http://compuboxonline.com/stat_files/KLI-JOH.htm",
-      "status": "no_capture_found_across_variants"
+      "error": "URLError: <urlopen error [Errno 111] Connection refused>"
     },
     {
       "seed_url": "http://www.compuboxonline.com/featured_stats/V_Klitschko_KO_10_Arreola.pdf",
@@ -184,13 +254,13 @@
       "seed_url": "http://www.compuboxonline.com/featured_stats/V_Klitschko_KO_10_Arreola.pdf",
       "exact_url": "http://www.compuboxonline.com:80/featured_stats/V_Klitschko_KO_10_Arreola.pdf",
       "rows": 0,
-      "error": "HTTPError: HTTP Error 503: Service Unavailable"
+      "error": "URLError: <urlopen error [Errno 111] Connection refused>"
     },
     {
       "seed_url": "http://www.compuboxonline.com/featured_stats/V_Klitschko_KO_10_Arreola.pdf",
       "exact_url": "https://compuboxonline.com/featured_stats/V_Klitschko_KO_10_Arreola.pdf",
       "rows": 0,
-      "error": "HTTPError: HTTP Error 503: Service Unavailable"
+      "error": "URLError: <urlopen error [Errno 111] Connection refused>"
     },
     {
       "seed_url": "http://www.compuboxonline.com/featured_stats/V_Klitschko_KO_10_Arreola.pdf",
@@ -211,10 +281,6 @@
       "error": "URLError: <urlopen error [Errno 111] Connection refused>"
     },
     {
-      "seed_url": "http://www.compuboxonline.com/featured_stats/V_Klitschko_KO_10_Arreola.pdf",
-      "status": "no_capture_found_across_variants"
-    },
-    {
       "seed_url": "http://www.compuboxonline.com/stat_files/COT-MOS.htm",
       "exact_url": "http://compuboxonline.com/stat_files/COT-MOS.htm",
       "rows": 0,
@@ -223,34 +289,32 @@
     {
       "seed_url": "http://www.compuboxonline.com/stat_files/COT-MOS.htm",
       "exact_url": "http://compuboxonline.com:80/stat_files/COT-MOS.htm",
-      "query": "https://web.archive.org/cdx/search/cdx?url=http%3A%2F%2Fcompuboxonline.com%3A80%2Fstat_files%2FCOT-MOS.htm&output=json&filter=statuscode%3A200&fl=timestamp%2Coriginal%2Cstatuscode%2Cmimetype%2Cdigest&limit=1000",
       "rows": 0,
-      "error": null
+      "error": "URLError: <urlopen error [Errno 111] Connection refused>"
     },
     {
       "seed_url": "http://www.compuboxonline.com/stat_files/COT-MOS.htm",
       "exact_url": "http://www.compuboxonline.com/stat_files/COT-MOS.htm",
-      "query": "https://web.archive.org/cdx/search/cdx?url=http%3A%2F%2Fwww.compuboxonline.com%2Fstat_files%2FCOT-MOS.htm&output=json&filter=statuscode%3A200&fl=timestamp%2Coriginal%2Cstatuscode%2Cmimetype%2Cdigest&limit=1000",
       "rows": 0,
-      "error": null
+      "error": "URLError: <urlopen error [Errno 111] Connection refused>"
     },
     {
       "seed_url": "http://www.compuboxonline.com/stat_files/COT-MOS.htm",
       "exact_url": "http://www.compuboxonline.com:80/stat_files/COT-MOS.htm",
       "rows": 0,
-      "error": "TimeoutError: The read operation timed out"
+      "error": "URLError: <urlopen error [Errno 111] Connection refused>"
     },
     {
       "seed_url": "http://www.compuboxonline.com/stat_files/COT-MOS.htm",
       "exact_url": "https://compuboxonline.com/stat_files/COT-MOS.htm",
       "rows": 0,
-      "error": "URLError: <urlopen error timed out>"
+      "error": "URLError: <urlopen error [Errno 111] Connection refused>"
     },
     {
       "seed_url": "http://www.compuboxonline.com/stat_files/COT-MOS.htm",
       "exact_url": "https://compuboxonline.com:80/stat_files/COT-MOS.htm",
       "rows": 0,
-      "error": "URLError: <urlopen error timed out>"
+      "error": "URLError: <urlopen error [Errno 111] Connection refused>"
     },
     {
       "seed_url": "http://www.compuboxonline.com/stat_files/COT-MOS.htm",
@@ -263,10 +327,6 @@
       "exact_url": "https://www.compuboxonline.com:80/stat_files/COT-MOS.htm",
       "rows": 0,
       "error": "URLError: <urlopen error [Errno 111] Connection refused>"
-    },
-    {
-      "seed_url": "http://www.compuboxonline.com/stat_files/COT-MOS.htm",
-      "status": "no_capture_found_across_variants"
     },
     {
       "seed_url": "http://compuboxonline.com/stat_files/MOS-MOR.htm",
@@ -290,30 +350,59 @@
       "seed_url": "http://compuboxonline.com/stat_files/MOS-MOR.htm",
       "exact_url": "http://www.compuboxonline.com:80/stat_files/MOS-MOR.htm",
       "rows": 0,
-      "error": "URLError: <urlopen error _ssl.c:993: The handshake operation timed out>"
+      "error": "URLError: <urlopen error [Errno 111] Connection refused>"
     },
     {
       "seed_url": "http://compuboxonline.com/stat_files/MOS-MOR.htm",
       "exact_url": "https://compuboxonline.com/stat_files/MOS-MOR.htm",
       "rows": 0,
-      "error": "URLError: <urlopen error _ssl.c:993: The handshake operation timed out>"
+      "error": "URLError: <urlopen error [Errno 111] Connection refused>"
     },
     {
       "seed_url": "http://compuboxonline.com/stat_files/MOS-MOR.htm",
       "exact_url": "https://compuboxonline.com:80/stat_files/MOS-MOR.htm",
       "rows": 0,
-      "error": "HTTPError: HTTP Error 503: Service Unavailable"
+      "error": "URLError: <urlopen error [Errno 111] Connection refused>"
     },
     {
       "seed_url": "http://compuboxonline.com/stat_files/MOS-MOR.htm",
       "exact_url": "https://www.compuboxonline.com/stat_files/MOS-MOR.htm",
-      "query": "https://web.archive.org/cdx/search/cdx?url=https%3A%2F%2Fwww.compuboxonline.com%2Fstat_files%2FMOS-MOR.htm&output=json&filter=statuscode%3A200&fl=timestamp%2Coriginal%2Cstatuscode%2Cmimetype%2Cdigest&limit=1000",
-      "rows": 1,
-      "error": null
+      "rows": 0,
+      "error": "URLError: <urlopen error [Errno 111] Connection refused>"
+    },
+    {
+      "seed_url": "http://compuboxonline.com/stat_files/MOS-MOR.htm",
+      "exact_url": "https://www.compuboxonline.com:80/stat_files/MOS-MOR.htm",
+      "rows": 0,
+      "error": "URLError: <urlopen error [Errno 111] Connection refused>"
+    },
+    {
+      "seed_url": "http://compuboxonline.com/stat_files/ARR-ADA.htm",
+      "status": "no_capture_found_across_variants"
+    },
+    {
+      "seed_url": "http://compuboxonline.com/stat_files/DIA-MAL3.htm",
+      "status": "no_capture_found_across_variants"
+    },
+    {
+      "seed_url": "http://compuboxonline.com/stat_files/KLI-JOH.htm",
+      "status": "no_capture_found_across_variants"
+    },
+    {
+      "seed_url": "http://www.compuboxonline.com/featured_stats/V_Klitschko_KO_10_Arreola.pdf",
+      "status": "no_capture_found_across_variants"
+    },
+    {
+      "seed_url": "http://www.compuboxonline.com/stat_files/COT-MOS.htm",
+      "status": "no_capture_found_across_variants"
+    },
+    {
+      "seed_url": "http://compuboxonline.com/stat_files/MOS-MOR.htm",
+      "status": "no_capture_found_across_variants"
     }
   ],
   "preserved_candidate_urls": 50,
-  "raw_cdx_rows": 1,
+  "raw_cdx_rows": 180,
   "unique_candidate_urls": 50,
   "html_candidates": 50,
   "pdf_candidates": 0,
