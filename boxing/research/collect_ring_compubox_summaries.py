@@ -13,6 +13,7 @@ from bs4 import BeautifulSoup
 
 ROOT=Path(__file__).resolve().parents[1]
 SEEDS=ROOT/'research'/'ring_compubox_seed_urls.json'
+AUTO_SEEDS=ROOT/'research'/'ring_compubox_auto_seed_urls.json'
 PAIR_SUPPLEMENTS=ROOT/'research'/'ring_compubox_pair_supplements.json'
 DB=ROOT/'research'/'boxing.sqlite3'
 OUT=ROOT/'punch_supplements'/'ring_compubox_summaries.jsonl'
@@ -755,6 +756,11 @@ def parse_pair(text,a,b):
 
 def main():
     seeds=json.loads(SEEDS.read_text()).get('pages') or []
+    if AUTO_SEEDS.exists():
+        try:seeds.extend(json.loads(AUTO_SEEDS.read_text()).get('pages') or [])
+        except Exception:pass
+    # URL de-dupe: manual seeds take precedence.
+    seeds=list({x.get('url'):x for x in reversed(seeds) if x.get('url')}.values())
     rows=[];diag=[]
     for seed in seeds:
         date=seed['bout_date'];a,b=seed['fighters'];rounds=int(seed.get('rounds') or 0)
