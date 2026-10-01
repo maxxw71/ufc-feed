@@ -25,7 +25,7 @@ jobs:
           python-version: '3.12'
       - run: python -m pip install --disable-pip-version-check beautifulsoup4 lxml
       - name: Fill strict-sample reach from official WBC statistics pages
-        run: python boxing/research/backfill_wbc_reach.py --limit 180 --min-appearances 2 --sleep 0.08
+        run: python boxing/research/backfill_wbc_reach.py --limit 260 --min-appearances 1 --sleep 0.06
       - name: Persist WBC reach supplements on latest main
         shell: bash
         run: |
@@ -46,3 +46,5 @@ jobs:
             git commit -m 'Expand boxer reach from official WBC statistics'
             git push origin HEAD:main
           fi
+
+# full-current-gap-refresh: 2026-10-01T09:10Z
