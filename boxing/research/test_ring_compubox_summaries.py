@@ -226,4 +226,47 @@ class RingCompuBoxSummaryTests(unittest.TestCase):
         self.assertNotIn('total_thrown',out['Brandon Figueroa'])
 
 
+
+    def test_adames_williams_exact_total_landed(self):
+        out=parse_pair(
+            "Adames dropped Williams in the second round and outlanded him 254 to 127, according to CompuBox, to score the victory.",
+            'Carlos Adames','Austin Williams')
+        self.assertEqual(out['Carlos Adames']['total_landed'],254)
+        self.assertEqual(out['Austin Williams']['total_landed'],127)
+
+    def test_fury_makhmudov_compubox_prefix_total_landed(self):
+        out=parse_pair(
+            "According to CompuBox, Fury out-landed his man 199-59. In the fifth and sixth rounds, Makhmudov landed just two punches.",
+            'Tyson Fury','Arslanbek Makhmudov')
+        self.assertEqual(out['Tyson Fury']['total_landed'],199)
+        self.assertEqual(out['Arslanbek Makhmudov']['total_landed'],59)
+
+    def test_crawford_canelo_counted_full_totals(self):
+        out=parse_pair(
+            "CompuBox counted 115 of 534 punches for Crawford and 99 of 338 for Alvarez, who landed more power punches.",
+            'Terence Crawford','Canelo Alvarez')
+        self.assertEqual(out['Terence Crawford']['total_landed'],115)
+        self.assertEqual(out['Terence Crawford']['total_thrown'],534)
+        self.assertEqual(out['Canelo Alvarez']['total_landed'],99)
+        self.assertEqual(out['Canelo Alvarez']['total_thrown'],338)
+
+    def test_inoue_picasso_category_sum_total_landed(self):
+        out=parse_pair(
+            "Inoue connected on 158 more punches than Picasso, had a 161-63 edge in jabs landed, 60 more power shots (167-107) and 30 more to the body (96-66).",
+            'Naoya Inoue','Alan Picasso')
+        self.assertEqual(out['Naoya Inoue']['jab_landed'],161)
+        self.assertEqual(out['Alan Picasso']['jab_landed'],63)
+        self.assertEqual(out['Naoya Inoue']['power_landed'],167)
+        self.assertEqual(out['Alan Picasso']['power_landed'],107)
+        self.assertEqual(out['Naoya Inoue']['total_landed'],328)
+        self.assertEqual(out['Alan Picasso']['total_landed'],170)
+
+    def test_nakatani_hernandez_two_half_total_landed(self):
+        out=parse_pair(
+            "Nakatani outlanded Hernandez 142-94 over the first six rounds. Hernandez threw considerably more and outlanded the Japanese star 179-155 over the final six rounds.",
+            'Junto Nakatani','Sebastian Hernandez')
+        self.assertEqual(out['Junto Nakatani']['total_landed'],297)
+        self.assertEqual(out['Sebastian Hernandez']['total_landed'],273)
+
+
 if __name__=='__main__':unittest.main()
