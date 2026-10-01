@@ -1,0 +1,44 @@
+name: Boxing Multi Source Height Recovery
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'boxing/research/probe_multi_source_height.py'
+      - '.github/workflows/boxing-multi-source-height.yml'
+permissions:
+  contents: write
+jobs:
+  recover:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install -q beautifulsoup4 lxml
+      - run: python boxing/research/probe_multi_source_height.py
+      - name: Persist height consensus
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          mkdir -p /tmp/height-consensus
+          cp boxing/profile_supplements/multi_source_height_probe.json /tmp/height-consensus/
+          cp boxing/profile_supplements/strict_height_additions.jsonl /tmp/height-consensus/
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          for attempt in 1 2 3 4; do
+            git fetch origin main
+            git reset --hard origin/main
+            cp /tmp/height-consensus/multi_source_height_probe.json boxing/profile_supplements/
+            cp /tmp/height-consensus/strict_height_additions.jsonl boxing/profile_supplements/
+            git add boxing/profile_supplements/multi_source_height_probe.json boxing/profile_supplements/strict_height_additions.jsonl
+            if git diff --cached --quiet; then exit 0; fi
+            git commit -m 'Add strict multi-source boxing heights'
+            if git push origin HEAD:main; then exit 0; fi
+            sleep $((attempt * 2))
+          done
+          exit 1
