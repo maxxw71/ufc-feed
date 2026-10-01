@@ -476,6 +476,22 @@ def parse_pair(text,a,b):
             if m.group(3):
                 setv(f,'power_landed',m.group(3));setv(o,'power_landed',m.group(4))
 
+    # Robust exact-pair CompuBox counted totals. Capture the two printed
+    # surnames/names, then require that they map to the already verified bout
+    # participants before assigning the values.
+    for m in re.finditer(
+        r'CompuBox\s+counted\s+(\d{1,4})\s+of\s+(\d{1,4})\s+punches\s+for\s+'
+        r'([A-Za-zÀ-ÿ .\'’-]{2,60}?)\s+and\s+(\d{1,4})\s+of\s+(\d{1,4})\s+for\s+'
+        r'([A-Za-zÀ-ÿ .\'’-]{2,60}?)(?=\s*[,.;])',
+        text,re.I):
+        n1=clean(m.group(3));n2=clean(m.group(6))
+        if person_matches(n1,a) and person_matches(n2,b):
+            setv(a,'total_landed',m.group(1));setv(a,'total_thrown',m.group(2))
+            setv(b,'total_landed',m.group(4));setv(b,'total_thrown',m.group(5))
+        elif person_matches(n1,b) and person_matches(n2,a):
+            setv(b,'total_landed',m.group(1));setv(b,'total_thrown',m.group(2))
+            setv(a,'total_landed',m.group(4));setv(a,'total_thrown',m.group(5))
+
     # Exact "CompuBox counted X of Y punches for F and Z of W for O" totals.
     for f,o in ((a,b),(b,a)):
         for fa in sorted({clean(f),clean(f).split()[-1]},key=len,reverse=True):
