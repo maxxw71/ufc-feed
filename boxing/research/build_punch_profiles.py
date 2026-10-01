@@ -434,18 +434,41 @@ def load_ring_partial_total_observations():
         if not avail:continue
         raw.append(r)
 
-    grouped=defaultdict(list)
+    by_url=defaultdict(list)
     for r in raw:
         fk=norm_name(r['fighter']);ok=norm_name(r['opponent'])
         if not fk or not ok or fk==ok:continue
         key=(str(r['bout_date']),str(r['source_url']),tuple(sorted([fk,ok])))
-        grouped[key].append(r)
+        by_url[key].append(r)
 
-    out=[]
-    for (date,url,pair),items in grouped.items():
+    # Build only reciprocal two-sided candidates, then select one best source
+    # per exact date+pair. This prevents duplicate Ring articles about the same
+    # fight from causing the downstream pair merge to see 4+ rows and reject
+    # an otherwise valid observation.
+    candidates=defaultdict(list)
+    for (date,url,pair),items in by_url.items():
         if len(items)!=2:continue
         a,b=items
         if norm_name(a['fighter'])!=norm_name(b['opponent']) or norm_name(a['opponent'])!=norm_name(b['fighter']):continue
+        completeness=sum(
+            int(x.get(k) is not None)
+            for x in items
+            for k in ('total_landed','total_thrown','jab_landed','jab_thrown',
+                      'power_landed','power_thrown','body_landed')
+        )
+        avail=max(str(x.get('available_from_date') or x.get('article_date') or '') for x in items)
+        candidates[(date,pair)].append((completeness,avail,url,items))
+
+    chosen=[]
+    for key,opts in candidates.items():
+        # Prefer richer explicit stats; on ties prefer earlier provable
+        # availability so the observation can safely inform more later fights.
+        opts=sorted(opts,key=lambda x:(-x[0],x[1],x[2]))
+        chosen.append((key,opts[0]))
+
+    out=[]
+    for (date,pair),(score,avail,url,items) in chosen:
+        a,b=items
         for r,o in ((a,b),(b,a)):
             rounds=int(r['rounds_observed'])
             result={
