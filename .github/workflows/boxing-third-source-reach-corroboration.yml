@@ -77,3 +77,5 @@ jobs:
           cp /tmp/reach3/verified_profiles.jsonl boxing/profile_supplements/
           git add boxing/profile_supplements/third_source_reach_corroboration.json boxing/profile_supplements/third_source_reach_additions.jsonl boxing/profile_supplements/verified_profiles.jsonl
           git diff --cached --quiet || (git commit -m 'Add corroborated boxing reach values' && git push origin HEAD:main)
+
+# batch-refresh-current-gaps: 2026-10-01T02:35-04:00
