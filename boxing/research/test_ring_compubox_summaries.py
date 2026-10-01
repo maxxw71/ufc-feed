@@ -97,7 +97,6 @@ class RingCompuBoxSummaryTests(unittest.TestCase):
             "Inoue had a 161-63 edge in jabs landed, 60 more power shots (167-107) and 30 more to the body (96-66). "
             "Inoue averaged 27 punches landed per round, while Picasso could only muster half that tally (14) per frame.",
             'Naoya Inoue','Alan Picasso')
-        print('DEBUG_INOUE',repr(out))
         self.assertEqual(out['Naoya Inoue']['jab_landed'],161)
         self.assertEqual(out['Alan Picasso']['jab_landed'],63)
         self.assertEqual(out['Naoya Inoue']['power_landed'],167)
@@ -230,9 +229,8 @@ class RingCompuBoxSummaryTests(unittest.TestCase):
 
     def test_adames_williams_exact_total_landed(self):
         out=parse_pair(
-            "Adames dropped Williams in the second round and outlanded him 254 to 127, according to CompuBox, to score the victory.",
+            "Adames (25-1-1, 18 KOs) dropped Williams (20-2, 13 KOs) in the second round and outlanded him 254 to 127, according to CompuBox, to score the victory.",
             'Carlos Adames','Austin Williams')
-        print('DEBUG_ADAMES',repr(out))
         self.assertEqual(out['Carlos Adames']['total_landed'],254)
         self.assertEqual(out['Austin Williams']['total_landed'],127)
 
