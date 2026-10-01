@@ -190,4 +190,27 @@ class RingCompuBoxSummaryTests(unittest.TestCase):
         self.assertNotIn('total_thrown',out['Dillian Whyte'])
         self.assertNotEqual(out['Dillian Whyte']['total_landed'],19)
 
+
+    def test_figueroa_gonzalez_parenthetical_overall(self):
+        out=parse_pair(
+            "According to CompuBox's unofficial punch stats, Figueroa landed 17 more punches overall than Gonzalez (282 of 1,071 to 265 of 821).",
+            'Brandon Figueroa','Joet Gonzalez')
+        self.assertEqual(out['Brandon Figueroa']['total_landed'],282)
+        self.assertEqual(out['Brandon Figueroa']['total_thrown'],1071)
+        self.assertEqual(out['Joet Gonzalez']['total_landed'],265)
+        self.assertEqual(out['Joet Gonzalez']['total_thrown'],821)
+
+    def test_parker_buatsi_outlanded_parenthetical_totals(self):
+        out=parse_pair(
+            "CompuBox counted more connections for Parker, who unofficially out-landed Buatsi by 24 punches overall (100-of-326 to 76-of-368). Parker landed more power punches (66-of-174 to 31-of-157), according to CompuBox, but Buatsi hit him with more jabs (45-of-211 to 34-of-152).",
+            'Joshua Buatsi','Zach Parker')
+        self.assertEqual(out['Zach Parker']['total_landed'],100)
+        self.assertEqual(out['Zach Parker']['total_thrown'],326)
+        self.assertEqual(out['Joshua Buatsi']['total_landed'],76)
+        self.assertEqual(out['Joshua Buatsi']['total_thrown'],368)
+        self.assertEqual(out['Zach Parker']['power_landed'],66)
+        self.assertEqual(out['Joshua Buatsi']['power_landed'],31)
+        self.assertEqual(out['Joshua Buatsi']['jab_landed'],45)
+        self.assertEqual(out['Zach Parker']['jab_landed'],34)
+
 if __name__=='__main__':unittest.main()
