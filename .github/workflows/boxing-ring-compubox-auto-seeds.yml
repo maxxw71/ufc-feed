@@ -1,0 +1,53 @@
+name: Boxing Ring CompuBox Auto Seeds
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'boxing/research/resolve_ring_compubox_auto_seeds.py'
+      - 'boxing/public_punch_audit/ring_compubox_sitemap_discovery.json'
+      - '.github/workflows/boxing-ring-compubox-auto-seeds.yml'
+permissions:
+  contents: write
+jobs:
+  resolve:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with: {fetch-depth: 0}
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.12'}
+      - run: python -m pip install -q beautifulsoup4 lxml
+      - name: Download current public boxing research DB
+        run: |
+          python - <<'PY'
+          import io,zipfile,urllib.request,os,shutil
+          u='https://appwiza.com/sports/downloads/boxing/research-database.zip'
+          req=urllib.request.Request(u,headers={'User-Agent':'Mozilla/5.0 AppwizaRingAutoSeed/1.0'})
+          with urllib.request.urlopen(req,timeout=180) as r:data=r.read()
+          with zipfile.ZipFile(io.BytesIO(data)) as z:z.extractall('/tmp/ring-auto-db')
+          db=next(os.path.join(root,f) for root,_,fs in os.walk('/tmp/ring-auto-db') for f in fs if f.endswith('.sqlite3'))
+          shutil.copy2(db,'boxing/research/boxing.sqlite3')
+          PY
+      - run: python boxing/research/resolve_ring_compubox_auto_seeds.py
+      - if: always()
+        run: rm -f boxing/research/boxing.sqlite3
+      - name: Persist auto seeds on latest main
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          cp boxing/research/ring_compubox_auto_seed_urls.json /tmp/ring_compubox_auto_seed_urls.json
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          for attempt in 1 2 3 4; do
+            git fetch origin main
+            git reset --hard origin/main
+            cp /tmp/ring_compubox_auto_seed_urls.json boxing/research/
+            git add boxing/research/ring_compubox_auto_seed_urls.json
+            if git diff --cached --quiet; then exit 0; fi
+            git commit -m 'Publish Ring CompuBox auto seeds'
+            if git push origin HEAD:main; then exit 0; fi
+            sleep $((attempt * 2))
+          done
+          exit 1
