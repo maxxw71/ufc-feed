@@ -476,6 +476,39 @@ def parse_pair(text,a,b):
             if m.group(3):
                 setv(f,'power_landed',m.group(3));setv(o,'power_landed',m.group(4))
 
+    # Exact "CompuBox counted X of Y punches for F and Z of W for O" totals.
+    for f,o in ((a,b),(b,a)):
+        for fa in sorted({clean(f),clean(f).split()[-1]},key=len,reverse=True):
+            for oa in sorted({clean(o),clean(o).split()[-1]},key=len,reverse=True):
+                m=re.search(
+                    r'CompuBox\s+counted\s+(\d{1,4})\s+of\s+(\d{1,4})\s+punches\s+for\s+'+
+                    re.escape(fa)+r'\s+and\s+(\d{1,4})\s+of\s+(\d{1,4})\s+for\s+'+re.escape(oa),
+                    text,re.I)
+                if m:
+                    setv(f,'total_landed',m.group(1));setv(f,'total_thrown',m.group(2))
+                    setv(o,'total_landed',m.group(3));setv(o,'total_thrown',m.group(4))
+                m=re.search(
+                    re.escape(fa)+r'[^.!?]{0,120}?power\s+punches\s*\('
+                    r'(\d{1,4})\s+of\s+(\d{1,4})\s+to\s+(\d{1,4})\s+of\s+(\d{1,4})\)',
+                    text,re.I)
+                if m:
+                    setv(f,'power_landed',m.group(1));setv(f,'power_thrown',m.group(2))
+                    setv(o,'power_landed',m.group(3));setv(o,'power_thrown',m.group(4))
+
+    # Exact "F ... advantage of X out of Y punches compared with Z out of W from O" total.
+    for f,o in ((a,b),(b,a)):
+        for fa in sorted({clean(f),clean(f).split()[-1]},key=len,reverse=True):
+            for oa in sorted({clean(o),clean(o).split()[-1]},key=len,reverse=True):
+                m=re.search(
+                    r'(?<![A-Za-z0-9])'+re.escape(fa)+
+                    r'(?![A-Za-z0-9])[^.!?]{0,180}?advantage\s+of\s+'
+                    r'(\d{1,4})\s+out\s+of\s+(\d{1,4})\s+punches\s+compared\s+with\s+'
+                    r'(\d{1,4})\s+out\s+of\s+(\d{1,4})\s+from\s+'+re.escape(oa),
+                    text,re.I)
+                if m:
+                    setv(f,'total_landed',m.group(1));setv(f,'total_thrown',m.group(2))
+                    setv(o,'total_landed',m.group(3));setv(o,'total_thrown',m.group(4))
+
     # "Overall in the fight, Roach outlanded Cruz 191 to 159."
     for f,o in ((a,b),(b,a)):
         fa=clean(f).split()[-1];oa=clean(o).split()[-1]
