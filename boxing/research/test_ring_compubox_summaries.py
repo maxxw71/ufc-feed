@@ -213,4 +213,17 @@ class RingCompuBoxSummaryTests(unittest.TestCase):
         self.assertEqual(out['Joshua Buatsi']['jab_landed'],45)
         self.assertEqual(out['Zach Parker']['jab_landed'],34)
 
+
+    def test_ball_figueroa_parenthetical_and_body_total(self):
+        out=parse_pair(
+            "Ball (249 of 567) outlanded Figueroa in all but one of their 11 completed rounds. "
+            "Figueroa's body work (94 of his 214 landed punches) paid dividends in a big way.",
+            'Nick Ball','Brandon Figueroa')
+        self.assertEqual(out['Nick Ball']['total_landed'],249)
+        self.assertEqual(out['Nick Ball']['total_thrown'],567)
+        self.assertEqual(out['Brandon Figueroa']['total_landed'],214)
+        self.assertEqual(out['Brandon Figueroa']['body_landed'],94)
+        self.assertNotIn('total_thrown',out['Brandon Figueroa'])
+
+
 if __name__=='__main__':unittest.main()
