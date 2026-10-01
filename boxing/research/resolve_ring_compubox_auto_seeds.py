@@ -76,7 +76,11 @@ def local_match(con,a,b,pub):
             matches.append({'bout_date':day,'rounds':rounds,'boxer_a':r['boxer_a'],'boxer_b':r['boxer_b'],
                             'method':r['method'],'status':r['status']})
     uniq={}
-    for x in matches:uniq[(x['bout_date'],x['rounds'],nk(x['boxer_a']),nk(x['boxer_b']))]=x
+    for x in matches:
+        # The research tables commonly contain reciprocal fighter/opponent
+        # rows for one physical bout. Collapse those to one canonical bout.
+        pair=tuple(sorted([nk(x['boxer_a']),nk(x['boxer_b'])]))
+        uniq[(x['bout_date'],x['rounds'],pair)]=x
     vals=list(uniq.values())
     return vals[0] if len(vals)==1 else None,vals
 def main():
