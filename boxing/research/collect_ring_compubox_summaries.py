@@ -638,8 +638,8 @@ def parse_pair(text,a,b):
                 # "more power punches for Pacquiao (...)" is self-contained.
                 pat=(
                     r'more\s+'+label+r'\s+for\s+'+re.escape(fa)+
-                    r'\s*\((\d{1,4})\s*(?:of|[-–])\s*(\d{1,4})\s+to\s+'
-                    r'(\d{1,4})\s*(?:of|[-–])\s*(\d{1,4})\)'
+                    r'\s*\((\d{1,4})\s*(?:(?:of)|[-–]\s*of\s*[-–]|[-–])\s*(\d{1,4})\s+to\s+'
+                    r'(\d{1,4})\s*(?:(?:of)|[-–]\s*of\s*[-–]|[-–])\s*(\d{1,4})\)'
                 )
                 m=re.search(pat,text,re.I)
                 if m:
@@ -653,8 +653,8 @@ def parse_pair(text,a,b):
                     for local in subject_segments(sent,f,o):
                         m=re.search(
                             r'^[^.!?]{0,160}?'+label+
-                            r'\s*\((\d{1,4})\s*(?:of|[-–])\s*(\d{1,4})\s+to\s+'
-                            r'(\d{1,4})\s*(?:of|[-–])\s*(\d{1,4})\)',
+                            r'\s*\((\d{1,4})\s*(?:(?:of)|[-–]\s*of\s*[-–]|[-–])\s*(\d{1,4})\s+to\s+'
+                            r'(\d{1,4})\s*(?:(?:of)|[-–]\s*of\s*[-–]|[-–])\s*(\d{1,4})\)',
                             local,re.I)
                         if m:
                             hit=m;break
