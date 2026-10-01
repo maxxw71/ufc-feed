@@ -632,6 +632,22 @@ def parse_pair(text,a,b):
                 setv(f,'power_landed',fp);setv(o,'power_landed',op)
                 setv(f,'total_landed',fj+fp);setv(o,'total_landed',oj+op)
 
+    # Alternate full-fight category-edge grammar:
+    # "holding a 161-63 edge in jabs landed, a 167-107 edge in power punches landed".
+    # Jab + power landed exhaust total landed categories in CompuBox.
+    for f,o in ((a,b),(b,a)):
+        for fa in name_aliases(f):
+            m=re.search(
+                r'(?<![A-Za-z0-9])'+re.escape(fa)+
+                r'(?![A-Za-z0-9])[^.!?]{0,260}?(\d{1,4})\s*[-–]\s*(\d{1,4})\s+edge\s+in\s+jabs\s+landed'
+                r'[^.!?]{0,120}?(\d{1,4})\s*[-–]\s*(\d{1,4})\s+edge\s+in\s+power\s+punches\s+landed',
+                text,re.I)
+            if m:
+                fj,oj,fp,op=map(int,m.groups())
+                setv(f,'jab_landed',fj);setv(o,'jab_landed',oj)
+                setv(f,'power_landed',fp);setv(o,'power_landed',op)
+                setv(f,'total_landed',fj+fp);setv(o,'total_landed',oj+op)
+
     # Exact two-half landed totals spanning all 12 rounds.
     # "Nakatani ... outlanded Hernandez 142-94 over the first six rounds ...
     #  Hernandez ... outlanded ... 179-155 over the final six rounds."
