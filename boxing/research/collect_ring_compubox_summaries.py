@@ -741,6 +741,30 @@ def parse_pair(text,a,b):
             if m:
                 setv(f,'total_landed',m.group(1));setv(o,'total_landed',m.group(2))
 
+    # Exact Ball-Figueroa style parenthetical total:
+    # "Ball (249 of 567) outlanded Figueroa ..."
+    for f,o in ((a,b),(b,a)):
+        for fa in name_aliases(f):
+            for oa in name_aliases(o):
+                m=re.search(
+                    r'(?<![A-Za-z0-9])'+re.escape(fa)+
+                    r'(?![A-Za-z0-9])\s*\((\d{1,4})\s+of\s+([\d,]{1,6})\)\s+outlanded\s+'+
+                    re.escape(oa)+r'(?![A-Za-z0-9])',
+                    text,re.I)
+                if m:
+                    setv(f,'total_landed',m.group(1));setv(f,'total_thrown',m.group(2).replace(',',''))
+
+    # Exact possessive body/overall construction:
+    # "Figueroa's body work (94 of his 214 landed punches) ..."
+    for f,o in ((a,b),(b,a)):
+        for fa in name_aliases(f):
+            m=re.search(
+                r'(?<![A-Za-z0-9])'+re.escape(fa)+
+                r"(?![A-Za-z0-9])(?:'s|’s)\s+body\s+work\s*\((\d{1,4})\s+of\s+(?:his|her)\s+(\d{1,4})\s+landed\s+punches\)",
+                text,re.I)
+            if m:
+                setv(f,'body_landed',m.group(1));setv(f,'total_landed',m.group(2))
+
     # Pair comparisons: "Hrgovic outlanded Adeleye 228-92 on total punches ... power shots (169-47)"
     for f,o in ((a,b),(b,a)):
         fa=clean(f).split()[-1];oa=clean(o).split()[-1]
