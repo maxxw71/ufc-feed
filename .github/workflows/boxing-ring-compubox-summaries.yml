@@ -9,6 +9,9 @@ on:
       - 'boxing/research/ring_compubox_pair_supplements.json'
       - '.github/workflows/boxing-ring-compubox-summaries.yml'
   workflow_dispatch:
+concurrency:
+  group: boxing-ring-compubox-summary-archive
+  cancel-in-progress: true
 permissions:
   contents: write
 jobs:
@@ -32,6 +35,11 @@ jobs:
           db=next(os.path.join(root,f) for root,_,fs in os.walk('/tmp/ring-compubox-db') for f in fs if f.endswith('.sqlite3'))
           shutil.copy2(db,'boxing/research/boxing.sqlite3')
           PY
+      - name: Sync latest main inputs before collection
+        shell: bash
+        run: |
+          git fetch origin main
+          git reset --hard origin/main
       - run: python boxing/research/collect_ring_compubox_summaries.py
       - if: always()
         run: rm -f boxing/research/boxing.sqlite3
