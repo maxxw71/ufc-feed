@@ -618,7 +618,7 @@ def parse_pair(text,a,b):
         for fa in name_aliases(f):
             m=re.search(
                 r'(?<![A-Za-z0-9])'+re.escape(fa)+
-                r'(?![A-Za-z0-9])[^.!?]{0,180}?(?:punch|punches)[^.!?]{0,30}?overall'
+                r'(?![A-Za-z0-9])[^.!?]{0,80}?\\blanded\\b[^.!?]{0,100}?(?:punch|punches)[^.!?]{0,30}?overall'
                 r'[^.!?]{0,80}?\((\d{1,4})\s*[-–]?\s*of\s*[-–]?\s*(\d{1,4})\s+to\s+'
                 r'(\d{1,4})\s*[-–]?\s*of\s*[-–]?\s*(\d{1,4})\)',
                 text,re.I)
