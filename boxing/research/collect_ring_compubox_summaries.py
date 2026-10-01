@@ -25,6 +25,21 @@ def clean(s):
 
 def nk(s):return re.sub(r'[^a-z0-9]+','',clean(s).casefold())
 
+def name_aliases(name):
+    full=clean(name)
+    toks=full.split()
+    while toks and toks[-1].casefold().rstrip('.') in {'jr','sr','ii','iii','iv','jnr'}:
+        toks.pop()
+    aliases={full}
+    if toks:aliases.add(toks[-1])
+    return sorted((x for x in aliases if x),key=len,reverse=True)
+
+def person_matches(observed,target):
+    ok=nk(observed);tk=nk(target)
+    if not ok or not tk:return False
+    if ok==tk:return True
+    return any(ok==nk(a) for a in name_aliases(target))
+
 def fetch(url):
     req=urllib.request.Request(url,headers={'User-Agent':UA,'Accept-Language':'en-US,en;q=0.8'})
     with urllib.request.urlopen(req,timeout=40) as r:
@@ -176,8 +191,8 @@ def parse_pair(text,a,b):
     # Paired construction where the second clause inherits the category:
     # "Chamberlain went 287 of 952 (30%) in total punches while Rafferty went 202 of 761 (27%)."
     for f,o in ((a,b),(b,a)):
-        for fa in sorted({clean(f),clean(f).split()[-1]},key=len,reverse=True):
-            for oa in sorted({clean(o),clean(o).split()[-1]},key=len,reverse=True):
+        for fa in name_aliases(f):
+            for oa in name_aliases(o):
                 m=re.search(
                     r'(?<![A-Za-z0-9])'+re.escape(fa)+r'(?![A-Za-z0-9])\s+went\s+'
                     r'(\d{1,4})\s+of\s+(\d{1,4})\s*\(?(\d+(?:\.\d+)?)%\)?\s+in\s+total\s+punches\s+'
@@ -194,8 +209,8 @@ def parse_pair(text,a,b):
     # first fighter. Example: Itauma ... Whyte landed just two ... while ...
     # connected on 19-of-34 punches (55.9%).
     for f,o in ((a,b),(b,a)):
-        for fa in sorted({clean(f),clean(f).split()[-1]},key=len,reverse=True):
-            for oa in sorted({clean(o),clean(o).split()[-1]},key=len,reverse=True):
+        for fa in name_aliases(f):
+            for oa in name_aliases(o):
                 m=re.search(
                     r'(?<![A-Za-z0-9])'+re.escape(fa)+r'(?![A-Za-z0-9])'
                     r'[^.!?]{0,220}?'+re.escape(oa)+
@@ -213,8 +228,8 @@ def parse_pair(text,a,b):
     # "Resendiz landed 186 of 600 total punches while Plant went 108 of 509."
     # Also accepts "X landed 170 of 442 punches and Y landed 169 of 407."
     for f,o in ((a,b),(b,a)):
-        for fa in sorted({clean(f),clean(f).split()[-1]},key=len,reverse=True):
-            for oa in sorted({clean(o),clean(o).split()[-1]},key=len,reverse=True):
+        for fa in name_aliases(f):
+            for oa in name_aliases(o):
                 m=re.search(
                     r'(?<![A-Za-z0-9])'+re.escape(fa)+r'(?![A-Za-z0-9])[^.!?]{0,70}?'
                     r'(?:landed|went|connected(?:\s+on)?)\s+(\d{1,4})\s+(?:of|[-–])\s+(\d{1,4})'
@@ -228,7 +243,7 @@ def parse_pair(text,a,b):
 
     # Exact pair "connect advantage" construction, e.g. 117-115 in power punches.
     for f,o in ((a,b),(b,a)):
-        for fa in sorted({clean(f),clean(f).split()[-1]},key=len,reverse=True):
+        for fa in name_aliases(f):
             m=re.search(
                 r'(?<![A-Za-z0-9])'+re.escape(fa)+
                 r'(?![A-Za-z0-9])[^.!?]{0,100}?(?:held|hold|had)[^.!?]{0,30}?'
@@ -242,8 +257,8 @@ def parse_pair(text,a,b):
     # Catterall-Eubank style exact completed-fight totals:
     # "... Catterall ... punches (51) than Eubank (17), ... attempts (186-85)"
     for f,o in ((a,b),(b,a)):
-        for fa in sorted({clean(f),clean(f).split()[-1]},key=len,reverse=True):
-            for oa in sorted({clean(o),clean(o).split()[-1]},key=len,reverse=True):
+        for fa in name_aliases(f):
+            for oa in name_aliases(o):
                 m=re.search(
                     r'(?<![A-Za-z0-9])'+re.escape(fa)+
                     r'(?![A-Za-z0-9])[^.!?]{0,120}?punches\s*\((\d{1,4})\)\s+than\s+'+
@@ -256,8 +271,8 @@ def parse_pair(text,a,b):
 
     # Inoue-Picasso style explicit category edges and per-round landed values.
     for f,o in ((a,b),(b,a)):
-        for fa in sorted({clean(f),clean(f).split()[-1]},key=len,reverse=True):
-            for oa in sorted({clean(o),clean(o).split()[-1]},key=len,reverse=True):
+        for fa in name_aliases(f):
+            for oa in name_aliases(o):
                 m=re.search(
                     r'(?<![A-Za-z0-9])'+re.escape(fa)+
                     r'(?![A-Za-z0-9])[^.!?]{0,180}?(\d{1,4})\s*[-–]\s*(\d{1,4})\s+edge\s+in\s+jabs\s+landed'
@@ -280,8 +295,8 @@ def parse_pair(text,a,b):
     # Cordina-Quiroz style completed-fight total where the opponent clause
     # uses "was X-of-Y on his attempts".
     for f,o in ((a,b),(b,a)):
-        for fa in sorted({clean(f),clean(f).split()[-1]},key=len,reverse=True):
-            for oa in sorted({clean(o),clean(o).split()[-1]},key=len,reverse=True):
+        for fa in name_aliases(f):
+            for oa in name_aliases(o):
                 m=re.search(
                     r'(?<![A-Za-z0-9])'+re.escape(fa)+
                     r'(?![A-Za-z0-9])[^.!?]{0,100}?landed\s+(\d{1,4})\s+of\s+(\d{1,4})\s+total\s+punches'
@@ -295,7 +310,7 @@ def parse_pair(text,a,b):
     # Explicit completed-fight category edge:
     # "Melikuziev held a 44-33 edge in body punches landed."
     for f,o in ((a,b),(b,a)):
-        for fa in sorted({clean(f),clean(f).split()[-1]},key=len,reverse=True):
+        for fa in name_aliases(f):
             m=re.search(
                 r'(?<![A-Za-z0-9])'+re.escape(fa)+
                 r'(?![A-Za-z0-9])[^.!?]{0,80}?(?:held|had)\s+a?\s*'
@@ -319,7 +334,7 @@ def parse_pair(text,a,b):
     # The first pair belongs to the explicitly named subject; the second to the
     # already verified opponent for this exact bout.
     for f,o in ((a,b),(b,a)):
-        for fa in sorted({clean(f),clean(f).split()[-1]},key=len,reverse=True):
+        for fa in name_aliases(f):
             m=re.search(
                 r'(?<![A-Za-z0-9])'+re.escape(fa)+
                 r'(?![A-Za-z0-9])[^.!?]{0,180}?final\s+tally\s*\('
@@ -332,8 +347,8 @@ def parse_pair(text,a,b):
 
     # "CompuBox credited Romero and Garcia for landing only 18 power punches apiece."
     for f,o in ((a,b),(b,a)):
-        for fa in sorted({clean(f),clean(f).split()[-1]},key=len,reverse=True):
-            for oa in sorted({clean(o),clean(o).split()[-1]},key=len,reverse=True):
+        for fa in name_aliases(f):
+            for oa in name_aliases(o):
                 m=re.search(
                     r'credited\s+'+re.escape(fa)+r'\s+and\s+'+re.escape(oa)+
                     r'\s+for\s+landing\s+(?:only\s+)?(\d{1,4})\s+power\s+punches\s+apiece',
@@ -344,8 +359,8 @@ def parse_pair(text,a,b):
     # Exact paired CompuBox final totals:
     # "CompuBox credited Russell with landing 233 of 665 punches and Santillan with 107 of 593."
     for f,o in ((a,b),(b,a)):
-        for fa in sorted({clean(f),clean(f).split()[-1]},key=len,reverse=True):
-            for oa in sorted({clean(o),clean(o).split()[-1]},key=len,reverse=True):
+        for fa in name_aliases(f):
+            for oa in name_aliases(o):
                 m=re.search(
                     r'CompuBox\s+credited\s+'+re.escape(fa)+
                     r'\s+with\s+landing\s+(\d{1,4})\s+of\s+(\d{1,4})\s+punches\s+and\s+'+
@@ -358,8 +373,8 @@ def parse_pair(text,a,b):
     # Exact CompuBox colon block:
     # "Here are the punch stats, according to CompuBox: Utria: 152 of 593 Mercado: 157 of 587"
     for f,o in ((a,b),(b,a)):
-        for fa in sorted({clean(f),clean(f).split()[-1]},key=len,reverse=True):
-            for oa in sorted({clean(o),clean(o).split()[-1]},key=len,reverse=True):
+        for fa in name_aliases(f):
+            for oa in name_aliases(o):
                 m=re.search(
                     r'punch\s+stats[^.!?]{0,100}?according\s+to\s+CompuBox\s*:\s*'+
                     re.escape(fa)+r'\s*:\s*(\d{1,4})\s+of\s+(\d{1,4})\s+'+
@@ -374,8 +389,8 @@ def parse_pair(text,a,b):
     # power shots ..., according to CompuBox. Veron ... landed 105 of 809 total
     # punches ... and 45 of 303 power shots ..."
     for f,o in ((a,b),(b,a)):
-        for fa in sorted({clean(f),clean(f).split()[-1]},key=len,reverse=True):
-            for oa in sorted({clean(o),clean(o).split()[-1]},key=len,reverse=True):
+        for fa in name_aliases(f):
+            for oa in name_aliases(o):
                 m=re.search(
                     r'(?<![A-Za-z0-9])'+re.escape(fa)+
                     r'(?![A-Za-z0-9]).{0,260}?\bHe\s+landed\s+(\d{1,4})\s+of\s+(\d{1,4})\s+total\s+punches'
@@ -394,7 +409,7 @@ def parse_pair(text,a,b):
     # "Romero ... was outlanded 124-to-73 according to CompuBox."
     # In this grammar the first number belongs to the verified opponent.
     for f,o in ((a,b),(b,a)):
-        for fa in sorted({clean(f),clean(f).split()[-1]},key=len,reverse=True):
+        for fa in name_aliases(f):
             m=re.search(
                 r'(?<![A-Za-z0-9])'+re.escape(fa)+
                 r'(?![A-Za-z0-9])[^.!?]{0,180}?was\s+outlanded\s+'
@@ -406,8 +421,8 @@ def parse_pair(text,a,b):
     # Exact verified-pair "credited/returning" total:
     # "Pacheco was credited with landing 266 of 602 punches, with Aleem returning 91 of 377, according to CompuBox."
     for f,o in ((a,b),(b,a)):
-        for fa in sorted({clean(f),clean(f).split()[-1]},key=len,reverse=True):
-            for oa in sorted({clean(o),clean(o).split()[-1]},key=len,reverse=True):
+        for fa in name_aliases(f):
+            for oa in name_aliases(o):
                 m=re.search(
                     r'(?<![A-Za-z0-9])'+re.escape(fa)+
                     r'(?![A-Za-z0-9])[^.!?]{0,80}?credited\s+with\s+landing\s+'
@@ -422,8 +437,8 @@ def parse_pair(text,a,b):
     # Exact verified-pair parenthetical total:
     # "CompuBox counted more punches landed for Dobson (131 of 422) than Davis (109 of 301)."
     for f,o in ((a,b),(b,a)):
-        for fa in sorted({clean(f),clean(f).split()[-1]},key=len,reverse=True):
-            for oa in sorted({clean(o),clean(o).split()[-1]},key=len,reverse=True):
+        for fa in name_aliases(f):
+            for oa in name_aliases(o):
                 m=re.search(
                     r'CompuBox[^.!?]{0,100}?punches\s+landed\s+for\s+'+re.escape(fa)+
                     r'\s*\((\d{1,4})\s+of\s+(\d{1,4})\)\s+than\s+'+
@@ -436,8 +451,8 @@ def parse_pair(text,a,b):
     # Exact verified-pair total with "was X-for-Y":
     # "According to CompuBox, Usyk landed 112 of 499 total punches and Verhoeven was 113-for-508."
     for f,o in ((a,b),(b,a)):
-        for fa in sorted({clean(f),clean(f).split()[-1]},key=len,reverse=True):
-            for oa in sorted({clean(o),clean(o).split()[-1]},key=len,reverse=True):
+        for fa in name_aliases(f):
+            for oa in name_aliases(o):
                 m=re.search(
                     r'According\s+to\s+CompuBox[^.!?]{0,40}?'+re.escape(fa)+
                     r'\s+landed\s+(\d{1,4})\s+of\s+(\d{1,4})\s+total\s+punches\s+and\s+'+
@@ -450,7 +465,7 @@ def parse_pair(text,a,b):
     # Exact category connect edge:
     # "Verhoeven had a 93-89 edge in power punches landed."
     for f,o in ((a,b),(b,a)):
-        for fa in sorted({clean(f),clean(f).split()[-1]},key=len,reverse=True):
+        for fa in name_aliases(f):
             m=re.search(
                 r'(?<![A-Za-z0-9])'+re.escape(fa)+
                 r'(?![A-Za-z0-9])[^.!?]{0,60}?(?:had|held)\s+a?\s*'
@@ -494,8 +509,8 @@ def parse_pair(text,a,b):
 
     # Exact "CompuBox counted X of Y punches for F and Z of W for O" totals.
     for f,o in ((a,b),(b,a)):
-        for fa in sorted({clean(f),clean(f).split()[-1]},key=len,reverse=True):
-            for oa in sorted({clean(o),clean(o).split()[-1]},key=len,reverse=True):
+        for fa in name_aliases(f):
+            for oa in name_aliases(o):
                 m=re.search(
                     r'CompuBox\s+counted\s+(\d{1,4})\s+of\s+(\d{1,4})\s+punches\s+for\s+'+
                     re.escape(fa)+r'\s+and\s+(\d{1,4})\s+of\s+(\d{1,4})\s+for\s+'+re.escape(oa),
@@ -513,8 +528,8 @@ def parse_pair(text,a,b):
 
     # Exact "F ... advantage of X out of Y punches compared with Z out of W from O" total.
     for f,o in ((a,b),(b,a)):
-        for fa in sorted({clean(f),clean(f).split()[-1]},key=len,reverse=True):
-            for oa in sorted({clean(o),clean(o).split()[-1]},key=len,reverse=True):
+        for fa in name_aliases(f):
+            for oa in name_aliases(o):
                 m=re.search(
                     r'(?<![A-Za-z0-9])'+re.escape(fa)+
                     r'(?![A-Za-z0-9])[^.!?]{0,180}?advantage\s+of\s+'
@@ -539,7 +554,7 @@ def parse_pair(text,a,b):
     # "Cruz landed one more punch overall ... (176-of-537 to 175-of-611)."
     # "Barrios ... punches overall (120 of 658 to 101 of 577)."
     for f,o in ((a,b),(b,a)):
-        for fa in sorted({clean(f),clean(f).split()[-1]},key=len,reverse=True):
+        for fa in name_aliases(f):
             m=re.search(
                 r'(?<![A-Za-z0-9])'+re.escape(fa)+
                 r'(?![A-Za-z0-9])[^.!?]{0,180}?(?:punch|punches)[^.!?]{0,30}?overall'
@@ -556,7 +571,7 @@ def parse_pair(text,a,b):
     # an explicit opponent mention. This prevents a Muratalla clause from
     # crossing "whereas Cruz..." and reversing the later jab pair.
     for f,o in ((a,b),(b,a)):
-        falias=sorted({clean(f),clean(f).split()[-1]},key=len,reverse=True)
+        falias=name_aliases(f)
         for fa in falias:
             for cat,label in [('jab',r'jabs?'),('power',r'power\s+punches')]:
                 # "more power punches for Pacquiao (...)" is self-contained.
@@ -643,7 +658,7 @@ def parse_pair(text,a,b):
 
             # Opponent-tail comparison deliberately uses the full sentence but
             # requires the opponent's exact name after the numeric pair.
-            for oa in sorted({clean(o),clean(o).split()[-1]},key=len,reverse=True):
+            for oa in name_aliases(o):
                 m=re.search(
                     r'compared\s+to\s+(\d{1,4})\s+of\s+(\d{1,4})'
                     r'(?:\s*\(?(\d+(?:\.\d+)?)%\)?)?[^.!?]{0,80}?'
@@ -656,7 +671,7 @@ def parse_pair(text,a,b):
     # Exact named-subject overall comparison:
     # "Ball ... landed at a slightly higher clip overall (240-220) over 12 rounds"
     for f,o in ((a,b),(b,a)):
-        for fa in sorted({clean(f),clean(f).split()[-1]},key=len,reverse=True):
+        for fa in name_aliases(f):
             m=re.search(
                 r'(?<![A-Za-z0-9])'+re.escape(fa)+
                 r'(?![A-Za-z0-9])[^.!?]{0,150}?landed[^.!?]{0,80}?overall\s*'
