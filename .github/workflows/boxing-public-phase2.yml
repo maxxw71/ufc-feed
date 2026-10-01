@@ -209,17 +209,32 @@ jobs:
           if-no-files-found: warn
       - name: Commit compact public results
         if: always()
+        shell: bash
         run: |
+          set -Eeuo pipefail
+          mkdir -p /tmp/boxing-phase2-results
+          cp -R boxing/public_phase2/. /tmp/boxing-phase2-results/
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add boxing/public_phase2
-          if git diff --cached --quiet; then
-            echo 'No research result changes.'
-          else
+          for attempt in 1 2 3 4 5; do
+            git rebase --abort 2>/dev/null || true
+            git fetch origin main
+            git reset --hard origin/main
+            cp -R /tmp/boxing-phase2-results/. boxing/public_phase2/
+            git add boxing/public_phase2
+            if git diff --cached --quiet; then
+              echo 'No research result changes.'
+              exit 0
+            fi
             git commit -m 'Update public boxing research'
-            git pull --rebase origin main
-            git push
-          fi
+            if git push origin HEAD:main; then
+              exit 0
+            fi
+            echo "Push race on attempt $attempt; retrying against latest main."
+            sleep $((attempt * 2))
+          done
+          echo 'Failed to publish Phase 2 results after retries.'
+          exit 1
 
 # phase2-refresh: 2026-09-23T22:12-04:00 corrected-archive
 
