@@ -241,6 +241,24 @@ def parse_pair(text,a,b):
                     setv(f,'total_landed',m.group(1));setv(f,'total_thrown',m.group(2))
                     setv(o,'total_landed',m.group(3));setv(o,'total_thrown',m.group(4))
 
+    # Exact verified-pair parenthetical final totals:
+    # "Figueroa ... Gonzalez (282 of 1,071 to 265 of 821)."
+    # "Parker ... Buatsi ... overall (100-of-326 to 76-of-368)."
+    # The named fighter immediately preceding the pair owns the first landed/thrown pair.
+    for f,o in ((a,b),(b,a)):
+        for fa in name_aliases(f):
+            for oa in name_aliases(o):
+                m=re.search(
+                    r'(?<![A-Za-z0-9])'+re.escape(fa)+
+                    r'(?![A-Za-z0-9])[^.!?]{0,220}?'+re.escape(oa)+
+                    r'[^.!?]{0,180}?\('
+                    r'(\d{1,4})\s*(?:[-–]\s*)?of\s*(?:[-–]\s*)?([\d,]{1,6})\s+to\s+'
+                    r'(\d{1,4})\s*(?:[-–]\s*)?of\s*(?:[-–]\s*)?([\d,]{1,6})\)',
+                    text,re.I)
+                if m:
+                    setv(f,'total_landed',m.group(1));setv(f,'total_thrown',m.group(2).replace(',',''))
+                    setv(o,'total_landed',m.group(3));setv(o,'total_thrown',m.group(4).replace(',',''))
+
     # Exact pair "connect advantage" construction, e.g. 117-115 in power punches.
     for f,o in ((a,b),(b,a)):
         for fa in name_aliases(f):
