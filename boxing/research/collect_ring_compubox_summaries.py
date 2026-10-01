@@ -341,6 +341,68 @@ def parse_pair(text,a,b):
                 if m:
                     setv(f,'power_landed',m.group(1));setv(o,'power_landed',m.group(1))
 
+    # Exact paired CompuBox final totals:
+    # "CompuBox credited Russell with landing 233 of 665 punches and Santillan with 107 of 593."
+    for f,o in ((a,b),(b,a)):
+        for fa in sorted({clean(f),clean(f).split()[-1]},key=len,reverse=True):
+            for oa in sorted({clean(o),clean(o).split()[-1]},key=len,reverse=True):
+                m=re.search(
+                    r'CompuBox\s+credited\s+'+re.escape(fa)+
+                    r'\s+with\s+landing\s+(\d{1,4})\s+of\s+(\d{1,4})\s+punches\s+and\s+'+
+                    re.escape(oa)+r'\s+with\s+(\d{1,4})\s+of\s+(\d{1,4})',
+                    text,re.I)
+                if m:
+                    setv(f,'total_landed',m.group(1));setv(f,'total_thrown',m.group(2))
+                    setv(o,'total_landed',m.group(3));setv(o,'total_thrown',m.group(4))
+
+    # Exact CompuBox colon block:
+    # "Here are the punch stats, according to CompuBox: Utria: 152 of 593 Mercado: 157 of 587"
+    for f,o in ((a,b),(b,a)):
+        for fa in sorted({clean(f),clean(f).split()[-1]},key=len,reverse=True):
+            for oa in sorted({clean(o),clean(o).split()[-1]},key=len,reverse=True):
+                m=re.search(
+                    r'punch\s+stats[^.!?]{0,100}?according\s+to\s+CompuBox\s*:\s*'+
+                    re.escape(fa)+r'\s*:\s*(\d{1,4})\s+of\s+(\d{1,4})\s+'+
+                    re.escape(oa)+r'\s*:\s*(\d{1,4})\s+of\s+(\d{1,4})',
+                    text,re.I)
+                if m:
+                    setv(f,'total_landed',m.group(1));setv(f,'total_thrown',m.group(2))
+                    setv(o,'total_landed',m.group(3));setv(o,'total_thrown',m.group(4))
+
+    # Exact verified-pair paragraph with total and power landed/thrown:
+    # "Hernandez ... He landed 200 of 649 total punches ..., including 122 of 387
+    # power shots ..., according to CompuBox. Veron ... landed 105 of 809 total
+    # punches ... and 45 of 303 power shots ..."
+    for f,o in ((a,b),(b,a)):
+        for fa in sorted({clean(f),clean(f).split()[-1]},key=len,reverse=True):
+            for oa in sorted({clean(o),clean(o).split()[-1]},key=len,reverse=True):
+                m=re.search(
+                    r'(?<![A-Za-z0-9])'+re.escape(fa)+
+                    r'(?![A-Za-z0-9]).{0,260}?\bHe\s+landed\s+(\d{1,4})\s+of\s+(\d{1,4})\s+total\s+punches'
+                    r'[^.!?]{0,120}?including\s+(\d{1,4})\s+of\s+(\d{1,4})\s+power\s+(?:shots|punches)'
+                    r'[^.!?]{0,100}?according\s+to\s+CompuBox\.\s*'+re.escape(oa)+
+                    r'[^.!?]{0,100}?landed\s+(\d{1,4})\s+of\s+(\d{1,4})\s+total\s+punches'
+                    r'[^.!?]{0,100}?and\s+(\d{1,4})\s+of\s+(\d{1,4})\s+power\s+(?:shots|punches)',
+                    text,re.I)
+                if m:
+                    setv(f,'total_landed',m.group(1));setv(f,'total_thrown',m.group(2))
+                    setv(f,'power_landed',m.group(3));setv(f,'power_thrown',m.group(4))
+                    setv(o,'total_landed',m.group(5));setv(o,'total_thrown',m.group(6))
+                    setv(o,'power_landed',m.group(7));setv(o,'power_thrown',m.group(8))
+
+    # Exact final-result comparison:
+    # "Romero ... was outlanded 124-to-73 according to CompuBox."
+    # In this grammar the first number belongs to the verified opponent.
+    for f,o in ((a,b),(b,a)):
+        for fa in sorted({clean(f),clean(f).split()[-1]},key=len,reverse=True):
+            m=re.search(
+                r'(?<![A-Za-z0-9])'+re.escape(fa)+
+                r'(?![A-Za-z0-9])[^.!?]{0,180}?was\s+outlanded\s+'
+                r'(\d{1,4})\s*[-–]?\s*to\s*[-–]?\s*(\d{1,4})\s+according\s+to\s+CompuBox',
+                text,re.I)
+            if m:
+                setv(o,'total_landed',m.group(1));setv(f,'total_landed',m.group(2))
+
     # "Overall in the fight, Roach outlanded Cruz 191 to 159."
     for f,o in ((a,b),(b,a)):
         fa=clean(f).split()[-1];oa=clean(o).split()[-1]
