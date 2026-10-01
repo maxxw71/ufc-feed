@@ -107,9 +107,18 @@ def main():
     def one(u):
         rec={'url':u}
         try:
-            final,raw=fetch(u,2_500_000);name,height,reach=parse(raw);key=nk(name)
-            rec.update({'url':final,'h1':name,'target_key':key if key in targets else None,'page_height_cm':height,'reach_cm':reach})
+            final,raw=fetch(u,2_500_000);name,height,reach=parse(raw)
+            url_key=slug_key(final) or slug_key(u); h1_key=nk(name) if name else None
+            key=h1_key if h1_key in targets else url_key
+            rec.update({'url':final,'h1':name,'url_key':url_key,'target_key':key if key in targets else None,'page_height_cm':height,'reach_cm':reach})
+            target_height=None
+            if key in targets:
+                try: target_height=float((targets[key].get('present') or {}).get('height_cm'))
+                except Exception: target_height=None
             if key not in targets: rec['status']='identity_mismatch'
+            elif h1_key and h1_key!=key: rec['status']='identity_mismatch_h1'
+            elif target_height is not None and height is not None and abs(target_height-height)>2:
+                rec['status']='identity_mismatch_physical'; rec['target_height_cm']=target_height
             elif reach is None: rec['status']='no_reach'
             else:
                 rec['status']='lead';m=mb.get(key)
@@ -140,7 +149,7 @@ def main():
     for r in rows:counts[r.get('status')]=counts.get(r.get('status'),0)+1
     report={'generated_at':dt.datetime.now(dt.timezone.utc).isoformat(),'missing_targets':len(targets),'discovered_matching_urls':len(urls),
       'status_counts':counts,'corroborated':len(corr),'rows':rows,'discovery_diagnostics':diag,
-      'policy':'BoxingMetrics is corroboration-only; exact profile identity + explicit reach + independent MartialBot agreement within 1 cm. Missing reach only; never overwrite.'}
+      'policy':'BoxingMetrics is corroboration-only; exact sitemap fighter slug (and H1 when rendered), compatible known height when available, explicit reach, plus independent MartialBot agreement within 1 cm. Missing reach only; never overwrite.'}
     OUT.write_text(json.dumps(report,indent=2,ensure_ascii=False))
     print(json.dumps({k:report[k] for k in ('missing_targets','discovered_matching_urls','status_counts','corroborated')},indent=2))
 
