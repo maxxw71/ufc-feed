@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-29T12:54:56.395066+00:00",
+  "generated_at": "2026-10-01T00:02:48.773278+00:00",
   "source_counts": {
     "cross_source_reach_additions.jsonl": 5,
     "third_source_reach_additions.jsonl": 12,
@@ -7,7 +7,7 @@
     "fitequant_reach_additions.jsonl": 0,
     "boxrec_wayback_reach_additions.jsonl": 0,
     "boxrec_wiki_reach_additions.jsonl": 0,
-    "public_search_reach_additions.jsonl": 35,
+    "public_search_reach_additions.jsonl": 36,
     "ring_reach_additions.jsonl": 0,
     "ready_to_fight_reach_additions.jsonl": 0,
     "toprank_reach_additions.jsonl": 0,
@@ -34,7 +34,7 @@
     "fitequant_reach_additions.jsonl": 0,
     "boxrec_wayback_reach_additions.jsonl": 0,
     "boxrec_wiki_reach_additions.jsonl": 0,
-    "public_search_reach_additions.jsonl": 35,
+    "public_search_reach_additions.jsonl": 36,
     "ring_reach_additions.jsonl": 0,
     "ready_to_fight_reach_additions.jsonl": 0,
     "toprank_reach_additions.jsonl": 0,
@@ -56,15 +56,22 @@
   },
   "rejected_candidate_rows": 0,
   "rejected_candidates": [],
-  "candidate_fighters": 63,
+  "candidate_fighters": 64,
   "merged": 0,
   "merged_profiles": [],
   "skipped_existing_reach": 57,
-  "skipped_explicit_quarantine": 6,
+  "skipped_explicit_quarantine": 7,
   "skipped_quarantined_profiles": [
     {
       "target_source_id": "https://champinon.info/boxing/steve-robinson/",
       "name": "Steve Robinson",
+      "sources": [
+        "public_search_reach_additions.jsonl"
+      ]
+    },
+    {
+      "target_source_id": "https://en.wikipedia.org/wiki/Kieron_Conway",
+      "name": "Kieron Conway",
       "sources": [
         "public_search_reach_additions.jsonl"
       ]
