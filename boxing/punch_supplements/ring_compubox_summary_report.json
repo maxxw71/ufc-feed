@@ -1,6 +1,6 @@
 {
-  "generated_at": "2026-10-01T13:05:45.162168+00:00",
-  "seed_pages": 44,
+  "generated_at": "2026-10-01T21:32:10.484514+00:00",
+  "seed_pages": 48,
   "accepted_pages": 27,
   "fighter_rows": 48,
   "distinct_bouts": 26,
@@ -533,6 +533,51 @@
       "pair_resolution": "exact_pre_bout_features_id_pair_via_normalized_fighters",
       "status": "error",
       "error": "ValueError: page too large"
+    },
+    {
+      "url": "https://www.ringmagazine.com/news/brandon-figueroa-wins-questionable-unanimous-decision-over-joet-gonzalez-798NfnrdioRn8ATOcGMVNc",
+      "bout_date": "2025-07-19",
+      "fighters": [
+        "Brandon Figueroa",
+        "Joet Gonzalez"
+      ],
+      "pair_resolution": "exact_pre_bout_features_id_pair_via_normalized_fighters",
+      "status": "no_safe_numeric_pattern",
+      "article_date": "2025-07-20",
+      "fighter_rows": 0
+    },
+    {
+      "url": "https://www.ringmagazine.com/news/parker-argues-he-beat-buatsi-easy-laments-lost-chance-to-change-daughter-s-life-wQh4EvFfHgyafHiSkNmZf",
+      "bout_date": "2025-11-01",
+      "fighters": [
+        "Joshua Buatsi",
+        "Zach Parker"
+      ],
+      "pair_resolution": "exact_pre_bout_features_id_pair_via_normalized_fighters",
+      "status": "no_safe_numeric_pattern",
+      "article_date": "2025-11-02",
+      "fighter_rows": 0
+    },
+    {
+      "url": "https://www.ringmagazine.com/news/raul-curiel-alexis-rocha-settle-for-majority-draw-in-fan-friendly-12-round-dazn-main-event-1s235lk9lhqgT2dQgU5m9t",
+      "bout_date": "2024-12-14",
+      "fighters": [
+        "Alexis Rocha",
+        "Raul Curiel"
+      ],
+      "pair_resolution": "pair_not_in_verified_supplements",
+      "status": "rejected_identity"
+    },
+    {
+      "url": "https://www.ringmagazine.com/news/figueroa-says-fulton-doesn-t-have-that-hunger-in-him-for-rematch-4qWNn2OsDyRWB7fEF7sowu",
+      "bout_date": "2021-11-27",
+      "fighters": [
+        "Brandon Figueroa",
+        "Stephen Fulton"
+      ],
+      "pair_resolution": "exact_pre_bout_features_id_pair_via_normalized_fighters",
+      "status": "error",
+      "error": "ValueError: CompuBox attribution missing"
     }
   ],
   "conflicts": [],
