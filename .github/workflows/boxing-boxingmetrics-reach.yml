@@ -1,0 +1,44 @@
+name: Boxing BoxingMetrics Reach Probe
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'boxing/research/probe_boxingmetrics_reach.py'
+      - '.github/workflows/boxing-boxingmetrics-reach.yml'
+permissions:
+  contents: write
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install beautifulsoup4 lxml
+      - run: python boxing/research/probe_boxingmetrics_reach.py
+      - name: Persist probe outputs
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          mkdir -p /tmp/boxingmetrics-reach
+          cp boxing/profile_supplements/boxingmetrics_reach_probe.json /tmp/boxingmetrics-reach/
+          cp boxing/profile_supplements/boxingmetrics_reach_additions.jsonl /tmp/boxingmetrics-reach/
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          for attempt in 1 2 3 4; do
+            git fetch origin main
+            git reset --hard origin/main
+            cp /tmp/boxingmetrics-reach/boxingmetrics_reach_probe.json boxing/profile_supplements/
+            cp /tmp/boxingmetrics-reach/boxingmetrics_reach_additions.jsonl boxing/profile_supplements/
+            git add boxing/profile_supplements/boxingmetrics_reach_probe.json boxing/profile_supplements/boxingmetrics_reach_additions.jsonl
+            if git diff --cached --quiet; then exit 0; fi
+            git commit -m 'Update BoxingMetrics reach probe'
+            if git push origin HEAD:main; then exit 0; fi
+            sleep $((attempt * 2))
+          done
+          exit 1
