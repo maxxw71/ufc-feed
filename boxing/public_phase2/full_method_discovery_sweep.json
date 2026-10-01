@@ -1913,65 +1913,6 @@
       "score": 71.87495313602784
     },
     {
-      "phase": "phase3",
-      "rule": "AGE_HEIGHT__price1.2__age3__height3",
-      "family": "AGE_HEIGHT",
-      "spec": {
-        "family": "AGE_HEIGHT",
-        "price": 1.2,
-        "age": 3,
-        "height": 3
-      },
-      "metrics": {
-        "bets": 42,
-        "wins": 33,
-        "losses": 9,
-        "win_pct": 78.57142857142857,
-        "wilson95_lower_pct": 64.05986210195627,
-        "profit_median_units": 4.585528845759273,
-        "roi_median_pct": 10.917925823236365,
-        "profit_best_units": 5.913875073223486,
-        "roi_best_pct": 14.080654936246395,
-        "avg_market_prob": 0.6787453336668396,
-        "avg_book_count": 4.142857142857143
-      },
-      "dev_2021_2023": {
-        "bets": 20,
-        "wins": 15,
-        "losses": 5,
-        "win_pct": 75.0,
-        "wilson95_lower_pct": 53.12949900419365,
-        "profit_median_units": 1.005240665204988,
-        "roi_median_pct": 5.026203326024939,
-        "profit_best_units": 1.5816387024101617,
-        "roi_best_pct": 7.908193512050808,
-        "avg_market_prob": 0.6839316123946518,
-        "avg_book_count": 4.45
-      },
-      "later_2024_2026": {
-        "bets": 22,
-        "wins": 18,
-        "losses": 4,
-        "win_pct": 81.81818181818181,
-        "wilson95_lower_pct": 61.48297802336214,
-        "profit_median_units": 3.5802881805542857,
-        "roi_median_pct": 16.27403718433766,
-        "profit_best_units": 4.332236370813324,
-        "roi_best_pct": 19.691983503696928,
-        "avg_market_prob": 0.674030534823374,
-        "avg_book_count": 3.8636363636363638
-      },
-      "bootstrap": {
-        "lo": -7.761944301631568,
-        "median": 11.056785270283406,
-        "hi": 28.176454712191436,
-        "p_gt_0": 0.881
-      },
-      "stable_family_variants": 2,
-      "neighborhood_support": 0.4,
-      "score": 71.43234355776536
-    },
-    {
       "phase": "phase4",
       "rule": "AGE_LAYOFF__pmin1.2__pmax1.6__opprest270__age3",
       "family": "AGE_LAYOFF",
@@ -2089,6 +2030,65 @@
       "stable_family_variants": 1,
       "neighborhood_support": 0.2,
       "score": 68.90522657979895
+    },
+    {
+      "phase": "phase3",
+      "rule": "AGE_HEIGHT__price1.2__age3__height3",
+      "family": "AGE_HEIGHT",
+      "spec": {
+        "family": "AGE_HEIGHT",
+        "price": 1.2,
+        "age": 3,
+        "height": 3
+      },
+      "metrics": {
+        "bets": 43,
+        "wins": 33,
+        "losses": 10,
+        "win_pct": 76.74418604651163,
+        "wilson95_lower_pct": 62.25519170056059,
+        "profit_median_units": 3.5855288457592733,
+        "roi_median_pct": 8.338439176184357,
+        "profit_best_units": 4.913875073223486,
+        "roi_best_pct": 11.427616449356945,
+        "avg_market_prob": 0.6791765689896554,
+        "avg_book_count": 4.232558139534884
+      },
+      "dev_2021_2023": {
+        "bets": 21,
+        "wins": 15,
+        "losses": 6,
+        "win_pct": 71.42857142857143,
+        "wilson95_lower_pct": 50.04322617716242,
+        "profit_median_units": 0.005240665204987893,
+        "roi_median_pct": 0.024955548595180444,
+        "profit_best_units": 0.5816387024101617,
+        "roi_best_pct": 2.7697081067150555,
+        "avg_market_prob": 0.6845676524019503,
+        "avg_book_count": 4.619047619047619
+      },
+      "later_2024_2026": {
+        "bets": 22,
+        "wins": 18,
+        "losses": 4,
+        "win_pct": 81.81818181818181,
+        "wilson95_lower_pct": 61.48297802336214,
+        "profit_median_units": 3.5802881805542857,
+        "roi_median_pct": 16.27403718433766,
+        "profit_best_units": 4.332236370813324,
+        "roi_best_pct": 19.691983503696928,
+        "avg_market_prob": 0.674030534823374,
+        "avg_book_count": 3.8636363636363638
+      },
+      "bootstrap": {
+        "lo": -11.548905166188014,
+        "median": 8.385465508448736,
+        "hi": 26.192392323813067,
+        "p_gt_0": 0.8176666666666667
+      },
+      "stable_family_variants": 2,
+      "neighborhood_support": 0.4,
+      "score": 68.79280149460668
     },
     {
       "phase": "phase3",
