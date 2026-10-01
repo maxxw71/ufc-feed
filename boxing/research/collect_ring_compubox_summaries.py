@@ -586,17 +586,22 @@ def parse_pair(text,a,b):
             if m:
                 setv(f,'total_landed',m.group(1));setv(o,'total_landed',m.group(2))
 
-    # Exact subject comparison with trailing CompuBox attribution:
-    # "Adames ... outlanded him 254 to 127, according to CompuBox."
+    # Exact dropped-opponent comparison with trailing CompuBox attribution:
+    # "Adames (...) dropped Williams (...) ... and outlanded him 254 to 127, according to CompuBox."
+    # Requiring the verified opponent between subject and pronoun prevents the
+    # reverse pass from treating the object name as the grammatical subject.
     for f,o in ((a,b),(b,a)):
         for fa in name_aliases(f):
-            m=re.search(
-                r'(?<![A-Za-z0-9])'+re.escape(fa)+
-                r'(?![A-Za-z0-9])[^.!?]{0,220}?outlanded\s+(?:him|his\s+man)\s+'
-                r'(\d{1,4})\s*(?:to|[-–])\s*(\d{1,4})[^.!?]{0,80}?according\s+to\s+CompuBox',
-                text,re.I)
-            if m:
-                setv(f,'total_landed',m.group(1));setv(o,'total_landed',m.group(2))
+            for oa in name_aliases(o):
+                m=re.search(
+                    r'(?<![A-Za-z0-9])'+re.escape(fa)+
+                    r'(?![A-Za-z0-9])\s*(?:\([^)]{0,80}\))?[^.!?]{0,80}?dropped\s+'+
+                    re.escape(oa)+r'(?![A-Za-z0-9])\s*(?:\([^)]{0,80}\))?'
+                    r'[^.!?]{0,160}?outlanded\s+(?:him|his\s+man)\s+'
+                    r'(\d{1,4})\s*(?:to|[-–])\s*(\d{1,4})[^.!?]{0,80}?according\s+to\s+CompuBox',
+                    text,re.I)
+                if m:
+                    setv(f,'total_landed',m.group(1));setv(o,'total_landed',m.group(2))
 
     # Exact CompuBox counted pair with verified surnames/names.
     # "CompuBox counted 115 of 534 punches for Crawford and 99 of 338 for Alvarez."
@@ -885,6 +890,8 @@ def main():
                              'source_tier':'modern_publisher_compubox_summary_separate_from_full_round_reports'})
                 added+=1
             item.update({'status':'accepted' if added else 'no_safe_numeric_pattern','article_date':pub,'fighter_rows':added})
+            if not added:
+                item['text_sample']=text[:3500]
         except Exception as e:item.update({'status':'error','error':type(e).__name__+': '+str(e)[:220]})
         diag.append(item)
     # Deduplicate exact fight/fighter; conflicts are quarantined.
