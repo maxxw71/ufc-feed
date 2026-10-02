@@ -1,0 +1,47 @@
+name: Crypto live scanner smoke test
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'crypto/live/live_crypto_scanner.py'
+      - 'crypto/live/methods.json'
+      - '.github/workflows/crypto-live-scanner-smoke.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install --quiet pandas numpy requests
+      - run: python -m py_compile crypto/live/live_crypto_scanner.py
+      - name: Run scanner once
+        run: |
+          python crypto/live/live_crypto_scanner.py             --methods crypto/live/methods.json             --output crypto/live/smoke_signals.json             --history crypto/live/smoke_history.json             --days 125             --recent-hours 72
+      - name: Validate payload
+        run: |
+          python - <<'PY'
+          import json
+          p=json.load(open('crypto/live/smoke_signals.json'))
+          assert len(p['methods'])==2
+          assert p['coverage']['ok']>0
+          print('signals',len(p['signals']),'coverage',p['coverage'])
+          PY
+      - name: Commit smoke snapshot
+        run: |
+          git config user.name appwiza-research-bot
+          git config user.email actions@users.noreply.github.com
+          git add crypto/live/smoke_signals.json
+          if ! git diff --cached --quiet; then
+            git commit -m "Update crypto live scanner smoke snapshot"
+            git pull --rebase origin main
+            git push origin HEAD:main
+          fi
