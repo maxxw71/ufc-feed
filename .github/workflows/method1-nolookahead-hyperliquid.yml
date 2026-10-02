@@ -1,0 +1,63 @@
+name: Method 1 no-lookahead Hyperliquid revalidation
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'crypto/research/method1_nolookahead_hyperliquid.py'
+      - 'crypto/research/method1_nolookahead_aggregate.py'
+      - '.github/workflows/method1-nolookahead-hyperliquid.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  scan:
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [0,1,2,3]
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install --quiet pandas numpy requests
+      - run: |
+          python crypto/research/method1_nolookahead_hyperliquid.py             --days 600             --shard-index ${{ matrix.shard }}             --shard-count 4             --out m1_nolook_out
+      - uses: actions/upload-artifact@v4
+        with:
+          name: m1-nolook-${{ matrix.shard }}
+          path: m1_nolook_out/
+          retention-days: 2
+
+  aggregate:
+    needs: scan
+    if: always() && needs.scan.result == 'success'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install --quiet pandas numpy
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: m1-nolook-*
+          path: m1_nolook_shards
+          merge-multiple: true
+      - run: python crypto/research/method1_nolookahead_aggregate.py
+      - name: Commit outputs
+        run: |
+          git config user.name "appwiza-research-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add crypto/research/results_method1_nolookahead_hyperliquid
+          if ! git diff --cached --quiet; then
+            git commit -m "Update no-lookahead Method 1 validation"
+            git pull --rebase origin main
+            git push origin HEAD:main
+          fi
