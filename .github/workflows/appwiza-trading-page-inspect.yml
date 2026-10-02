@@ -1,0 +1,53 @@
+name: Appwiza trading page runtime inspect
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/appwiza-trading-page-inspect.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  inspect:
+    runs-on: [self-hosted, Linux, X64, appwiza]
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Inspect current Appwiza public structure
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          R=crypto/trading_page_runtime_inspect.txt
+          : > "$R"
+          echo '=== TIMESTAMP ===' >> "$R"
+          date -u >> "$R"
+          echo '=== PUBLIC ROOT TREE ===' >> "$R"
+          find /srv/appwiza-sports/public -maxdepth 3 -type f -printf '%p %s bytes\n' 2>/dev/null | sort | head -400 >> "$R" || true
+          echo '=== TOP LEVEL DIRS / PERMS ===' >> "$R"
+          find /srv/appwiza-sports/public -mindepth 1 -maxdepth 2 -type d -printf '%M %u:%g %p\n' 2>/dev/null | sort | head -250 >> "$R" || true
+          echo '=== NAV / SPORTS LINKS IN HTML ===' >> "$R"
+          grep -RniE 'href=.*sports|href=.*ufc|href=.*nfl|href=.*mls|href=.*boxing|nav|menu' /srv/appwiza-sports/public --include='*.html' 2>/dev/null | head -300 >> "$R" || true
+          echo '=== ROOT INDEX HEAD ===' >> "$R"
+          sed -n '1,260p' /srv/appwiza-sports/public/index.html 2>/dev/null >> "$R" || true
+          echo '=== SPORTS PAGE HEAD ===' >> "$R"
+          sed -n '1,260p' /srv/appwiza-sports/public/sports/index.html 2>/dev/null >> "$R" || true
+          echo '=== PUBLISHER ROUTE / WRITE CLUES ===' >> "$R"
+          grep -RniE 'public/|sports/index|render_all|style.css|index.html' /opt/sports-publisher 2>/dev/null | head -300 >> "$R" || true
+          echo '=== WEB SERVER PATH CLUES ===' >> "$R"
+          grep -RniE 'root |location /|appwiza' /etc/nginx/sites-enabled /etc/nginx/conf.d 2>/dev/null | head -220 >> "$R" || true
+          echo '=== WRITABILITY ===' >> "$R"
+          for p in /srv/appwiza-sports/public /srv/appwiza-sports/public/index.html /srv/appwiza-sports/public/style.css; do
+            stat -c '%A %a %U:%G %n' "$p" >> "$R" 2>&1 || true
+            test -w "$p" && echo "WRITABLE $p" >> "$R" || echo "READONLY $p" >> "$R"
+          done
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git add "$R"
+          if ! git diff --cached --quiet; then
+            git commit -m 'Inspect Appwiza trading page integration path'
+            git pull --rebase origin main
+            git push origin HEAD:main
+          fi
