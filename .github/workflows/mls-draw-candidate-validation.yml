@@ -11,7 +11,7 @@ on:
       - '.github/workflows/mls-draw-candidate-validation.yml'
 
 concurrency:
-  group: mls-heavy-research
+  group: mls-draw-candidate-validation
   cancel-in-progress: false
 
 permissions:
