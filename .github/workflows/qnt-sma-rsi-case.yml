@@ -1,0 +1,35 @@
+name: QNT SMA RSI case study
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'crypto/research/qnt_sma_rsi_case.py'
+      - '.github/workflows/qnt-sma-rsi-case.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  research:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install --quiet pandas numpy requests
+      - name: Run QNT case study
+        run: python crypto/research/qnt_sma_rsi_case.py
+      - name: Commit outputs
+        run: |
+          git config user.name "appwiza-research-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add crypto/research/results_qnt_sma_rsi_case
+          if ! git diff --cached --quiet; then
+            git commit -m "Update QNT SMA RSI case study"
+            git pull --rebase origin main
+            git push origin HEAD:main
+          fi
