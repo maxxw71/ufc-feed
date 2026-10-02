@@ -1,0 +1,46 @@
+name: Crypto daily plus 4H blowoff research
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'crypto/research/blowoff_rebound_1d4h.py'
+      - '.github/workflows/crypto-blowoff-1d4h-research.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: crypto-blowoff-1d4h-research
+  cancel-in-progress: true
+
+jobs:
+  research:
+    if: github.repository == 'maxxw71/ufc-feed' && github.ref == 'refs/heads/main'
+    runs-on: [self-hosted, Linux, X64, appwiza]
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Run daily plus 4H rebound study
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          PY=/home/anestishkurti92/ufc-predictor-v1/venv/bin/python
+          test -x "$PY"
+          "$PY" crypto/research/blowoff_rebound_1d4h.py             --symbols 100             --days 900             --out crypto/research/results_1d4h
+
+      - name: Commit research outputs
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          git config user.name "appwiza-research-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add crypto/research/results_1d4h
+          if git diff --cached --quiet; then
+            echo "No output changes"
+          else
+            git commit -m "Update daily plus 4H crypto rebound research"
+            git push origin HEAD:main
+          fi
