@@ -1,0 +1,42 @@
+RSI DYNAMICS RESEARCH — DAILY BLOW-OFF + 4H FIRST FLUSH
+
+BASELINE
+{'events': 354, 'symbols': 31, 'hit5_36h': 0.5649717514124294, 'hit5_72h': 0.652542372881356, 'hit5_5d': 0.7203389830508474, 'hit10_5d': 0.4576271186440678, 'median_mfe5d': 0.09347038446313238, 'median_mae5d': -0.07469630787749387}
+
+This study does not use RSI as a one-dimensional absolute threshold.
+It measures RSI percentage loss, RSI acceleration, RSI-vs-price shock, daily/4H RSI dislocation, RSI percentage rebound entries, and RSI-recovery exits.
+
+TOP TRAIN-SELECTED RULES WITH LATER 40% HOLDOUT
+                                              rule               features  train_n  train_hit5_5d  train_hit10_5d  hold_n  hold_hit5_5d  hold_hit10_5d  hold_mfe5d_median  hold_mae5d_median  train_score
+   rsi_pct1 <= -0.19679 AND rsi_accel <= -12.79426     rsi_pct1+rsi_accel       33       1.000000        0.424242      15      0.800000       0.600000           0.302071          -0.023972     0.827273
+   rsi_accel <= -12.79426 AND rsi_pct3 <= -0.18363     rsi_accel+rsi_pct3       29       0.965517        0.482759       7      0.428571       0.428571           0.035737          -0.169075     0.820690
+   rsi_accel <= -12.79426 AND rsi_pct3 <= -0.13526     rsi_accel+rsi_pct3       32       0.968750        0.468750      12      0.666667       0.666667           0.322213          -0.024889     0.818750
+     rsi_pct1 <= -0.19679 AND rsi_pct3 <= -0.23562      rsi_pct1+rsi_pct3       21       1.000000        0.380952      14      0.928571       0.714286           0.238542          -0.019451     0.814286
+     rsi_pct1 <= -0.19679 AND rsi_pct3 <= -0.18363      rsi_pct1+rsi_pct3       39       0.948718        0.487179      17      0.764706       0.588235           0.133415          -0.023972     0.810256
+     rsi_pct1 <= -0.19679 AND rsi_pct3 <= -0.13526      rsi_pct1+rsi_pct3       42       0.952381        0.476190      21      0.809524       0.666667           0.302071          -0.019451     0.809524
+   rsi_accel <= -12.79426 AND rsi_pct1 <= -0.12000     rsi_accel+rsi_pct1       40       0.950000        0.475000      20      0.650000       0.500000           0.095324          -0.065416     0.807500
+    rsi_pct1 <= -0.19679 AND rsi_accel <= -8.53172     rsi_pct1+rsi_accel       42       0.952381        0.452381      24      0.833333       0.583333           0.133415          -0.021556     0.802381
+    rsi_pct1 <= -0.19679 AND rsi_accel <= -5.10489     rsi_pct1+rsi_accel       42       0.952381        0.452381      24      0.833333       0.583333           0.133415          -0.021556     0.802381
+                              rsi_pct1 <= -0.19679               rsi_pct1       45       0.955556        0.444444      26      0.846154       0.615385           0.217743          -0.019451     0.802222
+ rsi_pct1 <= -0.19679 AND rsi_drop_pct <= -0.19519  rsi_pct1+rsi_drop_pct       45       0.955556        0.444444      26      0.846154       0.615385           0.217743          -0.019451     0.802222
+    rsi_pct1 <= -0.19679 AND rsi_accel <= -1.75745     rsi_pct1+rsi_accel       44       0.954545        0.431818      26      0.846154       0.615385           0.217743          -0.019451     0.797727
+     rsi_pct1 <= -0.19679 AND rsi_accel <= 0.51103     rsi_pct1+rsi_accel       44       0.954545        0.431818      26      0.846154       0.615385           0.217743          -0.019451     0.797727
+rsi_accel <= -8.53172 AND rsi_drop_pct <= -0.37875 rsi_accel+rsi_drop_pct       31       0.935484        0.451613       8      0.750000       0.375000           0.076210          -0.017678     0.790323
+ rsi_pct3 <= -0.23562 AND rsi_drop_pct <= -0.44117  rsi_pct3+rsi_drop_pct       23       0.956522        0.391304       8      0.625000       0.250000           0.076210          -0.021742     0.786957
+
+RSI PERCENT-RECOVERY ENTRY TIMING
+                     entry  n  coverage  hit5_5d  hit10_5d  median_mfe5d
+RSI +10% from flush trough 52  0.146893 0.673077  0.346154      0.066285
+RSI +20% from flush trough  7  0.019774 0.428571  0.142857      0.048201
+RSI +30% from flush trough  0  0.000000      NaN       NaN           NaN
+
+RSI-DERIVED EXIT TIMING
+                                   exit   n  coverage  positive_rate  return_ge_5  median_return  mean_return
+ Recover 50% of RSI peak-to-trough loss 145  0.409605       0.965517     0.793103       0.091421     0.143789
+ Recover 75% of RSI peak-to-trough loss  84  0.237288       0.964286     0.857143       0.153770     0.218195
+Recover 100% of RSI peak-to-trough loss  38  0.107345       0.921053     0.868421       0.168370     0.327628
+              RSI gains 20% from trough 163  0.460452       0.932515     0.601227       0.060148     0.082246
+              RSI gains 35% from trough  87  0.245763       0.942529     0.758621       0.094440     0.109748
+              RSI gains 50% from trough  41  0.115819       0.951220     0.829268       0.102130     0.152113
+
+Guardrail: rules are ranked only by the first 60% chronological training sample; the later 40% is shown as holdout and is not used to choose thresholds.
