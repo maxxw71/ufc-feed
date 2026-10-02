@@ -247,7 +247,7 @@ def main():
     meta=d[['match_id','home_team','away_team']].drop_duplicates('match_id').copy();meta.match_id=meta.match_id.astype(str)
 
     singles=[];tested=0
-    for outcome in ['HOME','DRAW','AWAY']:
+    for outcome in ['HOME','AWAY']:
         so=s[s.outcome.eq(outcome)].copy();tr=so[period(so,'train')]
         feats=eligible_features(so,outcome)
         for f in feats:
