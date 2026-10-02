@@ -205,7 +205,8 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--symbols", type=int, default=100)
     ap.add_argument("--days", type=int, default=900)
-    ap.add_argument("--out", default="crypto/research/results_1d4h")\n    ap.add_argument("--quick", action="store_true")
+    ap.add_argument("--out", default="crypto/research/results_1d4h")
+    ap.add_argument("--quick", action="store_true")
     args = ap.parse_args()
 
     outdir = Path(args.out)
