@@ -1,0 +1,77 @@
+name: Crypto method runtime inspect
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/crypto-method-runtime-inspect.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  inspect:
+    if: github.repository == 'maxxw71/ufc-feed' && github.ref == 'refs/heads/main'
+    runs-on: [self-hosted, Linux, X64, appwiza]
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Locate current crypto breakout research
+        shell: bash
+        run: |
+          set -u
+          REPORT=crypto/method_runtime_inspect.txt
+          mkdir -p crypto
+          : > "$REPORT"
+          echo 'CRYPTO METHOD RUNTIME INSPECTION' >> "$REPORT"
+          date -u >> "$REPORT"
+          echo >> "$REPORT"
+
+          echo '=== LIKELY CRYPTO / BACKTEST FILES ===' >> "$REPORT"
+          for ROOT in /home/anestishkurti92 /srv/appwiza-sports /opt; do
+            [ -d "$ROOT" ] || continue
+            timeout 75s find "$ROOT" -maxdepth 6 -type f \
+              \( -iname '*crypto*' -o -iname '*breakout*' -o -iname '*washout*' -o -iname '*dip*buy*' -o -iname '*coingecko*' -o -iname '*backtest*' \) \
+              ! -path '*/.git/*' ! -path '*/venv/*' ! -path '*/.venv/*' ! -path '*/node_modules/*' \
+              -printf '%TY-%Tm-%Td %TH:%TM:%TS %s %p\n' 2>/dev/null | sort -r | head -500 >> "$REPORT" || true
+          done
+          echo >> "$REPORT"
+
+          echo '=== FILES CONTAINING METHOD SIGNATURES ===' >> "$REPORT"
+          for ROOT in /home/anestishkurti92 /srv/appwiza-sports /opt; do
+            [ -d "$ROOT" ] || continue
+            timeout 90s grep -RIlE \
+              'violent breakout|first washout|washout|CoinGecko|top.?500|810 signals|85\.7%|RSI|rsi|5-day acceleration|60-day high|realized volatility' \
+              "$ROOT" \
+              --include='*.py' --include='*.sh' --include='*.json' --include='*.txt' --include='*.md' --include='*.csv' \
+              --exclude-dir=.git --exclude-dir=venv --exclude-dir=.venv --exclude-dir=node_modules 2>/dev/null | head -300 >> "$REPORT" || true
+          done
+          echo >> "$REPORT"
+
+          echo '=== MATCHING SNIPPETS ===' >> "$REPORT"
+          mapfile -t FILES < <(
+            for ROOT in /home/anestishkurti92 /srv/appwiza-sports /opt; do
+              [ -d "$ROOT" ] || continue
+              timeout 90s grep -RIlE \
+                'violent breakout|first washout|washout|CoinGecko|top.?500|810 signals|85\.7%|5-day acceleration|60-day high|realized volatility' \
+                "$ROOT" \
+                --include='*.py' --include='*.sh' --include='*.json' --include='*.txt' --include='*.md' \
+                --exclude-dir=.git --exclude-dir=venv --exclude-dir=.venv --exclude-dir=node_modules 2>/dev/null || true
+            done | awk '!seen[$0]++' | head -80
+          )
+          for f in "${FILES[@]}"; do
+            echo "===== $f =====" >> "$REPORT"
+            timeout 15s grep -niE -C 8 \
+              'violent breakout|first washout|washout|CoinGecko|top.?500|810 signals|85\.7%|5-day acceleration|60-day high|realized volatility|RSI|rsi' \
+              "$f" 2>/dev/null | head -240 >> "$REPORT" || true
+            echo >> "$REPORT"
+          done
+
+          git config user.name "appwiza-research-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add "$REPORT"
+          if ! git diff --cached --quiet; then
+            git commit -m "Inspect current crypto breakout method runtime"
+            git push origin HEAD:main
+          fi
