@@ -1,0 +1,64 @@
+{
+  "version": "2026-10-02",
+  "venue": "Hyperliquid primary perpetuals",
+  "timeframe": "4h",
+  "target_pct": 0.05,
+  "methods": [
+    {
+      "id": "C1",
+      "key": "blowoff_first_flush",
+      "name": "Blow-Off First Flush",
+      "enabled": true,
+      "status": "LIVE",
+      "description": "A completed daily blow-off setup arms the method. The first 4H capitulation after the peak must show an unusually violent RSI reset.",
+      "trigger_summary": "Completed daily breakout regime → next-day arm → first ≥8% 4H flush → RSI drops ≥18.174% in one bar and RSI acceleration ≤ -11.7202.",
+      "validation": {
+        "venue": "Hyperliquid primary perps",
+        "n": 45,
+        "hit5": 0.8666666667,
+        "target_before_stop": 0.80,
+        "stop_reference_pct": 0.075,
+        "external_binance_holdout_n": 40,
+        "external_binance_hit5": 0.85
+      },
+      "params": {
+        "daily_ret5_min": 0.15,
+        "daily_rv20_min": 0.025,
+        "daily_prior_high_days": 60,
+        "setup_cooldown_days": 10,
+        "flush_window_days": 5,
+        "first_flush_min": 0.08,
+        "rsi_pct1_max": -0.18174,
+        "rsi_accel_max": -11.72020
+      }
+    },
+    {
+      "id": "C2",
+      "key": "lower_high_second_dump",
+      "name": "Lower-High Second Dump",
+      "enabled": true,
+      "status": "LIVE",
+      "description": "A 4H downtrend produces a relief pump that fails well below the prior swing high, then a second selloff reaches oversold RSI.",
+      "trigger_summary": "4H downtrend → relief pump ≥21.337% → lower high ≥19.915% below prior swing high → second dump ≥10% → RSI ≤30.",
+      "validation": {
+        "venue": "Hyperliquid primary perps",
+        "n": 47,
+        "hit5": 0.9361702128,
+        "target_before_stop": 0.8297872340,
+        "stop_reference_pct": 0.075,
+        "external_binance_holdout_n": 25,
+        "external_binance_hit5": 0.88
+      },
+      "params": {
+        "rsi_max": 30,
+        "min_pump": 0.21337,
+        "max_lower_high_pct": -0.19915,
+        "min_second_dump": 0.10,
+        "first_low_lookback_bars": 36,
+        "first_low_min_gap_bars": 6,
+        "prior_high_lookback_bars": 36,
+        "signal_cooldown_days": 5
+      }
+    }
+  ]
+}
