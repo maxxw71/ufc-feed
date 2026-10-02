@@ -242,6 +242,22 @@ def parse_pair(text,a,b):
                     setv(f,'total_landed',m.group(1));setv(f,'total_thrown',m.group(2))
                     setv(o,'total_landed',m.group(3));setv(o,'total_thrown',m.group(4))
 
+    # Exact verified-pair "by landing ... while ..." grammar:
+    # "Crawford ... by landing 115 of 534 total punches, while Alvarez landed 99 of 338, according to CompuBox."
+    for f,o in ((a,b),(b,a)):
+        for fa in name_aliases(f):
+            for oa in name_aliases(o):
+                m=re.search(
+                    r'(?<![A-Za-z0-9])'+re.escape(fa)+
+                    r'(?![A-Za-z0-9])[^.!?]{0,120}?by\s+landing\s+'
+                    r'(\d{1,4})\s+of\s+([\d,]{1,6})\s+total\s+punches\s*,?\s*while\s+'+
+                    re.escape(oa)+r'(?![A-Za-z0-9])\s+landed\s+'
+                    r'(\d{1,4})\s+of\s+([\d,]{1,6})[^.!?]{0,80}?according\s+to\s+CompuBox',
+                    text,re.I)
+                if m:
+                    setv(f,'total_landed',m.group(1));setv(f,'total_thrown',m.group(2).replace(',',''))
+                    setv(o,'total_landed',m.group(3));setv(o,'total_thrown',m.group(4).replace(',',''))
+
     # Exact post-fight total grammar:
     # "Figueroa landed 17 more punches overall than Gonzalez (282 of 1,071 to 265 of 821)."
     for f,o in ((a,b),(b,a)):
@@ -870,6 +886,19 @@ def parse_pair(text,a,b):
                 setv(f,'total_landed',m.group(1));setv(o,'total_landed',m.group(2))
                 pwr=re.search(r'power\s+(?:shots|punches)[^()]{0,30}\((\d{1,4})\s*[-–]\s*(\d{1,4})\)',sent,re.I)
                 if pwr:setv(f,'power_landed',pwr.group(1));setv(o,'power_landed',pwr.group(2))
+    # Some generic pair grammars can re-read the same verified sentence from
+    # the opposite fighter mention and produce an exact A<->B swap after a
+    # stronger earlier grammar already assigned both values. Suppress only
+    # perfect mirrored swaps; every other disagreement remains quarantined.
+    for k in set(out[a]).intersection(out[b]):
+        av=out[a].get(k);bv=out[b].get(k)
+        if not isinstance(av,(int,float)) or not isinstance(bv,(int,float)) or av==bv:
+            continue
+        am=[x for x in conflicts[a] if x[0]==k and float(x[1])==float(av) and float(x[2])==float(bv)]
+        bm=[x for x in conflicts[b] if x[0]==k and float(x[1])==float(bv) and float(x[2])==float(av)]
+        if am and bm:
+            conflicts[a]=[x for x in conflicts[a] if not (x[0]==k and float(x[1])==float(av) and float(x[2])==float(bv))]
+            conflicts[b]=[x for x in conflicts[b] if not (x[0]==k and float(x[1])==float(bv) and float(x[2])==float(av))]
     for f in (a,b):
         if conflicts[f]:out[f]={'_invalid_conflict':True,'details':conflicts[f]}
     return out
