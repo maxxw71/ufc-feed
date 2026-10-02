@@ -142,6 +142,33 @@ def prep4h(h):
     x["rsi_accel"] = x["rsi_delta1"].diff()
     x["price_pct1"] = x["close"].pct_change()
     x["price_pct3"] = x["close"] / x["close"].shift(3) - 1
+
+    # Price trend context.
+    x["sma9"] = x["close"].rolling(9, min_periods=5).mean()
+    x["sma20"] = x["close"].rolling(20, min_periods=10).mean()
+    x["sma50"] = x["close"].rolling(50, min_periods=25).mean()
+    x["ema9"] = x["close"].ewm(span=9, adjust=False).mean()
+    x["ema20"] = x["close"].ewm(span=20, adjust=False).mean()
+    x["dist_sma9"] = x["close"] / x["sma9"] - 1
+    x["dist_sma20"] = x["close"] / x["sma20"] - 1
+    x["dist_ema9"] = x["close"] / x["ema9"] - 1
+    x["sma9_slope3"] = x["sma9"] / x["sma9"].shift(3) - 1
+
+    # RSI is treated as a price-like series with its own moving averages.
+    x["rsi_sma3"] = x["rsi14"].rolling(3, min_periods=2).mean()
+    x["rsi_sma5"] = x["rsi14"].rolling(5, min_periods=3).mean()
+    x["rsi_sma9"] = x["rsi14"].rolling(9, min_periods=5).mean()
+    x["rsi_ema5"] = x["rsi14"].ewm(span=5, adjust=False).mean()
+    x["rsi_vs_sma3"] = x["rsi14"] / x["rsi_sma3"] - 1
+    x["rsi_vs_sma5"] = x["rsi14"] / x["rsi_sma5"] - 1
+    x["rsi_vs_sma9"] = x["rsi14"] / x["rsi_sma9"] - 1
+    x["rsi_sma5_slope1"] = x["rsi_sma5"].pct_change()
+    x["rsi_sma5_slope3"] = x["rsi_sma5"] / x["rsi_sma5"].shift(3) - 1
+    x["rsi_cross_up_sma5"] = (x["rsi14"] > x["rsi_sma5"]) & (x["rsi14"].shift(1) <= x["rsi_sma5"].shift(1))
+    x["rsi_cross_down_sma5"] = (x["rsi14"] < x["rsi_sma5"]) & (x["rsi14"].shift(1) >= x["rsi_sma5"].shift(1))
+    x["price_cross_up_ema9"] = (x["close"] > x["ema9"]) & (x["close"].shift(1) <= x["ema9"].shift(1))
+    x["price_cross_down_ema9"] = (x["close"] < x["ema9"]) & (x["close"].shift(1) >= x["ema9"].shift(1))
+    x["dual_stretch_9"] = x["dist_sma9"].fillna(0) + x["rsi_vs_sma9"].fillna(0)
     return x
 
 
@@ -200,6 +227,16 @@ def event_features(h, idx, arm, daily_rsi, dd_threshold):
         "daily_4h_rsi_gap": daily_gap,
         "rsi_to_daily_ratio": daily_ratio,
         "event_low_to_peak": trough_price / peak_price - 1 if peak_price > 0 else np.nan,
+        "dist_sma9": float(h.iloc[loc]["dist_sma9"]) if pd.notna(h.iloc[loc]["dist_sma9"]) else np.nan,
+        "dist_sma20": float(h.iloc[loc]["dist_sma20"]) if pd.notna(h.iloc[loc]["dist_sma20"]) else np.nan,
+        "dist_ema9": float(h.iloc[loc]["dist_ema9"]) if pd.notna(h.iloc[loc]["dist_ema9"]) else np.nan,
+        "sma9_slope3": float(h.iloc[loc]["sma9_slope3"]) if pd.notna(h.iloc[loc]["sma9_slope3"]) else np.nan,
+        "rsi_vs_sma3": float(h.iloc[loc]["rsi_vs_sma3"]) if pd.notna(h.iloc[loc]["rsi_vs_sma3"]) else np.nan,
+        "rsi_vs_sma5": float(h.iloc[loc]["rsi_vs_sma5"]) if pd.notna(h.iloc[loc]["rsi_vs_sma5"]) else np.nan,
+        "rsi_vs_sma9": float(h.iloc[loc]["rsi_vs_sma9"]) if pd.notna(h.iloc[loc]["rsi_vs_sma9"]) else np.nan,
+        "rsi_sma5_slope1": float(h.iloc[loc]["rsi_sma5_slope1"]) if pd.notna(h.iloc[loc]["rsi_sma5_slope1"]) else np.nan,
+        "rsi_sma5_slope3": float(h.iloc[loc]["rsi_sma5_slope3"]) if pd.notna(h.iloc[loc]["rsi_sma5_slope3"]) else np.nan,
+        "dual_stretch_9": float(h.iloc[loc]["dual_stretch_9"]) if pd.notna(h.iloc[loc]["dual_stretch_9"]) else np.nan,
     }
 
 
@@ -251,6 +288,35 @@ def future_labels(h, idx, entry_mode="next_open"):
                     out[key+"_hit10_5d"] = out[key+"_mfe5d"] >= 0.10
                 break
 
+    # Moving-average entry confirmations. These are deliberately evaluated
+    # after the flush trigger so we can measure whether confirmation helps or
+    # simply gives away too much of the rebound.
+    trigger_px = float(h.iloc[loc]["close"])
+    for key, pred in (
+        ("ma_rsi_cross", lambda row: bool(row["rsi_cross_up_sma5"])),
+        ("ma_price_reclaim", lambda row: bool(row["price_cross_up_ema9"])),
+        ("ma_dual_reclaim", lambda row: bool(row["rsi_cross_up_sma5"]) and float(row["close"]) > float(row["ema9"])),
+        ("ma_rsi_lead", lambda row: bool(row["rsi_cross_up_sma5"]) and float(row["close"]) < float(row["ema9"])),
+    ):
+        out[key+"_found"] = False
+        for j in range(loc+1, min(len(h), loc+7)):
+            row = h.iloc[j]
+            if pred(row) and float(row["close"]) <= trigger_px*1.08:
+                px = float(row["close"])
+                out[key+"_found"] = True
+                out[key+"_bars"] = j-loc
+                out[key+"_entry"] = px
+                out[key+"_move_before_entry"] = px/entry - 1
+                fut = h.iloc[j+1:min(len(h),j+1+30)]
+                if not fut.empty:
+                    mfe=float(fut["high"].max()/px-1)
+                    mae=float(fut["low"].min()/px-1)
+                    out[key+"_mfe5d"]=mfe
+                    out[key+"_mae5d"]=mae
+                    out[key+"_hit5_5d"]=mfe>=0.05
+                    out[key+"_hit10_5d"]=mfe>=0.10
+                break
+
     # RSI-based exits from the ordinary next-open entry. Treat RSI as a
     # percentage-recovery path, not an absolute 30/70 oscillator.
     peak_rsi = float(h.iloc[max(0,loc-12):loc+1]["rsi14"].max())
@@ -277,6 +343,31 @@ def future_labels(h, idx, entry_mode="next_open"):
                 out[key+"_return"] = float(row["close"])/entry - 1
                 out[key+"_time"] = row["close_time"]
                 break
+
+    # Rebound-exhaustion exits using RSI's own SMA and price EMA9.
+    recovered50 = False
+    px_reclaimed = False
+    rsi_turn = px_loss = None
+    for j in range(start, min(len(h), start+31)):
+        row=h.iloc[j]
+        if float(row["rsi14"]) >= trough_rsi + loss*0.50:
+            recovered50=True
+        if float(row["close"]) > float(row["ema9"]):
+            px_reclaimed=True
+        if recovered50 and rsi_turn is None and bool(row["rsi_cross_down_sma5"]):
+            rsi_turn=j
+        if px_reclaimed and px_loss is None and bool(row["price_cross_down_ema9"]):
+            px_loss=j
+    out["ma_exit_rsi_turn_found"]=rsi_turn is not None
+    if rsi_turn is not None:
+        out["ma_exit_rsi_turn_return"]=float(h.iloc[rsi_turn]["close"])/entry-1
+    out["ma_exit_price_loss_found"]=px_loss is not None
+    if px_loss is not None:
+        out["ma_exit_price_loss_return"]=float(h.iloc[px_loss]["close"])/entry-1
+    out["ma_exit_dual_found"]=rsi_turn is not None and px_loss is not None and abs(rsi_turn-px_loss)<=1
+    if out["ma_exit_dual_found"]:
+        j=max(rsi_turn,px_loss)
+        out["ma_exit_dual_return"]=float(h.iloc[j]["close"])/entry-1
     return out
 
 
@@ -300,6 +391,10 @@ def feature_rule_search(events):
         ("rsi_price_shock_ratio","high"),
         ("daily_4h_rsi_gap","high"),
         ("rsi_to_daily_ratio","low"),
+        ("dist_sma9","low"),("dist_sma20","low"),("dist_ema9","low"),
+        ("sma9_slope3","low"),("rsi_vs_sma3","low"),("rsi_vs_sma5","low"),
+        ("rsi_vs_sma9","low"),("rsi_sma5_slope1","low"),
+        ("rsi_sma5_slope3","low"),("dual_stretch_9","low"),
     ]
     train, hold = train_holdout_split(events)
     candidates = []
@@ -487,7 +582,9 @@ def main():
 
     # Feature-bucket diagnostics: shows shape instead of assuming linearity.
     diag_rows = []
-    for feat in ["rsi_drop_pct","rsi_pct1","rsi_pct3","rsi_accel","rsi_price_shock_ratio","daily_4h_rsi_gap","rsi_to_daily_ratio"]:
+    for feat in ["rsi_drop_pct","rsi_pct1","rsi_pct3","rsi_accel","rsi_price_shock_ratio","daily_4h_rsi_gap","rsi_to_daily_ratio",
+                 "dist_sma9","dist_sma20","dist_ema9","sma9_slope3","rsi_vs_sma3","rsi_vs_sma5","rsi_vs_sma9",
+                 "rsi_sma5_slope1","rsi_sma5_slope3","dual_stretch_9"]:
         x = e[[feat,"hit5_5d","hit10_5d","mfe_5d","mae_5d"]].replace([np.inf,-np.inf],np.nan).dropna()
         if len(x) < 20:
             continue
