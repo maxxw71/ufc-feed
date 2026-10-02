@@ -1,0 +1,29 @@
+CAPACITY-AWARE HYPERLIQUID BANKROLL BACKTEST
+
+Start 10,000 USDC | 1,000 notional/trade | max 10 concurrent | no leverage
++5% TP | -7.5% SL | 5d timeout | same-bar ambiguity -> stop first
+Costs: actual funding to exit + 0.045% taker/side + 0.10% slippage/side
+
+           rule  trades  skipped_capacity  wins  win_rate  target_exits  stop_exits  timeout_exits  net_profit  ending_bankroll  max_simultaneous_cap
+  A_EMA9_RSIacc      12                13    11  0.916667            11           1              0  436.352338     10436.352338                    10
+E_EMA9_lowclose      17                12    15  0.882353            15           2              0  544.421633     10544.421633                    10
+F_ensemble_2of5      15                19    12  0.800000            12           3              0  327.162255     10327.162255                    10
+G_ensemble_3of5      13                14    11  0.846154            11           2              0  358.789838     10358.789838                    10
+
+MONTHLY
+  month  trades  wins         pnl  ending_bankroll_if_month_starts_10k            rule
+2026-05       1     1   46.928797                         10046.928797   A_EMA9_RSIacc
+2026-06       1     0  -78.340205                          9921.659795   A_EMA9_RSIacc
+2026-09      10    10  467.763747                         10467.763747   A_EMA9_RSIacc
+2026-05       1     1   46.928797                         10046.928797 E_EMA9_lowclose
+2026-06       3     1 -110.022322                          9889.977678 E_EMA9_lowclose
+2026-07       1     1   45.960675                         10045.960675 E_EMA9_lowclose
+2026-08       1     1   47.087500                         10047.087500 E_EMA9_lowclose
+2026-09      11    11  514.466983                         10514.466983 E_EMA9_lowclose
+2026-05       1     1   46.928797                         10046.928797 F_ensemble_2of5
+2026-06       2     0 -156.402705                          9843.597295 F_ensemble_2of5
+2026-08       1     0  -78.265083                          9921.734917 F_ensemble_2of5
+2026-09      11    11  514.901247                         10514.901247 F_ensemble_2of5
+2026-05       1     1   46.928797                         10046.928797 G_ensemble_3of5
+2026-06       2     0 -156.402705                          9843.597295 G_ensemble_3of5
+2026-09      10    10  468.263747                         10468.263747 G_ensemble_3of5
