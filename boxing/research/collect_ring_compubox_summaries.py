@@ -258,6 +258,48 @@ def parse_pair(text,a,b):
                     setv(f,'total_landed',m.group(1));setv(f,'total_thrown',m.group(2).replace(',',''))
                     setv(o,'total_landed',m.group(3));setv(o,'total_thrown',m.group(4).replace(',',''))
 
+    # Strict pair-specific Ring stat grammars for pages whose rendered prose
+    # uses a descriptor/pronoun instead of repeating both full fighter names.
+    pair_keys={nk(a),nk(b)}
+
+    # Eubank-Benn II: "Benn ... connecting on more body punches (70) than
+    # Eubank managed total (68) per the CompuBox numbers."
+    if pair_keys=={nk('Chris Eubank Jr.'),nk('Conor Benn')}:
+        m=re.search(
+            r'Benn[^.!?]{0,180}?body\s+punches\s*\((\d{1,4})\)\s+than\s+Eubank'
+            r'[^.!?]{0,80}?total\s*\((\d{1,4})\)[^.!?]{0,80}?CompuBox',
+            text,re.I)
+        if m:
+            # Resolve actual seed-name spelling rather than assuming a/b order.
+            bf=next(x for x in (a,b) if nk(x)==nk('Conor Benn'))
+            ef=next(x for x in (a,b) if nk(x)==nk('Chris Eubank Jr.'))
+            setv(bf,'body_landed',m.group(1));setv(ef,'total_landed',m.group(2))
+
+    # Ortiz-Lubin: exact verified pair, "Lubin ... absorbed ... 25 power
+    # punches (61%)". Absorbed power punches are opponent power connects.
+    if pair_keys=={nk('Vergil Ortiz Jr.'),nk('Erickson Lubin')}:
+        m=re.search(
+            r'Lubin[^.!?]{0,180}?absorbed\s+(?:a\s+whopping\s+)?(\d{1,4})\s+power\s+punches'
+            r'\s*\((\d+(?:\.\d+)?)%\)',
+            text,re.I)
+        if m:
+            of=next(x for x in (a,b) if nk(x)==nk('Vergil Ortiz Jr.'))
+            setv(of,'power_landed',m.group(1));setv(of,'power_accuracy_pct',m.group(2))
+
+    # Cordina-Quiroz: the exact Ring stats page uses "The Cardiff contender"
+    # for Cordina, then explicitly names Quiroz. Restrict this descriptor
+    # grammar to the already-verified exact pair only.
+    if pair_keys=={nk('Joe Cordina'),nk('Jaret Gonzalez Quiroz')}:
+        m=re.search(
+            r'The\s+Cardiff\s+contender\s+landed\s+(\d{1,4})\s+of\s+([\d,]{1,6})\s+total\s+punches'
+            r'[^.!?]{0,80}?while\s+Quiroz\s+was\s+(\d{1,4})\s*[-–]\s*of\s*[-–]\s*([\d,]{1,6})',
+            text,re.I)
+        if m:
+            cf=next(x for x in (a,b) if nk(x)==nk('Joe Cordina'))
+            qf=next(x for x in (a,b) if nk(x)==nk('Jaret Gonzalez Quiroz'))
+            setv(cf,'total_landed',m.group(1));setv(cf,'total_thrown',m.group(2).replace(',',''))
+            setv(qf,'total_landed',m.group(3));setv(qf,'total_thrown',m.group(4).replace(',',''))
+
     # Exact post-fight total grammar:
     # "Figueroa landed 17 more punches overall than Gonzalez (282 of 1,071 to 265 of 821)."
     for f,o in ((a,b),(b,a)):
