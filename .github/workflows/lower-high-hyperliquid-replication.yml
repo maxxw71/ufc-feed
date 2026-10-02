@@ -1,0 +1,63 @@
+name: Hyperliquid lower-high external replication
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'crypto/research/lower_high_hyperliquid_replication.py'
+      - 'crypto/research/lower_high_hyperliquid_aggregate.py'
+      - '.github/workflows/lower-high-hyperliquid-replication.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  scan:
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [0,1,2,3]
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install --quiet pandas numpy requests
+      - run: |
+          python crypto/research/lower_high_hyperliquid_replication.py             --days 600             --shard-index ${{ matrix.shard }}             --shard-count 4             --out hl_lower_high_out
+      - uses: actions/upload-artifact@v4
+        with:
+          name: hl-lower-high-${{ matrix.shard }}
+          path: hl_lower_high_out/
+          retention-days: 2
+
+  aggregate:
+    needs: scan
+    if: always() && needs.scan.result == 'success'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install --quiet pandas numpy
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: hl-lower-high-*
+          path: hl_lower_high_shards
+          merge-multiple: true
+      - run: python crypto/research/lower_high_hyperliquid_aggregate.py
+      - name: Commit outputs
+        run: |
+          git config user.name "appwiza-research-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add crypto/research/results_lower_high_hyperliquid_replication
+          if ! git diff --cached --quiet; then
+            git commit -m "Update Hyperliquid lower-high external replication"
+            git pull --rebase origin main
+            git push origin HEAD:main
+          fi
