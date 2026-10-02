@@ -45,11 +45,15 @@ def metrics(x):
         return None
     by = x.groupby('season').profit.agg(['count','sum'])
     active_seasons = by[by['count'] >= 5]
+    if 'win' in x.columns:
+        w = pd.to_numeric(x['win'], errors='coerce').fillna(0).astype(int)
+    else:
+        w = (pd.to_numeric(x['profit'], errors='coerce') > 0).astype(int)
     return {
         'n': int(len(x)),
-        'wins': int(x.win.sum()),
-        'losses': int(len(x) - x.win.sum()),
-        'win_rate': float(x.win.mean()),
+        'wins': int(w.sum()),
+        'losses': int(len(x) - w.sum()),
+        'win_rate': float(w.mean()),
         'roi': float(x.profit.mean()),
         'units': float(x.profit.sum()),
         'active_seasons': int(len(active_seasons)),
