@@ -166,6 +166,10 @@ def eligible_draw_features(draws):
     for c in draws.columns:
         if c in KEYS or c in {'odds','market_prob','actual_draw'}:
             continue
+        # drawctx__ columns are copies used only by side-veto analysis; exclude them
+        # from direct draw discovery so a rule cannot pair with a duplicate of itself.
+        if c.startswith('drawctx__'):
+            continue
         fam = family(c)
         if fam not in SAFE_FAMILIES or fam == 'other':
             continue
