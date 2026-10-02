@@ -240,9 +240,9 @@ def summarize(e):
     return pd.DataFrame(rows).sort_values(["hold_hit5","hold_n"],ascending=[False,False])
 
 def main():
-    ap=argparse.ArgumentParser();ap.add_argument("--symbols",type=int,default=120);ap.add_argument("--days",type=int,default=900)
+    ap=argparse.ArgumentParser();ap.add_argument("--symbols",type=int,default=120);ap.add_argument("--days",type=int,default=900);ap.add_argument("--out",default="crypto/research/results_lower_high_rsi30_binance")
     args=ap.parse_args()
-    out=Path("crypto/research/results_lower_high_rsi30_binance");out.mkdir(parents=True,exist_ok=True)
+    out=Path(args.out);out.mkdir(parents=True,exist_ok=True)
     s=requests.Session();s.headers["User-Agent"]="appwiza-lower-high-rsi30/1.0"
     end=datetime.now(timezone.utc).replace(minute=0,second=0,microsecond=0);start=end-timedelta(days=args.days)
     rows=[];cov=[]
