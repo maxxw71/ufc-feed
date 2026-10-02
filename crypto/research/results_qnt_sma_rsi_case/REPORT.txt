@@ -1,0 +1,25 @@
+QNT 4H SMA + RSI-SMA CASE STUDY
+
+Peak: 2026-09-27 20:00:00+00:00 high=373.0000
+Trough: 2026-09-28 08:00:00+00:00 low=195.3500
+Peak-to-trough: -47.63%
+Subsequent rebound high: 2026-09-30 08:00:00+00:00 high=329.0000
+Trough-to-rebound: 68.42%
+Pre-peak acceleration: 405.08%
+
+TRIGGER / MOMENTUM RESET
+Trough-close candle: {'time': '2026-09-28 08:00:00+00:00', 'close': 236.9, 'high': 272.0, 'low': 195.35, 'rsi': 69.9297074089845, 'rsi_pct1': -0.15096379756759548, 'rsi_pct3': -0.2584194118742541, 'rsi_accel': -13.524534713895875, 'rsi_vs_sma5': -0.15874616993324187, 'rsi_vs_sma9': -0.18534031800294992, 'dist_sma9': 0.10909970505157696, 'dist_sma20': 0.5236490397602296, 'dist_ema9': 0.09292166285009396}
+RSI peak in collapse window: 94.2982
+RSI at trough-close: 69.9297
+RSI percentage collapse: -25.84%
+
+ENTRY TIMING CANDIDATES
+RSI crosses above RSI-SMA5: {'time': '2026-09-29 04:00:00+00:00', 'close': 263.89, 'return_from_next_open': 0.11407100941444659, 'bars_after_trough_close': 5}
+Price crosses above EMA9: None
+Both RSI>RSI-SMA5 and price>EMA9: {'time': '2026-09-29 04:00:00+00:00', 'close': 263.89, 'return_from_next_open': 0.11407100941444659, 'bars_after_trough_close': 5}
+
+EXIT TIMING CANDIDATES
+RSI crosses below RSI-SMA5 after >=50% RSI recovery: None
+Price loses EMA9 after reclaim: {'time': '2026-10-01 08:00:00+00:00', 'close': 276.31, 'return_from_next_open': 0.16650483387512138, 'bars_after_trough_close': 18}
+
+Research implication: compare immediate next-open entry against RSI-leading-price, price-EMA9 reclaim, and dual-reclaim entries. For exits, compare RSI-SMA5 rollover versus price EMA9 loss so the strategy can let the rebound run without waiting for a fixed RSI 70/80 threshold.
