@@ -282,4 +282,31 @@ class RingCompuBoxSummaryTests(unittest.TestCase):
         self.assertEqual(out['Alan Picasso']['power_landed'],107)
 
 
+    def test_eubank_benn_body_and_total(self):
+        out=parse_pair(
+            "Benn (24-1, 14 KOs) began sharp and outlanded the older man across all 12 rounds, "
+            "connecting on more body punches (70) than Eubank managed total (68) per the CompuBox numbers.",
+            'Chris Eubank Jr.','Conor Benn')
+        self.assertEqual(out['Conor Benn']['body_landed'],70)
+        self.assertEqual(out['Chris Eubank Jr.']['total_landed'],68)
+
+    def test_ortiz_lubin_absorbed_power(self):
+        out=parse_pair(
+            "Lubin, three years older and more experienced, was quickly out of his depth and absorbed "
+            "a whopping 25 power punches (61%) in four-and-a-half minutes.",
+            'Vergil Ortiz Jr.','Erickson Lubin')
+        self.assertEqual(out['Vergil Ortiz Jr.']['power_landed'],25)
+        self.assertEqual(out['Vergil Ortiz Jr.']['power_accuracy_pct'],61)
+
+    def test_cordina_quiroz_cardiff_descriptor(self):
+        out=parse_pair(
+            "The Cardiff contender landed 146 of 498 total punches over 10 rounds, "
+            "while Quiroz was 83-of-422 on his attempts.",
+            'Joe Cordina','Jaret Gonzalez Quiroz')
+        self.assertEqual(out['Joe Cordina']['total_landed'],146)
+        self.assertEqual(out['Joe Cordina']['total_thrown'],498)
+        self.assertEqual(out['Jaret Gonzalez Quiroz']['total_landed'],83)
+        self.assertEqual(out['Jaret Gonzalez Quiroz']['total_thrown'],422)
+
+
 if __name__=='__main__':unittest.main()
