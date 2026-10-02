@@ -1,0 +1,149 @@
+name: Appwiza Trading Crypto live deploy
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'crypto/live/live_crypto_scanner.py'
+      - 'crypto/live/methods.json'
+      - 'crypto/live/trading_index.html'
+      - 'crypto/live/crypto_index.html'
+      - 'crypto/live/ensure_trading_nav.py'
+      - '.github/workflows/appwiza-trading-crypto-live-deploy.yml'
+  workflow_dispatch:
+
+concurrency:
+  group: appwiza-trading-crypto-live
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  deploy:
+    runs-on: [self-hosted, Linux, X64, appwiza]
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Reject stale deployment
+        id: freshness
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          git fetch origin main
+          THIS=$(sha256sum crypto/live/live_crypto_scanner.py crypto/live/methods.json crypto/live/trading_index.html crypto/live/crypto_index.html crypto/live/ensure_trading_nav.py | sha256sum | awk '{print $1}')
+          LATEST=$(for f in crypto/live/live_crypto_scanner.py crypto/live/methods.json crypto/live/trading_index.html crypto/live/crypto_index.html crypto/live/ensure_trading_nav.py; do git show "origin/main:$f"; done | sha256sum | awk '{print $1}')
+          echo "this=$THIS latest=$LATEST"
+          if [ "$THIS" != "$LATEST" ]; then
+            echo "deploy=false" >> "$GITHUB_OUTPUT"
+            echo "STALE TRADING DEPLOY — skip"
+          else
+            echo "deploy=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Validate source
+        if: steps.freshness.outputs.deploy == 'true'
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          python3 -m py_compile crypto/live/live_crypto_scanner.py crypto/live/ensure_trading_nav.py
+          python3 - <<'PY'
+          import json
+          x=json.load(open('crypto/live/methods.json'))
+          assert len(x['methods'])==2
+          assert all(m['enabled'] for m in x['methods'])
+          assert {m['id'] for m in x['methods']}=={'C1','C2'}
+          PY
+          grep -q 'Trading · Crypto' crypto/live/crypto_index.html
+          grep -q '/trading/crypto/' crypto/live/trading_index.html
+
+      - name: Deploy Trading pages and live scanner
+        if: steps.freshness.outputs.deploy == 'true'
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          KEY=/home/appwiza-runner/.ssh/appwiza_vps
+          HOST=anestishkurti92@127.0.0.1
+          SSH="ssh -i $KEY -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=accept-new $HOST"
+
+          cat crypto/live/live_crypto_scanner.py | $SSH 'mkdir -p /home/anestishkurti92/crypto-trading; cat > /home/anestishkurti92/crypto-trading/live_crypto_scanner.py'
+          cat crypto/live/methods.json | $SSH 'mkdir -p /home/anestishkurti92/crypto-trading; cat > /home/anestishkurti92/crypto-trading/methods.json'
+          cat crypto/live/ensure_trading_nav.py | $SSH 'mkdir -p /home/anestishkurti92/crypto-trading; cat > /home/anestishkurti92/crypto-trading/ensure_trading_nav.py'
+          cat crypto/live/trading_index.html | $SSH 'mkdir -p /srv/appwiza-sports/public/trading; cat > /srv/appwiza-sports/public/trading/index.html'
+          cat crypto/live/crypto_index.html | $SSH 'mkdir -p /srv/appwiza-sports/public/trading/crypto; cat > /srv/appwiza-sports/public/trading/crypto/index.html'
+
+          $SSH 'bash -s' <<'EOF' | tee crypto/trading_live_deploy_report.txt
+          set -Eeuo pipefail
+          PY=/home/anestishkurti92/ufc-predictor-v1/venv/bin/python
+          ROOT=/home/anestishkurti92/crypto-trading
+          PUB=/srv/appwiza-sports/public/trading/crypto
+
+          chmod 0755 "$ROOT/live_crypto_scanner.py" "$ROOT/ensure_trading_nav.py"
+          chmod 0644 "$ROOT/methods.json" /srv/appwiza-sports/public/trading/index.html /srv/appwiza-sports/public/trading/crypto/index.html
+
+          "$PY" -m py_compile "$ROOT/live_crypto_scanner.py" "$ROOT/ensure_trading_nav.py"
+
+          if [ -f /srv/appwiza-sports/public/index.html ]; then
+            cp -a /srv/appwiza-sports/public/index.html "/srv/appwiza-sports/public/index.html.pre-trading.$(date -u +%Y%m%dT%H%M%SZ).bak"
+          fi
+          "$PY" "$ROOT/ensure_trading_nav.py"
+
+          "$PY" "$ROOT/live_crypto_scanner.py"             --methods "$ROOT/methods.json"             --output "$PUB/signals.json"             --history "$ROOT/history.json"             --days 125             --recent-hours 72
+
+          TMP=$(mktemp)
+          crontab -l 2>/dev/null | grep -v '/crypto-trading/live_crypto_scanner.py' | grep -v '/crypto-trading/ensure_trading_nav.py' > "$TMP" || true
+          echo 'CRON_TZ=UTC' >> "$TMP"
+          echo '*/15 * * * * /home/anestishkurti92/ufc-predictor-v1/venv/bin/python /home/anestishkurti92/crypto-trading/ensure_trading_nav.py >> /home/anestishkurti92/crypto-trading/scanner.log 2>&1; /home/anestishkurti92/ufc-predictor-v1/venv/bin/python /home/anestishkurti92/crypto-trading/live_crypto_scanner.py --methods /home/anestishkurti92/crypto-trading/methods.json --output /srv/appwiza-sports/public/trading/crypto/signals.json --history /home/anestishkurti92/crypto-trading/history.json --days 125 --recent-hours 72 >> /home/anestishkurti92/crypto-trading/scanner.log 2>&1' >> "$TMP"
+          crontab "$TMP"
+          rm -f "$TMP"
+
+          echo 'APPWIZA TRADING CRYPTO DEPLOY'
+          date -u
+          echo 'scanner_compile=ok'
+          echo 'scanner_prime=ok'
+          echo 'trading_nav_guard=ok'
+          echo '--- pages ---'
+          stat -c '%U:%G %a %s %n' /srv/appwiza-sports/public/trading/index.html /srv/appwiza-sports/public/trading/crypto/index.html "$PUB/signals.json"
+          echo '--- methods ---'
+          "$PY" - <<'PY'
+          import json
+          x=json.load(open('/srv/appwiza-sports/public/trading/crypto/signals.json'))
+          for m in x['methods']:
+              print(m['id'],m['name'],m['validation']['n'],m['validation']['hit5'])
+          print('signals',len(x['signals']))
+          print('coverage',x['coverage'])
+          PY
+          echo '--- cron ---'
+          crontab -l | grep 'crypto-trading'
+          EOF
+
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add crypto/trading_live_deploy_report.txt
+          if ! git diff --cached --quiet; then
+            git commit -m 'Record Appwiza Trading crypto live deployment'
+            git pull --rebase origin main
+            git push origin HEAD:main
+          fi
+
+      - name: Verify public routes
+        if: steps.freshness.outputs.deploy == 'true'
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          sleep 2
+          curl -fsSL https://appwiza.com/trading/ > /tmp/trading.html
+          curl -fsSL https://appwiza.com/trading/crypto/ > /tmp/trading-crypto.html
+          curl -fsSL https://appwiza.com/trading/crypto/signals.json > /tmp/trading-signals.json
+          grep -q 'Appwiza Trading' /tmp/trading.html
+          grep -q 'Crypto method scanner' /tmp/trading-crypto.html
+          python3 - <<'PY'
+          import json
+          x=json.load(open('/tmp/trading-signals.json'))
+          assert len(x['methods'])==2
+          assert {m['id'] for m in x['methods']}=={'C1','C2'}
+          print('PUBLIC_TRADING_VERIFY=PASS signals',len(x['signals']))
+          PY
