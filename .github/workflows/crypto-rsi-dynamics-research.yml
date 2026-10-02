@@ -1,0 +1,39 @@
+name: Crypto RSI dynamics research
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'crypto/research/rsi_dynamics_rebound.py'
+      - '.github/workflows/crypto-rsi-dynamics-research.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: crypto-rsi-dynamics-research
+  cancel-in-progress: true
+
+jobs:
+  research:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install --quiet pandas numpy requests
+      - name: Run multidimensional RSI study
+        run: |
+          python crypto/research/rsi_dynamics_rebound.py             --symbols 40             --days 600             --out crypto/research/results_rsi_dynamics
+      - name: Commit outputs
+        run: |
+          git config user.name "appwiza-research-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add crypto/research/results_rsi_dynamics
+          if ! git diff --cached --quiet; then
+            git commit -m "Update multidimensional RSI crypto research"
+            git push origin HEAD:main
+          fi
