@@ -1,0 +1,60 @@
+name: MLS Individual Player Feature Build
+
+on:
+  schedule:
+    - cron: '40 9 * * 1'
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/mls_individual_player_features.py'
+      - '.github/workflows/mls-individual-player-features.yml'
+
+concurrency:
+  group: mls-individual-player-features
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: [self-hosted, Linux, X64, appwiza]
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+        with: {fetch-depth: 0}
+      - name: Deploy and build player features
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          KEY=/home/appwiza-runner/.ssh/appwiza_vps
+          HOST=anestishkurti92@127.0.0.1
+          D=/home/anestishkurti92/mls-predictor-v1
+          cat scripts/mls_individual_player_features.py | ssh -i "$KEY" -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=accept-new "$HOST" "cat > $D/mls_individual_player_features.py"
+          ssh -i "$KEY" -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=accept-new "$HOST" "cd $D && venv/bin/python -m py_compile mls_individual_player_features.py && OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 nice -n 12 timeout 28m venv/bin/python mls_individual_player_features.py"
+      - name: Pull feature metadata
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          KEY=/home/appwiza-runner/.ssh/appwiza_vps
+          HOST=anestishkurti92@127.0.0.1
+          mkdir -p mls/players
+          ssh -i "$KEY" -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=accept-new "$HOST" 'cat /home/anestishkurti92/mls-predictor-v1/reports/individual_player_feature_meta.json' > mls/players/individual_player_feature_meta.json
+          cat mls/players/individual_player_feature_meta.json
+      - name: Persist metadata
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          cp mls/players/individual_player_feature_meta.json "$RUNNER_TEMP/ip_meta.json"
+          git fetch origin main
+          git reset --hard origin/main
+          mkdir -p mls/players
+          cp "$RUNNER_TEMP/ip_meta.json" mls/players/individual_player_feature_meta.json
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git add mls/players/individual_player_feature_meta.json
+          if ! git diff --cached --quiet; then
+            git commit -m 'Publish MLS individual-player feature metadata'
+            git push origin HEAD:main
+          fi
