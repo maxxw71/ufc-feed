@@ -197,8 +197,47 @@ def prep4h(h):
     x["volume_ratio20"] = x["volume"] / x["volume_med20"].replace(0, np.nan)
     x["range_med20"] = x["range_pct"].rolling(20, min_periods=10).median()
     x["range_ratio20"] = x["range_pct"] / x["range_med20"].replace(0, np.nan)
+
+    # Price trend / mean-reversion structure. We deliberately keep several
+    # horizons so the search can learn whether the rebound begins while price
+    # is still stretched below trend, on a fast reclaim, or only after a
+    # slower trend reset.
+    x["sma9"] = x["close"].rolling(9, min_periods=5).mean()
+    x["sma20"] = x["close"].rolling(20, min_periods=10).mean()
+    x["sma50"] = x["close"].rolling(50, min_periods=25).mean()
+    x["ema9"] = x["close"].ewm(span=9, adjust=False).mean()
     x["ema20"] = x["close"].ewm(span=20, adjust=False).mean()
+    x["dist_sma9"] = x["close"] / x["sma9"] - 1
+    x["dist_sma20"] = x["close"] / x["sma20"] - 1
+    x["dist_sma50"] = x["close"] / x["sma50"] - 1
+    x["dist_ema9"] = x["close"] / x["ema9"] - 1
     x["dist_ema20"] = x["close"] / x["ema20"] - 1
+    x["sma9_slope3"] = x["sma9"] / x["sma9"].shift(3) - 1
+    x["sma20_slope3"] = x["sma20"] / x["sma20"].shift(3) - 1
+    x["price_cross_up_ema9"] = (x["close"] > x["ema9"]) & (x["close"].shift(1) <= x["ema9"].shift(1))
+    x["price_cross_down_ema9"] = (x["close"] < x["ema9"]) & (x["close"].shift(1) >= x["ema9"].shift(1))
+    x["price_cross_up_sma9"] = (x["close"] > x["sma9"]) & (x["close"].shift(1) <= x["sma9"].shift(1))
+    x["price_cross_down_sma9"] = (x["close"] < x["sma9"]) & (x["close"].shift(1) >= x["sma9"].shift(1))
+
+    # RSI gets its own moving-average structure. This lets us test RSI as a
+    # price-like series rather than an absolute 30/70 oscillator.
+    x["rsi_sma3"] = x["rsi14"].rolling(3, min_periods=2).mean()
+    x["rsi_sma5"] = x["rsi14"].rolling(5, min_periods=3).mean()
+    x["rsi_sma9"] = x["rsi14"].rolling(9, min_periods=5).mean()
+    x["rsi_ema5"] = x["rsi14"].ewm(span=5, adjust=False).mean()
+    x["rsi_vs_sma3"] = x["rsi14"] / x["rsi_sma3"] - 1
+    x["rsi_vs_sma5"] = x["rsi14"] / x["rsi_sma5"] - 1
+    x["rsi_vs_sma9"] = x["rsi14"] / x["rsi_sma9"] - 1
+    x["rsi_vs_ema5"] = x["rsi14"] / x["rsi_ema5"] - 1
+    x["rsi_sma5_slope1"] = x["rsi_sma5"].pct_change()
+    x["rsi_sma5_slope3"] = x["rsi_sma5"] / x["rsi_sma5"].shift(3) - 1
+    x["rsi_cross_up_sma5"] = (x["rsi14"] > x["rsi_sma5"]) & (x["rsi14"].shift(1) <= x["rsi_sma5"].shift(1))
+    x["rsi_cross_down_sma5"] = (x["rsi14"] < x["rsi_sma5"]) & (x["rsi14"].shift(1) >= x["rsi_sma5"].shift(1))
+
+    # Joint stretch: large negative means both price and RSI are below their
+    # own local means. Lead/lag between the two reclaims may identify the
+    # earliest high-quality rebound entry.
+    x["dual_stretch_9"] = x["dist_sma9"].fillna(0) + x["rsi_vs_sma9"].fillna(0)
     return x
 
 
@@ -298,6 +337,19 @@ def build_event(h, d, arm, idx, threshold, meta):
         "lower_wick_pct_range": fnum(h.iloc[loc]["lower_wick_pct_range"]),
         "close_location": fnum(h.iloc[loc]["close_location"]),
         "dist_ema20": fnum(h.iloc[loc]["dist_ema20"]),
+        "dist_ema9": fnum(h.iloc[loc]["dist_ema9"]),
+        "dist_sma9": fnum(h.iloc[loc]["dist_sma9"]),
+        "dist_sma20": fnum(h.iloc[loc]["dist_sma20"]),
+        "dist_sma50": fnum(h.iloc[loc]["dist_sma50"]),
+        "sma9_slope3": fnum(h.iloc[loc]["sma9_slope3"]),
+        "sma20_slope3": fnum(h.iloc[loc]["sma20_slope3"]),
+        "rsi_vs_sma3": fnum(h.iloc[loc]["rsi_vs_sma3"]),
+        "rsi_vs_sma5": fnum(h.iloc[loc]["rsi_vs_sma5"]),
+        "rsi_vs_sma9": fnum(h.iloc[loc]["rsi_vs_sma9"]),
+        "rsi_vs_ema5": fnum(h.iloc[loc]["rsi_vs_ema5"]),
+        "rsi_sma5_slope1": fnum(h.iloc[loc]["rsi_sma5_slope1"]),
+        "rsi_sma5_slope3": fnum(h.iloc[loc]["rsi_sma5_slope3"]),
+        "dual_stretch_9": fnum(h.iloc[loc]["dual_stretch_9"]),
     }
 
     for name, bars in (("36h",9),("72h",18),("5d",30)):
@@ -337,6 +389,69 @@ def build_event(h, d, arm, idx, threshold, meta):
                 rec[key+"_found"] = True
                 rec[key+"_return"] = fnum(row["close"]) / entry - 1
                 break
+
+    # MA-aware entry timing. We test whether RSI leads price out of the hole,
+    # whether price reclaim alone is enough, and whether requiring both is
+    # worth the delay. These are evaluated after the original flush signal so
+    # they cannot leak future information into the trigger.
+    trigger_px = fnum(h.iloc[loc]["close"])
+    for key, predicate in (
+        ("entry_rsi_sma5_cross", lambda row: bool(row["rsi_cross_up_sma5"])),
+        ("entry_price_ema9_reclaim", lambda row: bool(row["price_cross_up_ema9"])),
+        ("entry_dual_reclaim", lambda row: bool(row["rsi_cross_up_sma5"]) and fnum(row["close"]) > fnum(row["ema9"])),
+        ("entry_rsi_leads_price", lambda row: bool(row["rsi_cross_up_sma5"]) and fnum(row["close"]) < fnum(row["ema9"])),
+    ):
+        rec[key+"_found"] = False
+        for j in range(loc+1, min(len(h), loc+7)):
+            row = h.iloc[j]
+            if predicate(row) and fnum(row["close"]) <= trigger_px * 1.08:
+                px = fnum(row["close"])
+                rec[key+"_found"] = True
+                rec[key+"_bars"] = j-loc
+                rec[key+"_return_at_entry"] = px/entry - 1
+                fut = h.iloc[j+1:min(len(h), j+1+30)]
+                if not fut.empty and px > 0:
+                    mfe = fnum(fut["high"].max()/px - 1)
+                    mae = fnum(fut["low"].min()/px - 1)
+                    rec[key+"_mfe5d"] = mfe
+                    rec[key+"_mae5d"] = mae
+                    rec[key+"_hit5_5d"] = mfe >= 0.05
+                    rec[key+"_hit10_5d"] = mfe >= 0.10
+                break
+
+    # MA-aware exits. Exit only after the rebound has actually developed:
+    # 1) RSI turns back under its own SMA5 after having recovered >=50% of the
+    #    original RSI loss; 2) price loses EMA9 after first reclaiming it;
+    # 3) both happen on the same/adjacent bar.
+    recovered50 = False
+    price_reclaimed = False
+    rsi_down_j = None
+    price_down_j = None
+    for j in range(start, min(len(h), start+31)):
+        row = h.iloc[j]
+        if fnum(row["rsi14"]) >= rr + loss*0.50:
+            recovered50 = True
+        if fnum(row["close"]) > fnum(row["ema9"]):
+            price_reclaimed = True
+        if recovered50 and rsi_down_j is None and bool(row["rsi_cross_down_sma5"]):
+            rsi_down_j = j
+        if price_reclaimed and price_down_j is None and bool(row["price_cross_down_ema9"]):
+            price_down_j = j
+
+    rec["exit_rsi_sma5_turn_found"] = rsi_down_j is not None
+    if rsi_down_j is not None:
+        rec["exit_rsi_sma5_turn_return"] = fnum(h.iloc[rsi_down_j]["close"])/entry - 1
+        rec["exit_rsi_sma5_turn_bars"] = rsi_down_j-start
+    rec["exit_price_ema9_loss_found"] = price_down_j is not None
+    if price_down_j is not None:
+        rec["exit_price_ema9_loss_return"] = fnum(h.iloc[price_down_j]["close"])/entry - 1
+        rec["exit_price_ema9_loss_bars"] = price_down_j-start
+    dual_candidates = [j for j in (rsi_down_j, price_down_j) if j is not None]
+    rec["exit_dual_turn_found"] = len(dual_candidates)==2 and abs(rsi_down_j-price_down_j) <= 1
+    if rec["exit_dual_turn_found"]:
+        j = max(rsi_down_j, price_down_j)
+        rec["exit_dual_turn_return"] = fnum(h.iloc[j]["close"])/entry - 1
+        rec["exit_dual_turn_bars"] = j-start
     return rec
 
 
@@ -391,7 +506,10 @@ def rule_search(events):
         ("daily_4h_rsi_gap","high"),("rsi_to_daily_ratio","low"),
         ("volume_ratio20","high"),("range_ratio20","high"),
         ("lower_wick_pct_range","high"),("close_location","low"),
-        ("dist_ema20","low"),
+        ("dist_ema20","low"),("dist_ema9","low"),("dist_sma9","low"),
+        ("dist_sma20","low"),("sma9_slope3","low"),
+        ("rsi_vs_sma3","low"),("rsi_vs_sma5","low"),("rsi_vs_sma9","low"),
+        ("rsi_sma5_slope1","low"),("rsi_sma5_slope3","low"),("dual_stretch_9","low"),
     ]
     all_rows = []
     for th, base in events.groupby("flush_threshold"):
@@ -475,7 +593,9 @@ def bucket_report(events):
     rows = []
     feats = ["rsi_pct1","rsi_pct3","rsi_accel","rsi_drop_pct","rsi_price_shock_ratio",
              "daily_4h_rsi_gap","rsi_to_daily_ratio","volume_ratio20","range_ratio20",
-             "lower_wick_pct_range","close_location","dist_ema20"]
+             "lower_wick_pct_range","close_location","dist_ema20","dist_ema9",
+             "dist_sma9","dist_sma20","sma9_slope3","rsi_vs_sma3","rsi_vs_sma5",
+             "rsi_vs_sma9","rsi_sma5_slope1","rsi_sma5_slope3","dual_stretch_9"]
     for feat in feats:
         x = events[[feat,"hit5_5d","hit10_5d","mfe_5d","mae_5d"]].replace([np.inf,-np.inf],np.nan).dropna()
         if len(x) < 40:
@@ -513,15 +633,49 @@ def exit_report(events):
         ("rsi_recover_50","Recover 50% RSI loss"),
         ("rsi_recover_75","Recover 75% RSI loss"),
         ("rsi_recover_100","Recover 100% RSI loss"),
+        ("exit_rsi_sma5_turn","RSI crosses below RSI-SMA5 after >=50% recovery"),
+        ("exit_price_ema9_loss","Price loses EMA9 after reclaim"),
+        ("exit_dual_turn","RSI-SMA5 turn + price EMA9 loss within 1 bar"),
     ]:
-        g = events[events[key+"_found"] == True]
-        ret = g[key+"_return"] if len(g) else pd.Series(dtype=float)
+        found_col = key+"_found"
+        ret_col = key+"_return"
+        if found_col not in events.columns:
+            continue
+        g = events[events[found_col] == True]
+        ret = g[ret_col] if len(g) and ret_col in g.columns else pd.Series(dtype=float)
         rows.append({
             "exit":label,"n":len(g),"coverage":len(g)/len(events) if len(events) else np.nan,
             "positive_rate":float((ret>0).mean()) if len(ret) else np.nan,
             "return_ge_5":float((ret>=0.05).mean()) if len(ret) else np.nan,
+            "return_ge_10":float((ret>=0.10).mean()) if len(ret) else np.nan,
             "median_return":fnum(ret.median()) if len(ret) else np.nan,
             "mean_return":fnum(ret.mean()) if len(ret) else np.nan,
+        })
+    return pd.DataFrame(rows)
+
+
+def entry_report(events):
+    rows = []
+    for key,label in [
+        ("entry_rsi_sma5_cross","RSI crosses above RSI-SMA5"),
+        ("entry_price_ema9_reclaim","Price reclaims EMA9"),
+        ("entry_dual_reclaim","RSI-SMA5 cross + price above EMA9"),
+        ("entry_rsi_leads_price","RSI-SMA5 cross while price still below EMA9"),
+    ]:
+        found = key+"_found"
+        if found not in events.columns:
+            continue
+        g = events[events[found] == True]
+        rows.append({
+            "entry":label,
+            "n":len(g),
+            "coverage":len(g)/len(events) if len(events) else np.nan,
+            "median_delay_bars":fnum(g[key+"_bars"].median()) if len(g) and key+"_bars" in g else np.nan,
+            "median_price_move_before_entry":fnum(g[key+"_return_at_entry"].median()) if len(g) and key+"_return_at_entry" in g else np.nan,
+            "hit5_5d":rate(g[key+"_hit5_5d"]) if len(g) and key+"_hit5_5d" in g else np.nan,
+            "hit10_5d":rate(g[key+"_hit10_5d"]) if len(g) and key+"_hit10_5d" in g else np.nan,
+            "median_mfe5d":fnum(g[key+"_mfe5d"].median()) if len(g) and key+"_mfe5d" in g else np.nan,
+            "median_mae5d":fnum(g[key+"_mae5d"].median()) if len(g) and key+"_mae5d" in g else np.nan,
         })
     return pd.DataFrame(rows)
 
@@ -607,6 +761,8 @@ def aggregate(args):
     buckets.to_csv(out/"feature_buckets.csv",index=False)
     exits = exit_report(events)
     exits.to_csv(out/"rsi_exit_rules.csv",index=False)
+    entries = entry_report(events)
+    entries.to_csv(out/"ma_entry_rules.csv",index=False)
 
     # Correlation-aware portfolio-style view on 8% trigger, which fires first.
     e8 = events[events["flush_threshold"]==0.08].copy()
@@ -643,7 +799,10 @@ def aggregate(args):
         "CORRELATION-AWARE: strongest 1-bar RSI collapse per 18h market episode (8% trigger)",
         str(pick_summary),
         "",
-        "RSI RECOVERY EXITS",
+        "MA / RSI-SMA ENTRY TIMING",
+        entries.to_string(index=False),
+        "",
+        "RSI + PRICE-MA EXITS",
         exits.to_string(index=False),
         "",
         "Guardrails:",
