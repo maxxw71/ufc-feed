@@ -1,0 +1,191 @@
+{
+  "built_at": "2026-10-02",
+  "status": "SHADOW_RESEARCH_ONLY",
+  "policy": "No DRAW methods. No automatic promotion. Definitions are frozen from completed historical research outputs; 2026 is prospective only.",
+  "candidates": [
+    {
+      "id": "MLS-ND01",
+      "name": "Away Salary Lineup Value Edge",
+      "outcome": "AWAY",
+      "price_band": "P20_30",
+      "rule": {
+        "feature": "new__salary__salary_top11_minutes5_gc__edge",
+        "op": ">=",
+        "threshold": 1451395.3324999998
+      },
+      "train": {
+        "n": 138,
+        "roi": 0.13260869565217392
+      },
+      "validation": {
+        "n": 121,
+        "roi": 0.14066115702479343
+      },
+      "holdout": {
+        "n": 166,
+        "roi": 0.126566265060241
+      },
+      "full": {
+        "n": 425,
+        "roi": 0.13254117647058827
+      },
+      "status": "HIGH_PRIORITY_SHADOW",
+      "rationale": "Distinct salary/lineup-value mechanism with unusually stable train-validation-holdout ROI."
+    },
+    {
+      "id": "MLS-ND02",
+      "name": "Away G+ Passing Strength",
+      "outcome": "AWAY",
+      "price_band": "P20_30",
+      "rule": {
+        "feature": "new__style__style_gplus_passing_3__sel",
+        "op": ">=",
+        "threshold": 0.36743333333333333
+      },
+      "train": {
+        "n": 221,
+        "roi": 0.13176470588235298
+      },
+      "validation": {
+        "n": 120,
+        "roi": 0.16666666666666666
+      },
+      "holdout": {
+        "n": 115,
+        "roi": 0.1848695652173913
+      },
+      "full": {
+        "n": 456,
+        "roi": 0.15434210526315792
+      },
+      "status": "HIGH_PRIORITY_SHADOW",
+      "rationale": "Independent G+ passing-quality mechanism; holdout strengthens rather than decays."
+    },
+    {
+      "id": "MLS-ND03",
+      "name": "Away Workload Advantage",
+      "outcome": "AWAY",
+      "price_band": "P25_35",
+      "rule": {
+        "feature": "new__cross_comp__allcomp_matches_21d__edge",
+        "op": "<=",
+        "threshold": -1
+      },
+      "train": {
+        "n": 184,
+        "roi": 0.06543478260869565
+      },
+      "validation": {
+        "n": 126,
+        "roi": 0.0696825396825397
+      },
+      "holdout": {
+        "n": 127,
+        "roi": 0.16645669291338586
+      },
+      "full": {
+        "n": 437,
+        "roi": 0.09601830663615561
+      },
+      "status": "HIGH_PRIORITY_SHADOW",
+      "rationale": "Distinct schedule/congestion mechanism with large sample and positive untouched holdout."
+    },
+    {
+      "id": "MLS-ND04",
+      "name": "Home Opponent Creative Weakness",
+      "outcome": "HOME",
+      "price_band": "P25_35",
+      "rule": {
+        "feature": "new__style__style_key_passes_5__opp",
+        "op": "<=",
+        "threshold": 9.2
+      },
+      "train": {
+        "n": 50,
+        "roi": 0.18460000000000001
+      },
+      "validation": {
+        "n": 78,
+        "roi": 0.14038461538461539
+      },
+      "holdout": {
+        "n": 47,
+        "roi": 0.1268085106382979
+      },
+      "full": {
+        "n": 175,
+        "roi": 0.14937142857142857
+      },
+      "status": "SHADOW_WATCH",
+      "rationale": "Consistent HOME underdog edge tied to opponent chance creation; smaller sample than ND01-ND03."
+    },
+    {
+      "id": "MLS-ND05",
+      "name": "Fresh Home Underdog Player Load",
+      "outcome": "HOME",
+      "price_band": "P20_30",
+      "rule": {
+        "feature": "edge_player_high_load_players3",
+        "op": "<=",
+        "threshold": -1
+      },
+      "train": {
+        "n": 40,
+        "roi": 0.30824999999999997
+      },
+      "validation": {
+        "n": 56,
+        "roi": 0.22750000000000004
+      },
+      "holdout": {
+        "n": 25,
+        "roi": 0.24200000000000008
+      },
+      "full": {
+        "n": 121,
+        "roi": 0.2571900826446281
+      },
+      "bootstrap95_roi": [
+        -0.059024793388429746,
+        0.5821962809917358
+      ],
+      "threshold_neighbors_positive_all_eras": 5,
+      "status": "SHADOW_WATCH",
+      "rationale": "Excellent threshold stability but bootstrap interval still crosses zero and team concentration is somewhat high."
+    },
+    {
+      "id": "MLS-ND06",
+      "name": "Away Opponent Lineup Instability",
+      "outcome": "AWAY",
+      "price_band": "P20_30",
+      "rule": {
+        "feature": "new__confirmed_lineup__confirmed_top11_start_share5__opp",
+        "op": "<=",
+        "threshold": 0.8363636363636363
+      },
+      "train": {
+        "period": "2022-2023",
+        "n": 258,
+        "roi": 0.08472868217054264
+      },
+      "validation": {
+        "period": "2024",
+        "n": 150,
+        "roi": 0.2034
+      },
+      "holdout": {
+        "period": "2025",
+        "n": 130,
+        "roi": 0.18676923076923077
+      },
+      "status": "RECENT_ONLY_SHADOW_WATCH",
+      "rationale": "Strong recent confirmed-lineup signal; insufficient long-history coverage for long-era status."
+    }
+  ],
+  "explicitly_not_counted": [
+    "Low referee O2.5 away signal: already represented by MLS-A05.",
+    "Opponent no-new-players away signal: already contributes to MLS-A06 family.",
+    "Stable-roster HOME xGD family: already tracked as MLS-A04/watch-only.",
+    "HOME opponent top11 minutes share >= 0.8379: rejected despite attractive ROI because only 1/5 neighboring thresholds survived all eras."
+  ]
+}
