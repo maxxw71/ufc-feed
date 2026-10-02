@@ -1,0 +1,81 @@
+name: MLS Fixed Draw Candidate Validation
+
+on:
+  schedule:
+    - cron: '20 12 * * 1'
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/mls_draw_candidate_validation.py'
+      - '.github/workflows/mls-draw-candidate-validation.yml'
+
+concurrency:
+  group: mls-draw-candidate-validation
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  validate:
+    runs-on: [self-hosted, Linux, X64, appwiza]
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+        with: {fetch-depth: 0}
+
+      - name: Deploy validation scripts
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          KEY=/home/appwiza-runner/.ssh/appwiza_vps
+          HOST=anestishkurti92@127.0.0.1
+          D=/home/anestishkurti92/mls-predictor-v1
+          for f in mls_draw_candidate_validation.py mls_master_method_discovery.py; do
+            cat "scripts/$f" | ssh -i "$KEY" -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=accept-new "$HOST" "cat > $D/$f"
+          done
+
+      - name: Run fixed candidate validation
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          KEY=/home/appwiza-runner/.ssh/appwiza_vps
+          HOST=anestishkurti92@127.0.0.1
+          D=/home/anestishkurti92/mls-predictor-v1
+          ssh -i "$KEY" -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=accept-new "$HOST" 'bash -s' <<'EOF'
+          set -Eeuo pipefail
+          cd /home/anestishkurti92/mls-predictor-v1
+          venv/bin/python -m py_compile mls_draw_candidate_validation.py mls_master_method_discovery.py
+          OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1 nice -n 12 timeout 28m venv/bin/python mls_draw_candidate_validation.py
+          EOF
+
+      - name: Pull validation results
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          KEY=/home/appwiza-runner/.ssh/appwiza_vps
+          HOST=anestishkurti92@127.0.0.1
+          mkdir -p mls/research
+          ssh -i "$KEY" -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=accept-new "$HOST" 'cat /home/anestishkurti92/mls-predictor-v1/research/draw_candidate_validation/latest.json' > mls/research/draw_candidate_validation_latest.json
+          ssh -i "$KEY" -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=accept-new "$HOST" 'cat /home/anestishkurti92/mls-predictor-v1/research/draw_candidate_validation/latest.txt' > mls/research/draw_candidate_validation_latest.txt
+          cat mls/research/draw_candidate_validation_latest.txt
+
+      - name: Persist validation results
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          cp mls/research/draw_candidate_validation_latest.json "$RUNNER_TEMP/draw_candidate_validation_latest.json"
+          cp mls/research/draw_candidate_validation_latest.txt "$RUNNER_TEMP/draw_candidate_validation_latest.txt"
+          git fetch origin main
+          git reset --hard origin/main
+          mkdir -p mls/research
+          cp "$RUNNER_TEMP/draw_candidate_validation_latest.json" mls/research/draw_candidate_validation_latest.json
+          cp "$RUNNER_TEMP/draw_candidate_validation_latest.txt" mls/research/draw_candidate_validation_latest.txt
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git add mls/research/draw_candidate_validation_latest.json mls/research/draw_candidate_validation_latest.txt
+          if ! git diff --cached --quiet; then
+            git commit -m 'Publish MLS fixed draw candidate validation'
+            git push origin HEAD:main
+          fi
