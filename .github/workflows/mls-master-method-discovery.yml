@@ -1,6 +1,8 @@
 name: MLS Master Method Discovery
 
 on:
+  schedule:
+    - cron: '15 10 * * 1'
   push:
     branches: [main]
     paths:
