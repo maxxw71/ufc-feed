@@ -1,6 +1,8 @@
 name: MLS Draw-Aware Discovery
 
 on:
+  schedule:
+    - cron: '20 11 * * 1'
   push:
     branches: [main]
     paths:
