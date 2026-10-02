@@ -1,0 +1,53 @@
+MONTHLY PROFIT EXAMPLES — HYPERLIQUID PRIMARY PERP HOLDOUT
+
+Assumptions:
+- Starting bankroll: 10,000 USDC
+- Fixed position: 1,000 USDC per trade; no compounding
+- Take profit: +5%
+- Stop: -7.5%
+- Uses later 40% chronological holdout only
+- Every non-win is conservatively charged as a full -7.5% stop
+- Cost-stress per trade: 0.045% taker/side + 0.10% slippage/side + full median 5d funding 0.1541%
+- Net win used: 45.56 USDC; net loss used: -79.44 USDC
+
+SUMMARY
+                    rule  holdout_trades  wins  win_rate  months_with_signals  avg_trades_per_active_month  median_trades_per_active_month  avg_net_profit_per_active_month  median_net_profit_per_active_month  best_month_net  worst_month_net  total_net_profit_holdout  ending_bankroll_from_10k_fixed_1k
+           A_EMA9_RSIacc              25    24  0.960000                    3                     8.333333                             1.0                       337.991667                             45.5590        1047.857          -79.441                  1013.975                          11013.975
+         E_EMA9_lowclose              29    27  0.931034                    5                     5.800000                             1.0                       214.242200                             45.5590        1047.857         -113.323                  1071.211                          11071.211
+         G_ensemble_3of5              27    25  0.925926                    3                     9.000000                             2.0                       326.697667                             45.5590        1093.416         -158.882                   980.093                          10980.093
+D_RSI_SMA5slope_RSIcrash              23    21  0.913043                    4                     5.750000                             1.0                       199.464250                            -16.9410         911.180          -79.441                   797.857                          10797.857
+         F_ensemble_2of5              34    31  0.911765                    4                     8.500000                             1.5                       293.501500                            -16.9410        1366.770         -158.882                  1174.006                          11174.006
+    B_RSIcrash_SMA9slope              30    27  0.900000                    4                     7.500000                             1.5                       247.942500                              5.8385        1059.534          -79.441                   991.770                          10991.770
+  C_RSIcrash_SMA9stretch              30    27  0.900000                    4                     7.500000                             1.5                       247.942500                            -16.9410        1184.534         -158.882                   991.770                          10991.770
+
+MONTHLY DETAIL
+  month  trades  wins  gross_pnl  net_pnl_stress  losses  win_rate  ending_bankroll_if_month_starts_10k                     rule
+2026-05       1     1       50.0          45.559       0  1.000000                            10045.559            A_EMA9_RSIacc
+2026-06       1     0      -75.0         -79.441       1  0.000000                             9920.559            A_EMA9_RSIacc
+2026-09      23    23     1150.0        1047.857       0  1.000000                            11047.857            A_EMA9_RSIacc
+2026-05       1     1       50.0          45.559       0  1.000000                            10045.559     B_RSIcrash_SMA9slope
+2026-06       1     0      -75.0         -79.441       1  0.000000                             9920.559     B_RSIcrash_SMA9slope
+2026-08       2     1      -25.0         -33.882       1  0.500000                             9966.118     B_RSIcrash_SMA9slope
+2026-09      26    25     1175.0        1059.534       1  0.961538                            11059.534     B_RSIcrash_SMA9slope
+2026-05       1     1       50.0          45.559       0  1.000000                            10045.559   C_RSIcrash_SMA9stretch
+2026-06       2     0     -150.0        -158.882       2  0.000000                             9841.118   C_RSIcrash_SMA9stretch
+2026-08       1     0      -75.0         -79.441       1  0.000000                             9920.559   C_RSIcrash_SMA9stretch
+2026-09      26    26     1300.0        1184.534       0  1.000000                            11184.534   C_RSIcrash_SMA9stretch
+2026-05       1     1       50.0          45.559       0  1.000000                            10045.559 D_RSI_SMA5slope_RSIcrash
+2026-06       1     0      -75.0         -79.441       1  0.000000                             9920.559 D_RSI_SMA5slope_RSIcrash
+2026-08       1     0      -75.0         -79.441       1  0.000000                             9920.559 D_RSI_SMA5slope_RSIcrash
+2026-09      20    20     1000.0         911.180       0  1.000000                            10911.180 D_RSI_SMA5slope_RSIcrash
+2026-05       1     1       50.0          45.559       0  1.000000                            10045.559          E_EMA9_lowclose
+2026-06       3     1     -100.0        -113.323       2  0.333333                             9886.677          E_EMA9_lowclose
+2026-07       1     1       50.0          45.559       0  1.000000                            10045.559          E_EMA9_lowclose
+2026-08       1     1       50.0          45.559       0  1.000000                            10045.559          E_EMA9_lowclose
+2026-09      23    23     1150.0        1047.857       0  1.000000                            11047.857          E_EMA9_lowclose
+2026-05       1     1       50.0          45.559       0  1.000000                            10045.559          F_ensemble_2of5
+2026-06       2     0     -150.0        -158.882       2  0.000000                             9841.118          F_ensemble_2of5
+2026-08       1     0      -75.0         -79.441       1  0.000000                             9920.559          F_ensemble_2of5
+2026-09      30    30     1500.0        1366.770       0  1.000000                            11366.770          F_ensemble_2of5
+2026-05       1     1       50.0          45.559       0  1.000000                            10045.559          G_ensemble_3of5
+2026-06       2     0     -150.0        -158.882       2  0.000000                             9841.118          G_ensemble_3of5
+2026-09      24    24     1200.0        1093.416       0  1.000000                            11093.416          G_ensemble_3of5
+
+Important: this is a fixed-payoff illustration, not an exact execution replay. It is intentionally conservative on non-winners and funding, but it does not yet model order-book depth, partial fills, simultaneous-position capacity, or exact time-to-exit.
