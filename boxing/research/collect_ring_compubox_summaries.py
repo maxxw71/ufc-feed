@@ -908,6 +908,7 @@ def main():
             item.update({'status':'accepted' if added else 'no_safe_numeric_pattern','article_date':pub,'fighter_rows':added})
             if not added:
                 item['text_sample']=text[:3500]
+                item['parsed_debug']=parsed
         except Exception as e:item.update({'status':'error','error':type(e).__name__+': '+str(e)[:220]})
         diag.append(item)
     # Deduplicate exact fight/fighter; conflicts are quarantined.
