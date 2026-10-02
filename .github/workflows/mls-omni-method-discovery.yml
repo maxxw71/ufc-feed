@@ -1,0 +1,86 @@
+name: MLS Omni Method Discovery
+
+on:
+  schedule:
+    - cron: '40 10 * * 1'
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/mls_omni_method_discovery.py'
+      - 'scripts/mls_individual_player_features.py'
+      - '.github/workflows/mls-omni-method-discovery.yml'
+
+concurrency:
+  group: mls-omni-method-discovery
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  research:
+    runs-on: [self-hosted, Linux, X64, appwiza]
+    timeout-minutes: 75
+    steps:
+      - uses: actions/checkout@v4
+        with: {fetch-depth: 0}
+
+      - name: Deploy omni research
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          KEY=/home/appwiza-runner/.ssh/appwiza_vps
+          HOST=anestishkurti92@127.0.0.1
+          D=/home/anestishkurti92/mls-predictor-v1
+          for f in mls_individual_player_features.py mls_master_method_discovery.py mls_omni_method_discovery.py; do
+            cat "scripts/$f" | ssh -i "$KEY" -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=accept-new "$HOST" "cat > $D/$f"
+          done
+
+      - name: Build player layer and run omni discovery
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          KEY=/home/appwiza-runner/.ssh/appwiza_vps
+          HOST=anestishkurti92@127.0.0.1
+          D=/home/anestishkurti92/mls-predictor-v1
+          ssh -i "$KEY" -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=accept-new "$HOST" 'bash -s' <<'EOF'
+          set -Eeuo pipefail
+          cd /home/anestishkurti92/mls-predictor-v1
+          venv/bin/python -m py_compile mls_individual_player_features.py mls_master_method_discovery.py mls_omni_method_discovery.py
+          OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1 nice -n 12 timeout 28m venv/bin/python mls_individual_player_features.py
+          OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1 nice -n 14 timeout 60m venv/bin/python mls_omni_method_discovery.py
+          EOF
+
+      - name: Pull omni results
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          KEY=/home/appwiza-runner/.ssh/appwiza_vps
+          HOST=anestishkurti92@127.0.0.1
+          mkdir -p mls/research mls/players
+          ssh -i "$KEY" -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=accept-new "$HOST" 'cat /home/anestishkurti92/mls-predictor-v1/research/omni_discovery/latest.json' > mls/research/omni_discovery_latest.json
+          ssh -i "$KEY" -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=accept-new "$HOST" 'cat /home/anestishkurti92/mls-predictor-v1/research/omni_discovery/latest.txt' > mls/research/omni_discovery_latest.txt
+          ssh -i "$KEY" -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=accept-new "$HOST" 'cat /home/anestishkurti92/mls-predictor-v1/reports/individual_player_feature_meta.json' > mls/players/individual_player_feature_meta.json
+          cat mls/research/omni_discovery_latest.txt
+
+      - name: Persist omni results
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          cp mls/research/omni_discovery_latest.json "$RUNNER_TEMP/omni.json"
+          cp mls/research/omni_discovery_latest.txt "$RUNNER_TEMP/omni.txt"
+          cp mls/players/individual_player_feature_meta.json "$RUNNER_TEMP/ip.json"
+          git fetch origin main
+          git reset --hard origin/main
+          mkdir -p mls/research mls/players
+          cp "$RUNNER_TEMP/omni.json" mls/research/omni_discovery_latest.json
+          cp "$RUNNER_TEMP/omni.txt" mls/research/omni_discovery_latest.txt
+          cp "$RUNNER_TEMP/ip.json" mls/players/individual_player_feature_meta.json
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git add mls/research/omni_discovery_latest.json mls/research/omni_discovery_latest.txt mls/players/individual_player_feature_meta.json
+          if ! git diff --cached --quiet; then
+            git commit -m 'Publish MLS omni method discovery'
+            git push origin HEAD:main
+          fi
