@@ -1,0 +1,44 @@
+METHOD 1 — NO-LOOKAHEAD HYPERLIQUID REVALIDATION
+
+Corrected unique events: 695
+Train: 417 | untouched holdout: 278
+Raw holdout +5%: 70.86%
+Raw holdout +5 before -7.5%: 62.95%
+
+PREVIOUS RULE DIAGNOSTIC AFTER LOOKAHEAD FIX
+{'n': 37, 'hit5': 0.9459459459459459, 'hit10': 0.7027027027027027, 't5_s7p5': 0.918918918918919}
+
+TOP TRAIN-SELECTED RULES / CORRECTED HOLDOUT
+                                                rule                  features  train_n  train_hit5  train_t5_s7p5  hold_n  hold_hit5  hold_hit10  hold_t5_s5  hold_t5_s7p5  hold_t5_s10  hold_median_mfe  hold_median_mae  train_score
+ daily_rv20 >= 0.07347 AND close_location <= 0.08779 daily_rv20+close_location       45    1.000000       0.866667      12   0.833333    0.666667    0.416667      0.500000     0.500000         0.118687        -0.105983     0.960000
+close_location <= 0.04066 AND rsi_accel <= -10.04437  close_location+rsi_accel       29    0.965517       0.931034      21   0.809524    0.571429    0.619048      0.666667     0.714286         0.108289        -0.035135     0.955172
+rsi_accel <= -11.72020 AND close_location <= 0.05291  rsi_accel+close_location       32    0.937500       0.906250      18   0.777778    0.500000    0.611111      0.666667     0.722222         0.098085        -0.039921     0.928125
+ close_location <= 0.04066 AND rsi_accel <= -7.62916  close_location+rsi_accel       32    0.937500       0.906250      22   0.818182    0.590909    0.636364      0.681818     0.727273         0.111255        -0.040778     0.928125
+  close_location <= 0.04066 AND price_dd <= -0.10419   close_location+price_dd       30    0.966667       0.833333      19   0.842105    0.578947    0.631579      0.631579     0.684211         0.108289        -0.061326     0.926667
+ close_location <= 0.04066 AND rsi_accel <= -8.99335  close_location+rsi_accel       31    0.935484       0.903226      22   0.818182    0.590909    0.636364      0.681818     0.727273         0.111255        -0.040778     0.925806
+rsi_accel <= -11.72020 AND close_location <= 0.08779  rsi_accel+close_location       44    0.931818       0.909091      23   0.826087    0.565217    0.695652      0.739130     0.782609         0.110178        -0.039359     0.925000
+  close_location <= 0.04066 AND price_dd <= -0.11367   close_location+price_dd       25    0.960000       0.840000      12   0.833333    0.500000    0.583333      0.583333     0.583333         0.093154        -0.069041     0.924000
+  price_dd <= -0.12776 AND close_location <= 0.08779   price_dd+close_location       25    0.960000       0.840000      11   0.818182    0.545455    0.545455      0.545455     0.545455         0.100182        -0.061326     0.924000
+ daily_rv20 >= 0.07347 AND close_location <= 0.12181 daily_rv20+close_location       60    0.966667       0.816667      15   0.733333    0.533333    0.400000      0.466667     0.466667         0.100182        -0.143200     0.921667
+  close_location <= 0.04066 AND price_dd <= -0.10859   close_location+price_dd       28    0.964286       0.821429      13   0.846154    0.538462    0.615385      0.615385     0.615385         0.100182        -0.061326     0.921429
+      daily_ret5 >= 0.34839 AND rsi_pct1 <= -0.17097       daily_ret5+rsi_pct1       28    0.964286       0.821429      16   0.812500    0.562500    0.562500      0.625000     0.625000         0.104235        -0.076916     0.921429
+  close_location <= 0.04066 AND rsi_pct1 <= -0.17097   close_location+rsi_pct1       29    0.931034       0.896552      23   0.782609    0.608696    0.652174      0.695652     0.695652         0.114220        -0.035135     0.920690
+ daily_rv20 >= 0.07347 AND close_location <= 0.10209 daily_rv20+close_location       51    0.960784       0.823529      14   0.714286    0.571429    0.357143      0.428571     0.428571         0.104235        -0.135074     0.919608
+       price_dd <= -0.11367 AND rsi_pct1 <= -0.17097         price_dd+rsi_pct1       31    0.967742       0.806452      27   0.814815    0.592593    0.592593      0.666667     0.703704         0.114220        -0.054445     0.919355
+  price_dd <= -0.12776 AND close_location <= 0.10209   price_dd+close_location       27    0.962963       0.814815      13   0.692308    0.461538    0.461538      0.461538     0.461538         0.086127        -0.143200     0.918519
+  close_location <= 0.05291 AND price_dd <= -0.10419   close_location+price_dd       39    0.948718       0.846154      20   0.850000    0.600000    0.650000      0.650000     0.700000         0.111255        -0.057886     0.917949
+rsi_accel <= -13.88623 AND close_location <= 0.05291  rsi_accel+close_location       28    0.928571       0.892857      12   0.666667    0.416667    0.500000      0.583333     0.583333         0.085240        -0.052477     0.917857
+rsi_accel <= -11.72020 AND close_location <= 0.07169  rsi_accel+close_location       40    0.925000       0.900000      21   0.809524    0.523810    0.666667      0.714286     0.761905         0.108289        -0.039359     0.917500
+       rsi_pct1 <= -0.18174 AND price_dd <= -0.11367         rsi_pct1+price_dd       25    0.960000       0.800000      25   0.800000    0.560000    0.600000      0.680000     0.680000         0.108289        -0.046421     0.912000
+ daily_rv20 >= 0.07722 AND close_location <= 0.12181 daily_rv20+close_location       53    0.962264       0.792453      12   0.750000    0.500000    0.333333      0.416667     0.416667         0.099868        -0.150798     0.911321
+rsi_accel <= -13.88623 AND close_location <= 0.08779  rsi_accel+close_location       37    0.918919       0.891892      16   0.750000    0.562500    0.625000      0.687500     0.687500         0.109234        -0.045085     0.910811
+rsi_accel <= -10.04437 AND close_location <= 0.05291  rsi_accel+close_location       37    0.918919       0.891892      22   0.818182    0.590909    0.636364      0.681818     0.727273         0.114732        -0.034278     0.910811
+     rsi_accel <= -11.72020 AND rsi_pct1 <= -0.18174        rsi_accel+rsi_pct1       47    0.936170       0.851064      45   0.866667    0.666667    0.688889      0.800000     0.822222         0.140831        -0.039359     0.910638
+ daily_rv20 >= 0.07722 AND close_location <= 0.10209 daily_rv20+close_location       45    0.955556       0.800000      11   0.727273    0.545455    0.272727      0.363636     0.363636         0.100182        -0.143200     0.908889
+     rsi_accel <= -11.72020 AND rsi_pct1 <= -0.17097        rsi_accel+rsi_pct1       57    0.929825       0.859649      48   0.854167    0.666667    0.645833      0.750000     0.791667         0.138623        -0.048464     0.908772
+  close_location <= 0.05291 AND price_dd <= -0.10859   close_location+price_dd       35    0.942857       0.828571      14   0.857143    0.571429    0.642857      0.642857     0.642857         0.104235        -0.057886     0.908571
+  rsi_pct1 <= -0.18174 AND close_location <= 0.04066   rsi_pct1+close_location       25    0.920000       0.880000      20   0.800000    0.600000    0.650000      0.700000     0.700000         0.114732        -0.029700     0.908000
+  price_dd <= -0.12776 AND close_location <= 0.12181   price_dd+close_location       30    0.966667       0.766667      15   0.733333    0.533333    0.466667      0.466667     0.533333         0.100182        -0.143200     0.906667
+ daily_rv20 >= 0.08230 AND close_location <= 0.12181 daily_rv20+close_location       46    0.956522       0.782609      10   0.700000    0.400000    0.300000      0.300000     0.300000         0.090791        -0.190838     0.904348
+
+Guardrail: daily setup arms at the next UTC day only after the complete daily candle is known.
