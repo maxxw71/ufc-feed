@@ -167,20 +167,33 @@ def method1_events(x):
                     cycles+=1
                     in_pullback=False
 
+        peak_rsi=float(x.loc[pi,"rsi"]) if pd.notna(x.loc[pi,"rsi"]) else np.nan
+        trigger_rsi=float(row["rsi"])
+        rsi_peak_to_trigger_drop=(trigger_rsi/peak_rsi-1) if np.isfinite(peak_rsi) and peak_rsi>0 else np.nan
+
         fresh_blowoff = (
             hours_peak_to_trigger <= 24
             and near95_bars <= 4
             and cycles == 0
         )
+        momentum_top = (
+            np.isfinite(peak_rsi)
+            and peak_rsi >= 70
+            and np.isfinite(rsi_peak_to_trigger_drop)
+            and rsi_peak_to_trigger_drop <= -0.20
+        )
 
         if (fresh_blowoff
+            and momentum_top
             and float(row["rsi_pct1"])<=-0.18174
             and float(row["rsi_accel"])<=-11.72020):
             found.append({
                 "trigger_idx":int(trigger),
                 "trigger_time":row["time"],
                 "trigger_price":float(row["c"]),
-                "rsi":float(row["rsi"]),
+                "rsi":trigger_rsi,
+                "peak_rsi":peak_rsi,
+                "rsi_peak_to_trigger_drop_pct":rsi_peak_to_trigger_drop,
                 "rsi_pct1":float(row["rsi_pct1"]),
                 "rsi_accel":float(row["rsi_accel"]),
                 "hours_peak_to_trigger":hours_peak_to_trigger,
