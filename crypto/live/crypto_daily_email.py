@@ -78,14 +78,17 @@ def research_html():
           if status else "Automatic research cycle is still building its first registry.")
     c3hl=remote_json("results_c3_search/best_candidate.json")
     c3bn=remote_json("results_c3_binance_validation/REPORT.json")
+    c3fb=remote_json("results_c3_funding_binance_archive/REPORT.json")
     featured=""
     if c3hl and c3bn:
         featured=(
             "<div style='background:#eef8f3;border:1px solid #cfe7d9;border-radius:12px;padding:14px;margin:10px 0 16px'>"
             "<strong>C3 · Volume Capitulation Flush</strong><br>"
             f"<span style='color:#53657b'>Hyperliquid holdout: {pct(c3hl.get('hold_hit5'))} +5% (n={c3hl.get('hold_n','—')}); "
-            f"Binance untouched holdout: {pct(c3bn.get('hold_hit5'))} +5% (n={c3bn.get('hold_n','—')}); "
-            f"Binance +5% before -7.5%: {pct(c3bn.get('hold_t5_s7p5'))}. Now promoted LIVE after cross-venue validation.</span></div>"
+            f"Binance untouched holdout: {pct(c3bn.get('hold_hit5'))} +5% (n={c3bn.get('hold_n','—')}). LIVE.</span>"
+            + (f"<br><strong>C3F · C3 + Funding</strong><br><span style='color:#53657b'>Binance funding-filter holdout: {pct((c3fb.get('c3_funding_holdout') or {}).get('hit5'))} +5% "
+               f"(n={(c3fb.get('c3_funding_holdout') or {}).get('n','—')}); +5% before -7.5% {pct((c3fb.get('c3_funding_holdout') or {}).get('t5_s7p5'))}. LIVE.</span>" if c3fb else "")
+            + "</div>"
         )
     return head,featured+"".join(rows)
 
@@ -109,7 +112,8 @@ def build():
       <h2 style="margin:28px 0 8px">Live methods</h2>
       <p><strong>C1 · Blow-Off First Flush</strong> — holdout +5% {pct((methods.get('C1') or {}).get('validation',{}).get('hit5'))}<br>
       <strong>C2 · Lower-High Second Dump</strong> — holdout +5% {pct((methods.get('C2') or {}).get('validation',{}).get('hit5'))}<br>
-      <strong>C3 · Volume Capitulation Flush</strong> — holdout +5% {pct((methods.get('C3') or {}).get('validation',{}).get('hit5'))}</p>
+      <strong>C3 · Volume Capitulation Flush</strong> — holdout +5% {pct((methods.get('C3') or {}).get('validation',{}).get('hit5'))}<br>
+      <strong>C3F · Volume Capitulation + Funding</strong> — holdout +5% {pct((methods.get('C3F') or {}).get('validation',{}).get('hit5'))}</p>
       <h2 style="margin:28px 0 8px">Market context</h2>
       <p style="color:#53657b">BTC 24h {pct(ctx.get('btc_ret24'))} · ETH 24h {pct(ctx.get('eth_ret24'))} ·
       Hyperliquid breadth positive {pct(ctx.get('breadth_positive_24h'))} ·
