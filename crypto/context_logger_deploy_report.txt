@@ -1,0 +1,17 @@
+context_logger_compile=ok
+{
+  "timestamp": "2026-10-03T19:39:00+00:00",
+  "coins": 178,
+  "breadth_positive_24h": 0.8764044943820225,
+  "breadth_up5_24h": 0.21910112359550563,
+  "breadth_down5_24h": 0.011235955056179775,
+  "btc_ret24": 0.0071062732469013845,
+  "eth_ret24": 0.005858085808580826
+}
+context_logger_schedule=hourly_at_05_UTC
+5 * * * * /home/anestishkurti92/ufc-predictor-v1/venv/bin/python /home/anestishkurti92/crypto-trading/crypto_market_context_logger.py >> /home/anestishkurti92/crypto-trading/context_logger.log 2>&1
+context_coins 178
+breadth_positive_24h 0.8764044943820225
+btc_ret24 0.0071062732469013845
+eth_ret24 0.005858085808580826
+l2_rows 60
