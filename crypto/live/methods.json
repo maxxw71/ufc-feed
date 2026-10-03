@@ -16,7 +16,7 @@
         "venue": "Hyperliquid primary perps",
         "n": 45,
         "hit5": 0.8666666667,
-        "target_before_stop": 0.80,
+        "target_before_stop": 0.8,
         "stop_reference_pct": 0.075,
         "external_binance_holdout_n": 40,
         "external_binance_hit5": 0.85
@@ -29,7 +29,7 @@
         "flush_window_days": 5,
         "first_flush_min": 0.08,
         "rsi_pct1_max": -0.18174,
-        "rsi_accel_max": -11.72020
+        "rsi_accel_max": -11.7202
       }
     },
     {
@@ -44,7 +44,7 @@
         "venue": "Hyperliquid primary perps",
         "n": 47,
         "hit5": 0.9361702128,
-        "target_before_stop": 0.8297872340,
+        "target_before_stop": 0.829787234,
         "stop_reference_pct": 0.075,
         "external_binance_holdout_n": 25,
         "external_binance_hit5": 0.88
@@ -53,11 +53,41 @@
         "rsi_max": 30,
         "min_pump": 0.21337,
         "max_lower_high_pct": -0.19915,
-        "min_second_dump": 0.10,
+        "min_second_dump": 0.1,
         "first_low_lookback_bars": 36,
         "first_low_min_gap_bars": 6,
         "prior_high_lookback_bars": 36,
         "signal_cooldown_days": 5
+      }
+    },
+    {
+      "id": "C3",
+      "key": "volume_capitulation_flush",
+      "name": "Volume Capitulation Flush",
+      "enabled": true,
+      "status": "SHADOW_ONLY",
+      "description": "A first ≥8% post-breakout flush closes near the bottom of its 4H range on abnormal volume.",
+      "trigger_summary": "Completed daily breakout regime → next-day arm → first ≥8% 4H flush → close in bottom 15.27% of candle range → 4H volume ≥1.8296× its 20-bar median.",
+      "validation": {
+        "venue": "Hyperliquid primary perps",
+        "n": 40,
+        "hit5": 0.9,
+        "hit10": 0.675,
+        "target_before_stop": 0.775,
+        "stop_reference_pct": 0.075,
+        "external_binance_holdout_n": 42,
+        "external_binance_hit5": 0.8809523809523809,
+        "external_binance_target_before_stop": 0.8095238095238095
+      },
+      "params": {
+        "daily_ret5_min": 0.15,
+        "daily_rv20_min": 0.025,
+        "daily_prior_high_days": 60,
+        "setup_cooldown_days": 10,
+        "flush_window_days": 5,
+        "first_flush_min": 0.08,
+        "close_location_max": 0.1527,
+        "volume_ratio20_min": 1.8296
       }
     }
   ]
