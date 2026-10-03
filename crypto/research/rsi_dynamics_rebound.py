@@ -171,6 +171,7 @@ def prep4h(h):
     x["rsi_vs_sma3"] = x["rsi14"] / x["rsi_sma3"] - 1
     x["rsi_vs_sma5"] = x["rsi14"] / x["rsi_sma5"] - 1
     x["rsi_vs_sma9"] = x["rsi14"] / x["rsi_sma9"] - 1
+    x["rsi_vs_ema5"] = x["rsi14"] / x["rsi_ema5"] - 1
     x["rsi_sma5_slope1"] = x["rsi_sma5"].pct_change()
     x["rsi_sma5_slope3"] = x["rsi_sma5"] / x["rsi_sma5"].shift(3) - 1
     x["rsi_cross_up_sma5"] = (x["rsi14"] > x["rsi_sma5"]) & (x["rsi14"].shift(1) <= x["rsi_sma5"].shift(1))
