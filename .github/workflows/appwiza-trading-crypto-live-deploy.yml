@@ -53,9 +53,9 @@ jobs:
           python3 - <<'PY'
           import json
           x=json.load(open('crypto/live/methods.json'))
-          assert len(x['methods'])==3
+          assert len(x['methods'])==4
           assert all(m['enabled'] for m in x['methods'])
-          assert {m['id'] for m in x['methods'] if m.get('status')=='LIVE'}=={'C1','C2','C3'}
+          assert {m['id'] for m in x['methods'] if m.get('status')=='LIVE'}=={'C1','C2','C3','C3F'}
           assert {m['id'] for m in x['methods'] if m.get('status')=='SHADOW_ONLY'}==set()
           PY
           grep -q 'Trading · Crypto' crypto/live/crypto_index.html
