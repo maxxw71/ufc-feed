@@ -43,7 +43,7 @@ async function refresh(){
   if(!r.ok) throw new Error('HTTP '+r.status);
   const d=await r.json();
   document.getElementById('updated').textContent='Updated '+dt(d.generated_at);
-  document.getElementById('methods').innerHTML=(d.methods||[]).map(methodCard).join('');
+  document.getElementById('methods').innerHTML=(d.methods||[]).filter(m=>m.status==='LIVE').map(methodCard).join('');
   const sig=(d.signals||[]);
   document.getElementById('signalCount').textContent=sig.length+' shown';
   const tb=document.getElementById('signals');
