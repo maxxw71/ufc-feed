@@ -9,6 +9,7 @@ from datetime import datetime
 from pathlib import Path
 from zoneinfo import ZoneInfo
 import requests
+import sys
 
 SIGNALS=Path("/srv/appwiza-sports/public/trading/crypto/signals.json")
 UFC_WATCHER=Path("/home/anestishkurti92/ufc-predictor-v1/ufc_email_watcher.py")
@@ -110,6 +111,9 @@ def build():
     return subject,body
 
 def send(subject,body):
+    watcher_dir=str(UFC_WATCHER.parent)
+    if watcher_dir not in sys.path:
+        sys.path.insert(0,watcher_dir)
     spec=importlib.util.spec_from_file_location("ufc_email_watcher",UFC_WATCHER)
     if not spec or not spec.loader:raise RuntimeError("UFC mailer module unavailable")
     mod=importlib.util.module_from_spec(spec);spec.loader.exec_module(mod)
