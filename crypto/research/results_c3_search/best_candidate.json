@@ -1,0 +1,18 @@
+{
+  "rule": "close_location <= 0.1527 AND volume_ratio20 >= 1.8296",
+  "features": "close_location+volume_ratio20",
+  "train_n": 64,
+  "train_hit5": 0.84375,
+  "train_t5_s7p5": 0.6875,
+  "hold_n": 40,
+  "hold_hit5": 0.9,
+  "hold_hit10": 0.675,
+  "hold_t5_s7p5": 0.775,
+  "hold_wilson_lower": 0.7694792561952611,
+  "hold_episodes": 16,
+  "episode_hit5": 0.8095238095238095,
+  "median_mfe": 0.13767866649306965,
+  "median_mae": -0.04712915676959615,
+  "score": 0.8358764970480975,
+  "passes": true
+}
