@@ -1,9 +1,9 @@
 {
-  "generated_at": "2026-10-03T13:27:59.255311+00:00",
+  "generated_at": "2026-10-03T19:16:34.102349+00:00",
   "authoritative_for_current_strict_research_coverage": true,
   "scope": "strict/research-relevant boxing dataset and current prospective price collection",
   "do_not_use_as_current_strict_coverage": "boxing/public_reports/DATA_GAP_AUDIT.json",
-  "phase2_build_at": "20261003T021720Z",
+  "phase2_build_at": "20261003T134947Z",
   "database": {
     "status": "database_ready",
     "tables": [
@@ -31,14 +31,14 @@
     "source_rows_note": "Compact public research DB may omit source_rows; Phase 2 retains supplemental quote links and skips only raw-source price rematching."
   },
   "research_universe": {
-    "fighter_bout_rows": 118501,
-    "strict_profile_fighters": 732,
-    "consensus_priced_bouts": 737,
-    "verified_graph_bouts": 11314,
-    "identity_links": 26470,
+    "fighter_bout_rows": 120892,
+    "strict_profile_fighters": 719,
+    "consensus_priced_bouts": 709,
+    "verified_graph_bouts": 11656,
+    "identity_links": 27243,
     "career_sources": {
-      "wikipedia": 112714,
-      "champinon": 5787
+      "wikipedia": 114857,
+      "champinon": 6035
     },
     "years": [
       "1990",
@@ -82,58 +82,58 @@
   },
   "fighter_profiles": {
     "born": {
-      "fighters_present": 732,
-      "fighters_total": 732,
+      "fighters_present": 719,
+      "fighters_total": 719,
       "fighter_coverage_pct": 100.0,
       "missing_fighters": 0,
       "priced_bout_both_sides": {
-        "both_sides": 737,
+        "both_sides": 709,
         "both_sides_pct": 100.0,
-        "at_least_one_side": 737
+        "at_least_one_side": 709
       }
     },
     "height_cm": {
-      "fighters_present": 696,
-      "fighters_total": 732,
-      "fighter_coverage_pct": 95.08,
-      "missing_fighters": 36,
+      "fighters_present": 684,
+      "fighters_total": 719,
+      "fighter_coverage_pct": 95.13,
+      "missing_fighters": 35,
       "priced_bout_both_sides": {
-        "both_sides": 679,
-        "both_sides_pct": 92.13,
-        "at_least_one_side": 737
+        "both_sides": 655,
+        "both_sides_pct": 92.38,
+        "at_least_one_side": 709
       }
     },
     "reach_cm": {
-      "fighters_present": 523,
-      "fighters_total": 732,
-      "fighter_coverage_pct": 71.45,
-      "missing_fighters": 209,
+      "fighters_present": 516,
+      "fighters_total": 719,
+      "fighter_coverage_pct": 71.77,
+      "missing_fighters": 203,
       "priced_bout_both_sides": {
-        "both_sides": 468,
-        "both_sides_pct": 63.5,
-        "at_least_one_side": 689
+        "both_sides": 457,
+        "both_sides_pct": 64.46,
+        "at_least_one_side": 668
       }
     },
     "stance": {
-      "fighters_present": 732,
-      "fighters_total": 732,
-      "fighter_coverage_pct": 100.0,
-      "missing_fighters": 0,
+      "fighters_present": 718,
+      "fighters_total": 719,
+      "fighter_coverage_pct": 99.86,
+      "missing_fighters": 1,
       "priced_bout_both_sides": {
-        "both_sides": 737,
-        "both_sides_pct": 100.0,
-        "at_least_one_side": 737
+        "both_sides": 708,
+        "both_sides_pct": 99.86,
+        "at_least_one_side": 709
       }
     },
     "nationality": {
-      "fighters_present": 732,
-      "fighters_total": 732,
-      "fighter_coverage_pct": 100.0,
-      "missing_fighters": 0,
+      "fighters_present": 718,
+      "fighters_total": 719,
+      "fighter_coverage_pct": 99.86,
+      "missing_fighters": 1,
       "priced_bout_both_sides": {
-        "both_sides": 737,
-        "both_sides_pct": 100.0,
-        "at_least_one_side": 737
+        "both_sides": 708,
+        "both_sides_pct": 99.86,
+        "at_least_one_side": 709
       }
     }
   },
@@ -226,12 +226,12 @@
     }
   },
   "punch_data": {
-    "full_round_reports": 56,
-    "full_round_fighter_observations": 112,
+    "full_round_reports": 131,
+    "full_round_fighter_observations": 262,
     "fight_total_supplement_observations": 2,
     "fight_total_supplement_fights": 1,
-    "fighters_with_any_prior_punch_fight": 23,
-    "fighters_with_any_prior_full_round_punch_fight": 14,
+    "fighters_with_any_prior_punch_fight": 41,
+    "fighters_with_any_prior_full_round_punch_fight": 35,
     "snapshots_with_3plus_prior_punch_fights": 1,
     "snapshots_with_3plus_prior_full_round_punch_fights": 1,
     "summary_articles_discovered": 158,
@@ -276,17 +276,17 @@
     "note": "Only this strict union of independently proven pre-event archived prices is treated as validated; remaining historical archive rows stay exploratory."
   },
   "prospective_pricing": {
-    "generated_at": "2026-10-03T13:27:32.431537+00:00",
-    "raw_quote_observations": 21682,
-    "verified_pre_event_quote_observations": 8354,
-    "verified_pre_event_sportsbook_quote_observations": 7870,
-    "verification_pct": 38.53,
-    "unique_verified_bouts": 66,
-    "unique_verified_sportsbook_bouts": 65,
+    "generated_at": "2026-10-03T19:16:07.247961+00:00",
+    "raw_quote_observations": 21972,
+    "verified_pre_event_quote_observations": 8548,
+    "verified_pre_event_sportsbook_quote_observations": 8048,
+    "verification_pct": 38.9,
+    "unique_verified_bouts": 71,
+    "unique_verified_sportsbook_bouts": 70,
     "settled_verified_bouts": 5,
     "past_unresolved_bouts": 15,
-    "future_or_today_bouts": 46,
-    "settlement_generated_at": "2026-10-03T13:27:32.431537+00:00"
+    "future_or_today_bouts": 51,
+    "settlement_generated_at": "2026-10-03T19:16:07.247961+00:00"
   },
   "largest_remaining_gaps": [
     "verified reach coverage",
