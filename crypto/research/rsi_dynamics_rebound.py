@@ -158,8 +158,13 @@ def prep4h(h):
     x["range_pct"] = (x["high"] - x["low"]) / x["close"].replace(0, np.nan)
     x["lower_wick_pct_range"] = (np.minimum(x["open"],x["close"]) - x["low"]) / (x["high"]-x["low"]).replace(0,np.nan)
     x["close_location"] = (x["close"] - x["low"]) / (x["high"]-x["low"]).replace(0,np.nan)
+    x["volume_med5"] = x["volume"].rolling(5,min_periods=3).median()
     x["volume_med20"] = x["volume"].rolling(20,min_periods=10).median()
+    x["volume_mean20"] = x["volume"].rolling(20,min_periods=10).mean()
+    x["volume_std20"] = x["volume"].rolling(20,min_periods=10).std()
+    x["volume_ratio5"] = x["volume"] / x["volume_med5"].replace(0,np.nan)
     x["volume_ratio20"] = x["volume"] / x["volume_med20"].replace(0,np.nan)
+    x["volume_z20"] = (x["volume"]-x["volume_mean20"]) / x["volume_std20"].replace(0,np.nan)
     x["trades"] = pd.to_numeric(x["trades"],errors="coerce")
     x["trades_med20"] = x["trades"].rolling(20,min_periods=10).median()
     x["trades_ratio20"] = x["trades"] / x["trades_med20"].replace(0,np.nan)
@@ -262,7 +267,9 @@ def event_features(h, idx, arm, daily_rsi, dd_threshold):
         "dist_sma50": float(h.iloc[loc]["dist_sma50"]) if pd.notna(h.iloc[loc]["dist_sma50"]) else np.nan,
         "sma20_slope3": float(h.iloc[loc]["sma20_slope3"]) if pd.notna(h.iloc[loc]["sma20_slope3"]) else np.nan,
         "rsi_vs_ema5": float(h.iloc[loc]["rsi_vs_ema5"]) if pd.notna(h.iloc[loc]["rsi_vs_ema5"]) else np.nan,
+        "volume_ratio5": float(h.iloc[loc]["volume_ratio5"]) if pd.notna(h.iloc[loc]["volume_ratio5"]) else np.nan,
         "volume_ratio20": float(h.iloc[loc]["volume_ratio20"]) if pd.notna(h.iloc[loc]["volume_ratio20"]) else np.nan,
+        "volume_z20": float(h.iloc[loc]["volume_z20"]) if pd.notna(h.iloc[loc]["volume_z20"]) else np.nan,
         "trades_ratio20": float(h.iloc[loc]["trades_ratio20"]) if pd.notna(h.iloc[loc]["trades_ratio20"]) else np.nan,
         "dist_vwap20": float(h.iloc[loc]["dist_vwap20"]) if pd.notna(h.iloc[loc]["dist_vwap20"]) else np.nan,
         "obv_delta3_norm": float(h.iloc[loc]["obv_delta3_norm"]) if pd.notna(h.iloc[loc]["obv_delta3_norm"]) else np.nan,
