@@ -1,0 +1,73 @@
+name: Deploy crypto market context logger
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'crypto/live/crypto_market_context_logger.py'
+      - '.github/workflows/appwiza-crypto-context-logger-deploy.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  deploy:
+    runs-on: [self-hosted, Linux, X64]
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Deploy context logger and hourly snapshot
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          KEY=/home/appwiza-runner/.ssh/appwiza_vps
+          HOST=anestishkurti92@127.0.0.1
+          SSH="ssh -i $KEY -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=accept-new $HOST"
+
+          cat crypto/live/crypto_market_context_logger.py | $SSH 'mkdir -p /home/anestishkurti92/crypto-trading; cat > /home/anestishkurti92/crypto-trading/crypto_market_context_logger.py'
+
+          $SSH 'bash -s' <<'EOF' | tee crypto/context_logger_deploy_report.txt
+          set -Eeuo pipefail
+          ROOT=/home/anestishkurti92/crypto-trading
+          PY=/home/anestishkurti92/ufc-predictor-v1/venv/bin/python
+          chmod 0755 "$ROOT/crypto_market_context_logger.py"
+          "$PY" - <<'PY'
+          from pathlib import Path
+          p=Path('/home/anestishkurti92/crypto-trading/crypto_market_context_logger.py')
+          compile(p.read_text(),str(p),'exec')
+          print('context_logger_compile=ok')
+          PY
+
+          "$PY" "$ROOT/crypto_market_context_logger.py"
+
+          TMP=$(mktemp)
+          crontab -l 2>/dev/null | grep -v '/crypto-trading/crypto_market_context_logger.py' > "$TMP" || true
+          echo 'CRON_TZ=UTC' >> "$TMP"
+          echo '5 * * * * /home/anestishkurti92/ufc-predictor-v1/venv/bin/python /home/anestishkurti92/crypto-trading/crypto_market_context_logger.py >> /home/anestishkurti92/crypto-trading/context_logger.log 2>&1' >> "$TMP"
+          crontab "$TMP"
+          rm -f "$TMP"
+
+          echo 'context_logger_schedule=hourly_at_05_UTC'
+          crontab -l | grep 'crypto_market_context_logger.py'
+          test -s /srv/appwiza-sports/public/trading/crypto/context.json
+          python3 - <<'PY'
+          import json
+          x=json.load(open('/srv/appwiza-sports/public/trading/crypto/context.json'))
+          assert x['summary']['coins'] > 100
+          print('context_coins',x['summary']['coins'])
+          print('breadth_positive_24h',x['summary']['breadth_positive_24h'])
+          print('btc_ret24',x['summary']['btc_ret24'])
+          print('eth_ret24',x['summary']['eth_ret24'])
+          print('l2_rows',sum('book_imbalance_top5' in r for r in x['rows']))
+          PY
+          EOF
+
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git add crypto/context_logger_deploy_report.txt
+          if ! git diff --cached --quiet; then
+            git commit -m 'Record crypto market context logger deployment'
+            git pull --rebase origin main
+            git push origin HEAD:main
+          fi
