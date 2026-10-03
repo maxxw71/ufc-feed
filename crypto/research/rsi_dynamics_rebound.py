@@ -160,6 +160,18 @@ def prep4h(h):
     x["close_location"] = (x["close"] - x["low"]) / (x["high"]-x["low"]).replace(0,np.nan)
     x["volume_med20"] = x["volume"].rolling(20,min_periods=10).median()
     x["volume_ratio20"] = x["volume"] / x["volume_med20"].replace(0,np.nan)
+    x["trades"] = pd.to_numeric(x["trades"],errors="coerce")
+    x["trades_med20"] = x["trades"].rolling(20,min_periods=10).median()
+    x["trades_ratio20"] = x["trades"] / x["trades_med20"].replace(0,np.nan)
+    typical=(x["high"]+x["low"]+x["close"])/3.0
+    x["vwap20"]=(typical*x["volume"]).rolling(20,min_periods=10).sum()/x["volume"].rolling(20,min_periods=10).sum().replace(0,np.nan)
+    x["dist_vwap20"]=x["close"]/x["vwap20"]-1
+    direction=np.sign(x["close"].diff()).fillna(0)
+    x["obv"]=(direction*x["volume"].fillna(0)).cumsum()
+    x["obv_delta3_norm"]=x["obv"].diff(3)/x["volume"].rolling(20,min_periods=10).sum().replace(0,np.nan)
+    mfm=((x["close"]-x["low"])-(x["high"]-x["close"]))/(x["high"]-x["low"]).replace(0,np.nan)
+    x["cmf20"]=(mfm*x["volume"]).rolling(20,min_periods=10).sum()/x["volume"].rolling(20,min_periods=10).sum().replace(0,np.nan)
+    x["atr14_pct"]=(x["high"]-x["low"]).rolling(14,min_periods=8).mean()/x["close"].replace(0,np.nan)
     x["range_med20"] = x["range_pct"].rolling(20,min_periods=10).median()
     x["range_ratio20"] = x["range_pct"] / x["range_med20"].replace(0,np.nan)
 
@@ -251,6 +263,11 @@ def event_features(h, idx, arm, daily_rsi, dd_threshold):
         "sma20_slope3": float(h.iloc[loc]["sma20_slope3"]) if pd.notna(h.iloc[loc]["sma20_slope3"]) else np.nan,
         "rsi_vs_ema5": float(h.iloc[loc]["rsi_vs_ema5"]) if pd.notna(h.iloc[loc]["rsi_vs_ema5"]) else np.nan,
         "volume_ratio20": float(h.iloc[loc]["volume_ratio20"]) if pd.notna(h.iloc[loc]["volume_ratio20"]) else np.nan,
+        "trades_ratio20": float(h.iloc[loc]["trades_ratio20"]) if pd.notna(h.iloc[loc]["trades_ratio20"]) else np.nan,
+        "dist_vwap20": float(h.iloc[loc]["dist_vwap20"]) if pd.notna(h.iloc[loc]["dist_vwap20"]) else np.nan,
+        "obv_delta3_norm": float(h.iloc[loc]["obv_delta3_norm"]) if pd.notna(h.iloc[loc]["obv_delta3_norm"]) else np.nan,
+        "cmf20": float(h.iloc[loc]["cmf20"]) if pd.notna(h.iloc[loc]["cmf20"]) else np.nan,
+        "atr14_pct": float(h.iloc[loc]["atr14_pct"]) if pd.notna(h.iloc[loc]["atr14_pct"]) else np.nan,
         "range_ratio20": float(h.iloc[loc]["range_ratio20"]) if pd.notna(h.iloc[loc]["range_ratio20"]) else np.nan,
         "lower_wick_pct_range": float(h.iloc[loc]["lower_wick_pct_range"]) if pd.notna(h.iloc[loc]["lower_wick_pct_range"]) else np.nan,
         "close_location": float(h.iloc[loc]["close_location"]) if pd.notna(h.iloc[loc]["close_location"]) else np.nan,
