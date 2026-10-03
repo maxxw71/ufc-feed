@@ -63,11 +63,11 @@ def funding_at_or_before(s,coin,t,lookback_hours=12):
         return None
 
 
-def fetch_4h(s,coin,start,end):
+def fetch_candles(s,coin,interval,start,end):
     rows=post(s,{"type":"candleSnapshot","req":{
-        "coin":coin,"interval":"4h",
-        "startTime":int(start.timestamp()*1000),
-        "endTime":int(end.timestamp()*1000)
+        "coin":coin,"interval":interval,
+        "startTime":int(pd.Timestamp(start).timestamp()*1000),
+        "endTime":int(pd.Timestamp(end).timestamp()*1000)
     }})
     rec=[]
     for r in rows or []:
@@ -82,6 +82,9 @@ def fetch_4h(s,coin,start,end):
     if not rec:
         return pd.DataFrame()
     return pd.DataFrame(rec).drop_duplicates("time").sort_values("time").reset_index(drop=True)
+
+def fetch_4h(s,coin,start,end):
+    return fetch_candles(s,coin,"4h",start,end)
 
 def split_closed(raw,now):
     if raw.empty:
@@ -302,7 +305,40 @@ def next_open_reference(raw,trigger_time,mark):
         return float(q.iloc[0]["o"])
     return mark
 
-def settle_signal(raw, signal, now):
+def resolve_same_4h_exit(s,coin,bar_time,target,stop):
+    """Resolve target-vs-stop order inside one 4H candle using 1-minute candles."""
+    if s is None or not coin:
+        return None
+    start=pd.Timestamp(bar_time)
+    end=start+pd.Timedelta(hours=4)
+    fine=fetch_candles(s,coin,"1m",start,end)
+    if fine.empty:
+        return None
+    for _,bar in fine.iterrows():
+        hit_target=float(bar["h"])>=target
+        hit_stop=float(bar["l"])<=stop
+        if not hit_target and not hit_stop:
+            continue
+        # If only one boundary is touched in this minute, order is known.
+        if hit_target and not hit_stop:
+            return ("target",bar["time"],"1m")
+        if hit_stop and not hit_target:
+            return ("stop",bar["time"],"1m")
+
+        # Both boundaries inside the same 1m candle is extremely rare because
+        # they are 12.5 percentage points apart. Use the minute open only when
+        # it already lies beyond one boundary; otherwise order is unknowable
+        # from OHLC alone and we leave it unresolved rather than inventing it.
+        o=float(bar["o"])
+        if o>=target:
+            return ("target",bar["time"],"1m_open")
+        if o<=stop:
+            return ("stop",bar["time"],"1m_open")
+        return None
+    return None
+
+
+def settle_signal(raw, signal, now, session=None, coin=None):
     """Update a signal from market data after its reference entry."""
     try:
         entry_time=pd.Timestamp(signal["entry_time"])
@@ -326,11 +362,29 @@ def settle_signal(raw, signal, now):
             stop_bar=bar["time"]
 
     # Position semantics: whichever exit is reached first ends the trade.
-    # If target and stop are both touched inside the same 4H candle, we cannot
-    # prove target came first, so conservatively count the trade as STOPPED.
+    # A same-4H target+stop candle is resolved using 1-minute candles so we do
+    # not automatically call it stopped merely because both are in one 4H wick.
     signal["stop_touched"]=bool(stop_bar is not None)
     if stop_bar is not None:
         signal["stop_touched_at"]=pd.Timestamp(stop_bar).isoformat()
+
+    if target_bar is not None and stop_bar is not None and pd.Timestamp(target_bar)==pd.Timestamp(stop_bar):
+        resolved=resolve_same_4h_exit(session,coin or signal.get("coin"),target_bar,target,stop)
+        if resolved is not None:
+            side,ts,resolution=resolved
+            signal["same_4h_resolution"]=resolution
+            if side=="target":
+                target_bar=ts
+                stop_bar=None
+            else:
+                stop_bar=ts
+                target_bar=None
+        else:
+            # Do not invent the ordering. Keep tracking state unresolved until
+            # a finer-grained source is available rather than forcing STOPPED.
+            signal["status"]="RECENT"
+            signal["same_4h_resolution"]="unresolved"
+            return signal
 
     if target_bar is not None and (stop_bar is None or pd.Timestamp(target_bar) < pd.Timestamp(stop_bar)):
         signal["status"]="SUCCESS"
@@ -446,7 +500,7 @@ def main():
                     "status":"ACTIVE" if age<=pd.Timedelta(hours=8) else "RECENT",
                     "metrics":{k:v for k,v in ev.items() if k not in {"trigger_idx","trigger_time","trigger_price"}},
                 }
-                signals.append(settle_signal(raw,sig,now))
+                signals.append(settle_signal(raw,sig,now,s,coin))
             for key,ev in shadow_candidates:
                 age=pd.Timestamp(now)-pd.Timestamp(ev["trigger_time"])
                 if age>pd.Timedelta(hours=args.recent_hours):
@@ -471,7 +525,7 @@ def main():
                     "metrics":{k:v for k,v in ev.items() if k not in {"trigger_idx","trigger_time","trigger_price"}},
                 }
                 # Reuse settlement logic, then preserve shadow labeling.
-                ssig=settle_signal(raw,ssig,now)
+                ssig=settle_signal(raw,ssig,now,s,coin)
                 if ssig["status"]=="ACTIVE": ssig["status"]="SHADOW_ACTIVE"
                 elif ssig["status"]=="RECENT": ssig["status"]="SHADOW_RECENT"
                 elif ssig["status"]=="SUCCESS": ssig["status"]="SHADOW_SUCCESS"
@@ -496,7 +550,7 @@ def main():
         raw=raw_cache.get(coin)
         if raw is not None and len(raw):
             try:
-                settle_signal(raw,hsig,now)
+                settle_signal(raw,hsig,now,s,coin)
             except Exception:
                 pass
     history=sorted(history,key=lambda x:str(x.get("trigger_time") or ""))[-500:]
