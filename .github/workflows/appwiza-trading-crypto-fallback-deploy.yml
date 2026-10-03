@@ -7,6 +7,11 @@ on:
     branches: [main]
     paths:
       - '.github/workflows/appwiza-trading-crypto-fallback-deploy.yml'
+      - 'crypto/live/live_crypto_scanner.py'
+      - 'crypto/live/methods.json'
+      - 'crypto/live/trading_index.html'
+      - 'crypto/live/crypto_index.html'
+      - 'crypto/live/ensure_trading_nav.py'
 
 permissions:
   contents: write
