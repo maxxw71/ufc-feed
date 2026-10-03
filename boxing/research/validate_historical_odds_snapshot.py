@@ -130,7 +130,7 @@ def validate_quote_across_snapshots(q,event_date,event_url,snapshots):
         if arc and arc.get('decimal_from_archive') is not None and q.get('decimal_price') is not None:
             diff=abs(float(q['decimal_price'])-float(arc['decimal_from_archive']))
             item['decimal_abs_diff']=round(diff,8)
-            if diff<=0.005:
+            if diff<=1e-6:
                 return {
                   'quote_rowid':q['quote_rowid'],'bout_id':str(q.get('bout_id') or ''),
                   'bookmaker':q.get('bookmaker'),'selection':q.get('selection'),
@@ -255,7 +255,7 @@ def main():
       'distinct_validated_bouts':len({x['bout_id'] for x in validated}),
       'distinct_validated_events':len({x['event_url'] for x in validated}),
       'validated_rows':validated,'event_audits':audits,
-      'policy':'Validation requires an exact pre-event Wayback snapshot plus exact archived event/bookmaker/bout/selection cell and price equivalence after American-to-decimal conversion (<=0.005 absolute difference). Newest eligible capture is attempted first; older captures may be used only if their exact Wayback timestamp is preserved.'
+      'policy':'Validation requires an exact pre-event Wayback snapshot plus exact archived event/bookmaker/bout/selection cell and price equivalence after American-to-decimal conversion (<=1e-6 absolute difference). Newest eligible capture is attempted first; older captures may be used only if their exact Wayback timestamp is preserved.'
     }
     OUT.parent.mkdir(parents=True,exist_ok=True)
     OUT.write_text(json.dumps(report,indent=2,ensure_ascii=False),encoding='utf-8')
@@ -265,3 +265,4 @@ def main():
     )},indent=2))
 
 if __name__=='__main__':main()
+
