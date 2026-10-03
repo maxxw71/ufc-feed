@@ -43,6 +43,17 @@ jobs:
           # Build a real preview from current live signals + latest research,
           # without sending a message during deployment.
           "$PY" "$ROOT/crypto_daily_email.py" --dry-run
+          "$PY" - <<'PY'
+          import importlib.util
+          from pathlib import Path
+          p=Path('/home/anestishkurti92/ufc-predictor-v1/ufc_email_watcher.py')
+          spec=importlib.util.spec_from_file_location('ufc_email_watcher_verify',p)
+          assert spec and spec.loader
+          mod=importlib.util.module_from_spec(spec)
+          spec.loader.exec_module(mod)
+          assert callable(getattr(mod,'send_email',None))
+          print('ufc_send_email_interface=ok')
+          PY
 
           TMP=$(mktemp)
           crontab -l 2>/dev/null | grep -v '/crypto-trading/crypto_daily_email.py' > "$TMP" || true
