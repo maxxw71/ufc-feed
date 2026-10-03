@@ -16,6 +16,10 @@ on:
 permissions:
   contents: write
 
+concurrency:
+  group: appwiza-trading-crypto-fallback
+  cancel-in-progress: true
+
 jobs:
   deploy:
     runs-on: [self-hosted, Linux, X64]
