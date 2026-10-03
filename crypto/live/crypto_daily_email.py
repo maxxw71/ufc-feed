@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 from __future__ import annotations
 
+import argparse
 import html
 import importlib.util
 import json
@@ -118,5 +119,14 @@ def send(subject,body):
     print("crypto_daily_email_sent",bool(result) if result is not None else "called")
 
 if __name__=="__main__":
+    ap=argparse.ArgumentParser()
+    ap.add_argument("--dry-run",action="store_true")
+    ap.add_argument("--preview",default="/home/anestishkurti92/crypto-trading/crypto_daily_email_preview.html")
+    args=ap.parse_args()
     subject,body=build()
-    send(subject,body)
+    if args.dry_run:
+        Path(args.preview).write_text(body)
+        print("subject",subject)
+        print("preview",args.preview)
+    else:
+        send(subject,body)
