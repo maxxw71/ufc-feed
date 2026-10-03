@@ -47,6 +47,22 @@ def fetch_universe(s):
         })
     return out
 
+def funding_at_or_before(s,coin,t,lookback_hours=12):
+    """Last published Hyperliquid funding rate at or before timestamp t."""
+    tt=pd.Timestamp(t)
+    rows=post(s,{"type":"fundingHistory","coin":coin,
+                 "startTime":int((tt-pd.Timedelta(hours=lookback_hours)).timestamp()*1000),
+                 "endTime":int(tt.timestamp()*1000)})
+    valid=[x for x in (rows or []) if int(x.get("time",0))<=int(tt.timestamp()*1000)]
+    if not valid:
+        return None
+    x=max(valid,key=lambda z:int(z.get("time",0)))
+    try:
+        return float(x.get("fundingRate"))
+    except Exception:
+        return None
+
+
 def fetch_4h(s,coin,start,end):
     rows=post(s,{"type":"candleSnapshot","req":{
         "coin":coin,"interval":"4h",
@@ -377,12 +393,32 @@ def main():
             if methods["lower_high_second_dump"]["enabled"]:
                 candidates += [("lower_high_second_dump",z) for z in method2_events(x)]
             shadow_candidates=[]
+            c3_events=[]
             if "volume_capitulation_flush" in methods and methods["volume_capitulation_flush"].get("enabled"):
                 c3_events=method3_events(x)
                 if methods["volume_capitulation_flush"].get("status")=="LIVE":
                     candidates += [("volume_capitulation_flush",z) for z in c3_events]
                 else:
                     shadow_candidates += [("volume_capitulation_flush",z) for z in c3_events]
+
+            # Optional C3+Funding family. The funding threshold is frozen in
+            # methods.json and checked against the last published funding rate
+            # at/before the C3 trigger. This block is dormant unless registered.
+            if "volume_capitulation_funding" in methods and methods["volume_capitulation_funding"].get("enabled"):
+                fm=methods["volume_capitulation_funding"]
+                fmin=float(fm.get("params",{}).get("funding_rate_min",0.000013))
+                for z in c3_events:
+                    try:
+                        fr=funding_at_or_before(s,coin,z["trigger_time"])
+                    except Exception:
+                        fr=None
+                    if fr is None or fr < fmin:
+                        continue
+                    zz=dict(z);zz["funding_rate_at_trigger"]=fr
+                    if fm.get("status")=="LIVE":
+                        candidates.append(("volume_capitulation_funding",zz))
+                    else:
+                        shadow_candidates.append(("volume_capitulation_funding",zz))
             for key,ev in candidates:
                 age=pd.Timestamp(now)-pd.Timestamp(ev["trigger_time"])
                 if age>pd.Timedelta(hours=args.recent_hours):
