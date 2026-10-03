@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-10-03T18:58:00+00:00",
+  "generated_at": "2026-10-03T19:43:00+00:00",
   "venue": "Hyperliquid primary perpetuals",
   "timeframe": "4h",
   "target_pct": 0.05,
@@ -11,7 +11,7 @@
       "enabled": true,
       "status": "LIVE",
       "description": "A completed daily blow-off setup arms the method. The first 4H capitulation after the peak must show an unusually violent RSI reset.",
-      "trigger_summary": "Completed daily breakout regime \u2192 next-day arm \u2192 fresh peak with peak 4H RSI \u226570 \u2192 RSI falls \u226520% from that peak \u2192 first \u22658% 4H washout within 24h, with \u22644 bars near the peak and no top-retest cycle \u2192 RSI drops \u226518.174% in one bar and RSI acceleration \u2264 -11.7202.",
+      "trigger_summary": "Completed daily breakout regime \u2192 next-day arm \u2192 first \u22658% 4H flush \u2192 RSI drops \u226518.174% in one bar and RSI acceleration \u2264 -11.7202.",
       "validation": {
         "venue": "Hyperliquid primary perps",
         "n": 45,
@@ -28,11 +28,6 @@
         "setup_cooldown_days": 10,
         "flush_window_days": 5,
         "first_flush_min": 0.08,
-        "max_hours_peak_to_trigger": 24,
-        "max_bars_within_5pct_peak": 4,
-        "max_top_retest_cycles": 0,
-        "peak_rsi_min": 70,
-        "rsi_peak_to_trigger_drop_max": -0.2,
         "rsi_pct1_max": -0.18174,
         "rsi_accel_max": -11.7202
       }
@@ -89,7 +84,9 @@
       "realized_target_pct": 0.05
     }
   ],
+  "shadow_signals": [],
   "history_count": 1,
+  "shadow_history_count": 0,
   "coverage": {
     "ok": 178,
     "short": 0,
