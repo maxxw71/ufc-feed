@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-10-03T19:43:00+00:00",
+  "generated_at": "2026-10-03T19:49:00+00:00",
   "venue": "Hyperliquid primary perpetuals",
   "timeframe": "4h",
   "target_pct": 0.05,
@@ -59,6 +59,36 @@
         "prior_high_lookback_bars": 36,
         "signal_cooldown_days": 5
       }
+    },
+    {
+      "id": "C3",
+      "key": "volume_capitulation_flush",
+      "name": "Volume Capitulation Flush",
+      "enabled": true,
+      "status": "SHADOW_ONLY",
+      "description": "A first \u22658% post-breakout flush closes near the bottom of its 4H range on abnormal volume.",
+      "trigger_summary": "Completed daily breakout regime \u2192 next-day arm \u2192 first \u22658% 4H flush \u2192 close in bottom 15.27% of candle range \u2192 4H volume \u22651.8296\u00d7 its 20-bar median.",
+      "validation": {
+        "venue": "Hyperliquid primary perps",
+        "n": 40,
+        "hit5": 0.9,
+        "hit10": 0.675,
+        "target_before_stop": 0.775,
+        "stop_reference_pct": 0.075,
+        "external_binance_holdout_n": 42,
+        "external_binance_hit5": 0.8809523809523809,
+        "external_binance_target_before_stop": 0.8095238095238095
+      },
+      "params": {
+        "daily_ret5_min": 0.15,
+        "daily_rv20_min": 0.025,
+        "daily_prior_high_days": 60,
+        "setup_cooldown_days": 10,
+        "flush_window_days": 5,
+        "first_flush_min": 0.08,
+        "close_location_max": 0.1527,
+        "volume_ratio20_min": 1.8296
+      }
     }
   ],
   "signals": [
@@ -84,9 +114,68 @@
       "realized_target_pct": 0.05
     }
   ],
-  "shadow_signals": [],
+  "shadow_signals": [
+    {
+      "id": "C3:PURR:2026-10-02T16:00:00+00:00",
+      "coin": "PURR",
+      "method_id": "C3",
+      "method_key": "volume_capitulation_flush",
+      "method_name": "Volume Capitulation Flush",
+      "trigger_time": "2026-10-02T16:00:00+00:00",
+      "entry_time": "2026-10-02T20:00:00+00:00",
+      "trigger_price": 0.14975,
+      "entry_reference": 0.14977,
+      "target_5pct": 0.1572585,
+      "risk_stop_reference": 0.13853725,
+      "status": "SHADOW_SUCCESS",
+      "metrics": {
+        "close_location": 0.09281961471103253,
+        "volume_ratio20": 2.4405222737618764
+      },
+      "settled_at": "2026-10-02T20:00:00+00:00",
+      "realized_target_pct": 0.05
+    },
+    {
+      "id": "C3:XLM:2026-10-02T16:00:00+00:00",
+      "coin": "XLM",
+      "method_id": "C3",
+      "method_key": "volume_capitulation_flush",
+      "method_name": "Volume Capitulation Flush",
+      "trigger_time": "2026-10-02T16:00:00+00:00",
+      "entry_time": "2026-10-02T20:00:00+00:00",
+      "trigger_price": 0.21216,
+      "entry_reference": 0.21198,
+      "target_5pct": 0.222579,
+      "risk_stop_reference": 0.19608150000000002,
+      "status": "SHADOW_RECENT",
+      "metrics": {
+        "close_location": 0.15117219078415392,
+        "volume_ratio20": 1.9567367945991145
+      }
+    },
+    {
+      "id": "C3:VIRTUAL:2026-10-02T16:00:00+00:00",
+      "coin": "VIRTUAL",
+      "method_id": "C3",
+      "method_key": "volume_capitulation_flush",
+      "method_name": "Volume Capitulation Flush",
+      "trigger_time": "2026-10-02T16:00:00+00:00",
+      "entry_time": "2026-10-02T20:00:00+00:00",
+      "trigger_price": 0.74892,
+      "entry_reference": 0.74907,
+      "target_5pct": 0.7865235,
+      "risk_stop_reference": 0.6928897500000001,
+      "status": "SHADOW_SUCCESS",
+      "metrics": {
+        "close_location": 0.134957825679475,
+        "volume_ratio20": 2.825512569939751
+      },
+      "settled_at": "2026-10-03T08:00:00+00:00",
+      "realized_target_pct": 0.05
+    }
+  ],
   "history_count": 1,
-  "shadow_history_count": 0,
+  "shadow_history_count": 3,
   "coverage": {
     "ok": 178,
     "short": 0,
