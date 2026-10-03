@@ -82,10 +82,10 @@ def research_html():
     if c3hl and c3bn:
         featured=(
             "<div style='background:#eef8f3;border:1px solid #cfe7d9;border-radius:12px;padding:14px;margin:10px 0 16px'>"
-            "<strong>C3 shadow candidate · Volume Capitulation Flush</strong><br>"
+            "<strong>C3 · Volume Capitulation Flush</strong><br>"
             f"<span style='color:#53657b'>Hyperliquid holdout: {pct(c3hl.get('hold_hit5'))} +5% (n={c3hl.get('hold_n','—')}); "
             f"Binance untouched holdout: {pct(c3bn.get('hold_hit5'))} +5% (n={c3bn.get('hold_n','—')}); "
-            f"Binance +5% before -7.5%: {pct(c3bn.get('hold_t5_s7p5'))}. Forward shadow only.</span></div>"
+            f"Binance +5% before -7.5%: {pct(c3bn.get('hold_t5_s7p5'))}. Now promoted LIVE after cross-venue validation.</span></div>"
         )
     return head,featured+"".join(rows)
 
@@ -108,7 +108,8 @@ def build():
       </div>
       <h2 style="margin:28px 0 8px">Live methods</h2>
       <p><strong>C1 · Blow-Off First Flush</strong> — holdout +5% {pct((methods.get('C1') or {}).get('validation',{}).get('hit5'))}<br>
-      <strong>C2 · Lower-High Second Dump</strong> — holdout +5% {pct((methods.get('C2') or {}).get('validation',{}).get('hit5'))}</p>
+      <strong>C2 · Lower-High Second Dump</strong> — holdout +5% {pct((methods.get('C2') or {}).get('validation',{}).get('hit5'))}<br>
+      <strong>C3 · Volume Capitulation Flush</strong> — holdout +5% {pct((methods.get('C3') or {}).get('validation',{}).get('hit5'))}</p>
       <h2 style="margin:28px 0 8px">Market context</h2>
       <p style="color:#53657b">BTC 24h {pct(ctx.get('btc_ret24'))} · ETH 24h {pct(ctx.get('eth_ret24'))} ·
       Hyperliquid breadth positive {pct(ctx.get('breadth_positive_24h'))} ·
