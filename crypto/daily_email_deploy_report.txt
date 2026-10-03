@@ -1,0 +1,7 @@
+crypto_daily_email_compile=ok
+subject Crypto Trading — Daily Research & Signals · Oct 03
+preview /home/anestishkurti92/crypto-trading/crypto_daily_email_preview.html
+daily_email_schedule=08:30_America/New_York
+30 8 * * * /home/anestishkurti92/ufc-predictor-v1/venv/bin/python /home/anestishkurti92/crypto-trading/live_crypto_scanner.py --methods /home/anestishkurti92/crypto-trading/methods.json --output /srv/appwiza-sports/public/trading/crypto/signals.json --history /home/anestishkurti92/crypto-trading/history.json --days 125 --recent-hours 72 >> /home/anestishkurti92/crypto-trading/scanner.log 2>&1; /home/anestishkurti92/ufc-predictor-v1/venv/bin/python /home/anestishkurti92/crypto-trading/crypto_daily_email.py >> /home/anestishkurti92/crypto-trading/email.log 2>&1
+anestishkurti92:anestishkurti92 755 7105 /home/anestishkurti92/crypto-trading/crypto_daily_email.py
+anestishkurti92:anestishkurti92 664 2493 /home/anestishkurti92/crypto-trading/crypto_daily_email_preview.html
