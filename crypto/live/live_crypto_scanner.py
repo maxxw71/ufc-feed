@@ -378,7 +378,11 @@ def main():
                 candidates += [("lower_high_second_dump",z) for z in method2_events(x)]
             shadow_candidates=[]
             if "volume_capitulation_flush" in methods and methods["volume_capitulation_flush"].get("enabled"):
-                shadow_candidates += [("volume_capitulation_flush",z) for z in method3_events(x)]
+                c3_events=method3_events(x)
+                if methods["volume_capitulation_flush"].get("status")=="LIVE":
+                    candidates += [("volume_capitulation_flush",z) for z in c3_events]
+                else:
+                    shadow_candidates += [("volume_capitulation_flush",z) for z in c3_events]
             for key,ev in candidates:
                 age=pd.Timestamp(now)-pd.Timestamp(ev["trigger_time"])
                 if age>pd.Timedelta(hours=args.recent_hours):
