@@ -1,0 +1,42 @@
+name: Verify C3 and C3F live on Appwiza
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/verify-appwiza-c3-c3f-live.yml'
+  workflow_dispatch:
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - name: Wait for public C3/C3F deployment
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          for i in $(seq 1 30); do
+            if curl -fsSL --max-time 20 https://appwiza.com/trading/crypto/signals.json -o /tmp/signals.json; then
+              if python3 - <<'PY'
+import json
+x=json.load(open('/tmp/signals.json'))
+live={m['id'] for m in x.get('methods',[]) if m.get('status')=='LIVE'}
+assert {'C1','C2','C3','C3F'}.issubset(live), live
+m={z['id']:z for z in x['methods']}
+assert m['C3']['params']['volume_ratio20_min']==1.8296
+assert m['C3F']['params']['funding_rate_min']==0.000013
+print('PUBLIC_C3_C3F_LIVE=PASS')
+print('generated_at',x.get('generated_at'))
+print('live_methods',sorted(live))
+print('signals',[(s.get('coin'),s.get('method_id'),s.get('status')) for s in x.get('signals',[])])
+PY
+              then
+                exit 0
+              fi
+            fi
+            echo "not live yet attempt=$i"
+            sleep 20
+          done
+          echo "C3/C3F did not become public in time" >&2
+          exit 1
