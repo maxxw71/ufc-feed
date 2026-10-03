@@ -12,6 +12,10 @@ on:
 permissions:
   contents: write
 
+concurrency:
+  group: crypto-live-scanner-smoke
+  cancel-in-progress: true
+
 jobs:
   smoke:
     runs-on: ubuntu-latest
@@ -47,6 +51,10 @@ jobs:
           git add crypto/live/smoke_signals.json
           if ! git diff --cached --quiet; then
             git commit -m "Update crypto live scanner smoke snapshot"
-            git pull --rebase origin main
-            git push origin HEAD:main
+            if ! git pull --rebase -X ours origin main; then
+              git rebase --abort || true
+              echo 'snapshot_publish=skipped_due_to_concurrent_main_update'
+              exit 0
+            fi
+            git push origin HEAD:main || echo 'snapshot_publish=skipped_due_to_concurrent_push'
           fi
