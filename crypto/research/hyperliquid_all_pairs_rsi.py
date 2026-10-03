@@ -256,13 +256,16 @@ def daily_from_4h(h):
     d["rv20"] = d["ret1"].rolling(20, min_periods=20).std()
     d["rsi14"] = rsi(d["close"])
     d["setup"] = (d["ret5"] >= 0.15) & (d["high"] >= d["prior60_high"]) & (d["rv20"] >= 0.025)
+    # No-lookahead: the completed UTC daily candle is not knowable until the
+    # next UTC day begins. All 4H event detection must arm after that close.
+    d["arm_time"] = d["time"] + pd.Timedelta(days=1)
     return d
 
 
 def setup_events(d):
     out, last = [], None
     for _, row in d.loc[d["setup"]].iterrows():
-        t = row["time"]
+        t = row["arm_time"]
         if last is None or t - last >= pd.Timedelta(days=10):
             out.append(t)
             last = t
@@ -297,7 +300,7 @@ def build_event(h, d, arm, idx, threshold, meta):
         return None
     peak_rsi = fnum(arm_rows["rsi14"].max())
     peak_price = fnum(arm_rows["high"].max())
-    dr = d[d["time"] == arm]
+    dr = d[d["arm_time"] == arm]
     if dr.empty:
         return None
     daily_rsi = fnum(dr.iloc[0]["rsi14"])
