@@ -147,7 +147,35 @@ def method1_events(x):
         row=x.loc[trigger]
         if pd.isna(row["rsi_pct1"]) or pd.isna(row["rsi_accel"]):
             continue
-        if float(row["rsi_pct1"])<=-0.18174 and float(row["rsi_accel"])<=-11.72020:
+
+        # Fresh-blowoff shape guard. Method C1 is intended to buy the FIRST
+        # washout from a fresh vertical peak, not a late breakdown after price
+        # has spent days distributing/retesting the top.
+        peak_time=x.loc[pi,"time"]
+        hours_peak_to_trigger=(row["time"]-peak_time).total_seconds()/3600
+        pre=w[w.index<=trigger].copy()
+        near95=pre[pre["h"]>=peak*.95]
+        near95_bars=int(len(near95))
+        first95=near95["time"].min() if len(near95) else pd.NaT
+        cycles=0
+        in_pullback=False
+        if pd.notna(first95):
+            for _,rr in pre[pre["time"]>=first95].iterrows():
+                if float(rr["c"])<=peak*.95:
+                    in_pullback=True
+                elif in_pullback and float(rr["h"])>=peak*.95:
+                    cycles+=1
+                    in_pullback=False
+
+        fresh_blowoff = (
+            hours_peak_to_trigger <= 24
+            and near95_bars <= 4
+            and cycles == 0
+        )
+
+        if (fresh_blowoff
+            and float(row["rsi_pct1"])<=-0.18174
+            and float(row["rsi_accel"])<=-11.72020):
             found.append({
                 "trigger_idx":int(trigger),
                 "trigger_time":row["time"],
@@ -155,6 +183,9 @@ def method1_events(x):
                 "rsi":float(row["rsi"]),
                 "rsi_pct1":float(row["rsi_pct1"]),
                 "rsi_accel":float(row["rsi_accel"]),
+                "hours_peak_to_trigger":hours_peak_to_trigger,
+                "near95_bars":near95_bars,
+                "top_retest_cycles":cycles,
             })
     return found
 
