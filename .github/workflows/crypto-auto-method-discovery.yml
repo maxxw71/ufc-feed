@@ -1,0 +1,140 @@
+name: Crypto automatic method discovery
+
+on:
+  workflow_dispatch:
+  schedule:
+    # Daily deep research after the UTC day closes.
+    - cron: '17 5 * * *'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: crypto-automatic-method-discovery
+  cancel-in-progress: true
+
+jobs:
+  hyperliquid_scan:
+    name: Hyperliquid shard ${{ matrix.shard }}
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [0,1,2,3,4,5,6,7]
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install --quiet pandas numpy requests
+      - name: Refresh all Hyperliquid research markets
+        run: |
+          python crypto/research/hyperliquid_all_pairs_rsi.py             --mode scan             --days 600             --shard-index ${{ matrix.shard }}             --shard-count 8             --sleep-seconds 4.2             --out hl_shard
+      - uses: actions/upload-artifact@v4
+        with:
+          name: auto-hl-${{ matrix.shard }}
+          path: hl_shard/
+          retention-days: 2
+
+  hyperliquid_aggregate:
+    needs: hyperliquid_scan
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install --quiet pandas numpy requests
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: auto-hl-*
+          path: hl_shards
+          merge-multiple: true
+      - name: Aggregate Hyperliquid research
+        run: |
+          mkdir -p work/results_hyperliquid_all_pairs
+          python crypto/research/hyperliquid_all_pairs_rsi.py             --mode aggregate             --input-dir hl_shards             --out work/results_hyperliquid_all_pairs
+      - uses: actions/upload-artifact@v4
+        with:
+          name: auto-hl-aggregate
+          path: work/results_hyperliquid_all_pairs/
+          retention-days: 2
+
+  binance_refresh:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install --quiet pandas numpy requests
+      - name: Refresh independent Binance validation panel
+        run: |
+          python crypto/research/rsi_dynamics_rebound.py             --symbols 160             --days 900             --out work/results_rsi_dynamics
+      - uses: actions/upload-artifact@v4
+        with:
+          name: auto-binance-validation
+          path: work/results_rsi_dynamics/
+          retention-days: 2
+
+  discover:
+    needs: [hyperliquid_aggregate, binance_refresh]
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install --quiet pandas numpy
+      - uses: actions/download-artifact@v4
+        with:
+          name: auto-hl-aggregate
+          path: crypto/research/results_hyperliquid_all_pairs
+      - uses: actions/download-artifact@v4
+        with:
+          name: auto-binance-validation
+          path: crypto/research/results_rsi_dynamics
+
+      - name: Discover new Hyperliquid method candidates
+        run: python crypto/research/auto_method_discovery.py
+
+      - name: Cross-validate frozen candidates on Binance
+        run: python crypto/research/auto_crossvenue_validate.py
+
+      - name: Write daily research status
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import json, pandas as pd
+          reg=json.loads(Path('crypto/research/auto_discovery/candidate_registry.json').read_text())
+          cs=reg.get('candidates',[])
+          out={
+            'generated_at':pd.Timestamp.utcnow().isoformat(),
+            'daily_schedule_utc':'05:17',
+            'hyperliquid_scope':'all active primary perps + builder/HIP-3 perps + spot',
+            'binance_scope':'top 160 current USDT spot pairs by quote volume',
+            'candidate_count':len(cs),
+            'cross_validated_shadow_count':sum(c.get('status')=='CROSS_VALIDATED_SHADOW' for c in cs),
+            'live_auto_promotion':False,
+            'next_stage':'forward shadow tracking and manual review before C-number assignment'
+          }
+          Path('crypto/research/auto_discovery/status.json').write_text(json.dumps(out,indent=2))
+          print(json.dumps(out,indent=2))
+          PY
+
+      - name: Commit candidate registry and reports
+        run: |
+          git config user.name "appwiza-research-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add crypto/research/auto_discovery
+          if ! git diff --cached --quiet; then
+            git commit -m "Update automatic crypto method discovery"
+            git pull --rebase origin main
+            git push origin HEAD:main
+          fi
