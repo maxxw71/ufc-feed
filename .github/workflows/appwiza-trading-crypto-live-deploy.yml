@@ -14,7 +14,7 @@ on:
 
 concurrency:
   group: appwiza-trading-crypto-live
-  cancel-in-progress: false
+  cancel-in-progress: true
 
 permissions:
   contents: write
