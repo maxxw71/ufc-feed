@@ -1,0 +1,58 @@
+{
+  "price_signal_source": "Binance USDT spot C3 frozen events",
+  "funding_source": "Binance USD-M perpetual monthly funding archives",
+  "funding_rate_min": 1.3e-05,
+  "funding_coverage": 0.9029126213592233,
+  "median_funding_age_hours": 3.999998888888889,
+  "c3_all": {
+    "n": 103,
+    "hit5": 0.8252427184466019,
+    "hit10": 0.6310679611650486,
+    "t5_s7p5": 0.7572815533980582,
+    "median_mfe": 0.1311475409836064,
+    "median_mae": -0.0855486707975214
+  },
+  "c3_holdout": {
+    "n": 42,
+    "hit5": 0.8809523809523809,
+    "hit10": 0.7142857142857143,
+    "t5_s7p5": 0.8095238095238095,
+    "median_mfe": 0.18809994310564504,
+    "median_mae": -0.03983560459559565
+  },
+  "c3_funding_all": {
+    "n": 65,
+    "hit5": 0.8923076923076924,
+    "hit10": 0.676923076923077,
+    "t5_s7p5": 0.8307692307692308,
+    "median_mfe": 0.1397270114942528,
+    "median_mae": -0.066316387389946
+  },
+  "c3_funding_train": {
+    "n": 34,
+    "hit5": 0.8235294117647058,
+    "hit10": 0.5294117647058824,
+    "t5_s7p5": 0.7352941176470589,
+    "median_mfe": 0.10816060531319174,
+    "median_mae": -0.107253653828477
+  },
+  "c3_funding_holdout": {
+    "n": 31,
+    "hit5": 0.967741935483871,
+    "hit10": 0.8387096774193549,
+    "t5_s7p5": 0.9354838709677419,
+    "median_mfe": 0.2203245089666952,
+    "median_mae": -0.0239715272689208
+  },
+  "missing_symbols": [
+    "AUDIOUSDT",
+    "BONKUSDT",
+    "DODOUSDT",
+    "GLMRUSDT",
+    "MSTRBUSDT",
+    "PHAUSDT",
+    "QIUSDT",
+    "SHIBUSDT"
+  ],
+  "similar_to_hyperliquid": true
+}
