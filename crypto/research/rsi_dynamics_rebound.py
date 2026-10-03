@@ -283,6 +283,19 @@ def future_labels(h, idx, entry_mode="next_open"):
         out["hit7p5_"+name] = mfe >= 0.075
         out["hit10_"+name] = mfe >= 0.10
 
+    # Ex-ante target-before-stop outcomes for cross-venue validation.
+    f5 = h.iloc[start:min(len(h), start+30)]
+    for stop in (0.05,0.075,0.10):
+        tk = sk = None
+        for k, (_, row) in enumerate(f5.iterrows()):
+            if tk is None and float(row["high"]) >= entry*1.05:
+                tk = k
+            if sk is None and float(row["low"]) <= entry*(1-stop):
+                sk = k
+        out["t50_before_s%d_5d" % round(stop*1000)] = (
+            tk is not None and (sk is None or tk < sk)
+        )
+
     # RSI-based entry confirmation: first 4H close after the flush where RSI
     # rises by 10/20/30% from the trigger RSI, but price has not already bounced >4%.
     trigger_rsi = float(h.iloc[loc]["rsi14"])
