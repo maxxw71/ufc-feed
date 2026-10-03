@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-10-03T20:08:00+00:00",
+  "generated_at": "2026-10-03T20:16:00+00:00",
   "venue": "Hyperliquid primary perpetuals",
   "timeframe": "4h",
   "target_pct": 0.05,
@@ -89,6 +89,33 @@
         "close_location_max": 0.1527,
         "volume_ratio20_min": 1.8296
       }
+    },
+    {
+      "id": "C3F",
+      "key": "volume_capitulation_funding",
+      "name": "Volume Capitulation + Funding",
+      "enabled": true,
+      "status": "LIVE",
+      "description": "C3 volume capitulation setup with a positive funding-state filter at the trigger.",
+      "trigger_summary": "C3 Volume Capitulation Flush qualifies \u2192 last published Hyperliquid funding rate at/before trigger \u22650.0013%.",
+      "validation": {
+        "venue": "Hyperliquid primary perps",
+        "n": 35,
+        "hit5": 0.9428571428571428,
+        "hit10": 0.7428571428571429,
+        "target_before_stop": 0.8571428571428571,
+        "stop_reference_pct": 0.075,
+        "external_binance_holdout_n": 31,
+        "external_binance_hit5": 0.967741935483871,
+        "external_binance_hit10": 0.8387096774193549,
+        "external_binance_target_before_stop": 0.9354838709677419,
+        "external_binance_funding_coverage": 0.9029126213592233
+      },
+      "params": {
+        "parent_method": "C3",
+        "funding_rate_min": 1.3e-05,
+        "funding_source": "last published funding rate at or before trigger"
+      }
     }
   ],
   "signals": [
@@ -128,6 +155,25 @@
       "metrics": {
         "close_location": 0.15117219078415392,
         "volume_ratio20": 1.9567367945991145
+      }
+    },
+    {
+      "id": "C3F:XLM:2026-10-02T16:00:00+00:00",
+      "coin": "XLM",
+      "method_id": "C3F",
+      "method_key": "volume_capitulation_funding",
+      "method_name": "Volume Capitulation + Funding",
+      "trigger_time": "2026-10-02T16:00:00+00:00",
+      "entry_time": "2026-10-02T20:00:00+00:00",
+      "trigger_price": 0.21216,
+      "entry_reference": 0.21198,
+      "target_5pct": 0.222579,
+      "risk_stop_reference": 0.19608150000000002,
+      "status": "RECENT",
+      "metrics": {
+        "close_location": 0.15117219078415392,
+        "volume_ratio20": 1.9567367945991145,
+        "funding_rate_at_trigger": 3.11255e-05
       }
     },
     {
@@ -173,7 +219,7 @@
     }
   ],
   "shadow_signals": [],
-  "history_count": 4,
+  "history_count": 5,
   "shadow_history_count": 0,
   "coverage": {
     "ok": 178,
