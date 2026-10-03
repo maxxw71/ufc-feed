@@ -325,22 +325,22 @@ def settle_signal(raw, signal, now):
         if stop_bar is None and float(bar["l"])<=stop:
             stop_bar=bar["time"]
 
-    # Success-status semantics are target based: if +5% is reached at any point
-    # in the tracked path, the trade is SUCCESS. We still preserve whether the
-    # risk reference was touched for separate risk research, but there is no
-    # AMBIGUOUS state when target and stop occur in the same 4H candle.
+    # Position semantics: whichever exit is reached first ends the trade.
+    # If target and stop are both touched inside the same 4H candle, we cannot
+    # prove target came first, so conservatively count the trade as STOPPED.
     signal["stop_touched"]=bool(stop_bar is not None)
     if stop_bar is not None:
         signal["stop_touched_at"]=pd.Timestamp(stop_bar).isoformat()
 
-    if target_bar is not None:
+    if target_bar is not None and (stop_bar is None or pd.Timestamp(target_bar) < pd.Timestamp(stop_bar)):
         signal["status"]="SUCCESS"
         signal["settled_at"]=pd.Timestamp(target_bar).isoformat()
         signal["realized_target_pct"]=0.05
-        signal["target_after_stop"]=bool(stop_bar is not None and pd.Timestamp(target_bar)>=pd.Timestamp(stop_bar))
+        signal["target_after_stop"]=False
     elif stop_bar is not None:
         signal["status"]="STOPPED"
         signal["settled_at"]=pd.Timestamp(stop_bar).isoformat()
+        signal["target_after_stop"]=bool(target_bar is not None and pd.Timestamp(target_bar) >= pd.Timestamp(stop_bar))
     else:
         age=pd.Timestamp(now)-pd.Timestamp(signal["trigger_time"])
         signal["status"]="ACTIVE" if age<=pd.Timedelta(hours=8) else "RECENT"
