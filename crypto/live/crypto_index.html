@@ -15,7 +15,7 @@
 .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:17px}.stat{background:#08111f;border:1px solid #192943;border-radius:12px;padding:11px}.stat b{display:block;font-size:19px}.stat span{color:var(--muted);font-size:11px}
 .rules{margin-top:14px;padding-top:13px;border-top:1px solid #1d2b42;color:#b8c9df;font-size:12px}.rules b{color:#fff}
 .section-title{display:flex;align-items:end;justify-content:space-between;gap:20px;margin:34px 0 12px}.section-title h2{font-size:26px;margin:0}.section-title span{color:var(--muted);font-size:12px}
-.tablewrap{overflow:auto;border:1px solid var(--line);border-radius:15px;background:#0a1424}table{width:100%;border-collapse:collapse;min-width:760px}th,td{padding:12px 14px;text-align:left;border-bottom:1px solid #18263c}th{font-size:11px;color:#91a7c4;text-transform:uppercase;letter-spacing:.08em;background:#0d192b}td{font-size:13px}.positive{color:var(--green);font-weight:800}.muted{color:var(--muted)}.empty{padding:28px;color:var(--muted);text-align:center}
+.tablewrap{overflow:auto;border:1px solid var(--line);border-radius:15px;background:#0a1424}table{width:100%;border-collapse:collapse;min-width:760px}th,td{padding:12px 14px;text-align:left;border-bottom:1px solid #18263c}th{font-size:11px;color:#91a7c4;text-transform:uppercase;letter-spacing:.08em;background:#0d192b}td{font-size:13px}.positive{color:var(--green);font-weight:800}.status-success{color:var(--green);font-weight:900}.status-stopped{color:var(--red);font-weight:850}.status-ambiguous{color:var(--yellow);font-weight:850}.muted{color:var(--muted)}.empty{padding:28px;color:var(--muted);text-align:center}
 .note{margin-top:22px;color:#7890b0;font-size:12px}.loading{color:var(--yellow)}@media(max-width:700px){.stats{grid-template-columns:1fr}.method-desc{min-height:0}.nav a{margin-left:10px}}
 </style>
 </head>
@@ -23,7 +23,7 @@
 <div class="top"><div class="brand">APPWIZA</div><nav class="nav"><a href="/">Home</a><a href="/trading/">Trading</a><a href="/trading/crypto/" aria-current="page">Crypto</a></nav></div>
 <section class="hero"><div class="eyebrow">Trading · Crypto</div><h1>Crypto method scanner</h1><div class="sub">Primary Hyperliquid perpetuals are scanned on closed 4-hour candles. The page surfaces only signals matching the live method contracts.</div><div class="statusline"><span class="pill live"><span class="dot"></span>Live scanner</span><span class="pill" id="updated">Waiting for scanner…</span><span class="pill">Target focus: +5%</span></div></section>
 <section class="methods" id="methods"></section>
-<div class="section-title"><h2>Active / recent signals</h2><span id="signalCount"></span></div>
+<div class="section-title"><h2>Active / recent / settled signals</h2><span id="signalCount"></span></div>
 <div class="tablewrap"><table><thead><tr><th>Time</th><th>Pair</th><th>Method</th><th>Trigger</th><th>Entry ref.</th><th>+5% target</th><th>Status</th></tr></thead><tbody id="signals"><tr><td colspan="7" class="empty loading">Loading live crypto scanner…</td></tr></tbody></table></div>
 <div class="note">Historical hit rates are validation measurements, not guaranteed future probabilities. Live signals are scanner output only; automated execution is not enabled on this page.</div>
 </main>
@@ -48,7 +48,7 @@ async function refresh(){
   document.getElementById('signalCount').textContent=sig.length+' shown';
   const tb=document.getElementById('signals');
   if(!sig.length){tb.innerHTML='<tr><td colspan="7" class="empty">No current or recent qualifying signals.</td></tr>';return;}
-  tb.innerHTML=sig.map(s=>'<tr><td>'+dt(s.trigger_time)+'</td><td><b>'+s.coin+'</b></td><td>'+s.method_id+'</td><td>'+money(s.trigger_price)+'</td><td>'+money(s.entry_reference)+'</td><td class="positive">'+money(s.target_5pct)+'</td><td>'+s.status+'</td></tr>').join('');
+  tb.innerHTML=sig.map(s=>{const sc=s.status==='SUCCESS'?'status-success':(s.status==='STOPPED'?'status-stopped':(s.status==='AMBIGUOUS'?'status-ambiguous':''));return '<tr><td>'+dt(s.trigger_time)+'</td><td><b>'+s.coin+'</b></td><td>'+s.method_id+'</td><td>'+money(s.trigger_price)+'</td><td>'+money(s.entry_reference)+'</td><td class="positive">'+money(s.target_5pct)+'</td><td class="'+sc+'">'+s.status+'</td></tr>'}).join('');
  }catch(e){
   document.getElementById('signals').innerHTML='<tr><td colspan="7" class="empty">Scanner data unavailable: '+String(e.message||e)+'</td></tr>';
  }
