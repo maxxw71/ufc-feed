@@ -72,14 +72,7 @@ jobs:
           stat -c '%U:%G %a %s %n' /srv/appwiza-sports/public/trading/index.html /srv/appwiza-sports/public/trading/crypto/index.html "$PUB/signals.json"
           EOF
 
-          git config user.name github-actions
-          git config user.email github-actions@github.com
-          git add crypto/trading_fallback_deploy_report.txt
-          if ! git diff --cached --quiet; then
-            git commit -m 'Record fallback Appwiza Trading deploy'
-            git pull --rebase origin main
-            git push origin HEAD:main
-          fi
+          echo "fallback_deploy_report_bytes=$(wc -c < crypto/trading_fallback_deploy_report.txt)"
 
       - name: Verify live routes
         shell: bash
