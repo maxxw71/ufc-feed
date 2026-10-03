@@ -1,0 +1,40 @@
+name: Send crypto daily email test
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/send-crypto-daily-email-test.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  send:
+    runs-on: [self-hosted, Linux, X64]
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - name: Send one verification email
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          KEY=/home/appwiza-runner/.ssh/appwiza_vps
+          HOST=anestishkurti92@127.0.0.1
+          SSH="ssh -i $KEY -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=accept-new $HOST"
+          $SSH 'bash -s' <<'EOF' | tee crypto/daily_email_send_test_report.txt
+          set -Eeuo pipefail
+          PY=/home/anestishkurti92/ufc-predictor-v1/venv/bin/python
+          "$PY" /home/anestishkurti92/crypto-trading/crypto_daily_email.py
+          echo crypto_daily_email_test=sent
+          date -u
+          EOF
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git add crypto/daily_email_send_test_report.txt
+          if ! git diff --cached --quiet; then
+            git commit -m 'Record crypto daily email send test'
+            git pull --rebase origin main
+            git push origin HEAD:main
+          fi
