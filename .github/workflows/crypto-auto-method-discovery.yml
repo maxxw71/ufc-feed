@@ -2,6 +2,14 @@ name: Crypto automatic method discovery
 
 on:
   workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'crypto/research/auto_method_discovery.py'
+      - 'crypto/research/auto_crossvenue_validate.py'
+      - 'crypto/research/hyperliquid_all_pairs_rsi.py'
+      - 'crypto/research/rsi_dynamics_rebound.py'
+      - '.github/workflows/crypto-auto-method-discovery.yml'
   schedule:
     # Daily deep research after the UTC day closes.
     - cron: '17 5 * * *'
