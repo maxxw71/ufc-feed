@@ -2,6 +2,14 @@ import unittest
 from validate_historical_odds_snapshot import american_to_decimal,parse_snapshot,snapshot_variants,wayback_timestamp,validate_quote_across_snapshots
 
 class HistoricalOddsArchiveValidationTests(unittest.TestCase):
+    def test_near_favorite_price_mismatch_is_rejected(self):
+        q={'quote_rowid':7,'bout_id':'99','bookmaker':'DraftKings','selection':'Frazer Clarke','decimal_price':1+100/6000}
+        snapshots=[{'timestamp':'20230120120000','snapshot_used_url':'saved',
+          'cells':{('99','draftkings','frazerclarke'):{'american_price':'-8000','decimal_from_archive':1.0125}}}]
+        row,checks=validate_quote_across_snapshots(q,'2023-01-21','event',snapshots)
+        self.assertIsNone(row)
+        self.assertFalse(checks[0]['validated'])
+
     def test_american_decimal_conversion(self):
         self.assertAlmostEqual(american_to_decimal('+140'),2.4)
         self.assertAlmostEqual(american_to_decimal('-200'),1.5)

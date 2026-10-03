@@ -135,7 +135,7 @@ def main():
                 arc=cells.get(key)
                 if not arc or arc.get('decimal_from_archive') is None or q.get('decimal_price') is None:continue
                 diff=abs(float(q['decimal_price'])-float(arc['decimal_from_archive']))
-                if diff<=0.005:
+                if diff<=1e-6:
                     validated.append({
                       'quote_rowid':q['quote_rowid'],'bout_id':str(q.get('bout_id') or ''),
                       'bookmaker':q.get('bookmaker'),'selection':q.get('selection'),
@@ -157,7 +157,7 @@ def main():
       'distinct_validated_bouts':len({x['bout_id'] for x in validated}),
       'distinct_validated_events':len({x['event_url'] for x in validated if x.get('event_url')}),
       'validated_rows':validated,'audits':audits,
-      'policy':'Exact ProBoxingOdds homepage Wayback capture strictly before event date, within 14 days; exact bookmaker, bout id, selection and displayed price; decimal equivalence <=0.005.'
+      'policy':'Exact ProBoxingOdds homepage Wayback capture strictly before event date, within 14 days; exact bookmaker, bout id, selection and displayed price; decimal equivalence <=1e-6.'
     }
     OUT.parent.mkdir(parents=True,exist_ok=True)
     OUT.write_text(json.dumps(report,indent=2,ensure_ascii=False))
@@ -165,3 +165,4 @@ def main():
     print(json.dumps({k:report[k] for k in ('cdx_rows','stored_quote_dates','validated_price_rows','distinct_validated_bouts','distinct_validated_events')},indent=2))
 
 if __name__=='__main__':main()
+
