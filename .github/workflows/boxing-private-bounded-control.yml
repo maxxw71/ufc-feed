@@ -1,0 +1,64 @@
+name: Boxing private bounded control
+on:
+  push:
+    branches: [codex/boxing-private-control-20261003]
+    paths:
+      - '.github/workflows/boxing-private-bounded-control.yml'
+      - 'ops/boxing-control/control.py'
+      - 'ops/boxing-control/test_control.py'
+permissions:
+  contents: read
+concurrency:
+  group: boxing-private-bounded-control
+  cancel-in-progress: false
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      - run: python3 -B -m unittest discover -s ops/boxing-control -p 'test_control.py'
+  control:
+    needs: tests
+    if: github.repository == 'maxxw71/ufc-feed' && github.ref == 'refs/heads/codex/boxing-private-control-20261003'
+    runs-on: [self-hosted, Linux, X64, appwiza]
+    timeout-minutes: 75
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - name: Read strict command from dedicated control branch
+        env:
+          CONTROL_GITHUB_TOKEN: ${{ github.token }}
+        run: |
+          python3 - <<'PY'
+          import base64,json,os,pathlib,sys,urllib.request
+          sys.path.insert(0,'ops/boxing-control')
+          from control import request
+          url='https://api.github.com/repos/maxxw71/ufc-feed/contents/ops/boxing-control/request.json?ref=codex%2Fboxing-private-control-20261003'
+          req=urllib.request.Request(url,headers={'Authorization':'Bearer '+os.environ['CONTROL_GITHUB_TOKEN'],'Accept':'application/vnd.github+json'})
+          with urllib.request.urlopen(req,timeout=30) as response:data=json.load(response)
+          parsed=request(base64.b64decode(data['content']).decode())
+          pathlib.Path('control-request.json').write_text(json.dumps(parsed))
+          print(json.dumps({'command_blob_sha':data['sha'],**parsed}))
+          PY
+      - name: Execute bounded staging command through existing VPS-local SSH
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          KEY=/home/appwiza-runner/.ssh/appwiza_vps
+          HOST=anestishkurti92@127.0.0.1
+          SSH_ARGS=(-i "$KEY" -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=yes -o ServerAliveInterval=15 -o ServerAliveCountMax=4)
+          ssh "${SSH_ARGS[@]}" "$HOST" 'mkdir -p /home/anestishkurti92/boxing-cloud-control/20261003-v4'
+          ssh "${SSH_ARGS[@]}" "$HOST" 'cat > /home/anestishkurti92/boxing-cloud-control/20261003-v4/control.py' < ops/boxing-control/control.py
+          ssh "${SSH_ARGS[@]}" "$HOST" '/opt/sports-envs/boxing-research/bin/python -B /home/anestishkurti92/boxing-cloud-control/20261003-v4/control.py' < control-request.json | tee control-report.jsonl
+      - name: Upload compact control report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: boxing-private-control-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            control-request.json
+            control-report.jsonl
+          if-no-files-found: warn
+          retention-days: 14
