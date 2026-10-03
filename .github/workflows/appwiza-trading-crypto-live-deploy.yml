@@ -84,7 +84,12 @@ jobs:
           chmod 0755 "$ROOT/live_crypto_scanner.py" "$ROOT/ensure_trading_nav.py"
           chmod 0644 "$ROOT/methods.json" /srv/appwiza-sports/public/trading/index.html /srv/appwiza-sports/public/trading/crypto/index.html
 
-          "$PY" -m py_compile "$ROOT/live_crypto_scanner.py" "$ROOT/ensure_trading_nav.py"
+          "$PY" - <<'PY'
+          from pathlib import Path
+          for p in [Path("/home/anestishkurti92/crypto-trading/live_crypto_scanner.py"),Path("/home/anestishkurti92/crypto-trading/ensure_trading_nav.py")]:
+              compile(p.read_text(), str(p), "exec")
+          print("source_compile=ok")
+          PY
 
           if [ -f /srv/appwiza-sports/public/index.html ]; then
             cp -a /srv/appwiza-sports/public/index.html "/srv/appwiza-sports/public/index.html.pre-trading.$(date -u +%Y%m%dT%H%M%SZ).bak"
