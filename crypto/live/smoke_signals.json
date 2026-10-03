@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-10-03T20:16:00+00:00",
+  "generated_at": "2026-10-03T20:33:00+00:00",
   "venue": "Hyperliquid primary perpetuals",
   "timeframe": "4h",
   "target_pct": 0.05,
@@ -136,8 +136,10 @@
         "close_location": 0.09281961471103253,
         "volume_ratio20": 2.4405222737618764
       },
+      "stop_touched": false,
       "settled_at": "2026-10-02T20:00:00+00:00",
-      "realized_target_pct": 0.05
+      "realized_target_pct": 0.05,
+      "target_after_stop": false
     },
     {
       "id": "C3:XLM:2026-10-02T16:00:00+00:00",
@@ -155,7 +157,8 @@
       "metrics": {
         "close_location": 0.15117219078415392,
         "volume_ratio20": 1.9567367945991145
-      }
+      },
+      "stop_touched": false
     },
     {
       "id": "C3F:XLM:2026-10-02T16:00:00+00:00",
@@ -174,7 +177,8 @@
         "close_location": 0.15117219078415392,
         "volume_ratio20": 1.9567367945991145,
         "funding_rate_at_trigger": 3.11255e-05
-      }
+      },
+      "stop_touched": false
     },
     {
       "id": "C1:VIRTUAL:2026-10-02T16:00:00+00:00",
@@ -194,8 +198,10 @@
         "rsi_pct1": -0.25524946514928326,
         "rsi_accel": -12.738019857304373
       },
+      "stop_touched": false,
       "settled_at": "2026-10-03T08:00:00+00:00",
-      "realized_target_pct": 0.05
+      "realized_target_pct": 0.05,
+      "target_after_stop": false
     },
     {
       "id": "C3:VIRTUAL:2026-10-02T16:00:00+00:00",
@@ -214,8 +220,10 @@
         "close_location": 0.134957825679475,
         "volume_ratio20": 2.825512569939751
       },
+      "stop_touched": false,
       "settled_at": "2026-10-03T08:00:00+00:00",
-      "realized_target_pct": 0.05
+      "realized_target_pct": 0.05,
+      "target_after_stop": false
     }
   ],
   "shadow_signals": [],
