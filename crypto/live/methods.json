@@ -1,5 +1,5 @@
 {
-  "version": "2026-10-03-c3-live",
+  "version": "2026-10-03-c3-c3f-live",
   "venue": "Hyperliquid primary perpetuals",
   "timeframe": "4h",
   "target_pct": 0.05,
@@ -88,6 +88,33 @@
         "first_flush_min": 0.08,
         "close_location_max": 0.1527,
         "volume_ratio20_min": 1.8296
+      }
+    },
+    {
+      "id": "C3F",
+      "key": "volume_capitulation_funding",
+      "name": "Volume Capitulation + Funding",
+      "enabled": true,
+      "status": "LIVE",
+      "description": "C3 volume capitulation setup with a positive funding-state filter at the trigger.",
+      "trigger_summary": "C3 Volume Capitulation Flush qualifies → last published Hyperliquid funding rate at/before trigger ≥0.0013%.",
+      "validation": {
+        "venue": "Hyperliquid primary perps",
+        "n": 35,
+        "hit5": 0.9428571428571428,
+        "hit10": 0.7428571428571429,
+        "target_before_stop": 0.8571428571428571,
+        "stop_reference_pct": 0.075,
+        "external_binance_holdout_n": 31,
+        "external_binance_hit5": 0.967741935483871,
+        "external_binance_hit10": 0.8387096774193549,
+        "external_binance_target_before_stop": 0.9354838709677419,
+        "external_binance_funding_coverage": 0.9029126213592233
+      },
+      "params": {
+        "parent_method": "C3",
+        "funding_rate_min": 0.000013,
+        "funding_source": "last published funding rate at or before trigger"
       }
     }
   ]
