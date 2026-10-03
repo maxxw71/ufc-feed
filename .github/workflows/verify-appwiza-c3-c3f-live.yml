@@ -1,5 +1,4 @@
 name: Verify C3 and C3F live on Appwiza
-# verify-trigger-v2
 
 on:
   push:
@@ -19,20 +18,7 @@ jobs:
           set -Eeuo pipefail
           for i in $(seq 1 30); do
             if curl -fsSL --max-time 20 https://appwiza.com/trading/crypto/signals.json -o /tmp/signals.json; then
-              if python3 - <<'PY'
-import json
-x=json.load(open('/tmp/signals.json'))
-live={m['id'] for m in x.get('methods',[]) if m.get('status')=='LIVE'}
-assert {'C1','C2','C3','C3F'}.issubset(live), live
-m={z['id']:z for z in x['methods']}
-assert m['C3']['params']['volume_ratio20_min']==1.8296
-assert m['C3F']['params']['funding_rate_min']==0.000013
-print('PUBLIC_C3_C3F_LIVE=PASS')
-print('generated_at',x.get('generated_at'))
-print('live_methods',sorted(live))
-print('signals',[(s.get('coin'),s.get('method_id'),s.get('status')) for s in x.get('signals',[])])
-PY
-              then
+              if python3 -c "import json;x=json.load(open('/tmp/signals.json'));live={m['id'] for m in x.get('methods',[]) if m.get('status')=='LIVE'};m={z['id']:z for z in x.get('methods',[])};assert {'C1','C2','C3','C3F'}.issubset(live),live;assert m['C3']['params']['volume_ratio20_min']==1.8296;assert m['C3F']['params']['funding_rate_min']==0.000013;print('PUBLIC_C3_C3F_LIVE=PASS',x.get('generated_at'),sorted(live),[(s.get('coin'),s.get('method_id'),s.get('status')) for s in x.get('signals',[])])"; then
                 exit 0
               fi
             fi
