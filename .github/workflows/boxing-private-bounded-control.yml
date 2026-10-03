@@ -43,6 +43,7 @@ jobs:
           print(json.dumps({'command_blob_sha':data['sha'],**parsed}))
           PY
       - name: Execute bounded staging command through existing VPS-local SSH
+        id: execute
         shell: bash
         run: |
           set -Eeuo pipefail
@@ -53,7 +54,7 @@ jobs:
           ssh "${SSH_ARGS[@]}" "$HOST" 'cat > /home/anestishkurti92/boxing-cloud-control/20261003-v4/control.py' < ops/boxing-control/control.py
           ssh "${SSH_ARGS[@]}" "$HOST" '/opt/sports-envs/boxing-research/bin/python -B /home/anestishkurti92/boxing-cloud-control/20261003-v4/control.py' < control-request.json | tee control-report.jsonl
       - name: Upload compact control report
-        if: always()
+        if: ${{ !cancelled() && steps.execute.outcome == 'success' }}
         uses: actions/upload-artifact@v4
         with:
           name: boxing-private-control-${{ github.run_id }}-${{ github.run_attempt }}

@@ -1,7 +1,7 @@
 """Restricted private boxing controller. No arbitrary command or path input."""
 import collections,datetime,fcntl,gzip,hashlib,json,os,pathlib,re,shutil,sqlite3,subprocess,sys,time
 SOURCE=pathlib.Path('/home/anestishkurti92/boxing-research/completion_runs/20261002T1540Z/master_repair_staging_20261003T0203Z')
-ROOT=pathlib.Path('/home/anestishkurti92/boxing-cloud-control/20261003-v4')
+ROOT=pathlib.Path('/opt/appwiza-sports-imports/google-ufc-model-20260913/home/boxing-cloud-control/20261003-v4')
 PY='/opt/sports-envs/boxing-research/bin/python'
 VALIDATOR_SHA='861102f4fb1a00ced16b240aaea5e8f0b26873e115df6858ded90e8d49b5538e'
 ACTIONS={'status','start-existing-validation','compare'}
