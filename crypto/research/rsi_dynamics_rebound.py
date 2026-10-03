@@ -126,7 +126,7 @@ def prep_daily(d):
     events = []
     last = None
     for _, row in x.loc[x["setup"]].iterrows():
-        t = row["open_time"]
+        t = row["close_time"]
         if last is None or t - last >= pd.Timedelta(days=10):
             events.append(t)
             last = t
@@ -153,6 +153,15 @@ def prep4h(h):
     x["dist_sma20"] = x["close"] / x["sma20"] - 1
     x["dist_ema9"] = x["close"] / x["ema9"] - 1
     x["sma9_slope3"] = x["sma9"] / x["sma9"].shift(3) - 1
+    x["sma20_slope3"] = x["sma20"] / x["sma20"].shift(3) - 1
+    x["dist_sma50"] = x["close"] / x["sma50"] - 1
+    x["range_pct"] = (x["high"] - x["low"]) / x["close"].replace(0, np.nan)
+    x["lower_wick_pct_range"] = (np.minimum(x["open"],x["close"]) - x["low"]) / (x["high"]-x["low"]).replace(0,np.nan)
+    x["close_location"] = (x["close"] - x["low"]) / (x["high"]-x["low"]).replace(0,np.nan)
+    x["volume_med20"] = x["volume"].rolling(20,min_periods=10).median()
+    x["volume_ratio20"] = x["volume"] / x["volume_med20"].replace(0,np.nan)
+    x["range_med20"] = x["range_pct"].rolling(20,min_periods=10).median()
+    x["range_ratio20"] = x["range_pct"] / x["range_med20"].replace(0,np.nan)
 
     # RSI is treated as a price-like series with its own moving averages.
     x["rsi_sma3"] = x["rsi14"].rolling(3, min_periods=2).mean()
@@ -237,6 +246,13 @@ def event_features(h, idx, arm, daily_rsi, dd_threshold):
         "rsi_sma5_slope1": float(h.iloc[loc]["rsi_sma5_slope1"]) if pd.notna(h.iloc[loc]["rsi_sma5_slope1"]) else np.nan,
         "rsi_sma5_slope3": float(h.iloc[loc]["rsi_sma5_slope3"]) if pd.notna(h.iloc[loc]["rsi_sma5_slope3"]) else np.nan,
         "dual_stretch_9": float(h.iloc[loc]["dual_stretch_9"]) if pd.notna(h.iloc[loc]["dual_stretch_9"]) else np.nan,
+        "dist_sma50": float(h.iloc[loc]["dist_sma50"]) if pd.notna(h.iloc[loc]["dist_sma50"]) else np.nan,
+        "sma20_slope3": float(h.iloc[loc]["sma20_slope3"]) if pd.notna(h.iloc[loc]["sma20_slope3"]) else np.nan,
+        "rsi_vs_ema5": float(h.iloc[loc]["rsi_vs_ema5"]) if pd.notna(h.iloc[loc]["rsi_vs_ema5"]) else np.nan,
+        "volume_ratio20": float(h.iloc[loc]["volume_ratio20"]) if pd.notna(h.iloc[loc]["volume_ratio20"]) else np.nan,
+        "range_ratio20": float(h.iloc[loc]["range_ratio20"]) if pd.notna(h.iloc[loc]["range_ratio20"]) else np.nan,
+        "lower_wick_pct_range": float(h.iloc[loc]["lower_wick_pct_range"]) if pd.notna(h.iloc[loc]["lower_wick_pct_range"]) else np.nan,
+        "close_location": float(h.iloc[loc]["close_location"]) if pd.notna(h.iloc[loc]["close_location"]) else np.nan,
     }
 
 
@@ -537,7 +553,7 @@ def main():
             h = prep4h(fetch_klines(session,sym,"4h",min(arms).to_pydatetime()-timedelta(days=2),end))
             n = 0
             for arm in arms:
-                dr = dx.loc[dx["open_time"]==arm]
+                dr = dx.loc[dx["close_time"]==arm]
                 if dr.empty:
                     continue
                 daily_rsi = float(dr.iloc[0]["rsi14"])
