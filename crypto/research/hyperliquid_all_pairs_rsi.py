@@ -200,6 +200,18 @@ def prep4h(h):
     x["volume_ratio5"] = x["volume"] / x["volume_med5"].replace(0, np.nan)
     x["volume_ratio20"] = x["volume"] / x["volume_med20"].replace(0, np.nan)
     x["volume_z20"] = (x["volume"] - x["volume_mean20"]) / x["volume_std20"].replace(0, np.nan)
+    x["trades"] = pd.to_numeric(x["trades"], errors="coerce")
+    x["trades_med20"] = x["trades"].rolling(20, min_periods=10).median()
+    x["trades_ratio20"] = x["trades"] / x["trades_med20"].replace(0, np.nan)
+    typical = (x["high"] + x["low"] + x["close"]) / 3.0
+    x["vwap20"] = (typical*x["volume"]).rolling(20,min_periods=10).sum() / x["volume"].rolling(20,min_periods=10).sum().replace(0,np.nan)
+    x["dist_vwap20"] = x["close"] / x["vwap20"] - 1
+    direction = np.sign(x["close"].diff()).fillna(0)
+    x["obv"] = (direction*x["volume"].fillna(0)).cumsum()
+    x["obv_delta3_norm"] = x["obv"].diff(3) / x["volume"].rolling(20,min_periods=10).sum().replace(0,np.nan)
+    mfm=((x["close"]-x["low"])-(x["high"]-x["close"]))/(x["high"]-x["low"]).replace(0,np.nan)
+    x["cmf20"]=(mfm*x["volume"]).rolling(20,min_periods=10).sum()/x["volume"].rolling(20,min_periods=10).sum().replace(0,np.nan)
+    x["atr14_pct"]=(x["high"]-x["low"]).rolling(14,min_periods=8).mean()/x["close"].replace(0,np.nan)
     x["range_med20"] = x["range_pct"].rolling(20, min_periods=10).median()
     x["range_ratio20"] = x["range_pct"] / x["range_med20"].replace(0, np.nan)
 
@@ -343,6 +355,11 @@ def build_event(h, d, arm, idx, threshold, meta):
         "volume_ratio5": fnum(h.iloc[loc]["volume_ratio5"]),
         "volume_ratio20": fnum(h.iloc[loc]["volume_ratio20"]),
         "volume_z20": fnum(h.iloc[loc]["volume_z20"]),
+        "trades_ratio20": fnum(h.iloc[loc]["trades_ratio20"]),
+        "dist_vwap20": fnum(h.iloc[loc]["dist_vwap20"]),
+        "obv_delta3_norm": fnum(h.iloc[loc]["obv_delta3_norm"]),
+        "cmf20": fnum(h.iloc[loc]["cmf20"]),
+        "atr14_pct": fnum(h.iloc[loc]["atr14_pct"]),
         "range_ratio20": fnum(h.iloc[loc]["range_ratio20"]),
         "lower_wick_pct_range": fnum(h.iloc[loc]["lower_wick_pct_range"]),
         "close_location": fnum(h.iloc[loc]["close_location"]),
