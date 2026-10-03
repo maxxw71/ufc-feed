@@ -324,16 +324,20 @@ def settle_signal(raw, signal, now):
             target_bar=bar["time"]
         if stop_bar is None and float(bar["l"])<=stop:
             stop_bar=bar["time"]
-        if target_bar is not None and stop_bar is not None:
-            break
 
-    if target_bar is not None and stop_bar is not None and target_bar==stop_bar:
-        signal["status"]="AMBIGUOUS"
-        signal["settled_at"]=pd.Timestamp(target_bar).isoformat()
-    elif target_bar is not None and (stop_bar is None or target_bar<stop_bar):
+    # Success-status semantics are target based: if +5% is reached at any point
+    # in the tracked path, the trade is SUCCESS. We still preserve whether the
+    # risk reference was touched for separate risk research, but there is no
+    # AMBIGUOUS state when target and stop occur in the same 4H candle.
+    signal["stop_touched"]=bool(stop_bar is not None)
+    if stop_bar is not None:
+        signal["stop_touched_at"]=pd.Timestamp(stop_bar).isoformat()
+
+    if target_bar is not None:
         signal["status"]="SUCCESS"
         signal["settled_at"]=pd.Timestamp(target_bar).isoformat()
         signal["realized_target_pct"]=0.05
+        signal["target_after_stop"]=bool(stop_bar is not None and pd.Timestamp(target_bar)>=pd.Timestamp(stop_bar))
     elif stop_bar is not None:
         signal["status"]="STOPPED"
         signal["settled_at"]=pd.Timestamp(stop_bar).isoformat()
@@ -472,7 +476,6 @@ def main():
                 elif ssig["status"]=="RECENT": ssig["status"]="SHADOW_RECENT"
                 elif ssig["status"]=="SUCCESS": ssig["status"]="SHADOW_SUCCESS"
                 elif ssig["status"]=="STOPPED": ssig["status"]="SHADOW_STOPPED"
-                elif ssig["status"]=="AMBIGUOUS": ssig["status"]="SHADOW_AMBIGUOUS"
                 shadow_signals.append(ssig)
             coverage.append({"coin":coin,"status":"ok","bars":len(x),"signals":len(candidates),"shadow_signals":len(shadow_candidates)})
         except Exception as ex:
@@ -502,7 +505,7 @@ def main():
     # Keep recent live signals plus recently settled trades visible online.
     visible_by_id={x["id"]:x for x in signals}
     for hsig in history:
-        if hsig.get("status") in {"SUCCESS","STOPPED","AMBIGUOUS"}:
+        if hsig.get("status") in {"SUCCESS","STOPPED"}:
             try:
                 settled_age=pd.Timestamp(now)-pd.Timestamp(hsig.get("settled_at"))
             except Exception:
