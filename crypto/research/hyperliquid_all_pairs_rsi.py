@@ -193,8 +193,13 @@ def prep4h(h):
     x["range_pct"] = (x["high"] - x["low"]) / x["close"].replace(0, np.nan)
     x["lower_wick_pct_range"] = (np.minimum(x["open"], x["close"]) - x["low"]) / (x["high"] - x["low"]).replace(0, np.nan)
     x["close_location"] = (x["close"] - x["low"]) / (x["high"] - x["low"]).replace(0, np.nan)
+    x["volume_med5"] = x["volume"].rolling(5, min_periods=3).median()
     x["volume_med20"] = x["volume"].rolling(20, min_periods=10).median()
+    x["volume_mean20"] = x["volume"].rolling(20, min_periods=10).mean()
+    x["volume_std20"] = x["volume"].rolling(20, min_periods=10).std()
+    x["volume_ratio5"] = x["volume"] / x["volume_med5"].replace(0, np.nan)
     x["volume_ratio20"] = x["volume"] / x["volume_med20"].replace(0, np.nan)
+    x["volume_z20"] = (x["volume"] - x["volume_mean20"]) / x["volume_std20"].replace(0, np.nan)
     x["range_med20"] = x["range_pct"].rolling(20, min_periods=10).median()
     x["range_ratio20"] = x["range_pct"] / x["range_med20"].replace(0, np.nan)
 
@@ -335,7 +340,9 @@ def build_event(h, d, arm, idx, threshold, meta):
         "rsi_price_shock_ratio": shock,
         "daily_4h_rsi_gap": daily_rsi - rr if np.isfinite(daily_rsi) else np.nan,
         "rsi_to_daily_ratio": rr / daily_rsi if np.isfinite(daily_rsi) and daily_rsi > 0 else np.nan,
+        "volume_ratio5": fnum(h.iloc[loc]["volume_ratio5"]),
         "volume_ratio20": fnum(h.iloc[loc]["volume_ratio20"]),
+        "volume_z20": fnum(h.iloc[loc]["volume_z20"]),
         "range_ratio20": fnum(h.iloc[loc]["range_ratio20"]),
         "lower_wick_pct_range": fnum(h.iloc[loc]["lower_wick_pct_range"]),
         "close_location": fnum(h.iloc[loc]["close_location"]),
