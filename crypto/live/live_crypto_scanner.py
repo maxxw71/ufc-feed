@@ -148,57 +148,17 @@ def method1_events(x):
         if pd.isna(row["rsi_pct1"]) or pd.isna(row["rsi_accel"]):
             continue
 
-        # Fresh-blowoff shape guard. Method C1 is intended to buy the FIRST
-        # washout from a fresh vertical peak, not a late breakdown after price
-        # has spent days distributing/retesting the top.
-        peak_time=x.loc[pi,"time"]
-        hours_peak_to_trigger=(row["time"]-peak_time).total_seconds()/3600
-        pre=w[w.index<=trigger].copy()
-        near95=pre[pre["h"]>=peak*.95]
-        near95_bars=int(len(near95))
-        first95=near95["time"].min() if len(near95) else pd.NaT
-        cycles=0
-        in_pullback=False
-        if pd.notna(first95):
-            for _,rr in pre[pre["time"]>=first95].iterrows():
-                if float(rr["c"])<=peak*.95:
-                    in_pullback=True
-                elif in_pullback and float(rr["h"])>=peak*.95:
-                    cycles+=1
-                    in_pullback=False
-
-        peak_rsi=float(x.loc[pi,"rsi"]) if pd.notna(x.loc[pi,"rsi"]) else np.nan
-        trigger_rsi=float(row["rsi"])
-        rsi_peak_to_trigger_drop=(trigger_rsi/peak_rsi-1) if np.isfinite(peak_rsi) and peak_rsi>0 else np.nan
-
-        fresh_blowoff = (
-            hours_peak_to_trigger <= 24
-            and near95_bars <= 4
-            and cycles == 0
-        )
-        momentum_top = (
-            np.isfinite(peak_rsi)
-            and peak_rsi >= 70
-            and np.isfinite(rsi_peak_to_trigger_drop)
-            and rsi_peak_to_trigger_drop <= -0.20
-        )
-
-        if (fresh_blowoff
-            and momentum_top
-            and float(row["rsi_pct1"])<=-0.18174
+        # C1 uses the validated no-lookahead momentum-reset contract.
+        # Peak RSI/top-shape remain research diagnostics, not live hard vetoes.
+        if (float(row["rsi_pct1"])<=-0.18174
             and float(row["rsi_accel"])<=-11.72020):
             found.append({
                 "trigger_idx":int(trigger),
                 "trigger_time":row["time"],
                 "trigger_price":float(row["c"]),
-                "rsi":trigger_rsi,
-                "peak_rsi":peak_rsi,
-                "rsi_peak_to_trigger_drop_pct":rsi_peak_to_trigger_drop,
+                "rsi":float(row["rsi"]),
                 "rsi_pct1":float(row["rsi_pct1"]),
                 "rsi_accel":float(row["rsi_accel"]),
-                "hours_peak_to_trigger":hours_peak_to_trigger,
-                "near95_bars":near95_bars,
-                "top_retest_cycles":cycles,
             })
     return found
 
@@ -277,6 +237,47 @@ def next_open_reference(raw,trigger_time,mark):
         return float(q.iloc[0]["o"])
     return mark
 
+def settle_signal(raw, signal, now):
+    """Update a signal from market data after its reference entry."""
+    try:
+        entry_time=pd.Timestamp(signal["entry_time"])
+    except Exception:
+        # Backward compatibility with early history rows that only stored trigger.
+        entry_time=pd.Timestamp(signal["trigger_time"])+pd.Timedelta(hours=4)
+    entry=float(signal["entry_reference"])
+    target=float(signal["target_5pct"])
+    stop=float(signal["risk_stop_reference"])
+    w=raw[(raw["time"]>=entry_time)&(raw["time"]<=pd.Timestamp(now))].copy()
+    if w.empty:
+        signal["status"]="ACTIVE"
+        return signal
+
+    target_bar=None
+    stop_bar=None
+    for _,bar in w.iterrows():
+        if target_bar is None and float(bar["h"])>=target:
+            target_bar=bar["time"]
+        if stop_bar is None and float(bar["l"])<=stop:
+            stop_bar=bar["time"]
+        if target_bar is not None and stop_bar is not None:
+            break
+
+    if target_bar is not None and stop_bar is not None and target_bar==stop_bar:
+        signal["status"]="AMBIGUOUS"
+        signal["settled_at"]=pd.Timestamp(target_bar).isoformat()
+    elif target_bar is not None and (stop_bar is None or target_bar<stop_bar):
+        signal["status"]="SUCCESS"
+        signal["settled_at"]=pd.Timestamp(target_bar).isoformat()
+        signal["realized_target_pct"]=0.05
+    elif stop_bar is not None:
+        signal["status"]="STOPPED"
+        signal["settled_at"]=pd.Timestamp(stop_bar).isoformat()
+    else:
+        age=pd.Timestamp(now)-pd.Timestamp(signal["trigger_time"])
+        signal["status"]="ACTIVE" if age<=pd.Timedelta(hours=8) else "RECENT"
+    return signal
+
+
 def load_history(path):
     try:
         data=json.loads(Path(path).read_text())
@@ -309,10 +310,12 @@ def main():
 
     signals=[]
     coverage=[]
+    raw_cache={}
     for pos,item in enumerate(fetch_universe(s),1):
         coin=item["coin"]
         try:
             raw=fetch_4h(s,coin,start,now+timedelta(hours=4))
+            raw_cache[coin]=raw
             closed,current=split_closed(raw,now)
             x=prep4(closed)
             if len(x)<100:
@@ -331,20 +334,22 @@ def main():
                 if entry_ref is None:
                     entry_ref=ev["trigger_price"]
                 method=methods[key]
-                signals.append({
+                sig={
                     "id":f"{method['id']}:{coin}:{pd.Timestamp(ev['trigger_time']).isoformat()}",
                     "coin":coin,
                     "method_id":method["id"],
                     "method_key":key,
                     "method_name":method["name"],
                     "trigger_time":pd.Timestamp(ev["trigger_time"]).isoformat(),
+                    "entry_time":(pd.Timestamp(ev["trigger_time"])+pd.Timedelta(hours=4)).isoformat(),
                     "trigger_price":ev["trigger_price"],
                     "entry_reference":entry_ref,
                     "target_5pct":entry_ref*1.05,
                     "risk_stop_reference":entry_ref*(1-float(method["validation"]["stop_reference_pct"])),
                     "status":"ACTIVE" if age<=pd.Timedelta(hours=8) else "RECENT",
                     "metrics":{k:v for k,v in ev.items() if k not in {"trigger_idx","trigger_time","trigger_price"}},
-                })
+                }
+                signals.append(settle_signal(raw,sig,now))
             coverage.append({"coin":coin,"status":"ok","bars":len(x),"signals":len(candidates)})
         except Exception as ex:
             coverage.append({"coin":coin,"status":"error","error":str(ex)[:160]})
@@ -352,13 +357,35 @@ def main():
 
     signals.sort(key=lambda x:x["trigger_time"],reverse=True)
     history=load_history(args.history)
-    known={str(x.get("id")) for x in history if isinstance(x,dict)}
+    by_id={str(x.get("id")):x for x in history if isinstance(x,dict) and x.get("id")}
     for sig in reversed(signals):
-        if sig["id"] not in known:
-            history.append(sig)
-            known.add(sig["id"])
-    history=history[-500:]
+        by_id[sig["id"]]=sig
+
+    # Re-settle previously recorded signals on every scan so the website changes
+    # automatically from ACTIVE/RECENT to SUCCESS/STOPPED when market data proves it.
+    history=list(by_id.values())
+    for hsig in history:
+        coin=str(hsig.get("coin") or "")
+        raw=raw_cache.get(coin)
+        if raw is not None and len(raw):
+            try:
+                settle_signal(raw,hsig,now)
+            except Exception:
+                pass
+    history=sorted(history,key=lambda x:str(x.get("trigger_time") or ""))[-500:]
     atomic_json(args.history,history)
+
+    # Keep recent live signals plus recently settled trades visible online.
+    visible_by_id={x["id"]:x for x in signals}
+    for hsig in history:
+        if hsig.get("status") in {"SUCCESS","STOPPED","AMBIGUOUS"}:
+            try:
+                settled_age=pd.Timestamp(now)-pd.Timestamp(hsig.get("settled_at"))
+            except Exception:
+                settled_age=pd.Timedelta(days=999)
+            if settled_age<=pd.Timedelta(days=7):
+                visible_by_id[hsig["id"]]=hsig
+    signals=sorted(visible_by_id.values(),key=lambda x:str(x.get("trigger_time") or ""),reverse=True)
 
     payload={
         "generated_at":now.isoformat(),
