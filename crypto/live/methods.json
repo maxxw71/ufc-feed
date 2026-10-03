@@ -1,5 +1,5 @@
 {
-  "version": "2026-10-03-c3-shadow",
+  "version": "2026-10-03-c3-live",
   "venue": "Hyperliquid primary perpetuals",
   "timeframe": "4h",
   "target_pct": 0.05,
@@ -65,7 +65,7 @@
       "key": "volume_capitulation_flush",
       "name": "Volume Capitulation Flush",
       "enabled": true,
-      "status": "SHADOW_ONLY",
+      "status": "LIVE",
       "description": "A first ≥8% post-breakout flush closes near the bottom of its 4H range on abnormal volume.",
       "trigger_summary": "Completed daily breakout regime → next-day arm → first ≥8% 4H flush → close in bottom 15.27% of candle range → 4H volume ≥1.8296× its 20-bar median.",
       "validation": {
