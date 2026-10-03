@@ -29,10 +29,13 @@ def rate(s):
     return float(x.astype(bool).mean()) if len(x) else np.nan
 
 def main():
-    e=pd.read_csv(SRC)
+    all_events=pd.read_csv(SRC)
     for c in ["trigger_time","entry_time","arm_time"]:
-        e[c]=pd.to_datetime(e[c],utc=True,errors="coerce")
-    e=e[(e["close_location"]<=CLOSE_MAX)&(e["volume_ratio20"]>=VOL_MIN)].sort_values("entry_time").reset_index(drop=True)
+        all_events[c]=pd.to_datetime(all_events[c],utc=True,errors="coerce")
+    all_events=all_events.sort_values("entry_time").reset_index(drop=True)
+    all_events["global_order"]=np.arange(len(all_events))
+    global_cut=max(1,int(len(all_events)*.60))
+    e=all_events[(all_events["close_location"]<=CLOSE_MAX)&(all_events["volume_ratio20"]>=VOL_MIN)].copy().reset_index(drop=True)
     s=requests.Session()
     s.headers["User-Agent"]="appwiza-c3-funding-enrichment/1.0"
     funding=[];premium=[]
@@ -54,7 +57,8 @@ def main():
     e["premium_at_trigger"]=premium
     e.to_csv(OUT/"events.csv",index=False)
 
-    cut=max(1,int(len(e)*.60));tr=e.iloc[:cut].copy();ho=e.iloc[cut:].copy()
+    tr=e[e["global_order"]<global_cut].copy()
+    ho=e[e["global_order"]>=global_cut].copy()
     rows=[]
     for feat in ["funding_rate_at_trigger","premium_at_trigger"]:
         clean=tr[feat].replace([np.inf,-np.inf],np.nan).dropna()
