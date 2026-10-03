@@ -1,7 +1,7 @@
 CROSS-SPORT APPROVAL INTEGRITY
 ========================================================================================
-built_at: 2026-10-03T12:45:03.399477+00:00
-status: PASS
+built_at: 2026-10-03T16:46:45.263274+00:00
+status: FAIL
 
 CONTRACT
 NFL: LIVE_CANONICAL_ONLY
@@ -10,7 +10,7 @@ MLS: SHADOW_ONLY_NO_OFFICIAL_BETS
 BOXING: RESEARCH_ONLY_NO_OFFICIAL_BETS
 
 HARD FAILURES
-- none
+- UFC canonical_future_tracker_exact: canonical=['UFC:ufc-332:andreypulyaev:damianpinas', 'UFC:ufc-332:deivesonfigueiredo:paytontalbott', 'UFC:ufc-fight-night-october-10-2026:brendsonribeiro:felipefranco'] tracker=['UFC:ufc-332:andreypulyaev:damianpinas', 'UFC:ufc-332:deivesonfigueiredo:paytontalbott', 'UFC:ufc-fight-night-october-10-2026:brendsonribeiro:felipefranco', 'UFC:ufc-fight-night-october-10-2026:geraldmeerschaert:juliuswalker']
 
 WARNINGS
 - none
@@ -27,13 +27,12 @@ ALL CHECKS
 [PASS] NFL m_record_fail_closed :: 
 [PASS] NFL page_missing_audit_fails_closed :: NFL public deep-audit must never treat a missing row as scanner-qualified/monitor
 [PASS] NFL page_missing_preseason_fails_closed :: missing deep-audit preseason status must be no-bet
-[PASS] UFC canonical_public_current_exact :: canonical=['UFC:ufc-332:andreypulyaev:damianpinas', 'UFC:ufc-332:deivesonfigueiredo:paytontalbott', 'UFC:ufc-fight-night-october-10-2026:brendsonribeiro:felipefranco', 'UFC:ufc-fight-night-october-10-2026:geraldmeerschaert:juliuswalker'] public=['UFC:ufc-332:andreypulyaev:damianpinas', 'UFC:ufc-332:deivesonfigueiredo:paytontalbott', 'UFC:ufc-fight-night-october-10-2026:brendsonribeiro:felipefranco', 'UFC:ufc-fight-night-october-10-2026:geraldmeerschaert:juliuswalker']
-[PASS] UFC canonical_state_ids_exact :: canonical=['UFC:ufc-332:andreypulyaev:damianpinas', 'UFC:ufc-332:deivesonfigueiredo:paytontalbott', 'UFC:ufc-fight-night-october-10-2026:brendsonribeiro:felipefranco', 'UFC:ufc-fight-night-october-10-2026:geraldmeerschaert:juliuswalker'] state=['UFC:ufc-332:andreypulyaev:damianpinas', 'UFC:ufc-332:deivesonfigueiredo:paytontalbott', 'UFC:ufc-fight-night-october-10-2026:brendsonribeiro:felipefranco', 'UFC:ufc-fight-night-october-10-2026:geraldmeerschaert:juliuswalker']
+[PASS] UFC canonical_public_current_exact :: canonical=['UFC:ufc-332:andreypulyaev:damianpinas', 'UFC:ufc-332:deivesonfigueiredo:paytontalbott', 'UFC:ufc-fight-night-october-10-2026:brendsonribeiro:felipefranco'] public=['UFC:ufc-332:andreypulyaev:damianpinas', 'UFC:ufc-332:deivesonfigueiredo:paytontalbott', 'UFC:ufc-fight-night-october-10-2026:brendsonribeiro:felipefranco']
+[PASS] UFC canonical_state_ids_exact :: canonical=['UFC:ufc-332:andreypulyaev:damianpinas', 'UFC:ufc-332:deivesonfigueiredo:paytontalbott', 'UFC:ufc-fight-night-october-10-2026:brendsonribeiro:felipefranco'] state=['UFC:ufc-332:andreypulyaev:damianpinas', 'UFC:ufc-332:deivesonfigueiredo:paytontalbott', 'UFC:ufc-fight-night-october-10-2026:brendsonribeiro:felipefranco']
 [PASS] UFC methods_exact:UFC:ufc-332:andreypulyaev:damianpinas :: canonical=['U1'] state=['U1']
 [PASS] UFC methods_exact:UFC:ufc-332:deivesonfigueiredo:paytontalbott :: canonical=['U1', 'U7', 'U8'] state=['U1', 'U7', 'U8']
 [PASS] UFC methods_exact:UFC:ufc-fight-night-october-10-2026:brendsonribeiro:felipefranco :: canonical=['U1'] state=['U1']
-[PASS] UFC methods_exact:UFC:ufc-fight-night-october-10-2026:geraldmeerschaert:juliuswalker :: canonical=['U1'] state=['U1']
-[PASS] UFC canonical_future_tracker_exact :: canonical=['UFC:ufc-332:andreypulyaev:damianpinas', 'UFC:ufc-332:deivesonfigueiredo:paytontalbott', 'UFC:ufc-fight-night-october-10-2026:brendsonribeiro:felipefranco', 'UFC:ufc-fight-night-october-10-2026:geraldmeerschaert:juliuswalker'] tracker=['UFC:ufc-332:andreypulyaev:damianpinas', 'UFC:ufc-332:deivesonfigueiredo:paytontalbott', 'UFC:ufc-fight-night-october-10-2026:brendsonribeiro:felipefranco', 'UFC:ufc-fight-night-october-10-2026:geraldmeerschaert:juliuswalker']
+[FAIL] UFC canonical_future_tracker_exact :: canonical=['UFC:ufc-332:andreypulyaev:damianpinas', 'UFC:ufc-332:deivesonfigueiredo:paytontalbott', 'UFC:ufc-fight-night-october-10-2026:brendsonribeiro:felipefranco'] tracker=['UFC:ufc-332:andreypulyaev:damianpinas', 'UFC:ufc-332:deivesonfigueiredo:paytontalbott', 'UFC:ufc-fight-night-october-10-2026:brendsonribeiro:felipefranco', 'UFC:ufc-fight-night-october-10-2026:geraldmeerschaert:juliuswalker']
 [PASS] UFC extreme_no_bet_absent_from_canonical :: overlap=[]
 [PASS] UFC extreme_no_bet_absent_from_state :: overlap=[]
 [PASS] UFC extreme_no_bet_absent_from_tracker :: overlap=[]
