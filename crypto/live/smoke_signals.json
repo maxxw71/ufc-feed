@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-10-03T07:17:00+00:00",
+  "generated_at": "2026-10-03T18:58:00+00:00",
   "venue": "Hyperliquid primary perpetuals",
   "timeframe": "4h",
   "target_pct": 0.05,
@@ -66,8 +66,30 @@
       }
     }
   ],
-  "signals": [],
-  "history_count": 0,
+  "signals": [
+    {
+      "id": "C1:VIRTUAL:2026-10-02T16:00:00+00:00",
+      "coin": "VIRTUAL",
+      "method_id": "C1",
+      "method_key": "blowoff_first_flush",
+      "method_name": "Blow-Off First Flush",
+      "trigger_time": "2026-10-02T16:00:00+00:00",
+      "entry_time": "2026-10-02T20:00:00+00:00",
+      "trigger_price": 0.74892,
+      "entry_reference": 0.74907,
+      "target_5pct": 0.7865235,
+      "risk_stop_reference": 0.6928897500000001,
+      "status": "SUCCESS",
+      "metrics": {
+        "rsi": 39.44009675870216,
+        "rsi_pct1": -0.25524946514928326,
+        "rsi_accel": -12.738019857304373
+      },
+      "settled_at": "2026-10-03T08:00:00+00:00",
+      "realized_target_pct": 0.05
+    }
+  ],
+  "history_count": 1,
   "coverage": {
     "ok": 178,
     "short": 0,
