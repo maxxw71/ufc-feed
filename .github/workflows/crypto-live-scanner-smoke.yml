@@ -31,9 +31,14 @@ jobs:
           python - <<'PY'
           import json
           p=json.load(open('crypto/live/smoke_signals.json'))
-          assert len(p['methods'])==2
+          assert len(p['methods'])==3
+          live={m['id'] for m in p['methods'] if m.get('status')=='LIVE'}
+          shadow={m['id'] for m in p['methods'] if m.get('status')=='SHADOW_ONLY'}
+          assert live=={'C1','C2'}, live
+          assert shadow=={'C3'}, shadow
+          assert 'shadow_signals' in p
           assert p['coverage']['ok']>0
-          print('signals',len(p['signals']),'coverage',p['coverage'])
+          print('signals',len(p['signals']),'shadow_signals',len(p['shadow_signals']),'coverage',p['coverage'])
           PY
       - name: Commit smoke snapshot
         run: |
