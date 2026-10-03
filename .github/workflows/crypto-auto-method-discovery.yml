@@ -143,6 +143,8 @@ jobs:
           git add crypto/research/auto_discovery
           if ! git diff --cached --quiet; then
             git commit -m "Update automatic crypto method discovery"
+            git restore --worktree crypto/research/results_hyperliquid_all_pairs crypto/research/results_rsi_dynamics 2>/dev/null || true
+            git clean -fd crypto/research/results_hyperliquid_all_pairs crypto/research/results_rsi_dynamics 2>/dev/null || true
             git pull --rebase origin main
             git push origin HEAD:main
           fi
