@@ -93,6 +93,8 @@ def prep4(x):
     x["range"]=(x["h"]-x["l"]).replace(0,np.nan)
     x["close_location"]=(x["c"]-x["l"])/x["range"]
     x["lower_wick"]=(np.minimum(x["o"],x["c"])-x["l"])/x["range"]
+    x["volume_med20"]=x["v"].rolling(20,min_periods=10).median()
+    x["volume_ratio20"]=x["v"]/x["volume_med20"].replace(0,np.nan)
     return x
 
 def daily_from_4h(x):
@@ -161,6 +163,53 @@ def method1_events(x):
                 "rsi_accel":float(row["rsi_accel"]),
             })
     return found
+
+def method3_events(x):
+    """C3 shadow: capitulation close + abnormal volume after the first 8% flush."""
+    if len(x)<120:
+        return []
+    d=daily_from_4h(x)
+    arms=[]
+    last=None
+    for _,r in d[d["setup"]].iterrows():
+        t=r["arm_time"]
+        if last is None or t-last>=pd.Timedelta(days=10):
+            arms.append(t)
+            last=t
+
+    found=[]
+    for arm in arms:
+        if arm < x["time"].max()-pd.Timedelta(days=7):
+            continue
+        w=x[(x["time"]>=arm)&(x["time"]<arm+pd.Timedelta(days=5))]
+        if len(w)<3:
+            continue
+        peak=-math.inf
+        pi=None
+        trigger=None
+        for idx,row in w.iterrows():
+            hi=float(row["h"])
+            if hi>=peak:
+                peak=hi
+                pi=idx
+            if pi is not None and idx>pi and float(row["c"])/peak-1<=-.08:
+                trigger=idx
+                break
+        if trigger is None:
+            continue
+        row=x.loc[trigger]
+        if pd.isna(row["close_location"]) or pd.isna(row["volume_ratio20"]):
+            continue
+        if float(row["close_location"])<=0.1527 and float(row["volume_ratio20"])>=1.8296:
+            found.append({
+                "trigger_idx":int(trigger),
+                "trigger_time":row["time"],
+                "trigger_price":float(row["c"]),
+                "close_location":float(row["close_location"]),
+                "volume_ratio20":float(row["volume_ratio20"]),
+            })
+    return found
+
 
 def lower_low_idx(x,start,end):
     if end<start:
@@ -309,6 +358,7 @@ def main():
     s.headers["User-Agent"]="appwiza-live-crypto-method-scanner/1.0"
 
     signals=[]
+    shadow_signals=[]
     coverage=[]
     raw_cache={}
     for pos,item in enumerate(fetch_universe(s),1):
@@ -326,6 +376,9 @@ def main():
                 candidates += [("blowoff_first_flush",z) for z in method1_events(x)]
             if methods["lower_high_second_dump"]["enabled"]:
                 candidates += [("lower_high_second_dump",z) for z in method2_events(x)]
+            shadow_candidates=[]
+            if "volume_capitulation_flush" in methods and methods["volume_capitulation_flush"].get("enabled"):
+                shadow_candidates += [("volume_capitulation_flush",z) for z in method3_events(x)]
             for key,ev in candidates:
                 age=pd.Timestamp(now)-pd.Timestamp(ev["trigger_time"])
                 if age>pd.Timedelta(hours=args.recent_hours):
@@ -350,7 +403,38 @@ def main():
                     "metrics":{k:v for k,v in ev.items() if k not in {"trigger_idx","trigger_time","trigger_price"}},
                 }
                 signals.append(settle_signal(raw,sig,now))
-            coverage.append({"coin":coin,"status":"ok","bars":len(x),"signals":len(candidates)})
+            for key,ev in shadow_candidates:
+                age=pd.Timestamp(now)-pd.Timestamp(ev["trigger_time"])
+                if age>pd.Timedelta(hours=args.recent_hours):
+                    continue
+                entry_ref=next_open_reference(raw,ev["trigger_time"],item.get("mark"))
+                if entry_ref is None:
+                    entry_ref=ev["trigger_price"]
+                method=methods[key]
+                ssig={
+                    "id":f"{method['id']}:{coin}:{pd.Timestamp(ev['trigger_time']).isoformat()}",
+                    "coin":coin,
+                    "method_id":method["id"],
+                    "method_key":key,
+                    "method_name":method["name"],
+                    "trigger_time":pd.Timestamp(ev["trigger_time"]).isoformat(),
+                    "entry_time":(pd.Timestamp(ev["trigger_time"])+pd.Timedelta(hours=4)).isoformat(),
+                    "trigger_price":ev["trigger_price"],
+                    "entry_reference":entry_ref,
+                    "target_5pct":entry_ref*1.05,
+                    "risk_stop_reference":entry_ref*(1-float(method["validation"]["stop_reference_pct"])),
+                    "status":"SHADOW_ACTIVE" if age<=pd.Timedelta(hours=8) else "SHADOW_RECENT",
+                    "metrics":{k:v for k,v in ev.items() if k not in {"trigger_idx","trigger_time","trigger_price"}},
+                }
+                # Reuse settlement logic, then preserve shadow labeling.
+                ssig=settle_signal(raw,ssig,now)
+                if ssig["status"]=="ACTIVE": ssig["status"]="SHADOW_ACTIVE"
+                elif ssig["status"]=="RECENT": ssig["status"]="SHADOW_RECENT"
+                elif ssig["status"]=="SUCCESS": ssig["status"]="SHADOW_SUCCESS"
+                elif ssig["status"]=="STOPPED": ssig["status"]="SHADOW_STOPPED"
+                elif ssig["status"]=="AMBIGUOUS": ssig["status"]="SHADOW_AMBIGUOUS"
+                shadow_signals.append(ssig)
+            coverage.append({"coin":coin,"status":"ok","bars":len(x),"signals":len(candidates),"shadow_signals":len(shadow_candidates)})
         except Exception as ex:
             coverage.append({"coin":coin,"status":"error","error":str(ex)[:160]})
         time.sleep(.04)
@@ -387,6 +471,15 @@ def main():
                 visible_by_id[hsig["id"]]=hsig
     signals=sorted(visible_by_id.values(),key=lambda x:str(x.get("trigger_time") or ""),reverse=True)
 
+    shadow_path=Path(args.history).with_name("shadow_history.json")
+    shadow_history=load_history(shadow_path)
+    shadow_by_id={str(x.get("id")):x for x in shadow_history if isinstance(x,dict) and x.get("id")}
+    for sig in shadow_signals:
+        shadow_by_id[sig["id"]]=sig
+    shadow_history=sorted(shadow_by_id.values(),key=lambda x:str(x.get("trigger_time") or ""))[-500:]
+    atomic_json(shadow_path,shadow_history)
+    shadow_signals=sorted(shadow_signals,key=lambda x:str(x.get("trigger_time") or ""),reverse=True)
+
     payload={
         "generated_at":now.isoformat(),
         "venue":cfg["venue"],
@@ -394,7 +487,9 @@ def main():
         "target_pct":cfg["target_pct"],
         "methods":cfg["methods"],
         "signals":signals[:100],
+        "shadow_signals":shadow_signals[:100],
         "history_count":len(history),
+        "shadow_history_count":len(shadow_history),
         "coverage":{"ok":sum(1 for x in coverage if x.get("status")=="ok"),
                     "short":sum(1 for x in coverage if x.get("status")=="short"),
                     "errors":sum(1 for x in coverage if x.get("status")=="error")},
