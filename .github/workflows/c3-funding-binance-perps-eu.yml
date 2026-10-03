@@ -1,0 +1,38 @@
+name: C3 funding Binance perps validation EU runner
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/c3-funding-binance-perps-eu.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  validate:
+    runs-on: [self-hosted, Linux, X64]
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Validate frozen C3+Funding on Binance USD-M
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          python3 -m venv /tmp/c3funding-venv
+          /tmp/c3funding-venv/bin/pip install --quiet pandas numpy requests
+          /tmp/c3funding-venv/bin/python crypto/research/c3_funding_binance_perps.py --symbols 120 --days 600
+      - name: Commit results
+        shell: bash
+        run: |
+          git config user.name appwiza-research-bot
+          git config user.email actions@users.noreply.github.com
+          git add crypto/research/results_c3_funding_binance_perps
+          if ! git diff --cached --quiet; then
+            git commit -m "Update C3 funding Binance perps validation EU"
+            git pull --rebase origin main
+            git push origin HEAD:main
+          fi
