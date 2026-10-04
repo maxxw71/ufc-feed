@@ -1,0 +1,115 @@
+name: Boxing Data API Free Audit
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/boxing-data-free-audit.yml'
+  workflow_dispatch:
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      RAPIDAPI_KEY: ${{ secrets.RAPIDAPI_KEY || secrets.BOXING_DATA_API_KEY || secrets.RAPID_API_KEY }}
+    steps:
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Verify key availability
+        shell: bash
+        run: |
+          if [ -z "${RAPIDAPI_KEY:-}" ]; then
+            echo "NO_RAPIDAPI_KEY_SECRET"
+            exit 2
+          fi
+          echo "RapidAPI secret present."
+
+      - name: Audit Boxing Data API free tier
+        shell: bash
+        run: |
+          python - <<'PY'
+          import json, re, urllib.parse, urllib.request, urllib.error, os
+
+          KEY=os.environ["RAPIDAPI_KEY"]
+          HOST="boxing-data-api.p.rapidapi.com"
+          BASE="https://"+HOST
+          HEADERS={
+              "x-rapidapi-key":KEY,
+              "x-rapidapi-host":HOST,
+              "accept":"application/json",
+              "user-agent":"Appwiza-Boxing-DeepStats-Audit/1.0",
+          }
+          req_count=0
+
+          def get(path, params=None):
+              global req_count
+              if req_count>=10: raise RuntimeError("request budget exhausted")
+              url=BASE+path
+              if params: url+="?"+urllib.parse.urlencode(params)
+              req_count+=1
+              req=urllib.request.Request(url,headers=HEADERS,method="GET")
+              try:
+                  with urllib.request.urlopen(req,timeout=30) as r:
+                      body=r.read().decode("utf-8","replace")
+                      print(f"REQUEST {req_count} status={r.status} path={path} len={len(body)}")
+                      try:return r.status,json.loads(body)
+                      except:return r.status,None
+              except urllib.error.HTTPError as e:
+                  body=e.read().decode("utf-8","replace")
+                  print(f"REQUEST {req_count} status={e.code} path={path} body={body[:500]}")
+                  return e.code,None
+              except Exception as e:
+                  print(f"REQUEST {req_count} ERROR {type(e).__name__}: {e}")
+                  return None,None
+
+          terms=re.compile(r"(punch|jab|power|landed|thrown|accuracy|stat|round)",re.I)
+          def paths(obj,p="$"):
+              out=[]
+              if isinstance(obj,dict):
+                  for k,v in obj.items():
+                      q=f"{p}.{k}"
+                      if terms.search(str(k)): out.append(q)
+                      out.extend(paths(v,q))
+              elif isinstance(obj,list):
+                  for i,v in enumerate(obj[:20]): out.extend(paths(v,f"{p}[{i}]"))
+              return out
+
+          print("=== KNOWN FIGHT ===")
+          s,d=get("/v2/fights/671d12333012a998846efa3c")
+          if isinstance(d,dict):
+              root=d.get("data",d)
+              print("KNOWN_KEYS", sorted(root.keys()) if isinstance(root,dict) else type(root).__name__)
+              pp=paths(root)
+              print("KNOWN_PUNCH_ROUND_PATHS", json.dumps(pp[:100]))
+          else:
+              print("KNOWN_NO_DATA")
+
+          print("=== YEAR SAMPLES ===")
+          for yr in (2024,2022,2020,2018,2015):
+              if req_count>=10: break
+              s,d=get("/v2/fights/",{
+                  "data_from":f"{yr}-01-01",
+                  "date_to":f"{yr}-12-31",
+                  "date_sort":"ASC",
+                  "page_size":2,
+                  "page_num":1,
+              })
+              root=d.get("data") if isinstance(d,dict) else None
+              total=((d.get("pagination") or {}).get("total_items")) if isinstance(d,dict) else None
+              print("YEAR",yr,"STATUS",s,"RETURNED",len(root) if isinstance(root,list) else 0,"TOTAL",total)
+              if isinstance(root,list):
+                  for x in root[:2]:
+                      if isinstance(x,dict):
+                          print("FIGHT",json.dumps({"id":x.get("id"),"title":x.get("title"),"date":x.get("date")}))
+                          if x.get("id") and req_count<10:
+                              ss,dd=get("/v2/fights/"+str(x["id"]))
+                              rr=dd.get("data",dd) if isinstance(dd,dict) else None
+                              pp=paths(rr) if rr is not None else []
+                              print("DETAIL",yr,x.get("id"),"STATUS",ss,"PATHS",json.dumps(pp[:100]))
+                              break
+
+          print("TOTAL_REQUESTS",req_count)
+          PY
