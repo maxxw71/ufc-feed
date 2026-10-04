@@ -37,7 +37,10 @@ jobs:
           KEY=/home/appwiza-runner/.ssh/appwiza_vps
           HOST=anestishkurti92@127.0.0.1
           SSH="ssh -i $KEY -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=accept-new $HOST"
-          cat scripts/ufc_shadow_tracker.py | $SSH 'set -e; D=/home/anestishkurti92/ufc-predictor-v1; cat > "$D/ufc_shadow_tracker.py.new"; chmod 0700 "$D/ufc_shadow_tracker.py.new"; mv -f "$D/ufc_shadow_tracker.py.new" "$D/ufc_shadow_tracker.py"'
+          TMP=$(mktemp)
+          curl -fsSL "https://raw.githubusercontent.com/maxxw71/ufc-feed/$GITHUB_SHA/scripts/ufc_shadow_tracker.py" -o "$TMP"
+          cat "$TMP" | $SSH 'set -e; D=/home/anestishkurti92/ufc-predictor-v1; cat > "$D/ufc_shadow_tracker.py.new"; chmod 0700 "$D/ufc_shadow_tracker.py.new"; mv -f "$D/ufc_shadow_tracker.py.new" "$D/ufc_shadow_tracker.py"'
+          rm -f "$TMP"
           $SSH 'bash -s' <<'EOF'
           set -Eeuo pipefail
           export HOME=/home/anestishkurti92
@@ -57,6 +60,10 @@ jobs:
           print('rules',c.execute('select count(*) from shadow_rules').fetchone()[0])
           print('picks',c.execute('select count(*) from shadow_picks').fetchone()[0])
           print('pending',c.execute("select count(*) from shadow_picks where status='pending'").fetchone()[0])
+          print('void_pre_freeze',c.execute("select count(*) from shadow_picks where status='void_pre_freeze'").fetchone()[0])
+          print('lrr_rows',[dict(r) for r in (lambda db:(setattr(db,'row_factory',sqlite3.Row) or db).execute(
+            "select event_date,selection,opponent,rule_ids_json,status,lrr_mode,event_start from shadow_picks where rule_ids_json like '%LRR1%' or lrr_mode like 'invalid_%' order by event_date"
+          ))(sqlite3.connect(p))])
           print('official_integration',0)
           print('pending_rows',[dict(zip([c[0] for c in c.execute("pragma table_info(shadow_picks)").fetchall()],[]))] if False else [
             dict(r) for r in (lambda db: (setattr(db,'row_factory',sqlite3.Row) or db).execute(
