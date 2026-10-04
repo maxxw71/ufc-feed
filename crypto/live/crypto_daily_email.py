@@ -113,7 +113,9 @@ def build():
       <p><strong>C1 · Blow-Off First Flush</strong> — holdout +5% {pct((methods.get('C1') or {}).get('validation',{}).get('hit5'))}<br>
       <strong>C2 · Lower-High Second Dump</strong> — holdout +5% {pct((methods.get('C2') or {}).get('validation',{}).get('hit5'))}<br>
       <strong>C3 · Volume Capitulation Flush</strong> — holdout +5% {pct((methods.get('C3') or {}).get('validation',{}).get('hit5'))}<br>
-      <strong>C3F · Volume Capitulation + Funding</strong> — holdout +5% {pct((methods.get('C3F') or {}).get('validation',{}).get('hit5'))}</p>
+      <strong>C3F · Volume Capitulation + Funding</strong> — holdout +5% {pct((methods.get('C3F') or {}).get('validation',{}).get('hit5'))}<br>
+      <strong>C4 · RSI Shock vs 3-Bar Mean</strong> — holdout +5% {pct((methods.get('C4') or {}).get('validation',{}).get('hit5'))}<br>
+      <strong>C2D · Lower-High Second Dump · Deep EMA Stretch</strong> — holdout +5% {pct((methods.get('C2D') or {}).get('validation',{}).get('hit5'))}</p>
       <h2 style="margin:28px 0 8px">Market context</h2>
       <p style="color:#53657b">BTC 24h {pct(ctx.get('btc_ret24'))} · ETH 24h {pct(ctx.get('eth_ret24'))} ·
       Hyperliquid breadth positive {pct(ctx.get('breadth_positive_24h'))} ·
