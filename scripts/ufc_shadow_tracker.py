@@ -411,7 +411,7 @@ def publish():
     rules=''.join(
       f"<tr><td><b>{escape(r['id'])}</b> · {escape(r['name'])}</td><td>{escape(r['role'])}</td>"
       f"<td>{r['historical']['bets']}</td><td>{r['historical']['wins']}-{r['historical']['losses']}</td>"
-      f"<td>{pct(r['historical']['roi'])}</td><td>{pct(r['historical']['holdout_roi'])}</td>"
+      f"<td>{pct(r['historical'].get('roi'))}</td><td>{pct(r['historical'].get('holdout_roi'))}</td>"
       f"<td>{r['prospective']['picks']}</td><td>{wl(r['prospective'])}</td><td>{pct(r['prospective']['roi'])}</td></tr>"
       for r in out['rules'])
     def pickrow(p):
