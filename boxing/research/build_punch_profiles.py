@@ -399,6 +399,56 @@ def load_total_supplement_observations():
     return out
 
 
+def load_boxing_data_verified_round_total_observations():
+    """Load independently verified Boxing Data public round-total observations.
+
+    This tier contains genuine round-by-round *total* landed/thrown counts whose
+    fight sums were checked against an independent published CompuBox/ESPN
+    source. It contributes total-punch trajectory features but is deliberately
+    not treated as a full Total+Jab+Power CompuBox round chart.
+    """
+    path=Path(__file__).resolve().parent.parent/'punch_supplements'/'boxing_data_verified_round_total_observations.jsonl'
+    if not path.exists():return []
+    raw=[]
+    for line in path.read_text(encoding='utf-8').splitlines():
+        if not line.strip():continue
+        try:r=json.loads(line)
+        except Exception:continue
+        if r.get('source_quality')!='boxing_data_public_round_total_verified_independent':continue
+        if not r.get('bout_date') or not r.get('fighter_key') or not r.get('opponent_key'):continue
+        try:
+            rounds=int(r.get('rounds_observed') or 0)
+            fl=float(r.get('total_landed'));ft=float(r.get('total_thrown'))
+            ol=float(r.get('opp_total_landed'));ot=float(r.get('opp_total_thrown'))
+        except Exception:
+            continue
+        if rounds<2 or min(fl,ft,ol,ot)<0 or fl>ft or ol>ot:continue
+        if not r.get('independent_verification_url') or not r.get('independent_verification_source'):continue
+        # Round-derived fields are already computed by the verifier. Preserve
+        # only explicit/derived total-punch metrics; never synthesize jab/power.
+        raw.append(r)
+
+    grouped=defaultdict(list)
+    for r in raw:
+        key=(str(r['bout_date']),tuple(sorted([str(r['fighter_key']),str(r['opponent_key'])])))
+        grouped[key].append(r)
+    out=[]
+    for key,items in grouped.items():
+        if len(items)!=2:continue
+        a,b=items
+        if a['fighter_key']!=b['opponent_key'] or a['opponent_key']!=b['fighter_key']:continue
+        # Reciprocal totals must agree exactly across both sides.
+        try:
+            if float(a['total_landed'])!=float(b['opp_total_landed']):continue
+            if float(a['total_thrown'])!=float(b['opp_total_thrown']):continue
+            if float(b['total_landed'])!=float(a['opp_total_landed']):continue
+            if float(b['total_thrown'])!=float(a['opp_total_thrown']):continue
+        except Exception:
+            continue
+        out.extend(items)
+    return out
+
+
 def load_ring_partial_total_observations():
     """Load conservative two-sided Ring/CompuBox fight-total summaries.
 
@@ -701,7 +751,8 @@ def pre_fight_profiles(observations):
                       'structured_fight_total_table_ready_to_fight',
                       'archived_compubox_final_total_table_strict',
                       'ring_published_compubox_partial_fight_totals',
-                      'ring_published_compubox_landed_only_totals'
+                      'ring_published_compubox_landed_only_totals',
+                      'boxing_data_public_round_total_verified_independent'
                     } for x in h
                   )}
             for cat in CATEGORIES:
@@ -729,8 +780,10 @@ def main():
     reviewed_reports=load_reviewed_chart_reports(db)
     reports,reviewed_reports_accepted,reviewed_reports_skipped=merge_round_report_tiers(strong_reports,reviewed_reports)
     round_obs=fight_observations(reports)
+    boxing_data_round_obs=load_boxing_data_verified_round_total_observations()
+    obs,boxing_data_round_obs_accepted,boxing_data_round_obs_skipped=merge_observation_tiers(round_obs,boxing_data_round_obs)
     total_obs=load_total_supplement_observations()
-    obs,supplement_obs_accepted,supplement_obs_skipped=merge_observation_tiers(round_obs,total_obs)
+    obs,supplement_obs_accepted,supplement_obs_skipped=merge_observation_tiers(obs,total_obs)
     ring_partial_obs=load_ring_partial_total_observations()
     obs,ring_partial_obs_accepted,ring_partial_obs_skipped=merge_observation_tiers(obs,ring_partial_obs)
     ring_landed_obs=load_ring_landed_only_observations()
@@ -754,6 +807,10 @@ def main():
         'duplicate_source_variants_collapsed':sum(max(0,int(r.get('variant_count',1))-1) for r in reports),
         'fighter_fight_observations':len(obs),
         'round_level_fighter_observations':len(round_obs),
+        'boxing_data_verified_round_total_observations_loaded':len(boxing_data_round_obs),
+        'boxing_data_verified_round_total_observations_accepted':boxing_data_round_obs_accepted,
+        'boxing_data_verified_round_total_observations_skipped_due_to_stronger_or_invalid_pair':boxing_data_round_obs_skipped,
+        'boxing_data_verified_round_total_fights_accepted':boxing_data_round_obs_accepted//2,
         'fight_total_supplement_observations_loaded':len(total_obs),
         'fight_total_supplement_observations_accepted':supplement_obs_accepted,
         'fight_total_supplement_observations_skipped_due_to_stronger_or_invalid_pair':supplement_obs_skipped,
