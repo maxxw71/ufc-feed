@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-10-04T10:32:31.364731+00:00",
+  "generated_at": "2026-10-04T12:10:23.614121+00:00",
   "authoritative_for_current_strict_research_coverage": true,
   "scope": "strict/research-relevant boxing dataset and current prospective price collection",
   "do_not_use_as_current_strict_coverage": "boxing/public_reports/DATA_GAP_AUDIT.json",
@@ -152,6 +152,68 @@
       }
     }
   },
+  "broad_enrichment": {
+    "boxing_data_public_profiles": {
+      "status": "BROAD_SUPPLEMENT_CANDIDATES_NOT_AUTO_MERGED",
+      "articles_scanned": 323,
+      "candidate_rows": 693,
+      "candidate_fighters": 103,
+      "candidate_rows_by_field": {
+        "age": 110,
+        "debut": 42,
+        "division": 41,
+        "height_cm": 76,
+        "ko_pct": 56,
+        "ko_wins": 9,
+        "nationality": 40,
+        "reach_cm": 70,
+        "record": 110,
+        "rounds_boxed": 16,
+        "stance": 99,
+        "title_context": 24
+      },
+      "currently_missing_candidate_rows": 1,
+      "currently_missing_candidate_fighters": 1,
+      "missing_candidates_by_field": {
+        "reach_cm": 1
+      },
+      "agreement_audit": {
+        "reach_cm": {
+          "comparisons": 98,
+          "agreements": 82,
+          "conflicts": 16,
+          "agreement_pct": 83.67,
+          "median_abs_diff_cm": 0.0,
+          "max_abs_diff_cm": 18.0
+        },
+        "stance": {
+          "comparisons": 149,
+          "agreements": 138,
+          "conflicts": 11,
+          "agreement_pct": 92.62,
+          "median_abs_diff_cm": null,
+          "max_abs_diff_cm": null
+        },
+        "height_cm": {
+          "comparisons": 112,
+          "agreements": 89,
+          "conflicts": 23,
+          "agreement_pct": 79.46,
+          "median_abs_diff_cm": 0.0,
+          "max_abs_diff_cm": 17.0
+        },
+        "nationality": {
+          "comparisons": 56,
+          "agreements": 12,
+          "conflicts": 44,
+          "agreement_pct": 21.43,
+          "median_abs_diff_cm": null,
+          "max_abs_diff_cm": null
+        }
+      },
+      "policy": "Candidate/corroboration source only. Existing strict values are never overwritten from Boxing Data public articles alone."
+    }
+  },
   "rankings": {
     "WBC": {
       "ranking_rows": 8953,
@@ -281,6 +343,19 @@
       "article_date_min": "2023-01-21",
       "article_date_max": "2026-05-16",
       "note": "Public Boxing Data API-attributed article tables are supplemental/quarantined until identity/date/source validation; they do not inflate strict CompuBox counts."
+    },
+    "boxing_data_verified_round_totals": {
+      "source_round_tables": 12,
+      "normalizable_round_tables": 11,
+      "verified_fighter_observations": 14,
+      "verified_fights": 7,
+      "verified_unique_fighters": 14,
+      "source_quality": "boxing_data_public_round_total_verified_independent",
+      "admission": "verified supplemental round-total tier; not counted as full total+jab+power CompuBox round chart",
+      "chronological_profile_observations_loaded": null,
+      "chronological_profile_observations_accepted": null,
+      "chronological_profile_fights_accepted": null,
+      "note": "Independently verified round-total tier contributes total-punch trajectory features but does not count as a full Total+Jab+Power CompuBox round chart."
     },
     "latest_cross_source_reach_backfill": {
       "generated_at": "2026-09-23T12:44:10.565970+00:00",
