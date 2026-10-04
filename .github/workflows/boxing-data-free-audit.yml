@@ -1,18 +1,19 @@
 name: Boxing Data API Free Audit
 
 on:
-  push:
-    branches: [main]
-    paths:
-      - '.github/workflows/boxing-data-free-audit.yml'
   workflow_dispatch:
+    inputs:
+      api_key:
+        description: 'Temporary RapidAPI key for this audit run'
+        required: true
+        type: string
 
 jobs:
   audit:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     env:
-      RAPIDAPI_KEY: ${{ secrets.RAPIDAPI_KEY || secrets.BOXING_DATA_API_KEY || secrets.RAPID_API_KEY }}
+      RAPIDAPI_KEY: ${{ inputs.api_key || secrets.RAPIDAPI_KEY || secrets.BOXING_DATA_API_KEY || secrets.RAPID_API_KEY }}
     steps:
       - uses: actions/setup-python@v5
         with:
@@ -22,10 +23,10 @@ jobs:
         shell: bash
         run: |
           if [ -z "${RAPIDAPI_KEY:-}" ]; then
-            echo "NO_RAPIDAPI_KEY_SECRET"
+            echo "NO_RAPIDAPI_KEY_PROVIDED"
             exit 2
           fi
-          echo "RapidAPI secret present."
+          echo "RapidAPI credential provided for this run."
 
       - name: Audit Boxing Data API free tier
         shell: bash
