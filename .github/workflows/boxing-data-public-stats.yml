@@ -1,0 +1,50 @@
+name: Boxing Data Public Punch Stats
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'boxing/collectors/boxing_data_public_stats.py'
+      - '.github/workflows/boxing-data-public-stats.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: boxing-data-public-stats
+  cancel-in-progress: true
+
+jobs:
+  collect:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install requests beautifulsoup4 lxml
+      - run: python boxing/collectors/boxing_data_public_stats.py
+      - name: Publish supplemental report
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          cp boxing/punch_supplements/boxing_data_public_stats_report.json /tmp/boxing_data_public_stats_report.json
+          cp boxing/punch_supplements/boxing_data_public_stats_rows.csv /tmp/boxing_data_public_stats_rows.csv
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          for attempt in 1 2 3; do
+            git fetch origin main
+            git reset --hard origin/main
+            cp /tmp/boxing_data_public_stats_report.json boxing/punch_supplements/boxing_data_public_stats_report.json
+            cp /tmp/boxing_data_public_stats_rows.csv boxing/punch_supplements/boxing_data_public_stats_rows.csv
+            git add boxing/punch_supplements/boxing_data_public_stats_report.json boxing/punch_supplements/boxing_data_public_stats_rows.csv
+            if git diff --cached --quiet; then exit 0; fi
+            git commit -m 'Refresh Boxing Data public punch-stat supplement'
+            if git push origin HEAD:main; then exit 0; fi
+            sleep $((attempt * 2))
+          done
+          exit 1
