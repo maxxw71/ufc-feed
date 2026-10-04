@@ -1,0 +1,48 @@
+name: Boxing BROAD Public Profile Enrichment
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'boxing/collectors/boxing_data_public_profiles.py'
+      - '.github/workflows/boxing-broad-public-profiles.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: boxing-broad-public-profiles
+  cancel-in-progress: true
+
+jobs:
+  enrich:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with: {fetch-depth: 0}
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.12'}
+      - run: pip install requests beautifulsoup4 lxml
+      - run: python boxing/collectors/boxing_data_public_profiles.py
+      - name: Publish BROAD supplement
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          cp boxing/profile_supplements/boxing_data_public_profiles_report.json /tmp/report.json
+          cp boxing/profile_supplements/boxing_data_public_profile_candidates.csv /tmp/rows.csv
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          for attempt in 1 2 3; do
+            git fetch origin main
+            git reset --hard origin/main
+            cp /tmp/report.json boxing/profile_supplements/boxing_data_public_profiles_report.json
+            cp /tmp/rows.csv boxing/profile_supplements/boxing_data_public_profile_candidates.csv
+            git add boxing/profile_supplements/boxing_data_public_profiles_report.json boxing/profile_supplements/boxing_data_public_profile_candidates.csv
+            if git diff --cached --quiet; then exit 0; fi
+            git commit -m 'Refresh Boxing Data BROAD profile supplement'
+            if git push origin HEAD:main; then exit 0; fi
+            sleep $((attempt*2))
+          done
+          exit 1
