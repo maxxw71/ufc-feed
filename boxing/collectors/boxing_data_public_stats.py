@@ -32,8 +32,8 @@ SEEDS=[
     BASE+"/sitemap-index.xml",
 ]
 UA="Appwiza Boxing Research/1.0 (+public provenance audit)"
-MAX_ARTICLES=250
-MAX_DISCOVERY_PAGES=30
+MAX_ARTICLES=1000
+MAX_DISCOVERY_PAGES=100
 SLEEP=0.20
 
 PUNCH_WORDS=re.compile(r"\b(punch|punches|jab|jabs|power|landed|thrown|accuracy)\b",re.I)
@@ -104,12 +104,54 @@ def discover():
     return sorted(articles)[:MAX_ARTICLES],discovery_pages
 
 def parse_date(soup,text):
+    for attrs in (
+        {"property":"article:published_time"},
+        {"name":"article:published_time"},
+        {"name":"date"},
+        {"itemprop":"datePublished"},
+    ):
+        tag=soup.find("meta",attrs=attrs)
+        raw=(tag.get("content") if tag else None) or ""
+        if raw:
+            m=DATE_RE.search(raw)
+            if m:return m.group(1)
+            if re.match(r"20\\d{2}-\\d{2}-\\d{2}",raw):return raw[:10]
     for tag in soup.find_all(["time"]):
         raw=tag.get("datetime") or tag.get_text(" ",strip=True)
         m=DATE_RE.search(raw or "")
         if m:return m.group(1)
     m=DATE_RE.search(text)
     return m.group(1) if m else None
+
+def normalized_date(raw):
+    if not raw:return None
+    raw=raw.strip()
+    for fmt in ("%Y-%m-%d","%b %d, %Y","%B %d, %Y","%d %b %Y","%d %B %Y"):
+        try:return datetime.strptime(raw,fmt).date().isoformat()
+        except ValueError:pass
+    return raw
+
+def norm_name(s):
+    x=str(s or "").lower()
+    x=re.sub(r"\\b(jr|jnr|sr|ii|iii|iv)\\b"," ",x)
+    x=re.sub(r"[^a-z0-9]+"," ",x)
+    return re.sub(r"\\s+"," ",x).strip()
+
+def slug_pair(url):
+    slug=urlparse(url).path.rstrip("/").split("/")[-1]
+    if "-vs-" not in slug:return None,None
+    left,right=slug.split("-vs-",1)
+    stops=("fight-results","fight-result","fight-review","review","fight-preview","preview","results","result",
+           "statistical-analysis","stats-analysis","analysis","prediction","betting","key-stats","super-",
+           "wba-","wbc-","wbo-","ibf-","title-")
+    cut=len(right)
+    for st in stops:
+        pos=right.find("-"+st)
+        if pos>=0:cut=min(cut,pos)
+    right=right[:cut]
+    def pretty(x):
+        return " ".join(w.capitalize() if w not in ("jr","jnr","ii","iii") else w.upper() for w in x.split("-") if w)
+    return pretty(left),pretty(right)
 
 def clean_title(title):
     x=norm_space(title)
@@ -156,12 +198,12 @@ def parse_article(url):
         if typ:
             matrices.append({"table_index":idx,"type":typ,"rows":m})
     if not matrices:return None
-    a,b=infer_pair(title)
+    a,b=infer_pair(title,url)
     explicit_source=bool(SOURCE_WORDS.search(text))
     return {
         "url":url,
         "title":title,
-        "published_date":parse_date(soup,text),
+        "published_date":normalized_date(parse_date(soup,text)),
         "fighter_a_hint":a,
         "fighter_b_hint":b,
         "explicit_boxing_data_api_attribution":explicit_source,
@@ -196,7 +238,15 @@ def flatten(records):
                 })
     return out
 
+def load_strict_names():
+    p=ROOT/"public_phase2"/"PROFILE_GAP_AUDIT.json"
+    try:
+        j=json.loads(p.read_text(encoding="utf-8"))
+        return {norm_name(x.get("name")):x.get("name") for x in j.get("fighters",[]) if x.get("name")}
+    except Exception:return {}
+
 def main():
+    strict_names=load_strict_names()
     urls,discovery_pages=discover()
     print("DISCOVERED_ARTICLES",len(urls),"DISCOVERY_PAGES",discovery_pages)
     records=[]
@@ -204,8 +254,14 @@ def main():
         if i>1:time.sleep(SLEEP)
         rec=parse_article(url)
         if rec:
+            matches=[]
+            for hint in (rec.get("fighter_a_hint"),rec.get("fighter_b_hint")):
+                n=norm_name(hint)
+                matches.append(strict_names.get(n) if n else None)
+            rec["strict_fighter_matches"]=matches
+            rec["strict_both_sides_matched"]=bool(len(matches)==2 and all(matches))
             records.append(rec)
-            print("ACCEPT",rec["table_count"],rec["round_table_count"],url)
+            print("ACCEPT",rec["table_count"],rec["round_table_count"],matches,url)
     rows=flatten(records)
     fieldnames=list(rows[0].keys()) if rows else [
         "source","source_url","published_date","title","fighter_a_hint","fighter_b_hint",
@@ -227,6 +283,8 @@ def main():
         "tables_extracted":sum(r["table_count"] for r in records),
         "round_tables_extracted":sum(r["round_table_count"] for r in records),
         "normalized_table_rows":len(rows),
+        "strict_profile_articles_both_sides_matched":sum(r.get("strict_both_sides_matched",False) for r in records),
+        "strict_profile_unique_fighters_matched":len({x for r in records for x in (r.get("strict_fighter_matches") or []) if x}),
         "article_date_min":min((r["published_date"] for r in records if r.get("published_date")),default=None),
         "article_date_max":max((r["published_date"] for r in records if r.get("published_date")),default=None),
         "records":records,
@@ -242,6 +300,7 @@ def main():
     print(json.dumps({k:report[k] for k in [
         "article_urls_discovered","articles_with_punch_tables","articles_explicitly_attributing_boxing_data_api",
         "articles_with_round_tables","tables_extracted","round_tables_extracted","normalized_table_rows",
+        "strict_profile_articles_both_sides_matched","strict_profile_unique_fighters_matched",
         "article_date_min","article_date_max"
     ]},indent=2))
 
