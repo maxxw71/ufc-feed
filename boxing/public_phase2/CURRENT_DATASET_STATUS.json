@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-10-04T06:00:20.683568+00:00",
+  "generated_at": "2026-10-04T06:51:09.070257+00:00",
   "authoritative_for_current_strict_research_coverage": true,
   "scope": "strict/research-relevant boxing dataset and current prospective price collection",
   "do_not_use_as_current_strict_coverage": "boxing/public_reports/DATA_GAP_AUDIT.json",
@@ -29,6 +29,21 @@
     "source_rows_present": false,
     "source_rows_required_for_phase2": false,
     "source_rows_note": "Compact public research DB may omit source_rows; Phase 2 retains supplemental quote links and skips only raw-source price rematching."
+  },
+  "research_lanes": {
+    "BROAD": {
+      "purpose": "Large-sample method discovery using career, opponent, profile, ranking, contextual and verified-market features without requiring punch history.",
+      "status": "ACTIVE_PRIMARY_RESEARCH_LANE",
+      "punch_data_required": false,
+      "promotion_policy": "research/shadow first; prospective verified-price validation required before live promotion"
+    },
+    "DEEP_STATS": {
+      "purpose": "High-information punch-performance research using verified pre-fight fight-level/round-level punch history.",
+      "status": "ACTIVE_DATA_EXPANSION_AND_RESEARCH_LANE",
+      "punch_data_required": true,
+      "minimum_depth_goal": "prefer >=3 prior verified punch fights per fighter snapshot; lesser depth may be analyzed separately but must be labeled",
+      "promotion_policy": "separate from BROAD; no live promotion until source accuracy, point-in-time depth and forward validation are adequate"
+    }
   },
   "research_universe": {
     "fighter_bout_rows": 120892,
