@@ -35,6 +35,29 @@ def mean(s,m):
     x=pd.to_numeric(s[m],errors='coerce').dropna()
     return None if x.empty else float(x.mean())
 
+def norm_name(s):
+    return re.sub(r'[^a-z0-9]+',' ',str(s or '').lower()).strip()
+
+def rebuilt_age_adv(d):
+    """Opponent age minus favorite age; positive means favorite is younger."""
+    p=ROOT/'raw'/'individuals.csv'
+    if not p.exists():return pd.Series(np.nan,index=d.index),0
+    ids=pd.read_csv(p,low_memory=False)
+    dob={}
+    for _,r in ids.iterrows():
+        name=norm_name(r.get('name'))
+        dt=pd.to_datetime(r.get('dob'),errors='coerce')
+        if name and pd.notna(dt):dob[name]=dt
+    vals=[];covered=0
+    for _,r in d.iterrows():
+        ed=pd.to_datetime(r.get('event_date'),errors='coerce')
+        fd=dob.get(norm_name(r.get('favorite')));od=dob.get(norm_name(r.get('opponent')))
+        if pd.notna(ed) and fd is not None and od is not None:
+            vals.append(((ed-fd).days-(ed-od).days)/365.2425)
+            covered+=1
+        else:vals.append(np.nan)
+    return pd.Series(vals,index=d.index,dtype=float),covered
+
 def main():
     d=pd.read_csv(DATA,low_memory=False)
     d['_date']=pd.to_datetime(d.event_date,errors='coerce')
@@ -45,8 +68,11 @@ def main():
     base=stats(d,lrr)
     print('BASELINE',json.dumps(base,sort_keys=True))
 
-    # AGE ROLE: age_adv > 0 means the favorite is younger.
-    age=num(d,'age_adv')
+    # AGE ROLE: rebuild from fighter DOBs because legacy age_adv coverage is sparse.
+    # Positive = favorite younger by that many years.
+    age,age_covered=rebuilt_age_adv(d)
+    print('AGE_REBUILD_COVERAGE',json.dumps({'dataset_rows':len(d),'dob_matched_rows':age_covered,
+          'lrr_rows':int(lrr.sum()),'lrr_age_covered':int((lrr&age.notna()).sum())},sort_keys=True))
     buckets=[
       ('fav_5plus_older',-99,-5),('fav_3to5_older',-5,-3),('fav_1to3_older',-3,-1),
       ('roughly_same_age',-1,1),('fav_1to3_younger',1,3),('fav_3to5_younger',3,5),('fav_5plus_younger',5,99)]
