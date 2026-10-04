@@ -91,7 +91,7 @@ def validate_candidate(x):
         for s in sources:
             if not isinstance(s,dict):continue
             fam=_source_name(s.get('source'))
-            try:v=float(s.get('reported_reach_cm'))
+            try:v=float(s.get('reported_reach_cm') if s.get('reported_reach_cm') is not None else s.get('reach_cm'))
             except Exception:continue
             if not 120<=v<=270:continue
             if fam:
