@@ -1,17 +1,17 @@
 AUTO DISCOVERY — BINANCE CROSS-VENUE VALIDATION
 
-Binance 8% first-flush events: 827
-Independent Binance holdout events: 331
-Candidates checked: 11
+Binance 8% first-flush events: 837
+Independent Binance holdout events: 335
+Candidates checked: 10
 Cross-validated shadow candidates: 7
 
     candidate_id                 status                                                    rule  binance_n  binance_hit5  binance_hit10  binance_t5_s7p5  binance_wilson_lower unsupported_features
-AUTO-20261003-01 CROSS_VALIDATED_SHADOW      rsi_accel <= -9.01822 AND rsi_vs_sma3 <= -0.120961         65      0.846154       0.661538         0.769231              0.739445                     
-AUTO-20261003-02 CROSS_VALIDATED_SHADOW      rsi_accel <= -9.01822 AND price_pct1 <= -0.0650863         60      0.833333       0.683333         0.716667              0.719681                     
-AUTO-20261003-04 CROSS_VALIDATED_SHADOW close_location <= 0.070281 AND price_pct1 <= -0.0291518         54      0.796296       0.592593         0.703704              0.670974                     
-AUTO-20261003-05 CROSS_VALIDATED_SHADOW        price_pct1 <= -0.0586661 AND rsi_accel <= -10.02         65      0.846154       0.692308         0.738462              0.739445                     
-AUTO-20261003-07 CROSS_VALIDATED_SHADOW                                price_pct1 <= -0.0539121        101      0.831683       0.673267         0.712871              0.746886                     
-AUTO-20261003-09 CROSS_VALIDATED_SHADOW                                 price_pct1 <= -0.054998         97      0.835052       0.680412         0.711340              0.748734                     
-AUTO-20261003-11 CROSS_VALIDATED_SHADOW    dist_sma9 <= -0.0574629 AND price_pct1 <= -0.0291518         38      0.868421       0.763158         0.736842              0.726728                     
+AUTO-20261004-01 CROSS_VALIDATED_SHADOW      rsi_accel <= -9.01822 AND rsi_vs_sma3 <= -0.120961         64      0.859375       0.687500         0.781250              0.753835                     
+AUTO-20261004-02 CROSS_VALIDATED_SHADOW      rsi_accel <= -9.01822 AND price_pct1 <= -0.0650863         57      0.842105       0.701754         0.719298              0.726366                     
+AUTO-20261004-04 CROSS_VALIDATED_SHADOW close_location <= 0.070281 AND price_pct1 <= -0.0347543         50      0.800000       0.620000         0.720000              0.669626                     
+AUTO-20261004-05 CROSS_VALIDATED_SHADOW      price_pct1 <= -0.0587659 AND rsi_accel <= -10.0204         63      0.857143       0.714286         0.746032              0.750252                     
+AUTO-20261004-07 CROSS_VALIDATED_SHADOW                                price_pct1 <= -0.0541713         96      0.833333       0.697917         0.708333              0.746288                     
+AUTO-20261004-08 CROSS_VALIDATED_SHADOW    close_location <= 0.120513 AND rsi_accel <= -9.01822         50      0.780000       0.620000         0.720000              0.647582                     
+AUTO-20261004-09 CROSS_VALIDATED_SHADOW                                 price_pct1 <= -0.054998         94      0.840426       0.702128         0.712766              0.753274                     
 
 No candidate is auto-promoted live. CROSS_VALIDATED_SHADOW still requires forward shadow performance and manual review.
