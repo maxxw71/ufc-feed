@@ -4,6 +4,20 @@ Updated: 2026-10-04
 
 Purpose: identify a lawful, structured, repeatable source of fight-level and round-level boxing performance data that can support the DEEP_STATS lane. This file does not authorize ingestion. Every source must pass provenance, identity, point-in-time, licensing/terms, and cross-source accuracy checks before entering strict research.
 
+## Spend policy
+
+**No paid boxing-data subscription is approved from research claims alone.** Before any paid tier is considered, the source must prove value at zero cost or via a vendor-provided sample.
+
+Required proof before spend:
+1. confirm that round-level punch fields are actually returned for multiple historical fights, not just demo fights;
+2. measure historical depth across a stratified sample of years and promotions;
+3. cross-check sampled totals/rounds against independently published CompuBox or another authoritative source;
+4. measure overlap against our 719 strict-profile fighters and 443 validated-price bouts;
+5. estimate how many pre-fight snapshots would reach >=1 and >=3 prior punch fights per fighter;
+6. document source/licensing terms suitable for Appwiza research use.
+
+If these checks cannot be completed on the free tier, public demos, or a vendor-provided evaluation sample, do not pay merely to discover whether the product is useful.
+
 ## Priority 1 — CompuBox official data feed
 
 Status: **best schema match / licensing required for Appwiza use**
@@ -23,7 +37,7 @@ Action:
 
 Status: **high-priority structured API lead / historical depth must be measured**
 
-The service advertises fight endpoints with round-by-round total, jab and power landed/thrown statistics, fighter profiles, schedules, results and historical fights. Its published pricing includes an unlimited-historical-access tier.
+The service advertises fight endpoints with round-by-round total, jab and power landed/thrown statistics, fighter profiles, schedules, results and historical fights. A free Basic tier currently advertises 100 requests/month with no credit card required; use that or a vendor-provided sample for evaluation. The paid unlimited-history tier is not approved unless the zero-cost proof gate above is satisfied.
 
 Why it matters:
 - API-native JSON rather than article/PDF parsing;
