@@ -71,6 +71,7 @@ jobs:
           import sqlite3
           c=sqlite3.connect('auto_research/state/prospective_ufc.sqlite3')
           print('postfight_observations',c.execute('select count(*) from postfight_research_observations').fetchone()[0])
-          print('recent_method_labeled',c.execute("select event_date,favorite,opponent,method_ids_json,method_families_json,won from postfight_research_observations where method_count>0 order by event_date desc limit 8").fetchall())
+          print('recent_postfight',c.execute("select event_date,favorite,opponent,method_ids_json,method_families_json,won from postfight_research_observations order by event_date desc,favorite limit 12").fetchall())
+          print('ufc332_quotes',c.execute("select event_date,event_start,fighter_a,fighter_b,p_a,p_b,dec_a,dec_b,captured_at from bout_quotes where lower(fighter_a||' '||fighter_b) like '%pinas%' or lower(fighter_a||' '||fighter_b) like '%talbott%' order by captured_at desc limit 12").fetchall())
           PY
           EOF
