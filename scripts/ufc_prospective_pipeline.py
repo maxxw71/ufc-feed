@@ -224,6 +224,15 @@ def quote_map():
         if valid:out[k]=valid[-1]
     return out
 
+def quote_for_fight(k,quotes):
+    if k in quotes:return quotes[k],k,0
+    try:dt=pd.Timestamp(k[0])
+    except Exception:return None,None,None
+    for off in (-1,1):
+        kk=(str((dt+pd.Timedelta(days=off)).date()),k[1],k[2])
+        if kk in quotes:return quotes[kk],kk,off
+    return None,None,None
+
 def finalize():
     d=canonical_frame();export_canonical_raw(d);quotes=quote_map();base=pd.read_csv(BASE,low_memory=False) if BASE.exists() else pd.DataFrame();existing=set()
     if len(base):
@@ -237,7 +246,7 @@ def finalize():
                 a,b=norm(r.get('player1')),norm(r.get('player2'));k=(str(dt.date()),)+tuple(sorted((a,b)));snaps[k]=(prof(states.get(a),dt),prof(states.get(b),dt),r)
             for k,(p1,p2,r) in snaps.items():
                 if k in existing or '|'.join(k) in fin:continue
-                q=quotes.get(k)
+                q,qk,qoff=quote_for_fight(k,quotes)
                 if q is None or p1 is None or p2 is None:continue
                 pa,pb=num(q.p_a),num(q.p_b);da,db=num(q.dec_a),num(q.dec_b)
                 if not all(np.isfinite(x) for x in [pa,pb,da,db]) or max(pa,pb)<=0:continue
@@ -245,7 +254,7 @@ def finalize():
                 res=str(r.get('result','')).upper();won=res.startswith('W') if fav1 else res.startswith('L')
                 fr=im.get(norm(fav));orr=im.get(norm(opp));fa=age_on(fr,dt) if fr is not None else np.nan;oa=age_on(orr,dt) if orr is not None else np.nan;fre=parse_reach(fr.get('reach')) if fr is not None else np.nan;ore=parse_reach(orr.get('reach')) if orr is not None else np.nan
                 fk='|'.join(k);ctx=official_method_context(fav,opp,q.event_start)
-                row={'event_date':str(dt.date()),'favorite':fav,'opponent':opp,'market_prob':mkt,'fav_decimal':dec,'profit100':100*(dec-1) if won else -100.0,'won':bool(won),'age_adv':oa-fa if pd.notna(fa) and pd.notna(oa) else np.nan,'reach_adv':fre-ore if pd.notna(fre) and pd.notna(ore) else np.nan,'prospective_fight_key':fk,'prospective_quote_at':q.quote_at or q.captured_at,'prospective_captured_at':q.captured_at,'prospective_snapshot_sha':q.snapshot_sha,'prospective_book':q.book,'prospective_event_start':q.event_start,'prospective_point_in_time':True}
+                row={'event_date':str(dt.date()),'favorite':fav,'opponent':opp,'market_prob':mkt,'fav_decimal':dec,'profit100':100*(dec-1) if won else -100.0,'won':bool(won),'age_adv':oa-fa if pd.notna(fa) and pd.notna(oa) else np.nan,'reach_adv':fre-ore if pd.notna(fre) and pd.notna(ore) else np.nan,'prospective_fight_key':fk,'prospective_quote_event_date':qk[0] if qk else str(q.event_date),'prospective_event_date_offset_days':qoff,'prospective_quote_at':q.quote_at or q.captured_at,'prospective_captured_at':q.captured_at,'prospective_snapshot_sha':q.snapshot_sha,'prospective_book':q.book,'prospective_event_start':q.event_start,'prospective_point_in_time':True}
                 row.update(ctx);row.update({f'f_{x}':v for x,v in fp.items()});row.update({f'o_{x}':v for x,v in op.items()});new.append(row)
                 pc.execute('INSERT OR REPLACE INTO finalized_bouts(fight_key,finalized_at,quote_id,snapshot_sha,base_row_json) VALUES(?,?,?,?,?)',(fk,utcnow(),int(q.id),q.snapshot_sha,json.dumps(row,default=str)))
             for _,r in grp.iterrows():update_state(r,states)
