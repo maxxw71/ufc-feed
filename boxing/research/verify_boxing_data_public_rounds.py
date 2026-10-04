@@ -59,11 +59,16 @@ def token_match(header,name):
     return False
 
 def canonical_names(rec):
+    # Article hints are safer than a strict-universe surname guess. A surname
+    # can belong to a different fighter (e.g. Hernandez). Independent
+    # verification later upgrades these hints to canonical full names.
     hints=[rec.get("fighter_a_hint"),rec.get("fighter_b_hint")]
     strict=rec.get("strict_fighter_matches") or [None,None]
     out=[]
     for i in range(2):
-        out.append(strict[i] if i<len(strict) and strict[i] else hints[i])
+        hint=hints[i] if i<len(hints) else None
+        strict_name=strict[i] if i<len(strict) else None
+        out.append(hint or strict_name)
     return out
 
 def parse_round_table(rec,table):
@@ -86,7 +91,7 @@ def parse_round_table(rec,table):
             if p2:by[names[1]][rnd]=p2
     else:
         header=m[0]
-        if not header or not re.search(r"\bround\b",header[0],re.I):return None
+        if not header or not re.search(r"\b(?:round|rd)\b",header[0],re.I):return None
         cols={}
         for fi,name in enumerate(names):
             hits=[]
@@ -221,11 +226,13 @@ def observation(fighter,opp,parsed,rec,verification):
     diffs=[x[0]-y[0] for x,y in zip(fvals,ovals)]
     first3=statistics.mean(diffs[:3]) if len(diffs)>=3 else None
     last3=statistics.mean(diffs[-3:]) if len(diffs)>=3 else None
+    canonical_fighter=got[fighter]["fighter"]
+    canonical_opp=got[opp]["fighter"]
     return {
       "report_url":rec["url"],"report_id":"boxing-data-verified:"+rec["url"],
       "bout_date":bout_date,"available_from_date":rec.get("published_date") or bout_date,
-      "report_title":rec.get("title"),"fighter_label":fighter,"fighter_full_name":fighter,"fighter_key":core(fighter),
-      "opponent_label":opp,"opponent_full_name":opp,"opponent_key":core(opp),
+      "report_title":rec.get("title"),"fighter_label":canonical_fighter,"fighter_full_name":canonical_fighter,"fighter_key":core(canonical_fighter),
+      "opponent_label":canonical_opp,"opponent_full_name":canonical_opp,"opponent_key":core(canonical_opp),
       "identity_quality":"boxing_data_pair_plus_independent_exact_total_match",
       "rounds_observed":len(rounds),
       "total_landed":fl,"total_thrown":ft,"total_accuracy_pct":pct(div(fl,ft)),
