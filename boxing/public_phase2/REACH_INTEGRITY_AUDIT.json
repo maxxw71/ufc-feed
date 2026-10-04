@@ -1,15 +1,15 @@
 {
-  "generated_at": "2026-10-04T12:13:23.774165+00:00",
+  "generated_at": "2026-10-04T12:29:43.321468+00:00",
   "strict_consensus_bouts": 709,
   "strict_fighters_seen": 719,
-  "supplement_reach_rows": 165,
+  "supplement_reach_rows": 166,
   "supplement_provenance": {
     "official_or_first_party": 103,
     "independent_numeric_consensus": 62,
-    "legacy_multi_source_claim_warning": 0
+    "legacy_multi_source_claim_warning": 1
   },
   "critical_issue_count": 0,
-  "warning_count": 112,
+  "warning_count": 113,
   "critical_issues": [],
   "warnings": [
     {
@@ -795,6 +795,17 @@
       "name": "Kaye Scott",
       "height_cm": 178.0,
       "reach_cm": 178.0
+    },
+    {
+      "type": "legacy_multi_source_without_stored_numeric_values",
+      "target_source_id": "https://en.wikipedia.org/wiki/Shingo_Wake",
+      "name": "Shingo Wake",
+      "reach_cm": 176.0,
+      "families": [
+        "boxerlist",
+        "cross_probe_reach_consensus",
+        "ready_to_fight"
+      ]
     }
   ],
   "policy": "Critical failure if final strict reach/height is impossible or inconsistent, if contaminated BoxerList evidence remains, if identity evidence is explicitly non-exact, or if a non-official supplement lacks defensible multi-source provenance. Reach==height is a warning only because it can be legitimate; it requires provenance review rather than automatic deletion."
