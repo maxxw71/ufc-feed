@@ -53,7 +53,7 @@ def rebuilt_age_adv(d):
         ed=pd.to_datetime(r.get('event_date'),errors='coerce')
         fd=dob.get(norm_name(r.get('favorite')));od=dob.get(norm_name(r.get('opponent')))
         if pd.notna(ed) and fd is not None and od is not None:
-            vals.append(((ed-fd).days-(ed-od).days)/365.2425)
+            vals.append(((ed-od).days-(ed-fd).days)/365.2425)
             covered+=1
         else:vals.append(np.nan)
     return pd.Series(vals,index=d.index,dtype=float),covered
