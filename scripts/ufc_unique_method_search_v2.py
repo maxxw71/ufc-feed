@@ -136,14 +136,14 @@ def main():
     d['_date']=pd.to_datetime(d['event_date'],errors='coerce')
     d=d[d._date.notna()].sort_values('_date').reset_index(drop=True)
     d['_key']=[key(r.event_date,r.favorite,r.opponent) for r in d.itertuples()]
-    d['won']=d['won'].astype(str).str.lower().map({'true':True,'false':False,'1':True,'0':False,'w':True,'l':False}).where(~pd.api.types.is_bool_dtype(d['won']),d['won'])
-    if d['won'].isna().all():
-        d['won']=pd.to_numeric(d['won'],errors='coerce')>.5
+    rawwon=d['won'].copy()
+    if pd.api.types.is_bool_dtype(rawwon):
+        d['won']=rawwon.fillna(False).astype(bool)
+    elif pd.api.types.is_numeric_dtype(rawwon):
+        d['won']=pd.to_numeric(rawwon,errors='coerce')>.5
     else:
-        # Recover numeric/bool variants safely.
-        raw=pd.read_csv(DATA,usecols=['won'])['won']
-        if pd.api.types.is_bool_dtype(raw):d['won']=raw.astype(bool).values
-        elif pd.api.types.is_numeric_dtype(raw):d['won']=(pd.to_numeric(raw,errors='coerce')>.5).values
+        mapped=rawwon.astype(str).str.strip().str.lower().map({'true':True,'false':False,'1':True,'0':False,'w':True,'l':False,'win':True,'loss':False})
+        d['won']=mapped.fillna(False).astype(bool)
     d['fav_decimal']=n(d,'fav_decimal')
     d['market_prob']=n(d,'market_prob')
     d['profit']=np.where(d.won,d.fav_decimal-1,-1.0)
