@@ -1,25 +1,27 @@
 {
-  "generated_at": "2026-10-04T10:11:05.302480+00:00",
+  "generated_at": "2026-10-04T10:15:23.962050+00:00",
   "status": "SUPPLEMENTAL_QUARANTINED_NOT_STRICT",
   "source": "boxing-data.com public fight-review/blog pages",
   "api_key_required": false,
-  "discovery_pages_fetched": 1,
-  "article_urls_discovered": 250,
-  "articles_with_punch_tables": 39,
-  "articles_explicitly_attributing_boxing_data_api": 39,
-  "articles_with_round_tables": 9,
-  "tables_extracted": 44,
-  "round_tables_extracted": 11,
-  "normalized_table_rows": 217,
-  "article_date_min": "April 05, 2025",
-  "article_date_max": "May 3, 2025",
+  "discovery_pages_fetched": 4,
+  "article_urls_discovered": 320,
+  "articles_with_punch_tables": 53,
+  "articles_explicitly_attributing_boxing_data_api": 53,
+  "articles_with_round_tables": 11,
+  "tables_extracted": 59,
+  "round_tables_extracted": 13,
+  "normalized_table_rows": 323,
+  "strict_profile_articles_both_sides_matched": 8,
+  "strict_profile_unique_fighters_matched": 32,
+  "article_date_min": "2023-01-21",
+  "article_date_max": "Feb 29, 2025",
   "records": [
     {
       "url": "https://boxing-data.com/blog/anthony-cacace-vs-jazza-dickens-wba-super-featherweight-title-review",
       "title": "Cacace Dethrones Dickens: Two-Time Champion in Dublin",
       "published_date": null,
-      "fighter_a_hint": null,
-      "fighter_b_hint": null,
+      "fighter_a_hint": "Anthony Cacace",
+      "fighter_b_hint": "Jazza Dickens",
       "explicit_boxing_data_api_attribution": true,
       "tables": [
         {
@@ -60,7 +62,12 @@
         }
       ],
       "table_count": 1,
-      "round_table_count": 1
+      "round_table_count": 1,
+      "strict_fighter_matches": [
+        "Anthony Cacace",
+        null
+      ],
+      "strict_both_sides_matched": false
     },
     {
       "url": "https://boxing-data.com/blog/anthony-joshua-vs-kristian-prenga-fight-results-review-analysis",
@@ -98,14 +105,19 @@
         }
       ],
       "table_count": 1,
-      "round_table_count": 1
+      "round_table_count": 1,
+      "strict_fighter_matches": [
+        "Anthony Joshua",
+        null
+      ],
+      "strict_both_sides_matched": false
     },
     {
       "url": "https://boxing-data.com/blog/artur-beterbiev-vs-dmitry-bivol-review",
       "title": "Bivol Breaks Beterbiev: Technical Masterpiece Ends Knockout Streak in Riyadh",
-      "published_date": "Feb 22, 2025",
-      "fighter_a_hint": null,
-      "fighter_b_hint": null,
+      "published_date": "2025-02-22",
+      "fighter_a_hint": "Artur Beterbiev",
+      "fighter_b_hint": "Dmitry Bivol",
       "explicit_boxing_data_api_attribution": true,
       "tables": [
         {
@@ -141,12 +153,17 @@
         }
       ],
       "table_count": 1,
-      "round_table_count": 0
+      "round_table_count": 0,
+      "strict_fighter_matches": [
+        "Artur Beterbiev",
+        "Dmitry Bivol"
+      ],
+      "strict_both_sides_matched": true
     },
     {
       "url": "https://boxing-data.com/blog/ben-fail-vs-dean-sutherland-fight-preview-prediction-analysis",
       "title": "Ben Fail vs Dean Sutherland: Fight Preview, Prediction & Analysis",
-      "published_date": "May 16, 2026",
+      "published_date": "2026-05-16",
       "fighter_a_hint": "Ben Fail",
       "fighter_b_hint": "Dean Sutherland",
       "explicit_boxing_data_api_attribution": true,
@@ -183,12 +200,17 @@
         }
       ],
       "table_count": 1,
-      "round_table_count": 0
+      "round_table_count": 0,
+      "strict_fighter_matches": [
+        null,
+        null
+      ],
+      "strict_both_sides_matched": false
     },
     {
       "url": "https://boxing-data.com/blog/bentley-vs-saavedra-fight-review",
       "title": "Bentley vs Saavedra: Fight Review & Statistical Breakdown",
-      "published_date": "April 4, 2026",
+      "published_date": "2026-04-04",
       "fighter_a_hint": "Bentley",
       "fighter_b_hint": "Saavedra",
       "explicit_boxing_data_api_attribution": true,
@@ -282,14 +304,19 @@
         }
       ],
       "table_count": 1,
-      "round_table_count": 0
+      "round_table_count": 0,
+      "strict_fighter_matches": [
+        null,
+        null
+      ],
+      "strict_both_sides_matched": false
     },
     {
       "url": "https://boxing-data.com/blog/berinchyk-vs-davis-review",
       "title": "Davis Delivers a Statement: Rising Star Stops Berinchyk in 4th-Round MSG Showcase",
       "published_date": null,
-      "fighter_a_hint": null,
-      "fighter_b_hint": null,
+      "fighter_a_hint": "Berinchyk",
+      "fighter_b_hint": "Davis",
       "explicit_boxing_data_api_attribution": true,
       "tables": [
         {
@@ -325,12 +352,17 @@
         }
       ],
       "table_count": 1,
-      "round_table_count": 0
+      "round_table_count": 0,
+      "strict_fighter_matches": [
+        null,
+        null
+      ],
+      "strict_both_sides_matched": false
     },
     {
       "url": "https://boxing-data.com/blog/canelo-alvarez-vs-william-scull-review",
       "title": "Canelo Alvarez vs William Scull Results: Punch Stats, Decision Breakdown, and Round-by-Round Analysis",
-      "published_date": "May 3, 2025",
+      "published_date": "2025-05-03",
       "fighter_a_hint": "Canelo Alvarez",
       "fighter_b_hint": "William Scull",
       "explicit_boxing_data_api_attribution": true,
@@ -383,14 +415,19 @@
         }
       ],
       "table_count": 1,
-      "round_table_count": 0
+      "round_table_count": 0,
+      "strict_fighter_matches": [
+        null,
+        null
+      ],
+      "strict_both_sides_matched": false
     },
     {
       "url": "https://boxing-data.com/blog/cardenas-vs-acosta-review",
       "title": "Cardenas Defies Height Disadvantage to Outwork Acosta in San Antonio Slugfest",
       "published_date": null,
-      "fighter_a_hint": null,
-      "fighter_b_hint": null,
+      "fighter_a_hint": "Cardenas",
+      "fighter_b_hint": "Acosta",
       "explicit_boxing_data_api_attribution": true,
       "tables": [
         {
@@ -426,14 +463,19 @@
         }
       ],
       "table_count": 1,
-      "round_table_count": 0
+      "round_table_count": 0,
+      "strict_fighter_matches": [
+        null,
+        null
+      ],
+      "strict_both_sides_matched": false
     },
     {
       "url": "https://boxing-data.com/blog/catterall-vs-barboza-jr-review",
       "title": "Controversial Split Stuns Manchester: Barboza Edges Catterall",
-      "published_date": "Feb 15, 2025",
-      "fighter_a_hint": null,
-      "fighter_b_hint": null,
+      "published_date": "2025-02-15",
+      "fighter_a_hint": "Catterall",
+      "fighter_b_hint": "Barboza JR",
       "explicit_boxing_data_api_attribution": true,
       "tables": [
         {
@@ -469,14 +511,19 @@
         }
       ],
       "table_count": 1,
-      "round_table_count": 0
+      "round_table_count": 0,
+      "strict_fighter_matches": [
+        null,
+        null
+      ],
+      "strict_both_sides_matched": false
     },
     {
       "url": "https://boxing-data.com/blog/chris-eubank-jr-vs-conor-benn-review",
       "title": "Heart Over Hierarchy: Eubank Jr Edges Benn in Thrilling Battle of Wills",
       "published_date": null,
-      "fighter_a_hint": null,
-      "fighter_b_hint": null,
+      "fighter_a_hint": "Chris Eubank JR",
+      "fighter_b_hint": "Conor Benn",
       "explicit_boxing_data_api_attribution": true,
       "tables": [
         {
@@ -512,12 +559,17 @@
         }
       ],
       "table_count": 1,
-      "round_table_count": 0
+      "round_table_count": 0,
+      "strict_fighter_matches": [
+        null,
+        "Conor Benn"
+      ],
+      "strict_both_sides_matched": false
     },
     {
       "url": "https://boxing-data.com/blog/chris-eubank-jr-vs-liam-smith-series-review",
       "title": "Eubank Jr vs Smith: Redemption and Reckoning in a British Middleweight Rivalry",
-      "published_date": "January 21, 2023",
+      "published_date": "2023-01-21",
       "fighter_a_hint": "Eubank Jr",
       "fighter_b_hint": "Smith",
       "explicit_boxing_data_api_attribution": true,
@@ -572,14 +624,19 @@
         }
       ],
       "table_count": 2,
-      "round_table_count": 0
+      "round_table_count": 0,
+      "strict_fighter_matches": [
+        null,
+        null
+      ],
+      "strict_both_sides_matched": false
     },
     {
       "url": "https://boxing-data.com/blog/daniel-dubois-vs-fabio-wardley-fight-review",
       "title": "Daniel Dubois Stops Fabio Wardley: WBO Heavyweight Title Fight Review",
       "published_date": null,
-      "fighter_a_hint": null,
-      "fighter_b_hint": null,
+      "fighter_a_hint": "Daniel Dubois",
+      "fighter_b_hint": "Fabio Wardley",
       "explicit_boxing_data_api_attribution": true,
       "tables": [
         {
@@ -630,12 +687,17 @@
         }
       ],
       "table_count": 1,
-      "round_table_count": 0
+      "round_table_count": 0,
+      "strict_fighter_matches": [
+        "Daniel Dubois",
+        "Fabio Wardley"
+      ],
+      "strict_both_sides_matched": true
     },
     {
       "url": "https://boxing-data.com/blog/dave-allen-vs-filip-hrgovic-fight-preview-prediction-analysis",
       "title": "Dave Allen vs Filip Hrgovic: Fight Preview, Prediction & Analysis",
-      "published_date": "May 16, 2026",
+      "published_date": "2026-05-16",
       "fighter_a_hint": "Dave Allen",
       "fighter_b_hint": "Filip Hrgovic",
       "explicit_boxing_data_api_attribution": true,
@@ -676,14 +738,19 @@
         }
       ],
       "table_count": 1,
-      "round_table_count": 0
+      "round_table_count": 0,
+      "strict_fighter_matches": [
+        null,
+        null
+      ],
+      "strict_both_sides_matched": false
     },
     {
       "url": "https://boxing-data.com/blog/david-adeleye-vs-jeamie-tshikeva-review",
       "title": "David Adeleye Claims British Gold in Thrilling TKO Victory Over Jeamie Tshikeva",
-      "published_date": "April 05, 2025",
-      "fighter_a_hint": null,
-      "fighter_b_hint": null,
+      "published_date": "2025-04-05",
+      "fighter_a_hint": "David Adeleye",
+      "fighter_b_hint": "Jeamie Tshikeva",
       "explicit_boxing_data_api_attribution": true,
       "tables": [
         {
@@ -712,12 +779,17 @@
         }
       ],
       "table_count": 1,
-      "round_table_count": 0
+      "round_table_count": 0,
+      "strict_fighter_matches": [
+        "David Adeleye",
+        "Jeamie Tshikeva"
+      ],
+      "strict_both_sides_matched": true
     },
     {
       "url": "https://boxing-data.com/blog/davies-vs-grandelli-fight-review",
       "title": "Liam Davies vs Francesco Grandelli: Fight Review â Power Accuracy Builds to a Sixth-Round Finish",
-      "published_date": "March 28, 2026",
+      "published_date": "2026-03-28",
       "fighter_a_hint": "Liam Davies",
       "fighter_b_hint": "Francesco Grandelli",
       "explicit_boxing_data_api_attribution": true,
@@ -765,12 +837,17 @@
         }
       ],
       "table_count": 1,
-      "round_table_count": 0
+      "round_table_count": 0,
+      "strict_fighter_matches": [
+        "Liam Davies",
+        null
+      ],
+      "strict_both_sides_matched": false
     },
     {
       "url": "https://boxing-data.com/blog/devin-haney-vs-jose-carlos-ramirez-review",
       "title": "Devin Haney vs Jose Carlos Ramirez Results: Punch Stats, Dominant Decision, and Round-by-Round Analysis",
-      "published_date": "May 2, 2025",
+      "published_date": "2025-05-02",
       "fighter_a_hint": "Devin Haney",
       "fighter_b_hint": "Jose Carlos Ramirez",
       "explicit_boxing_data_api_attribution": true,
@@ -823,12 +900,17 @@
         }
       ],
       "table_count": 1,
-      "round_table_count": 0
+      "round_table_count": 0,
+      "strict_fighter_matches": [
+        null,
+        null
+      ],
+      "strict_both_sides_matched": false
     },
     {
       "url": "https://boxing-data.com/blog/eubank-vs-benn-history",
       "title": "Eubank vs. Benn: A Legacy of Unresolved Rivalry Resurfaces Ahead of Jr. vs. Benn Showdown",
-      "published_date": "April 26, 2025",
+      "published_date": "2025-04-26",
       "fighter_a_hint": "Eubank",
       "fighter_b_hint": "Benn",
       "explicit_boxing_data_api_attribution": true,
@@ -889,12 +971,17 @@
         }
       ],
       "table_count": 2,
-      "round_table_count": 0
+      "round_table_count": 0,
+      "strict_fighter_matches": [
+        null,
+        null
+      ],
+      "strict_both_sides_matched": false
     },
     {
       "url": "https://boxing-data.com/blog/fabio-wardley-vs-justis-huni-review",
       "title": "Fabio Wardley vs Justis Huni Results: Punch Stats, Knockout Breakdown, and Round-by-Round Analysis",
-      "published_date": "June 7, 2025",
+      "published_date": "2025-06-07",
       "fighter_a_hint": "Fabio Wardley",
       "fighter_b_hint": "Justis Huni",
       "explicit_boxing_data_api_attribution": true,
@@ -947,12 +1034,17 @@
         }
       ],
       "table_count": 1,
-      "round_table_count": 0
+      "round_table_count": 0,
+      "strict_fighter_matches": [
+        "Fabio Wardley",
+        "Justis Huni"
+      ],
+      "strict_both_sides_matched": true
     },
     {
       "url": "https://boxing-data.com/blog/fundora-vs-thurman-fight-review",
       "title": "Fundora vs Thurman: Fight Review & Statistical Breakdown",
-      "published_date": "March 28, 2026",
+      "published_date": "2026-03-28",
       "fighter_a_hint": "Fundora",
       "fighter_b_hint": "Thurman",
       "explicit_boxing_data_api_attribution": true,
@@ -1029,7 +1121,12 @@
         }
       ],
       "table_count": 1,
-      "round_table_count": 1
+      "round_table_count": 1,
+      "strict_fighter_matches": [
+        null,
+        null
+      ],
+      "strict_both_sides_matched": false
     },
     {
       "url": "https://boxing-data.com/blog/fury-vs-makhmudov-fight-review",
@@ -1082,7 +1179,12 @@
         }
       ],
       "table_count": 1,
-      "round_table_count": 0
+      "round_table_count": 0,
+      "strict_fighter_matches": [
+        null,
+        null
+      ],
+      "strict_both_sides_matched": false
     },
     {
       "url": "https://boxing-data.com/blog/hamzah-sheeraz-vs-simon-zachenhuber-fight-results-review-analysis",
@@ -1120,12 +1222,17 @@
         }
       ],
       "table_count": 1,
-      "round_table_count": 1
+      "round_table_count": 1,
+      "strict_fighter_matches": [
+        "Hamzah Sheeraz",
+        null
+      ],
+      "strict_both_sides_matched": false
     },
     {
       "url": "https://boxing-data.com/blog/heaney-vs-warburton-fight-review",
       "title": "Nathan Heaney vs Gerome Warburton: Fight Review â The Upset the Stats Predicted",
-      "published_date": "March 28, 2026",
+      "published_date": "2026-03-28",
       "fighter_a_hint": "Nathan Heaney",
       "fighter_b_hint": "Gerome Warburton",
       "explicit_boxing_data_api_attribution": true,
@@ -1173,12 +1280,17 @@
         }
       ],
       "table_count": 1,
-      "round_table_count": 0
+      "round_table_count": 0,
+      "strict_fighter_matches": [
+        null,
+        "Gerome Warburton"
+      ],
+      "strict_both_sides_matched": false
     },
     {
       "url": "https://boxing-data.com/blog/hernandez-vs-gausha-fight-review",
       "title": "Hernandez vs Gausha: Fight Review & Statistical Breakdown",
-      "published_date": "March 28, 2026",
+      "published_date": "2026-03-28",
       "fighter_a_hint": "Hernandez",
       "fighter_b_hint": "Gausha",
       "explicit_boxing_data_api_attribution": true,
@@ -1239,12 +1351,17 @@
         }
       ],
       "table_count": 1,
-      "round_table_count": 1
+      "round_table_count": 1,
+      "strict_fighter_matches": [
+        null,
+        null
+      ],
+      "strict_both_sides_matched": false
     },
     {
       "url": "https://boxing-data.com/blog/hovhannisyan-vs-navarro-fight-review",
       "title": "Hovhannisyan vs Navarro: Fight Review & Statistical Breakdown",
-      "published_date": "March 28, 2026",
+      "published_date": "2026-03-28",
       "fighter_a_hint": "Hovhannisyan",
       "fighter_b_hint": "Navarro",
       "explicit_boxing_data_api_attribution": true,
@@ -1313,12 +1430,17 @@
         }
       ],
       "table_count": 1,
-      "round_table_count": 1
+      "round_table_count": 1,
+      "strict_fighter_matches": [
+        null,
+        null
+      ],
+      "strict_both_sides_matched": false
     },
     {
       "url": "https://boxing-data.com/blog/hutchinson-vs-taylor-fight-review",
       "title": "Willy Hutchinson vs Ezra Taylor: Fight Review â WBO Interim Light Heavyweight Title",
-      "published_date": "March 28, 2026",
+      "published_date": "2026-03-28",
       "fighter_a_hint": "Willy Hutchinson",
       "fighter_b_hint": "Ezra Taylor",
       "explicit_boxing_data_api_attribution": true,
@@ -1366,12 +1488,17 @@
         }
       ],
       "table_count": 1,
-      "round_table_count": 0
+      "round_table_count": 0,
+      "strict_fighter_matches": [
+        "Willy Hutchinson",
+        "Ezra Taylor"
+      ],
+      "strict_both_sides_matched": true
     },
     {
       "url": "https://boxing-data.com/blog/itauma-vs-franklin-jr-fight-review",
       "title": "Moses Itauma vs Jermaine Franklin Jr: Fight Review",
-      "published_date": "March 28, 2026",
+      "published_date": "2026-03-28",
       "fighter_a_hint": "Moses Itauma",
       "fighter_b_hint": "Jermaine Franklin Jr",
       "explicit_boxing_data_api_attribution": true,
@@ -1419,12 +1546,17 @@
         }
       ],
       "table_count": 1,
-      "round_table_count": 0
+      "round_table_count": 0,
+      "strict_fighter_matches": [
+        "Moses Itauma",
+        null
+      ],
+      "strict_both_sides_matched": false
     },
     {
       "url": "https://boxing-data.com/blog/jack-catterall-vs-harlem-eubank-review",
       "title": "Catterall vs Eubank Results: Punch Stats, Technical Decision Breakdown, and Round-by-Round Analysis",
-      "published_date": "July 5, 2025",
+      "published_date": "2025-07-05",
       "fighter_a_hint": "Catterall",
       "fighter_b_hint": "Eubank",
       "explicit_boxing_data_api_attribution": true,
@@ -1477,12 +1609,17 @@
         }
       ],
       "table_count": 1,
-      "round_table_count": 0
+      "round_table_count": 0,
+      "strict_fighter_matches": [
+        null,
+        null
+      ],
+      "strict_both_sides_matched": false
     },
     {
       "url": "https://boxing-data.com/blog/jai-opetaia-vs-claudio-squeo-preview",
       "title": "Jai Opetaia vs Claudio Squeo Prediction, Betting Odds, and Stats Comparison | Expert Preview",
-      "published_date": "June 8, 2025",
+      "published_date": "2025-06-08",
       "fighter_a_hint": "Jai Opetaia",
       "fighter_b_hint": "Claudio Squeo Prediction, Betting Odds, and Stats Comparison | Expert Preview",
       "explicit_boxing_data_api_attribution": true,
@@ -1515,14 +1652,19 @@
         }
       ],
       "table_count": 1,
-      "round_table_count": 1
+      "round_table_count": 1,
+      "strict_fighter_matches": [
+        "Jai Opetaia",
+        null
+      ],
+      "strict_both_sides_matched": false
     },
     {
       "url": "https://boxing-data.com/blog/joe-joyce-vs-filip-hrgovic-review",
       "title": "Hrgovic Outclasses Joyce in Manchester: Croatian Heavyweight Secures Career-Defining Unanimous Decision",
-      "published_date": "April 05, 2025",
-      "fighter_a_hint": null,
-      "fighter_b_hint": null,
+      "published_date": "2025-04-05",
+      "fighter_a_hint": "Joe Joyce",
+      "fighter_b_hint": "Filip Hrgovic",
       "explicit_boxing_data_api_attribution": true,
       "tables": [
         {
@@ -1558,14 +1700,19 @@
         }
       ],
       "table_count": 1,
-      "round_table_count": 0
+      "round_table_count": 0,
+      "strict_fighter_matches": [
+        null,
+        null
+      ],
+      "strict_both_sides_matched": false
     },
     {
       "url": "https://boxing-data.com/blog/jono-carroll-vs-colm-murphy-super-featherweight-review",
       "title": "Carroll Edges Murphy in Dublin: The Punch Data Behind a Controversial Split Decision",
       "published_date": null,
-      "fighter_a_hint": null,
-      "fighter_b_hint": null,
+      "fighter_a_hint": "Jono Carroll",
+      "fighter_b_hint": "Colm Murphy",
       "explicit_boxing_data_api_attribution": true,
       "tables": [
         {
@@ -1611,14 +1758,19 @@
         }
       ],
       "table_count": 1,
-      "round_table_count": 1
+      "round_table_count": 1,
+      "strict_fighter_matches": [
+        "Jono Carroll",
+        null
+      ],
+      "strict_both_sides_matched": false
     },
     {
       "url": "https://boxing-data.com/blog/joshua-buatsi-vs-callum-smith-review",
       "title": "Smith Outlasts Buatsi in British Thriller: Veteran Claims Decision in Riyadh War",
-      "published_date": "Feb 22, 2025",
-      "fighter_a_hint": null,
-      "fighter_b_hint": null,
+      "published_date": "2025-02-22",
+      "fighter_a_hint": "Joshua Buatsi",
+      "fighter_b_hint": "Callum Smith",
       "explicit_boxing_data_api_attribution": true,
       "tables": [
         {
@@ -1654,12 +1806,17 @@
         }
       ],
       "table_count": 1,
-      "round_table_count": 0
+      "round_table_count": 0,
+      "strict_fighter_matches": [
+        "Joshua Buatsi",
+        "Callum Smith"
+      ],
+      "strict_both_sides_matched": true
     },
     {
       "url": "https://boxing-data.com/blog/louie-odoherty-vs-ahmed-hatim-fight-preview-prediction-analysis",
       "title": "Louie O'Doherty vs Ahmed Hatim: British & Commonwealth Lightweight Title Preview",
-      "published_date": "May 16, 2026",
+      "published_date": "2026-05-16",
       "fighter_a_hint": "Louie O'Doherty",
       "fighter_b_hint": "Ahmed Hatim",
       "explicit_boxing_data_api_attribution": true,
@@ -1700,12 +1857,17 @@
         }
       ],
       "table_count": 1,
-      "round_table_count": 0
+      "round_table_count": 0,
+      "strict_fighter_matches": [
+        null,
+        null
+      ],
+      "strict_both_sides_matched": false
     },
     {
       "url": "https://boxing-data.com/blog/maxi-hughes-vs-lewis-sylvester-fight-preview-prediction-analysis",
       "title": "Maxi Hughes vs Lewis Sylvester: Fight Preview, Prediction & Analysis",
-      "published_date": "May 16, 2026",
+      "published_date": "2026-05-16",
       "fighter_a_hint": "Maxi Hughes",
       "fighter_b_hint": "Lewis Sylvester",
       "explicit_boxing_data_api_attribution": true,
@@ -1742,12 +1904,17 @@
         }
       ],
       "table_count": 1,
-      "round_table_count": 0
+      "round_table_count": 0,
+      "strict_fighter_matches": [
+        "Maxi Hughes",
+        null
+      ],
+      "strict_both_sides_matched": false
     },
     {
       "url": "https://boxing-data.com/blog/michael-gomez-jnr-vs-lee-mcgregor-fight-preview-prediction-analysis",
       "title": "Michael Gomez Jnr vs Lee McGregor: Fight Preview, Prediction & Analysis",
-      "published_date": "May 16, 2026",
+      "published_date": "2026-05-16",
       "fighter_a_hint": "Michael Gomez Jnr",
       "fighter_b_hint": "Lee McGregor",
       "explicit_boxing_data_api_attribution": true,
@@ -1784,12 +1951,17 @@
         }
       ],
       "table_count": 1,
-      "round_table_count": 0
+      "round_table_count": 0,
+      "strict_fighter_matches": [
+        null,
+        "Lee McGregor"
+      ],
+      "strict_both_sides_matched": false
     },
     {
       "url": "https://boxing-data.com/blog/murphy-vs-holmes-fight-review",
       "title": "Alex Murphy vs Josh Holmes: Fight Review â A First-Round Clinic in Power Accuracy",
-      "published_date": "March 28, 2026",
+      "published_date": "2026-03-28",
       "fighter_a_hint": "Alex Murphy",
       "fighter_b_hint": "Josh Holmes",
       "explicit_boxing_data_api_attribution": true,
@@ -1852,14 +2024,19 @@
         }
       ],
       "table_count": 1,
-      "round_table_count": 0
+      "round_table_count": 0,
+      "strict_fighter_matches": [
+        null,
+        null
+      ],
+      "strict_both_sides_matched": false
     },
     {
       "url": "https://boxing-data.com/blog/nick-ball-vs-tj-doheny-review",
       "title": "Nick Ball Stops Veteran TJ Doheny in 10th Round War: Youth Prevails in Liverpool Slugfest",
-      "published_date": "March 15, 2025",
-      "fighter_a_hint": null,
-      "fighter_b_hint": null,
+      "published_date": "2025-03-15",
+      "fighter_a_hint": "Nick Ball",
+      "fighter_b_hint": "Tj Doheny",
       "explicit_boxing_data_api_attribution": true,
       "tables": [
         {
@@ -1900,14 +2077,19 @@
         }
       ],
       "table_count": 1,
-      "round_table_count": 0
+      "round_table_count": 0,
+      "strict_fighter_matches": [
+        "Nick Ball",
+        null
+      ],
+      "strict_both_sides_matched": false
     },
     {
       "url": "https://boxing-data.com/blog/parker-vs-bakole-review",
       "title": "Parker Powers Through: New Zealander Floors Bakole in Riyadh Statement",
-      "published_date": "Feb 22, 2025",
-      "fighter_a_hint": null,
-      "fighter_b_hint": null,
+      "published_date": "2025-02-22",
+      "fighter_a_hint": "Parker",
+      "fighter_b_hint": "Bakole",
       "explicit_boxing_data_api_attribution": true,
       "tables": [
         {
@@ -1943,12 +2125,17 @@
         }
       ],
       "table_count": 1,
-      "round_table_count": 0
+      "round_table_count": 0,
+      "strict_fighter_matches": [
+        null,
+        null
+      ],
+      "strict_both_sides_matched": false
     },
     {
       "url": "https://boxing-data.com/blog/paul-vs-chavez-jr-review",
       "title": "Jake Paul vs Julio Cesar Chavez Jr. Results: Punch Stats, Knockout Analysis, and Round-by-Round Breakdown",
-      "published_date": "June 28, 2025",
+      "published_date": "2025-06-28",
       "fighter_a_hint": "Jake Paul",
       "fighter_b_hint": "Julio Cesar Chavez Jr.",
       "explicit_boxing_data_api_attribution": true,
@@ -2085,12 +2272,17 @@
         }
       ],
       "table_count": 4,
-      "round_table_count": 3
+      "round_table_count": 3,
+      "strict_fighter_matches": [
+        "Jake Paul",
+        null
+      ],
+      "strict_both_sides_matched": false
     },
     {
       "url": "https://boxing-data.com/blog/richardson-hitchins-vs-george-kambosos-jr-review",
       "title": "Richardson Hitchins vs George Kambosos Results: Punch Stats, Knockout Breakdown, and Round-by-Round Analysis",
-      "published_date": "June 14, 2025",
+      "published_date": "2025-06-14",
       "fighter_a_hint": "Richardson Hitchins",
       "fighter_b_hint": "George Kambosos",
       "explicit_boxing_data_api_attribution": true,
@@ -2143,7 +2335,1120 @@
         }
       ],
       "table_count": 1,
-      "round_table_count": 0
+      "round_table_count": 0,
+      "strict_fighter_matches": [
+        null,
+        null
+      ],
+      "strict_both_sides_matched": false
+    },
+    {
+      "url": "https://boxing-data.com/blog/riley-vs-masternak-fight-review",
+      "title": "Riley vs Masternak: Fight Review & Statistical Breakdown",
+      "published_date": "2026-04-04",
+      "fighter_a_hint": "Riley",
+      "fighter_b_hint": "Masternak",
+      "explicit_boxing_data_api_attribution": true,
+      "tables": [
+        {
+          "table_index": 0,
+          "type": "fight_total_or_summary",
+          "rows": [
+            [
+              "Rd",
+              "Riley Landed",
+              "Riley Acc.",
+              "Jab Acc.",
+              "Power Acc.",
+              "Masternak Landed",
+              "Masternak Acc.",
+              "Power Acc."
+            ],
+            [
+              "R1",
+              "12/43",
+              "27.9%",
+              "23.5%",
+              "44.4%",
+              "7/27",
+              "25.9%",
+              "60.0%"
+            ],
+            [
+              "R2",
+              "20/48",
+              "41.7%",
+              "38.7%",
+              "47.1%",
+              "9/39",
+              "23.1%",
+              "53.3%"
+            ],
+            [
+              "R3",
+              "17/44",
+              "38.6%",
+              "32.1%",
+              "50.0%",
+              "5/26",
+              "19.2%",
+              "12.5%"
+            ],
+            [
+              "R4",
+              "17/42",
+              "40.5%",
+              "37.9%",
+              "46.2%",
+              "4/27",
+              "14.8%",
+              "15.4%"
+            ],
+            [
+              "R5",
+              "27/58",
+              "46.6%",
+              "33.3%",
+              "60.7%",
+              "7/43",
+              "16.3%",
+              "33.3%"
+            ],
+            [
+              "R6",
+              "17/42",
+              "40.5%",
+              "34.6%",
+              "50.0%",
+              "5/26",
+              "19.2%",
+              "44.4%"
+            ],
+            [
+              "R7",
+              "25/62",
+              "40.3%",
+              "19.4%",
+              "61.3%",
+              "8/29",
+              "27.6%",
+              "46.2%"
+            ],
+            [
+              "R8",
+              "21/56",
+              "37.5%",
+              "29.6%",
+              "44.8%",
+              "7/34",
+              "20.6%",
+              "26.3%"
+            ],
+            [
+              "R9",
+              "15/29",
+              "51.7%",
+              "43.8%",
+              "61.5%",
+              "2/20",
+              "10.0%",
+              "22.2%"
+            ],
+            [
+              "R10",
+              "19/51",
+              "37.3%",
+              "30.0%",
+              "47.6%",
+              "5/32",
+              "15.6%",
+              "25.0%"
+            ],
+            [
+              "R11",
+              "17/53",
+              "32.1%",
+              "25.8%",
+              "40.9%",
+              "8/37",
+              "21.6%",
+              "21.4%"
+            ],
+            [
+              "R12",
+              "17/44",
+              "38.6%",
+              "40.0%",
+              "36.8%",
+              "13/46",
+              "28.3%",
+              "31.0%"
+            ],
+            [
+              "Total",
+              "224/572",
+              "39.2%",
+              "31.7%",
+              "50.0%",
+              "80/386",
+              "20.7%",
+              "31.7%"
+            ]
+          ]
+        }
+      ],
+      "table_count": 1,
+      "round_table_count": 0,
+      "strict_fighter_matches": [
+        null,
+        null
+      ],
+      "strict_both_sides_matched": false
+    },
+    {
+      "url": "https://boxing-data.com/blog/ryan-garcia-vs-rolando-romero-review",
+      "title": "Ryan Garcia vs Rolando Romero Results: Punch Stats, Decision Breakdown, and Round-by-Round Analysis",
+      "published_date": "2025-05-02",
+      "fighter_a_hint": "Ryan Garcia",
+      "fighter_b_hint": "Rolando Romero",
+      "explicit_boxing_data_api_attribution": true,
+      "tables": [
+        {
+          "table_index": 0,
+          "type": "fight_total_or_summary",
+          "rows": [
+            [
+              "Stat",
+              "Ryan Garcia",
+              "Rolando Romero"
+            ],
+            [
+              "Total Landed",
+              "65",
+              "57"
+            ],
+            [
+              "Total Thrown",
+              "210",
+              "280"
+            ],
+            [
+              "Accuracy",
+              "31%",
+              "20.4%"
+            ],
+            [
+              "Power Punches",
+              "18",
+              "18"
+            ],
+            [
+              "Jabs Landed",
+              "48",
+              "39"
+            ],
+            [
+              "Jab Accuracy",
+              "37.5%",
+              "24.4%"
+            ]
+          ]
+        }
+      ],
+      "table_count": 1,
+      "round_table_count": 0,
+      "strict_fighter_matches": [
+        null,
+        "Rolando Romero"
+      ],
+      "strict_both_sides_matched": false
+    },
+    {
+      "url": "https://boxing-data.com/blog/sebastian-fundora-vs-chordale-booker-review",
+      "title": "The Towering Storm: Fundora Retains Titles With Dominant 4th-Round TKO Over Booker",
+      "published_date": "2025-03-22",
+      "fighter_a_hint": "Sebastian Fundora",
+      "fighter_b_hint": "Chordale Booker",
+      "explicit_boxing_data_api_attribution": true,
+      "tables": [
+        {
+          "table_index": 0,
+          "type": "fight_total_or_summary",
+          "rows": [
+            [
+              "Statistic",
+              "Sebastian Fundora",
+              "Chordale Booker"
+            ],
+            [
+              "Total Punches Landed",
+              "79",
+              "37"
+            ],
+            [
+              "Total Accuracy",
+              "21.9%",
+              "24.7%"
+            ],
+            [
+              "Power Punches Landed",
+              "50",
+              "16"
+            ],
+            [
+              "Power Accuracy",
+              "33.3%",
+              "27.1%"
+            ],
+            [
+              "Jab Accuracy",
+              "14.6%",
+              "23.8%"
+            ]
+          ]
+        }
+      ],
+      "table_count": 1,
+      "round_table_count": 0,
+      "strict_fighter_matches": [
+        null,
+        "Chordale Booker"
+      ],
+      "strict_both_sides_matched": false
+    },
+    {
+      "url": "https://boxing-data.com/blog/serrano-vs-tellez-fight-preview-prediction",
+      "title": "Serrano vs. Tellez: Fight Prediction, Stats & How to Watch",
+      "published_date": "2026-01-03",
+      "fighter_a_hint": "Serrano",
+      "fighter_b_hint": "Tellez",
+      "explicit_boxing_data_api_attribution": true,
+      "tables": [
+        {
+          "table_index": 0,
+          "type": "fight_total_or_summary",
+          "rows": [
+            [
+              "Attribute",
+              "Amanda Serrano",
+              "Reina Tellez"
+            ],
+            [
+              "Experience",
+              "Vastly More (38 more fights, 191 more rounds)",
+              "Less"
+            ],
+            [
+              "Power",
+              "Higher (66% KO)",
+              "Lower (38% KO)"
+            ],
+            [
+              "Age",
+              "Older (37)",
+              "Younger (22)"
+            ],
+            [
+              "Height",
+              "5â 5â",
+              "5â 0â"
+            ],
+            [
+              "Stance",
+              "Southpaw",
+              "Orthodox"
+            ]
+          ]
+        }
+      ],
+      "table_count": 1,
+      "round_table_count": 0,
+      "strict_fighter_matches": [
+        null,
+        null
+      ],
+      "strict_both_sides_matched": false
+    },
+    {
+      "url": "https://boxing-data.com/blog/shakur-stevenson-vs-josh-padley-review",
+      "title": "Stevenson's Surgical Strike: American Star Dismantles Padley in Riyadh Masterclass",
+      "published_date": "2025-02-22",
+      "fighter_a_hint": "Shakur Stevenson",
+      "fighter_b_hint": "Josh Padley",
+      "explicit_boxing_data_api_attribution": true,
+      "tables": [
+        {
+          "table_index": 0,
+          "type": "fight_total_or_summary",
+          "rows": [
+            [
+              "Metric",
+              "Stevenson (R1-9)",
+              "Padley (R1-9)"
+            ],
+            [
+              "Total Landed",
+              "188",
+              "66"
+            ],
+            [
+              "Power Punch Accuracy",
+              "47.6%",
+              "19.2%"
+            ],
+            [
+              "Jabs Landed",
+              "65",
+              "9"
+            ],
+            [
+              "Body Shots Landed",
+              "71",
+              "22"
+            ]
+          ]
+        }
+      ],
+      "table_count": 1,
+      "round_table_count": 0,
+      "strict_fighter_matches": [
+        "Shakur Stevenson",
+        "Josh Padley"
+      ],
+      "strict_both_sides_matched": true
+    },
+    {
+      "url": "https://boxing-data.com/blog/shakur-stevenson-vs-william-zepeda-statistical-analysis",
+      "title": "Shakur Stevenson Defeats William Zepeda: Post-Fight Stats and Analysis",
+      "published_date": "2025-07-12",
+      "fighter_a_hint": "Shakur Stevenson",
+      "fighter_b_hint": "William Zepeda",
+      "explicit_boxing_data_api_attribution": true,
+      "tables": [
+        {
+          "table_index": 0,
+          "type": "round_level_or_round_summary",
+          "rows": [
+            [
+              "Round",
+              "Shakur Stevenson Punches Landed/Thrown (Accuracy)",
+              "William Zepeda Punches Landed/Thrown (Accuracy)",
+              "Notes"
+            ],
+            [
+              "1",
+              "23/53 (43.4%)",
+              "11/68 (16.2%)",
+              "Stevenson came out sharp, establishing his jab and controlling the center of the ring. Zepeda struggled to find his rhythm and range."
+            ],
+            [
+              "2",
+              "25/50 (50%)",
+              "27/103 (26.2%)",
+              "Zepeda increased his punch output, landing more shots, but Stevenson remained composed, landing with better accuracy."
+            ],
+            [
+              "3",
+              "25/54 (46.3%)",
+              "32/103 (31.1%)",
+              "A busier round for both fighters as Zepeda continued to pressure Stevenson, who utilized effective counter-punching."
+            ],
+            [
+              "4",
+              "30/54 (55.6%)",
+              "23/93 (24.7%)",
+              "Stevensonâs accuracy was on full display, landing a high percentage of his punches. Zepedaâs aggression was not enough to overcome Stevensonâs clean, precise punches."
+            ],
+            [
+              "5",
+              "23/48 (47.9%)",
+              "26/78 (33.3%)",
+              "Zepeda had some success landing his jab, but Stevensonâs power punches had greater impact."
+            ],
+            [
+              "6",
+              "25/43 (58.1%)",
+              "24/81 (29.6%)",
+              "Stevenson began to truly dominate, effectively using his footwork and angles to evade Zepedaâs attacks, allowing him to land cleaner, more effective shots."
+            ],
+            [
+              "7",
+              "26/45 (57.8%)",
+              "22/87 (25.3%)",
+              "Stevenson continued to outbox Zepeda, maintaining a comfortable distance while landing with greater accuracy and consistency."
+            ],
+            [
+              "8",
+              "22/40 (55%)",
+              "26/75 (34.7%)",
+              "Zepeda demonstrated resilience, but Stevensonâs superior defensive skills and counter-punching kept him firmly in control of the fight."
+            ],
+            [
+              "9",
+              "25/46 (54.3%)",
+              "27/84 (32.1%)",
+              "A highly competitive round, with both fighters connecting. However, Stevensonâs cleaner, more impactful shots likely earned him the edge on the scorecards."
+            ],
+            [
+              "10",
+              "26/47 (55.3%)",
+              "17/67 (25.4%)",
+              "Stevenson maintained his composure and accuracy, effectively frustrating Zepedaâs persistent attempts to close the distance and land power punches."
+            ],
+            [
+              "11",
+              "22/40 (55%)",
+              "19/71 (26.8%)",
+              "Stevenson continued to control the pace and distance, consistently landing clean punches and skillfully avoiding Zepedaâs attempts to land significant power shots."
+            ],
+            [
+              "12",
+              "23/45 (51.1%)",
+              "18/69 (26.1%)",
+              "Stevenson finished the fight strong, solidifying his unanimous decision victory. Despite Zepedaâs determined efforts, he was ultimately unable to overcome Stevensonâs superior skill set."
+            ]
+          ]
+        },
+        {
+          "table_index": 1,
+          "type": "fight_total_or_summary",
+          "rows": [
+            [
+              "Statistic",
+              "Shakur Stevenson",
+              "William Zepeda"
+            ],
+            [
+              "Total Punches Landed",
+              "295",
+              "290"
+            ],
+            [
+              "Total Punches Thrown",
+              "555",
+              "979"
+            ],
+            [
+              "Punch Accuracy",
+              "53.1%",
+              "29.6%"
+            ]
+          ]
+        }
+      ],
+      "table_count": 2,
+      "round_table_count": 1,
+      "strict_fighter_matches": [
+        "Shakur Stevenson",
+        null
+      ],
+      "strict_both_sides_matched": false
+    },
+    {
+      "url": "https://boxing-data.com/blog/tellez-vs-mendoza-fight-review",
+      "title": "Tellez vs Mendoza: Fight Review & Statistical Breakdown",
+      "published_date": "2026-03-28",
+      "fighter_a_hint": "Tellez",
+      "fighter_b_hint": "Mendoza",
+      "explicit_boxing_data_api_attribution": true,
+      "tables": [
+        {
+          "table_index": 1,
+          "type": "round_level_or_round_summary",
+          "rows": [
+            [
+              "Round",
+              "Tellez Landed",
+              "Tellez Acc.",
+              "Mendoza Landed",
+              "Mendoza Acc.",
+              "Round Winner"
+            ],
+            [
+              "R1",
+              "6/25",
+              "24.0%",
+              "8/38",
+              "21.1%",
+              "Mendoza"
+            ],
+            [
+              "R2",
+              "16/50",
+              "32.0%",
+              "15/55",
+              "27.3%",
+              "Tellez"
+            ],
+            [
+              "R3",
+              "7/25",
+              "28.0%",
+              "10/48",
+              "20.8%",
+              "Close"
+            ],
+            [
+              "R4",
+              "14/47",
+              "29.8%",
+              "17/57",
+              "29.8%",
+              "Close"
+            ],
+            [
+              "R5",
+              "17/50",
+              "34.0%",
+              "12/40",
+              "30.0%",
+              "Tellez"
+            ],
+            [
+              "R6",
+              "18/45",
+              "40.0%",
+              "12/63",
+              "19.0%",
+              "Tellez"
+            ],
+            [
+              "R7",
+              "24/60",
+              "40.0%",
+              "15/56",
+              "26.8%",
+              "Tellez"
+            ],
+            [
+              "R8",
+              "15/47",
+              "31.9%",
+              "14/45",
+              "31.1%",
+              "Close"
+            ],
+            [
+              "R9",
+              "18/49",
+              "36.7%",
+              "12/48",
+              "25.0%",
+              "Tellez"
+            ],
+            [
+              "R10",
+              "12/37",
+              "32.4%",
+              "10/51",
+              "19.6%",
+              "Tellez"
+            ],
+            [
+              "Total",
+              "147/435",
+              "33.8%",
+              "125/501",
+              "24.9%",
+              "Tellez"
+            ]
+          ]
+        }
+      ],
+      "table_count": 1,
+      "round_table_count": 1,
+      "strict_fighter_matches": [
+        null,
+        null
+      ],
+      "strict_both_sides_matched": false
+    },
+    {
+      "url": "https://boxing-data.com/blog/teofimo-lopez-vs-arnold-barboza-jr-review",
+      "title": "Teofimo Lopez vs Arnold Barboza Jr Results: Punch Stats, Dominance Breakdown, and Round-by-Round Analysis",
+      "published_date": "2025-05-02",
+      "fighter_a_hint": "Teofimo Lopez",
+      "fighter_b_hint": "Arnold Barboza Jr",
+      "explicit_boxing_data_api_attribution": true,
+      "tables": [
+        {
+          "table_index": 0,
+          "type": "fight_total_or_summary",
+          "rows": [
+            [
+              "Stat",
+              "Teofimo Lopez",
+              "Arnold Barboza Jr"
+            ],
+            [
+              "Total Punches Landed",
+              "127",
+              "71"
+            ],
+            [
+              "Total Punches Thrown",
+              "574",
+              "426"
+            ],
+            [
+              "Total Accuracy",
+              "22.13%",
+              "16.67%"
+            ],
+            [
+              "Power Punches Landed",
+              "73",
+              "33"
+            ],
+            [
+              "Power Accuracy",
+              "36.87%",
+              "17.55%"
+            ],
+            [
+              "Jabs Landed",
+              "54",
+              "38"
+            ],
+            [
+              "Jab Accuracy",
+              "14.36%",
+              "15.97%"
+            ]
+          ]
+        }
+      ],
+      "table_count": 1,
+      "round_table_count": 0,
+      "strict_fighter_matches": [
+        null,
+        "Arnold Barboza Jr."
+      ],
+      "strict_both_sides_matched": false
+    },
+    {
+      "url": "https://boxing-data.com/blog/thompson-vs-pauls-fight-review",
+      "title": "Shakiel Thompson vs Brad Pauls: Fight Review â A Masterclass in Quality Over Quantity",
+      "published_date": "2026-03-28",
+      "fighter_a_hint": "Shakiel Thompson",
+      "fighter_b_hint": "Brad Pauls",
+      "explicit_boxing_data_api_attribution": true,
+      "tables": [
+        {
+          "table_index": 0,
+          "type": "fight_total_or_summary",
+          "rows": [
+            [
+              "Stat",
+              "Thompson",
+              "Pauls"
+            ],
+            [
+              "Total landed",
+              "94",
+              "66"
+            ],
+            [
+              "Total thrown",
+              "502",
+              "210"
+            ],
+            [
+              "Overall accuracy",
+              "18.7%",
+              "31.4%"
+            ],
+            [
+              "Power landed",
+              "70",
+              "44"
+            ],
+            [
+              "Power thrown",
+              "226",
+              "113"
+            ],
+            [
+              "Power accuracy",
+              "31.0%",
+              "38.9%"
+            ]
+          ]
+        }
+      ],
+      "table_count": 1,
+      "round_table_count": 0,
+      "strict_fighter_matches": [
+        null,
+        "Brad Pauls"
+      ],
+      "strict_both_sides_matched": false
+    },
+    {
+      "url": "https://boxing-data.com/blog/usyk-v-fury-ii-overview",
+      "title": "Usyk vs Fury II: A Night of Heavyweight Boxing in Riyadh",
+      "published_date": "2024-12-21",
+      "fighter_a_hint": "Usyk",
+      "fighter_b_hint": "Fury II",
+      "explicit_boxing_data_api_attribution": true,
+      "tables": [
+        {
+          "table_index": 0,
+          "type": "fight_total_or_summary",
+          "rows": [
+            [
+              "Statistic",
+              "Usyk",
+              "Fury"
+            ],
+            [
+              "Total Punches Landed",
+              "179",
+              "144"
+            ],
+            [
+              "Total Punches Thrown",
+              "423",
+              "508"
+            ],
+            [
+              "Total Punch Accuracy",
+              "42.3%",
+              "28.3%"
+            ],
+            [
+              "Jabs Landed",
+              "67",
+              "42"
+            ],
+            [
+              "Jabs Thrown",
+              "227",
+              "258"
+            ],
+            [
+              "Jab Accuracy",
+              "29.5%",
+              "16.3%"
+            ],
+            [
+              "Power Punches Landed",
+              "112",
+              "102"
+            ],
+            [
+              "Power Punches Thrown",
+              "196",
+              "250"
+            ],
+            [
+              "Power Punch Accuracy",
+              "57.1%",
+              "40.8%"
+            ]
+          ]
+        }
+      ],
+      "table_count": 1,
+      "round_table_count": 0,
+      "strict_fighter_matches": [
+        null,
+        null
+      ],
+      "strict_both_sides_matched": false
+    },
+    {
+      "url": "https://boxing-data.com/blog/wilder-vs-chisora-fight-review",
+      "title": "Wilder vs Chisora: Fight Review & Statistical Breakdown",
+      "published_date": "2026-04-04",
+      "fighter_a_hint": "Wilder",
+      "fighter_b_hint": "Chisora",
+      "explicit_boxing_data_api_attribution": true,
+      "tables": [
+        {
+          "table_index": 0,
+          "type": "fight_total_or_summary",
+          "rows": [
+            [
+              "Rd",
+              "Wilder Landed",
+              "Wilder Acc.",
+              "Power Acc.",
+              "Chisora Landed",
+              "Chisora Acc.",
+              "Power Acc."
+            ],
+            [
+              "R1",
+              "6/23",
+              "26.1%",
+              "37.5%",
+              "6/20",
+              "30.0%",
+              "33.3%"
+            ],
+            [
+              "R2",
+              "9/31",
+              "29.0%",
+              "30.4%",
+              "13/27",
+              "48.1%",
+              "50.0%"
+            ],
+            [
+              "R3",
+              "9/30",
+              "30.0%",
+              "26.3%",
+              "9/23",
+              "39.1%",
+              "44.4%"
+            ],
+            [
+              "R4",
+              "17/38",
+              "44.7%",
+              "48.3%",
+              "9/20",
+              "45.0%",
+              "50.0%"
+            ],
+            [
+              "R5",
+              "16/38",
+              "42.1%",
+              "37.5%",
+              "4/24",
+              "16.7%",
+              "25.0%"
+            ],
+            [
+              "R6",
+              "14/32",
+              "43.8%",
+              "47.8%",
+              "18/35",
+              "51.4%",
+              "55.6%"
+            ],
+            [
+              "R7",
+              "12/29",
+              "41.4%",
+              "47.6%",
+              "5/26",
+              "19.2%",
+              "26.7%"
+            ],
+            [
+              "R8",
+              "12/32",
+              "37.5%",
+              "35.7%",
+              "11/32",
+              "34.4%",
+              "41.7%"
+            ],
+            [
+              "R9",
+              "14/35",
+              "40.0%",
+              "43.5%",
+              "10/33",
+              "30.3%",
+              "64.3%"
+            ],
+            [
+              "R10",
+              "9/29",
+              "31.0%",
+              "42.1%",
+              "14/37",
+              "37.8%",
+              "41.2%"
+            ],
+            [
+              "R11",
+              "15/34",
+              "44.1%",
+              "46.7%",
+              "13/36",
+              "36.1%",
+              "56.3%"
+            ],
+            [
+              "R12",
+              "10/34",
+              "29.4%",
+              "26.7%",
+              "13/28",
+              "46.4%",
+              "71.4%"
+            ],
+            [
+              "Total",
+              "143/375",
+              "38.1%",
+              "38.9%",
+              "125/341",
+              "36.7%",
+              "52.1%"
+            ]
+          ]
+        }
+      ],
+      "table_count": 1,
+      "round_table_count": 0,
+      "strict_fighter_matches": [
+        null,
+        null
+      ],
+      "strict_both_sides_matched": false
+    },
+    {
+      "url": "https://boxing-data.com/blog/william-zepeda-vs-tevin-farmer-review",
+      "title": "Zepeda Edges Farmer in Thrilling Rematch to Claim WBC Interim Lightweight Crown",
+      "published_date": "Feb 29, 2025",
+      "fighter_a_hint": "William Zepeda",
+      "fighter_b_hint": "Tevin Farmer",
+      "explicit_boxing_data_api_attribution": true,
+      "tables": [
+        {
+          "table_index": 0,
+          "type": "fight_total_or_summary",
+          "rows": [
+            [
+              "Category",
+              "Zepeda",
+              "Farmer"
+            ],
+            [
+              "Total Punches Landed",
+              "344",
+              "155"
+            ],
+            [
+              "Total Punches Thrown",
+              "1,009",
+              "683"
+            ],
+            [
+              "Power Punches Landed",
+              "254 (44%)",
+              "106 (29%)"
+            ],
+            [
+              "Jab Accuracy",
+              "22.5%",
+              "13.7%"
+            ]
+          ]
+        }
+      ],
+      "table_count": 1,
+      "round_table_count": 0,
+      "strict_fighter_matches": [
+        null,
+        null
+      ],
+      "strict_both_sides_matched": false
+    },
+    {
+      "url": "https://boxing-data.com/blog/zayas-vs-spomer-review",
+      "title": "Zayas Annihilates Spomer: Young Star Delivers Career best Performance",
+      "published_date": null,
+      "fighter_a_hint": "Zayas",
+      "fighter_b_hint": "Spomer",
+      "explicit_boxing_data_api_attribution": true,
+      "tables": [
+        {
+          "table_index": 0,
+          "type": "fight_total_or_summary",
+          "rows": [
+            [
+              "Metric",
+              "Zayas (R1-9)",
+              "Spomer (R1-9)"
+            ],
+            [
+              "Total Landed",
+              "257",
+              "39"
+            ],
+            [
+              "Power Punch Accuracy",
+              "43.6%",
+              "13.2%"
+            ],
+            [
+              "Jabs Landed",
+              "82",
+              "6"
+            ],
+            [
+              "Body Shots Landed",
+              "63",
+              "9"
+            ]
+          ]
+        }
+      ],
+      "table_count": 1,
+      "round_table_count": 0,
+      "strict_fighter_matches": [
+        null,
+        null
+      ],
+      "strict_both_sides_matched": false
+    },
+    {
+      "url": "https://boxing-data.com/blog/zhilei-zhang-vs-agit-kabayel-review",
+      "title": "The German Technician Kabayel Stops Zhang in Riyadh Upset",
+      "published_date": null,
+      "fighter_a_hint": "Zhilei Zhang",
+      "fighter_b_hint": "Agit Kabayel",
+      "explicit_boxing_data_api_attribution": true,
+      "tables": [
+        {
+          "table_index": 0,
+          "type": "fight_total_or_summary",
+          "rows": [
+            [
+              "Metric",
+              "Zhang (R1-6)",
+              "Kabayel (R1-6)"
+            ],
+            [
+              "Total Landed",
+              "89",
+              "171"
+            ],
+            [
+              "Power Punch Accuracy",
+              "46.1%",
+              "51.3%"
+            ],
+            [
+              "Body Shots Landed",
+              "27",
+              "83"
+            ],
+            [
+              "Total Punches Thrown",
+              "232",
+              "346"
+            ]
+          ]
+        }
+      ],
+      "table_count": 1,
+      "round_table_count": 0,
+      "strict_fighter_matches": [
+        "Zhilei Zhang",
+        "Agit Kabayel"
+      ],
+      "strict_both_sides_matched": true
     }
   ],
   "policy": [
