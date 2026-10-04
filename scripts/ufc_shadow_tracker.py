@@ -214,6 +214,47 @@ def latest_quotes():
         groups[key]=r
     return groups
 
+def completed_same_bout(raw,date,a,b):
+    try:dt=pd.Timestamp(date).normalize()
+    except Exception:return False
+    pair={norm(a),norm(b)}
+    for off in (-1,0,1):
+        dd=dt+pd.Timedelta(days=off)
+        for _,r in raw[raw['_date']==dd].iterrows():
+            if {norm(r.get('player1')),norm(r.get('player2'))}==pair:
+                res=str(r.get('result') or '').strip().upper()
+                if res.startswith('W') or res.startswith('L'):
+                    return True
+    return False
+
+def invalidate_pre_freeze_lrr(c,raw):
+    freeze=pd.to_datetime(LRR_FROZEN_AT,utc=True,errors='coerce')
+    if pd.isna(freeze):return 0
+    freeze_local=freeze.tz_convert('America/New_York').date()
+    changed=0
+    rows=[dict(r) for r in c.execute("SELECT * FROM shadow_picks WHERE rule_ids_json LIKE '%LRR1%'")]
+    for p in rows:
+        pair={norm(p.get('fighter_a')),norm(p.get('fighter_b'))}
+        found=False
+        for _,r in raw.iterrows():
+            if {norm(r.get('player1')),norm(r.get('player2'))}!=pair:continue
+            if pd.notna(r.get('_date')) and r['_date'].date()<freeze_local:
+                res=str(r.get('result') or '').strip().upper()
+                if res.startswith('W') or res.startswith('L'):
+                    found=True;break
+        if found:
+            ids=[x for x in json.loads(p.get('rule_ids_json') or '[]') if x!='LRR1']
+            if ids:
+                prim=[x for x in ids if RULE_BY_ID.get(x,{}).get('role') in ('primary','novel')]
+                ctrl=[x for x in ids if RULE_BY_ID.get(x,{}).get('role')=='control']
+                c.execute("UPDATE shadow_picks SET rule_ids_json=?,primary_rule_ids_json=?,control_rule_ids_json=?,lrr_mode=NULL WHERE fight_key=?",
+                          (json.dumps(ids),json.dumps(prim),json.dumps(ctrl),p['fight_key']))
+            else:
+                c.execute("UPDATE shadow_picks SET status='void_pre_freeze',profit_units=NULL,result_settled_at=NULL,result_source='Invalid for LRR1: fight completed before rule freeze',lrr_mode='invalid_pre_freeze' WHERE fight_key=?",(p['fight_key'],))
+            changed+=1
+    c.commit()
+    return changed
+
 def favorite_from_quote(r):
     pa=float(r['p_a']) if finite(r.get('p_a')) else np.nan
     pb=float(r['p_b']) if finite(r.get('p_b')) else np.nan
@@ -307,6 +348,8 @@ def scan():
         for date in sorted(by_date):
             states=states_before(raw,date,fe)
             for key,r in by_date[date]:
+                if completed_same_bout(raw,date,r.get('fighter_a'),r.get('fighter_b')):
+                    continue
                 favinfo=favorite_from_quote(r)
                 if not favinfo:continue
                 fav,opp,dec=favinfo
@@ -377,6 +420,9 @@ def scan():
 def settle():
     raw=load_raw();settled=0;stamp=utcnow()
     with connect() as c:
+        invalidated=invalidate_pre_freeze_lrr(c,raw)
+        if invalidated:
+            print(json.dumps({'lrr_pre_freeze_invalidated':invalidated,'at':stamp}))
         pending=[dict(r) for r in c.execute("SELECT * FROM shadow_picks WHERE status='pending' ORDER BY event_date")]
         for p in pending:
             date=pd.Timestamp(p['event_date'])
