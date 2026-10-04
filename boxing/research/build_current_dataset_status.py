@@ -55,6 +55,7 @@ punch=load(PHASE2/'punch_profile_coverage.json')
 summary=load(PUNCH/'boxingscene_compubox_summary_report.json')
 archived_summary=load(PUNCH/'archived_compubox_summary_report.json')
 ring_summary=load(PUNCH/'ring_compubox_summary_report.json')
+boxing_data_public=load(PUNCH/'boxing_data_public_stats_report.json')
 reach=load(PROFILE/'cross_source_reach_report.json')
 pros=load(ODDS/'coverage.json')
 settle=load(ODDS/'settled_bouts.json')
@@ -143,6 +144,25 @@ out={
     'ring_compubox_summary_bouts':ring_summary.get('distinct_bouts'),
     'ring_compubox_summary_date_min':ring_summary.get('date_min'),
     'ring_compubox_summary_date_max':ring_summary.get('date_max'),
+    'boxing_data_public_supplement':{
+      'status':boxing_data_public.get('status'),
+      'api_key_required':boxing_data_public.get('api_key_required'),
+      'articles_discovered':boxing_data_public.get('article_urls_discovered'),
+      'articles_with_punch_tables':boxing_data_public.get('articles_with_punch_tables'),
+      'articles_explicitly_attributing_boxing_data_api':boxing_data_public.get('articles_explicitly_attributing_boxing_data_api'),
+      'articles_with_true_round_tables':boxing_data_public.get('articles_with_round_tables'),
+      'tables_extracted':boxing_data_public.get('tables_extracted'),
+      'round_tables_extracted':boxing_data_public.get('round_tables_extracted'),
+      'normalized_table_rows':boxing_data_public.get('normalized_table_rows'),
+      'strict_profile_articles_both_sides_matched':boxing_data_public.get('strict_profile_articles_both_sides_matched'),
+      'strict_profile_unique_fighters_matched':boxing_data_public.get('strict_profile_unique_fighters_matched'),
+      'validated_price_articles_unique_match':boxing_data_public.get('validated_price_articles_unique_match'),
+      'validated_price_unique_bouts_matched':boxing_data_public.get('validated_price_unique_bouts_matched'),
+      'validated_price_round_articles_unique_match':boxing_data_public.get('validated_price_round_articles_unique_match'),
+      'article_date_min':boxing_data_public.get('article_date_min'),
+      'article_date_max':boxing_data_public.get('article_date_max'),
+      'note':'Public Boxing Data API-attributed article tables are supplemental/quarantined until identity/date/source validation; they do not inflate strict CompuBox counts.'
+    },
     'latest_cross_source_reach_backfill':{
       'generated_at':reach.get('generated_at'),'targets':reach.get('targets'),
       'accepted':reach.get('accepted'),'policy':reach.get('policy')
