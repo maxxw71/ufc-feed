@@ -13,7 +13,7 @@ jobs:
           set -euo pipefail
           KEY=/home/appwiza-runner/.ssh/appwiza_vps
           TMP=$(mktemp)
-          curl -fsSL https://raw.githubusercontent.com/maxxw71/ufc-feed/432fcc347744787840b95bdfa136412e810fd4be/scripts/ufc_autoresearch_runner.py -o "$TMP"
+          curl -fsSL https://raw.githubusercontent.com/maxxw71/ufc-feed/$GITHUB_SHA/scripts/ufc_autoresearch_runner.py -o "$TMP"
           scp -i "$KEY" -o StrictHostKeyChecking=no "$TMP" anestishkurti92@127.0.0.1:/home/anestishkurti92/ufc-predictor-v1/ufc_autoresearch_runner.py
           rm -f "$TMP"
           ssh -i "$KEY" -o StrictHostKeyChecking=no anestishkurti92@127.0.0.1 'bash -s' <<'EOF'
@@ -22,13 +22,18 @@ jobs:
           chmod 700 ufc_autoresearch_runner.py
           venv/bin/python -m py_compile ufc_autoresearch_runner.py
           venv/bin/python - <<'PY'
-          import ufc_autoresearch_runner as r, ufc_autoresearch as a
+          import ufc_autoresearch_runner as r
+          a=r.ar
           assert a.PREFIGHT.name == 'prefight_favorite_features_v6.csv', a.PREFIGHT
+          assert str(a.__file__).startswith('/home/anestishkurti92/ufc-predictor-v1/'), a.__file__
+          print('research_engine',a.__file__)
           print('research_dataset',a.PREFIGHT)
+          print('research_db',a.DB)
           PY
           OLD=$(crontab -l 2>/dev/null || true)
           NEW=$(printf '%s\n' "$OLD" | sed 's/ufc_autoresearch.py/ufc_autoresearch_runner.py/g')
           printf '%s\n' "$NEW" | crontab -
+          OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 venv/bin/python ufc_autoresearch_runner.py snapshot
           OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 venv/bin/python ufc_autoresearch_runner.py digest
           echo '=== UFC AUTORESEARCH CRON ==='
           crontab -l | sed -n '/# BEGIN APPWIZA UFC AUTORESEARCH/,/# END APPWIZA UFC AUTORESEARCH/p'
