@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-10-04T01:21:00+00:00",
+  "generated_at": "2026-10-04T01:35:00+00:00",
   "venue": "Hyperliquid primary perpetuals",
   "timeframe": "4h",
   "target_pct": 0.05,
@@ -122,7 +122,7 @@
       "key": "rsi_shock_sma3",
       "name": "RSI Shock vs 3-Bar Mean",
       "enabled": true,
-      "status": "SHADOW_ONLY",
+      "status": "LIVE",
       "description": "A first post-breakout 4H flush where RSI acceleration collapses and RSI stretches sharply below its own 3-bar mean.",
       "trigger_summary": "Daily breakout regime \u2192 next-day arm \u2192 first \u22658% 4H flush \u2192 RSI acceleration \u2264 -9.01822 \u2192 RSI \u226412.0961% below its 3-bar mean.",
       "validation": {
@@ -149,7 +149,7 @@
       "key": "lower_high_second_dump_deepstretch",
       "name": "Lower-High Second Dump \u00b7 Deep EMA Stretch",
       "enabled": true,
-      "status": "SHADOW_ONLY",
+      "status": "LIVE",
       "description": "The existing C2 lower-high/second-dump structure, but only when price is deeply stretched below the 4H EMA9 at the trigger.",
       "trigger_summary": "All C2 rules \u2192 trigger close at least 6.9254% below 4H EMA9.",
       "validation": {
@@ -256,6 +256,28 @@
       "target_after_stop": false
     },
     {
+      "id": "C4:VIRTUAL:2026-10-02T16:00:00+00:00",
+      "coin": "VIRTUAL",
+      "method_id": "C4",
+      "method_key": "rsi_shock_sma3",
+      "method_name": "RSI Shock vs 3-Bar Mean",
+      "trigger_time": "2026-10-02T16:00:00+00:00",
+      "entry_time": "2026-10-02T20:00:00+00:00",
+      "trigger_price": 0.74892,
+      "entry_reference": 0.74907,
+      "target_5pct": 0.7865235,
+      "risk_stop_reference": 0.6928897500000001,
+      "status": "SUCCESS",
+      "metrics": {
+        "rsi_accel": -12.738019857304373,
+        "rsi_vs_sma3": -0.19033217214291098
+      },
+      "stop_touched": false,
+      "settled_at": "2026-10-03T08:00:00+00:00",
+      "realized_target_pct": 0.05,
+      "target_after_stop": false
+    },
+    {
       "id": "C3:VIRTUAL:2026-10-02T16:00:00+00:00",
       "coin": "VIRTUAL",
       "method_id": "C3",
@@ -278,32 +300,9 @@
       "target_after_stop": false
     }
   ],
-  "shadow_signals": [
-    {
-      "id": "C4:VIRTUAL:2026-10-02T16:00:00+00:00",
-      "coin": "VIRTUAL",
-      "method_id": "C4",
-      "method_key": "rsi_shock_sma3",
-      "method_name": "RSI Shock vs 3-Bar Mean",
-      "trigger_time": "2026-10-02T16:00:00+00:00",
-      "entry_time": "2026-10-02T20:00:00+00:00",
-      "trigger_price": 0.74892,
-      "entry_reference": 0.74907,
-      "target_5pct": 0.7865235,
-      "risk_stop_reference": 0.6928897500000001,
-      "status": "SHADOW_SUCCESS",
-      "metrics": {
-        "rsi_accel": -12.738019857304373,
-        "rsi_vs_sma3": -0.19033217214291098
-      },
-      "stop_touched": false,
-      "settled_at": "2026-10-03T08:00:00+00:00",
-      "realized_target_pct": 0.05,
-      "target_after_stop": false
-    }
-  ],
-  "history_count": 5,
-  "shadow_history_count": 1,
+  "shadow_signals": [],
+  "history_count": 6,
+  "shadow_history_count": 0,
   "coverage": {
     "ok": 178,
     "short": 0,
