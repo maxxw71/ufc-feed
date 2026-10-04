@@ -20,7 +20,7 @@ jobs:
         with: {fetch-depth: 0}
       - uses: actions/setup-python@v5
         with: {python-version: '3.12'}
-      - run: pip install playwright
+      - run: pip install playwright openpyxl xlrd pypdf
       - run: python -m playwright install --with-deps chromium
       - run: python boxing/research/collect_current_compubox_browser.py
       - name: Publish current report capture
