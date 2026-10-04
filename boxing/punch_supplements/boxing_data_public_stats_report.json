@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-10-04T10:18:07.688332+00:00",
+  "generated_at": "2026-10-04T10:22:38.706832+00:00",
   "status": "SUPPLEMENTAL_QUARANTINED_NOT_STRICT",
   "source": "boxing-data.com public fight-review/blog pages",
   "api_key_required": false,
@@ -11,10 +11,13 @@
   "tables_extracted": 59,
   "round_tables_extracted": 12,
   "normalized_table_rows": 323,
-  "strict_profile_articles_both_sides_matched": 8,
-  "strict_profile_unique_fighters_matched": 32,
+  "strict_profile_articles_both_sides_matched": 18,
+  "strict_profile_unique_fighters_matched": 52,
+  "validated_price_articles_unique_match": 6,
+  "validated_price_unique_bouts_matched": 6,
+  "validated_price_round_articles_unique_match": 1,
   "article_date_min": "2023-01-21",
-  "article_date_max": "Feb 29, 2025",
+  "article_date_max": "2026-05-16",
   "records": [
     {
       "url": "https://boxing-data.com/blog/anthony-cacace-vs-jazza-dickens-wba-super-featherweight-title-review",
@@ -67,7 +70,9 @@
         "Anthony Cacace",
         null
       ],
-      "strict_both_sides_matched": false
+      "strict_both_sides_matched": false,
+      "validated_price_bout_matches": [],
+      "validated_price_bout_unique_match": false
     },
     {
       "url": "https://boxing-data.com/blog/anthony-joshua-vs-kristian-prenga-fight-results-review-analysis",
@@ -110,7 +115,9 @@
         "Anthony Joshua",
         null
       ],
-      "strict_both_sides_matched": false
+      "strict_both_sides_matched": false,
+      "validated_price_bout_matches": [],
+      "validated_price_bout_unique_match": false
     },
     {
       "url": "https://boxing-data.com/blog/artur-beterbiev-vs-dmitry-bivol-review",
@@ -158,7 +165,9 @@
         "Artur Beterbiev",
         "Dmitry Bivol"
       ],
-      "strict_both_sides_matched": true
+      "strict_both_sides_matched": true,
+      "validated_price_bout_matches": [],
+      "validated_price_bout_unique_match": false
     },
     {
       "url": "https://boxing-data.com/blog/ben-fail-vs-dean-sutherland-fight-preview-prediction-analysis",
@@ -205,7 +214,9 @@
         null,
         null
       ],
-      "strict_both_sides_matched": false
+      "strict_both_sides_matched": false,
+      "validated_price_bout_matches": [],
+      "validated_price_bout_unique_match": false
     },
     {
       "url": "https://boxing-data.com/blog/bentley-vs-saavedra-fight-review",
@@ -306,10 +317,12 @@
       "table_count": 1,
       "round_table_count": 1,
       "strict_fighter_matches": [
-        null,
-        null
+        "Denzel Bentley",
+        "Endry Saavedra"
       ],
-      "strict_both_sides_matched": false
+      "strict_both_sides_matched": true,
+      "validated_price_bout_matches": [],
+      "validated_price_bout_unique_match": false
     },
     {
       "url": "https://boxing-data.com/blog/berinchyk-vs-davis-review",
@@ -354,10 +367,12 @@
       "table_count": 1,
       "round_table_count": 0,
       "strict_fighter_matches": [
-        null,
+        "Denys Berinchyk",
         null
       ],
-      "strict_both_sides_matched": false
+      "strict_both_sides_matched": false,
+      "validated_price_bout_matches": [],
+      "validated_price_bout_unique_match": false
     },
     {
       "url": "https://boxing-data.com/blog/canelo-alvarez-vs-william-scull-review",
@@ -420,7 +435,9 @@
         null,
         null
       ],
-      "strict_both_sides_matched": false
+      "strict_both_sides_matched": false,
+      "validated_price_bout_matches": [],
+      "validated_price_bout_unique_match": false
     },
     {
       "url": "https://boxing-data.com/blog/cardenas-vs-acosta-review",
@@ -468,7 +485,9 @@
         null,
         null
       ],
-      "strict_both_sides_matched": false
+      "strict_both_sides_matched": false,
+      "validated_price_bout_matches": [],
+      "validated_price_bout_unique_match": false
     },
     {
       "url": "https://boxing-data.com/blog/catterall-vs-barboza-jr-review",
@@ -513,10 +532,12 @@
       "table_count": 1,
       "round_table_count": 0,
       "strict_fighter_matches": [
-        null,
+        "Jack Catterall",
         null
       ],
-      "strict_both_sides_matched": false
+      "strict_both_sides_matched": false,
+      "validated_price_bout_matches": [],
+      "validated_price_bout_unique_match": false
     },
     {
       "url": "https://boxing-data.com/blog/chris-eubank-jr-vs-conor-benn-review",
@@ -564,7 +585,9 @@
         null,
         "Conor Benn"
       ],
-      "strict_both_sides_matched": false
+      "strict_both_sides_matched": false,
+      "validated_price_bout_matches": [],
+      "validated_price_bout_unique_match": false
     },
     {
       "url": "https://boxing-data.com/blog/chris-eubank-jr-vs-liam-smith-series-review",
@@ -629,7 +652,9 @@
         null,
         null
       ],
-      "strict_both_sides_matched": false
+      "strict_both_sides_matched": false,
+      "validated_price_bout_matches": [],
+      "validated_price_bout_unique_match": false
     },
     {
       "url": "https://boxing-data.com/blog/daniel-dubois-vs-fabio-wardley-fight-review",
@@ -692,7 +717,19 @@
         "Daniel Dubois",
         "Fabio Wardley"
       ],
-      "strict_both_sides_matched": true
+      "strict_both_sides_matched": true,
+      "validated_price_bout_matches": [
+        {
+          "bout_id": "17676",
+          "event_date": "2026-05-09",
+          "selection_names": [
+            "Daniel Dubois",
+            "Fabio Wardley"
+          ],
+          "event_url": "https://www.proboxingodds.com/events/2026-05-09-2391"
+        }
+      ],
+      "validated_price_bout_unique_match": true
     },
     {
       "url": "https://boxing-data.com/blog/dave-allen-vs-filip-hrgovic-fight-preview-prediction-analysis",
@@ -743,7 +780,9 @@
         null,
         null
       ],
-      "strict_both_sides_matched": false
+      "strict_both_sides_matched": false,
+      "validated_price_bout_matches": [],
+      "validated_price_bout_unique_match": false
     },
     {
       "url": "https://boxing-data.com/blog/david-adeleye-vs-jeamie-tshikeva-review",
@@ -784,7 +823,9 @@
         "David Adeleye",
         "Jeamie Tshikeva"
       ],
-      "strict_both_sides_matched": true
+      "strict_both_sides_matched": true,
+      "validated_price_bout_matches": [],
+      "validated_price_bout_unique_match": false
     },
     {
       "url": "https://boxing-data.com/blog/davies-vs-grandelli-fight-review",
@@ -842,7 +883,9 @@
         "Liam Davies",
         null
       ],
-      "strict_both_sides_matched": false
+      "strict_both_sides_matched": false,
+      "validated_price_bout_matches": [],
+      "validated_price_bout_unique_match": false
     },
     {
       "url": "https://boxing-data.com/blog/devin-haney-vs-jose-carlos-ramirez-review",
@@ -905,7 +948,9 @@
         null,
         null
       ],
-      "strict_both_sides_matched": false
+      "strict_both_sides_matched": false,
+      "validated_price_bout_matches": [],
+      "validated_price_bout_unique_match": false
     },
     {
       "url": "https://boxing-data.com/blog/eubank-vs-benn-history",
@@ -973,10 +1018,12 @@
       "table_count": 2,
       "round_table_count": 0,
       "strict_fighter_matches": [
-        null,
-        null
+        "Harlem Eubank",
+        "Conor Benn"
       ],
-      "strict_both_sides_matched": false
+      "strict_both_sides_matched": true,
+      "validated_price_bout_matches": [],
+      "validated_price_bout_unique_match": false
     },
     {
       "url": "https://boxing-data.com/blog/fabio-wardley-vs-justis-huni-review",
@@ -1039,7 +1086,9 @@
         "Fabio Wardley",
         "Justis Huni"
       ],
-      "strict_both_sides_matched": true
+      "strict_both_sides_matched": true,
+      "validated_price_bout_matches": [],
+      "validated_price_bout_unique_match": false
     },
     {
       "url": "https://boxing-data.com/blog/fundora-vs-thurman-fight-review",
@@ -1126,7 +1175,9 @@
         null,
         null
       ],
-      "strict_both_sides_matched": false
+      "strict_both_sides_matched": false,
+      "validated_price_bout_matches": [],
+      "validated_price_bout_unique_match": false
     },
     {
       "url": "https://boxing-data.com/blog/fury-vs-makhmudov-fight-review",
@@ -1182,9 +1233,11 @@
       "round_table_count": 0,
       "strict_fighter_matches": [
         null,
-        null
+        "Arslanbek Makhmudov"
       ],
-      "strict_both_sides_matched": false
+      "strict_both_sides_matched": false,
+      "validated_price_bout_matches": [],
+      "validated_price_bout_unique_match": false
     },
     {
       "url": "https://boxing-data.com/blog/hamzah-sheeraz-vs-simon-zachenhuber-fight-results-review-analysis",
@@ -1227,7 +1280,9 @@
         "Hamzah Sheeraz",
         null
       ],
-      "strict_both_sides_matched": false
+      "strict_both_sides_matched": false,
+      "validated_price_bout_matches": [],
+      "validated_price_bout_unique_match": false
     },
     {
       "url": "https://boxing-data.com/blog/heaney-vs-warburton-fight-review",
@@ -1285,7 +1340,19 @@
         null,
         "Gerome Warburton"
       ],
-      "strict_both_sides_matched": false
+      "strict_both_sides_matched": false,
+      "validated_price_bout_matches": [
+        {
+          "bout_id": "17313",
+          "event_date": "2026-03-28",
+          "selection_names": [
+            "Gerome Warburton",
+            "Nathan Heaney"
+          ],
+          "event_url": "https://www.proboxingodds.com/events/2026-03-28-2372"
+        }
+      ],
+      "validated_price_bout_unique_match": true
     },
     {
       "url": "https://boxing-data.com/blog/hernandez-vs-gausha-fight-review",
@@ -1353,10 +1420,12 @@
       "table_count": 1,
       "round_table_count": 1,
       "strict_fighter_matches": [
-        null,
-        null
+        "Vladimir Hernandez",
+        "Terrell Gausha"
       ],
-      "strict_both_sides_matched": false
+      "strict_both_sides_matched": true,
+      "validated_price_bout_matches": [],
+      "validated_price_bout_unique_match": false
     },
     {
       "url": "https://boxing-data.com/blog/hovhannisyan-vs-navarro-fight-review",
@@ -1432,10 +1501,12 @@
       "table_count": 1,
       "round_table_count": 1,
       "strict_fighter_matches": [
-        null,
+        "Gurgen Hovhannisyan",
         null
       ],
-      "strict_both_sides_matched": false
+      "strict_both_sides_matched": false,
+      "validated_price_bout_matches": [],
+      "validated_price_bout_unique_match": false
     },
     {
       "url": "https://boxing-data.com/blog/hutchinson-vs-taylor-fight-review",
@@ -1493,7 +1564,9 @@
         "Willy Hutchinson",
         "Ezra Taylor"
       ],
-      "strict_both_sides_matched": true
+      "strict_both_sides_matched": true,
+      "validated_price_bout_matches": [],
+      "validated_price_bout_unique_match": false
     },
     {
       "url": "https://boxing-data.com/blog/itauma-vs-franklin-jr-fight-review",
@@ -1549,9 +1622,21 @@
       "round_table_count": 0,
       "strict_fighter_matches": [
         "Moses Itauma",
-        null
+        "Jermaine Franklin"
       ],
-      "strict_both_sides_matched": false
+      "strict_both_sides_matched": true,
+      "validated_price_bout_matches": [
+        {
+          "bout_id": "17301",
+          "event_date": "2026-03-28",
+          "selection_names": [
+            "Jermaine Franklin Jr",
+            "Moses Itauma"
+          ],
+          "event_url": "https://www.proboxingodds.com/events/2026-03-28-2372"
+        }
+      ],
+      "validated_price_bout_unique_match": true
     },
     {
       "url": "https://boxing-data.com/blog/jack-catterall-vs-harlem-eubank-review",
@@ -1611,10 +1696,12 @@
       "table_count": 1,
       "round_table_count": 0,
       "strict_fighter_matches": [
-        null,
-        null
+        "Jack Catterall",
+        "Harlem Eubank"
       ],
-      "strict_both_sides_matched": false
+      "strict_both_sides_matched": true,
+      "validated_price_bout_matches": [],
+      "validated_price_bout_unique_match": false
     },
     {
       "url": "https://boxing-data.com/blog/jai-opetaia-vs-claudio-squeo-preview",
@@ -1655,9 +1742,11 @@
       "round_table_count": 0,
       "strict_fighter_matches": [
         "Jai Opetaia",
-        null
+        "Claudio Squeo"
       ],
-      "strict_both_sides_matched": false
+      "strict_both_sides_matched": true,
+      "validated_price_bout_matches": [],
+      "validated_price_bout_unique_match": false
     },
     {
       "url": "https://boxing-data.com/blog/joe-joyce-vs-filip-hrgovic-review",
@@ -1705,7 +1794,9 @@
         null,
         null
       ],
-      "strict_both_sides_matched": false
+      "strict_both_sides_matched": false,
+      "validated_price_bout_matches": [],
+      "validated_price_bout_unique_match": false
     },
     {
       "url": "https://boxing-data.com/blog/jono-carroll-vs-colm-murphy-super-featherweight-review",
@@ -1763,7 +1854,9 @@
         "Jono Carroll",
         null
       ],
-      "strict_both_sides_matched": false
+      "strict_both_sides_matched": false,
+      "validated_price_bout_matches": [],
+      "validated_price_bout_unique_match": false
     },
     {
       "url": "https://boxing-data.com/blog/joshua-buatsi-vs-callum-smith-review",
@@ -1811,7 +1904,19 @@
         "Joshua Buatsi",
         "Callum Smith"
       ],
-      "strict_both_sides_matched": true
+      "strict_both_sides_matched": true,
+      "validated_price_bout_matches": [
+        {
+          "bout_id": "15727",
+          "event_date": "2025-02-22",
+          "selection_names": [
+            "Callum Smith",
+            "Joshua Buatsi"
+          ],
+          "event_url": "https://www.proboxingodds.com/events/2025-02-22-2161"
+        }
+      ],
+      "validated_price_bout_unique_match": true
     },
     {
       "url": "https://boxing-data.com/blog/louie-odoherty-vs-ahmed-hatim-fight-preview-prediction-analysis",
@@ -1862,7 +1967,9 @@
         null,
         null
       ],
-      "strict_both_sides_matched": false
+      "strict_both_sides_matched": false,
+      "validated_price_bout_matches": [],
+      "validated_price_bout_unique_match": false
     },
     {
       "url": "https://boxing-data.com/blog/maxi-hughes-vs-lewis-sylvester-fight-preview-prediction-analysis",
@@ -1909,7 +2016,9 @@
         "Maxi Hughes",
         null
       ],
-      "strict_both_sides_matched": false
+      "strict_both_sides_matched": false,
+      "validated_price_bout_matches": [],
+      "validated_price_bout_unique_match": false
     },
     {
       "url": "https://boxing-data.com/blog/michael-gomez-jnr-vs-lee-mcgregor-fight-preview-prediction-analysis",
@@ -1956,7 +2065,9 @@
         null,
         "Lee McGregor"
       ],
-      "strict_both_sides_matched": false
+      "strict_both_sides_matched": false,
+      "validated_price_bout_matches": [],
+      "validated_price_bout_unique_match": false
     },
     {
       "url": "https://boxing-data.com/blog/murphy-vs-holmes-fight-review",
@@ -2029,7 +2140,9 @@
         null,
         null
       ],
-      "strict_both_sides_matched": false
+      "strict_both_sides_matched": false,
+      "validated_price_bout_matches": [],
+      "validated_price_bout_unique_match": false
     },
     {
       "url": "https://boxing-data.com/blog/nick-ball-vs-tj-doheny-review",
@@ -2082,7 +2195,9 @@
         "Nick Ball",
         null
       ],
-      "strict_both_sides_matched": false
+      "strict_both_sides_matched": false,
+      "validated_price_bout_matches": [],
+      "validated_price_bout_unique_match": false
     },
     {
       "url": "https://boxing-data.com/blog/parker-vs-bakole-review",
@@ -2128,9 +2243,11 @@
       "round_table_count": 0,
       "strict_fighter_matches": [
         null,
-        null
+        "Martin Bakole"
       ],
-      "strict_both_sides_matched": false
+      "strict_both_sides_matched": false,
+      "validated_price_bout_matches": [],
+      "validated_price_bout_unique_match": false
     },
     {
       "url": "https://boxing-data.com/blog/paul-vs-chavez-jr-review",
@@ -2277,7 +2394,9 @@
         "Jake Paul",
         null
       ],
-      "strict_both_sides_matched": false
+      "strict_both_sides_matched": false,
+      "validated_price_bout_matches": [],
+      "validated_price_bout_unique_match": false
     },
     {
       "url": "https://boxing-data.com/blog/richardson-hitchins-vs-george-kambosos-jr-review",
@@ -2340,7 +2459,9 @@
         null,
         null
       ],
-      "strict_both_sides_matched": false
+      "strict_both_sides_matched": false,
+      "validated_price_bout_matches": [],
+      "validated_price_bout_unique_match": false
     },
     {
       "url": "https://boxing-data.com/blog/riley-vs-masternak-fight-review",
@@ -2500,10 +2621,12 @@
       "table_count": 1,
       "round_table_count": 1,
       "strict_fighter_matches": [
-        null,
-        null
+        "Viddal Riley",
+        "Mateusz Masternak"
       ],
-      "strict_both_sides_matched": false
+      "strict_both_sides_matched": true,
+      "validated_price_bout_matches": [],
+      "validated_price_bout_unique_match": false
     },
     {
       "url": "https://boxing-data.com/blog/ryan-garcia-vs-rolando-romero-review",
@@ -2561,7 +2684,9 @@
         null,
         "Rolando Romero"
       ],
-      "strict_both_sides_matched": false
+      "strict_both_sides_matched": false,
+      "validated_price_bout_matches": [],
+      "validated_price_bout_unique_match": false
     },
     {
       "url": "https://boxing-data.com/blog/sebastian-fundora-vs-chordale-booker-review",
@@ -2614,7 +2739,9 @@
         null,
         "Chordale Booker"
       ],
-      "strict_both_sides_matched": false
+      "strict_both_sides_matched": false,
+      "validated_price_bout_matches": [],
+      "validated_price_bout_unique_match": false
     },
     {
       "url": "https://boxing-data.com/blog/serrano-vs-tellez-fight-preview-prediction",
@@ -2664,10 +2791,12 @@
       "table_count": 1,
       "round_table_count": 0,
       "strict_fighter_matches": [
-        null,
-        null
+        "Amanda Serrano",
+        "Yoenis Tellez"
       ],
-      "strict_both_sides_matched": false
+      "strict_both_sides_matched": true,
+      "validated_price_bout_matches": [],
+      "validated_price_bout_unique_match": false
     },
     {
       "url": "https://boxing-data.com/blog/shakur-stevenson-vs-josh-padley-review",
@@ -2715,7 +2844,9 @@
         "Shakur Stevenson",
         "Josh Padley"
       ],
-      "strict_both_sides_matched": true
+      "strict_both_sides_matched": true,
+      "validated_price_bout_matches": [],
+      "validated_price_bout_unique_match": false
     },
     {
       "url": "https://boxing-data.com/blog/shakur-stevenson-vs-william-zepeda-statistical-analysis",
@@ -2842,7 +2973,19 @@
         "Shakur Stevenson",
         null
       ],
-      "strict_both_sides_matched": false
+      "strict_both_sides_matched": false,
+      "validated_price_bout_matches": [
+        {
+          "bout_id": "16339",
+          "event_date": "2025-07-12",
+          "selection_names": [
+            "Shakur Stevenson",
+            "William Zepeda Segura"
+          ],
+          "event_url": "https://www.proboxingodds.com/events/2025-07-12-2214"
+        }
+      ],
+      "validated_price_bout_unique_match": true
     },
     {
       "url": "https://boxing-data.com/blog/tellez-vs-mendoza-fight-review",
@@ -2958,10 +3101,12 @@
       "table_count": 1,
       "round_table_count": 1,
       "strict_fighter_matches": [
-        null,
-        null
+        "Yoenis Tellez",
+        "Brian Mendoza"
       ],
-      "strict_both_sides_matched": false
+      "strict_both_sides_matched": true,
+      "validated_price_bout_matches": [],
+      "validated_price_bout_unique_match": false
     },
     {
       "url": "https://boxing-data.com/blog/teofimo-lopez-vs-arnold-barboza-jr-review",
@@ -3024,7 +3169,9 @@
         null,
         "Arnold Barboza Jr."
       ],
-      "strict_both_sides_matched": false
+      "strict_both_sides_matched": false,
+      "validated_price_bout_matches": [],
+      "validated_price_bout_unique_match": false
     },
     {
       "url": "https://boxing-data.com/blog/thompson-vs-pauls-fight-review",
@@ -3082,7 +3229,19 @@
         null,
         "Brad Pauls"
       ],
-      "strict_both_sides_matched": false
+      "strict_both_sides_matched": false,
+      "validated_price_bout_matches": [
+        {
+          "bout_id": "17309",
+          "event_date": "2026-03-28",
+          "selection_names": [
+            "Brad Pauls",
+            "Shakiel Thompson"
+          ],
+          "event_url": "https://www.proboxingodds.com/events/2026-03-28-2372"
+        }
+      ],
+      "validated_price_bout_unique_match": true
     },
     {
       "url": "https://boxing-data.com/blog/usyk-v-fury-ii-overview",
@@ -3152,10 +3311,12 @@
       "table_count": 1,
       "round_table_count": 0,
       "strict_fighter_matches": [
-        null,
+        "Oleksandr Usyk",
         null
       ],
-      "strict_both_sides_matched": false
+      "strict_both_sides_matched": false,
+      "validated_price_bout_matches": [],
+      "validated_price_bout_unique_match": false
     },
     {
       "url": "https://boxing-data.com/blog/wilder-vs-chisora-fight-review",
@@ -3301,15 +3462,17 @@
       "table_count": 1,
       "round_table_count": 1,
       "strict_fighter_matches": [
-        null,
-        null
+        "Deontay Wilder",
+        "Derek Chisora"
       ],
-      "strict_both_sides_matched": false
+      "strict_both_sides_matched": true,
+      "validated_price_bout_matches": [],
+      "validated_price_bout_unique_match": false
     },
     {
       "url": "https://boxing-data.com/blog/william-zepeda-vs-tevin-farmer-review",
       "title": "Zepeda Edges Farmer in Thrilling Rematch to Claim WBC Interim Lightweight Crown",
-      "published_date": "Feb 29, 2025",
+      "published_date": null,
       "fighter_a_hint": "William Zepeda",
       "fighter_b_hint": "Tevin Farmer",
       "explicit_boxing_data_api_attribution": true,
@@ -3352,7 +3515,9 @@
         null,
         null
       ],
-      "strict_both_sides_matched": false
+      "strict_both_sides_matched": false,
+      "validated_price_bout_matches": [],
+      "validated_price_bout_unique_match": false
     },
     {
       "url": "https://boxing-data.com/blog/zayas-vs-spomer-review",
@@ -3400,7 +3565,9 @@
         null,
         null
       ],
-      "strict_both_sides_matched": false
+      "strict_both_sides_matched": false,
+      "validated_price_bout_matches": [],
+      "validated_price_bout_unique_match": false
     },
     {
       "url": "https://boxing-data.com/blog/zhilei-zhang-vs-agit-kabayel-review",
@@ -3448,7 +3615,9 @@
         "Zhilei Zhang",
         "Agit Kabayel"
       ],
-      "strict_both_sides_matched": true
+      "strict_both_sides_matched": true,
+      "validated_price_bout_matches": [],
+      "validated_price_bout_unique_match": false
     }
   ],
   "policy": [
