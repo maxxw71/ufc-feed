@@ -336,8 +336,11 @@ def article_price_matches(rec, validated_bouts):
                 try:
                     bd=datetime.fromisoformat(str(b.get("event_date"))[:10]).date()
                     if 0 <= (ad-bd).days <= 7:close.append(b)
-                except Exception:pass
+                except Exception:
+                    pass
             if len(close)==1:return close
+        except Exception:
+            pass
     return matches
 
 def main():
