@@ -1,10 +1,15 @@
 #!/usr/bin/env python3
-import hashlib, html, json, os, shutil
+import hashlib, html, importlib.util, json, os, shutil
 from datetime import datetime
 from pathlib import Path
-import ufc_autoresearch as ar
 
 ROOT=Path.home()/"ufc-predictor-v1"
+AR_FILE=ROOT/"ufc_autoresearch.py"
+if not AR_FILE.exists():
+    raise RuntimeError(f"Missing local UFC research engine: {AR_FILE}")
+_spec=importlib.util.spec_from_file_location("appwiza_ufc_autoresearch_local",AR_FILE)
+ar=importlib.util.module_from_spec(_spec)
+_spec.loader.exec_module(ar)
 for name in ["prefight_favorite_features_v6.csv","prefight_favorite_features_v5.csv","prefight_favorite_features_v4.csv","prefight_favorite_features_v3.csv","prefight_favorite_features_v2.csv"]:
     p=ROOT/"feature_expansion"/name
     if p.exists():
