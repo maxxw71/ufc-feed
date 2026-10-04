@@ -1,4 +1,5 @@
 {
+  "research_lane": "BROAD",
   "status": "RESEARCH_SHADOW_ONLY_NOT_LIVE",
   "eligible_consensus_bouts": 709,
   "stable_opponent_aware_rules": 34,
@@ -2227,6 +2228,10 @@
     "Require >=20 total bets, >=72% win rate, >=8% exploratory median-price ROI.",
     "Inspect neighboring thresholds/family support and every historical loss.",
     "Track prospectively with verified pre-event sportsbook prices before live promotion."
+  ],
+  "lane_policy": [
+    "This sweep is BROAD-lane research and intentionally does not require punch-stat history.",
+    "DEEP_STATS research is a separate lane and must not silently shrink or redefine the BROAD universe."
   ],
   "limitations": [
     "Historical ROI outside independently verified price rows remains exploratory.",
