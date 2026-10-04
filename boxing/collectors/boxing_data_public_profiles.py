@@ -130,24 +130,43 @@ def canonical_key(label):
     if "reach" in x:return "reach_cm"
     if "height" in x:return "height_cm"
     if "stance" in x:return "stance"
-    if "national" in x or "country" in x:return "nationality"
-    if re.search(r"\bage\b",x):return "age"
-    if "round" in x:return "rounds_boxed"
+    if "national" in x or x in ("country","country/region"):return "nationality"
+    if re.fullmatch(r"(?:fighter )?age",x):return "age"
+    if re.search(r"\b(rounds boxed|career rounds|total rounds)\b",x):return "rounds_boxed"
     if "debut" in x:return "debut"
     if "division" in x or "weight class" in x:return "division"
     if "title" in x:return "title_context"
-    if "record" in x:return "record"
-    if re.search(r"\bwins?\b",x):return "wins"
-    if "loss" in x:return "losses"
-    if "draw" in x:return "draws"
-    if re.search(r"\bko\b|knockout",x):return "ko_wins"
+    if re.fullmatch(r"(?:pro )?record",x):return "record"
+    if re.fullmatch(r"wins?",x):return "wins"
+    if re.fullmatch(r"loss(?:es)?",x):return "losses"
+    if re.fullmatch(r"draws?",x):return "draws"
+    if re.search(r"\bko\b|knockout",x):
+        if "%" in x or "rate" in x or "percentage" in x:return "ko_pct"
+        return "ko_wins"
     return None
 
 def value_for(key,v):
-    if key in ("height_cm","reach_cm"):return cm(v,key)
-    if key in ("age","rounds_boxed","wins","losses","draws","ko_wins"):
-        z=numeric(v);return int(z) if z is not None and float(z).is_integer() else z
+    if key in ("height_cm","reach_cm"):
+        z=cm(v,key)
+        if z is None or not 130<=z<=230:return None
+        return z
+    if key=="stance":
+        x=sp(v).lower()
+        if x not in ("orthodox","southpaw","switch","switch-hitter","switch hitter"):return None
+        return "switch" if x.startswith("switch") else x
+    if key in ("age","rounds_boxed","wins","losses","draws","ko_wins","ko_pct"):
+        z=numeric(v)
+        if z is None:return None
+        if key=="age" and not 16<=z<=60:return None
+        if key=="ko_pct" and not 0<=z<=100:return None
+        if key in ("rounds_boxed","wins","losses","draws","ko_wins") and z<0:return None
+        return int(z) if float(z).is_integer() else z
     return sp(v) or None
+
+def name_like(value):
+    x=norm_name(value)
+    toks=x.split()
+    return len(toks)>=2 and not any(w in x for w in ("fighter 1","fighter 2","fighter a","fighter b","value","statistic","attribute"))
 
 def parse_article(url,names,strict_map):
     r=get(url)
@@ -166,29 +185,44 @@ def parse_article(url,names,strict_map):
         blob=" ".join(" ".join(x) for x in matrix)
         if not PROFILE_KEYS.search(blob):continue
 
-        # Common tale-of-tape form: header = Attribute / Fighter A / Fighter B.
+        # Strict tale-of-tape form. Never assume columns 2/3 belong to
+        # the title fighters unless the header itself identifies those fighters.
         hdr=matrix[0]
         if len(hdr)>=3:
-            for row in matrix[1:]:
-                if len(row)<3:continue
-                key=canonical_key(row[0])
-                if not key:continue
-                for fighter,val,side in ((ra,row[1],"A"),(rb,row[2],"B")):
-                    if not fighter:continue
-                    vv=value_for(key,val)
-                    if vv is None:continue
-                    candidates.append((fighter,key,vv,val,ti,side))
-        # Transposed form: first row has fighter names, first col attributes.
-        # Already handled above. Also support 2-col Field/Value tables only when
-        # title/slug resolves exactly one fighter.
+            colfighters=[]
+            for ci in (1,2):
+                label=hdr[ci] if ci<len(hdr) else ""
+                resolved=resolve(label,names) if name_like(label) else None
+                colfighters.append(resolved)
+            # Some pages use surname-only headers. Permit those only when the
+            # article pair is full-name-resolved and the header uniquely matches
+            # the resolved fighter surname.
+            if not all(colfighters) and ra and rb and all(len(norm_name(x).split())>=2 for x in (a,b)):
+                h1,h2=norm_name(hdr[1]),norm_name(hdr[2])
+                ra_n,rb_n=norm_name(ra),norm_name(rb)
+                if h1 and h2 and h1 in ra_n.split() and h2 in rb_n.split():
+                    colfighters=[ra,rb]
+            if len(colfighters)==2 and all(colfighters) and colfighters[0]!=colfighters[1]:
+                for row in matrix[1:]:
+                    if len(row)<3:continue
+                    key=canonical_key(row[0])
+                    if not key:continue
+                    for fighter,val,side in ((colfighters[0],row[1],"A"),(colfighters[1],row[2],"B")):
+                        vv=value_for(key,val)
+                        if vv is None:continue
+                        candidates.append((fighter,key,vv,val,ti,side))
+        # Two-column Field/Value tables are accepted only when exactly one
+        # full-name fighter is resolvable from the article identity.
         if len(hdr)==2 and bool(ra)^bool(rb):
             fighter=ra or rb
-            for row in matrix[1:]:
-                if len(row)<2:continue
-                key=canonical_key(row[0])
-                if not key:continue
-                vv=value_for(key,row[1])
-                if vv is not None:candidates.append((fighter,key,vv,row[1],ti,"single"))
+            hint=a if ra else b
+            if hint and len(norm_name(hint).split())>=2:
+                for row in matrix[1:]:
+                    if len(row)<2:continue
+                    key=canonical_key(row[0])
+                    if not key:continue
+                    vv=value_for(key,row[1])
+                    if vv is not None:candidates.append((fighter,key,vv,row[1],ti,"single"))
 
     out=[]
     for fighter,key,vv,raw,ti,side in candidates:
