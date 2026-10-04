@@ -39,6 +39,10 @@ WBC_ARCHIVE_CAPTURES={
   (2023,'APRIL'):('20230525040938','https://wbcboxing.com/mailing/2023/ratings_pdf/WBC_RATINGS_APRIL_2023_.pdf'),
   (2024,'JUNE'):('20240620103321','https://wbcboxing.com/mailing/2024/ratings_pdf/_WBC_RATINGS_JUNE_2024.pdf'),
 }
+WBC_KNOWN_DIRECT_PDFS={
+  (2020,'MAY'):'https://wbcboxing.com/mailing/2020/ratings_pdf/WBC-Ratings-May-2020.pdf',
+  (2023,'JANUARY'):'https://wbcboxing.com/mailing/2023/ratings_pdf/WBC%20RATINGS%20DECEMBER%202022%20%20-%20%20JANUARY%202023.pdf',
+}
 
 def next_month(y,m):
     return dt.date(y+1,1,1) if m==12 else dt.date(y,m+1,1)
@@ -139,11 +143,11 @@ def archive_capture_date(url):
     except ValueError:return None
 
 def fetch_pdf(y,month):
-    # One older official document remains directly indexed by WBC. Treat the
-    # December-2022 / January-2023 combined sheet as the January 2023 rating
-    # period and keep the existing next-month effective-date rule (2023-02-01).
-    if (y,month)==(2023,'JANUARY'):
-      known='https://wbcboxing.com/mailing/2023/ratings_pdf/WBC%20RATINGS%20DECEMBER%202022%20%20-%20%20JANUARY%202023.pdf'
+    # A small set of older official PDFs remains directly indexed by WBC.
+    # Treat each only as its named rating period; normal next-month effective
+    # dating plus the downstream 75-day freshness ceiling prevents stale carry.
+    known=WBC_KNOWN_DIRECT_PDFS.get((y,month))
+    if known:
       final,data=_curl_pdf(known)
       if data:return final,data
 
@@ -287,7 +291,7 @@ def extract_document(data,y,m,url):
 def main():
     docs=[];allrows=[];champs=[]
     today=dt.date.today()
-    for y in range(2023,today.year+1):
+    for y in range(2020,today.year+1):
       for m,month in enumerate(MONTHS,1):
         if dt.date(y,m,1)>today:
           continue
