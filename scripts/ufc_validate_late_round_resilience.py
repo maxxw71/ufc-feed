@@ -40,6 +40,14 @@ def existing(d):
     risk12=risk11+(n(d,'f_last5')<.50).astype(int)
     sets['U12']=set(d.loc[base&(risk12<4),'_key'])
     sets={k:v&universe for k,v in sets.items()}
+    # For genuinely prospective rows, trust the method labels frozen before the fight.
+    if 'official_methods_json' in d.columns:
+        for _,r in d.iterrows():
+            try:mids=json.loads(r.get('official_methods_json') or '[]')
+            except Exception:mids=[]
+            for mid in mids:
+                mid=str(mid)
+                if mid in sets:sets[mid].add(r['_key'])
     return sets,set().union(*sets.values())
 def main():
     d=pd.read_csv(D,low_memory=False);d['_date']=pd.to_datetime(d.event_date,errors='coerce');d=d[d._date.notna()].sort_values('_date').reset_index(drop=True)
