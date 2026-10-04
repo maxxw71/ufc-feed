@@ -1,0 +1,27 @@
+name: UFC Unique Method Search V2
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/ufc_unique_method_search_v2.py'
+      - '.github/workflows/ufc-unique-method-search-v2.yml'
+  workflow_dispatch:
+jobs:
+  research:
+    runs-on: [self-hosted, appwiza]
+    timeout-minutes: 20
+    steps:
+      - shell: bash
+        run: |
+          set -euo pipefail
+          K=/home/appwiza-runner/.ssh/appwiza_vps
+          S=$(mktemp)
+          curl -fsSL https://raw.githubusercontent.com/maxxw71/ufc-feed/$GITHUB_SHA/scripts/ufc_unique_method_search_v2.py -o "$S"
+          scp -i "$K" -o StrictHostKeyChecking=no "$S" anestishkurti92@127.0.0.1:/home/anestishkurti92/ufc-predictor-v1/ufc_unique_method_search_v2.py
+          rm -f "$S"
+          ssh -i "$K" -o StrictHostKeyChecking=no anestishkurti92@127.0.0.1 'bash -s' <<'EOF'
+          set -euo pipefail
+          cd /home/anestishkurti92/ufc-predictor-v1
+          venv/bin/python -m py_compile ufc_unique_method_search_v2.py
+          OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 venv/bin/python -u ufc_unique_method_search_v2.py
+          EOF
