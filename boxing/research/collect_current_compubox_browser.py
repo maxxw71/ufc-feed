@@ -81,8 +81,9 @@ def parse_download(data:bytes, filename:str):
 async def main():
     records=[]
     async with async_playwright() as p:
-        browser=await p.chromium.launch(headless=True,accept_downloads=True)
-        page=await browser.new_page(viewport={"width":1440,"height":1400})
+        browser=await p.chromium.launch(headless=True)
+        context=await browser.new_context(accept_downloads=True,viewport={"width":1440,"height":1400})
+        page=await context.new_page()
         await page.goto(BASE,wait_until="networkidle",timeout=90000)
         links=await page.locator("a").evaluate_all(
           """els => els.map(a=>({
@@ -127,6 +128,7 @@ async def main():
             if page.url!=BASE:
                 await page.goto(BASE,wait_until="domcontentloaded",timeout=60000)
             await page.wait_for_timeout(300)
+        await context.close()
         await browser.close()
     report={
       "generated_at":datetime.now(timezone.utc).isoformat(),
