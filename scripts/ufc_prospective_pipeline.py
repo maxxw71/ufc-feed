@@ -275,8 +275,13 @@ def reconcile():
         py=str(ROOT/'venv/bin/python')
         ar=ROOT/'ufc_autoresearch_runner.py'
         if not ar.exists():ar=ROOT/'ufc_autoresearch.py'
+        live=ROOT/'ufcstats_live_refresh.py'
         imm=ROOT/'ufc_immutable_warehouse.py'
         if ar.exists():subprocess.run([py,str(ar),'snapshot'],cwd=ROOT,check=True)
+        if live.exists():
+            try:subprocess.run([py,str(live)],cwd=ROOT,check=True)
+            except subprocess.CalledProcessError as exc:
+                print(json.dumps({'live_ufcstats_refresh':'warning','returncode':exc.returncode,'fallback':'mirror_snapshot'}))
         if imm.exists():subprocess.run([py,str(imm)],cwd=ROOT,check=True)
         capture()
         n=finalize()
