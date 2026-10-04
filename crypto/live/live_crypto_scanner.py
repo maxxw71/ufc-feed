@@ -100,7 +100,9 @@ def prep4(x):
     x["rsi_pct3"]=x["rsi"]/x["rsi"].shift(3)-1
     x["rsi_delta"]=x["rsi"].diff()
     x["rsi_accel"]=x["rsi_delta"].diff()
+    x["rsi_sma3"]=x["rsi"].rolling(3,min_periods=3).mean()
     x["rsi_sma5"]=x["rsi"].rolling(5,min_periods=3).mean()
+    x["rsi_vs_sma3"]=x["rsi"]/x["rsi_sma3"]-1
     x["rsi_vs_sma5"]=x["rsi"]/x["rsi_sma5"]-1
     x["ema9"]=x["c"].ewm(span=9,adjust=False).mean()
     x["sma20"]=x["c"].rolling(20,min_periods=10).mean()
@@ -182,6 +184,47 @@ def method1_events(x):
                 "rsi_accel":float(row["rsi_accel"]),
             })
     return found
+
+def method4_events(x):
+    """C4 shadow: first post-breakout flush with RSI shock vs its own 3-bar mean."""
+    if len(x)<120:
+        return []
+    d=daily_from_4h(x)
+    arms=[]
+    last=None
+    for _,r in d[d["setup"]].iterrows():
+        t=r["arm_time"]
+        if last is None or t-last>=pd.Timedelta(days=10):
+            arms.append(t);last=t
+    found=[]
+    for arm in arms:
+        if arm < x["time"].max()-pd.Timedelta(days=7):
+            continue
+        w=x[(x["time"]>=arm)&(x["time"]<arm+pd.Timedelta(days=5))]
+        if len(w)<3:
+            continue
+        peak=-math.inf;pi=None;trigger=None
+        for idx,row in w.iterrows():
+            hi=float(row["h"])
+            if hi>=peak:
+                peak=hi;pi=idx
+            if pi is not None and idx>pi and float(row["c"])/peak-1<=-.08:
+                trigger=idx;break
+        if trigger is None:
+            continue
+        row=x.loc[trigger]
+        if pd.isna(row["rsi_accel"]) or pd.isna(row["rsi_vs_sma3"]):
+            continue
+        if float(row["rsi_accel"])<=-9.01822 and float(row["rsi_vs_sma3"])<=-0.120961:
+            found.append({
+                "trigger_idx":int(trigger),
+                "trigger_time":row["time"],
+                "trigger_price":float(row["c"]),
+                "rsi_accel":float(row["rsi_accel"]),
+                "rsi_vs_sma3":float(row["rsi_vs_sma3"]),
+            })
+    return found
+
 
 def method3_events(x):
     """C3 shadow: capitulation close + abnormal volume after the first 8% flush."""
@@ -295,6 +338,7 @@ def method2_events(x):
             "pump_pct":pump,
             "lower_high_pct":lower_high_pct,
             "second_dump_pct":second_dump,
+            "dist_ema9":float(x.loc[t,"dist_ema9"]) if pd.notna(x.loc[t,"dist_ema9"]) else None,
         })
     return events
 
@@ -448,9 +492,28 @@ def main():
             candidates=[]
             if methods["blowoff_first_flush"]["enabled"]:
                 candidates += [("blowoff_first_flush",z) for z in method1_events(x)]
+            c2_events=[]
             if methods["lower_high_second_dump"]["enabled"]:
-                candidates += [("lower_high_second_dump",z) for z in method2_events(x)]
+                c2_events=method2_events(x)
+                candidates += [("lower_high_second_dump",z) for z in c2_events]
             shadow_candidates=[]
+            if "lower_high_second_dump_deepstretch" in methods and methods["lower_high_second_dump_deepstretch"].get("enabled"):
+                dm=methods["lower_high_second_dump_deepstretch"]
+                for z in c2_events:
+                    if z.get("dist_ema9") is None or float(z["dist_ema9"])>-0.069254:
+                        continue
+                    if dm.get("status")=="LIVE":
+                        candidates.append(("lower_high_second_dump_deepstretch",dict(z)))
+                    else:
+                        shadow_candidates.append(("lower_high_second_dump_deepstretch",dict(z)))
+
+            if "rsi_shock_sma3" in methods and methods["rsi_shock_sma3"].get("enabled"):
+                rm=methods["rsi_shock_sma3"]
+                for z in method4_events(x):
+                    if rm.get("status")=="LIVE":
+                        candidates.append(("rsi_shock_sma3",z))
+                    else:
+                        shadow_candidates.append(("rsi_shock_sma3",z))
             c3_events=[]
             if "volume_capitulation_flush" in methods and methods["volume_capitulation_flush"].get("enabled"):
                 c3_events=method3_events(x)
