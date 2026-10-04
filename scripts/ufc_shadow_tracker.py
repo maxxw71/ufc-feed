@@ -34,7 +34,8 @@ RAW=ROOT/'raw'/'competitions.csv'
 FEATURE=ROOT/'ufc_feature_expansion.py'
 PUBLIC=Path('/srv/appwiza-sports/public/ufc/shadow')
 VERSION='UFC_SHADOW_V2_20261004'
-FROZEN_AT='2026-10-04T01:35:00-04:00'
+FROZEN_AT='2026-09-24T00:00:00-04:00'
+LRR_FROZEN_AT='2026-10-04T01:35:00-04:00'
 
 RULES=[
   {
@@ -86,7 +87,7 @@ RULES=[
       'confluence_bets':101,'confluence_wins':85,'confluence_roi':0.1403021433529697,
       'prospective_at_freeze':3,'prospective_wins_at_freeze':3
     },
-    'frozen_at':'2026-10-04T01:35:00-04:00',
+    'frozen_at':LRR_FROZEN_AT,
   },
 ]
 RULE_BY_ID={r['id']:r for r in RULES}
@@ -152,6 +153,23 @@ def connect():
           (rule_id,version,role,name,frozen_at,conditions_json,historical_json)
           VALUES(?,?,?,?,?,?,?)''',
           (r['id'],VERSION,r['role'],r['name'],r.get('frozen_at',FROZEN_AT),json.dumps(r['conditions'],sort_keys=True),json.dumps(r['historical'],sort_keys=True)))
+    # Invalidate any LRR1 row accidentally created for an event that started before LRR1 was frozen.
+    # Preserve the row for auditability; it never counts as prospective validation.
+    rows=c.execute("SELECT fight_key,event_start,rule_ids_json,status FROM shadow_picks").fetchall()
+    freeze=pd.to_datetime(LRR_FROZEN_AT,utc=True,errors='coerce')
+    for row in rows:
+        ids=json.loads(row['rule_ids_json'] or '[]')
+        if 'LRR1' not in ids:continue
+        start=pd.to_datetime(row['event_start'],utc=True,errors='coerce')
+        if pd.notna(start) and pd.notna(freeze) and start<=freeze:
+            remain=[x for x in ids if x!='LRR1']
+            if remain:
+                prim=[x for x in remain if RULE_BY_ID.get(x,{}).get('role') in ('primary','novel')]
+                ctrl=[x for x in remain if RULE_BY_ID.get(x,{}).get('role')=='control']
+                c.execute("UPDATE shadow_picks SET rule_ids_json=?,primary_rule_ids_json=?,control_rule_ids_json=?,lrr_mode=NULL WHERE fight_key=?",
+                          (json.dumps(remain),json.dumps(prim),json.dumps(ctrl),row['fight_key']))
+            else:
+                c.execute("UPDATE shadow_picks SET status='void_pre_freeze',lrr_mode='invalid_pre_freeze' WHERE fight_key=?",(row['fight_key'],))
     c.commit()
     return c
 
@@ -268,6 +286,15 @@ def qualifies(rule,features):
         if op=='<=' and not float(v)<=float(threshold):return False
     return True
 
+def rule_live_for_event(rule,event_start):
+    freeze=pd.to_datetime(rule.get('frozen_at',FROZEN_AT),utc=True,errors='coerce')
+    start=pd.to_datetime(event_start,utc=True,errors='coerce')
+    if pd.isna(freeze):return False
+    # For newly discovered rules, require a known event start strictly after freeze.
+    if rule.get('id')=='LRR1':
+        return pd.notna(start) and start>freeze
+    return True
+
 def fight_key(date,a,b):
     return date+'|'+ '|'.join(sorted((norm(a),norm(b))))
 
@@ -293,7 +320,7 @@ def scan():
                     reason='missing fighter history'
                     tags=[]
                 else:
-                    tags=[rule['id'] for rule in RULES if qualifies(rule,features)]
+                    tags=[rule['id'] for rule in RULES if rule_live_for_event(rule,r.get('event_start')) and qualifies(rule,features)]
                     reason='qualified' if tags else 'no frozen rule matched'
                 lrr_mode=('confluence' if official_ids else 'standalone') if 'LRR1' in tags else None
                 scanned+=1
@@ -355,9 +382,15 @@ def settle():
             date=pd.Timestamp(p['event_date'])
             pair={norm(p['fighter_a']),norm(p['fighter_b'])}
             candidates=[]
-            for _,r in raw[raw['_date']==date].iterrows():
-                if {norm(r.get('player1')),norm(r.get('player2'))}==pair:
-                    candidates.append(r)
+            # Odds feeds may label late-night U.S. cards as the following UTC date.
+            # Match only the exact fighter pair and allow at most ±1 calendar day.
+            for off in (0,-1,1):
+                dd=date+pd.Timedelta(days=off)
+                q=[]
+                for _,r in raw[raw['_date']==dd].iterrows():
+                    if {norm(r.get('player1')),norm(r.get('player2'))}==pair:q.append(r)
+                if len(q)==1:
+                    candidates=q;break
             if len(candidates)!=1:continue
             r=candidates[0];sel=norm(p['selection']);p1=norm(r.get('player1'));p2=norm(r.get('player2'));res=str(r.get('result') or '').strip().upper()
             if sel==p1:
@@ -379,6 +412,7 @@ def summary():
     with connect() as c:
         picks=[dict(r) for r in c.execute('SELECT * FROM shadow_picks ORDER BY event_date,first_recorded_at')]
     def stats(rows):
+        rows=[x for x in rows if not str(x.get('status') or '').startswith('void_')]
         done=[x for x in rows if x['status'] in ('win','loss')]
         w=sum(x['status']=='win' for x in done);l=sum(x['status']=='loss' for x in done)
         priced=[x for x in done if x.get('profit_units') is not None]
@@ -391,7 +425,7 @@ def summary():
         rules.append({**rule,'prospective':stats(rr)})
     primary=[p for p in picks if json.loads(p['primary_rule_ids_json'] or '[]')]
     control_only=[p for p in picks if not json.loads(p['primary_rule_ids_json'] or '[]') and json.loads(p['control_rule_ids_json'] or '[]')]
-    lrr=[p for p in picks if 'LRR1' in json.loads(p['rule_ids_json'] or '[]')]
+    lrr=[p for p in picks if 'LRR1' in json.loads(p['rule_ids_json'] or '[]') and not str(p.get('status') or '').startswith('void_')]
     lrr_standalone=[p for p in lrr if p.get('lrr_mode')=='standalone']
     lrr_confluence=[p for p in lrr if p.get('lrr_mode')=='confluence']
     return {
