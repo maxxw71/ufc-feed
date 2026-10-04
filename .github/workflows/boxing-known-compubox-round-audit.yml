@@ -1,0 +1,43 @@
+name: Boxing Known CompuBox Round Audit
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'boxing/research/inspect_known_compubox_round_pages.py'
+      - 'boxing/punch_supplements/boxing_data_external_verifications.json'
+      - '.github/workflows/boxing-known-compubox-round-audit.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+        with: {fetch-depth: 0}
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.12'}
+      - run: pip install requests beautifulsoup4 lxml
+      - run: python boxing/research/inspect_known_compubox_round_pages.py
+      - name: Publish audit
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          cp boxing/punch_supplements/official_compubox_known_round_page_audit.json /tmp/report.json
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          for attempt in 1 2 3; do
+            git fetch origin main
+            git reset --hard origin/main
+            cp /tmp/report.json boxing/punch_supplements/official_compubox_known_round_page_audit.json
+            git add boxing/punch_supplements/official_compubox_known_round_page_audit.json
+            if git diff --cached --quiet; then exit 0; fi
+            git commit -m 'Refresh known official CompuBox round-page audit'
+            if git push origin HEAD:main; then exit 0; fi
+            sleep $((attempt*2))
+          done
+          exit 1
