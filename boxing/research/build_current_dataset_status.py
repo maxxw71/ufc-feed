@@ -56,6 +56,9 @@ summary=load(PUNCH/'boxingscene_compubox_summary_report.json')
 archived_summary=load(PUNCH/'archived_compubox_summary_report.json')
 ring_summary=load(PUNCH/'ring_compubox_summary_report.json')
 boxing_data_public=load(PUNCH/'boxing_data_public_stats_report.json')
+boxing_data_round_verify=load(PUNCH/'boxing_data_round_verification_report.json')
+boxing_data_broad=load(PROFILE/'boxing_data_public_profiles_report.json')
+boxing_data_broad_agreement=load(PROFILE/'boxing_data_public_profile_agreement.json')
 reach=load(PROFILE/'cross_source_reach_report.json')
 pros=load(ODDS/'coverage.json')
 settle=load(ODDS/'settled_bouts.json')
@@ -120,6 +123,20 @@ out={
     'years':sorted((cov.get('years') or {}).keys())
   },
   'fighter_profiles':profile_cov,
+  'broad_enrichment':{
+    'boxing_data_public_profiles':{
+      'status':boxing_data_broad.get('status'),
+      'articles_scanned':boxing_data_broad.get('articles_scanned'),
+      'candidate_rows':boxing_data_broad.get('candidate_rows'),
+      'candidate_fighters':boxing_data_broad.get('candidate_fighters'),
+      'candidate_rows_by_field':boxing_data_broad.get('candidate_rows_by_field'),
+      'currently_missing_candidate_rows':boxing_data_broad.get('currently_missing_candidate_rows'),
+      'currently_missing_candidate_fighters':boxing_data_broad.get('currently_missing_candidate_fighters'),
+      'missing_candidates_by_field':boxing_data_broad.get('missing_candidates_by_field'),
+      'agreement_audit':boxing_data_broad_agreement.get('summary'),
+      'policy':'Candidate/corroboration source only. Existing strict values are never overwritten from Boxing Data public articles alone.'
+    }
+  },
   'rankings':{org:ranking(org) for org in ('WBC','WBA','WBO','IBF')},
   'punch_data':{
     'full_round_reports':punch.get('unique_report_ids'),
@@ -162,6 +179,19 @@ out={
       'article_date_min':boxing_data_public.get('article_date_min'),
       'article_date_max':boxing_data_public.get('article_date_max'),
       'note':'Public Boxing Data API-attributed article tables are supplemental/quarantined until identity/date/source validation; they do not inflate strict CompuBox counts.'
+    },
+    'boxing_data_verified_round_totals':{
+      'source_round_tables':boxing_data_round_verify.get('source_round_tables'),
+      'normalizable_round_tables':boxing_data_round_verify.get('normalizable_round_tables'),
+      'verified_fighter_observations':boxing_data_round_verify.get('verified_fighter_observations'),
+      'verified_fights':boxing_data_round_verify.get('verified_fights'),
+      'verified_unique_fighters':boxing_data_round_verify.get('verified_unique_fighters'),
+      'source_quality':boxing_data_round_verify.get('source_quality'),
+      'admission':boxing_data_round_verify.get('admission'),
+      'chronological_profile_observations_loaded':punch.get('boxing_data_verified_round_total_observations_loaded'),
+      'chronological_profile_observations_accepted':punch.get('boxing_data_verified_round_total_observations_accepted'),
+      'chronological_profile_fights_accepted':punch.get('boxing_data_verified_round_total_fights_accepted'),
+      'note':'Independently verified round-total tier contributes total-punch trajectory features but does not count as a full Total+Jab+Power CompuBox round chart.'
     },
     'latest_cross_source_reach_backfill':{
       'generated_at':reach.get('generated_at'),'targets':reach.get('targets'),
