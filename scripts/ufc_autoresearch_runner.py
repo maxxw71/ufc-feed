@@ -10,6 +10,19 @@ if not AR_FILE.exists():
 _spec=importlib.util.spec_from_file_location("appwiza_ufc_autoresearch_local",AR_FILE)
 ar=importlib.util.module_from_spec(_spec)
 _spec.loader.exec_module(ar)
+
+# The imported legacy research DB can be mounted read-only by the model environment.
+# Preserve it as a seed, but run autonomous research from a user-owned writable DB.
+RUNNER_STATE=ROOT/"auto_research"/"runner_state"
+RUNNER_STATE.mkdir(parents=True,exist_ok=True)
+RUNNER_DB=RUNNER_STATE/"research.sqlite3"
+LEGACY_DB=Path(ar.DB)
+if not RUNNER_DB.exists() and LEGACY_DB.exists() and os.access(LEGACY_DB,os.R_OK):
+    shutil.copyfile(LEGACY_DB,RUNNER_DB)
+    RUNNER_DB.chmod(0o600)
+ar.DB=RUNNER_DB
+ar.LOCK=RUNNER_STATE/"research.lock"
+
 for name in ["prefight_favorite_features_v6.csv","prefight_favorite_features_v5.csv","prefight_favorite_features_v4.csv","prefight_favorite_features_v3.csv","prefight_favorite_features_v2.csv"]:
     p=ROOT/"feature_expansion"/name
     if p.exists():
