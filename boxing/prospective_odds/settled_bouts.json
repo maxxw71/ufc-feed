@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-10-03T23:07:38.232458+00:00",
+  "generated_at": "2026-10-04T05:59:55.444859+00:00",
   "settled": [
     {
       "event_date": "2026-09-21",
@@ -2660,6 +2660,518 @@
       "selections": [
         "Harvey Smith",
         "Joshua John"
+      ]
+    },
+    {
+      "event_date": "2026-10-03",
+      "bout_id": "18317",
+      "participants": [
+        "Ben Whittaker",
+        "Conor Wallace"
+      ],
+      "first_snapshot": "2026-09-21T12:55:57.664481+00:00",
+      "last_snapshot": "2026-09-29T10:44:12.451749+00:00",
+      "verified_quote_rows": 244,
+      "verified_sportsbook_quote_rows": 240,
+      "verified_prediction_market_quote_rows": 4,
+      "market_classes": [
+        "prediction_market",
+        "sportsbook"
+      ],
+      "sportsbooks": [
+        "BetWay",
+        "Caesars",
+        "FanDuel",
+        "Unibet"
+      ],
+      "sportsbook_market_summary": {
+        "per_book": {
+          "BetWay": {
+            "Ben Whittaker": {
+              "first_verified_pre_event": {
+                "fetched_at": "2026-09-22T13:27:10.547562+00:00",
+                "decimal_price": 1.1430615164520743,
+                "american_price": -699
+              },
+              "latest_verified_pre_event": {
+                "fetched_at": "2026-09-29T10:44:12.451749+00:00",
+                "decimal_price": 1.1430615164520743,
+                "american_price": -699
+              },
+              "observations": 27,
+              "decimal_move": 0.0
+            },
+            "Conor Wallace": {
+              "first_verified_pre_event": {
+                "fetched_at": "2026-09-22T13:27:10.547562+00:00",
+                "decimal_price": 5.5,
+                "american_price": 450
+              },
+              "latest_verified_pre_event": {
+                "fetched_at": "2026-09-29T10:44:12.451749+00:00",
+                "decimal_price": 5.5,
+                "american_price": 450
+              },
+              "observations": 27,
+              "decimal_move": 0.0
+            }
+          },
+          "Caesars": {
+            "Ben Whittaker": {
+              "first_verified_pre_event": {
+                "fetched_at": "2026-09-21T12:55:57.664481+00:00",
+                "decimal_price": 1.125,
+                "american_price": -800
+              },
+              "latest_verified_pre_event": {
+                "fetched_at": "2026-09-29T10:44:12.451749+00:00",
+                "decimal_price": 1.1111111111111112,
+                "american_price": -900
+              },
+              "observations": 31,
+              "decimal_move": -0.013889
+            },
+            "Conor Wallace": {
+              "first_verified_pre_event": {
+                "fetched_at": "2026-09-21T12:55:57.664481+00:00",
+                "decimal_price": 6.0,
+                "american_price": 500
+              },
+              "latest_verified_pre_event": {
+                "fetched_at": "2026-09-29T10:44:12.451749+00:00",
+                "decimal_price": 6.5,
+                "american_price": 550
+              },
+              "observations": 31,
+              "decimal_move": 0.5
+            }
+          },
+          "FanDuel": {
+            "Ben Whittaker": {
+              "first_verified_pre_event": {
+                "fetched_at": "2026-09-21T12:55:57.664481+00:00",
+                "decimal_price": 1.1333333333333333,
+                "american_price": -750
+              },
+              "latest_verified_pre_event": {
+                "fetched_at": "2026-09-29T10:44:12.451749+00:00",
+                "decimal_price": 1.0909090909090908,
+                "american_price": -1100
+              },
+              "observations": 31,
+              "decimal_move": -0.042424
+            },
+            "Conor Wallace": {
+              "first_verified_pre_event": {
+                "fetched_at": "2026-09-21T12:55:57.664481+00:00",
+                "decimal_price": 5.6,
+                "american_price": 460
+              },
+              "latest_verified_pre_event": {
+                "fetched_at": "2026-09-29T10:44:12.451749+00:00",
+                "decimal_price": 7.1,
+                "american_price": 610
+              },
+              "observations": 31,
+              "decimal_move": 1.5
+            }
+          },
+          "Unibet": {
+            "Ben Whittaker": {
+              "first_verified_pre_event": {
+                "fetched_at": "2026-09-21T12:55:57.664481+00:00",
+                "decimal_price": 1.10989010989011,
+                "american_price": -910
+              },
+              "latest_verified_pre_event": {
+                "fetched_at": "2026-09-29T10:44:12.451749+00:00",
+                "decimal_price": 1.10989010989011,
+                "american_price": -910
+              },
+              "observations": 31,
+              "decimal_move": 0.0
+            },
+            "Conor Wallace": {
+              "first_verified_pre_event": {
+                "fetched_at": "2026-09-21T12:55:57.664481+00:00",
+                "decimal_price": 6.5,
+                "american_price": 550
+              },
+              "latest_verified_pre_event": {
+                "fetched_at": "2026-09-29T10:44:12.451749+00:00",
+                "decimal_price": 6.5,
+                "american_price": 550
+              },
+              "observations": 31,
+              "decimal_move": 0.0
+            }
+          }
+        },
+        "consensus_latest_verified": {
+          "Ben Whittaker": {
+            "books": 4,
+            "median_latest_verified_decimal": 1.110501,
+            "min_latest_verified_decimal": 1.0909090909090908,
+            "max_latest_verified_decimal": 1.1430615164520743
+          },
+          "Conor Wallace": {
+            "books": 4,
+            "median_latest_verified_decimal": 6.5,
+            "min_latest_verified_decimal": 5.5,
+            "max_latest_verified_decimal": 7.1
+          }
+        },
+        "books_with_both_sides_latest": 4,
+        "book_selection_pairs": 8
+      },
+      "selections": [
+        "Ben Whittaker",
+        "Conor Wallace"
+      ]
+    },
+    {
+      "event_date": "2026-10-03",
+      "bout_id": "18443",
+      "participants": [
+        "Bilal Fawaz",
+        "Eithan James"
+      ],
+      "first_snapshot": "2026-09-21T12:55:57.664481+00:00",
+      "last_snapshot": "2026-09-29T10:44:12.451749+00:00",
+      "verified_quote_rows": 152,
+      "verified_sportsbook_quote_rows": 148,
+      "verified_prediction_market_quote_rows": 4,
+      "market_classes": [
+        "prediction_market",
+        "sportsbook"
+      ],
+      "sportsbooks": [
+        "BetWay",
+        "Caesars",
+        "FanDuel"
+      ],
+      "sportsbook_market_summary": {
+        "per_book": {
+          "BetWay": {
+            "Bilal Fawaz": {
+              "first_verified_pre_event": {
+                "fetched_at": "2026-09-22T13:27:10.547562+00:00",
+                "decimal_price": 1.1430615164520743,
+                "american_price": -699
+              },
+              "latest_verified_pre_event": {
+                "fetched_at": "2026-09-29T10:44:12.451749+00:00",
+                "decimal_price": 1.1430615164520743,
+                "american_price": -699
+              },
+              "observations": 27,
+              "decimal_move": 0.0
+            },
+            "Eithan James": {
+              "first_verified_pre_event": {
+                "fetched_at": "2026-09-22T13:27:10.547562+00:00",
+                "decimal_price": 5.5,
+                "american_price": 450
+              },
+              "latest_verified_pre_event": {
+                "fetched_at": "2026-09-29T10:44:12.451749+00:00",
+                "decimal_price": 5.5,
+                "american_price": 450
+              },
+              "observations": 27,
+              "decimal_move": 0.0
+            }
+          },
+          "Caesars": {
+            "Bilal Fawaz": {
+              "first_verified_pre_event": {
+                "fetched_at": "2026-09-25T05:02:58.898351+00:00",
+                "decimal_price": 1.1333333333333333,
+                "american_price": -750
+              },
+              "latest_verified_pre_event": {
+                "fetched_at": "2026-09-29T10:44:12.451749+00:00",
+                "decimal_price": 1.1333333333333333,
+                "american_price": -750
+              },
+              "observations": 16,
+              "decimal_move": 0.0
+            },
+            "Eithan James": {
+              "first_verified_pre_event": {
+                "fetched_at": "2026-09-25T05:02:58.898351+00:00",
+                "decimal_price": 5.6,
+                "american_price": 460
+              },
+              "latest_verified_pre_event": {
+                "fetched_at": "2026-09-29T10:44:12.451749+00:00",
+                "decimal_price": 5.6,
+                "american_price": 460
+              },
+              "observations": 16,
+              "decimal_move": 0.0
+            }
+          },
+          "FanDuel": {
+            "Bilal Fawaz": {
+              "first_verified_pre_event": {
+                "fetched_at": "2026-09-21T12:55:57.664481+00:00",
+                "decimal_price": 1.1333333333333333,
+                "american_price": -750
+              },
+              "latest_verified_pre_event": {
+                "fetched_at": "2026-09-29T10:44:12.451749+00:00",
+                "decimal_price": 1.1333333333333333,
+                "american_price": -750
+              },
+              "observations": 31,
+              "decimal_move": 0.0
+            },
+            "Eithan James": {
+              "first_verified_pre_event": {
+                "fetched_at": "2026-09-21T12:55:57.664481+00:00",
+                "decimal_price": 5.3,
+                "american_price": 430
+              },
+              "latest_verified_pre_event": {
+                "fetched_at": "2026-09-29T10:44:12.451749+00:00",
+                "decimal_price": 5.3,
+                "american_price": 430
+              },
+              "observations": 31,
+              "decimal_move": 0.0
+            }
+          }
+        },
+        "consensus_latest_verified": {
+          "Bilal Fawaz": {
+            "books": 3,
+            "median_latest_verified_decimal": 1.133333,
+            "min_latest_verified_decimal": 1.1333333333333333,
+            "max_latest_verified_decimal": 1.1430615164520743
+          },
+          "Eithan James": {
+            "books": 3,
+            "median_latest_verified_decimal": 5.5,
+            "min_latest_verified_decimal": 5.3,
+            "max_latest_verified_decimal": 5.6
+          }
+        },
+        "books_with_both_sides_latest": 3,
+        "book_selection_pairs": 6
+      },
+      "selections": [
+        "Bilal Fawaz",
+        "Eithan James"
+      ]
+    },
+    {
+      "event_date": "2026-10-03",
+      "bout_id": "18488",
+      "participants": [
+        "Ibraheem Sulaimaan",
+        "Sonny Hardy"
+      ],
+      "first_snapshot": "2026-09-21T12:55:57.664481+00:00",
+      "last_snapshot": "2026-09-29T10:44:12.451749+00:00",
+      "verified_quote_rows": 120,
+      "verified_sportsbook_quote_rows": 116,
+      "verified_prediction_market_quote_rows": 4,
+      "market_classes": [
+        "prediction_market",
+        "sportsbook"
+      ],
+      "sportsbooks": [
+        "BetWay",
+        "FanDuel"
+      ],
+      "sportsbook_market_summary": {
+        "per_book": {
+          "BetWay": {
+            "Ibraheem Sulaimaan": {
+              "first_verified_pre_event": {
+                "fetched_at": "2026-09-22T13:27:10.547562+00:00",
+                "decimal_price": 1.1,
+                "american_price": -1000
+              },
+              "latest_verified_pre_event": {
+                "fetched_at": "2026-09-29T10:44:12.451749+00:00",
+                "decimal_price": 1.1,
+                "american_price": -1000
+              },
+              "observations": 27,
+              "decimal_move": 0.0
+            },
+            "Sonny Hardy": {
+              "first_verified_pre_event": {
+                "fetched_at": "2026-09-22T13:27:10.547562+00:00",
+                "decimal_price": 7.0,
+                "american_price": 600
+              },
+              "latest_verified_pre_event": {
+                "fetched_at": "2026-09-29T10:44:12.451749+00:00",
+                "decimal_price": 7.0,
+                "american_price": 600
+              },
+              "observations": 27,
+              "decimal_move": 0.0
+            }
+          },
+          "FanDuel": {
+            "Ibraheem Sulaimaan": {
+              "first_verified_pre_event": {
+                "fetched_at": "2026-09-21T12:55:57.664481+00:00",
+                "decimal_price": 1.0769230769230769,
+                "american_price": -1300
+              },
+              "latest_verified_pre_event": {
+                "fetched_at": "2026-09-29T10:44:12.451749+00:00",
+                "decimal_price": 1.0769230769230769,
+                "american_price": -1300
+              },
+              "observations": 31,
+              "decimal_move": 0.0
+            },
+            "Sonny Hardy": {
+              "first_verified_pre_event": {
+                "fetched_at": "2026-09-21T12:55:57.664481+00:00",
+                "decimal_price": 6.8,
+                "american_price": 580
+              },
+              "latest_verified_pre_event": {
+                "fetched_at": "2026-09-29T10:44:12.451749+00:00",
+                "decimal_price": 6.8,
+                "american_price": 580
+              },
+              "observations": 31,
+              "decimal_move": 0.0
+            }
+          }
+        },
+        "consensus_latest_verified": {
+          "Ibraheem Sulaimaan": {
+            "books": 2,
+            "median_latest_verified_decimal": 1.088462,
+            "min_latest_verified_decimal": 1.0769230769230769,
+            "max_latest_verified_decimal": 1.1
+          },
+          "Sonny Hardy": {
+            "books": 2,
+            "median_latest_verified_decimal": 6.9,
+            "min_latest_verified_decimal": 6.8,
+            "max_latest_verified_decimal": 7.0
+          }
+        },
+        "books_with_both_sides_latest": 2,
+        "book_selection_pairs": 4
+      },
+      "selections": [
+        "Ibraheem Sulaimaan",
+        "Sonny Hardy"
+      ]
+    },
+    {
+      "event_date": "2026-10-03",
+      "bout_id": "18513",
+      "participants": [
+        "Alan Sanchez",
+        "Omari Jones"
+      ],
+      "first_snapshot": "2026-09-21T12:55:57.664481+00:00",
+      "last_snapshot": "2026-09-29T10:44:12.451749+00:00",
+      "verified_quote_rows": 116,
+      "verified_sportsbook_quote_rows": 116,
+      "verified_prediction_market_quote_rows": 0,
+      "market_classes": [
+        "sportsbook"
+      ],
+      "sportsbooks": [
+        "BetWay",
+        "FanDuel"
+      ],
+      "sportsbook_market_summary": {
+        "per_book": {
+          "BetWay": {
+            "Alan Sanchez": {
+              "first_verified_pre_event": {
+                "fetched_at": "2026-09-22T13:27:10.547562+00:00",
+                "decimal_price": 11.0,
+                "american_price": 1000
+              },
+              "latest_verified_pre_event": {
+                "fetched_at": "2026-09-29T10:44:12.451749+00:00",
+                "decimal_price": 11.0,
+                "american_price": 1000
+              },
+              "observations": 27,
+              "decimal_move": 0.0
+            },
+            "Omari Jones": {
+              "first_verified_pre_event": {
+                "fetched_at": "2026-09-22T13:27:10.547562+00:00",
+                "decimal_price": 1.04,
+                "american_price": -2500
+              },
+              "latest_verified_pre_event": {
+                "fetched_at": "2026-09-29T10:44:12.451749+00:00",
+                "decimal_price": 1.04,
+                "american_price": -2500
+              },
+              "observations": 27,
+              "decimal_move": 0.0
+            }
+          },
+          "FanDuel": {
+            "Alan Sanchez": {
+              "first_verified_pre_event": {
+                "fetched_at": "2026-09-21T12:55:57.664481+00:00",
+                "decimal_price": 9.9,
+                "american_price": 890
+              },
+              "latest_verified_pre_event": {
+                "fetched_at": "2026-09-29T10:44:12.451749+00:00",
+                "decimal_price": 11.6,
+                "american_price": 1060
+              },
+              "observations": 31,
+              "decimal_move": 1.7
+            },
+            "Omari Jones": {
+              "first_verified_pre_event": {
+                "fetched_at": "2026-09-21T12:55:57.664481+00:00",
+                "decimal_price": 1.0333333333333334,
+                "american_price": -3000
+              },
+              "latest_verified_pre_event": {
+                "fetched_at": "2026-09-29T10:44:12.451749+00:00",
+                "decimal_price": 1.0222222222222221,
+                "american_price": -4500
+              },
+              "observations": 31,
+              "decimal_move": -0.011111
+            }
+          }
+        },
+        "consensus_latest_verified": {
+          "Alan Sanchez": {
+            "books": 2,
+            "median_latest_verified_decimal": 11.3,
+            "min_latest_verified_decimal": 11.0,
+            "max_latest_verified_decimal": 11.6
+          },
+          "Omari Jones": {
+            "books": 2,
+            "median_latest_verified_decimal": 1.031111,
+            "min_latest_verified_decimal": 1.0222222222222221,
+            "max_latest_verified_decimal": 1.04
+          }
+        },
+        "books_with_both_sides_latest": 2,
+        "book_selection_pairs": 4
+      },
+      "selections": [
+        "Alan Sanchez",
+        "Omari Jones"
       ]
     }
   ]
