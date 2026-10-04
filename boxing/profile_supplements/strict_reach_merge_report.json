@@ -1,8 +1,8 @@
 {
-  "generated_at": "2026-10-01T00:21:24.179451+00:00",
+  "generated_at": "2026-10-04T12:21:36.578683+00:00",
   "source_counts": {
     "cross_source_reach_additions.jsonl": 5,
-    "third_source_reach_additions.jsonl": 12,
+    "third_source_reach_additions.jsonl": 0,
     "boxingscene_wayback_reach_additions.jsonl": 0,
     "fitequant_reach_additions.jsonl": 0,
     "boxrec_wayback_reach_additions.jsonl": 0,
@@ -12,7 +12,7 @@
     "ready_to_fight_reach_additions.jsonl": 0,
     "toprank_reach_additions.jsonl": 0,
     "pbc_reach_additions.jsonl": 0,
-    "wba_direct_reach_additions.jsonl": 2,
+    "wba_direct_reach_additions.jsonl": 0,
     "wba_wayback_reach_additions.jsonl": 0,
     "salita_reach_additions.jsonl": 0,
     "boxingdata_reach_additions.jsonl": 0,
@@ -20,17 +20,17 @@
     "sofascore_reach_additions.jsonl": 0,
     "foxsports_reach_additions.jsonl": 0,
     "boxlive_wayback_reach_additions.jsonl": 1,
-    "boxnow_reach_additions.jsonl": 8,
+    "boxnow_reach_additions.jsonl": 3,
     "ringside24_reach_additions.jsonl": 0,
     "boxingshowtimes_reach_additions.jsonl": 0,
     "boxerlist_reach_additions.jsonl": 0,
     "boxingmetrics_reach_additions.jsonl": 4,
     "nextknockout_reach_additions.jsonl": 0,
-    "cross_probe_reach_additions.jsonl": 0
+    "cross_probe_reach_additions.jsonl": 4
   },
   "validated_source_counts": {
     "cross_source_reach_additions.jsonl": 5,
-    "third_source_reach_additions.jsonl": 12,
+    "third_source_reach_additions.jsonl": 0,
     "boxingscene_wayback_reach_additions.jsonl": 0,
     "fitequant_reach_additions.jsonl": 0,
     "boxrec_wayback_reach_additions.jsonl": 0,
@@ -40,7 +40,7 @@
     "ready_to_fight_reach_additions.jsonl": 0,
     "toprank_reach_additions.jsonl": 0,
     "pbc_reach_additions.jsonl": 0,
-    "wba_direct_reach_additions.jsonl": 2,
+    "wba_direct_reach_additions.jsonl": 0,
     "wba_wayback_reach_additions.jsonl": 0,
     "salita_reach_additions.jsonl": 0,
     "boxingdata_reach_additions.jsonl": 0,
@@ -48,7 +48,7 @@
     "sofascore_reach_additions.jsonl": 0,
     "foxsports_reach_additions.jsonl": 0,
     "boxlive_wayback_reach_additions.jsonl": 1,
-    "boxnow_reach_additions.jsonl": 8,
+    "boxnow_reach_additions.jsonl": 3,
     "ringside24_reach_additions.jsonl": 0,
     "boxingshowtimes_reach_additions.jsonl": 0,
     "boxerlist_reach_additions.jsonl": 0,
@@ -56,59 +56,44 @@
     "nextknockout_reach_additions.jsonl": 0,
     "cross_probe_reach_additions.jsonl": 0
   },
-  "rejected_candidate_rows": 0,
-  "rejected_candidates": [],
-  "candidate_fighters": 67,
-  "merged": 4,
-  "merged_profiles": [
+  "rejected_candidate_rows": 4,
+  "rejected_candidates": [
     {
-      "target_source_id": "https://en.wikipedia.org/wiki/Jason_Cunningham",
-      "name": "Jason Cunningham",
-      "reach_cm": 170,
-      "addition_files": [
-        "boxingmetrics_reach_additions.jsonl"
-      ]
+      "addition_file": "cross_probe_reach_additions.jsonl",
+      "target_source_id": "https://en.wikipedia.org/wiki/Abass_Baraou",
+      "name": "Abass Baraou",
+      "reason": "no_official_or_two_source_numeric_consensus"
     },
     {
-      "target_source_id": "https://en.wikipedia.org/wiki/Danny_Dignum",
-      "name": "Danny Dignum",
-      "reach_cm": 185,
-      "addition_files": [
-        "boxingmetrics_reach_additions.jsonl"
-      ]
+      "addition_file": "cross_probe_reach_additions.jsonl",
+      "target_source_id": "https://champinon.info/boxing/daniel-lugo/",
+      "name": "Daniel Lugo",
+      "reason": "no_official_or_two_source_numeric_consensus"
     },
     {
-      "target_source_id": "https://en.wikipedia.org/wiki/Vincenzo_Gualtieri",
-      "name": "Vincenzo Gualtieri",
-      "reach_cm": 179,
-      "addition_files": [
-        "boxingmetrics_reach_additions.jsonl"
-      ]
+      "addition_file": "cross_probe_reach_additions.jsonl",
+      "target_source_id": "https://champinon.info/boxing/dario-morello/",
+      "name": "Dario Morello",
+      "reason": "no_official_or_two_source_numeric_consensus"
     },
     {
-      "target_source_id": "https://en.wikipedia.org/wiki/Magomed_Kurbanov_%28boxer%29",
-      "name": "Magomed Kurbanov",
-      "reach_cm": 177,
-      "addition_files": [
-        "boxingmetrics_reach_additions.jsonl"
-      ]
+      "addition_file": "cross_probe_reach_additions.jsonl",
+      "target_source_id": "https://en.wikipedia.org/wiki/Shingo_Wake",
+      "name": "Shingo Wake",
+      "reason": "no_official_or_two_source_numeric_consensus"
     }
   ],
-  "skipped_existing_reach": 57,
-  "skipped_explicit_quarantine": 6,
+  "candidate_fighters": 48,
+  "merged": 0,
+  "merged_profiles": [],
+  "skipped_existing_reach": 44,
+  "skipped_explicit_quarantine": 4,
   "skipped_quarantined_profiles": [
     {
       "target_source_id": "https://champinon.info/boxing/steve-robinson/",
       "name": "Steve Robinson",
       "sources": [
         "public_search_reach_additions.jsonl"
-      ]
-    },
-    {
-      "target_source_id": "https://en.wikipedia.org/wiki/Uisma_Lima",
-      "name": "Uisma Lima",
-      "sources": [
-        "boxnow_reach_additions.jsonl"
       ]
     },
     {
@@ -128,13 +113,6 @@
     {
       "target_source_id": "https://champinon.info/boxing/dario-morello/",
       "name": "Dario Morello",
-      "sources": [
-        "boxnow_reach_additions.jsonl"
-      ]
-    },
-    {
-      "target_source_id": "https://champinon.info/boxing/sean-hemphill/",
-      "name": "Sean Hemphill",
       "sources": [
         "boxnow_reach_additions.jsonl"
       ]
