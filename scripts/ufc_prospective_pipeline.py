@@ -16,6 +16,11 @@ BASE=ROOT/"new_category_discovery"/"prefight_favorite_features.csv"
 RAW=ROOT/"raw"/"competitions.csv"
 IND=ROOT/"raw"/"individuals.csv"
 WATCHER=ROOT/"ufc_email_watcher.py"
+METHOD_FAMILIES={
+    'U1':'structural','U2':'structural','U3':'structural','U4':'structural',
+    'U5':'wrestling','U6':'striking','U7':'striking','U8':'striking',
+    'U9':'experience','U10':'recovery','U11':'experience','U12':'experience',
+}
 for p in (STATE,WARE,BASE.parent,RAW.parent):p.mkdir(parents=True,exist_ok=True)
 
 def utcnow(): return datetime.now(timezone.utc).isoformat(timespec='seconds')
@@ -52,6 +57,10 @@ def connect():
       snapshot_sha TEXT NOT NULL,market_json TEXT,UNIQUE(snapshot_sha,event_date,fighter_a,fighter_b));
     CREATE TABLE IF NOT EXISTS finalized_bouts(
       fight_key TEXT PRIMARY KEY,finalized_at TEXT NOT NULL,quote_id INTEGER,snapshot_sha TEXT,base_row_json TEXT NOT NULL);
+    CREATE TABLE IF NOT EXISTS postfight_research_observations(
+      fight_key TEXT PRIMARY KEY,recorded_at TEXT NOT NULL,event_date TEXT,favorite TEXT,opponent TEXT,
+      won INTEGER,profit100 REAL,official_live_pick INTEGER,method_ids_json TEXT,method_families_json TEXT,
+      method_count INTEGER,family_count INTEGER,appwiza_snapshot_sha TEXT,prefight_feature_json TEXT NOT NULL);
     ''');c.commit();return c
 
 def load_watcher():
@@ -138,6 +147,69 @@ def age_on(rec,dt):
     try:return (dt-pd.Timestamp(rec.get('dob'))).days/365.2425
     except:return np.nan
 
+def official_method_context(fav,opp,event_start):
+    empty={'official_selection':'','official_live_pick':False,'official_methods_json':'[]','official_method_titles_json':'[]',
+           'official_method_families_json':'[]','official_method_count':0,'official_method_family_count':0,
+           'official_snapshot_sha':'','official_snapshot_captured_at':''}
+    try:
+        target=pd.to_datetime(event_start,utc=True,errors='coerce')
+        pair={norm(fav),norm(opp)}
+        with sqlite3.connect(DB) as c:
+            rows=c.execute("SELECT sha,captured_at,payload_json FROM appwiza_snapshots ORDER BY captured_at DESC").fetchall()
+        for sha,cap,payload_json in rows:
+            capts=pd.to_datetime(cap,utc=True,errors='coerce')
+            if pd.notna(target) and (pd.isna(capts) or capts>=target):continue
+            try:payload=json.loads(payload_json)
+            except Exception:continue
+            for card in (payload.get('cards') or []):
+                sel=str(card.get('selection') or '').strip();op=str(card.get('opponent') or '').strip()
+                if {norm(sel),norm(op)}!=pair:continue
+                mids=[];titles=[]
+                for m in (card.get('methods') or []):
+                    if isinstance(m,dict):
+                        mid=str(m.get('id') or '').strip();title=str(m.get('title') or mid).strip()
+                    else:
+                        mid=str(m or '').strip();title=mid
+                    if mid and mid not in mids:mids.append(mid)
+                    if title and title not in titles:titles.append(title)
+                fams=sorted({METHOD_FAMILIES.get(mid,'other') for mid in mids})
+                return {'official_selection':sel,'official_live_pick':norm(sel)==norm(fav),
+                        'official_methods_json':json.dumps(mids),'official_method_titles_json':json.dumps(titles),
+                        'official_method_families_json':json.dumps(fams),'official_method_count':len(mids),
+                        'official_method_family_count':len(fams),'official_snapshot_sha':sha,
+                        'official_snapshot_captured_at':cap}
+    except Exception as exc:
+        print(json.dumps({'official_method_context':'warning','favorite':fav,'opponent':opp,'error':str(exc)}))
+    return empty
+
+def persist_postfight_observations(fight_keys):
+    keys=set(fight_keys or [])
+    if not keys:return 0
+    v6=ROOT/'feature_expansion'/'prefight_favorite_features_v6.csv'
+    if not v6.exists():return 0
+    d=pd.read_csv(v6,low_memory=False)
+    if 'prospective_fight_key' not in d.columns:return 0
+    q=d[d['prospective_fight_key'].astype(str).isin(keys)].copy()
+    if q.empty:return 0
+    with connect() as pc:
+        for _,r in q.iterrows():
+            obj={str(k):(None if pd.isna(v) else v) for k,v in r.to_dict().items()}
+            fk=str(obj.get('prospective_fight_key') or '')
+            if not fk:continue
+            pc.execute('''INSERT OR REPLACE INTO postfight_research_observations(
+              fight_key,recorded_at,event_date,favorite,opponent,won,profit100,official_live_pick,
+              method_ids_json,method_families_json,method_count,family_count,appwiza_snapshot_sha,prefight_feature_json)
+              VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?)''',
+              (fk,utcnow(),str(obj.get('event_date') or ''),str(obj.get('favorite') or ''),str(obj.get('opponent') or ''),
+               int(bool(obj.get('won'))),num(obj.get('profit100'),0.0),int(bool(obj.get('official_live_pick'))),
+               str(obj.get('official_methods_json') or '[]'),str(obj.get('official_method_families_json') or '[]'),
+               int(num(obj.get('official_method_count'),0)),int(num(obj.get('official_method_family_count'),0)),
+               str(obj.get('official_snapshot_sha') or ''),json.dumps(obj,sort_keys=True,default=str)))
+        pc.commit()
+        pd.read_sql_query('SELECT * FROM postfight_research_observations ORDER BY event_date,fight_key',pc).to_csv(
+            WARE/'postfight_research_observations.csv',index=False)
+    return int(len(q))
+
 def quote_map():
     with connect() as c:q=pd.read_sql_query('SELECT * FROM bout_quotes ORDER BY captured_at',c)
     if q.empty:return {}
@@ -172,9 +244,10 @@ def finalize():
                 fav1=pa>=pb;fp,op=(p1,p2) if fav1 else (p2,p1);fav=str(r.get('player1') if fav1 else r.get('player2'));opp=str(r.get('player2') if fav1 else r.get('player1'));dec=da if fav1 else db;mkt=max(pa,pb)
                 res=str(r.get('result','')).upper();won=res.startswith('W') if fav1 else res.startswith('L')
                 fr=im.get(norm(fav));orr=im.get(norm(opp));fa=age_on(fr,dt) if fr is not None else np.nan;oa=age_on(orr,dt) if orr is not None else np.nan;fre=parse_reach(fr.get('reach')) if fr is not None else np.nan;ore=parse_reach(orr.get('reach')) if orr is not None else np.nan
-                row={'event_date':str(dt.date()),'favorite':fav,'opponent':opp,'market_prob':mkt,'fav_decimal':dec,'profit100':100*(dec-1) if won else -100.0,'won':bool(won),'age_adv':oa-fa if pd.notna(fa) and pd.notna(oa) else np.nan,'reach_adv':fre-ore if pd.notna(fre) and pd.notna(ore) else np.nan,'prospective_quote_at':q.quote_at or q.captured_at,'prospective_captured_at':q.captured_at,'prospective_snapshot_sha':q.snapshot_sha,'prospective_book':q.book,'prospective_event_start':q.event_start,'prospective_point_in_time':True}
-                row.update({f'f_{x}':v for x,v in fp.items()});row.update({f'o_{x}':v for x,v in op.items()});new.append(row)
-                fk='|'.join(k);pc.execute('INSERT OR REPLACE INTO finalized_bouts(fight_key,finalized_at,quote_id,snapshot_sha,base_row_json) VALUES(?,?,?,?,?)',(fk,utcnow(),int(q.id),q.snapshot_sha,json.dumps(row,default=str)))
+                fk='|'.join(k);ctx=official_method_context(fav,opp,q.event_start)
+                row={'event_date':str(dt.date()),'favorite':fav,'opponent':opp,'market_prob':mkt,'fav_decimal':dec,'profit100':100*(dec-1) if won else -100.0,'won':bool(won),'age_adv':oa-fa if pd.notna(fa) and pd.notna(oa) else np.nan,'reach_adv':fre-ore if pd.notna(fre) and pd.notna(ore) else np.nan,'prospective_fight_key':fk,'prospective_quote_at':q.quote_at or q.captured_at,'prospective_captured_at':q.captured_at,'prospective_snapshot_sha':q.snapshot_sha,'prospective_book':q.book,'prospective_event_start':q.event_start,'prospective_point_in_time':True}
+                row.update(ctx);row.update({f'f_{x}':v for x,v in fp.items()});row.update({f'o_{x}':v for x,v in op.items()});new.append(row)
+                pc.execute('INSERT OR REPLACE INTO finalized_bouts(fight_key,finalized_at,quote_id,snapshot_sha,base_row_json) VALUES(?,?,?,?,?)',(fk,utcnow(),int(q.id),q.snapshot_sha,json.dumps(row,default=str)))
             for _,r in grp.iterrows():update_state(r,states)
         pc.commit()
     if not new:
@@ -185,12 +258,38 @@ def finalize():
         p=ROOT/s
         if not p.exists():p=ROOT/'scripts'/s
         subprocess.run([str(ROOT/'venv/bin/python'),str(p)],cwd=ROOT,check=True)
-    print(json.dumps({'finalize':'ok','new_rows':len(nd),'base_rows':len(combined),'v6':str(ROOT/'feature_expansion/prefight_favorite_features_v6.csv')}));return len(nd)
+    obs=persist_postfight_observations(nd['prospective_fight_key'].astype(str).tolist())
+    print(json.dumps({'finalize':'ok','new_rows':len(nd),'base_rows':len(combined),'postfight_observations':obs,'v6':str(ROOT/'feature_expansion/prefight_favorite_features_v6.csv')}));return len(nd)
+
+def reconcile():
+    lock=STATE/'postevent_reconcile.lock'
+    try:
+        fd=lock.open('x');fd.write(utcnow());fd.close()
+    except FileExistsError:
+        try:
+            age=(datetime.now(timezone.utc)-datetime.fromtimestamp(lock.stat().st_mtime,timezone.utc)).total_seconds()
+            if age>7200:lock.unlink();return reconcile()
+        except Exception:pass
+        print(json.dumps({'reconcile':'skipped','reason':'lock_busy'}));return 0
+    try:
+        py=str(ROOT/'venv/bin/python')
+        ar=ROOT/'ufc_autoresearch_runner.py'
+        if not ar.exists():ar=ROOT/'ufc_autoresearch.py'
+        imm=ROOT/'ufc_immutable_warehouse.py'
+        if ar.exists():subprocess.run([py,str(ar),'snapshot'],cwd=ROOT,check=True)
+        if imm.exists():subprocess.run([py,str(imm)],cwd=ROOT,check=True)
+        capture()
+        n=finalize()
+        print(json.dumps({'reconcile':'ok','new_rows':n,'at':utcnow()}))
+        return n
+    finally:
+        try:lock.unlink()
+        except FileNotFoundError:pass
 
 def status():
     with connect() as c:
-        print(json.dumps({'snapshots':c.execute('select count(*) from feed_snapshots').fetchone()[0],'quotes':c.execute('select count(*) from bout_quotes').fetchone()[0],'finalized':c.execute('select count(*) from finalized_bouts').fetchone()[0],'base_rows':len(pd.read_csv(BASE,low_memory=False)) if BASE.exists() else 0,'v6_rows':len(pd.read_csv(ROOT/'feature_expansion/prefight_favorite_features_v6.csv',low_memory=False)) if (ROOT/'feature_expansion/prefight_favorite_features_v6.csv').exists() else 0},indent=2))
+        print(json.dumps({'snapshots':c.execute('select count(*) from feed_snapshots').fetchone()[0],'quotes':c.execute('select count(*) from bout_quotes').fetchone()[0],'finalized':c.execute('select count(*) from finalized_bouts').fetchone()[0],'postfight_observations':c.execute('select count(*) from postfight_research_observations').fetchone()[0],'base_rows':len(pd.read_csv(BASE,low_memory=False)) if BASE.exists() else 0,'v6_rows':len(pd.read_csv(ROOT/'feature_expansion/prefight_favorite_features_v6.csv',low_memory=False)) if (ROOT/'feature_expansion/prefight_favorite_features_v6.csv').exists() else 0},indent=2))
 
 def main():
-    ap=argparse.ArgumentParser();ap.add_argument('mode',choices=['capture','finalize','status']);a=ap.parse_args();{'capture':capture,'finalize':finalize,'status':status}[a.mode]()
+    ap=argparse.ArgumentParser();ap.add_argument('mode',choices=['capture','finalize','reconcile','status']);a=ap.parse_args();{'capture':capture,'finalize':finalize,'reconcile':reconcile,'status':status}[a.mode]()
 if __name__=='__main__':main()
