@@ -15,7 +15,7 @@ jobs:
         run: |
           set -euo pipefail
           K=/home/appwiza-runner/.ssh/appwiza_vps
-          SRC=https://raw.githubusercontent.com/maxxw71/ufc-feed/4755d9f4dfcdd1e3e977266dcac1ac573d81cfad/scripts/ufc_prospective_pipeline.py
+          SRC=https://raw.githubusercontent.com/maxxw71/ufc-feed/main/scripts/ufc_prospective_pipeline.py
           PATCH=https://raw.githubusercontent.com/maxxw71/ufc-feed/5e00048e7453480fc57ec3957ae862edfc1dd756/scripts/patch_ufc_prospective_market.py
           T=$(mktemp); P=$(mktemp)
           curl -fsSL "$SRC" -o "$T"
@@ -40,6 +40,9 @@ jobs:
           CRON_TZ=America/New_York
           10 0,6,12,18 * * * cd /home/anestishkurti92/ufc-predictor-v1 && timeout 10m nice -n 10 venv/bin/python ufc_prospective_pipeline.py capture >> auto_research/prospective.log 2>&1
           40 0,6,12,18 * * * cd /home/anestishkurti92/ufc-predictor-v1 && timeout 45m nice -n 12 venv/bin/python ufc_prospective_pipeline.py finalize >> auto_research/prospective.log 2>&1
+          # Fight-weekend reconciliation: refresh UFCStats/immutable warehouse hourly so completed cards
+          # do not wait up to six hours to become finalized prospective research observations.
+          50 * * * 6,0 cd /home/anestishkurti92/ufc-predictor-v1 && timeout 50m nice -n 12 venv/bin/python ufc_prospective_pipeline.py reconcile >> auto_research/prospective.log 2>&1
           CRON
           crontab "$CR"
           rm -f "$CR"
@@ -56,4 +59,11 @@ jobs:
           PY
           echo '=== STATUS ==='
           venv/bin/python ufc_prospective_pipeline.py status
+          echo '=== POSTFIGHT RESEARCH WAREHOUSE ==='
+          venv/bin/python - <<'PY'
+          import sqlite3
+          c=sqlite3.connect('auto_research/state/prospective_ufc.sqlite3')
+          print('postfight_observations',c.execute('select count(*) from postfight_research_observations').fetchone()[0])
+          print('recent_method_labeled',c.execute("select event_date,favorite,opponent,method_ids_json,method_families_json,won from postfight_research_observations where method_count>0 order by event_date desc limit 8").fetchall())
+          PY
           EOF
