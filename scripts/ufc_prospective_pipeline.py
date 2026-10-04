@@ -273,11 +273,8 @@ def reconcile():
         print(json.dumps({'reconcile':'skipped','reason':'lock_busy'}));return 0
     try:
         py=str(ROOT/'venv/bin/python')
-        ar=ROOT/'ufc_autoresearch_runner.py'
-        if not ar.exists():ar=ROOT/'ufc_autoresearch.py'
         live=ROOT/'ufcstats_live_refresh.py'
         imm=ROOT/'ufc_immutable_warehouse.py'
-        if ar.exists():subprocess.run([py,str(ar),'snapshot'],cwd=ROOT,check=True)
         if live.exists():
             try:subprocess.run([py,str(live)],cwd=ROOT,check=True)
             except subprocess.CalledProcessError as exc:
