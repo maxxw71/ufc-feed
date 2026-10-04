@@ -1,11 +1,17 @@
 {
-  "built_at": "2026-10-03T22:26:45.767877+00:00",
+  "built_at": "2026-10-04T01:54:42.316824+00:00",
   "status": "FAIL",
   "hard_failures": [
     {
+      "name": "UFC canonical_state_ids_exact",
+      "ok": false,
+      "detail": "canonical=['UFC:ufc-332:andreypulyaev:damianpinas', 'UFC:ufc-332:deivesonfigueiredo:paytontalbott', 'UFC:ufc-fight-night-october-10-2026:brendsonribeiro:felipefranco'] state=['UFC:ufc-fight-night-october-10-2026:brendsonribeiro:felipefranco']",
+      "hard": true
+    },
+    {
       "name": "UFC canonical_future_tracker_exact",
       "ok": false,
-      "detail": "canonical=['UFC:ufc-332:andreypulyaev:damianpinas', 'UFC:ufc-332:deivesonfigueiredo:paytontalbott', 'UFC:ufc-fight-night-october-10-2026:brendsonribeiro:felipefranco'] tracker=['UFC:ufc-332:andreypulyaev:damianpinas', 'UFC:ufc-332:deivesonfigueiredo:paytontalbott', 'UFC:ufc-fight-night-october-10-2026:brendsonribeiro:felipefranco', 'UFC:ufc-fight-night-october-10-2026:geraldmeerschaert:juliuswalker']",
+      "detail": "canonical=['UFC:ufc-332:andreypulyaev:damianpinas', 'UFC:ufc-332:deivesonfigueiredo:paytontalbott', 'UFC:ufc-fight-night-october-10-2026:brendsonribeiro:felipefranco'] tracker=['UFC:ufc-fight-night-october-10-2026:brendsonribeiro:felipefranco', 'UFC:ufc-fight-night-october-10-2026:geraldmeerschaert:juliuswalker']",
       "hard": true
     }
   ],
@@ -85,20 +91,8 @@
     },
     {
       "name": "UFC canonical_state_ids_exact",
-      "ok": true,
-      "detail": "canonical=['UFC:ufc-332:andreypulyaev:damianpinas', 'UFC:ufc-332:deivesonfigueiredo:paytontalbott', 'UFC:ufc-fight-night-october-10-2026:brendsonribeiro:felipefranco'] state=['UFC:ufc-332:andreypulyaev:damianpinas', 'UFC:ufc-332:deivesonfigueiredo:paytontalbott', 'UFC:ufc-fight-night-october-10-2026:brendsonribeiro:felipefranco']",
-      "hard": true
-    },
-    {
-      "name": "UFC methods_exact:UFC:ufc-332:andreypulyaev:damianpinas",
-      "ok": true,
-      "detail": "canonical=['U1'] state=['U1']",
-      "hard": true
-    },
-    {
-      "name": "UFC methods_exact:UFC:ufc-332:deivesonfigueiredo:paytontalbott",
-      "ok": true,
-      "detail": "canonical=['U1', 'U7', 'U8'] state=['U1', 'U7', 'U8']",
+      "ok": false,
+      "detail": "canonical=['UFC:ufc-332:andreypulyaev:damianpinas', 'UFC:ufc-332:deivesonfigueiredo:paytontalbott', 'UFC:ufc-fight-night-october-10-2026:brendsonribeiro:felipefranco'] state=['UFC:ufc-fight-night-october-10-2026:brendsonribeiro:felipefranco']",
       "hard": true
     },
     {
@@ -110,7 +104,7 @@
     {
       "name": "UFC canonical_future_tracker_exact",
       "ok": false,
-      "detail": "canonical=['UFC:ufc-332:andreypulyaev:damianpinas', 'UFC:ufc-332:deivesonfigueiredo:paytontalbott', 'UFC:ufc-fight-night-october-10-2026:brendsonribeiro:felipefranco'] tracker=['UFC:ufc-332:andreypulyaev:damianpinas', 'UFC:ufc-332:deivesonfigueiredo:paytontalbott', 'UFC:ufc-fight-night-october-10-2026:brendsonribeiro:felipefranco', 'UFC:ufc-fight-night-october-10-2026:geraldmeerschaert:juliuswalker']",
+      "detail": "canonical=['UFC:ufc-332:andreypulyaev:damianpinas', 'UFC:ufc-332:deivesonfigueiredo:paytontalbott', 'UFC:ufc-fight-night-october-10-2026:brendsonribeiro:felipefranco'] tracker=['UFC:ufc-fight-night-october-10-2026:brendsonribeiro:felipefranco', 'UFC:ufc-fight-night-october-10-2026:geraldmeerschaert:juliuswalker']",
       "hard": true
     },
     {
@@ -224,7 +218,7 @@
       "ufc"
     ],
     "future_pending_by_sport": {
-      "UFC": 4
+      "UFC": 2
     }
   },
   "contract": {
