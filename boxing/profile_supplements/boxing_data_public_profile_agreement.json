@@ -1,0 +1,886 @@
+{
+  "generated_at": "2026-10-04T12:04:15.570261+00:00",
+  "summary": {
+    "reach_cm": {
+      "comparisons": 98,
+      "agreements": 82,
+      "conflicts": 16,
+      "agreement_pct": 83.67,
+      "median_abs_diff_cm": 0.0,
+      "max_abs_diff_cm": 18.0
+    },
+    "stance": {
+      "comparisons": 149,
+      "agreements": 138,
+      "conflicts": 11,
+      "agreement_pct": 92.62,
+      "median_abs_diff_cm": null,
+      "max_abs_diff_cm": null
+    },
+    "height_cm": {
+      "comparisons": 112,
+      "agreements": 89,
+      "conflicts": 23,
+      "agreement_pct": 79.46,
+      "median_abs_diff_cm": 0.0,
+      "max_abs_diff_cm": 17.0
+    },
+    "nationality": {
+      "comparisons": 56,
+      "agreements": 12,
+      "conflicts": 44,
+      "agreement_pct": 21.43,
+      "median_abs_diff_cm": null,
+      "max_abs_diff_cm": null
+    }
+  },
+  "conflicts": [
+    {
+      "fighter": "Carlos Adames",
+      "field": "nationality",
+      "candidate": "Dominican Republic",
+      "strict": "Dominican [ 1 ]",
+      "difference": null,
+      "agree": false,
+      "source_url": "https://boxing-data.com/blog/adames-vs-williams-2-fight-preview-prediction-analysis"
+    },
+    {
+      "fighter": "Austin Williams",
+      "field": "height_cm",
+      "candidate": "180.0",
+      "strict": 183.0,
+      "difference": 3.0,
+      "agree": false,
+      "source_url": "https://boxing-data.com/blog/adames-vs-williams-2-fight-preview-prediction-analysis"
+    },
+    {
+      "fighter": "Austin Williams",
+      "field": "stance",
+      "candidate": "Southpaw",
+      "strict": "orthodox",
+      "difference": null,
+      "agree": false,
+      "source_url": "https://boxing-data.com/blog/adames-vs-williams-2-fight-preview-prediction-analysis"
+    },
+    {
+      "fighter": "Jack Martin",
+      "field": "stance",
+      "candidate": "Southpaw",
+      "strict": "orthodox",
+      "difference": null,
+      "agree": false,
+      "source_url": "https://boxing-data.com/blog/ajagba-vs-martin-fight-preview-prediction-analysis"
+    },
+    {
+      "fighter": "Mauricio Lara",
+      "field": "height_cm",
+      "candidate": "175.0",
+      "strict": 170.0,
+      "difference": 5.0,
+      "agree": false,
+      "source_url": "https://boxing-data.com/blog/alimkhanuly-vs-lara-fight-preview-prediction"
+    },
+    {
+      "fighter": "Mauricio Lara",
+      "field": "reach_cm",
+      "candidate": "188.0",
+      "strict": 170.0,
+      "difference": 18.0,
+      "agree": false,
+      "source_url": "https://boxing-data.com/blog/alimkhanuly-vs-lara-fight-preview-prediction"
+    },
+    {
+      "fighter": "Arslanbek Makhmudov",
+      "field": "reach_cm",
+      "candidate": "197.0",
+      "strict": 194.0,
+      "difference": 3.0,
+      "agree": false,
+      "source_url": "https://boxing-data.com/blog/allen-vs-makhmudov-fight-preview-prediction"
+    },
+    {
+      "fighter": "Anthony Olascuaga",
+      "field": "nationality",
+      "candidate": "ðºð¸ USA",
+      "strict": "American",
+      "difference": null,
+      "agree": false,
+      "source_url": "https://boxing-data.com/blog/anthony-olascuaga-vs-jukiya-iimura-wbo-flyweight-review"
+    },
+    {
+      "fighter": "Anthony Olascuaga",
+      "field": "height_cm",
+      "candidate": "163.0",
+      "strict": 166.0,
+      "difference": 3.0,
+      "agree": false,
+      "source_url": "https://boxing-data.com/blog/anthony-olascuaga-vs-jukiya-iimura-wbo-flyweight-review"
+    },
+    {
+      "fighter": "Conor Wallace",
+      "field": "stance",
+      "candidate": "12 rounds",
+      "strict": "southpaw",
+      "difference": null,
+      "agree": false,
+      "source_url": "https://boxing-data.com/blog/ben-whittaker-vs-conor-wallace-fight-preview-prediction-analysis"
+    },
+    {
+      "fighter": "Conor Wallace",
+      "field": "nationality",
+      "candidate": "Northern Ireland (based in Brisbane, Australia)",
+      "strict": "Australia",
+      "difference": null,
+      "agree": false,
+      "source_url": "https://boxing-data.com/blog/ben-whittaker-vs-conor-wallace-fight-preview-prediction-analysis"
+    },
+    {
+      "fighter": "Conor Wallace",
+      "field": "height_cm",
+      "candidate": "175.0",
+      "strict": 192.0,
+      "difference": 17.0,
+      "agree": false,
+      "source_url": "https://boxing-data.com/blog/ben-whittaker-vs-conor-wallace-fight-results-review-analysis"
+    },
+    {
+      "fighter": "Denzel Bentley",
+      "field": "nationality",
+      "candidate": "England",
+      "strict": "British",
+      "difference": null,
+      "agree": false,
+      "source_url": "https://boxing-data.com/blog/bentley-vs-saavedra-fight-preview-prediction-analysis"
+    },
+    {
+      "fighter": "Bilal Fawaz",
+      "field": "stance",
+      "candidate": "12 rounds",
+      "strict": "orthodox",
+      "difference": null,
+      "agree": false,
+      "source_url": "https://boxing-data.com/blog/bilal-fawaz-vs-eithan-james-fight-preview-prediction-analysis"
+    },
+    {
+      "fighter": "Brad Pauls",
+      "field": "nationality",
+      "candidate": "England",
+      "strict": "United Kingdom",
+      "difference": null,
+      "agree": false,
+      "source_url": "https://boxing-data.com/blog/brad-pauls-vs-bradley-goldsmith-fight-preview-prediction-analysis"
+    },
+    {
+      "fighter": "Frazer Clarke",
+      "field": "nationality",
+      "candidate": "United Kingdom",
+      "strict": "British",
+      "difference": null,
+      "agree": false,
+      "source_url": "https://boxing-data.com/blog/clarke-vs-tshikeva-fight-preview"
+    },
+    {
+      "fighter": "Jeamie Tshikeva",
+      "field": "nationality",
+      "candidate": "United Kingdom",
+      "strict": "English",
+      "difference": null,
+      "agree": false,
+      "source_url": "https://boxing-data.com/blog/clarke-vs-tshikeva-fight-preview"
+    },
+    {
+      "fighter": "Ben Vaughan",
+      "field": "nationality",
+      "candidate": "England",
+      "strict": "United Kingdom",
+      "difference": null,
+      "agree": false,
+      "source_url": "https://boxing-data.com/blog/constantin-ursu-vs-ben-vaughan-fight-preview-prediction-analysis"
+    },
+    {
+      "fighter": "Daniel Dubois",
+      "field": "nationality",
+      "candidate": "English",
+      "strict": "United Kingdom",
+      "difference": null,
+      "agree": false,
+      "source_url": "https://boxing-data.com/blog/daniel-dubois-vs-fabio-wardley-fight-review"
+    },
+    {
+      "fighter": "Fabio Wardley",
+      "field": "nationality",
+      "candidate": "English",
+      "strict": "British",
+      "difference": null,
+      "agree": false,
+      "source_url": "https://boxing-data.com/blog/daniel-dubois-vs-fabio-wardley-fight-review"
+    },
+    {
+      "fighter": "Delante Johnson",
+      "field": "height_cm",
+      "candidate": "180.0",
+      "strict": 178.0,
+      "difference": 2.0,
+      "agree": false,
+      "source_url": "https://boxing-data.com/blog/delante-johnson-vs-christopher-guerrero-fight-preview-prediction-analysis"
+    },
+    {
+      "fighter": "Arslanbek Makhmudov",
+      "field": "reach_cm",
+      "candidate": "197.0",
+      "strict": 194.0,
+      "difference": 3.0,
+      "agree": false,
+      "source_url": "https://boxing-data.com/blog/fury-vs-makhmudov-fight-preview-prediction-analysis"
+    },
+    {
+      "fighter": "Galal Yafai",
+      "field": "height_cm",
+      "candidate": "157.0",
+      "strict": 163.0,
+      "difference": 6.0,
+      "agree": false,
+      "source_url": "https://boxing-data.com/blog/galal-yafai-vs-rodriguez-jr"
+    },
+    {
+      "fighter": "Elijah Garcia",
+      "field": "reach_cm",
+      "candidate": "183.0",
+      "strict": 180.0,
+      "difference": 3.0,
+      "agree": false,
+      "source_url": "https://boxing-data.com/blog/garcia-vs-newman-fight-preview-prediction-analysis"
+    },
+    {
+      "fighter": "Elijah Garcia",
+      "field": "stance",
+      "candidate": "Orthodox",
+      "strict": "southpaw",
+      "difference": null,
+      "agree": false,
+      "source_url": "https://boxing-data.com/blog/garcia-vs-newman-fight-review"
+    },
+    {
+      "fighter": "Hamzah Sheeraz",
+      "field": "nationality",
+      "candidate": "English",
+      "strict": "United Kingdom",
+      "difference": null,
+      "agree": false,
+      "source_url": "https://boxing-data.com/blog/hamzah-sheeraz-vs-alem-begic-fight-preview-prediction-analysis"
+    },
+    {
+      "fighter": "Hamzah Sheeraz",
+      "field": "height_cm",
+      "candidate": "185.0",
+      "strict": 191.0,
+      "difference": 6.0,
+      "agree": false,
+      "source_url": "https://boxing-data.com/blog/hamzah-sheeraz-vs-alem-begic-fight-preview-prediction-analysis"
+    },
+    {
+      "fighter": "Hamzah Sheeraz",
+      "field": "nationality",
+      "candidate": "German",
+      "strict": "United Kingdom",
+      "difference": null,
+      "agree": false,
+      "source_url": "https://boxing-data.com/blog/hamzah-sheeraz-vs-alem-begic-fight-preview-prediction-analysis"
+    },
+    {
+      "fighter": "Terrell Gausha",
+      "field": "reach_cm",
+      "candidate": "183.0",
+      "strict": 187.0,
+      "difference": 4.0,
+      "agree": false,
+      "source_url": "https://boxing-data.com/blog/hernandez-vs-gausha-fight-preview-prediction-analysis"
+    },
+    {
+      "fighter": "Vladimir Hernandez",
+      "field": "nationality",
+      "candidate": "Cuba",
+      "strict": "Mexico",
+      "difference": null,
+      "agree": false,
+      "source_url": "https://boxing-data.com/blog/hernandez-vs-gausha-fight-review"
+    },
+    {
+      "fighter": "Terrell Gausha",
+      "field": "nationality",
+      "candidate": "USA",
+      "strict": "American",
+      "difference": null,
+      "agree": false,
+      "source_url": "https://boxing-data.com/blog/hernandez-vs-gausha-fight-review"
+    },
+    {
+      "fighter": "Gurgen Hovhannisyan",
+      "field": "nationality",
+      "candidate": "Armenia",
+      "strict": "Armenian",
+      "difference": null,
+      "agree": false,
+      "source_url": "https://boxing-data.com/blog/hovhannisyan-vs-navarro-fight-review"
+    },
+    {
+      "fighter": "Moses Itauma",
+      "field": "height_cm",
+      "candidate": "198.0",
+      "strict": 194.0,
+      "difference": 4.0,
+      "agree": false,
+      "source_url": "https://boxing-data.com/blog/itauma-vs-franklin-jr-fight-preview-prediction-analysis"
+    },
+    {
+      "fighter": "Cheavon Clarke",
+      "field": "stance",
+      "candidate": "Orthodox",
+      "strict": "southpaw",
+      "difference": null,
+      "agree": false,
+      "source_url": "https://boxing-data.com/blog/jack-massey-vs-cheavon-clarke-fight-preview-prediction-analysis"
+    },
+    {
+      "fighter": "Jai Opetaia",
+      "field": "height_cm",
+      "candidate": "191.0",
+      "strict": 188.0,
+      "difference": 3.0,
+      "agree": false,
+      "source_url": "https://boxing-data.com/blog/jai-opetaia-vs-claudio-squeo-preview"
+    },
+    {
+      "fighter": "Jai Opetaia",
+      "field": "nationality",
+      "candidate": "Australian",
+      "strict": "Australia",
+      "difference": null,
+      "agree": false,
+      "source_url": "https://boxing-data.com/blog/jai-opetaia-vs-noel-mikaelyan-fight-preview-prediction-analysis"
+    },
+    {
+      "fighter": "Jai Opetaia",
+      "field": "height_cm",
+      "candidate": "191.0",
+      "strict": 188.0,
+      "difference": 3.0,
+      "agree": false,
+      "source_url": "https://boxing-data.com/blog/jai-opetaia-vs-noel-mikaelyan-fight-preview-prediction-analysis"
+    },
+    {
+      "fighter": "Jake Paul",
+      "field": "nationality",
+      "candidate": "United States",
+      "strict": "USA",
+      "difference": null,
+      "agree": false,
+      "source_url": "https://boxing-data.com/blog/jake-paul-vs-gervonta-davis-preview"
+    },
+    {
+      "fighter": "Amanda Serrano",
+      "field": "height_cm",
+      "candidate": "166.0",
+      "strict": 168.0,
+      "difference": 2.0,
+      "agree": false,
+      "source_url": "https://boxing-data.com/blog/katie-taylor-vs-amanda-serrano-preview"
+    },
+    {
+      "fighter": "Amanda Serrano",
+      "field": "stance",
+      "candidate": "Orthodox",
+      "strict": "southpaw",
+      "difference": null,
+      "agree": false,
+      "source_url": "https://boxing-data.com/blog/katie-taylor-vs-amanda-serrano-preview"
+    },
+    {
+      "fighter": "George Liddard",
+      "field": "nationality",
+      "candidate": "England",
+      "strict": "English",
+      "difference": null,
+      "agree": false,
+      "source_url": "https://boxing-data.com/blog/liddard-vs-denny-fight-preview-prediction-analysis"
+    },
+    {
+      "fighter": "Tyler Denny",
+      "field": "nationality",
+      "candidate": "England",
+      "strict": "United Kingdom",
+      "difference": null,
+      "agree": false,
+      "source_url": "https://boxing-data.com/blog/liddard-vs-denny-fight-preview-prediction-analysis"
+    },
+    {
+      "fighter": "Lyndon Arthur",
+      "field": "nationality",
+      "candidate": "England",
+      "strict": "United Kingdom",
+      "difference": null,
+      "agree": false,
+      "source_url": "https://boxing-data.com/blog/lyndon-arthur-vs-lewis-edmondson-fight-preview-prediction-analysis"
+    },
+    {
+      "fighter": "Lewis Edmondson",
+      "field": "nationality",
+      "candidate": "England",
+      "strict": "English",
+      "difference": null,
+      "agree": false,
+      "source_url": "https://boxing-data.com/blog/lyndon-arthur-vs-lewis-edmondson-fight-preview-prediction-analysis"
+    },
+    {
+      "fighter": "Andres Cortes",
+      "field": "nationality",
+      "candidate": "American",
+      "strict": "USA",
+      "difference": null,
+      "agree": false,
+      "source_url": "https://boxing-data.com/blog/mark-magsayo-vs-andres-cortes-fight-preview-prediction-analysis"
+    },
+    {
+      "fighter": "Michael Conlan",
+      "field": "stance",
+      "candidate": "Orthodox",
+      "strict": "southpaw",
+      "difference": null,
+      "agree": false,
+      "source_url": "https://boxing-data.com/blog/michael-conlan-vs-kevin-walsh-fight-preview-prediction-analysis"
+    },
+    {
+      "fighter": "Jarrell Miller",
+      "field": "nationality",
+      "candidate": "American",
+      "strict": "USA",
+      "difference": null,
+      "agree": false,
+      "source_url": "https://boxing-data.com/blog/miller-vs-pero-fight-preview-prediction-analysis"
+    },
+    {
+      "fighter": "Jarrell Miller",
+      "field": "nationality",
+      "candidate": "Cuban",
+      "strict": "USA",
+      "difference": null,
+      "agree": false,
+      "source_url": "https://boxing-data.com/blog/miller-vs-pero-fight-preview-prediction-analysis"
+    },
+    {
+      "fighter": "Jarrell Miller",
+      "field": "reach_cm",
+      "candidate": "201.0",
+      "strict": 198.0,
+      "difference": 3.0,
+      "agree": false,
+      "source_url": "https://boxing-data.com/blog/miller-vs-pero-fight-preview-prediction-analysis"
+    },
+    {
+      "fighter": "Jarrell Miller",
+      "field": "stance",
+      "candidate": "Southpaw",
+      "strict": "orthodox",
+      "difference": null,
+      "agree": false,
+      "source_url": "https://boxing-data.com/blog/miller-vs-pero-fight-preview-prediction-analysis"
+    },
+    {
+      "fighter": "Mizuki Hiruta",
+      "field": "nationality",
+      "candidate": "Australian",
+      "strict": "Japanese",
+      "difference": null,
+      "agree": false,
+      "source_url": "https://boxing-data.com/blog/mizuki-hiruta-vs-mai-soliman-fight-preview-prediction-analysis"
+    },
+    {
+      "fighter": "Junto Nakatani",
+      "field": "height_cm",
+      "candidate": "170.0",
+      "strict": 175.0,
+      "difference": 5.0,
+      "agree": false,
+      "source_url": "https://boxing-data.com/blog/naoya-inoue-vs-junto-nakatani-fight-preview-prediction-analysis"
+    },
+    {
+      "fighter": "Naoya Inoue",
+      "field": "reach_cm",
+      "candidate": "173.0",
+      "strict": 171.0,
+      "difference": 2.0,
+      "agree": false,
+      "source_url": "https://boxing-data.com/blog/naoya-inoue-vs-junto-nakatani-fight-preview-prediction-analysis"
+    },
+    {
+      "fighter": "Junto Nakatani",
+      "field": "reach_cm",
+      "candidate": "170.0",
+      "strict": 174.0,
+      "difference": 4.0,
+      "agree": false,
+      "source_url": "https://boxing-data.com/blog/naoya-inoue-vs-junto-nakatani-fight-preview-prediction-analysis"
+    },
+    {
+      "fighter": "Oleksandr Usyk",
+      "field": "nationality",
+      "candidate": "Ukrainian",
+      "strict": "Ukraine",
+      "difference": null,
+      "agree": false,
+      "source_url": "https://boxing-data.com/blog/oleksandr-usyk-vs-rico-verhoeven-fight-preview-prediction-analysis"
+    },
+    {
+      "fighter": "Oleksandr Usyk",
+      "field": "height_cm",
+      "candidate": "196.0",
+      "strict": 191.0,
+      "difference": 5.0,
+      "agree": false,
+      "source_url": "https://boxing-data.com/blog/oleksandr-usyk-vs-rico-verhoeven-fight-preview-prediction-analysis"
+    },
+    {
+      "fighter": "Oleksandr Usyk",
+      "field": "stance",
+      "candidate": "Orthodox",
+      "strict": "southpaw",
+      "difference": null,
+      "agree": false,
+      "source_url": "https://boxing-data.com/blog/oleksandr-usyk-vs-rico-verhoeven-fight-preview-prediction-analysis"
+    },
+    {
+      "fighter": "Oleksandr Usyk",
+      "field": "nationality",
+      "candidate": "Dutch",
+      "strict": "Ukraine",
+      "difference": null,
+      "agree": false,
+      "source_url": "https://boxing-data.com/blog/oleksandr-usyk-vs-rico-verhoeven-fight-preview-prediction-analysis"
+    },
+    {
+      "fighter": "Oscar Collazo",
+      "field": "height_cm",
+      "candidate": "155.0",
+      "strict": 157.0,
+      "difference": 2.0,
+      "agree": false,
+      "source_url": "https://boxing-data.com/blog/oscar-collazo-vs-joey-canoy-fight-preview-prediction-analysis"
+    },
+    {
+      "fighter": "Oscar Collazo",
+      "field": "reach_cm",
+      "candidate": "159.0",
+      "strict": 155.0,
+      "difference": 4.0,
+      "agree": false,
+      "source_url": "https://boxing-data.com/blog/oscar-collazo-vs-joey-canoy-fight-preview-prediction-analysis"
+    },
+    {
+      "fighter": "Peter McGrail",
+      "field": "nationality",
+      "candidate": "English",
+      "strict": "United Kingdom",
+      "difference": null,
+      "agree": false,
+      "source_url": "https://boxing-data.com/blog/peter-mcgrail-vs-mansilla-fight-preview-prediction-analysis"
+    },
+    {
+      "fighter": "Peter McGrail",
+      "field": "nationality",
+      "candidate": "Argentine",
+      "strict": "United Kingdom",
+      "difference": null,
+      "agree": false,
+      "source_url": "https://boxing-data.com/blog/peter-mcgrail-vs-mansilla-fight-preview-prediction-analysis"
+    },
+    {
+      "fighter": "Riku Masuda",
+      "field": "nationality",
+      "candidate": "ð¯ðµ Japan",
+      "strict": "Japanese",
+      "difference": null,
+      "agree": false,
+      "source_url": "https://boxing-data.com/blog/riku-masuda-vs-nonito-donaire-bantamweight-review"
+    },
+    {
+      "fighter": "Nonito Donaire",
+      "field": "nationality",
+      "candidate": "ðµð­ Philippines",
+      "strict": "Philippines",
+      "difference": null,
+      "agree": false,
+      "source_url": "https://boxing-data.com/blog/riku-masuda-vs-nonito-donaire-bantamweight-review"
+    },
+    {
+      "fighter": "Nonito Donaire",
+      "field": "height_cm",
+      "candidate": "166.0",
+      "strict": 168.0,
+      "difference": 2.0,
+      "agree": false,
+      "source_url": "https://boxing-data.com/blog/riku-masuda-vs-nonito-donaire-bantamweight-review"
+    },
+    {
+      "fighter": "Riku Masuda",
+      "field": "reach_cm",
+      "candidate": "177.0",
+      "strict": 175.0,
+      "difference": 2.0,
+      "agree": false,
+      "source_url": "https://boxing-data.com/blog/riku-masuda-vs-nonito-donaire-bantamweight-review"
+    },
+    {
+      "fighter": "Viddal Riley",
+      "field": "nationality",
+      "candidate": "England",
+      "strict": "United Kingdom",
+      "difference": null,
+      "agree": false,
+      "source_url": "https://boxing-data.com/blog/riley-vs-masternak-fight-preview-prediction-analysis"
+    },
+    {
+      "fighter": "Mateusz Masternak",
+      "field": "nationality",
+      "candidate": "Poland",
+      "strict": "Polish",
+      "difference": null,
+      "agree": false,
+      "source_url": "https://boxing-data.com/blog/riley-vs-masternak-fight-preview-prediction-analysis"
+    },
+    {
+      "fighter": "Mateusz Masternak",
+      "field": "height_cm",
+      "candidate": "185.0",
+      "strict": 188.0,
+      "difference": 3.0,
+      "agree": false,
+      "source_url": "https://boxing-data.com/blog/riley-vs-masternak-fight-preview-prediction-analysis"
+    },
+    {
+      "fighter": "Mateusz Masternak",
+      "field": "reach_cm",
+      "candidate": "193.0",
+      "strict": 188.0,
+      "difference": 5.0,
+      "agree": false,
+      "source_url": "https://boxing-data.com/blog/riley-vs-masternak-fight-preview-prediction-analysis"
+    },
+    {
+      "fighter": "Gary Antuanne Russell",
+      "field": "nationality",
+      "candidate": "United States",
+      "strict": "USA",
+      "difference": null,
+      "agree": false,
+      "source_url": "https://boxing-data.com/blog/russell-vs-hiraoka-fight-preview-prediction-analysis"
+    },
+    {
+      "fighter": "Andy Hiraoka",
+      "field": "height_cm",
+      "candidate": "180.0",
+      "strict": 182.0,
+      "difference": 2.0,
+      "agree": false,
+      "source_url": "https://boxing-data.com/blog/russell-vs-hiraoka-fight-preview-prediction-analysis"
+    },
+    {
+      "fighter": "Gary Antuanne Russell",
+      "field": "reach_cm",
+      "candidate": "178.0",
+      "strict": 175.0,
+      "difference": 3.0,
+      "agree": false,
+      "source_url": "https://boxing-data.com/blog/russell-vs-hiraoka-fight-preview-prediction-analysis"
+    },
+    {
+      "fighter": "Conor Benn",
+      "field": "nationality",
+      "candidate": "English",
+      "strict": "United Kingdom",
+      "difference": null,
+      "agree": false,
+      "source_url": "https://boxing-data.com/blog/ryan-garcia-vs-conor-benn-fight-preview-prediction-analysis"
+    },
+    {
+      "fighter": "Conor Benn",
+      "field": "nationality",
+      "candidate": "England",
+      "strict": "United Kingdom",
+      "difference": null,
+      "agree": false,
+      "source_url": "https://boxing-data.com/blog/ryan-garcia-vs-conor-benn-fight-results-review-analysis"
+    },
+    {
+      "fighter": "Rolando Romero",
+      "field": "height_cm",
+      "candidate": "173.0",
+      "strict": 170.0,
+      "difference": 3.0,
+      "agree": false,
+      "source_url": "https://boxing-data.com/blog/ryan-garcia-vs-rolando-romero-preview"
+    },
+    {
+      "fighter": "Ryan Garner",
+      "field": "nationality",
+      "candidate": "England",
+      "strict": "English",
+      "difference": null,
+      "agree": false,
+      "source_url": "https://boxing-data.com/blog/ryan-garner-vs-michael-magnesi-fight-preview-prediction-analysis"
+    },
+    {
+      "fighter": "Ryosuke Nishida",
+      "field": "nationality",
+      "candidate": "Japan",
+      "strict": "Japanese",
+      "difference": null,
+      "agree": false,
+      "source_url": "https://boxing-data.com/blog/ryosuke-nishida-vs-sam-goodman-fight-preview-prediction-analysis"
+    },
+    {
+      "fighter": "Derrick Osaze",
+      "field": "nationality",
+      "candidate": "England",
+      "strict": "British",
+      "difference": null,
+      "agree": false,
+      "source_url": "https://boxing-data.com/blog/sains-vs-osaze-fight-preview-prediction-analysis"
+    },
+    {
+      "fighter": "Sam Noakes",
+      "field": "nationality",
+      "candidate": "England",
+      "strict": "English",
+      "difference": null,
+      "agree": false,
+      "source_url": "https://boxing-data.com/blog/sam-noakes-vs-denis-berinchyk-fight-preview-prediction-analysis"
+    },
+    {
+      "fighter": "Ricardo Rafael Sandoval",
+      "field": "height_cm",
+      "candidate": "173.0",
+      "strict": 168.0,
+      "difference": 5.0,
+      "agree": false,
+      "source_url": "https://boxing-data.com/blog/sandoval-vs-rodriguez-preview-prediction-analysis"
+    },
+    {
+      "fighter": "Ricardo Rafael Sandoval",
+      "field": "reach_cm",
+      "candidate": "180.0",
+      "strict": 170.0,
+      "difference": 10.0,
+      "agree": false,
+      "source_url": "https://boxing-data.com/blog/sandoval-vs-rodriguez-preview-prediction-analysis"
+    },
+    {
+      "fighter": "Shakur Stevenson",
+      "field": "height_cm",
+      "candidate": "170.0",
+      "strict": 173.0,
+      "difference": 3.0,
+      "agree": false,
+      "source_url": "https://boxing-data.com/blog/shakur-stevenson-vs-william-zepeda-preview"
+    },
+    {
+      "fighter": "Jorge Silva",
+      "field": "height_cm",
+      "candidate": "188.0",
+      "strict": 173.0,
+      "difference": 15.0,
+      "agree": false,
+      "source_url": "https://boxing-data.com/blog/silva-vs-woodley-fight-preview-prediction"
+    },
+    {
+      "fighter": "Jorge Silva",
+      "field": "reach_cm",
+      "candidate": "198.0",
+      "strict": 183.0,
+      "difference": 15.0,
+      "agree": false,
+      "source_url": "https://boxing-data.com/blog/silva-vs-woodley-fight-preview-prediction"
+    },
+    {
+      "fighter": "Bakhodur Usmonov",
+      "field": "nationality",
+      "candidate": "Russian",
+      "strict": "Tajikistani",
+      "difference": null,
+      "agree": false,
+      "source_url": "https://boxing-data.com/blog/subkhankulov-vs-usmonov-fight-preview-prediction-analysis"
+    },
+    {
+      "fighter": "Bakhodur Usmonov",
+      "field": "stance",
+      "candidate": "Southpaw",
+      "strict": "orthodox",
+      "difference": null,
+      "agree": false,
+      "source_url": "https://boxing-data.com/blog/subkhankulov-vs-usmonov-fight-preview-prediction-analysis"
+    },
+    {
+      "fighter": "Bakhodur Usmonov",
+      "field": "nationality",
+      "candidate": "Tajik",
+      "strict": "Tajikistani",
+      "difference": null,
+      "agree": false,
+      "source_url": "https://boxing-data.com/blog/subkhankulov-vs-usmonov-fight-preview-prediction-analysis"
+    },
+    {
+      "fighter": "Kazuto Ioka",
+      "field": "reach_cm",
+      "candidate": "168.0",
+      "strict": 164.0,
+      "difference": 4.0,
+      "agree": false,
+      "source_url": "https://boxing-data.com/blog/takuma-inoue-vs-kazuto-ioka-fight-preview-prediction-analysis"
+    },
+    {
+      "fighter": "Yoenis Tellez",
+      "field": "reach_cm",
+      "candidate": "188.0",
+      "strict": 185.0,
+      "difference": 3.0,
+      "agree": false,
+      "source_url": "https://boxing-data.com/blog/tellez-vs-mendoza-fight-preview-prediction-analysis"
+    },
+    {
+      "fighter": "Michael Zerafa",
+      "field": "height_cm",
+      "candidate": "180.0",
+      "strict": 177.0,
+      "difference": 3.0,
+      "agree": false,
+      "source_url": "https://boxing-data.com/blog/tszyu-vs-zerafa-fight-preview-prediction"
+    },
+    {
+      "fighter": "Giorgio Visioli",
+      "field": "nationality",
+      "candidate": "England",
+      "strict": "English",
+      "difference": null,
+      "agree": false,
+      "source_url": "https://boxing-data.com/blog/visioli-vs-giles-fight-preview-prediction-analysis"
+    },
+    {
+      "fighter": "Giorgio Visioli",
+      "field": "height_cm",
+      "candidate": "170.0",
+      "strict": 173.0,
+      "difference": 3.0,
+      "agree": false,
+      "source_url": "https://boxing-data.com/blog/visioli-vs-giles-fight-preview-prediction-analysis"
+    },
+    {
+      "fighter": "Derek Chisora",
+      "field": "nationality",
+      "candidate": "England",
+      "strict": "United Kingdom",
+      "difference": null,
+      "agree": false,
+      "source_url": "https://boxing-data.com/blog/wilder-vs-chisora-fight-preview-prediction-analysis"
+    }
+  ],
+  "policy": "Physical conflicts do not overwrite strict values. They are queued for source review; nationality wording differences are not automatically errors."
+}
