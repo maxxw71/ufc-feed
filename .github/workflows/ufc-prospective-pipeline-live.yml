@@ -4,12 +4,13 @@ on:
     paths:
       - 'scripts/ufc_prospective_pipeline.py'
       - 'scripts/patch_ufc_prospective_market.py'
+      - 'scripts/ufcstats_live_refresh.py'
       - '.github/workflows/ufc-prospective-pipeline-live.yml'
   workflow_dispatch:
 jobs:
   deploy:
     runs-on: [self-hosted, appwiza]
-    timeout-minutes: 30
+    timeout-minutes: 45
     steps:
       - shell: bash
         run: |
@@ -17,18 +18,31 @@ jobs:
           K=/home/appwiza-runner/.ssh/appwiza_vps
           SRC=https://raw.githubusercontent.com/maxxw71/ufc-feed/main/scripts/ufc_prospective_pipeline.py
           PATCH=https://raw.githubusercontent.com/maxxw71/ufc-feed/5e00048e7453480fc57ec3957ae862edfc1dd756/scripts/patch_ufc_prospective_market.py
-          T=$(mktemp); P=$(mktemp)
+          REFRESH=https://raw.githubusercontent.com/maxxw71/ufc-feed/main/scripts/ufcstats_live_refresh.py
+          T=$(mktemp); P=$(mktemp); R=$(mktemp)
           curl -fsSL "$SRC" -o "$T"
           curl -fsSL "$PATCH" -o "$P"
+          curl -fsSL "$REFRESH" -o "$R"
           scp -i "$K" -o StrictHostKeyChecking=no "$T" anestishkurti92@127.0.0.1:/home/anestishkurti92/ufc-predictor-v1/ufc_prospective_pipeline.py
           scp -i "$K" -o StrictHostKeyChecking=no "$P" anestishkurti92@127.0.0.1:/home/anestishkurti92/ufc-predictor-v1/patch_ufc_prospective_market.py
-          rm -f "$T" "$P"
+          scp -i "$K" -o StrictHostKeyChecking=no "$R" anestishkurti92@127.0.0.1:/home/anestishkurti92/ufc-predictor-v1/ufcstats_live_refresh.py
+          rm -f "$T" "$P" "$R"
           ssh -i "$K" -o StrictHostKeyChecking=no anestishkurti92@127.0.0.1 'bash -s' <<'EOF'
           set -euo pipefail
           cd /home/anestishkurti92/ufc-predictor-v1
-          chmod 700 ufc_prospective_pipeline.py
+          chmod 700 ufc_prospective_pipeline.py ufcstats_live_refresh.py
           venv/bin/python patch_ufc_prospective_market.py
-          venv/bin/python -m py_compile ufc_prospective_pipeline.py
+          venv/bin/python -m py_compile ufc_prospective_pipeline.py ufcstats_live_refresh.py
+
+          # Vendor the upstream mma-ai UFCStats scraper + proof-of-work middleware.
+          # Pin the upstream revision for reproducibility; our wrapper merges only new event/fighter URLs.
+          V=/home/anestishkurti92/ufc-predictor-v1/vendor_ufcstats
+          mkdir -p "$V/libs/scraping"
+          touch "$V/libs/__init__.py" "$V/libs/scraping/__init__.py"
+          curl -fsSL https://raw.githubusercontent.com/DanMcInerney/mma-ai/fa54a340b7dc59e4ab501d9bef50e5980525b77f/libs/scraping/ufcstats.py -o "$V/libs/scraping/ufcstats.py"
+          curl -fsSL https://raw.githubusercontent.com/DanMcInerney/mma-ai/fa54a340b7dc59e4ab501d9bef50e5980525b77f/libs/scraping/ufcstats_challenge.py -o "$V/libs/scraping/ufcstats_challenge.py"
+          venv/bin/python -c 'import scrapy' >/dev/null 2>&1 || venv/bin/pip install -q 'scrapy>=2.11,<3'
+          venv/bin/python -m py_compile "$V/libs/scraping/ufcstats.py" "$V/libs/scraping/ufcstats_challenge.py"
           for f in ufc_feature_expansion.py ufc_metadata_features.py ufc_weight_history_features.py ufc_context_crosscheck_features.py ufc_career_context_features.py; do
             test -f "$f" || { echo "MISSING $f"; exit 3; }
           done
@@ -48,8 +62,8 @@ jobs:
           rm -f "$CR"
           echo '=== PROSPECTIVE CRON ==='
           crontab -l | grep -E 'CRON_TZ|ufc_prospective_pipeline'
-          echo '=== FINALIZE INITIAL ==='
-          venv/bin/python ufc_prospective_pipeline.py finalize
+          echo '=== INITIAL POST-EVENT RECONCILIATION ==='
+          venv/bin/python ufc_prospective_pipeline.py reconcile
           echo '=== QUOTE READINESS ==='
           venv/bin/python - <<'PY'
           import sqlite3,pandas as pd
