@@ -35,11 +35,11 @@ jobs:
           python - <<'PY'
           import json
           p=json.load(open('crypto/live/smoke_signals.json'))
-          assert len(p['methods'])==4
+          assert len(p['methods'])==6
           live={m['id'] for m in p['methods'] if m.get('status')=='LIVE'}
           shadow={m['id'] for m in p['methods'] if m.get('status')=='SHADOW_ONLY'}
           assert live=={'C1','C2','C3','C3F'}, live
-          assert shadow==set(), shadow
+          assert shadow=={'C4','C2D'}, shadow
           assert 'shadow_signals' in p
           assert p['coverage']['ok']>0
           print('signals',len(p['signals']),'shadow_signals',len(p['shadow_signals']),'coverage',p['coverage'])
