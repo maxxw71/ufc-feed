@@ -94,6 +94,21 @@ out={
     'source_rows_required_for_phase2':False,
     'source_rows_note':'Compact public research DB may omit source_rows; Phase 2 retains supplemental quote links and skips only raw-source price rematching.'
   },
+  'research_lanes':{
+    'BROAD':{
+      'purpose':'Large-sample method discovery using career, opponent, profile, ranking, contextual and verified-market features without requiring punch history.',
+      'status':'ACTIVE_PRIMARY_RESEARCH_LANE',
+      'punch_data_required':False,
+      'promotion_policy':'research/shadow first; prospective verified-price validation required before live promotion'
+    },
+    'DEEP_STATS':{
+      'purpose':'High-information punch-performance research using verified pre-fight fight-level/round-level punch history.',
+      'status':'ACTIVE_DATA_EXPANSION_AND_RESEARCH_LANE',
+      'punch_data_required':True,
+      'minimum_depth_goal':'prefer >=3 prior verified punch fights per fighter snapshot; lesser depth may be analyzed separately but must be labeled',
+      'promotion_policy':'separate from BROAD; no live promotion until source accuracy, point-in-time depth and forward validation are adequate'
+    }
+  },
   'research_universe':{
     'fighter_bout_rows':cov.get('rows'),
     'strict_profile_fighters':fighters or None,
