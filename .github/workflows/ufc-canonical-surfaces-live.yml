@@ -4,6 +4,7 @@ on:
     branches: [main]
     paths:
       - 'scripts/patch_ufc_canonical_surfaces.py'
+      - 'scripts/ufc_sync_tracker_canonical.py'
       - '.github/workflows/ufc-canonical-surfaces-live.yml'
   workflow_dispatch:
 permissions:
@@ -22,6 +23,7 @@ jobs:
           KEY=/home/appwiza-runner/.ssh/appwiza_vps
           HOST=anestishkurti92@127.0.0.1
           scp -i "$KEY" -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=accept-new             scripts/patch_ufc_canonical_surfaces.py "$HOST":/tmp/patch_ufc_canonical_surfaces.py
+          scp -i "$KEY" -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=accept-new             scripts/ufc_sync_tracker_canonical.py "$HOST":/tmp/ufc_sync_tracker_canonical.py
 
           ssh -i "$KEY" -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=accept-new "$HOST" 'bash -s' <<'EOF'
           set -Eeuo pipefail
@@ -117,7 +119,15 @@ jobs:
           if missing:
               raise RuntimeError('Canonical current selections missing from tracker history: '+repr(missing))
           db.commit()
+          db.close()
           print('[80%] tracker label corrections',corrected)
+
+          # Synchronize current approval non-destructively: pending future tracker rows
+          # that are no longer canonical are marked withdrawn in payload, never deleted.
+          import runpy
+          runpy.run_path('/tmp/ufc_sync_tracker_canonical.py',run_name='__main__')
+          db=sqlite3.connect(dbp);db.row_factory=sqlite3.Row
+          print('[85%] tracker current-approval synchronization PASS')
 
           # Final four-way verification: canonical snapshot, public state, preview picks, pending tracker.
           d=json.loads(Path('/srv/appwiza-sports/state/ufc.json').read_text())
@@ -132,8 +142,13 @@ jobs:
           assert public==canon,(public,canon)
 
           pending={}
-          for r in db.execute("select key,methods from bets where sport='UFC' and result='pending'"):
-              if r['key'] in canon:pending[r['key']]=sorted(json.loads(r['methods'] or '[]'),key=w._ufc_method_sort)
+          for r in db.execute("select key,methods,start,payload from bets where sport='UFC' and result='pending'"):
+              try: st=datetime.fromisoformat(str(r['start']).replace('Z','+00:00')).astimezone(timezone.utc)
+              except Exception: continue
+              try: pobj=json.loads(r['payload'] or '{}')
+              except Exception: pobj={}
+              if st<=nowdt or pobj.get('withdrawn'):continue
+              pending[r['key']]=sorted(json.loads(r['methods'] or '[]'),key=w._ufc_method_sort)
           assert pending==canon,(pending,canon)
 
           snap=json.loads(Path('canonical_selections.json').read_text())
@@ -144,6 +159,7 @@ jobs:
           PY
 
           systemctl is-active ufc-model-watcher.timer
+          rm -f /tmp/ufc_sync_tracker_canonical.py /tmp/patch_ufc_canonical_surfaces.py
           grep -q 'UFC_CANONICAL_SURFACE_V1' "$W"
           echo '[100%] UFC CANONICAL WEBSITE / EMAIL / TRACKER BOUNDARY ACTIVE'
           echo 'No test email was sent.'
