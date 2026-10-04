@@ -1,0 +1,116 @@
+{
+  "C4_candidate": {
+    "name": "RSI Shock vs 3-Bar RSI Mean",
+    "mechanism": "first post-breakout flush where RSI acceleration is sharply negative and RSI is deeply below its own 3-bar mean",
+    "frozen_rule": "rsi_accel <= -9.01822 AND rsi_vs_sma3 <= -0.120961",
+    "validation": {
+      "candidate_id": "AUTO-20261003-01",
+      "status": "CROSS_VALIDATED_SHADOW",
+      "segment": "primary_perps",
+      "rule": "rsi_accel <= -9.01822 AND rsi_vs_sma3 <= -0.120961",
+      "features": [
+        "rsi_accel",
+        "rsi_vs_sma3"
+      ],
+      "conditions": [
+        {
+          "feature": "rsi_accel",
+          "op": "<=",
+          "a": -9.018221719991855,
+          "b": null
+        },
+        {
+          "feature": "rsi_vs_sma3",
+          "op": "<=",
+          "a": -0.12096095043413067,
+          "b": null
+        }
+      ],
+      "validation": {
+        "train_n": 64,
+        "train_hit5": 0.875,
+        "hold_n": 61,
+        "hold_hit5": 0.9180327868852459,
+        "hold_hit10": 0.6885245901639344,
+        "hold_t5_before_s7p5": 0.819672131147541,
+        "hold_wilson_lower": 0.822051145758621,
+        "episodes": 17,
+        "episode_hit5": 0.8169934640522876
+      },
+      "promotion_requirements": [
+        "independent cross-venue validation",
+        "fees/slippage/funding replay",
+        "forward shadow signals",
+        "manual review before assignment of C-number"
+      ],
+      "cross_venue_validation": {
+        "venue": "Binance USDT spot",
+        "split": "latest 40%",
+        "n": 65,
+        "hit5": 0.8461538461538461,
+        "hit10": 0.6615384615384615,
+        "t5_before_s7p5": 0.7692307692307693,
+        "wilson_lower": 0.7394445429998054,
+        "unsupported_features": [],
+        "passed": true
+      }
+    }
+  },
+  "C2_deepstretch_candidate": {
+    "name": "Lower-High Second Dump \u2014 Deep EMA Stretch",
+    "mechanism": "existing lower-high/second-dump structure plus price materially below 4H EMA9 at trigger",
+    "frozen_additional_filter": "dist_ema9 <= -0.069254",
+    "hyperliquid": {
+      "all": {
+        "n": 92,
+        "hit5": 0.967391304347826,
+        "hit10": 0.9021739130434783,
+        "t5_s0.075": 0.9130434782608695,
+        "median_mfe5d": 0.161809552172781,
+        "median_mae5d": -0.0249672192640255
+      },
+      "later40": {
+        "n": 37,
+        "hit5": 1.0,
+        "hit10": 0.918918918918919,
+        "t5_s0.075": 0.8918918918918919,
+        "median_mfe5d": 0.147104607721046,
+        "median_mae5d": -0.0223698646836523
+      },
+      "train60": {
+        "n": 55,
+        "hit5": 0.9454545454545454,
+        "hit10": 0.8909090909090909,
+        "t5_s0.075": 0.9272727272727272,
+        "median_mfe5d": 0.1997250185691483,
+        "median_mae5d": -0.0277700121144347
+      }
+    },
+    "binance": {
+      "all": {
+        "n": 49,
+        "hit5": 0.9795918367346939,
+        "hit10": 0.9387755102040817,
+        "t5_s0.075": 0.7551020408163265,
+        "median_mfe5d": 0.1670224119530414,
+        "median_mae5d": -0.0422680412371133
+      },
+      "later40": {
+        "n": 20,
+        "hit5": 1.0,
+        "hit10": 0.9,
+        "t5_s0.075": 1.0,
+        "median_mfe5d": 0.15116111234715585,
+        "median_mae5d": -0.0213889917083605
+      },
+      "train60": {
+        "n": 29,
+        "hit5": 0.9655172413793104,
+        "hit10": 0.9655172413793104,
+        "t5_s0.075": 0.5862068965517241,
+        "median_mfe5d": 0.17809992234015,
+        "median_mae5d": -0.091703056768559
+      }
+    }
+  }
+}
