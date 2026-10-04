@@ -176,11 +176,28 @@ def table_to_matrix(table):
     return matrix
 
 def classify_matrix(matrix):
+    if not matrix:return None
     blob=" ".join(" ".join(r) for r in matrix)
     score=sum(bool(re.search(w,blob,re.I)) for w in ["punch","landed","thrown","jab","power","accuracy","round"])
     if score<2:return None
-    if ROUND_WORDS.search(blob) and (re.search(r"landed\s*/\s*thrown",blob,re.I) or re.search(r"\bround\b",blob,re.I)):
-        return "round_level_or_round_summary"
+
+    header=" ".join(matrix[0]).lower()
+    body=matrix[1:]
+    # True round history requires repeated round observations tied to punch metrics.
+    metric_header=bool(re.search(r"(punch|landed|thrown|acc|jab|power)",header,re.I))
+    round_header=bool(re.search(r"\bround\b",header,re.I))
+    numbered_round_rows=0
+    round_metric_rows=0
+    for row in body:
+        label=(row[0] if row else "").strip().lower()
+        is_round=bool(re.fullmatch(r"r?\s*\d{1,2}",label) or re.match(r"round\s+\d{1,2}\b",label))
+        if is_round:
+            numbered_round_rows+=1
+            rowblob=" ".join(row[1:])
+            if re.search(r"\d+\s*/\s*\d+|\b\d+(?:\.\d+)?%\b",rowblob):
+                round_metric_rows+=1
+    if (round_header and metric_header and round_metric_rows>=2) or round_metric_rows>=2:
+        return "round_level_punch_stats"
     return "fight_total_or_summary"
 
 def parse_article(url):
@@ -209,7 +226,7 @@ def parse_article(url):
         "explicit_boxing_data_api_attribution":explicit_source,
         "tables":matrices,
         "table_count":len(matrices),
-        "round_table_count":sum(x["type"]=="round_level_or_round_summary" for x in matrices),
+        "round_table_count":sum(x["type"]=="round_level_punch_stats" for x in matrices),
     }
 
 def flatten(records):
