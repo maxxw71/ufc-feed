@@ -1,5 +1,5 @@
 {
-  "version": "2026-10-03-c4-c2d-shadow",
+  "version": "2026-10-03-c4-c2d-live",
   "venue": "Hyperliquid primary perpetuals",
   "timeframe": "4h",
   "target_pct": 0.05,
@@ -122,7 +122,7 @@
       "key": "rsi_shock_sma3",
       "name": "RSI Shock vs 3-Bar Mean",
       "enabled": true,
-      "status": "SHADOW_ONLY",
+      "status": "LIVE",
       "description": "A first post-breakout 4H flush where RSI acceleration collapses and RSI stretches sharply below its own 3-bar mean.",
       "trigger_summary": "Daily breakout regime → next-day arm → first ≥8% 4H flush → RSI acceleration ≤ -9.01822 → RSI ≤12.0961% below its 3-bar mean.",
       "validation": {
@@ -149,7 +149,7 @@
       "key": "lower_high_second_dump_deepstretch",
       "name": "Lower-High Second Dump · Deep EMA Stretch",
       "enabled": true,
-      "status": "SHADOW_ONLY",
+      "status": "LIVE",
       "description": "The existing C2 lower-high/second-dump structure, but only when price is deeply stretched below the 4H EMA9 at the trigger.",
       "trigger_summary": "All C2 rules → trigger close at least 6.9254% below 4H EMA9.",
       "validation": {
