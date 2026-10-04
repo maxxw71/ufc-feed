@@ -129,7 +129,7 @@ def normalized_date(raw):
     for fmt in ("%Y-%m-%d","%b %d, %Y","%B %d, %Y","%d %b %Y","%d %B %Y"):
         try:return datetime.strptime(raw,fmt).date().isoformat()
         except ValueError:pass
-    return raw
+    return None
 
 def norm_name(s):
     x=str(s or "").lower()
@@ -259,11 +259,90 @@ def load_strict_names():
     p=ROOT/"public_phase2"/"PROFILE_GAP_AUDIT.json"
     try:
         j=json.loads(p.read_text(encoding="utf-8"))
-        return {norm_name(x.get("name")):x.get("name") for x in j.get("fighters",[]) if x.get("name")}
-    except Exception:return {}
+        names=[x.get("name") for x in j.get("fighters",[]) if x.get("name")]
+        return names
+    except Exception:return []
+
+def resolve_name(hint, strict_names):
+    n=norm_name(hint)
+    if not n:return None
+    exact=[x for x in strict_names if norm_name(x)==n]
+    if len(exact)==1:return exact[0]
+    # Many article slugs/titles use only a surname (Fundora, Thurman, Wilder)
+    # or omit a second surname. Accept only a unique deterministic match.
+    ht=n.split()
+    if len(ht)==1:
+        cand=[x for x in strict_names if ht[0] in (norm_name(x).split()[-1:], norm_name(x).split()[:1])]
+        if len(cand)==1:return cand[0]
+        cand=[x for x in strict_names if ht[0] in norm_name(x).split()]
+        if len(cand)==1:return cand[0]
+        return None
+    pref=[x for x in strict_names if norm_name(x).startswith(n+" ") or n.startswith(norm_name(x)+" ")]
+    if len(pref)==1:return pref[0]
+    # First-name + any surname token agreement, still unique only.
+    cand=[]
+    for x in strict_names:
+        xt=norm_name(x).split()
+        if xt and ht and xt[0]==ht[0] and any(t in xt[1:] for t in ht[1:]):
+            cand.append(x)
+    return cand[0] if len(cand)==1 else None
+
+def load_validated_price_bouts():
+    p=ROOT/"public_reports"/"HISTORICAL_ODDS_STRICT_UNION_ROWS.json"
+    try:j=json.loads(p.read_text(encoding="utf-8"))
+    except Exception:return []
+    grouped={}
+    for row in j.get("rows",[]):
+        bid=str(row.get("bout_id") or "")
+        if not bid:continue
+        g=grouped.setdefault(bid,{"bout_id":bid,"event_date":row.get("event_date"),"selections":set(),"event_url":row.get("event_url")})
+        if row.get("selection"):g["selections"].add(str(row["selection"]))
+    out=[]
+    for g in grouped.values():
+        if len(g["selections"])==2:
+            sels=sorted(g["selections"])
+            g["selection_names"]=sels
+            g["selection_norms"]=sorted(norm_name(x) for x in sels)
+            del g["selections"]
+            out.append(g)
+    return out
+
+def article_price_matches(rec, validated_bouts):
+    hints=[rec.get("fighter_a_hint"),rec.get("fighter_b_hint")]
+    if not all(hints):return []
+    hnorms=[norm_name(x) for x in hints]
+    matches=[]
+    for b in validated_bouts:
+        sn=b["selection_norms"]
+        # Exact normalized pair.
+        if sorted(hnorms)==sn:
+            matches.append(b);continue
+        # Conservative containment for omitted suffix/maternal surname.
+        used=[False,False];ok=True
+        for h in hnorms:
+            hit=False
+            for i,sn_i in enumerate(sn):
+                if used[i]:continue
+                if h==sn_i or h.startswith(sn_i+" ") or sn_i.startswith(h+" "):
+                    used[i]=True;hit=True;break
+            if not hit:ok=False;break
+        if ok:matches.append(b)
+    # Use article publication date as a tie-breaker only, never as a required bout date.
+    if len(matches)>1 and rec.get("published_date"):
+        try:
+            ad=datetime.fromisoformat(rec["published_date"]).date()
+            close=[]
+            for b in matches:
+                try:
+                    bd=datetime.fromisoformat(str(b.get("event_date"))[:10]).date()
+                    if 0 <= (ad-bd).days <= 7:close.append(b)
+                except Exception:pass
+            if len(close)==1:return close
+    return matches
 
 def main():
     strict_names=load_strict_names()
+    validated_bouts=load_validated_price_bouts()
     urls,discovery_pages=discover()
     print("DISCOVERED_ARTICLES",len(urls),"DISCOVERY_PAGES",discovery_pages)
     records=[]
@@ -271,14 +350,18 @@ def main():
         if i>1:time.sleep(SLEEP)
         rec=parse_article(url)
         if rec:
-            matches=[]
-            for hint in (rec.get("fighter_a_hint"),rec.get("fighter_b_hint")):
-                n=norm_name(hint)
-                matches.append(strict_names.get(n) if n else None)
+            matches=[resolve_name(hint,strict_names) for hint in (rec.get("fighter_a_hint"),rec.get("fighter_b_hint"))]
             rec["strict_fighter_matches"]=matches
             rec["strict_both_sides_matched"]=bool(len(matches)==2 and all(matches))
+            pm=article_price_matches(rec,validated_bouts)
+            rec["validated_price_bout_matches"]=[{
+                "bout_id":x["bout_id"],"event_date":x.get("event_date"),
+                "selection_names":x.get("selection_names"),"event_url":x.get("event_url")
+            } for x in pm]
+            rec["validated_price_bout_unique_match"]=len(pm)==1
             records.append(rec)
-            print("ACCEPT",rec["table_count"],rec["round_table_count"],matches,url)
+            print("ACCEPT",rec["table_count"],rec["round_table_count"],matches,
+                  "price_matches",len(pm),url)
     rows=flatten(records)
     fieldnames=list(rows[0].keys()) if rows else [
         "source","source_url","published_date","title","fighter_a_hint","fighter_b_hint",
@@ -302,6 +385,14 @@ def main():
         "normalized_table_rows":len(rows),
         "strict_profile_articles_both_sides_matched":sum(r.get("strict_both_sides_matched",False) for r in records),
         "strict_profile_unique_fighters_matched":len({x for r in records for x in (r.get("strict_fighter_matches") or []) if x}),
+        "validated_price_articles_unique_match":sum(r.get("validated_price_bout_unique_match",False) for r in records),
+        "validated_price_unique_bouts_matched":len({
+            r["validated_price_bout_matches"][0]["bout_id"] for r in records
+            if r.get("validated_price_bout_unique_match") and r.get("validated_price_bout_matches")
+        }),
+        "validated_price_round_articles_unique_match":sum(
+            r.get("validated_price_bout_unique_match",False) and r.get("round_table_count",0)>0 for r in records
+        ),
         "article_date_min":min((r["published_date"] for r in records if r.get("published_date")),default=None),
         "article_date_max":max((r["published_date"] for r in records if r.get("published_date")),default=None),
         "records":records,
@@ -318,7 +409,8 @@ def main():
         "article_urls_discovered","articles_with_punch_tables","articles_explicitly_attributing_boxing_data_api",
         "articles_with_round_tables","tables_extracted","round_tables_extracted","normalized_table_rows",
         "strict_profile_articles_both_sides_matched","strict_profile_unique_fighters_matched",
-        "article_date_min","article_date_max"
+        "validated_price_articles_unique_match","validated_price_unique_bouts_matched",
+        "validated_price_round_articles_unique_match","article_date_min","article_date_max"
     ]},indent=2))
 
 if __name__=="__main__":main()
