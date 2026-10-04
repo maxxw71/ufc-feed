@@ -158,15 +158,15 @@ def clean_title(title):
     x=re.sub(r"\s*\|\s*Boxing Stats Data API.*$","",x,flags=re.I)
     return x
 
-def infer_pair(title):
+def infer_pair(title,url=None):
     t=clean_title(title)
     # Only a candidate identity hint; never strict-link from this alone.
     m=re.search(r"(.+?)\s+vs\.?\s+(.+?)(?:\s*[:\-–—]|\s+Results|\s+Review|\s+Fight|\s+Defeats|$)",t,re.I)
-    if not m:return None,None
-    a=norm_space(m.group(1));b=norm_space(m.group(2))
-    # Remove common leading title boilerplate.
-    a=re.sub(r"^(?:Boxing Stats Data API\s*\|\s*)","",a,flags=re.I).strip()
-    return a,b
+    if m:
+        a=norm_space(m.group(1));b=norm_space(m.group(2))
+        a=re.sub(r"^(?:Boxing Stats Data API\s*\|\s*)","",a,flags=re.I).strip()
+        return a,b
+    return slug_pair(url) if url else (None,None)
 
 def table_to_matrix(table):
     matrix=[]
