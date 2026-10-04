@@ -16,9 +16,9 @@ jobs:
         run: |
           set -euo pipefail
           K=/home/appwiza-runner/.ssh/appwiza_vps
-          SRC=https://raw.githubusercontent.com/maxxw71/ufc-feed/main/scripts/ufc_prospective_pipeline.py
+          SRC=https://raw.githubusercontent.com/maxxw71/ufc-feed/$GITHUB_SHA/scripts/ufc_prospective_pipeline.py
           PATCH=https://raw.githubusercontent.com/maxxw71/ufc-feed/5e00048e7453480fc57ec3957ae862edfc1dd756/scripts/patch_ufc_prospective_market.py
-          REFRESH=https://raw.githubusercontent.com/maxxw71/ufc-feed/main/scripts/ufcstats_live_refresh.py
+          REFRESH=https://raw.githubusercontent.com/maxxw71/ufc-feed/$GITHUB_SHA/scripts/ufcstats_live_refresh.py
           T=$(mktemp); P=$(mktemp); R=$(mktemp)
           curl -fsSL "$SRC" -o "$T"
           curl -fsSL "$PATCH" -o "$P"
