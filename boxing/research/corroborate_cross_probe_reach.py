@@ -12,7 +12,7 @@ It never treats height as reach and never invents values. All explicit
 disagreements remain visible in the report.
 """
 from __future__ import annotations
-import datetime as dt,json,re,statistics,unicodedata
+import csv,datetime as dt,json,re,statistics,unicodedata
 from collections import defaultdict
 from pathlib import Path
 
@@ -69,6 +69,20 @@ def main():
     # Boxing Data fighter-specific preview sections.
     for x in load('boxingdata_reach_probe.json').get('leads') or []:
         add(x.get('name'),'boxingdata',x.get('reach_cm'),x.get('url'))
+
+    # Cleaned public Boxing Data article tale-of-tape candidates. These are a
+    # corroborating source family only; they can never stand alone.
+    public_csv=SUP/'boxing_data_public_profile_candidates.csv'
+    if public_csv.exists():
+        try:
+            with public_csv.open(encoding='utf-8') as fh:
+                for x in csv.DictReader(fh):
+                    if x.get('field')!='reach_cm':continue
+                    if str(x.get('currently_missing','')).strip().lower() not in ('true','1','yes'):continue
+                    add(x.get('fighter'),'boxing_data_public_articles',x.get('candidate_value'),x.get('source_url'),
+                        {'raw_display':x.get('raw_value'),'quality':'public_article_explicit_reach_candidate'})
+        except Exception:
+            pass
 
     # Archived Box.Live exact identity.
     for x in load('boxlive_wayback_reach_probe.json').get('rows') or []:
