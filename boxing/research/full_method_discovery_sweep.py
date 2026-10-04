@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Full boxing method-discovery sweep.
+"""BROAD-lane boxing method-discovery sweep.
 
 Research/shadow only. Combines existing fixed rule universes, requires explicit
 opponent-relative context, checks era stability, nearby-rule robustness,
@@ -135,6 +135,7 @@ def main():
     for c in ranked:
         x=dict(c);x.pop('keys',None);x.pop('losses',None);family_clean.append(x)
     report={
+      'research_lane':'BROAD',
       'status':'RESEARCH_SHADOW_ONLY_NOT_LIVE',
       'eligible_consensus_bouts':len(markets),
       'stable_opponent_aware_rules':len(cands),
@@ -149,6 +150,10 @@ def main():
         'Inspect neighboring thresholds/family support and every historical loss.',
         'Track prospectively with verified pre-event sportsbook prices before live promotion.'
       ],
+      'lane_policy':[
+        'This sweep is BROAD-lane research and intentionally does not require punch-stat history.',
+        'DEEP_STATS research is a separate lane and must not silently shrink or redefine the BROAD universe.'
+      ],
       'limitations':[
         'Historical ROI outside independently verified price rows remains exploratory.',
         'Observed boxing career histories may still be incomplete for some fighters.',
@@ -157,7 +162,7 @@ def main():
       ]
     }
     (RUN/'full_method_discovery_sweep.json').write_text(json.dumps(report,indent=2,default=list))
-    lines=['BOXING FULL METHOD-DISCOVERY SWEEP','='*116,
+    lines=['BOXING BROAD-LANE METHOD-DISCOVERY SWEEP','='*116,
            f"Consensus-priced bouts: {len(markets)} | stable opponent-aware rules: {len(cands)}",
            'STATUS: RESEARCH/SHADOW ONLY — NOTHING PROMOTED LIVE','',
            'INDEPENDENT SHORTLIST','-'*116]
