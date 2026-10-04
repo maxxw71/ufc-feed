@@ -1,0 +1,22 @@
+name: UFC Late Round Resilience Validation
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/ufc_validate_late_round_resilience.py'
+      - '.github/workflows/ufc-late-round-resilience-validation.yml'
+  workflow_dispatch:
+jobs:
+  validate:
+    runs-on: [self-hosted, appwiza]
+    timeout-minutes: 15
+    steps:
+      - shell: bash
+        run: |
+          set -euo pipefail
+          K=/home/appwiza-runner/.ssh/appwiza_vps
+          S=$(mktemp)
+          curl -fsSL https://raw.githubusercontent.com/maxxw71/ufc-feed/$GITHUB_SHA/scripts/ufc_validate_late_round_resilience.py -o "$S"
+          scp -i "$K" -o StrictHostKeyChecking=no "$S" anestishkurti92@127.0.0.1:/home/anestishkurti92/ufc-predictor-v1/ufc_validate_late_round_resilience.py
+          rm -f "$S"
+          ssh -i "$K" -o StrictHostKeyChecking=no anestishkurti92@127.0.0.1 'cd /home/anestishkurti92/ufc-predictor-v1 && OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 venv/bin/python -u ufc_validate_late_round_resilience.py'
