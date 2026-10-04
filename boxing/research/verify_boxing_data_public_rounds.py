@@ -48,8 +48,15 @@ def token_match(header,name):
     if not h or not n:return False
     if n in h:return True
     ht=set(h.split());nt=n.split()
-    # Prefer surname; suffixes already removed.
-    return bool(nt and nt[-1] in ht) or (len(nt)>1 and nt[0] in ht and nt[-1] in ht)
+    if nt and nt[-1] in ht:return True
+    if len(nt)>1 and nt[0] in ht and nt[-1] in ht:return True
+    # Allow a unique surname abbreviation such as Hovh. for Hovhannisyan.
+    if nt:
+        last=nt[-1]
+        for tok in ht:
+            if len(tok)>=4 and (last.startswith(tok) or tok.startswith(last)):
+                return True
+    return False
 
 def canonical_names(rec):
     hints=[rec.get("fighter_a_hint"),rec.get("fighter_b_hint")]
@@ -84,7 +91,7 @@ def parse_round_table(rec,table):
         for fi,name in enumerate(names):
             hits=[]
             for ci,h in enumerate(header[1:],1):
-                if token_match(h,name) and not re.search(r"acc|accuracy|power|jab",h,re.I):
+                if token_match(h,name) and not re.search(r"power|jab",h,re.I):
                     hits.append(ci)
             if not hits:
                 # Direct fighter-name columns (Paul / Chavez Jr.) are caught by
@@ -121,6 +128,19 @@ def load_jsonl(path):
 
 def independent_rows():
     rows=[]
+    manual=P/"boxing_data_external_verifications.json"
+    if manual.exists():
+        try:
+            m=json.loads(manual.read_text(encoding="utf-8"))
+            for x in m.get("fights",[]):
+                if x.get("fighter") and x.get("opponent") and x.get("bout_date"):
+                    rows.append({
+                      "fighter":x.get("fighter"),"opponent":x.get("opponent"),"bout_date":x.get("bout_date"),
+                      "total_landed":x.get("total_landed"),"total_thrown":x.get("total_thrown"),
+                      "source_url":x.get("source_url"),"source":x.get("source") or "External verification"
+                    })
+        except Exception:
+            pass
     # Modern Ring published CompuBox summaries.
     for x in load_jsonl(P/"ring_compubox_summaries.jsonl"):
         if x.get("fighter") and x.get("opponent") and x.get("bout_date"):
@@ -152,7 +172,11 @@ def independent_rows():
 
 def compatible_name(a,b):
     na,nb=norm(a),norm(b)
-    return na==nb or na.startswith(nb+" ") or nb.startswith(na+" ")
+    if na==nb or na.startswith(nb+" ") or nb.startswith(na+" "):return True
+    ta,tb=na.split(),nb.split()
+    if len(ta)==1 and tb and ta[0]==tb[-1]:return True
+    if len(tb)==1 and ta and tb[0]==ta[-1]:return True
+    return False
 
 def match_independent(parsed,rec,ind):
     a,b=parsed["fighters"]
