@@ -1,0 +1,51 @@
+name: Boxing Deep-Stats Public Verification
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'boxing/research/verify_boxing_data_public_rounds.py'
+      - 'boxing/punch_supplements/boxing_data_public_stats_report.json'
+      - 'boxing/punch_supplements/ring_compubox_summaries.jsonl'
+      - 'boxing/punch_supplements/boxingscene_compubox_summaries.jsonl'
+      - 'boxing/punch_supplements/legacy_compubox_final_totals.jsonl'
+      - '.github/workflows/boxing-deep-public-verify.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: boxing-deep-public-verify
+  cancel-in-progress: true
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with: {fetch-depth: 0}
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.12'}
+      - run: python boxing/research/verify_boxing_data_public_rounds.py
+      - name: Publish verified supplement
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          cp boxing/punch_supplements/boxing_data_verified_round_total_observations.jsonl /tmp/obs.jsonl
+          cp boxing/punch_supplements/boxing_data_round_verification_report.json /tmp/report.json
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          for attempt in 1 2 3; do
+            git fetch origin main
+            git reset --hard origin/main
+            cp /tmp/obs.jsonl boxing/punch_supplements/boxing_data_verified_round_total_observations.jsonl
+            cp /tmp/report.json boxing/punch_supplements/boxing_data_round_verification_report.json
+            git add boxing/punch_supplements/boxing_data_verified_round_total_observations.jsonl boxing/punch_supplements/boxing_data_round_verification_report.json
+            if git diff --cached --quiet; then exit 0; fi
+            git commit -m 'Refresh verified Boxing Data Deep-Stats supplement'
+            if git push origin HEAD:main; then exit 0; fi
+            sleep $((attempt*2))
+          done
+          exit 1
