@@ -34,15 +34,8 @@ jobs:
           venv/bin/python patch_ufc_prospective_market.py
           venv/bin/python -m py_compile ufc_prospective_pipeline.py ufcstats_live_refresh.py
 
-          # Vendor the upstream mma-ai UFCStats scraper + proof-of-work middleware.
-          # Pin the upstream revision for reproducibility; our wrapper merges only new event/fighter URLs.
-          V=/home/anestishkurti92/ufc-predictor-v1/vendor_ufcstats
-          mkdir -p "$V/libs/scraping"
-          touch "$V/libs/__init__.py" "$V/libs/scraping/__init__.py"
-          curl -fsSL https://raw.githubusercontent.com/DanMcInerney/mma-ai/fa54a340b7dc59e4ab501d9bef50e5980525b77f/libs/scraping/ufcstats.py -o "$V/libs/scraping/ufcstats.py"
-          curl -fsSL https://raw.githubusercontent.com/DanMcInerney/mma-ai/fa54a340b7dc59e4ab501d9bef50e5980525b77f/libs/scraping/ufcstats_challenge.py -o "$V/libs/scraping/ufcstats_challenge.py"
-          venv/bin/python -c 'import scrapy' >/dev/null 2>&1 || venv/bin/pip install -q 'scrapy>=2.11,<3'
-          venv/bin/python -m py_compile "$V/libs/scraping/ufcstats.py" "$V/libs/scraping/ufcstats_challenge.py"
+          # Self-contained live UFCStats refresher uses packages already present in the model environment.
+          venv/bin/python -c 'import requests,lxml,pandas,numpy'
           for f in ufc_feature_expansion.py ufc_metadata_features.py ufc_weight_history_features.py ufc_context_crosscheck_features.py ufc_career_context_features.py; do
             test -f "$f" || { echo "MISSING $f"; exit 3; }
           done
