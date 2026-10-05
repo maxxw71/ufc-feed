@@ -105,6 +105,19 @@ def discover_events(session, season, season_type, provenance):
             es=(ev.get("season") or {}).get("type")
             if es is not None and int(es)!=want:
                 continue
+            # ESPN can retain old canceled/postponed event shells after a replacement
+            # game is scheduled. After a 7-day grace period, only completed historical
+            # events are retained; current/future scheduled games remain untouched.
+            ev_date_raw=ev.get("date")
+            try:
+                ev_dt=datetime.fromisoformat(str(ev_date_raw).replace("Z","+00:00"))
+            except Exception:
+                ev_dt=None
+            st=((ev.get("status") or {}).get("type") or {})
+            state=st.get("state")
+            completed=bool(st.get("completed"))
+            if ev_dt and ev_dt < datetime.now(timezone.utc)-timedelta(days=7) and not completed and state!="post":
+                continue
             comp=(ev.get("competitions") or [{}])[0]
             tris=[]
             for competitor in comp.get("competitors") or []:
