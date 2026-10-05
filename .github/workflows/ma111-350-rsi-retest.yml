@@ -1,0 +1,76 @@
+name: MA111 MA350 RSI support-retest research
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'crypto/research/ma111_350_rsi_retest.py'
+      - '.github/workflows/ma111-350-rsi-retest.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: ma111-350-rsi-retest
+  cancel-in-progress: true
+
+jobs:
+  scan:
+    strategy:
+      fail-fast: false
+      matrix:
+        venue: [hl,bn]
+        shard: [0,1,2,3,4,5,6,7]
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install --quiet pandas numpy requests
+      - run: |
+          python crypto/research/ma111_350_rsi_retest.py \
+            --mode scan --venue ${{ matrix.venue }} --days 600 \
+            --binance-symbols 160 \
+            --shard-index ${{ matrix.shard }} --shard-count 8 \
+            --sleep 0.05 --out ma_retest_out
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ma-retest-${{ matrix.venue }}-${{ matrix.shard }}
+          path: ma_retest_out/
+          retention-days: 2
+
+  aggregate:
+    needs: scan
+    if: always() && needs.scan.result == 'success'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install --quiet pandas numpy requests
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: ma-retest-*
+          path: ma_retest_shards
+          merge-multiple: true
+      - run: |
+          python crypto/research/ma111_350_rsi_retest.py \
+            --mode aggregate --input-dir ma_retest_shards \
+            --out crypto/research/results_ma111_350_rsi_retest
+      - name: Commit MA/RSI research
+        run: |
+          git config user.name "appwiza-research-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add crypto/research/results_ma111_350_rsi_retest
+          if ! git diff --cached --quiet; then
+            git commit -m "Update MA111 MA350 RSI support-retest research"
+            git pull --rebase -X ours origin main || true
+            git push origin HEAD:main || true
+          fi
