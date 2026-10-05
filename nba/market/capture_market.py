@@ -8,6 +8,7 @@ ROOT=Path(__file__).resolve().parents[1]
 OUT=ROOT/"market"
 RAW=OUT/"raw"
 URL="https://site.api.espn.com/apis/site/v2/sports/basketball/nba/scoreboard"
+CORE_ODDS="https://sports.core.api.espn.com/v2/sports/basketball/leagues/nba/events/{event_id}/competitions/{competition_id}/odds"
 HEADERS={"User-Agent":"Mozilla/5.0","Accept":"application/json, text/plain, */*"}
 
 def now(): return datetime.now(timezone.utc)
@@ -61,6 +62,17 @@ def main():
         ht=home.get("team") or {}; at=away.get("team") or {}
         odds=comp.get("odds") or []
         if isinstance(odds,dict): odds=[odds]
+        if not odds:
+            event_id=str(ev.get("id") or "")
+            competition_id=str(comp.get("id") or event_id)
+            try:
+                ou=CORE_ODDS.format(event_id=event_id,competition_id=competition_id)
+                rr=requests.get(ou,headers=HEADERS,timeout=20)
+                if rr.ok:
+                    core=rr.json()
+                    odds=core.get("items") or []
+            except Exception:
+                odds=[]
         for o in odds:
             provider=o.get("provider") or {}
             home_odds=o.get("homeTeamOdds") or {}
@@ -75,7 +87,12 @@ def main():
                 "details":o.get("details"),"spread":num(o.get("spread")),"over_under":num(o.get("overUnder")),
                 "home_moneyline":num(home_odds.get("moneyLine")),"away_moneyline":num(away_odds.get("moneyLine")),
                 "home_spread_odds":num(home_odds.get("spreadOdds")),"away_spread_odds":num(away_odds.get("spreadOdds")),
-                "over_odds":num((o.get("over") or {}).get("odds")),"under_odds":num((o.get("under") or {}).get("odds")),
+                "over_odds":num(o.get("overOdds") if o.get("overOdds") is not None else (o.get("over") or {}).get("odds")),
+                "under_odds":num(o.get("underOdds") if o.get("underOdds") is not None else (o.get("under") or {}).get("odds")),
+                "open_over":num((((o.get("open") or {}).get("over") or {}).get("value"))),
+                "open_under":num((((o.get("open") or {}).get("under") or {}).get("value"))),
+                "open_home_spread":num((((((o.get("open") or {}).get("spread") or {}).get("home") or {}).get("line")))),
+                "open_away_spread":num((((((o.get("open") or {}).get("spread") or {}).get("away") or {}).get("line")))),
                 "home_favorite":home_odds.get("favorite"),"away_favorite":away_odds.get("favorite"),
                 "source":"espn_scoreboard_odds","pregame_snapshot":True
             })
