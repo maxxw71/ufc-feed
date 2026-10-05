@@ -6,6 +6,7 @@ on:
     branches: [main]
     paths:
       - "nba/market/capture_market.py"
+      - "nba/market/capture_external_odds.py"
       - ".github/workflows/nba-market-snapshot.yml"
   schedule:
     - cron: "23 */3 * * *"
@@ -31,6 +32,11 @@ jobs:
       - run: python -m pip install --upgrade requests
       - name: Capture timestamped NBA market state
         run: python nba/market/capture_market.py
+
+      - name: Capture external bookmaker odds when configured
+        env:
+          THE_ODDS_API_KEY: ${{ secrets.THE_ODDS_API_KEY }}
+        run: python nba/market/capture_external_odds.py
       - name: Commit market snapshot
         shell: bash
         run: |
