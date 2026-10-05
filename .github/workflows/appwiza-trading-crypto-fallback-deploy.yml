@@ -80,5 +80,5 @@ jobs:
           set -Eeuo pipefail
           curl -fsSL https://appwiza.com/trading/ | grep -q 'Appwiza Trading'
           curl -fsSL https://appwiza.com/trading/crypto/ | grep -q 'Crypto method scanner'
-          curl -fsSL https://appwiza.com/trading/crypto/signals.json | python3 -c "import json,sys;x=json.load(sys.stdin);assert len(x['methods'])==6;assert {m['id'] for m in x['methods'] if m.get('status')=='LIVE'}=={'C1','C2','C3','C3F','C4','C2D'};assert {m['id'] for m in x['methods'] if m.get('status')=='SHADOW_ONLY'}==set()"
+          curl -fsSL https://appwiza.com/trading/crypto/signals.json | python3 -c "import json,sys;x=json.load(sys.stdin);assert len(x['methods'])==8;assert {m['id'] for m in x['methods'] if m.get('status')=='LIVE'}=={'C1','C2','C3','C3F','C4','C2D'};assert {m['id'] for m in x['methods'] if m.get('status')=='SHADOW_ONLY'}=={'N02','N06'}"
           echo LIVE_VERIFY_OK
