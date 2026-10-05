@@ -1,0 +1,47 @@
+name: NBA ML001 Elite 001 Robustness
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - "nba/research/audit_ml001_elite001.py"
+      - ".github/workflows/nba-ml001-elite001-robustness.yml"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: nba-ml001-elite001-robustness
+  cancel-in-progress: true
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: python nba/build_market_features.py
+      - run: python nba/research/audit_ml001_elite001.py
+      - shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "appwiza-nba-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add nba/research/ml001_elite/elite_001_robustness.json nba/research/ml001_elite/elite_001_signals.csv
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m "nba: audit elite ML001 DefCap TS method"
+          git reset --hard HEAD
+          git clean -fd
+          for attempt in 1 2 3; do
+            git fetch origin main
+            if git rebase origin/main && git push; then exit 0; fi
+            git rebase --abort 2>/dev/null || true
+            sleep 3
+          done
+          exit 1
