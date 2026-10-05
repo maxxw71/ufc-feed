@@ -6,6 +6,12 @@ on:
     branches: [main]
     paths:
       - "nba/research/discover_methods.py"
+      - "nba/build_context.py"
+      - "nba/build_rolling_features.py"
+      - "nba/build_pregame_strength.py"
+      - "nba/build_market_features.py"
+      - "nba/build_player_workload.py"
+      - "nba/market/filter_odds_to_accepted_games.py"
       - ".github/workflows/nba-initial-method-discovery.yml"
 
 permissions:
