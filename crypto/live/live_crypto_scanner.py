@@ -114,6 +114,7 @@ def prep4(x):
     x["dist_sma20"]=x["c"]/x["sma20"]-1
     x["dist_sma50"]=x["c"]/x["sma50"]-1
     x["range"]=(x["h"]-x["l"]).replace(0,np.nan)
+    x["atr14_pct"]=x["range"].rolling(14,min_periods=8).mean()/x["c"].replace(0,np.nan)
     x["close_location"]=(x["c"]-x["l"])/x["range"]
     x["lower_wick"]=(np.minimum(x["o"],x["c"])-x["l"])/x["range"]
     x["volume_med20"]=x["v"].rolling(20,min_periods=10).median()
@@ -136,6 +137,7 @@ def daily_from_4h(x):
     d["ret5"]=d["c"]/d["c"].shift(5)-1
     d["prior60"]=d["h"].shift(1).rolling(60,min_periods=60).max()
     d["rv20"]=d["ret1"].rolling(20,min_periods=20).std()
+    d["rsi14"]=rsi(d["c"])
     d["setup"]=(d["ret5"]>=.15)&(d["h"]>=d["prior60"])&(d["rv20"]>=.025)
     d["arm_time"]=d["time"]+pd.Timedelta(days=1)
     return d
@@ -184,15 +186,24 @@ def novel_context_events(x,btc_x):
         btc_ret4=float(br.iloc[0]["price_pct1"])
         rel=float(row["price_pct1"])-btc_ret4
         price_dd=float(row["c"])/float(peak)-1
+        daily_rsi=float(dr["rsi14"]) if pd.notna(dr.get("rsi14")) else None
+        btc_rsi14=float(br.iloc[0]["rsi"]) if pd.notna(br.iloc[0].get("rsi")) else None
+        btc_atr14_pct=float(br.iloc[0]["atr14_pct"]) if pd.notna(br.iloc[0].get("atr14_pct")) else None
         found.append({
             "trigger_idx":int(trigger),
             "trigger_time":row["time"],
             "trigger_price":float(row["c"]),
             "daily_ret5":float(dr["ret5"]),
+            "daily_rsi":daily_rsi,
+            "trigger_rsi":float(row["rsi"]) if pd.notna(row.get("rsi")) else None,
+            "daily_4h_rsi_gap":(daily_rsi-float(row["rsi"])) if daily_rsi is not None and pd.notna(row.get("rsi")) else None,
             "price_dd":price_dd,
             "asset_ret4":float(row["price_pct1"]),
             "btc_ret4":btc_ret4,
+            "btc_rsi14":btc_rsi14,
+            "btc_atr14_pct":btc_atr14_pct,
             "relative_ret4":rel,
+            "lower_wick":float(row["lower_wick"]) if pd.notna(row.get("lower_wick")) else None,
             "obv_delta3_norm":float(row["obv_delta3_norm"]),
         })
     return found
@@ -623,7 +634,9 @@ def main():
             shadow_candidates=[]
             novel_events=[]
             if (("novel_relative_btc_obv" in methods and methods["novel_relative_btc_obv"].get("enabled"))
-                or ("novel_proportional_washout" in methods and methods["novel_proportional_washout"].get("enabled"))):
+                or ("novel_proportional_washout" in methods and methods["novel_proportional_washout"].get("enabled"))
+                or ("refined_novel01_btc_regime" in methods and methods["refined_novel01_btc_regime"].get("enabled"))
+                or ("refined_novel03_btc_vol" in methods and methods["refined_novel03_btc_vol"].get("enabled"))):
                 novel_events=novel_context_events(x,btc_x)
 
             if "novel_relative_btc_obv" in methods and methods["novel_relative_btc_obv"].get("enabled"):
@@ -643,6 +656,32 @@ def main():
                     if not (float(p["price_dd_min"])<=z["price_dd"]<=float(p["price_dd_max"])):
                         continue
                     shadow_candidates.append(("novel_proportional_washout",dict(z)))
+
+            if "refined_novel01_btc_regime" in methods and methods["refined_novel01_btc_regime"].get("enabled"):
+                nm=methods["refined_novel01_btc_regime"];p=nm["params"]
+                for z in novel_events:
+                    if z.get("daily_4h_rsi_gap") is None or z.get("btc_rsi14") is None:
+                        continue
+                    if not (float(p["daily_4h_rsi_gap_min"])<=z["daily_4h_rsi_gap"]<=float(p["daily_4h_rsi_gap_max"])):
+                        continue
+                    if not (float(p["relative_ret4_min"])<=z["relative_ret4"]<=float(p["relative_ret4_max"])):
+                        continue
+                    if z["btc_rsi14"]<float(p["btc_rsi14_min"]):
+                        continue
+                    shadow_candidates.append(("refined_novel01_btc_regime",dict(z)))
+
+            if "refined_novel03_btc_vol" in methods and methods["refined_novel03_btc_vol"].get("enabled"):
+                nm=methods["refined_novel03_btc_vol"];p=nm["params"]
+                for z in novel_events:
+                    if z.get("lower_wick") is None or z.get("btc_atr14_pct") is None:
+                        continue
+                    if not (float(p["lower_wick_min"])<=z["lower_wick"]<=float(p["lower_wick_max"])):
+                        continue
+                    if not (float(p["obv_delta3_norm_min"])<=z["obv_delta3_norm"]<=float(p["obv_delta3_norm_max"])):
+                        continue
+                    if z["btc_atr14_pct"]<float(p["btc_atr14_pct_min"]):
+                        continue
+                    shadow_candidates.append(("refined_novel03_btc_vol",dict(z)))
 
             if "lower_high_second_dump_deepstretch" in methods and methods["lower_high_second_dump_deepstretch"].get("enabled"):
                 dm=methods["lower_high_second_dump_deepstretch"]
