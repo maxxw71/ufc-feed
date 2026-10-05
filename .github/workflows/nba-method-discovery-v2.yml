@@ -1,0 +1,45 @@
+name: NBA Method Discovery V2
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - "nba/research/discover_methods_v2.py"
+      - "nba/features/lineup_pregame.csv.gz"
+      - ".github/workflows/nba-method-discovery-v2.yml"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: nba-method-discovery-v2
+  cancel-in-progress: true
+
+jobs:
+  discover:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Rebuild executable sportsbook market features
+        run: python nba/build_market_features.py
+      - name: Run V2 discovery
+        run: python nba/research/discover_methods_v2.py
+      - name: Commit V2 research
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "appwiza-nba-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add nba/research/v2
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m "nba: add second-pass lineup-aware method discovery"
+          git fetch origin main
+          git rebase origin/main
+          git push
