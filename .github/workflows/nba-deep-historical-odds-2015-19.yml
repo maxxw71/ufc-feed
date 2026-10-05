@@ -42,8 +42,8 @@ jobs:
             echo "===== ODDS $season ====="
             python nba/market/backfill_espn_historical_odds.py --season "$season" --workers 8
 
-            SEASON="$season" python - <<'PY'
-          import json, os, pathlib, sys
+            if SEASON="$season" python - <<'PY'
+          import json, os, pathlib
           season=os.environ["SEASON"]
           p=pathlib.Path("nba/market/historical")/season.replace("-","_")/"summary.json"
           s=json.loads(p.read_text())
@@ -54,8 +54,7 @@ jobs:
           if coverage < 0.95 or rows <= 0:
               raise SystemExit(1)
           PY
-
-            if [[ "$?" == "0" ]]; then
+            then
               echo "$season" | tee -a /tmp/odds_validated
             else
               echo "$season" | tee -a /tmp/odds_rejected
