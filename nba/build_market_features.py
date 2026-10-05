@@ -4,7 +4,7 @@ from collections import defaultdict
 from datetime import datetime,timezone
 from pathlib import Path
 
-ROOT=Path(__file__).resolve().parents[1]
+ROOT=Path(__file__).resolve().parent
 HIST=ROOT/"market"/"historical"
 OUT=ROOT/"features"
 OUT.mkdir(parents=True,exist_ok=True)
