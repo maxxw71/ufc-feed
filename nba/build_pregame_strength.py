@@ -61,7 +61,7 @@ def snap(tid):
 for g in games:
     hid=g.get("home_team_id"); aid=g.get("away_team_id")
     if not hid or not aid: continue
-    hs=snap(hid); as_=snap(aid)
+    season=g.get("season")\n    hs=snap(season,hid); as_=snap(season,aid)
     base={
       "season":g.get("season"),"season_type":g.get("season_type"),
       "game_id":g.get("game_id"),"game_date":g.get("game_date"),
@@ -78,7 +78,7 @@ for g in games:
     completed=str(g.get("completed")).lower() in ("true","1")
     hp=n(g.get("home_score")); ap=n(g.get("away_score"))
     if not completed or hp is None or ap is None: continue
-    sh=state[hid]; sa=state[aid]
+    sh=state[(season,hid)]; sa=state[(season,aid)]
     sh["g"]+=1; sa["g"]+=1
     sh["pf"]+=hp; sh["pa"]+=ap; sa["pf"]+=ap; sa["pa"]+=hp
     if hp>ap:
@@ -87,6 +87,6 @@ for g in games:
         sh["l"]+=1; sa["w"]+=1; sh["home_l"]+=1; sa["road_w"]+=1
 
 write(OUT/"pregame_strength.csv.gz",rows)
-summary={"generated_at_utc":datetime.now(timezone.utc).isoformat(),"rows":len(rows),"teams_seen":len(state),"point_in_time":True}
+summary={"generated_at_utc":datetime.now(timezone.utc).isoformat(),"rows":len(rows),"teams_seen":len(set(k[1] for k in state)),"point_in_time":True}
 (OUT/"pregame_strength_summary.json").write_text(json.dumps(summary,indent=2)+"\n")
 print(json.dumps(summary,indent=2))
