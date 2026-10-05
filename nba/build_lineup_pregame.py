@@ -4,7 +4,7 @@ from collections import Counter,defaultdict
 from datetime import datetime,timezone
 from pathlib import Path
 
-NBA=Path(__file__).resolve().parents[1]
+NBA=Path(__file__).resolve().parent
 DATA=NBA/"data"
 SRC=NBA/"lineups"/"historical_lineup_stints.csv.gz"
 OUT=NBA/"features"
