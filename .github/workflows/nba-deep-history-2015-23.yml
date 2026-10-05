@@ -1,0 +1,107 @@
+name: NBA Deep History 2015-23
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/nba-deep-history-2015-23.yml"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: nba-deep-history-2015-23
+  cancel-in-progress: true
+
+jobs:
+  backfill:
+    runs-on: ubuntu-latest
+    timeout-minutes: 360
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - run: python -m pip install --upgrade requests
+
+      - name: Backfill and independently validate each season
+        shell: bash
+        run: |
+          set -euo pipefail
+          : > /tmp/nba_validated
+          : > /tmp/nba_rejected
+
+          seasons=(
+            "2022-23"
+            "2021-22"
+            "2020-21"
+            "2019-20"
+            "2018-19"
+            "2017-18"
+            "2016-17"
+            "2015-16"
+          )
+
+          for season in "${seasons[@]}"; do
+            echo "===== BACKFILL $season ====="
+            python nba/bootstrap_dataset.py               --slice "$season|Regular Season"               --slice "$season|Post Season"
+
+            echo "===== VALIDATE $season ====="
+            if python nba/validate_historical_season.py --season "$season"; then
+              echo "$season" | tee -a /tmp/nba_validated
+            else
+              echo "$season" | tee -a /tmp/nba_rejected
+            fi
+          done
+
+          echo "Validated seasons:"
+          cat /tmp/nba_validated || true
+          echo "Rejected seasons:"
+          cat /tmp/nba_rejected || true
+
+      - name: Commit validated seasons only
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          git config user.name "appwiza-nba-bot"
+          git config user.email "actions@users.noreply.github.com"
+
+          while read -r season; do
+            [[ -z "$season" ]] && continue
+            dir="nba/data/${season/-/_}"
+            git add "$dir"
+          done < /tmp/nba_validated
+
+          # bootstrap_dataset writes a global status file on each invocation.
+          # It is not part of this historical-season commit.
+          if git ls-files --error-unmatch nba/bootstrap_status.json >/dev/null 2>&1; then
+            git restore --staged nba/bootstrap_status.json 2>/dev/null || true
+          fi
+
+          if git diff --cached --quiet; then
+            echo "No validated historical seasons produced new data."
+          else
+            git commit -m "nba: backfill validated history through 2015-16"
+          fi
+
+          # Remove all generated but uncommitted scratch/global files before rebase.
+          git reset --hard HEAD
+          git clean -fd
+
+          git pull --rebase origin main
+          git push
+
+      - name: Record validation outcome
+        if: always()
+        shell: bash
+        run: |
+          echo "Validated:"
+          cat /tmp/nba_validated 2>/dev/null || true
+          echo "Rejected (kept out of committed research data):"
+          cat /tmp/nba_rejected 2>/dev/null || true
