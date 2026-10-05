@@ -49,7 +49,7 @@ def main():
         all_events.extend(payload.get("events") or [])
 
     rows=[]
-    core_diag={"requests":0,"status_counts":{},"nonempty_responses":0,"first_response_shape":null}
+    core_diag={"requests":0,"status_counts":{},"nonempty_responses":0,"first_response_shape":None}
     for ev in all_events:
         comps=ev.get("competitions") or []
         if not comps: continue
