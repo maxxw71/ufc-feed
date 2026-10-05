@@ -1,5 +1,5 @@
 {
-  "version": "2026-10-05-novel02-novel06-shadow",
+  "version": "2026-10-05-novel-forward-and-refined-shadow",
   "venue": "Hyperliquid primary perpetuals",
   "timeframe": "4h",
   "target_pct": 0.05,
@@ -234,6 +234,70 @@
         "first_flush_min": 0.08,
         "price_dd_min": -0.1394393733853019,
         "price_dd_max": -0.10419042571418308
+      }
+    },
+    {
+      "id": "R01",
+      "key": "refined_novel01_btc_regime",
+      "name": "Refined Novel 01 · BTC-Regime RSI Gap",
+      "enabled": true,
+      "status": "SHADOW_ONLY",
+      "research_parent": "NOVEL-20261005-01",
+      "description": "Research-only refinement of NOVEL-01 using a train-frozen BTC regime veto. Kept shadow because cross-venue sample is still too small.",
+      "trigger_summary": "Daily breakout → first ≥8% flush → daily-vs-4H RSI gap 14.56–22.84 → asset trails BTC 2.49–4.86pp over 4H → BTC RSI ≥45.84.",
+      "validation": {
+        "venue": "Hyperliquid primary perps",
+        "n": 29,
+        "target_before_stop": 0.9655172414,
+        "actual_funding_net_roi": 0.042427936,
+        "stop_reference_pct": 0.075,
+        "external_binance_n": 10,
+        "external_binance_hit5": 0.9,
+        "external_binance_target_before_stop": 0.8,
+        "external_binance_net_roi": 0.0216,
+        "promotion_blocker": "sample size below full gate"
+      },
+      "params": {
+        "daily_ret5_min": 0.15,
+        "daily_rv20_min": 0.025,
+        "first_flush_min": 0.08,
+        "daily_4h_rsi_gap_min": 14.564335396607099,
+        "daily_4h_rsi_gap_max": 22.840074974386972,
+        "relative_ret4_min": -0.048556911108327216,
+        "relative_ret4_max": -0.02494468062678926,
+        "btc_rsi14_min": 45.84034715519137
+      }
+    },
+    {
+      "id": "R03",
+      "key": "refined_novel03_btc_vol",
+      "name": "Refined Novel 03 · BTC-Volatility Flow Wick",
+      "enabled": true,
+      "status": "SHADOW_ONLY",
+      "research_parent": "NOVEL-20261005-03",
+      "description": "Research-only refinement of NOVEL-03 using a train-frozen BTC volatility veto. Kept shadow because independent sample is still too small.",
+      "trigger_summary": "Daily breakout → first ≥8% flush → lower wick 4.16–11.99% of range → normalized OBV delta -0.1342 to -0.0452 → BTC ATR14 ≥1.03%.",
+      "validation": {
+        "venue": "Hyperliquid primary perps",
+        "n": 15,
+        "target_before_stop": 0.9333333333,
+        "actual_funding_net_roi": 0.0385178971,
+        "stop_reference_pct": 0.075,
+        "external_binance_n": 6,
+        "external_binance_hit5": 1,
+        "external_binance_target_before_stop": 1,
+        "external_binance_net_roi": 0.0466,
+        "promotion_blocker": "sample size below full gate"
+      },
+      "params": {
+        "daily_ret5_min": 0.15,
+        "daily_rv20_min": 0.025,
+        "first_flush_min": 0.08,
+        "lower_wick_min": 0.04160912056190943,
+        "lower_wick_max": 0.11986433193646617,
+        "obv_delta3_norm_min": -0.1342119207492753,
+        "obv_delta3_norm_max": -0.045244761407937324,
+        "btc_atr14_pct_min": 0.01032640865130135
       }
     }
   ]

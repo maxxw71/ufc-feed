@@ -1,0 +1,36 @@
+name: Novel crypto convergence analysis
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'crypto/research/novel_convergence_analysis.py'
+      - '.github/workflows/novel-crypto-convergence.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  analyze:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install --quiet pandas numpy
+      - run: python crypto/research/novel_convergence_analysis.py
+      - name: Commit convergence research
+        run: |
+          git config user.name "appwiza-research-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add crypto/research/results_novel_convergence
+          if ! git diff --cached --quiet; then
+            git commit -m "Update novel crypto convergence analysis"
+            git pull --rebase -X ours origin main || true
+            git push origin HEAD:main || true
+          fi
