@@ -1,4 +1,5 @@
-# Accepted-game odds alignment; provider extras never enter research truth.\n#!/usr/bin/env python3
+# Accepted-game odds alignment; provider extras never enter research truth.
+# Research methods must consume odds_accepted.csv.gz only, never raw provider event sets.\n#!/usr/bin/env python3
 import csv,gzip,json
 from datetime import datetime,timezone
 from pathlib import Path
