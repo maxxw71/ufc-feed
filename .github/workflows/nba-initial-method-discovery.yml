@@ -18,8 +18,8 @@ permissions:
   contents: write
 
 concurrency:
-  group: nba-initial-method-discovery
-  cancel-in-progress: true
+  group: nba-research-generated-state
+  cancel-in-progress: false
 
 jobs:
   discover:
