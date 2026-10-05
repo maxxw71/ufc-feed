@@ -1,0 +1,93 @@
+name: NBA Deep Historical Odds 2015-19
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/nba-deep-historical-odds-2015-19.yml"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: nba-deep-historical-odds-2015-19
+  cancel-in-progress: true
+
+jobs:
+  backfill:
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - run: python -m pip install --upgrade requests
+
+      - name: Backfill and validate older historical odds
+        shell: bash
+        run: |
+          set -euo pipefail
+          : > /tmp/odds_validated
+          : > /tmp/odds_rejected
+
+          seasons=("2018-19" "2017-18" "2016-17" "2015-16")
+
+          for season in "${seasons[@]}"; do
+            echo "===== ODDS $season ====="
+            python nba/market/backfill_espn_historical_odds.py --season "$season" --workers 8
+
+            SEASON="$season" python - <<'PY'
+          import json, os, pathlib, sys
+          season=os.environ["SEASON"]
+          p=pathlib.Path("nba/market/historical")/season.replace("-","_")/"summary.json"
+          s=json.loads(p.read_text())
+          coverage=float(s.get("coverage") or 0)
+          failures=int(s.get("failure_count") or 0)
+          rows=int(s.get("odds_rows") or 0)
+          print({"season":season,"coverage":coverage,"failure_count":failures,"odds_rows":rows})
+          if coverage < 0.95 or rows <= 0:
+              raise SystemExit(1)
+          PY
+
+            if [[ "$?" == "0" ]]; then
+              echo "$season" | tee -a /tmp/odds_validated
+            else
+              echo "$season" | tee -a /tmp/odds_rejected
+            fi
+          done
+
+      - name: Commit validated odds seasons only
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          git config user.name "appwiza-nba-bot"
+          git config user.email "actions@users.noreply.github.com"
+
+          while read -r season; do
+            [[ -z "$season" ]] && continue
+            git add "nba/market/historical/${season/-/_}"
+          done < /tmp/odds_validated
+
+          if git diff --cached --quiet; then
+            echo "No newly validated odds data."
+          else
+            git commit -m "nba: backfill validated historical odds through 2015-16"
+          fi
+
+          git reset --hard HEAD
+          git clean -fd
+          git pull --rebase origin main
+          git push
+
+          echo "Validated odds seasons:"
+          cat /tmp/odds_validated 2>/dev/null || true
+          echo "Rejected odds seasons:"
+          cat /tmp/odds_rejected 2>/dev/null || true
