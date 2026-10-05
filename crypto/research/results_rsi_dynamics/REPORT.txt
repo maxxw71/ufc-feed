@@ -1,42 +1,42 @@
 RSI DYNAMICS RESEARCH — DAILY BLOW-OFF + 4H FIRST FLUSH
 
 BASELINE
-{'events': 354, 'symbols': 31, 'hit5_36h': 0.5649717514124294, 'hit5_72h': 0.652542372881356, 'hit5_5d': 0.7203389830508474, 'hit10_5d': 0.4632768361581921, 'median_mfe5d': 0.09348229807695119, 'median_mae5d': -0.07469630787749387}
+{'events': 419, 'symbols': 33, 'hit5_36h': 0.568019093078759, 'hit5_72h': 0.6563245823389021, 'hit5_5d': 0.7064439140811456, 'hit10_5d': 0.4916467780429594, 'median_mfe5d': 0.09462844419704974, 'median_mae5d': -0.07908611599297011}
 
 This study does not use RSI as a one-dimensional absolute threshold.
 It measures RSI percentage loss, RSI acceleration, RSI-vs-price shock, daily/4H RSI dislocation, RSI percentage rebound entries, and RSI-recovery exits.
 
 TOP TRAIN-SELECTED RULES WITH LATER 40% HOLDOUT
-                                                rule                 features  train_n  train_hit5_5d  train_hit10_5d  hold_n  hold_hit5_5d  hold_hit10_5d  hold_mfe5d_median  hold_mae5d_median  train_score
-      dist_sma9 <= -0.05223 AND rsi_pct3 <= -0.21386       dist_sma9+rsi_pct3       28       1.000000        0.714286      18      0.777778       0.611111           0.167026          -0.024889     0.914286
-      rsi_pct1 <= -0.19679 AND dist_ema9 <= -0.04274       rsi_pct1+dist_ema9       20       1.000000        0.700000      14      0.928571       0.714286           0.238542          -0.019451     0.910000
-      dist_ema9 <= -0.04274 AND rsi_pct3 <= -0.21386       dist_ema9+rsi_pct3       28       1.000000        0.678571      19      0.789474       0.631579           0.133415          -0.023972     0.903571
-      rsi_pct1 <= -0.19679 AND dist_sma9 <= -0.05223       rsi_pct1+dist_sma9       18       1.000000        0.666667      11      0.909091       0.636364           0.343669          -0.019451     0.900000
-      dist_sma9 <= -0.05223 AND rsi_pct3 <= -0.23562       dist_sma9+rsi_pct3       17       1.000000        0.647059      16      0.750000       0.562500           0.139460          -0.023972     0.894118
-   dist_sma9 <= -0.05223 AND rsi_vs_sma3 <= -0.14503    dist_sma9+rsi_vs_sma3       18       1.000000        0.611111      14      0.857143       0.642857           0.176085          -0.021711     0.883333
-   dist_ema9 <= -0.04274 AND rsi_vs_sma3 <= -0.14503    dist_ema9+rsi_vs_sma3       18       1.000000        0.611111      17      0.882353       0.705882           0.176085          -0.023972     0.883333
-      dist_ema9 <= -0.04274 AND rsi_pct3 <= -0.23562       dist_ema9+rsi_pct3       17       1.000000        0.588235      19      0.789474       0.631579           0.133415          -0.023972     0.876471
-   dist_sma9 <= -0.05223 AND rsi_vs_sma5 <= -0.18731    dist_sma9+rsi_vs_sma5       19       1.000000        0.578947      14      0.857143       0.642857           0.176085          -0.021711     0.873684
-   dist_ema9 <= -0.04274 AND rsi_vs_sma5 <= -0.18731    dist_ema9+rsi_vs_sma5       19       1.000000        0.578947      17      0.882353       0.705882           0.176085          -0.023972     0.873684
- rsi_pct1 <= -0.19679 AND dual_stretch_9 <= -0.29736  rsi_pct1+dual_stretch_9       18       1.000000        0.555556      11      0.909091       0.636364           0.343669          -0.019451     0.866667
-      dist_ema9 <= -0.04274 AND rsi_pct1 <= -0.14589       dist_ema9+rsi_pct1       28       0.928571        0.678571      19      0.789474       0.631579           0.133415          -0.023972     0.853571
-      dist_sma9 <= -0.05223 AND rsi_pct1 <= -0.14589       dist_sma9+rsi_pct1       26       0.923077        0.653846      16      0.750000       0.562500           0.139460          -0.023972     0.842308
-rsi_pct1 <= -0.19679 AND rsi_sma5_slope1 <= -0.06596 rsi_pct1+rsi_sma5_slope1       15       1.000000        0.466667       6      0.833333       0.333333           0.076210          -0.018565     0.840000
-  rsi_accel <= -12.79426 AND rsi_vs_sma3 <= -0.14503    rsi_accel+rsi_vs_sma3       21       1.000000        0.428571      10      0.700000       0.400000           0.087813          -0.065416     0.828571
+                                                       rule                        features  train_n  train_hit5_5d  train_hit10_5d  hold_n  hold_hit5_5d  hold_hit10_5d  hold_mfe5d_median  hold_mae5d_median  train_score
+rsi_sma5_slope3 <= -0.13634 AND rsi_sma5_slope1 <= -0.06870 rsi_sma5_slope3+rsi_sma5_slope1       36       0.888889        0.611111      10      0.900000       0.800000           0.142746          -0.043487     0.805556
+                                rsi_sma5_slope3 <= -0.13634                 rsi_sma5_slope3       47       0.872340        0.617021      21      0.714286       0.619048           0.113749          -0.043487     0.795745
+rsi_sma5_slope3 <= -0.13634 AND rsi_sma5_slope1 <= -0.04581 rsi_sma5_slope3+rsi_sma5_slope1       47       0.872340        0.617021      17      0.823529       0.705882           0.162945          -0.039866     0.795745
+rsi_sma5_slope3 <= -0.13634 AND rsi_sma5_slope1 <= -0.03282 rsi_sma5_slope3+rsi_sma5_slope1       47       0.872340        0.617021      21      0.714286       0.619048           0.113749          -0.043487     0.795745
+rsi_sma5_slope3 <= -0.13634 AND rsi_sma5_slope1 <= -0.02862 rsi_sma5_slope3+rsi_sma5_slope1       47       0.872340        0.617021      21      0.714286       0.619048           0.113749          -0.043487     0.795745
+ rsi_sma5_slope3 <= -0.13634 AND dual_stretch_9 <= -0.15547  rsi_sma5_slope3+dual_stretch_9       47       0.872340        0.617021      21      0.714286       0.619048           0.113749          -0.043487     0.795745
+rsi_sma5_slope3 <= -0.13634 AND rsi_sma5_slope1 <= -0.05784 rsi_sma5_slope3+rsi_sma5_slope1       44       0.863636        0.613636      14      0.785714       0.642857           0.113749          -0.043487     0.788636
+   rsi_sma5_slope1 <= -0.06870 AND rsi_drop_pct <= -0.37984    rsi_sma5_slope1+rsi_drop_pct       26       0.846154        0.538462       7      0.857143       0.285714           0.076210          -0.023099     0.753846
+ rsi_sma5_slope3 <= -0.13634 AND dual_stretch_9 <= -0.30328  rsi_sma5_slope3+dual_stretch_9       32       0.843750        0.531250       9      0.888889       0.888889           0.171743          -0.043487     0.750000
+     rsi_accel <= -10.37175 AND rsi_sma5_slope1 <= -0.02862       rsi_accel+rsi_sma5_slope1       40       0.825000        0.575000      26      0.769231       0.653846           0.150497          -0.020825     0.750000
+    rsi_sma5_slope3 <= -0.13634 AND rsi_vs_sma5 <= -0.11934     rsi_sma5_slope3+rsi_vs_sma5       38       0.842105        0.526316      11      0.818182       0.727273           0.113749          -0.043487     0.747368
+      rsi_sma5_slope3 <= -0.13634 AND dist_ema9 <= -0.04314       rsi_sma5_slope3+dist_ema9       29       0.827586        0.517241       8      1.000000       1.000000           0.171743          -0.043487     0.734483
+         rsi_accel <= -10.37175 AND rsi_vs_sma5 <= -0.11934           rsi_accel+rsi_vs_sma5       44       0.795455        0.568182      29      0.896552       0.793103           0.252153          -0.025806     0.727273
+     rsi_accel <= -10.37175 AND rsi_sma5_slope1 <= -0.04581       rsi_accel+rsi_sma5_slope1       33       0.787879        0.575758      17      0.823529       0.647059           0.133415          -0.023972     0.724242
+                                     rsi_accel <= -10.37175                       rsi_accel       48       0.791667        0.562500      38      0.789474       0.657895           0.167579          -0.032757     0.722917
 
 RSI PERCENT-RECOVERY ENTRY TIMING
                      entry  n  coverage  hit5_5d  hit10_5d  median_mfe5d
-RSI +10% from flush trough 52  0.146893 0.673077  0.346154      0.066285
-RSI +20% from flush trough  7  0.019774 0.428571  0.142857      0.048201
-RSI +30% from flush trough  0  0.000000      NaN       NaN           NaN
+RSI +10% from flush trough 82  0.195704 0.621951  0.390244      0.069106
+RSI +20% from flush trough 16  0.038186 0.312500  0.125000      0.033501
+RSI +30% from flush trough  3  0.007160 0.333333  0.000000      0.034671
 
 RSI-DERIVED EXIT TIMING
                                    exit   n  coverage  positive_rate  return_ge_5  median_return  mean_return
- Recover 50% of RSI peak-to-trough loss 145  0.409605       0.965517     0.793103       0.091421     0.143864
- Recover 75% of RSI peak-to-trough loss  84  0.237288       0.964286     0.857143       0.153770     0.218195
-Recover 100% of RSI peak-to-trough loss  38  0.107345       0.921053     0.868421       0.168370     0.327628
-              RSI gains 20% from trough 163  0.460452       0.932515     0.601227       0.060148     0.082312
-              RSI gains 35% from trough  87  0.245763       0.942529     0.758621       0.094440     0.109748
-              RSI gains 50% from trough  41  0.115819       0.951220     0.829268       0.102130     0.152113
+ Recover 50% of RSI peak-to-trough loss 187  0.446301       0.957219     0.732620       0.076267     0.111836
+ Recover 75% of RSI peak-to-trough loss 105  0.250597       0.990476     0.761905       0.089779     0.147162
+Recover 100% of RSI peak-to-trough loss  55  0.131265       1.000000     0.745455       0.115550     0.183091
+              RSI gains 20% from trough 211  0.503580       0.933649     0.559242       0.056915     0.076016
+              RSI gains 35% from trough 133  0.317422       0.969925     0.744361       0.076267     0.102624
+              RSI gains 50% from trough  70  0.167064       1.000000     0.857143       0.091235     0.149662
 
 Guardrail: rules are ranked only by the first 60% chronological training sample; the later 40% is shown as holdout and is not used to choose thresholds.
