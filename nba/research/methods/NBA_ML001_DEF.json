@@ -1,0 +1,33 @@
+{
+  "method_id": "NBA_ML001_DEF",
+  "name": "ML001 Defensive-Profile Loss Filter",
+  "status": "shadow_only",
+  "market": "moneyline",
+  "frozen_rule": {
+    "net5_gap_min": 7.759,
+    "rest_diff_min_days": 2.0,
+    "def5_adv_max": 5.492107833295265
+  },
+  "interpretation": "Strong recent net-rating edge plus meaningful rest advantage, while excluding cases where the side's recent defensive advantage is too extreme. The defensive cap was selected from discovery-only loss forensics and then tested forward without retuning.",
+  "performance": {
+    "overall": {"n": 116, "wins": 92, "hit_rate": 0.7931034482758621, "roi": 0.17205164076344187},
+    "discovery_A_2018_19_to_2020_21": {"n": 42, "wins": 31, "hit_rate": 0.7380952380952381, "roi": 0.14085768374057825},
+    "discovery_B_2021_22_to_2022_23": {"n": 32, "wins": 26, "hit_rate": 0.8125, "roi": 0.16017868796656767},
+    "validation_2023_24": {"n": 20, "wins": 16, "hit_rate": 0.8, "roi": 0.11222760192301648},
+    "holdout_2024_25_to_2025_26": {"n": 22, "wins": 19, "hit_rate": 0.8636363636363636, "roi": 0.30325897991202166}
+  },
+  "threshold_robustness": {
+    "def5_adv_max_5_0": {"overall_hit": 0.7909090909090909, "overall_roi": 0.15015430011401767, "holdout_hit": 0.8571428571428571, "holdout_roi": 0.2510332170506893},
+    "def5_adv_max_6_0": {"overall_hit": 0.7874015748031497, "overall_roi": 0.16130149893014326, "holdout_hit": 0.8461538461538461, "holdout_roi": 0.3178573134868103}
+  },
+  "promotion_policy": {
+    "live": false,
+    "prospective_2026_27_required": true,
+    "no_retuning_on_2026_27": true
+  },
+  "notes": [
+    "Nearby 5.0-6.0 defensive-cap thresholds remain strong, reducing concern that 5.492 is a knife-edge fit.",
+    "Intersections with V2_001 showed very high headline hit rates but failed validation consistency or had very small samples, so they remain research-only.",
+    "Totals, ATS and novel flow/workload lanes remain below this method's probability/ROI standard."
+  ]
+}
