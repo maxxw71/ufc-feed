@@ -31,6 +31,17 @@ OUT.mkdir(parents=True, exist_ok=True)
 PRIMARY = "hit5_5d"
 RISK = "t50_before_s75_5d"
 
+# Research P&L contract. Discovery is intentionally Hyperliquid-first:
+# +5% take-profit, -7.5% stop, 5-day timeout, base perp taker fee and
+# conservative 0.10% slippage per side. Actual funding is a later replay gate.
+TP = 0.05
+STOP = 0.075
+HL_FEE_SIDE = 0.00045
+SLIP_SIDE = 0.0010
+HL_RT_COST = 2 * (HL_FEE_SIDE + SLIP_SIDE)
+MIN_TRAIN_NET_ROI = 0.0125
+MIN_HOLD_NET_ROI = 0.0150
+
 FEATURES = [
     ("rsi_pct1","low"),("rsi_pct3","low"),("rsi_accel","low"),
     ("rsi_drop_pct","low"),("trigger_rsi","low"),
@@ -51,7 +62,9 @@ FEATURES = [
 ]
 
 KNOWN_METHOD_FEATURE_SETS = [
-    frozenset(["rsi_pct1","rsi_accel"]),  # C1 core
+    frozenset(["rsi_pct1","rsi_accel"]),            # C1
+    frozenset(["close_location","volume_ratio20"]), # C3
+    frozenset(["rsi_accel","rsi_vs_sma3"]),         # C4
 ]
 
 def rate(s):
@@ -65,6 +78,27 @@ def wilson_lower(w,n,z=1.96):
     ctr=(p+z*z/(2*n))/den
     half=z*sqrt((p*(1-p)+z*z/(4*n))/n)/den
     return ctr-half
+
+def net_roi_target_stop_timeout(df, rt_cost=HL_RT_COST):
+    """Mean net return/trade under the frozen +5/-7.5/5d contract.
+
+    Same-bar target/stop events are already encoded as not target-first, so a
+    row that also reaches the stop is charged the stop. If neither boundary is
+    reached, use the observed 5-day closing return. Funding is deliberately
+    excluded here and remains a mandatory later economic-replay gate.
+    """
+    if df.empty:
+        return np.nan
+    win=df[RISK].fillna(False).astype(bool)
+    mae=pd.to_numeric(df["mae_5d"],errors="coerce")
+    timeout=pd.to_numeric(
+        df["close_ret_5d"] if "close_ret_5d" in df.columns else pd.Series(0.0,index=df.index),
+        errors="coerce"
+    ).fillna(0.0)
+    stopped=(~win)&(mae<=-STOP)
+    gross=pd.Series(np.where(win,TP,np.where(stopped,-STOP,timeout)),index=df.index)
+    gross=gross.clip(lower=-STOP,upper=TP)
+    return float((gross-rt_cost).mean())
 
 def episodes(df,hours=18):
     x=df.sort_values("trigger_time").copy()
@@ -170,6 +204,8 @@ def discover_segment(base,segment_name):
 
         tr_hit=rate(gt[PRIMARY]);tr_risk=rate(gt[RISK])
         ho_hit=rate(gh[PRIMARY]);ho_risk=rate(gh[RISK])
+        tr_roi=net_roi_target_stop_timeout(gt)
+        ho_roi=net_roi_target_stop_timeout(gh)
         wins=int(gh[PRIMARY].fillna(False).astype(bool).sum())
         lo=wilson_lower(wins,len(gh))
         ep_n,ep_rate=episode_success(gh,PRIMARY)
@@ -178,8 +214,11 @@ def discover_segment(base,segment_name):
         # Discovery gate: strong +5% probability, reasonable stop-order
         # performance, enough independent episodes, and no train collapse.
         eligible=(
-            ho_hit>=.80
+            segment_name=="primary_perps"
+            and ho_hit>=.80
             and ho_risk>=.72
+            and tr_roi>=MIN_TRAIN_NET_ROI
+            and ho_roi>=MIN_HOLD_NET_ROI
             and len(gh)>=20
             and ep_n>=12
             and ep_rate>=.76
@@ -196,15 +235,20 @@ def discover_segment(base,segment_name):
             "conditions":json.dumps([{"feature":s[0],"op":s[1],"a":s[2],"b":s[3]} for s in combo]),
             "novelty":classify_novelty(combo),
             "train_n":len(gt),"train_hit5":tr_hit,"train_t5_s7p5":tr_risk,
+            "train_net_roi":tr_roi,
             "hold_n":len(gh),"hold_hit5":ho_hit,"hold_hit10":rate(gh["hit10_5d"]),
             "hold_t5_s7p5":ho_risk,
+            "hold_net_roi":ho_roi,
             "hold_wilson_lower":lo,
             "hold_episodes":ep_n,"episode_hit5":ep_rate,
             "train_folds":folds,"train_fold_mean_hit5":fold_mean,"train_fold_min_hit5":fold_min,
             "hold_median_mfe5d":float(gh["mfe_5d"].median()),
             "hold_median_mae5d":float(gh["mae_5d"].median()),
             "eligible":eligible,
-            "research_score":(.45*ho_hit+.25*ho_risk+.15*ep_rate+.15*lo),
+            "research_score":(
+                .30*ho_hit+.20*ho_risk+.15*ep_rate+.10*lo
+                +.25*min(max(ho_roi/.03,0.0),1.0)
+            ),
         })
     return pd.DataFrame(rows)
 
@@ -258,13 +302,15 @@ def main():
                 "hold_hit5":float(r["hold_hit5"]),
                 "hold_hit10":float(r["hold_hit10"]),
                 "hold_t5_before_s7p5":float(r["hold_t5_s7p5"]),
+                "train_net_roi":float(r["train_net_roi"]),
+                "hold_net_roi":float(r["hold_net_roi"]),
                 "hold_wilson_lower":float(r["hold_wilson_lower"]),
                 "episodes":int(r["hold_episodes"]),
                 "episode_hit5":float(r["episode_hit5"]),
             },
             "promotion_requirements":[
-                "independent cross-venue validation",
-                "fees/slippage/funding replay",
+                "independent cross-venue validation with frozen thresholds",
+                "full fees/slippage/actual-funding economic replay",
                 "forward shadow signals",
                 "manual review before assignment of C-number"
             ]
@@ -281,7 +327,9 @@ def main():
         f"Source events: {len(e)}",
         f"Eligible new candidates: {len(cand)}",
         "",
-        "Promotion policy: AUTO discoveries are SHADOW_ONLY. They never become C3/C4/etc automatically.",
+        "Promotion policy: AUTO discoveries are SHADOW_ONLY. They never become a live C-number automatically.",
+        "Discovery order: Hyperliquid primary perps first on cost-adjusted ROI, then frozen-threshold cross-venue replication.",
+        "ROI contract: +5% target / -7.5% stop / 5d timeout / 0.045% taker + 0.10% slippage per side; funding replay remains mandatory.",
         "",
         "TOP NEW CANDIDATES",
         cand.head(20).to_string(index=False) if len(cand) else "No candidate passed today's full gate.",
@@ -289,6 +337,9 @@ def main():
         "GATES",
         "+5% holdout >= 80%",
         "+5% before -7.5% holdout >= 72%",
+        f"training net ROI/trade >= {MIN_TRAIN_NET_ROI*100:.2f}%",
+        f"holdout net ROI/trade >= {MIN_HOLD_NET_ROI*100:.2f}%",
+        "primary Hyperliquid perps only for promotion to candidate registry",
         "holdout N >= 20",
         ">=12 market episodes",
         "episode-average +5% >= 76%",
