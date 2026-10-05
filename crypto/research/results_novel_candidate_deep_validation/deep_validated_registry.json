@@ -1,0 +1,70 @@
+{
+  "generated_at": "2026-10-05T04:28:00.062151+00:00",
+  "policy": "Frozen Hyperliquid rules; actual-funding HL holdout + full independent Binance external panel; no retuning",
+  "candidates": [
+    {
+      "candidate_id": "NOVEL-20261005-02",
+      "status": "DEEP_VALIDATED_SHADOW",
+      "rule": "-0.0538208 <= relative_ret4 <= -0.0305042 AND -0.112934 <= obv_delta3_norm <= -0.0354537",
+      "hyperliquid_actual_funding": {
+        "n": 29,
+        "target_rate": 0.8275862068965517,
+        "net_roi": 0.02724454886789687,
+        "pnl_per_10000": 272.4454886789687
+      },
+      "binance_full_external": {
+        "n": 23,
+        "hit5": 0.782608695652174,
+        "hit10": 0.4782608695652174,
+        "risk": 0.7391304347826086,
+        "net_roi": 0.016823967333955255,
+        "wilson_lower": 0.5809611981726508
+      },
+      "binance_latest40": {
+        "n": 8,
+        "hit5": 0.75,
+        "hit10": 0.75,
+        "risk": 0.75,
+        "net_roi": 0.023493906085121363,
+        "wilson_lower": 0.40926987910258916
+      },
+      "next_stage": [
+        "forward shadow tracking",
+        "live L2 sizing at signal time",
+        "manual review before any C-number"
+      ]
+    },
+    {
+      "candidate_id": "NOVEL-20261005-06",
+      "status": "DEEP_VALIDATED_SHADOW",
+      "rule": "-0.139439 <= price_dd <= -0.10419 AND 0.313961 <= daily_ret5 <= 0.579532",
+      "hyperliquid_actual_funding": {
+        "n": 31,
+        "target_rate": 0.7419354838709677,
+        "net_roi": 0.0187526257073083,
+        "pnl_per_10000": 187.526257073083
+      },
+      "binance_full_external": {
+        "n": 16,
+        "hit5": 0.9375,
+        "hit10": 0.8125,
+        "risk": 0.875,
+        "net_roi": 0.030975000000000003,
+        "wilson_lower": 0.7167073163197013
+      },
+      "binance_latest40": {
+        "n": 7,
+        "hit5": 1.0,
+        "hit10": 0.8571428571428571,
+        "risk": 1.0,
+        "net_roi": 0.04660000000000001,
+        "wilson_lower": 0.6456611570247934
+      },
+      "next_stage": [
+        "forward shadow tracking",
+        "live L2 sizing at signal time",
+        "manual review before any C-number"
+      ]
+    }
+  ]
+}
