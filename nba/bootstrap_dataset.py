@@ -324,7 +324,7 @@ def main():
     ap.add_argument("--slice",action="append",help="SEASON|SEASON_TYPE, repeatable")
     ap.add_argument("--max-games",type=int,default=None)
     args=ap.parse_args()
-    slices=args.slice or ["2025-26|Regular Season","2026-27|Pre Season","2026-27|Regular Season"]
+    slices=args.slice or ["2025-26|Regular Season","2025-26|Post Season","2026-27|Pre Season","2026-27|Regular Season"]
     s=requests.Session()
     failures=[]
     for spec in slices:
