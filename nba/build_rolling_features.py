@@ -114,15 +114,15 @@ def pregame_roll(rows,id_field,metrics,played_field=None):
         gm=game_meta.get(r.get("game_id")) or {}
         when=dt(gm.get("game_date"))
         if ident and when:
-            grouped[ident].append((when,r,gm))
+            grouped[(gm.get("season"),ident)].append((when,r,gm))
     out=[]
-    for ident,arr in grouped.items():
+    for (season_key,ident),arr in grouped.items():
         arr.sort(key=lambda x:x[0])
         hist=[]
         for when,r,gm in arr:
             feat={
                 "game_id":r.get("game_id"),id_field:ident,"game_date":gm.get("game_date"),
-                "season":gm.get("season") or r.get("season"),"season_type":gm.get("season_type") or r.get("season_type"),
+                "season":season_key or gm.get("season") or r.get("season"),"season_type":gm.get("season_type") or r.get("season_type"),
                 "prior_games_available":len(hist),"pregame_only_feature":True
             }
             if id_field=="team_id":
