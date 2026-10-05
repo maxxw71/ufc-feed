@@ -6,7 +6,6 @@ on:
     branches: [main]
     paths:
       - "nba/market/capture_market.py"
-      - "nba/market/capture_external_odds.py"
       - ".github/workflows/nba-market-snapshot.yml"
   schedule:
     - cron: "23 */3 * * *"
