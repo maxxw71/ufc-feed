@@ -160,11 +160,14 @@ def veto_search(cid,train,hold,binfull,trades,condition_features):
         if st["roi"] < max(base_tr["roi"],.010):continue
 
         gh=hold[apply_veto(hold,spec)]
-        gb=binfull[apply_veto(binfull,spec)]
+        f,op,v=spec
+        binance_supported=f in binfull.columns
+        gb=binfull[apply_veto(binfull,spec)] if binance_supported else binfull.iloc[0:0].copy()
         sh=stats(gh,HL_COST);sb=stats(gb,BIN_COST)
         ah=actual_holdout_stats(cid,gh,trades)
-        f,op,v=spec
         rescued=(
+            binance_supported
+            and
             ah["n"]>=15 and ah["target_rate"]>=.72 and ah["net_roi"]>=.015
             and sb["n"]>=15 and sb["hit5"]>=.78 and sb["risk"]>=.68
             and sb["roi"]>=.010 and sb["wilson"]>=.58
@@ -172,6 +175,7 @@ def veto_search(cid,train,hold,binfull,trades,condition_features):
         rows.append({
             "candidate_id":cid,"feature":f,"op":op,"threshold":v,
             "uses_current_live_core_feature":f in CORE_LIVE_FEATURES,
+            "binance_feature_supported":binance_supported,
             "train_base_n":base_tr["n"],"train_base_risk":base_tr["risk"],"train_base_roi":base_tr["roi"],
             "train_keep_n":st["n"],"train_keep_fraction":st["n"]/max(base_tr["n"],1),
             "train_risk":st["risk"],"train_roi":st["roi"],
