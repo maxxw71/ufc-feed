@@ -48,10 +48,10 @@ for r in players:
     meta=game_meta.get(r.get("game_id")) or {}
     when=dt(meta.get("date"))
     if r.get("person_id") and when:
-        by_player[r["person_id"]].append((when,r,meta))
+        by_player[(meta.get("season"),r["person_id"])].append((when,r,meta))
 
 out=[]
-for pid,arr in by_player.items():
+for (season_key,pid),arr in by_player.items():
     arr.sort(key=lambda x:x[0])
     hist=[]
     for when,r,meta in arr:
@@ -62,7 +62,7 @@ for pid,arr in by_player.items():
         prev=prior[-1] if prior else None
         fga=num(r.get("field_goals_attempted")); fta=num(r.get("free_throws_attempted")); tov=num(r.get("turnovers"))
         feat={
-          "season":meta.get("season") or r.get("season"),"season_type":meta.get("season_type") or r.get("season_type"),
+          "season":season_key or meta.get("season") or r.get("season"),"season_type":meta.get("season_type") or r.get("season_type"),
           "game_id":r.get("game_id"),"game_date":meta.get("date"),"person_id":pid,
           "player_name":r.get("player_name"),"team_id":r.get("team_id"),"team_tricode":r.get("team_tricode"),
           "days_since_prev_appearance":(when.date()-prev[0].date()).days if prev else None,
@@ -95,7 +95,7 @@ for pid,arr in by_player.items():
 write(OUT/"player_workload.csv.gz",out)
 summary={
  "generated_at_utc":datetime.now(timezone.utc).isoformat(),
- "rows":len(out),"players":len(by_player),
+ "rows":len(out),"players":len(set(k[1] for k in by_player)),
  "windows_days":[2,3,5,7],"point_in_time":True
 }
 (OUT/"player_workload_summary.json").write_text(json.dumps(summary,indent=2)+"\n")
