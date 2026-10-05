@@ -14,6 +14,7 @@ on:
       - "nba/build_availability_impact.py"
       - "nba/build_manifest.py"
       - "nba/build_market_features.py"
+      - "nba/build_player_workload.py"
       - "nba/market/historical/**"
 
 permissions:
@@ -50,6 +51,9 @@ jobs:
 
       - name: Build historical market features
         run: python nba/build_market_features.py
+
+      - name: Build player workload
+        run: python nba/build_player_workload.py
 
       - name: Build coverage manifest
         run: python nba/build_manifest.py
