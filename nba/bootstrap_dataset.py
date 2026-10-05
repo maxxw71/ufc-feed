@@ -14,6 +14,15 @@ HEADERS = {
 }
 
 SEASON_TYPE_CODE = {"Pre Season": 1, "Regular Season": 2, "Post Season": 3}
+NBA_TRICODES = {
+    "ATL","BOS","BKN","CHA","CHI","CLE","DAL","DEN","DET","GS","GSW","HOU","IND","LAC","LAL",
+    "MEM","MIA","MIL","MIN","NO","NOP","NY","NYK","OKC","ORL","PHI","PHX","POR","SAC","SA","SAS",
+    "TOR","UTAH","UTA","WSH","WAS"
+}
+REGULAR_END_DATES = {
+    "2025-26": date(2026,4,12),
+    "2026-27": date(2027,4,11),
+}
 
 def now_utc():
     return datetime.now(timezone.utc).isoformat()
@@ -56,7 +65,7 @@ def slice_window(season, season_type):
     if season_type=="Pre Season":
         return date(start,9,20),date(start,10,25)
     if season_type=="Regular Season":
-        return date(start,10,1),date(end,4,30)
+        return date(start,10,1),REGULAR_END_DATES.get(season,date(end,4,30))
     if season_type=="Post Season":
         return date(end,4,1),date(end,6,30)
     raise ValueError(f"unsupported season type: {season_type}")
@@ -92,6 +101,17 @@ def discover_events(session, season, season_type, provenance):
             es=(ev.get("season") or {}).get("type")
             if es is not None and int(es)!=want:
                 continue
+            comp=(ev.get("competitions") or [{}])[0]
+            tris=[]
+            for competitor in comp.get("competitors") or []:
+                tri=((competitor.get("team") or {}).get("abbreviation"))
+                if tri: tris.append(tri)
+            if len(tris)!=2 or any(tri not in NBA_TRICODES for tri in tris):
+                continue
+            if season_type=="Regular Season":
+                note_text=(json.dumps(comp.get("notes") or [])+" "+str(ev.get("name") or "")).lower()
+                if "championship" in note_text and ("nba cup" in note_text or "emirates" in note_text):
+                    continue
             eid=str(ev.get("id") or "")
             if eid:
                 events[eid]=ev
