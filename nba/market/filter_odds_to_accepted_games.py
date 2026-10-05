@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+# Accepted-game odds alignment; provider extras never enter research truth.\n#!/usr/bin/env python3
 import csv,gzip,json
 from datetime import datetime,timezone
 from pathlib import Path
