@@ -1,0 +1,36 @@
+name: NBA Official Schedule Crosscheck V2
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - "nba/official_crosscheck_v2.py"
+      - ".github/workflows/nba-official-crosscheck-v2.yml"
+
+permissions:
+  contents: write
+
+jobs:
+  crosscheck:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: python -m pip install --upgrade requests
+      - run: python nba/official_crosscheck_v2.py
+      - shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "appwiza-nba-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add nba/official_game_id_map_v2.csv.gz nba/official_crosscheck_v2_report.json
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m "nba: refresh official schedule crosscheck v2"
+          git pull --rebase origin main
+          git push
