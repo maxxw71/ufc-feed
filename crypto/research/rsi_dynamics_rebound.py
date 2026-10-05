@@ -304,6 +304,9 @@ def future_labels(h, idx, entry_mode="next_open"):
         mae = float(f["low"].min()/entry - 1)
         out["mfe_"+name] = mfe
         out["mae_"+name] = mae
+        # Preserve the actual 5-day timeout close so frozen Hyperliquid
+        # candidates can be compared on Binance with the same P&L contract.
+        out["close_ret_"+name] = float(f.iloc[-1]["close"]/entry - 1)
         out["hit5_"+name] = mfe >= 0.05
         out["hit7p5_"+name] = mfe >= 0.075
         out["hit10_"+name] = mfe >= 0.10

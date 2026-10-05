@@ -16,6 +16,13 @@ BIN=Path("crypto/research/results_rsi_dynamics/events.csv")
 OUT=Path("crypto/research/auto_discovery")
 OUT.mkdir(parents=True,exist_ok=True)
 
+TP=0.05
+STOP=0.075
+BINANCE_FEE_SIDE=0.00070
+SLIP_SIDE=0.0010
+BINANCE_RT_COST=2*(BINANCE_FEE_SIDE+SLIP_SIDE)
+MIN_BINANCE_NET_ROI=0.010
+
 def rate(s):
     x=s.dropna()
     return float(x.astype(bool).mean()) if len(x) else np.nan
@@ -26,6 +33,19 @@ def wilson_lower(w,n,z=1.96):
     ctr=(p+z*z/(2*n))/den
     half=z*sqrt((p*(1-p)+z*z/(4*n))/n)/den
     return ctr-half
+
+def net_roi_target_stop_timeout(df):
+    if df.empty:return np.nan
+    win=df["t50_before_s75_5d"].fillna(False).astype(bool)
+    mae=pd.to_numeric(df["mae_5d"],errors="coerce")
+    timeout=pd.to_numeric(
+        df["close_ret_5d"] if "close_ret_5d" in df.columns else pd.Series(0.0,index=df.index),
+        errors="coerce"
+    ).fillna(0.0)
+    stopped=(~win)&(mae<=-STOP)
+    gross=pd.Series(np.where(win,TP,np.where(stopped,-STOP,timeout)),index=df.index)
+    gross=gross.clip(lower=-STOP,upper=TP)
+    return float((gross-BINANCE_RT_COST).mean())
 
 def apply_condition(df,c):
     f=c["feature"];op=c["op"];a=c["a"];b=c.get("b")
@@ -68,12 +88,14 @@ def main():
         hit10=rate(g["hit10_5d"]) if n and "hit10_5d" in g else np.nan
         wins=int(g["hit5_5d"].fillna(False).astype(bool).sum()) if n else 0
         lo=wilson_lower(wins,n)
+        roi=net_roi_target_stop_timeout(g) if n else np.nan
 
         passed=(
             not unsupported
             and n>=15
             and hit>=.78
             and risk>=.68
+            and roi>=MIN_BINANCE_NET_ROI
             and lo>=.58
         )
         cand["cross_venue_validation"]={
@@ -83,6 +105,7 @@ def main():
             "hit5":None if pd.isna(hit) else float(hit),
             "hit10":None if pd.isna(hit10) else float(hit10),
             "t5_before_s7p5":None if pd.isna(risk) else float(risk),
+            "net_roi":None if pd.isna(roi) else float(roi),
             "wilson_lower":None if pd.isna(lo) else float(lo),
             "unsupported_features":unsupported,
             "passed":bool(passed),
@@ -96,6 +119,7 @@ def main():
             "binance_hit5":hit,
             "binance_hit10":hit10,
             "binance_t5_s7p5":risk,
+            "binance_net_roi":roi,
             "binance_wilson_lower":lo,
             "unsupported_features":"+".join(unsupported),
         })
@@ -113,6 +137,7 @@ def main():
         f"Independent Binance holdout events: {len(hold)}",
         f"Candidates checked: {len(z)}",
         f"Cross-validated shadow candidates: {len(passed)}",
+        f"Binance net ROI gate: >= {MIN_BINANCE_NET_ROI*100:.2f}%/trade under the same +5/-7.5/5d contract",
         "",
         passed.to_string(index=False) if len(passed) else "No candidate passed cross-venue gates today.",
         "",

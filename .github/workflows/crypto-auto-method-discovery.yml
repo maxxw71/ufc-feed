@@ -127,6 +127,8 @@ jobs:
             'daily_schedule_utc':'05:17',
             'hyperliquid_scope':'all active primary perps + builder/HIP-3 perps + spot',
             'binance_scope':'top 160 current USDT spot pairs by quote volume',
+            'discovery_policy':'Hyperliquid primary-perp ROI-first; frozen thresholds then Binance replication',
+            'roi_contract':'+5% target / -7.5% stop / 5d timeout; venue fees + 0.10% slippage per side; actual funding replay before live promotion',
             'candidate_count':len(cs),
             'cross_validated_shadow_count':sum(c.get('status')=='CROSS_VALIDATED_SHADOW' for c in cs),
             'live_auto_promotion':False,
