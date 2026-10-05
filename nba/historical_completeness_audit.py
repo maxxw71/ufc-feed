@@ -7,6 +7,14 @@ from pathlib import Path
 ROOT=Path(__file__).resolve().parent
 DATA=ROOT/"data"
 EXPECTED={
+ "2015_16":{"games":1230,"teams":30,"team_games":82},
+ "2016_17":{"games":1230,"teams":30,"team_games":82},
+ "2017_18":{"games":1230,"teams":30,"team_games":82},
+ "2018_19":{"games":1230,"teams":30,"team_games":82},
+ "2019_20":{"games":1059,"teams":30,"team_games":None},
+ "2020_21":{"games":1080,"teams":30,"team_games":72},
+ "2021_22":{"games":1230,"teams":30,"team_games":82},
+ "2022_23":{"games":1230,"teams":30,"team_games":82},
  "2023_24":{"games":1230,"teams":30,"team_games":82},
  "2024_25":{"games":1230,"teams":30,"team_games":82},
  "2025_26":{"games":1230,"teams":30,"team_games":82}
@@ -38,7 +46,10 @@ for season,exp in EXPECTED.items():
     checks={
       "regular_games_exact":len(games)==exp["games"],
       "unique_teams_exact":len(counts)==exp["teams"],
-      "each_team_games_exact":len(counts)==exp["teams"] and all(v==exp["team_games"] for v in counts.values()),
+      "each_team_games_exact":(
+        True if exp["team_games"] is None
+        else len(counts)==exp["teams"] and all(v==exp["team_games"] for v in counts.values())
+      ),
       "team_rows_exact":len(teams)==2*len(games),
       "player_rows_nonempty":len(players)>0,
       "playbyplay_nonempty":len(pbp)>0,
