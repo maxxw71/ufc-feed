@@ -1,0 +1,41 @@
+name: NBA 2024-25 Historical Odds Backfill
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/nba-2024-25-historical-odds.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: nba-2024-25-historical-odds
+  cancel-in-progress: true
+
+jobs:
+  backfill:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: python -m pip install --upgrade requests
+      - name: Backfill 2024-25 historical odds
+        run: python nba/market/backfill_espn_historical_odds.py --season 2024-25 --workers 8
+      - name: Commit historical odds
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "appwiza-nba-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add nba/market/historical/2024_25
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m "nba: backfill 2024-25 historical odds"
+          git pull --rebase origin main
+          git push
