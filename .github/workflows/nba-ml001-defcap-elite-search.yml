@@ -1,0 +1,47 @@
+name: NBA ML001 DefCap Elite Search
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - "nba/research/search_ml001_defcap_elite.py"
+      - ".github/workflows/nba-ml001-defcap-elite-search.yml"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: nba-ml001-defcap-elite-search
+  cancel-in-progress: true
+
+jobs:
+  search:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: python nba/build_market_features.py
+      - run: python nba/research/search_ml001_defcap_elite.py
+      - shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "appwiza-nba-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add nba/research/ml001_elite/anchored_elite_search.json
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m "nba: search one-filter elite descendants of ML001 DefCap"
+          git reset --hard HEAD
+          git clean -fd
+          for attempt in 1 2 3; do
+            git fetch origin main
+            if git rebase origin/main && git push; then exit 0; fi
+            git rebase --abort 2>/dev/null || true
+            sleep 3
+          done
+          exit 1
