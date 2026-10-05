@@ -100,6 +100,8 @@ def prep4(x):
     x["rsi_pct3"]=x["rsi"]/x["rsi"].shift(3)-1
     x["rsi_delta"]=x["rsi"].diff()
     x["rsi_accel"]=x["rsi_delta"].diff()
+    x["price_pct1"]=x["c"].pct_change()
+    x["price_pct3"]=x["c"]/x["c"].shift(3)-1
     x["rsi_sma3"]=x["rsi"].rolling(3,min_periods=3).mean()
     x["rsi_sma5"]=x["rsi"].rolling(5,min_periods=3).mean()
     x["rsi_vs_sma3"]=x["rsi"]/x["rsi_sma3"]-1
@@ -116,6 +118,9 @@ def prep4(x):
     x["lower_wick"]=(np.minimum(x["o"],x["c"])-x["l"])/x["range"]
     x["volume_med20"]=x["v"].rolling(20,min_periods=10).median()
     x["volume_ratio20"]=x["v"]/x["volume_med20"].replace(0,np.nan)
+    direction=np.sign(x["c"].diff()).fillna(0)
+    x["obv"]=(direction*x["v"].fillna(0)).cumsum()
+    x["obv_delta3_norm"]=x["obv"].diff(3)/x["v"].rolling(20,min_periods=10).sum().replace(0,np.nan)
     return x
 
 def daily_from_4h(x):
@@ -134,6 +139,118 @@ def daily_from_4h(x):
     d["setup"]=(d["ret5"]>=.15)&(d["h"]>=d["prior60"])&(d["rv20"]>=.025)
     d["arm_time"]=d["time"]+pd.Timedelta(days=1)
     return d
+
+def novel_context_events(x,btc_x):
+    """Frozen first-flush context used by N02/N06 shadow research."""
+    if len(x)<120:
+        return []
+    d=daily_from_4h(x)
+    arms=[]
+    last=None
+    for _,r in d[d["setup"]].iterrows():
+        t=r["arm_time"]
+        if last is None or t-last>=pd.Timedelta(days=10):
+            arms.append((t,r))
+            last=t
+
+    found=[]
+    for arm,dr in arms:
+        if arm < x["time"].max()-pd.Timedelta(days=7):
+            continue
+        w=x[(x["time"]>=arm)&(x["time"]<arm+pd.Timedelta(days=5))]
+        if len(w)<3:
+            continue
+        peak=-math.inf
+        peak_idx=None
+        trigger=None
+        for idx,row in w.iterrows():
+            hi=float(row["h"])
+            if hi>=peak:
+                peak=hi
+                peak_idx=idx
+            if peak_idx is not None and idx>peak_idx and peak>0 and float(row["c"])/peak-1<=-.08:
+                trigger=idx
+                break
+        if trigger is None:
+            continue
+        row=x.loc[trigger]
+        if pd.isna(row.get("price_pct1")) or pd.isna(row.get("obv_delta3_norm")):
+            continue
+        br=btc_x[btc_x["time"]==row["time"]] if btc_x is not None and len(btc_x) else pd.DataFrame()
+        if br.empty and btc_x is not None and len(btc_x):
+            br=btc_x[btc_x["time"]<=row["time"]].tail(1)
+        if br.empty or pd.isna(br.iloc[0].get("price_pct1")):
+            continue
+        btc_ret4=float(br.iloc[0]["price_pct1"])
+        rel=float(row["price_pct1"])-btc_ret4
+        price_dd=float(row["c"])/float(peak)-1
+        found.append({
+            "trigger_idx":int(trigger),
+            "trigger_time":row["time"],
+            "trigger_price":float(row["c"]),
+            "daily_ret5":float(dr["ret5"]),
+            "price_dd":price_dd,
+            "asset_ret4":float(row["price_pct1"]),
+            "btc_ret4":btc_ret4,
+            "relative_ret4":rel,
+            "obv_delta3_norm":float(row["obv_delta3_norm"]),
+        })
+    return found
+
+
+def l2_book(s,coin):
+    j=post(s,{"type":"l2Book","coin":coin})
+    levels=j.get("levels",[]) if isinstance(j,dict) else []
+    bids=levels[0] if len(levels)>0 else []
+    asks=levels[1] if len(levels)>1 else []
+    def cv(a):
+        out=[]
+        for z in a or []:
+            try: out.append((float(z["px"]),float(z["sz"])))
+            except Exception: pass
+        return out
+    return cv(bids),cv(asks)
+
+
+def simulate_l2(bids,asks,notional):
+    if not bids or not asks:
+        return {"full_fill":False}
+    best_bid=bids[0][0];best_ask=asks[0][0]
+    mid=(best_bid+best_ask)/2.0
+    rem=float(notional);base=0.0;spent=0.0
+    for px,sz in asks:
+        cap=px*sz
+        take=min(rem,cap)
+        spent+=take;base+=take/px;rem-=take
+        if rem<=1e-9:break
+    buy_full=rem<=max(1e-6,notional*1e-9)
+    avg_buy=spent/base if base>0 else None
+    rem_base=base;proceeds=0.0
+    for px,sz in bids:
+        take=min(rem_base,sz)
+        proceeds+=take*px;rem_base-=take
+        if rem_base<=1e-12:break
+    sell_full=rem_base<=max(1e-10,base*1e-9)
+    return {
+        "full_fill":bool(buy_full and sell_full),
+        "best_bid":best_bid,"best_ask":best_ask,"mid":mid,
+        "entry_slippage_pct":(avg_buy/mid-1) if buy_full and avg_buy and mid>0 else None,
+        "roundtrip_book_impact_pct":(1-proceeds/spent) if buy_full and sell_full and spent>0 else None,
+        "buy_book_coverage":spent/notional if notional>0 else None,
+    }
+
+
+def liquidity_snapshot(s,coin,day_volume=None):
+    out={"status":"ok","day_volume":day_volume,"sizes":{}}
+    try:
+        bids,asks=l2_book(s,coin)
+        out["bid_levels"]=len(bids);out["ask_levels"]=len(asks)
+        for size in (1000,5000,10000):
+            out["sizes"][str(size)]=simulate_l2(bids,asks,size)
+    except Exception as ex:
+        out={"status":"error","error":str(ex)[:120],"day_volume":day_volume,"sizes":{}}
+    return out
+
 
 def method1_events(x):
     if len(x)<120:
@@ -479,6 +596,13 @@ def main():
     shadow_signals=[]
     coverage=[]
     raw_cache={}
+    book_cache={}
+    try:
+        btc_raw=fetch_4h(s,"BTC",start,now+timedelta(hours=4))
+        btc_closed,_=split_closed(btc_raw,now)
+        btc_x=prep4(btc_closed)
+    except Exception:
+        btc_x=pd.DataFrame()
     for pos,item in enumerate(fetch_universe(s),1):
         coin=item["coin"]
         try:
@@ -497,6 +621,29 @@ def main():
                 c2_events=method2_events(x)
                 candidates += [("lower_high_second_dump",z) for z in c2_events]
             shadow_candidates=[]
+            novel_events=[]
+            if (("novel_relative_btc_obv" in methods and methods["novel_relative_btc_obv"].get("enabled"))
+                or ("novel_proportional_washout" in methods and methods["novel_proportional_washout"].get("enabled"))):
+                novel_events=novel_context_events(x,btc_x)
+
+            if "novel_relative_btc_obv" in methods and methods["novel_relative_btc_obv"].get("enabled"):
+                nm=methods["novel_relative_btc_obv"];p=nm["params"]
+                for z in novel_events:
+                    if not (float(p["relative_ret4_min"])<=z["relative_ret4"]<=float(p["relative_ret4_max"])):
+                        continue
+                    if not (float(p["obv_delta3_norm_min"])<=z["obv_delta3_norm"]<=float(p["obv_delta3_norm_max"])):
+                        continue
+                    shadow_candidates.append(("novel_relative_btc_obv",dict(z)))
+
+            if "novel_proportional_washout" in methods and methods["novel_proportional_washout"].get("enabled"):
+                nm=methods["novel_proportional_washout"];p=nm["params"]
+                for z in novel_events:
+                    if not (float(p["daily_ret5_min"])<=z["daily_ret5"]<=float(p["daily_ret5_max"])):
+                        continue
+                    if not (float(p["price_dd_min"])<=z["price_dd"]<=float(p["price_dd_max"])):
+                        continue
+                    shadow_candidates.append(("novel_proportional_washout",dict(z)))
+
             if "lower_high_second_dump_deepstretch" in methods and methods["lower_high_second_dump_deepstretch"].get("enabled"):
                 dm=methods["lower_high_second_dump_deepstretch"]
                 for z in c2_events:
@@ -548,6 +695,8 @@ def main():
                 if entry_ref is None:
                     entry_ref=ev["trigger_price"]
                 method=methods[key]
+                if coin not in book_cache:
+                    book_cache[coin]=liquidity_snapshot(s,coin,item.get("day_volume"))
                 sig={
                     "id":f"{method['id']}:{coin}:{pd.Timestamp(ev['trigger_time']).isoformat()}",
                     "coin":coin,
@@ -562,6 +711,7 @@ def main():
                     "risk_stop_reference":entry_ref*(1-float(method["validation"]["stop_reference_pct"])),
                     "status":"ACTIVE" if age<=pd.Timedelta(hours=8) else "RECENT",
                     "metrics":{k:v for k,v in ev.items() if k not in {"trigger_idx","trigger_time","trigger_price"}},
+                    "liquidity":book_cache[coin],
                 }
                 signals.append(settle_signal(raw,sig,now,s,coin))
             for key,ev in shadow_candidates:
@@ -572,6 +722,8 @@ def main():
                 if entry_ref is None:
                     entry_ref=ev["trigger_price"]
                 method=methods[key]
+                if coin not in book_cache:
+                    book_cache[coin]=liquidity_snapshot(s,coin,item.get("day_volume"))
                 ssig={
                     "id":f"{method['id']}:{coin}:{pd.Timestamp(ev['trigger_time']).isoformat()}",
                     "coin":coin,
@@ -586,6 +738,7 @@ def main():
                     "risk_stop_reference":entry_ref*(1-float(method["validation"]["stop_reference_pct"])),
                     "status":"SHADOW_ACTIVE" if age<=pd.Timedelta(hours=8) else "SHADOW_RECENT",
                     "metrics":{k:v for k,v in ev.items() if k not in {"trigger_idx","trigger_time","trigger_price"}},
+                    "liquidity":book_cache[coin],
                 }
                 # Reuse settlement logic, then preserve shadow labeling.
                 ssig=settle_signal(raw,ssig,now,s,coin)

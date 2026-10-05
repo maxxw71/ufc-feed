@@ -1,5 +1,5 @@
 {
-  "version": "2026-10-03-c4-c2d-live",
+  "version": "2026-10-05-novel02-novel06-shadow",
   "venue": "Hyperliquid primary perpetuals",
   "timeframe": "4h",
   "target_pct": 0.05,
@@ -167,6 +167,73 @@
       "params": {
         "parent_method": "C2",
         "dist_ema9_max": -0.069254
+      }
+    },
+    {
+      "id": "N02",
+      "key": "novel_relative_btc_obv",
+      "name": "Novel 02 · BTC-Relative Flow Exhaustion",
+      "enabled": true,
+      "status": "SHADOW_ONLY",
+      "research_id": "NOVEL-20261005-02",
+      "description": "First post-breakout 8% flush where the asset underperforms BTC over the latest 4H move while normalized OBV flow is materially negative.",
+      "trigger_summary": "Daily breakout regime → first ≥8% 4H flush → asset 4H return trails BTC by 3.05–5.38pp → 3-bar normalized OBV delta between -0.11293 and -0.03545.",
+      "validation": {
+        "venue": "Hyperliquid primary perps",
+        "n": 29,
+        "hit5": 0.8965517241,
+        "target_before_stop": 0.8275862069,
+        "actual_funding_net_roi": 0.0272445489,
+        "stop_reference_pct": 0.075,
+        "external_binance_full_n": 23,
+        "external_binance_hit5": 0.7826086957,
+        "external_binance_target_before_stop": 0.7391304348,
+        "external_binance_net_roi": 0.0168239673
+      },
+      "params": {
+        "daily_ret5_min": 0.15,
+        "daily_rv20_min": 0.025,
+        "daily_prior_high_days": 60,
+        "setup_cooldown_days": 10,
+        "flush_window_days": 5,
+        "first_flush_min": 0.08,
+        "relative_ret4_min": -0.05382078204024199,
+        "relative_ret4_max": -0.03050418191478533,
+        "obv_delta3_norm_min": -0.11293352517433576,
+        "obv_delta3_norm_max": -0.035453733606862416
+      }
+    },
+    {
+      "id": "N06",
+      "key": "novel_proportional_washout",
+      "name": "Novel 06 · Proportional Breakout Washout",
+      "enabled": true,
+      "status": "SHADOW_ONLY",
+      "research_id": "NOVEL-20261005-06",
+      "description": "First post-breakout 8% flush where the breakout was exceptionally strong but the washout remains in a historically favorable proportional drawdown band.",
+      "trigger_summary": "Daily breakout regime → 5-day gain 31.40–57.95% → first ≥8% 4H flush → trigger closes 10.42–13.94% below the post-arm peak.",
+      "validation": {
+        "venue": "Hyperliquid primary perps",
+        "n": 31,
+        "hit5": 0.8387096774,
+        "target_before_stop": 0.7419354839,
+        "actual_funding_net_roi": 0.0187526257,
+        "stop_reference_pct": 0.075,
+        "external_binance_full_n": 16,
+        "external_binance_hit5": 0.9375,
+        "external_binance_target_before_stop": 0.875,
+        "external_binance_net_roi": 0.030975
+      },
+      "params": {
+        "daily_ret5_min": 0.31396113303210554,
+        "daily_ret5_max": 0.5795319768388887,
+        "daily_rv20_min": 0.025,
+        "daily_prior_high_days": 60,
+        "setup_cooldown_days": 10,
+        "flush_window_days": 5,
+        "first_flush_min": 0.08,
+        "price_dd_min": -0.1394393733853019,
+        "price_dd_max": -0.10419042571418308
       }
     }
   ]
