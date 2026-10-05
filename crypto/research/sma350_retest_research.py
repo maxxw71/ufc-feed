@@ -162,7 +162,13 @@ def scan_variant(x,coin,venue,below_frac,buffer,extension,tol,max_delay,mode):
             i=j+1;continue
 
         if mode=="touch":
-            entry_idx=j
+            # The exact touch occurs somewhere inside the retest 4H candle.
+            # Without 1m data we cannot know whether that candle's later high
+            # or low occurred before/after the fill. Start outcome accounting
+            # from the NEXT 4H candle to avoid intrabar lookahead. This is
+            # deliberately conservative for touch entries.
+            entry_idx=j+1
+            if entry_idx>=n:break
             entry=float(limit_px)
         else:
             entry_idx=j+1
