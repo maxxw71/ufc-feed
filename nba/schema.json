@@ -1,0 +1,26 @@
+{
+  "version": 1,
+  "point_in_time_required": true,
+  "tables": {
+    "games": {
+      "primary_key": ["game_id"],
+      "fields": ["season","season_type","game_id","game_date","home_team_id","home_team","home_tricode","away_team_id","away_team","away_tricode","home_score","away_score","status","arena_name","arena_city","arena_state","source_boxscore_url","ingested_at_utc"]
+    },
+    "team_boxscores": {
+      "primary_key": ["game_id","team_id"],
+      "fields": ["season","season_type","game_id","team_id","team_tricode","is_home","points","field_goals_made","field_goals_attempted","field_goals_percentage","three_pointers_made","three_pointers_attempted","three_pointers_percentage","free_throws_made","free_throws_attempted","free_throws_percentage","rebounds_offensive","rebounds_defensive","rebounds_total","assists","steals","blocks","turnovers","fouls_personal","points_in_the_paint","points_fast_break","points_second_chance","bench_points","true_shooting_percentage","effective_field_goal_percentage","ingested_at_utc"]
+    },
+    "player_boxscores": {
+      "primary_key": ["game_id","person_id"],
+      "fields": ["season","season_type","game_id","team_id","team_tricode","is_home","person_id","player_name","starter","played","status","not_playing_reason","minutes","points","assists","rebounds_total","rebounds_offensive","rebounds_defensive","steals","blocks","turnovers","fouls_personal","field_goals_made","field_goals_attempted","field_goals_percentage","three_pointers_made","three_pointers_attempted","three_pointers_percentage","free_throws_made","free_throws_attempted","free_throws_percentage","plus_minus","points_in_the_paint","points_fast_break","points_second_chance","ingested_at_utc"]
+    },
+    "playbyplay": {
+      "primary_key": ["game_id","action_number"],
+      "fields": ["season","season_type","game_id","action_number","period","clock","time_actual","action_type","sub_type","description","team_id","team_tricode","person_id","player_name","x","y","shot_distance","shot_result","is_field_goal","score_home","score_away","points_total","ingested_at_utc"]
+    },
+    "provenance": {
+      "primary_key": ["season","season_type","game_id","source"],
+      "fields": ["season","season_type","game_id","source","url","http_status","ok","error","ingested_at_utc"]
+    }
+  }
+}
