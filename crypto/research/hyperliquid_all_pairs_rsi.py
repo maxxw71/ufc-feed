@@ -387,6 +387,9 @@ def build_event(h, d, arm, idx, threshold, meta):
         mae = fnum(f["low"].min() / entry - 1)
         rec["mfe_" + name] = mfe
         rec["mae_" + name] = mae
+        # Exact end-of-window return lets downstream research compute a
+        # target/stop/timeout P&L without inventing the timeout outcome.
+        rec["close_ret_" + name] = fnum(f.iloc[-1]["close"] / entry - 1)
         for tgt in (5, 7.5, 10):
             rec["hit%s_%s" % (str(tgt).replace(".","p"), name)] = mfe >= tgt/100
 
