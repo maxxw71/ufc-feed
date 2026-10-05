@@ -23,8 +23,8 @@ permissions:
   contents: write
 
 concurrency:
-  group: nba-research-feature-refresh
-  cancel-in-progress: true
+  group: nba-research-generated-state
+  cancel-in-progress: false
 
 jobs:
   refresh:
