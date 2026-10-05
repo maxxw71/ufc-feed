@@ -48,7 +48,7 @@ for base in DATA.glob("*/*"):
 
 game_meta={}
 for g in games:
-    game_meta[g.get("game_id")]={"game_date":g.get("game_date"),"season":g.get("season"),"season_type":g.get("season_type")}
+    game_meta[g.get("game_id")]={"game_date":g.get("game_date"),"season":g.get("season"),"season_type":g.get("season_type"),"completed":str(g.get("completed")).lower() in ("true","1")}
 
 TEAM_METRICS=[
  "points","field_goals_made","field_goals_attempted","field_goals_percentage",
@@ -111,10 +111,10 @@ def pregame_roll(rows,id_field,metrics,played_field=None):
                     vals=[v for v in vals if v is not None]
                     feat[f"{m}_last{w}_avg"]=sum(vals)/len(vals) if vals else None
             out.append(feat)
-            include=True
+            include=bool(gm.get("completed"))
             if played_field:
                 played=str(r.get(played_field)).lower()
-                include=played not in ("false","0","dnp","none","")
+                include=include and played not in ("false","0","dnp","none","")
             if include:
                 hist.append(r)
     return out
