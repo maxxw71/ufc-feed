@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
-import argparse, csv, gzip, json, os, re, sys, time
-from datetime import datetime, timezone
+import argparse, csv, gzip, json, re, sys, time
+from datetime import date, datetime, timedelta, timezone
 from pathlib import Path
 import requests
 
@@ -8,227 +8,316 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 NBA_ROOT = REPO_ROOT / "nba"
 DATA_ROOT = NBA_ROOT / "data"
 
-STATS_HEADERS = {
+HEADERS = {
     "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 Chrome/154 Safari/537.36",
-    "Referer": "https://www.nba.com/",
-    "Origin": "https://www.nba.com",
     "Accept": "application/json, text/plain, */*",
-    "x-nba-stats-origin": "stats",
-    "x-nba-stats-token": "true",
 }
 
-LIVE_HEADERS = {
-    "User-Agent": STATS_HEADERS["User-Agent"],
-    "Referer": "https://www.nba.com/",
-    "Accept": "application/json, text/plain, */*",
-}
+SEASON_TYPE_CODE = {"Pre Season": 1, "Regular Season": 2, "Post Season": 3}
 
 def now_utc():
     return datetime.now(timezone.utc).isoformat()
 
 def slug(s):
-    return re.sub(r"[^a-z0-9]+", "_", s.lower()).strip("_")
+    return re.sub(r"[^a-z0-9]+", "_", str(s).lower()).strip("_")
 
-def get_json(session, url, params=None, headers=None, tries=4, timeout=40):
-    last = None
+def as_num(v):
+    if v is None or v == "": return None
+    try:
+        f=float(str(v).replace("%","").replace(",",""))
+        return int(f) if f.is_integer() else f
+    except Exception:
+        return v
+
+def get_json(session, url, params=None, tries=4, timeout=30):
+    last=None
+    status=None
     for attempt in range(tries):
         try:
-            r = session.get(url, params=params, headers=headers, timeout=timeout)
+            r=session.get(url,params=params,headers=HEADERS,timeout=timeout)
+            status=r.status_code
             r.raise_for_status()
-            return r.json(), r.status_code, None
+            return r.json(),status,None
         except Exception as e:
-            last = str(e)
-            if attempt + 1 < tries:
-                time.sleep(1.5 * (attempt + 1))
-    return None, None, last
+            last=str(e)
+            if attempt+1<tries:
+                time.sleep(min(6,1.25*(attempt+1)))
+    return None,status,last
 
-def league_games(session, season, season_type):
-    url = "https://stats.nba.com/stats/leaguegamefinder"
-    params = {
-        "PlayerOrTeam": "T",
-        "Season": season,
-        "SeasonType": season_type,
-        "LeagueID": "00",
-    }
-    data, status, err = get_json(session, url, params=params, headers=STATS_HEADERS, tries=5, timeout=60)
-    if not data:
-        raise RuntimeError(f"LeagueGameFinder failed for {season} {season_type}: {err}")
-    sets = data.get("resultSets") or data.get("resultSet")
-    if isinstance(sets, dict):
-        sets = [sets]
-    target = None
-    for rs in sets or []:
-        if rs.get("name") in ("LeagueGameFinderResults", "LeagueGameFinderTeamResults"):
-            target = rs
-            break
-    if not target:
-        target = (sets or [None])[0]
-    if not target:
-        raise RuntimeError("LeagueGameFinder returned no result set")
-    headers = target["headers"]
-    rows = [dict(zip(headers, r)) for r in target["rowSet"]]
-    by_game = {}
-    for row in rows:
-        gid = str(row.get("GAME_ID") or "")
-        if not gid:
+def season_years(season):
+    a,b=season.split("-")
+    start=int(a)
+    end=(start//100)*100+int(b)
+    if end < start: end += 100
+    return start,end
+
+def slice_window(season, season_type):
+    start,end=season_years(season)
+    if season_type=="Pre Season":
+        return date(start,9,20),date(start,10,25)
+    if season_type=="Regular Season":
+        return date(start,10,1),date(end,4,30)
+    if season_type=="Post Season":
+        return date(end,4,1),date(end,6,30)
+    raise ValueError(f"unsupported season type: {season_type}")
+
+def daterange(a,b):
+    d=a
+    while d<=b:
+        yield d
+        d+=timedelta(days=1)
+
+def scoreboard_url():
+    return "https://site.api.espn.com/apis/site/v2/sports/basketball/nba/scoreboard"
+
+def summary_url(event_id):
+    return "https://site.api.espn.com/apis/site/v2/sports/basketball/nba/summary"
+
+def discover_events(session, season, season_type, provenance):
+    want=SEASON_TYPE_CODE[season_type]
+    start,end=slice_window(season,season_type)
+    events={}
+    stamp=now_utc()
+    for i,d in enumerate(daterange(start,end),1):
+        ds=d.strftime("%Y%m%d")
+        data,status,err=get_json(session,scoreboard_url(),params={"dates":ds,"limit":100},tries=3,timeout=25)
+        provenance.append({
+            "season":season,"season_type":season_type,"game_id":"","source":"espn_scoreboard",
+            "url":f"{scoreboard_url()}?dates={ds}&limit=100","http_status":status,"ok":bool(data),
+            "error":err,"ingested_at_utc":stamp
+        })
+        if not data:
             continue
-        by_game.setdefault(gid, []).append(row)
-    return by_game
+        for ev in data.get("events") or []:
+            es=(ev.get("season") or {}).get("type")
+            if es is not None and int(es)!=want:
+                continue
+            eid=str(ev.get("id") or "")
+            if eid:
+                events[eid]=ev
+        if i%50==0:
+            print(f"{season} {season_type}: scanned {i} calendar days / {len(events)} events",flush=True)
+        time.sleep(0.03)
+    return events
 
-def live_urls(game_id):
-    return (
-        f"https://cdn.nba.com/static/json/liveData/boxscore/boxscore_{game_id}.json",
-        f"https://cdn.nba.com/static/json/liveData/playbyplay/playbyplay_{game_id}.json",
-    )
+def competition(ev):
+    comps=ev.get("competitions") or []
+    return comps[0] if comps else {}
 
-def side_rows(game):
-    return [("away", game.get("awayTeam") or {}), ("home", game.get("homeTeam") or {})]
+def competitors(ev):
+    comp=competition(ev)
+    out={}
+    for c in comp.get("competitors") or []:
+        side=c.get("homeAway")
+        if side in ("home","away"): out[side]=c
+    return out
 
-def team_name(t):
-    return " ".join(x for x in [t.get("teamCity"), t.get("teamName")] if x).strip()
-
-def parse_minutes(v):
-    if v is None: return None
-    s = str(v)
-    if s.startswith("PT"):
-        m = re.search(r"(\d+)M", s)
-        sec = re.search(r"([\d.]+)S", s)
-        return round((float(m.group(1)) if m else 0) + (float(sec.group(1)) if sec else 0)/60, 4)
-    try: return float(s)
-    except: return s
-
-def flatten_game(season, season_type, game, box_url, stamp):
-    arena = game.get("arena") or {}
-    home = game.get("homeTeam") or {}
-    away = game.get("awayTeam") or {}
+def team_bits(c):
+    t=c.get("team") or {}
     return {
-        "season": season, "season_type": season_type, "game_id": game.get("gameId"),
-        "game_date": game.get("gameTimeLocal") or game.get("gameTimeUTC") or game.get("gameEt"),
-        "home_team_id": home.get("teamId"), "home_team": team_name(home), "home_tricode": home.get("teamTricode"),
-        "away_team_id": away.get("teamId"), "away_team": team_name(away), "away_tricode": away.get("teamTricode"),
-        "home_score": home.get("score"), "away_score": away.get("score"),
-        "status": game.get("gameStatusText") or game.get("gameStatus"),
-        "arena_name": arena.get("arenaName"), "arena_city": arena.get("arenaCity"), "arena_state": arena.get("arenaState"),
-        "source_boxscore_url": box_url, "ingested_at_utc": stamp,
+        "team_id":str(t.get("id") or ""),
+        "team_name":t.get("displayName") or t.get("shortDisplayName") or t.get("name"),
+        "team_tricode":t.get("abbreviation"),
     }
 
-def team_box_rows(season, season_type, game, stamp):
-    out=[]
-    keymap = {
-        "points":"points","fieldGoalsMade":"field_goals_made","fieldGoalsAttempted":"field_goals_attempted",
-        "fieldGoalsPercentage":"field_goals_percentage","threePointersMade":"three_pointers_made",
-        "threePointersAttempted":"three_pointers_attempted","threePointersPercentage":"three_pointers_percentage",
-        "freeThrowsMade":"free_throws_made","freeThrowsAttempted":"free_throws_attempted",
-        "freeThrowsPercentage":"free_throws_percentage","reboundsOffensive":"rebounds_offensive",
-        "reboundsDefensive":"rebounds_defensive","reboundsTotal":"rebounds_total","assists":"assists",
-        "steals":"steals","blocks":"blocks","turnoversTotal":"turnovers","turnovers":"turnovers",
-        "foulsPersonal":"fouls_personal","pointsInThePaint":"points_in_the_paint","pointsFastBreak":"points_fast_break",
-        "pointsSecondChance":"points_second_chance","benchPoints":"bench_points","trueShootingPercentage":"true_shooting_percentage",
-        "fieldGoalsEffectiveAdjusted":"effective_field_goal_percentage"
+def event_game_row(season, season_type, ev, stamp):
+    comp=competition(ev)
+    sides=competitors(ev)
+    h=sides.get("home") or {}
+    a=sides.get("away") or {}
+    ht=team_bits(h); at=team_bits(a)
+    venue=comp.get("venue") or {}
+    addr=venue.get("address") or {}
+    st=((ev.get("status") or {}).get("type") or {})
+    return {
+        "season":season,"season_type":season_type,"game_id":str(ev.get("id") or ""),
+        "source_game_id":str(ev.get("id") or ""),"source_system":"espn",
+        "game_date":ev.get("date"),"home_team_id":ht["team_id"],"home_team":ht["team_name"],
+        "home_tricode":ht["team_tricode"],"away_team_id":at["team_id"],"away_team":at["team_name"],
+        "away_tricode":at["team_tricode"],"home_score":as_num(h.get("score")),"away_score":as_num(a.get("score")),
+        "status":st.get("detail") or st.get("description") or st.get("name"),"status_state":st.get("state"),
+        "completed":st.get("completed"),"arena_name":venue.get("fullName"),"arena_city":addr.get("city"),
+        "arena_state":addr.get("state"),"source_boxscore_url":f"{summary_url(ev.get('id'))}?event={ev.get('id')}",
+        "ingested_at_utc":stamp
     }
-    for side,t in side_rows(game):
-        st=t.get("statistics") or {}
-        row={"season":season,"season_type":season_type,"game_id":game.get("gameId"),"team_id":t.get("teamId"),
-             "team_tricode":t.get("teamTricode"),"is_home":side=="home","ingested_at_utc":stamp}
-        for src,dst in keymap.items():
-            if src in st and (dst not in row or row.get(dst) is None):
-                row[dst]=st.get(src)
-        out.append(row)
-    return out
 
-def player_box_rows(season, season_type, game, stamp):
+def team_seed_rows(season, season_type, ev, stamp):
     out=[]
-    statmap={
-      "points":"points","assists":"assists","reboundsTotal":"rebounds_total","reboundsOffensive":"rebounds_offensive",
-      "reboundsDefensive":"rebounds_defensive","steals":"steals","blocks":"blocks","turnovers":"turnovers",
-      "foulsPersonal":"fouls_personal","fieldGoalsMade":"field_goals_made","fieldGoalsAttempted":"field_goals_attempted",
-      "fieldGoalsPercentage":"field_goals_percentage","threePointersMade":"three_pointers_made",
-      "threePointersAttempted":"three_pointers_attempted","threePointersPercentage":"three_pointers_percentage",
-      "freeThrowsMade":"free_throws_made","freeThrowsAttempted":"free_throws_attempted","freeThrowsPercentage":"free_throws_percentage",
-      "plusMinusPoints":"plus_minus","pointsInThePaint":"points_in_the_paint","pointsFastBreak":"points_fast_break",
-      "pointsSecondChance":"points_second_chance"
-    }
-    for side,t in side_rows(game):
-        for p in t.get("players") or []:
-            st=p.get("statistics") or {}
-            row={"season":season,"season_type":season_type,"game_id":game.get("gameId"),"team_id":t.get("teamId"),
-                 "team_tricode":t.get("teamTricode"),"is_home":side=="home","person_id":p.get("personId"),
-                 "player_name":p.get("name") or " ".join(x for x in [p.get("firstName"),p.get("familyName")] if x),
-                 "starter":p.get("starter"),"played":p.get("played"),"status":p.get("status"),
-                 "not_playing_reason":p.get("notPlayingReason") or p.get("notPlayingDescription"),
-                 "minutes":parse_minutes(st.get("minutes")),"ingested_at_utc":stamp}
-            for src,dst in statmap.items(): row[dst]=st.get(src)
-            out.append(row)
-    return out
-
-def pbp_rows(season, season_type, game_id, data, stamp):
-    out=[]
-    game=(data or {}).get("game") or {}
-    for a in game.get("actions") or []:
+    for side,c in competitors(ev).items():
+        tb=team_bits(c)
         out.append({
-          "season":season,"season_type":season_type,"game_id":game_id,"action_number":a.get("actionNumber"),
-          "period":a.get("period"),"clock":a.get("clock"),"time_actual":a.get("timeActual"),
-          "action_type":a.get("actionType"),"sub_type":a.get("subType"),"description":a.get("description"),
-          "team_id":a.get("teamId"),"team_tricode":a.get("teamTricode"),"person_id":a.get("personId"),
-          "player_name":a.get("playerName"),"x":a.get("x"),"y":a.get("y"),"shot_distance":a.get("shotDistance"),
-          "shot_result":a.get("shotResult"),"is_field_goal":a.get("isFieldGoal"),"score_home":a.get("scoreHome"),
-          "score_away":a.get("scoreAway"),"points_total":a.get("pointsTotal"),"ingested_at_utc":stamp
+            "season":season,"season_type":season_type,"game_id":str(ev.get("id") or ""),
+            "team_id":tb["team_id"],"team_tricode":tb["team_tricode"],"team_name":tb["team_name"],
+            "is_home":side=="home","points":as_num(c.get("score")),"winner":c.get("winner"),
+            "ingested_at_utc":stamp
+        })
+    return out
+
+TEAM_MAP={
+    "fieldgoalpct":"field_goals_percentage","threepointfieldgoalpct":"three_pointers_percentage",
+    "freethrowpct":"free_throws_percentage","offensiverebounds":"rebounds_offensive",
+    "defensiverebounds":"rebounds_defensive","totalrebounds":"rebounds_total","assists":"assists",
+    "steals":"steals","blocks":"blocks","turnovers":"turnovers","fouls":"fouls_personal",
+    "points":"points","pointsinthepaint":"points_in_the_paint","fastbreakpoints":"points_fast_break",
+    "secondchancepoints":"points_second_chance"
+}
+
+def parse_made_attempted(v):
+    s=str(v or "")
+    m=re.match(r"^\s*(\d+)\s*[-/]\s*(\d+)\s*$",s)
+    return (int(m.group(1)),int(m.group(2))) if m else (None,None)
+
+def enrich_team_rows(seed, summary):
+    by_id={str(x.get("team_id")):x for x in seed}
+    box=(summary or {}).get("boxscore") or {}
+    for entry in box.get("teams") or []:
+        team=entry.get("team") or {}
+        tid=str(team.get("id") or "")
+        row=by_id.get(tid)
+        if not row: continue
+        for st in entry.get("statistics") or []:
+            name=slug(st.get("name") or st.get("label") or "stat")
+            raw=st.get("displayValue")
+            if raw is None: raw=st.get("value")
+            row[f"stat_{name}"]=raw
+            key=TEAM_MAP.get(name)
+            if key: row[key]=as_num(st.get("value") if st.get("value") is not None else raw)
+            if name in ("fieldgoalsmade-fieldgoalsattempted","fieldgoals"):
+                m,a=parse_made_attempted(raw); row["field_goals_made"]=m; row["field_goals_attempted"]=a
+            elif name in ("threepointfieldgoalsmade-threepointfieldgoalsattempted","threepointfieldgoals"):
+                m,a=parse_made_attempted(raw); row["three_pointers_made"]=m; row["three_pointers_attempted"]=a
+            elif name in ("freethrowsmade-freethrowsattempted","freethrows"):
+                m,a=parse_made_attempted(raw); row["free_throws_made"]=m; row["free_throws_attempted"]=a
+    return list(by_id.values())
+
+PLAYER_LABEL_MAP={
+    "MIN":"minutes","PTS":"points","AST":"assists","REB":"rebounds_total","OREB":"rebounds_offensive",
+    "DREB":"rebounds_defensive","STL":"steals","BLK":"blocks","TO":"turnovers","PF":"fouls_personal",
+    "+/-":"plus_minus"
+}
+
+def player_rows(season, season_type, game_id, summary, stamp):
+    out=[]
+    box=(summary or {}).get("boxscore") or {}
+    for teamblock in box.get("players") or []:
+        team=teamblock.get("team") or {}
+        tid=str(team.get("id") or "")
+        tri=team.get("abbreviation")
+        for group in teamblock.get("statistics") or []:
+            labels=group.get("labels") or group.get("names") or []
+            for p in group.get("athletes") or []:
+                ath=p.get("athlete") or {}
+                vals=p.get("stats") or []
+                row={
+                    "season":season,"season_type":season_type,"game_id":game_id,"team_id":tid,
+                    "team_tricode":tri,"person_id":str(ath.get("id") or ""),
+                    "player_name":ath.get("displayName") or ath.get("shortName"),
+                    "starter":p.get("starter"),"played":not bool(p.get("didNotPlay")),
+                    "status":"DNP" if p.get("didNotPlay") else "played",
+                    "not_playing_reason":p.get("reason"),"ingested_at_utc":stamp
+                }
+                for label,val in zip(labels,vals):
+                    row[f"stat_{slug(label)}"]=val
+                    if label in PLAYER_LABEL_MAP: row[PLAYER_LABEL_MAP[label]]=as_num(val)
+                    if label=="FG":
+                        m,a=parse_made_attempted(val); row["field_goals_made"]=m; row["field_goals_attempted"]=a
+                    elif label=="3PT":
+                        m,a=parse_made_attempted(val); row["three_pointers_made"]=m; row["three_pointers_attempted"]=a
+                    elif label=="FT":
+                        m,a=parse_made_attempted(val); row["free_throws_made"]=m; row["free_throws_attempted"]=a
+                out.append(row)
+    return out
+
+def play_rows(season, season_type, game_id, summary, stamp):
+    out=[]
+    for i,a in enumerate((summary or {}).get("plays") or []):
+        period=a.get("period") or {}
+        clock=a.get("clock") or {}
+        typ=a.get("type") or {}
+        team=a.get("team") or {}
+        participants=a.get("participants") or []
+        person=(participants[0].get("athlete") or {}) if participants else {}
+        coord=a.get("coordinate") or {}
+        out.append({
+            "season":season,"season_type":season_type,"game_id":game_id,
+            "action_number":a.get("sequenceNumber") or a.get("id") or i+1,
+            "period":period.get("number"),"clock":clock.get("displayValue"),"time_actual":a.get("wallclock"),
+            "action_type":typ.get("text") or typ.get("type"),"sub_type":typ.get("id"),
+            "description":a.get("text"),"team_id":str(team.get("id") or ""),"team_tricode":team.get("abbreviation"),
+            "person_id":str(person.get("id") or ""),"player_name":person.get("displayName"),
+            "x":coord.get("x"),"y":coord.get("y"),"shot_distance":a.get("shotDistance"),
+            "shot_result":a.get("shootingPlay"),"is_field_goal":a.get("shootingPlay"),
+            "score_home":a.get("homeScore"),"score_away":a.get("awayScore"),
+            "points_total":a.get("scoreValue"),"scoring_play":a.get("scoringPlay"),"ingested_at_utc":stamp
         })
     return out
 
 def write_gz(path, rows, preferred=None):
-    path.parent.mkdir(parents=True, exist_ok=True)
+    path.parent.mkdir(parents=True,exist_ok=True)
     rows=list(rows)
     fields=[]
     for f in preferred or []:
         if f not in fields: fields.append(f)
     for r in rows:
-        for k in r.keys():
+        for k in r:
             if k not in fields: fields.append(k)
-    with gzip.open(path, "wt", newline="", encoding="utf-8") as f:
-        w=csv.DictWriter(f, fieldnames=fields)
+    if not fields:
+        fields=["_empty"]
+    with gzip.open(path,"wt",newline="",encoding="utf-8") as f:
+        w=csv.DictWriter(f,fieldnames=fields,extrasaction="ignore")
         w.writeheader()
         for r in rows: w.writerow(r)
 
 def run_slice(session, season, season_type, max_games=None):
-    ids=league_games(session, season, season_type)
-    game_ids=sorted(ids.keys())
-    if max_games: game_ids=game_ids[-max_games:]
-    games=[]; teams=[]; players=[]; pbp=[]; prov=[]
+    provenance=[]
+    events=discover_events(session,season,season_type,provenance)
+    ordered=sorted(events.values(),key=lambda e:e.get("date") or "")
+    if max_games: ordered=ordered[-max_games:]
     stamp=now_utc()
-    for idx,gid in enumerate(game_ids,1):
-        box_url,pbp_url=live_urls(gid)
-        box,bs,be=get_json(session,box_url,headers=LIVE_HEADERS)
-        prov.append({"season":season,"season_type":season_type,"game_id":gid,"source":"nba_live_boxscore","url":box_url,
-                     "http_status":bs,"ok":bool(box),"error":be,"ingested_at_utc":stamp})
-        if not box or not box.get("game"):
+    games=[]; teams=[]; players=[]; plays=[]
+    for idx,ev in enumerate(ordered,1):
+        gid=str(ev.get("id") or "")
+        games.append(event_game_row(season,season_type,ev,stamp))
+        seed=team_seed_rows(season,season_type,ev,stamp)
+        state=((((ev.get("status") or {}).get("type") or {}).get("state")) or "")
+        if state=="pre":
+            teams.extend(seed)
             continue
-        game=box["game"]
-        games.append(flatten_game(season,season_type,game,box_url,stamp))
-        teams.extend(team_box_rows(season,season_type,game,stamp))
-        players.extend(player_box_rows(season,season_type,game,stamp))
-        pd,ps,pe=get_json(session,pbp_url,headers=LIVE_HEADERS)
-        prov.append({"season":season,"season_type":season_type,"game_id":gid,"source":"nba_live_playbyplay","url":pbp_url,
-                     "http_status":ps,"ok":bool(pd),"error":pe,"ingested_at_utc":stamp})
-        if pd: pbp.extend(pbp_rows(season,season_type,gid,pd,stamp))
-        if idx % 100 == 0: print(f"{season} {season_type}: {idx}/{len(game_ids)}", flush=True)
-        time.sleep(0.08)
+        data,status,err=get_json(session,summary_url(gid),params={"event":gid},tries=3,timeout=30)
+        provenance.append({
+            "season":season,"season_type":season_type,"game_id":gid,"source":"espn_summary",
+            "url":f"{summary_url(gid)}?event={gid}","http_status":status,"ok":bool(data),
+            "error":err,"ingested_at_utc":stamp
+        })
+        if data:
+            teams.extend(enrich_team_rows(seed,data))
+            players.extend(player_rows(season,season_type,gid,data,stamp))
+            plays.extend(play_rows(season,season_type,gid,data,stamp))
+        else:
+            teams.extend(seed)
+        if idx%100==0:
+            print(f"{season} {season_type}: normalized {idx}/{len(ordered)} events",flush=True)
+        time.sleep(0.04)
 
     out=DATA_ROOT/slug(season)/slug(season_type)
     write_gz(out/"games.csv.gz",games)
     write_gz(out/"team_boxscores.csv.gz",teams)
     write_gz(out/"player_boxscores.csv.gz",players)
-    write_gz(out/"playbyplay.csv.gz",pbp)
-    write_gz(out/"provenance.csv.gz",prov)
+    write_gz(out/"playbyplay.csv.gz",plays)
+    write_gz(out/"provenance.csv.gz",provenance)
     summary={
-      "season":season,"season_type":season_type,"resolved_game_ids":len(ids),"attempted_game_ids":len(game_ids),
-      "games_written":len(games),"team_rows":len(teams),"player_rows":len(players),"playbyplay_rows":len(pbp),
-      "boxscore_success":sum(1 for x in prov if x["source"]=="nba_live_boxscore" and x["ok"]),
-      "playbyplay_success":sum(1 for x in prov if x["source"]=="nba_live_playbyplay" and x["ok"]),
-      "generated_at_utc":now_utc()
+        "season":season,"season_type":season_type,"source":"espn_site_api",
+        "resolved_game_ids":len(events),"attempted_game_ids":len(ordered),
+        "games_written":len(games),"team_rows":len(teams),"player_rows":len(players),
+        "playbyplay_rows":len(plays),
+        "scoreboard_requests":sum(1 for x in provenance if x["source"]=="espn_scoreboard"),
+        "scoreboard_success":sum(1 for x in provenance if x["source"]=="espn_scoreboard" and x["ok"]),
+        "summary_requests":sum(1 for x in provenance if x["source"]=="espn_summary"),
+        "summary_success":sum(1 for x in provenance if x["source"]=="espn_summary" and x["ok"]),
+        "generated_at_utc":now_utc()
     }
     (out/"summary.json").write_text(json.dumps(summary,indent=2)+"\n")
-    print(json.dumps(summary))
+    print(json.dumps(summary),flush=True)
 
 def main():
     ap=argparse.ArgumentParser()
@@ -240,11 +329,12 @@ def main():
     failures=[]
     for spec in slices:
         season,season_type=spec.split("|",1)
-        try: run_slice(s,season,season_type,args.max_games)
+        try:
+            run_slice(s,season,season_type,args.max_games)
         except Exception as e:
             failures.append({"slice":spec,"error":str(e)})
-            print(f"ERROR {spec}: {e}",file=sys.stderr)
-    status={"generated_at_utc":now_utc(),"slices":slices,"failures":failures,"ok":not failures}
+            print(f"ERROR {spec}: {e}",file=sys.stderr,flush=True)
+    status={"generated_at_utc":now_utc(),"source_strategy":"ESPN discovery/summary; NBA official feeds retained for later cross-check lane","slices":slices,"failures":failures,"ok":not failures}
     (NBA_ROOT/"bootstrap_status.json").write_text(json.dumps(status,indent=2)+"\n")
     if failures: sys.exit(2)
 
