@@ -1,0 +1,70 @@
+name: NBA Initial Method Discovery
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - "nba/research/discover_methods.py"
+      - ".github/workflows/nba-initial-method-discovery.yml"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: nba-initial-method-discovery
+  cancel-in-progress: true
+
+jobs:
+  discover:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Align odds to accepted games
+        run: python nba/market/filter_odds_to_accepted_games.py
+
+      - name: Rebuild season-local schedule context
+        run: python nba/build_context.py
+
+      - name: Rebuild season-local rolling form
+        run: python nba/build_rolling_features.py
+
+      - name: Rebuild season-local pregame strength
+        run: python nba/build_pregame_strength.py
+
+      - name: Build accepted pregame market features
+        run: python nba/build_market_features.py
+
+      - name: Build player workload
+        run: python nba/build_player_workload.py
+
+      - name: Run fixed-split method discovery
+        run: python nba/research/discover_methods.py
+
+      - name: Commit research outputs
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "appwiza-nba-bot"
+          git config user.email "actions@users.noreply.github.com"
+
+          git add nba/market/historical nba/features nba/team_game_context.csv.gz nba/context_summary.json nba/research/results
+
+          if git diff --cached --quiet; then
+            echo "No research changes."
+            exit 0
+          fi
+
+          git commit -m "nba: run initial fixed-split method discovery"
+          git reset --hard HEAD
+          git clean -fd
+          git pull --rebase origin main
+          git push
