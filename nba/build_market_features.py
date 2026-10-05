@@ -62,6 +62,8 @@ for season_dir in sorted(HIST.glob("*")) if HIST.exists() else []:
         first=pre[0]
         hml=[r.get("home_moneyline") for r in pre]; aml=[r.get("away_moneyline") for r in pre]
         spreads=[r.get("spread") for r in pre]; totals=[r.get("over_under") for r in pre]
+        home_spread_prices=[r.get("home_spread_odds") for r in pre]; away_spread_prices=[r.get("away_spread_odds") for r in pre]
+        over_prices=[r.get("over_odds") for r in pre]; under_prices=[r.get("under_odds") for r in pre]
         open_totals=[r.get("open_total") for r in pre]
         open_hs=[r.get("open_home_spread") for r in pre]; open_as=[r.get("open_away_spread") for r in pre]
         row={
@@ -74,6 +76,8 @@ for season_dir in sorted(HIST.glob("*")) if HIST.exists() else []:
           "closing_total_median":median(totals),"closing_total_min":minv(totals),"closing_total_max":maxv(totals),
           "home_moneyline_median":median(hml),"home_moneyline_best":maxv(hml),"home_moneyline_worst":minv(hml),
           "away_moneyline_median":median(aml),"away_moneyline_best":maxv(aml),"away_moneyline_worst":minv(aml),
+          "home_spread_price_median":median(home_spread_prices),"away_spread_price_median":median(away_spread_prices),
+          "over_price_median":median(over_prices),"under_price_median":median(under_prices),
           "open_total_median":median(open_totals),"open_home_spread_median":median(open_hs),
           "open_away_spread_median":median(open_as),
           "contains_live_rows_excluded":len(grp)>len(pre),
