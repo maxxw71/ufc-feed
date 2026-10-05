@@ -1,0 +1,391 @@
+{
+  "generated_at": "2026-10-05T04:21:20.964315+00:00",
+  "design": "Hyperliquid-first orthogonal/context discovery; frozen Binance replication",
+  "excluded_live_core_features": [
+    "rsi_pct1",
+    "rsi_accel",
+    "rsi_vs_sma3",
+    "close_location",
+    "volume_ratio20"
+  ],
+  "candidates": [
+    {
+      "candidate_id": "NOVEL-20261005-01",
+      "status": "SHADOW_ONLY",
+      "rule": "14.5643 <= daily_4h_rsi_gap <= 22.8401 AND -0.0485569 <= relative_ret4 <= -0.0249447",
+      "features": [
+        "daily_4h_rsi_gap",
+        "relative_ret4"
+      ],
+      "families": [
+        "RELATIVE",
+        "RSI"
+      ],
+      "conditions": [
+        {
+          "feature": "daily_4h_rsi_gap",
+          "op": "band",
+          "a": 14.564335396607099,
+          "b": 22.840074974386972
+        },
+        {
+          "feature": "relative_ret4",
+          "op": "band",
+          "a": -0.048556911108327216,
+          "b": -0.02494468062678926
+        }
+      ],
+      "hyperliquid": {
+        "train_n": 46,
+        "train_hit5": 0.8478260869565217,
+        "train_net_roi": 0.019926086956521746,
+        "hold_n": 34,
+        "hold_hit5": 0.9411764705882353,
+        "hold_hit10": 0.7647058823529411,
+        "hold_risk": 0.9117647058823529,
+        "hold_net_roi": 0.03795270740497085,
+        "episodes": 12,
+        "episode_hit5": 0.875,
+        "incremental_vs_C1_C3_C4": 0.5
+      },
+      "binance": {
+        "n": 8,
+        "hit5": 0.75,
+        "hit10": 0.75,
+        "risk": 0.75,
+        "net_roi": 0.023493906085121363,
+        "wilson_lower": 0.40926987910258916,
+        "passed": false
+      },
+      "promotion_requirements": [
+        "actual-funding Hyperliquid economic replay",
+        "forward shadow tracking",
+        "manual review"
+      ]
+    },
+    {
+      "candidate_id": "NOVEL-20261005-02",
+      "status": "SHADOW_ONLY",
+      "rule": "-0.0538208 <= relative_ret4 <= -0.0305042 AND -0.112934 <= obv_delta3_norm <= -0.0354537",
+      "features": [
+        "relative_ret4",
+        "obv_delta3_norm"
+      ],
+      "families": [
+        "FLOW",
+        "RELATIVE"
+      ],
+      "conditions": [
+        {
+          "feature": "relative_ret4",
+          "op": "band",
+          "a": -0.05382078204024199,
+          "b": -0.03050418191478533
+        },
+        {
+          "feature": "obv_delta3_norm",
+          "op": "band",
+          "a": -0.11293352517433576,
+          "b": -0.035453733606862416
+        }
+      ],
+      "hyperliquid": {
+        "train_n": 44,
+        "train_hit5": 0.8181818181818182,
+        "train_net_roi": 0.013009090909090915,
+        "hold_n": 29,
+        "hold_hit5": 0.896551724137931,
+        "hold_hit10": 0.6551724137931034,
+        "hold_risk": 0.8275862068965517,
+        "hold_net_roi": 0.02775489833686239,
+        "episodes": 14,
+        "episode_hit5": 0.8571428571428571,
+        "incremental_vs_C1_C3_C4": 0.6551724137931034
+      },
+      "binance": {
+        "n": 8,
+        "hit5": 0.75,
+        "hit10": 0.75,
+        "risk": 0.75,
+        "net_roi": 0.023493906085121363,
+        "wilson_lower": 0.40926987910258916,
+        "passed": false
+      },
+      "promotion_requirements": [
+        "actual-funding Hyperliquid economic replay",
+        "forward shadow tracking",
+        "manual review"
+      ]
+    },
+    {
+      "candidate_id": "NOVEL-20261005-03",
+      "status": "SHADOW_ONLY",
+      "rule": "0.0416091 <= lower_wick_pct_range <= 0.119864 AND -0.134212 <= obv_delta3_norm <= -0.0452448",
+      "features": [
+        "lower_wick_pct_range",
+        "obv_delta3_norm"
+      ],
+      "families": [
+        "FLOW",
+        "VOL"
+      ],
+      "conditions": [
+        {
+          "feature": "lower_wick_pct_range",
+          "op": "band",
+          "a": 0.04160912056190943,
+          "b": 0.11986433193646617
+        },
+        {
+          "feature": "obv_delta3_norm",
+          "op": "band",
+          "a": -0.1342119207492753,
+          "b": -0.045244761407937324
+        }
+      ],
+      "hyperliquid": {
+        "train_n": 34,
+        "train_hit5": 0.8235294117647058,
+        "train_net_roi": 0.021364705882352945,
+        "hold_n": 20,
+        "hold_hit5": 0.85,
+        "hold_hit10": 0.6,
+        "hold_risk": 0.85,
+        "hold_net_roi": 0.028350000000000007,
+        "episodes": 14,
+        "episode_hit5": 0.7857142857142857,
+        "incremental_vs_C1_C3_C4": 0.55
+      },
+      "binance": {
+        "n": 4,
+        "hit5": 0.75,
+        "hit10": 0.75,
+        "risk": 0.75,
+        "net_roi": 0.015350000000000003,
+        "wilson_lower": 0.3006360524426366,
+        "passed": false
+      },
+      "promotion_requirements": [
+        "actual-funding Hyperliquid economic replay",
+        "forward shadow tracking",
+        "manual review"
+      ]
+    },
+    {
+      "candidate_id": "NOVEL-20261005-04",
+      "status": "SHADOW_ONLY",
+      "rule": "-0.0355012 <= relative_ret12 <= -0.00476346 AND volume_z20 >= 0.336789",
+      "features": [
+        "relative_ret12",
+        "volume_z20"
+      ],
+      "families": [
+        "FLOW",
+        "RELATIVE"
+      ],
+      "conditions": [
+        {
+          "feature": "relative_ret12",
+          "op": "band",
+          "a": -0.03550121050446778,
+          "b": -0.004763461686092562
+        },
+        {
+          "feature": "volume_z20",
+          "op": ">=",
+          "a": 0.33678930511155547,
+          "b": null
+        }
+      ],
+      "hyperliquid": {
+        "train_n": 40,
+        "train_hit5": 0.85,
+        "train_net_roi": 0.015850000000000003,
+        "hold_n": 21,
+        "hold_hit5": 0.8571428571428571,
+        "hold_hit10": 0.5238095238095238,
+        "hold_risk": 0.8095238095238095,
+        "hold_net_roi": 0.024790279076838263,
+        "episodes": 12,
+        "episode_hit5": 0.7916666666666666,
+        "incremental_vs_C1_C3_C4": 0.42857142857142855
+      },
+      "binance": {
+        "n": 8,
+        "hit5": 0.375,
+        "hit10": 0.375,
+        "risk": 0.375,
+        "net_roi": -0.020443332617828023,
+        "wilson_lower": 0.13684175946152105,
+        "passed": false
+      },
+      "promotion_requirements": [
+        "actual-funding Hyperliquid economic replay",
+        "forward shadow tracking",
+        "manual review"
+      ]
+    },
+    {
+      "candidate_id": "NOVEL-20261005-05",
+      "status": "SHADOW_ONLY",
+      "rule": "-0.162601 <= price_dd <= -0.108519 AND -0.0746774 <= relative_ret4 <= -0.0429527",
+      "features": [
+        "price_dd",
+        "relative_ret4"
+      ],
+      "families": [
+        "PRICE",
+        "RELATIVE"
+      ],
+      "conditions": [
+        {
+          "feature": "price_dd",
+          "op": "band",
+          "a": -0.16260135603679088,
+          "b": -0.10851859716537517
+        },
+        {
+          "feature": "relative_ret4",
+          "op": "band",
+          "a": -0.07467743365684132,
+          "b": -0.0429527240373622
+        }
+      ],
+      "hyperliquid": {
+        "train_n": 40,
+        "train_hit5": 0.9,
+        "train_net_roi": 0.0175329058738782,
+        "hold_n": 28,
+        "hold_hit5": 0.8928571428571429,
+        "hold_hit10": 0.6428571428571429,
+        "hold_risk": 0.7857142857142857,
+        "hold_net_roi": 0.020314285714285722,
+        "episodes": 13,
+        "episode_hit5": 0.8333333333333334,
+        "incremental_vs_C1_C3_C4": 0.39285714285714285
+      },
+      "binance": {
+        "n": 5,
+        "hit5": 0.8,
+        "hit10": 0.4,
+        "risk": 0.6,
+        "net_roi": -0.0033999999999999976,
+        "wilson_lower": 0.3755282641185388,
+        "passed": false
+      },
+      "promotion_requirements": [
+        "actual-funding Hyperliquid economic replay",
+        "forward shadow tracking",
+        "manual review"
+      ]
+    },
+    {
+      "candidate_id": "NOVEL-20261005-06",
+      "status": "SHADOW_ONLY",
+      "rule": "-0.139439 <= price_dd <= -0.10419 AND 0.313961 <= daily_ret5 <= 0.579532",
+      "features": [
+        "price_dd",
+        "daily_ret5"
+      ],
+      "families": [
+        "DAILY",
+        "PRICE"
+      ],
+      "conditions": [
+        {
+          "feature": "price_dd",
+          "op": "band",
+          "a": -0.1394393733853019,
+          "b": -0.10419042571418308
+        },
+        {
+          "feature": "daily_ret5",
+          "op": "band",
+          "a": 0.31396113303210554,
+          "b": 0.5795319768388887
+        }
+      ],
+      "hyperliquid": {
+        "train_n": 42,
+        "train_hit5": 0.8809523809523809,
+        "train_net_roi": 0.014361904761904767,
+        "hold_n": 31,
+        "hold_hit5": 0.8387096774193549,
+        "hold_hit10": 0.6451612903225806,
+        "hold_risk": 0.7419354838709677,
+        "hold_net_roi": 0.019183238075050242,
+        "episodes": 12,
+        "episode_hit5": 0.8141025641025642,
+        "incremental_vs_C1_C3_C4": 0.6129032258064516
+      },
+      "binance": {
+        "n": 7,
+        "hit5": 1.0,
+        "hit10": 0.8571428571428571,
+        "risk": 1.0,
+        "net_roi": 0.04660000000000001,
+        "wilson_lower": 0.6456611570247934,
+        "passed": false
+      },
+      "promotion_requirements": [
+        "actual-funding Hyperliquid economic replay",
+        "forward shadow tracking",
+        "manual review"
+      ]
+    },
+    {
+      "candidate_id": "NOVEL-20261005-07",
+      "status": "SHADOW_ONLY",
+      "rule": "14.5643 <= daily_4h_rsi_gap <= 22.8401 AND -0.112934 <= obv_delta3_norm <= -0.0354537",
+      "features": [
+        "daily_4h_rsi_gap",
+        "obv_delta3_norm"
+      ],
+      "families": [
+        "FLOW",
+        "RSI"
+      ],
+      "conditions": [
+        {
+          "feature": "daily_4h_rsi_gap",
+          "op": "band",
+          "a": 14.564335396607099,
+          "b": 22.840074974386972
+        },
+        {
+          "feature": "obv_delta3_norm",
+          "op": "band",
+          "a": -0.11293352517433576,
+          "b": -0.035453733606862416
+        }
+      ],
+      "hyperliquid": {
+        "train_n": 47,
+        "train_hit5": 0.8085106382978723,
+        "train_net_roi": 0.0203563411447716,
+        "hold_n": 36,
+        "hold_hit5": 0.8055555555555556,
+        "hold_hit10": 0.5555555555555556,
+        "hold_risk": 0.7222222222222222,
+        "hold_net_roi": 0.015632905170837468,
+        "episodes": 17,
+        "episode_hit5": 0.7745098039215685,
+        "incremental_vs_C1_C3_C4": 0.7777777777777778
+      },
+      "binance": {
+        "n": 11,
+        "hit5": 0.6363636363636364,
+        "hit10": 0.6363636363636364,
+        "risk": 0.6363636363636364,
+        "net_roi": 0.0070682953346337205,
+        "wilson_lower": 0.35379677689163724,
+        "passed": false
+      },
+      "promotion_requirements": [
+        "actual-funding Hyperliquid economic replay",
+        "forward shadow tracking",
+        "manual review"
+      ]
+    }
+  ]
+}
