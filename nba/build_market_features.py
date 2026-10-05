@@ -39,9 +39,20 @@ def maxv(vals):
     x=[num(v) for v in vals]; x=[v for v in x if v is not None]
     return max(x) if x else None
 
+NON_EXECUTABLE_PROVIDER_TOKENS=("live odds","accuscore","consensus","numberfire","teamrankings","betegy","betradar","opening")
+
+def provider_is_executable(name):
+    s=(name or "").lower()
+    return bool(s) and not any(tok in s for tok in NON_EXECUTABLE_PROVIDER_TOKENS)
+
+def american_price(v):
+    a=num(v)
+    if a is None or abs(a)<100:return None
+    return a
+
 def implied(american):
-    a=num(american)
-    if a is None or a==0:return None
+    a=american_price(american)
+    if a is None:return None
     return (-a)/((-a)+100) if a<0 else 100/(a+100)
 
 rows_out=[]
@@ -56,14 +67,14 @@ for season_dir in sorted(HIST.glob("*")) if HIST.exists() else []:
         if r.get("game_id"):by_game[r["game_id"]].append(r)
     built=0
     for gid,grp in by_game.items():
-        pre=[r for r in grp if "live odds" not in (r.get("provider") or "").lower()]
+        pre=[r for r in grp if provider_is_executable(r.get("provider"))]
         if not pre:continue
         providers=sorted(set(r.get("provider") for r in pre if r.get("provider")))
         first=pre[0]
-        hml=[r.get("home_moneyline") for r in pre]; aml=[r.get("away_moneyline") for r in pre]
+        hml=[american_price(r.get("home_moneyline")) for r in pre]; aml=[american_price(r.get("away_moneyline")) for r in pre]
         spreads=[r.get("spread") for r in pre]; totals=[r.get("over_under") for r in pre]
-        home_spread_prices=[r.get("home_spread_odds") for r in pre]; away_spread_prices=[r.get("away_spread_odds") for r in pre]
-        over_prices=[r.get("over_odds") for r in pre]; under_prices=[r.get("under_odds") for r in pre]
+        home_spread_prices=[american_price(r.get("home_spread_odds")) for r in pre]; away_spread_prices=[american_price(r.get("away_spread_odds")) for r in pre]
+        over_prices=[american_price(r.get("over_odds")) for r in pre]; under_prices=[american_price(r.get("under_odds")) for r in pre]
         open_totals=[r.get("open_total") for r in pre]
         open_hs=[r.get("open_home_spread") for r in pre]; open_as=[r.get("open_away_spread") for r in pre]
         row={
@@ -106,7 +117,7 @@ write(OUT/"historical_market_features.csv.gz",rows_out)
 summary={
  "generated_at_utc":datetime.now(timezone.utc).isoformat(),
  "games":len(rows_out),"seasons":season_summary,
- "policy":"Provider labels containing 'Live Odds' are excluded from pregame research features."
+ "policy":"Executable sportsbook providers only for price/ROI features. Live odds, consensus/model feeds, data-provider feeds and Opening pseudo-provider rows are excluded; American prices require absolute value >=100."
 }
 (OUT/"historical_market_features_summary.json").write_text(json.dumps(summary,indent=2)+"\n")
 print(json.dumps(summary,indent=2))
