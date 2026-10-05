@@ -40,7 +40,7 @@ def maxv(vals):
     return max(x) if x else None
 
 NON_EXECUTABLE_PROVIDER_TOKENS=("live odds","accuscore","consensus","numberfire","teamrankings","betegy","betradar","opening")
-DETAIL_SPREAD_RE=re.compile(r"\\b([A-Z]{2,4})\\s*([+-]\\d+(?:\\.\\d+)?)\\b")
+DETAIL_SPREAD_RE=re.compile(r"\b([A-Z]{2,4})\s*([+-]\d+(?:\.\d+)?)\b")
 
 def signed_home_spread(row):
     d=(row.get("details") or "").upper()
