@@ -1,0 +1,51 @@
+name: NBA Novel Mechanism Discovery
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - "nba/research/discover_novel.py"
+      - "nba/build_team_flow_rolling.py"
+      - "nba/build_team_workload.py"
+      - ".github/workflows/nba-novel-method-discovery.yml"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: nba-novel-method-discovery
+  cancel-in-progress: true
+
+jobs:
+  discover:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: python nba/build_market_features.py
+      - run: python nba/build_game_flow_features.py
+      - run: python nba/build_team_flow_rolling.py
+      - run: python nba/build_player_workload.py
+      - run: python nba/build_team_workload.py
+      - run: python nba/research/discover_novel.py
+      - shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "appwiza-nba-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add nba/research/novel
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m "nba: add novel flow and workload method discovery"
+          for attempt in 1 2 3; do
+            git fetch origin main
+            if git rebase origin/main && git push; then exit 0; fi
+            git rebase --abort 2>/dev/null || true
+            sleep 3
+          done
+          exit 1
