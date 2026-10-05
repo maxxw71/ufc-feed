@@ -138,7 +138,7 @@ def enrich(e,btc,trigger_col="trigger_time"):
     x=x.drop(columns=["time"],errors="ignore")
 
     times=pd.to_datetime(x[trigger_col],utc=True)
-    vals=times.view("int64")
+    vals=times.astype("int64").to_numpy()
     for hrs in (8,24):
         w=pd.Timedelta(hours=hrs).value
         counts=[]
