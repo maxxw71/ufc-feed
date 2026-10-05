@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-10-05T08:25:00+00:00",
+  "generated_at": "2026-10-05T12:17:00+00:00",
   "venue": "Hyperliquid primary perpetuals",
   "timeframe": "4h",
   "target_pct": 0.05,
@@ -235,6 +235,70 @@
         "price_dd_min": -0.1394393733853019,
         "price_dd_max": -0.10419042571418308
       }
+    },
+    {
+      "id": "R01",
+      "key": "refined_novel01_btc_regime",
+      "name": "Refined Novel 01 \u00b7 BTC-Regime RSI Gap",
+      "enabled": true,
+      "status": "SHADOW_ONLY",
+      "research_parent": "NOVEL-20261005-01",
+      "description": "Research-only refinement of NOVEL-01 using a train-frozen BTC regime veto. Kept shadow because cross-venue sample is still too small.",
+      "trigger_summary": "Daily breakout \u2192 first \u22658% flush \u2192 daily-vs-4H RSI gap 14.56\u201322.84 \u2192 asset trails BTC 2.49\u20134.86pp over 4H \u2192 BTC RSI \u226545.84.",
+      "validation": {
+        "venue": "Hyperliquid primary perps",
+        "n": 29,
+        "target_before_stop": 0.9655172414,
+        "actual_funding_net_roi": 0.042427936,
+        "stop_reference_pct": 0.075,
+        "external_binance_n": 10,
+        "external_binance_hit5": 0.9,
+        "external_binance_target_before_stop": 0.8,
+        "external_binance_net_roi": 0.0216,
+        "promotion_blocker": "sample size below full gate"
+      },
+      "params": {
+        "daily_ret5_min": 0.15,
+        "daily_rv20_min": 0.025,
+        "first_flush_min": 0.08,
+        "daily_4h_rsi_gap_min": 14.564335396607099,
+        "daily_4h_rsi_gap_max": 22.840074974386972,
+        "relative_ret4_min": -0.048556911108327216,
+        "relative_ret4_max": -0.02494468062678926,
+        "btc_rsi14_min": 45.84034715519137
+      }
+    },
+    {
+      "id": "R03",
+      "key": "refined_novel03_btc_vol",
+      "name": "Refined Novel 03 \u00b7 BTC-Volatility Flow Wick",
+      "enabled": true,
+      "status": "SHADOW_ONLY",
+      "research_parent": "NOVEL-20261005-03",
+      "description": "Research-only refinement of NOVEL-03 using a train-frozen BTC volatility veto. Kept shadow because independent sample is still too small.",
+      "trigger_summary": "Daily breakout \u2192 first \u22658% flush \u2192 lower wick 4.16\u201311.99% of range \u2192 normalized OBV delta -0.1342 to -0.0452 \u2192 BTC ATR14 \u22651.03%.",
+      "validation": {
+        "venue": "Hyperliquid primary perps",
+        "n": 15,
+        "target_before_stop": 0.9333333333,
+        "actual_funding_net_roi": 0.0385178971,
+        "stop_reference_pct": 0.075,
+        "external_binance_n": 6,
+        "external_binance_hit5": 1,
+        "external_binance_target_before_stop": 1,
+        "external_binance_net_roi": 0.0466,
+        "promotion_blocker": "sample size below full gate"
+      },
+      "params": {
+        "daily_ret5_min": 0.15,
+        "daily_rv20_min": 0.025,
+        "first_flush_min": 0.08,
+        "lower_wick_min": 0.04160912056190943,
+        "lower_wick_max": 0.11986433193646617,
+        "obv_delta3_norm_min": -0.1342119207492753,
+        "obv_delta3_norm_max": -0.045244761407937324,
+        "btc_atr14_pct_min": 0.01032640865130135
+      }
     }
   ],
   "signals": [
@@ -257,34 +321,34 @@
       },
       "liquidity": {
         "status": "ok",
-        "day_volume": 1590316.7863199997,
+        "day_volume": 1752722.7795799992,
         "sizes": {
           "1000": {
-            "full_fill": true,
-            "best_bid": 0.16682,
-            "best_ask": 0.16693,
-            "mid": 0.166875,
-            "entry_slippage_pct": 0.0008739403939523882,
-            "roundtrip_book_impact_pct": 0.0012475802836623417,
-            "buy_book_coverage": 1.0
+            "full_fill": false,
+            "best_bid": 0.1676,
+            "best_ask": 0.16779,
+            "mid": 0.16769499999999998,
+            "entry_slippage_pct": null,
+            "roundtrip_book_impact_pct": null,
+            "buy_book_coverage": 0.8271513699999999
           },
           "5000": {
             "full_fill": false,
-            "best_bid": 0.16682,
-            "best_ask": 0.16693,
-            "mid": 0.166875,
+            "best_bid": 0.1676,
+            "best_ask": 0.16779,
+            "mid": 0.16769499999999998,
             "entry_slippage_pct": null,
             "roundtrip_book_impact_pct": null,
-            "buy_book_coverage": 0.26076924599999995
+            "buy_book_coverage": 0.165430274
           },
           "10000": {
             "full_fill": false,
-            "best_bid": 0.16682,
-            "best_ask": 0.16693,
-            "mid": 0.166875,
+            "best_bid": 0.1676,
+            "best_ask": 0.16779,
+            "mid": 0.16769499999999998,
             "entry_slippage_pct": null,
             "roundtrip_book_impact_pct": null,
-            "buy_book_coverage": 0.13038462299999998
+            "buy_book_coverage": 0.082715137
           }
         },
         "bid_levels": 20,
@@ -314,34 +378,34 @@
       },
       "liquidity": {
         "status": "ok",
-        "day_volume": 2630714.8795900014,
+        "day_volume": 2795417.3120999993,
         "sizes": {
           "1000": {
             "full_fill": true,
-            "best_bid": 0.22278,
-            "best_ask": 0.22279,
-            "mid": 0.222785,
-            "entry_slippage_pct": 2.2443162690288787e-05,
-            "roundtrip_book_impact_pct": 4.729063602482153e-05,
+            "best_bid": 0.22096,
+            "best_ask": 0.22098,
+            "mid": 0.22097,
+            "entry_slippage_pct": 4.525501199270643e-05,
+            "roundtrip_book_impact_pct": 0.00012057185627656342,
             "buy_book_coverage": 1.0
           },
           "5000": {
             "full_fill": true,
-            "best_bid": 0.22278,
-            "best_ask": 0.22279,
-            "mid": 0.222785,
-            "entry_slippage_pct": 0.00016269812008529172,
-            "roundtrip_book_impact_pct": 0.0003240182837780381,
+            "best_bid": 0.22096,
+            "best_ask": 0.22098,
+            "mid": 0.22097,
+            "entry_slippage_pct": 0.00016411803264326785,
+            "roundtrip_book_impact_pct": 0.0003786037907166362,
             "buy_book_coverage": 1.0
           },
           "10000": {
             "full_fill": true,
-            "best_bid": 0.22278,
-            "best_ask": 0.22279,
-            "mid": 0.222785,
-            "entry_slippage_pct": 0.0002365154747785425,
-            "roundtrip_book_impact_pct": 0.0004678725200341072,
-            "buy_book_coverage": 1.0
+            "best_bid": 0.22096,
+            "best_ask": 0.22098,
+            "mid": 0.22097,
+            "entry_slippage_pct": 0.0002625839872147928,
+            "roundtrip_book_impact_pct": 0.0005508192418004487,
+            "buy_book_coverage": 0.9999999999999998
           }
         },
         "bid_levels": 20,
@@ -372,34 +436,34 @@
       },
       "liquidity": {
         "status": "ok",
-        "day_volume": 2630714.8795900014,
+        "day_volume": 2795417.3120999993,
         "sizes": {
           "1000": {
             "full_fill": true,
-            "best_bid": 0.22278,
-            "best_ask": 0.22279,
-            "mid": 0.222785,
-            "entry_slippage_pct": 2.2443162690288787e-05,
-            "roundtrip_book_impact_pct": 4.729063602482153e-05,
+            "best_bid": 0.22096,
+            "best_ask": 0.22098,
+            "mid": 0.22097,
+            "entry_slippage_pct": 4.525501199270643e-05,
+            "roundtrip_book_impact_pct": 0.00012057185627656342,
             "buy_book_coverage": 1.0
           },
           "5000": {
             "full_fill": true,
-            "best_bid": 0.22278,
-            "best_ask": 0.22279,
-            "mid": 0.222785,
-            "entry_slippage_pct": 0.00016269812008529172,
-            "roundtrip_book_impact_pct": 0.0003240182837780381,
+            "best_bid": 0.22096,
+            "best_ask": 0.22098,
+            "mid": 0.22097,
+            "entry_slippage_pct": 0.00016411803264326785,
+            "roundtrip_book_impact_pct": 0.0003786037907166362,
             "buy_book_coverage": 1.0
           },
           "10000": {
             "full_fill": true,
-            "best_bid": 0.22278,
-            "best_ask": 0.22279,
-            "mid": 0.222785,
-            "entry_slippage_pct": 0.0002365154747785425,
-            "roundtrip_book_impact_pct": 0.0004678725200341072,
-            "buy_book_coverage": 1.0
+            "best_bid": 0.22096,
+            "best_ask": 0.22098,
+            "mid": 0.22097,
+            "entry_slippage_pct": 0.0002625839872147928,
+            "roundtrip_book_impact_pct": 0.0005508192418004487,
+            "buy_book_coverage": 0.9999999999999998
           }
         },
         "bid_levels": 20,
@@ -430,33 +494,33 @@
       },
       "liquidity": {
         "status": "ok",
-        "day_volume": 5100002.659201002,
+        "day_volume": 5523093.224267001,
         "sizes": {
           "1000": {
             "full_fill": true,
-            "best_bid": 0.87506,
-            "best_ask": 0.8751,
-            "mid": 0.87508,
-            "entry_slippage_pct": 2.285505325239079e-05,
-            "roundtrip_book_impact_pct": 0.00024452435275978956,
+            "best_bid": 0.86365,
+            "best_ask": 0.86373,
+            "mid": 0.8636900000000001,
+            "entry_slippage_pct": 8.45203903085956e-05,
+            "roundtrip_book_impact_pct": 0.0001453032455027703,
             "buy_book_coverage": 1.0
           },
           "5000": {
             "full_fill": true,
-            "best_bid": 0.87506,
-            "best_ask": 0.8751,
-            "mid": 0.87508,
-            "entry_slippage_pct": 0.00021261591997578932,
-            "roundtrip_book_impact_pct": 0.0006635369772302058,
+            "best_bid": 0.86365,
+            "best_ask": 0.86373,
+            "mid": 0.8636900000000001,
+            "entry_slippage_pct": 0.00029905348020586864,
+            "roundtrip_book_impact_pct": 0.00045306064363792586,
             "buy_book_coverage": 1.0
           },
           "10000": {
             "full_fill": true,
-            "best_bid": 0.87506,
-            "best_ask": 0.8751,
-            "mid": 0.87508,
-            "entry_slippage_pct": 0.00037481578491527223,
-            "roundtrip_book_impact_pct": 0.000954622421576623,
+            "best_bid": 0.86365,
+            "best_ask": 0.86373,
+            "mid": 0.8636900000000001,
+            "entry_slippage_pct": 0.0005044447736244351,
+            "roundtrip_book_impact_pct": 0.0006911538600761213,
             "buy_book_coverage": 1.0
           }
         },
@@ -487,33 +551,33 @@
       },
       "liquidity": {
         "status": "ok",
-        "day_volume": 5100002.659201002,
+        "day_volume": 5523093.224267001,
         "sizes": {
           "1000": {
             "full_fill": true,
-            "best_bid": 0.87506,
-            "best_ask": 0.8751,
-            "mid": 0.87508,
-            "entry_slippage_pct": 2.285505325239079e-05,
-            "roundtrip_book_impact_pct": 0.00024452435275978956,
+            "best_bid": 0.86365,
+            "best_ask": 0.86373,
+            "mid": 0.8636900000000001,
+            "entry_slippage_pct": 8.45203903085956e-05,
+            "roundtrip_book_impact_pct": 0.0001453032455027703,
             "buy_book_coverage": 1.0
           },
           "5000": {
             "full_fill": true,
-            "best_bid": 0.87506,
-            "best_ask": 0.8751,
-            "mid": 0.87508,
-            "entry_slippage_pct": 0.00021261591997578932,
-            "roundtrip_book_impact_pct": 0.0006635369772302058,
+            "best_bid": 0.86365,
+            "best_ask": 0.86373,
+            "mid": 0.8636900000000001,
+            "entry_slippage_pct": 0.00029905348020586864,
+            "roundtrip_book_impact_pct": 0.00045306064363792586,
             "buy_book_coverage": 1.0
           },
           "10000": {
             "full_fill": true,
-            "best_bid": 0.87506,
-            "best_ask": 0.8751,
-            "mid": 0.87508,
-            "entry_slippage_pct": 0.00037481578491527223,
-            "roundtrip_book_impact_pct": 0.000954622421576623,
+            "best_bid": 0.86365,
+            "best_ask": 0.86373,
+            "mid": 0.8636900000000001,
+            "entry_slippage_pct": 0.0005044447736244351,
+            "roundtrip_book_impact_pct": 0.0006911538600761213,
             "buy_book_coverage": 1.0
           }
         },
@@ -544,33 +608,33 @@
       },
       "liquidity": {
         "status": "ok",
-        "day_volume": 5100002.659201002,
+        "day_volume": 5523093.224267001,
         "sizes": {
           "1000": {
             "full_fill": true,
-            "best_bid": 0.87506,
-            "best_ask": 0.8751,
-            "mid": 0.87508,
-            "entry_slippage_pct": 2.285505325239079e-05,
-            "roundtrip_book_impact_pct": 0.00024452435275978956,
+            "best_bid": 0.86365,
+            "best_ask": 0.86373,
+            "mid": 0.8636900000000001,
+            "entry_slippage_pct": 8.45203903085956e-05,
+            "roundtrip_book_impact_pct": 0.0001453032455027703,
             "buy_book_coverage": 1.0
           },
           "5000": {
             "full_fill": true,
-            "best_bid": 0.87506,
-            "best_ask": 0.8751,
-            "mid": 0.87508,
-            "entry_slippage_pct": 0.00021261591997578932,
-            "roundtrip_book_impact_pct": 0.0006635369772302058,
+            "best_bid": 0.86365,
+            "best_ask": 0.86373,
+            "mid": 0.8636900000000001,
+            "entry_slippage_pct": 0.00029905348020586864,
+            "roundtrip_book_impact_pct": 0.00045306064363792586,
             "buy_book_coverage": 1.0
           },
           "10000": {
             "full_fill": true,
-            "best_bid": 0.87506,
-            "best_ask": 0.8751,
-            "mid": 0.87508,
-            "entry_slippage_pct": 0.00037481578491527223,
-            "roundtrip_book_impact_pct": 0.000954622421576623,
+            "best_bid": 0.86365,
+            "best_ask": 0.86373,
+            "mid": 0.8636900000000001,
+            "entry_slippage_pct": 0.0005044447736244351,
+            "roundtrip_book_impact_pct": 0.0006911538600761213,
             "buy_book_coverage": 1.0
           }
         },
@@ -599,42 +663,48 @@
       "status": "SHADOW_SUCCESS",
       "metrics": {
         "daily_ret5": 0.5005170403291457,
+        "daily_rsi": 83.50349560305948,
+        "trigger_rsi": 69.5755525537538,
+        "daily_4h_rsi_gap": 13.927943049305682,
         "price_dd": -0.13216924753589865,
         "asset_ret4": -0.06554819075129603,
         "btc_ret4": 0.001277668019259659,
+        "btc_rsi14": 52.071972507206695,
+        "btc_atr14_pct": 0.010419286397877321,
         "relative_ret4": -0.06682585877055569,
+        "lower_wick": 0.26896464964146455,
         "obv_delta3_norm": -0.03289551473182012
       },
       "liquidity": {
         "status": "ok",
-        "day_volume": 25720673.213501982,
+        "day_volume": 12957870.283982005,
         "sizes": {
           "1000": {
             "full_fill": true,
-            "best_bid": 0.072237,
-            "best_ask": 0.07225,
-            "mid": 0.07224349999999999,
-            "entry_slippage_pct": 0.00013251082076570775,
-            "roundtrip_book_impact_pct": 0.00038773646215606306,
-            "buy_book_coverage": 1.0000000000000002
+            "best_bid": 0.071501,
+            "best_ask": 0.07152,
+            "mid": 0.0715105,
+            "entry_slippage_pct": 0.00023929408363643212,
+            "roundtrip_book_impact_pct": 0.0004139506713545238,
+            "buy_book_coverage": 1.0
           },
           "5000": {
-            "full_fill": false,
-            "best_bid": 0.072237,
-            "best_ask": 0.07225,
-            "mid": 0.07224349999999999,
-            "entry_slippage_pct": null,
-            "roundtrip_book_impact_pct": null,
-            "buy_book_coverage": 0.9126370935999999
+            "full_fill": true,
+            "best_bid": 0.071501,
+            "best_ask": 0.07152,
+            "mid": 0.0715105,
+            "entry_slippage_pct": 0.0004296013846549762,
+            "roundtrip_book_impact_pct": 0.0008830723903567872,
+            "buy_book_coverage": 1.0
           },
           "10000": {
             "full_fill": false,
-            "best_bid": 0.072237,
-            "best_ask": 0.07225,
-            "mid": 0.07224349999999999,
+            "best_bid": 0.071501,
+            "best_ask": 0.07152,
+            "mid": 0.0715105,
             "entry_slippage_pct": null,
             "roundtrip_book_impact_pct": null,
-            "buy_book_coverage": 0.45631854679999995
+            "buy_book_coverage": 0.7078541634
           }
         },
         "bid_levels": 20,
@@ -644,10 +714,77 @@
       "settled_at": "2026-10-03T12:00:00+00:00",
       "realized_target_pct": 0.05,
       "target_after_stop": false
+    },
+    {
+      "id": "R03:PURR:2026-10-02T16:00:00+00:00",
+      "coin": "PURR",
+      "method_id": "R03",
+      "method_key": "refined_novel03_btc_vol",
+      "method_name": "Refined Novel 03 \u00b7 BTC-Volatility Flow Wick",
+      "trigger_time": "2026-10-02T16:00:00+00:00",
+      "entry_time": "2026-10-02T20:00:00+00:00",
+      "trigger_price": 0.14975,
+      "entry_reference": 0.14977,
+      "target_5pct": 0.1572585,
+      "risk_stop_reference": 0.13853725,
+      "status": "SHADOW_SUCCESS",
+      "metrics": {
+        "daily_ret5": 0.2643883495145629,
+        "daily_rsi": 63.360956235715456,
+        "trigger_rsi": 46.62687859545273,
+        "daily_4h_rsi_gap": 16.734077640262726,
+        "price_dd": -0.18543298520452567,
+        "asset_ret4": -0.11756040070713025,
+        "btc_ret4": -0.012142949236377265,
+        "btc_rsi14": 49.26185327248771,
+        "btc_atr14_pct": 0.01306513754159131,
+        "relative_ret4": -0.10541745147075299,
+        "lower_wick": 0.09281961471103253,
+        "obv_delta3_norm": -0.1309971871682553
+      },
+      "liquidity": {
+        "status": "ok",
+        "day_volume": 1752722.7795799992,
+        "sizes": {
+          "1000": {
+            "full_fill": false,
+            "best_bid": 0.1676,
+            "best_ask": 0.16779,
+            "mid": 0.16769499999999998,
+            "entry_slippage_pct": null,
+            "roundtrip_book_impact_pct": null,
+            "buy_book_coverage": 0.8271513699999999
+          },
+          "5000": {
+            "full_fill": false,
+            "best_bid": 0.1676,
+            "best_ask": 0.16779,
+            "mid": 0.16769499999999998,
+            "entry_slippage_pct": null,
+            "roundtrip_book_impact_pct": null,
+            "buy_book_coverage": 0.165430274
+          },
+          "10000": {
+            "full_fill": false,
+            "best_bid": 0.1676,
+            "best_ask": 0.16779,
+            "mid": 0.16769499999999998,
+            "entry_slippage_pct": null,
+            "roundtrip_book_impact_pct": null,
+            "buy_book_coverage": 0.082715137
+          }
+        },
+        "bid_levels": 20,
+        "ask_levels": 20
+      },
+      "stop_touched": false,
+      "settled_at": "2026-10-02T20:00:00+00:00",
+      "realized_target_pct": 0.05,
+      "target_after_stop": false
     }
   ],
   "history_count": 6,
-  "shadow_history_count": 1,
+  "shadow_history_count": 2,
   "coverage": {
     "ok": 178,
     "short": 0,
