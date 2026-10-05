@@ -47,7 +47,13 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          rm -f nba/bootstrap_status.json nba/integrity_report.json nba/completeness_report.json
+          for f in nba/bootstrap_status.json nba/integrity_report.json nba/completeness_report.json; do
+            if git ls-files --error-unmatch "$f" >/dev/null 2>&1; then
+              git restore "$f"
+            else
+              rm -f "$f"
+            fi
+          done
           git config user.name "appwiza-nba-bot"
           git config user.email "actions@users.noreply.github.com"
           git add nba/data/2023_24
