@@ -4,7 +4,7 @@ from collections import Counter
 from datetime import datetime,timezone
 from pathlib import Path
 
-ROOT=Path(__file__).resolve().parents[1]
+ROOT=Path(__file__).resolve().parent
 DATA=ROOT/"data"
 EXPECTED={
  "2023_24":{"games":1230,"teams":30,"team_games":82},
