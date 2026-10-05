@@ -4,7 +4,7 @@ from datetime import datetime,timezone
 from pathlib import Path
 import requests
 
-ROOT=Path(__file__).resolve().parents[1]
+ROOT=Path(__file__).resolve().parent
 DATA=ROOT/"data"
 URL="https://cdn.nba.com/static/json/staticData/scheduleLeagueV2.json"
 HEADERS={
