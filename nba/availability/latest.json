@@ -1,9 +1,195 @@
 {
-  "captured_at_utc": "2026-10-05T00:42:48.292951+00:00",
-  "source": "espn_injuries",
+  "captured_at_utc": "2026-10-05T01:30:32.646734+00:00",
+  "source": "espn_injuries_team_scoped",
   "source_url": "https://site.api.espn.com/apis/site/v2/sports/basketball/nba/injuries",
-  "http_status": 200,
+  "teams_attempted": 30,
+  "teams_success": 30,
   "rows": 67,
-  "raw_snapshot": "availability/raw/2026-10-05/004248Z.json.gz",
-  "notes": "Prospective point-in-time capture. Raw payload retained for later parser upgrades."
+  "rows_with_team_id": 67,
+  "rows_with_person_id": 67,
+  "unique_teams_with_injuries": 24,
+  "raw_snapshot": "availability/raw/2026-10-05/013032Z_team_scoped.json.gz",
+  "requests": [
+    {
+      "team": "ATL",
+      "http_status": 200,
+      "ok": true,
+      "rows": 4
+    },
+    {
+      "team": "BKN",
+      "http_status": 200,
+      "ok": true,
+      "rows": 1
+    },
+    {
+      "team": "BOS",
+      "http_status": 200,
+      "ok": true,
+      "rows": 0
+    },
+    {
+      "team": "CHA",
+      "http_status": 200,
+      "ok": true,
+      "rows": 3
+    },
+    {
+      "team": "CHI",
+      "http_status": 200,
+      "ok": true,
+      "rows": 1
+    },
+    {
+      "team": "CLE",
+      "http_status": 200,
+      "ok": true,
+      "rows": 1
+    },
+    {
+      "team": "DAL",
+      "http_status": 200,
+      "ok": true,
+      "rows": 4
+    },
+    {
+      "team": "DEN",
+      "http_status": 200,
+      "ok": true,
+      "rows": 3
+    },
+    {
+      "team": "DET",
+      "http_status": 200,
+      "ok": true,
+      "rows": 1
+    },
+    {
+      "team": "GS",
+      "http_status": 200,
+      "ok": true,
+      "rows": 4
+    },
+    {
+      "team": "HOU",
+      "http_status": 200,
+      "ok": true,
+      "rows": 0
+    },
+    {
+      "team": "IND",
+      "http_status": 200,
+      "ok": true,
+      "rows": 4
+    },
+    {
+      "team": "LAC",
+      "http_status": 200,
+      "ok": true,
+      "rows": 6
+    },
+    {
+      "team": "LAL",
+      "http_status": 200,
+      "ok": true,
+      "rows": 0
+    },
+    {
+      "team": "MEM",
+      "http_status": 200,
+      "ok": true,
+      "rows": 3
+    },
+    {
+      "team": "MIA",
+      "http_status": 200,
+      "ok": true,
+      "rows": 2
+    },
+    {
+      "team": "MIL",
+      "http_status": 200,
+      "ok": true,
+      "rows": 0
+    },
+    {
+      "team": "MIN",
+      "http_status": 200,
+      "ok": true,
+      "rows": 1
+    },
+    {
+      "team": "NO",
+      "http_status": 200,
+      "ok": true,
+      "rows": 1
+    },
+    {
+      "team": "NY",
+      "http_status": 200,
+      "ok": true,
+      "rows": 1
+    },
+    {
+      "team": "OKC",
+      "http_status": 200,
+      "ok": true,
+      "rows": 3
+    },
+    {
+      "team": "ORL",
+      "http_status": 200,
+      "ok": true,
+      "rows": 4
+    },
+    {
+      "team": "PHI",
+      "http_status": 200,
+      "ok": true,
+      "rows": 2
+    },
+    {
+      "team": "PHX",
+      "http_status": 200,
+      "ok": true,
+      "rows": 1
+    },
+    {
+      "team": "POR",
+      "http_status": 200,
+      "ok": true,
+      "rows": 1
+    },
+    {
+      "team": "SA",
+      "http_status": 200,
+      "ok": true,
+      "rows": 3
+    },
+    {
+      "team": "SAC",
+      "http_status": 200,
+      "ok": true,
+      "rows": 0
+    },
+    {
+      "team": "TOR",
+      "http_status": 200,
+      "ok": true,
+      "rows": 7
+    },
+    {
+      "team": "UTAH",
+      "http_status": 200,
+      "ok": true,
+      "rows": 3
+    },
+    {
+      "team": "WSH",
+      "http_status": 200,
+      "ok": true,
+      "rows": 3
+    }
+  ],
+  "notes": "Prospective point-in-time team-scoped capture; roster identity reconciliation applied at capture time."
 }
