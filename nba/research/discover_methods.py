@@ -1,3 +1,4 @@
+# Fixed-split NBA method discovery. No holdout-derived tuning.
 #!/usr/bin/env python3
 import csv,gzip,itertools,json,math,statistics
 from collections import defaultdict
