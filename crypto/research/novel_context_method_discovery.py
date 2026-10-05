@@ -36,7 +36,7 @@ OUT=ROOT/"novel_context_discovery"
 OUT.mkdir(parents=True,exist_ok=True)
 
 HL_INFO="https://api.hyperliquid.xyz/info"
-BIN_KLINES="https://api.binance.com/api/v3/klines"
+BIN_KLINES="https://data-api.binance.vision/api/v3/klines"
 
 TP=.05
 STOP=.075
