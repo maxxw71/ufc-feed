@@ -312,12 +312,13 @@ def run_slice(session, season, season_type, max_games=None):
     if max_games: ordered=ordered[-max_games:]
     stamp=now_utc()
     games=[]; teams=[]; players=[]; plays=[]
+    rejected_historical_shells=0
     for idx,ev in enumerate(ordered,1):
         gid=str(ev.get("id") or "")
-        games.append(event_game_row(season,season_type,ev,stamp))
         seed=team_seed_rows(season,season_type,ev,stamp)
         state=((((ev.get("status") or {}).get("type") or {}).get("state")) or "")
         if state=="pre":
+            games.append(event_game_row(season,season_type,ev,stamp))
             teams.extend(seed)
             continue
         data,status,err=get_json(session,summary_url(gid),params={"event":gid},tries=3,timeout=30)
@@ -326,6 +327,28 @@ def run_slice(session, season, season_type, max_games=None):
             "url":f"{summary_url(gid)}?event={gid}","http_status":status,"ok":bool(data),
             "error":err,"ingested_at_utc":stamp
         })
+
+        # Some ESPN historical event shells are marked Final but contain no real
+        # box-score statistics. Old completed games must have a detailed team
+        # box score before they are admitted to research data.
+        ev_dt=None
+        try:
+            ev_dt=datetime.fromisoformat(str(ev.get("date") or "").replace("Z","+00:00"))
+        except Exception:
+            pass
+        old_completed=(state=="post" and ev_dt is not None and ev_dt < datetime.now(timezone.utc)-timedelta(days=7))
+        box_teams=((data or {}).get("boxscore") or {}).get("teams") or []
+        has_detailed_team_stats=any((x.get("statistics") or []) for x in box_teams)
+        if old_completed and not has_detailed_team_stats:
+            rejected_historical_shells+=1
+            provenance.append({
+              "season":season,"season_type":season_type,"game_id":gid,"source":"historical_shell_rejection",
+              "url":f"{summary_url(gid)}?event={gid}","http_status":status,"ok":False,
+              "error":"completed historical event lacked detailed team box-score statistics","ingested_at_utc":stamp
+            })
+            continue
+
+        games.append(event_game_row(season,season_type,ev,stamp))
         if data:
             teams.extend(enrich_team_rows(seed,data))
             players.extend(player_rows(season,season_type,gid,data,stamp))
@@ -351,6 +374,7 @@ def run_slice(session, season, season_type, max_games=None):
         "scoreboard_success":sum(1 for x in provenance if x["source"]=="espn_scoreboard" and x["ok"]),
         "summary_requests":sum(1 for x in provenance if x["source"]=="espn_summary"),
         "summary_success":sum(1 for x in provenance if x["source"]=="espn_summary" and x["ok"]),
+        "rejected_historical_shells":rejected_historical_shells,
         "generated_at_utc":now_utc()
     }
     (out/"summary.json").write_text(json.dumps(summary,indent=2)+"\n")
