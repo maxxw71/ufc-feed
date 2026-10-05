@@ -29,8 +29,13 @@ jobs:
           set -euo pipefail
           git config user.name "appwiza-nba-bot"
           git config user.email "actions@users.noreply.github.com"
-          git add nba/official_game_id_map_v2.csv.gz nba/official_crosscheck_v2_report.json
+          git add nba/official_crosscheck_v2_report.json
+          if [[ -f nba/official_game_id_map_v2.csv.gz ]]; then
+            git add nba/official_game_id_map_v2.csv.gz
+          fi
           if git diff --cached --quiet; then exit 0; fi
           git commit -m "nba: refresh official schedule crosscheck v2"
+          git reset --hard HEAD
+          git clean -fd
           git pull --rebase origin main
           git push
