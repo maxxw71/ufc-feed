@@ -81,7 +81,31 @@ def add_derived_team(row):
     return row
 
 for r in team: add_derived_team(r)
-TEAM_DERIVED=["_e_fg","_three_pa_rate","_ft_rate","_possessions_est","_off_rating_est","_true_shooting_est"]
+
+# Pair each team's completed-game row with its opponent so defensive/context form
+# can be rolled point-in-time just like offense.
+_by_game=defaultdict(list)
+for r in team:
+    _by_game[r.get("game_id")].append(r)
+for gid,pair in _by_game.items():
+    if len(pair)!=2:
+        continue
+    a,b=pair
+    for own,opp in ((a,b),(b,a)):
+        own["_opp_points"]=num(opp.get("points"))
+        own["_opp_e_fg"]=num(opp.get("_e_fg"))
+        own["_opp_three_pa_rate"]=num(opp.get("_three_pa_rate"))
+        own["_opp_ft_rate"]=num(opp.get("_ft_rate"))
+        own["_opp_true_shooting_est"]=num(opp.get("_true_shooting_est"))
+        own["_opp_possessions_est"]=num(opp.get("_possessions_est"))
+        own["_def_rating_est"]=(100*own["_opp_points"]/own["_opp_possessions_est"]) if own.get("_opp_possessions_est") and own.get("_opp_points") is not None else None
+        own["_net_rating_est"]=(own.get("_off_rating_est")-own.get("_def_rating_est")) if own.get("_off_rating_est") is not None and own.get("_def_rating_est") is not None else None
+
+TEAM_DERIVED=[
+ "_e_fg","_three_pa_rate","_ft_rate","_possessions_est","_off_rating_est","_true_shooting_est",
+ "_opp_points","_opp_e_fg","_opp_three_pa_rate","_opp_ft_rate","_opp_true_shooting_est",
+ "_opp_possessions_est","_def_rating_est","_net_rating_est"
+]
 
 def pregame_roll(rows,id_field,metrics,played_field=None):
     grouped=defaultdict(list)
