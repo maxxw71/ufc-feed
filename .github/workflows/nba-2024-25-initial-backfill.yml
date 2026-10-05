@@ -1,0 +1,56 @@
+name: NBA 2024-25 Initial Backfill
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/nba-2024-25-initial-backfill.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: nba-2024-25-initial-backfill
+  cancel-in-progress: true
+
+jobs:
+  backfill:
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: python -m pip install --upgrade requests
+      - name: Backfill 2024-25 games, players and play-by-play
+        run: |
+          python nba/bootstrap_dataset.py             --slice "2024-25|Regular Season"             --slice "2024-25|Post Season"
+      - name: Validate selected season structure
+        shell: bash
+        run: |
+          python nba/integrity_check.py
+          python - <<'PY'
+          import json, pathlib
+          p=pathlib.Path("nba/data/2024_25/regular_season/summary.json")
+          s=json.loads(p.read_text())
+          assert s["games_written"] >= 1200, s
+          assert s["team_rows"] == 2*s["games_written"], s
+          assert s["player_rows"] > 0 and s["playbyplay_rows"] > 0, s
+          print(s)
+          PY
+      - name: Commit only 2024-25 season data
+        shell: bash
+        run: |
+          set -euo pipefail
+          git checkout -- nba/bootstrap_status.json nba/integrity_report.json 2>/dev/null || true
+          git config user.name "appwiza-nba-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add nba/data/2024_25
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m "nba: backfill 2024-25 season"
+          git pull --rebase origin main
+          git push
