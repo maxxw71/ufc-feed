@@ -1,0 +1,74 @@
+name: Generic Hyperliquid capitulation method discovery
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'crypto/research/generic_hl_capitulation.py'
+      - '.github/workflows/generic-hl-capitulation-discovery.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: generic-hl-capitulation-discovery
+  cancel-in-progress: true
+
+jobs:
+  scan:
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [0,1,2,3,4,5,6,7]
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install --quiet pandas numpy requests
+      - run: |
+          python crypto/research/generic_hl_capitulation.py \
+            --mode scan --days 600 \
+            --shard-index ${{ matrix.shard }} --shard-count 8 \
+            --sleep 0.08 --out generic_cap_out
+      - uses: actions/upload-artifact@v4
+        with:
+          name: generic-cap-${{ matrix.shard }}
+          path: generic_cap_out/
+          retention-days: 2
+
+  aggregate:
+    needs: scan
+    if: always() && needs.scan.result == 'success'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install --quiet pandas numpy
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: generic-cap-*
+          path: generic_cap_shards
+          merge-multiple: true
+      - run: |
+          python crypto/research/generic_hl_capitulation.py \
+            --mode aggregate --input-dir generic_cap_shards \
+            --out crypto/research/results_generic_hl_capitulation
+      - name: Commit research outputs
+        run: |
+          git config user.name "appwiza-research-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add crypto/research/results_generic_hl_capitulation
+          if ! git diff --cached --quiet; then
+            git commit -m "Update generic Hyperliquid capitulation discovery"
+            git pull --rebase origin main
+            git push origin HEAD:main
+          fi
