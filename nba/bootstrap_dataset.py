@@ -127,7 +127,7 @@ def discover_events(session, season, season_type, provenance):
                 continue
             if season_type=="Regular Season":
                 note_text=(json.dumps(comp.get("notes") or [])+" "+str(ev.get("name") or "")).lower()
-                if "championship" in note_text and ("nba cup" in note_text or "emirates" in note_text):
+                if "championship" in note_text and ("nba cup" in note_text or "emirates" in note_text or "in-season" in note_text or "in season" in note_text or "tournament" in note_text):
                     continue
             eid=str(ev.get("id") or "")
             if eid:
