@@ -1,0 +1,43 @@
+{
+  "method_id": "NBA_ML001_DEF_TS",
+  "name": "ML001 Defensive-Cap + True-Shooting Confirmation",
+  "status": "shadow_only",
+  "market": "moneyline",
+  "frozen_rule": {
+    "net5_gap_min": 7.759,
+    "rest_diff_min_days": 2.0,
+    "def5_adv_max": 5.5,
+    "ts5_gap_min": 0.05603199206897114
+  },
+  "interpretation": "A strong recent net-rating edge with meaningful rest advantage, excluding defense-dominant profiles that historically produced more ML001 losses, and requiring the edge to be confirmed by a material five-game true-shooting advantage.",
+  "performance": {
+    "overall": {"n": 60, "wins": 51, "hit_rate": 0.85, "roi": 0.28812009450539056},
+    "discovery_A_2018_19_to_2020_21": {"n": 22, "wins": 18, "hit_rate": 0.8181818181818182, "roi": 0.3851255146503593},
+    "discovery_B_2021_22_to_2022_23": {"n": 16, "wins": 14, "hit_rate": 0.875, "roi": 0.26990144562021473},
+    "validation_2023_24": {"n": 12, "wins": 10, "hit_rate": 0.8333333333333334, "roi": 0.08268756924133035},
+    "holdout_2024_25_to_2025_26": {"n": 10, "wins": 9, "hit_rate": 0.9, "roi": 0.3503770387196129}
+  },
+  "execution_stress": {
+    "worst_price_overall_roi": 0.26231990240825515,
+    "worst_price_discovery_A_roi": 0.342831840300128,
+    "worst_price_discovery_B_roi": 0.24657925003405146,
+    "worst_price_validation_roi": 0.06232127251262861,
+    "worst_price_holdout_roi": 0.3503770387196129
+  },
+  "robustness": {
+    "exclude_covid": {"n": 49, "wins": 41, "hit_rate": 0.8367346938775511, "roi": 0.29454086668335033},
+    "max_single_team_share": 0.11666666666666667,
+    "ts5_neighborhood_note": "Thresholds from 0.05 through 0.06 remain high-hit and positive-ROI; the discovery-selected threshold is retained frozen rather than retuned."
+  },
+  "promotion_policy": {
+    "live": false,
+    "prospective_2026_27_required": true,
+    "no_retuning_on_2026_27": true,
+    "minimum_prospective_signals_before_live_review": 20
+  },
+  "notes": [
+    "This is a higher-selectivity descendant of NBA_ML001_DEF, not an independent family.",
+    "The method passed internal confirmation, validation, holdout, worst-price, leave-one-season-out and COVID-exclusion checks.",
+    "Any future live consideration requires prospective 2026-27 performance under the frozen rule."
+  ]
+}
