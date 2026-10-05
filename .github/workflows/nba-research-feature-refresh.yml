@@ -1,0 +1,62 @@
+name: NBA Research Feature Refresh
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - "nba/data/**"
+      - "nba/availability/**"
+      - "nba/rosters/**"
+      - "nba/players/backfill_player_profiles.py"
+      - "nba/build_pregame_strength.py"
+      - "nba/build_game_flow_features.py"
+      - "nba/build_availability_impact.py"
+      - "nba/build_manifest.py"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: nba-research-feature-refresh
+  cancel-in-progress: true
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: python -m pip install --upgrade requests
+
+      - name: Build pregame strength
+        run: python nba/build_pregame_strength.py
+
+      - name: Build game-flow features
+        run: python nba/build_game_flow_features.py
+
+      - name: Enrich historical player profiles
+        run: python nba/players/backfill_player_profiles.py
+
+      - name: Build availability impact
+        run: python nba/build_availability_impact.py
+
+      - name: Build coverage manifest
+        run: python nba/build_manifest.py
+
+      - name: Commit research feature refresh
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "appwiza-nba-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add nba/features nba/players nba/dataset_manifest.json
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m "nba: refresh derived research features"
+          git pull --rebase origin main
+          git push
