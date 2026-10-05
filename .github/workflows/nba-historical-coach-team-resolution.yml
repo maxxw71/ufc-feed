@@ -1,0 +1,42 @@
+name: NBA Historical Coach Team Resolution
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - "nba/coaching/resolve_coach_teams.py"
+      - ".github/workflows/nba-historical-coach-team-resolution.yml"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: nba-historical-coach-team-resolution
+  cancel-in-progress: true
+
+jobs:
+  resolve:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: python -m pip install --upgrade requests
+      - run: python nba/coaching/resolve_coach_teams.py
+      - shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "appwiza-nba-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add nba/coaching
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m "nba: resolve historical coach team assignments"
+          git reset --hard HEAD
+          git clean -fd
+          git pull --rebase origin main
+          git push
