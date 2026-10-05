@@ -1,0 +1,33 @@
+{
+  "season": "2020-21",
+  "games": 1080,
+  "teams": 30,
+  "team_game_min": 72,
+  "team_game_max": 72,
+  "team_rows": 2160,
+  "player_rows": 28884,
+  "playbyplay_rows": 502693,
+  "core_team_stat_coverage": {
+    "points": 1.0,
+    "field_goals_attempted": 1.0,
+    "three_pointers_attempted": 1.0,
+    "free_throws_attempted": 1.0,
+    "rebounds_total": 1.0,
+    "assists": 1.0,
+    "turnovers": 1.0
+  },
+  "checks": {
+    "regular_games_exact": true,
+    "unique_teams_exact": true,
+    "team_rows_exact": true,
+    "player_rows_nonempty": true,
+    "playbyplay_nonempty": true,
+    "duplicate_games_zero": true,
+    "duplicate_team_game_rows_zero": true,
+    "duplicate_player_game_rows_zero": true,
+    "duplicate_pbp_rows_zero": true,
+    "core_team_stats_95pct_plus": true,
+    "each_team_game_count_exact": true
+  },
+  "ok": true
+}
