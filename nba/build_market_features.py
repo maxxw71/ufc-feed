@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-import csv,gzip,json,statistics
+import csv,gzip,json,statistics,re
 from collections import defaultdict
 from datetime import datetime,timezone
 from pathlib import Path
@@ -40,6 +40,19 @@ def maxv(vals):
     return max(x) if x else None
 
 NON_EXECUTABLE_PROVIDER_TOKENS=("live odds","accuscore","consensus","numberfire","teamrankings","betegy","betradar","opening")
+DETAIL_SPREAD_RE=re.compile(r"\\b([A-Z]{2,4})\\s*([+-]\\d+(?:\\.\\d+)?)\\b")
+
+def signed_home_spread(row):
+    d=(row.get("details") or "").upper()
+    m=DETAIL_SPREAD_RE.search(d)
+    if not m:return None
+    team=m.group(1)
+    try: line=float(m.group(2))
+    except:return None
+    ht=(row.get("home_tricode") or "").upper(); at=(row.get("away_tricode") or "").upper()
+    if team==ht:return line
+    if team==at:return -line
+    return None
 
 def provider_is_executable(name):
     s=(name or "").lower()
@@ -73,6 +86,7 @@ for season_dir in sorted(HIST.glob("*")) if HIST.exists() else []:
         first=pre[0]
         hml=[american_price(r.get("home_moneyline")) for r in pre]; aml=[american_price(r.get("away_moneyline")) for r in pre]
         spreads=[r.get("spread") for r in pre]; totals=[r.get("over_under") for r in pre]
+        signed_home_spreads=[signed_home_spread(r) for r in pre]
         home_spread_prices=[american_price(r.get("home_spread_odds")) for r in pre]; away_spread_prices=[american_price(r.get("away_spread_odds")) for r in pre]
         over_prices=[american_price(r.get("over_odds")) for r in pre]; under_prices=[american_price(r.get("under_odds")) for r in pre]
         open_totals=[r.get("open_total") for r in pre]
@@ -84,6 +98,7 @@ for season_dir in sorted(HIST.glob("*")) if HIST.exists() else []:
           "away_team":first.get("away_team"),"away_tricode":first.get("away_tricode"),
           "pregame_provider_count":len(providers),"pregame_providers":"|".join(providers),
           "closing_spread_median":median(spreads),"closing_spread_min":minv(spreads),"closing_spread_max":maxv(spreads),
+          "home_spread_signed_median":median(signed_home_spreads),
           "closing_total_median":median(totals),"closing_total_min":minv(totals),"closing_total_max":maxv(totals),
           "home_moneyline_median":median(hml),"home_moneyline_best":maxv(hml),"home_moneyline_worst":minv(hml),
           "away_moneyline_median":median(aml),"away_moneyline_best":maxv(aml),"away_moneyline_worst":minv(aml),
