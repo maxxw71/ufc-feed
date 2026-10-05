@@ -1,0 +1,246 @@
+{
+  "generated_at_utc": "2026-10-05T04:15:44.164821+00:00",
+  "policy": "All refinement eligibility is based only on 2018-19 through 2022-23. 2023-24 and 2024-26 are evaluation-only.",
+  "base_rule": {
+    "net5_gap": 7.759,
+    "rest_diff": 2.0
+  },
+  "base_price_stress": {
+    "ml_best": {
+      "overall": {
+        "n": 309,
+        "wins": 225,
+        "hit": 0.7281553398058253,
+        "roi": 0.09001298288158649,
+        "profit": 27.814011710410227
+      },
+      "discovery": {
+        "n": 188,
+        "wins": 132,
+        "hit": 0.7021276595744681,
+        "roi": 0.06464795908030908,
+        "profit": 12.153816307098108
+      },
+      "validation": {
+        "n": 43,
+        "wins": 33,
+        "hit": 0.7674418604651163,
+        "roi": 0.12573039940976302,
+        "profit": 5.40640717461981
+      },
+      "holdout": {
+        "n": 78,
+        "wins": 60,
+        "hit": 0.7692307692307693,
+        "roi": 0.13145882344477317,
+        "profit": 10.253788228692308
+      }
+    },
+    "ml_median": {
+      "overall": {
+        "n": 309,
+        "wins": 225,
+        "hit": 0.7281553398058253,
+        "roi": 0.05934961170877517,
+        "profit": 18.339030018011528
+      },
+      "discovery": {
+        "n": 188,
+        "wins": 132,
+        "hit": 0.7021276595744681,
+        "roi": 0.019751340816583588,
+        "profit": 3.7132520735177144
+      },
+      "validation": {
+        "n": 43,
+        "wins": 33,
+        "hit": 0.7674418604651163,
+        "roi": 0.10192180123621673,
+        "profit": 4.38263745315732
+      },
+      "holdout": {
+        "n": 78,
+        "wins": 60,
+        "hit": 0.7692307692307693,
+        "roi": 0.13132231399149352,
+        "profit": 10.243140491336495
+      }
+    },
+    "ml_worst": {
+      "overall": {
+        "n": 309,
+        "wins": 225,
+        "hit": 0.7281553398058253,
+        "roi": 0.02924241671337699,
+        "profit": 9.03590676443349
+      },
+      "discovery": {
+        "n": 188,
+        "wins": 132,
+        "hit": 0.7021276595744681,
+        "roi": -0.023362357391475744,
+        "profit": -4.39212318959744
+      },
+      "validation": {
+        "n": 43,
+        "wins": 33,
+        "hit": 0.7674418604651163,
+        "roi": 0.07428624685978441,
+        "profit": 3.1943086149707294
+      },
+      "holdout": {
+        "n": 78,
+        "wins": 60,
+        "hit": 0.7692307692307693,
+        "roi": 0.13120155562897692,
+        "profit": 10.2337213390602
+      }
+    }
+  },
+  "training_selected_variants": [
+    {
+      "variant": "implied_le_0.65",
+      "train_n": 55,
+      "train_hit": 0.5272727272727272,
+      "train_roi": 0.19133200731508124,
+      "validation_n": 12,
+      "validation_hit": 0.5833333333333334,
+      "validation_roi": 0.24991875971290234,
+      "holdout_n": 24,
+      "holdout_hit": 0.5416666666666666,
+      "holdout_roi": 0.31368658683313855
+    },
+    {
+      "variant": "lineup_diversity_adv_ge_q70",
+      "train_n": 58,
+      "train_hit": 0.7931034482758621,
+      "train_roi": 0.16520128128596945,
+      "validation_n": 17,
+      "validation_hit": 0.7647058823529411,
+      "validation_roi": -0.04160197838885102,
+      "holdout_n": 28,
+      "holdout_hit": 0.6428571428571429,
+      "holdout_roi": -0.19587483356577334
+    },
+    {
+      "variant": "implied_le_0.60",
+      "train_n": 44,
+      "train_hit": 0.45454545454545453,
+      "train_roi": 0.16121735449473967,
+      "validation_n": 7,
+      "validation_hit": 0.5714285714285714,
+      "validation_roi": 0.46098281417830295,
+      "holdout_n": 18,
+      "holdout_hit": 0.6111111111111112,
+      "holdout_roi": 0.5787426096046785
+    },
+    {
+      "variant": "implied_le_0.70",
+      "train_n": 68,
+      "train_hit": 0.5294117647058824,
+      "train_roi": 0.11547677962056767,
+      "validation_n": 18,
+      "validation_hit": 0.5,
+      "validation_roi": -0.0008758374836639604,
+      "holdout_n": 30,
+      "holdout_hit": 0.6333333333333333,
+      "holdout_roi": 0.3465030175906384
+    },
+    {
+      "variant": "starter_churn_adv_ge_q80",
+      "train_n": 40,
+      "train_hit": 0.825,
+      "train_roi": 0.09767822128624773,
+      "validation_n": 14,
+      "validation_hit": 0.7142857142857143,
+      "validation_roi": 0.0564136068697833,
+      "holdout_n": 24,
+      "holdout_hit": 0.7916666666666666,
+      "holdout_roi": 0.30297900581261744
+    },
+    {
+      "variant": "lineup_diversity_adv_ge_q60",
+      "train_n": 76,
+      "train_hit": 0.7631578947368421,
+      "train_roi": 0.09109885620057645,
+      "validation_n": 23,
+      "validation_hit": 0.782608695652174,
+      "validation_roi": 0.06876415267225369,
+      "holdout_n": 36,
+      "holdout_hit": 0.6944444444444444,
+      "holdout_roi": -0.08550214041178604
+    },
+    {
+      "variant": "implied_le_0.75",
+      "train_n": 94,
+      "train_hit": 0.574468085106383,
+      "train_roi": 0.06858525274580494,
+      "validation_n": 21,
+      "validation_hit": 0.5714285714285714,
+      "validation_roi": 0.0514859343935117,
+      "holdout_n": 34,
+      "holdout_hit": 0.6470588235294118,
+      "holdout_roi": 0.31211050571723
+    },
+    {
+      "variant": "away",
+      "train_n": 75,
+      "train_hit": 0.6,
+      "train_roi": 0.0600159728267368,
+      "validation_n": 26,
+      "validation_hit": 0.7692307692307693,
+      "validation_roi": 0.2049700086889335,
+      "holdout_n": 41,
+      "holdout_hit": 0.7317073170731707,
+      "holdout_roi": 0.17517910928080965
+    },
+    {
+      "variant": "lineup_stability_gap_ge_q60",
+      "train_n": 75,
+      "train_hit": 0.72,
+      "train_roi": 0.058455471687801686,
+      "validation_n": 19,
+      "validation_hit": 0.7894736842105263,
+      "validation_roi": 0.13169421507657675,
+      "holdout_n": 33,
+      "holdout_hit": 0.696969696969697,
+      "holdout_roi": 0.1530729288469342
+    },
+    {
+      "variant": "lineup_stability_gap_ge_q70",
+      "train_n": 57,
+      "train_hit": 0.7719298245614035,
+      "train_roi": 0.05405849042197943,
+      "validation_n": 11,
+      "validation_hit": 0.7272727272727273,
+      "validation_roi": -0.0878133620990841,
+      "holdout_n": 26,
+      "holdout_hit": 0.7307692307692307,
+      "holdout_roi": 0.2730474403590173
+    },
+    {
+      "variant": "implied_le_0.80",
+      "train_n": 121,
+      "train_hit": 0.6198347107438017,
+      "train_roi": 0.05324846251388982,
+      "validation_n": 31,
+      "validation_hit": 0.6774193548387096,
+      "validation_roi": 0.08857591367559182,
+      "holdout_n": 41,
+      "holdout_hit": 0.6585365853658537,
+      "holdout_roi": 0.24673406427024705
+    },
+    {
+      "variant": "opp_b2b",
+      "train_n": 113,
+      "train_hit": 0.7079646017699115,
+      "train_roi": 0.044466886631686714,
+      "validation_n": 28,
+      "validation_hit": 0.75,
+      "validation_roi": 0.0607193019804491,
+      "holdout_n": 49,
+      "holdout_hit": 0.7551020408163265,
+      "holdout_roi": 0.05423144023794071
+    }
+  ]
+}
