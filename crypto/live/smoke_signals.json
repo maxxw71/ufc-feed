@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-10-04T01:35:00+00:00",
+  "generated_at": "2026-10-05T08:25:00+00:00",
   "venue": "Hyperliquid primary perpetuals",
   "timeframe": "4h",
   "target_pct": 0.05,
@@ -168,6 +168,73 @@
         "parent_method": "C2",
         "dist_ema9_max": -0.069254
       }
+    },
+    {
+      "id": "N02",
+      "key": "novel_relative_btc_obv",
+      "name": "Novel 02 \u00b7 BTC-Relative Flow Exhaustion",
+      "enabled": true,
+      "status": "SHADOW_ONLY",
+      "research_id": "NOVEL-20261005-02",
+      "description": "First post-breakout 8% flush where the asset underperforms BTC over the latest 4H move while normalized OBV flow is materially negative.",
+      "trigger_summary": "Daily breakout regime \u2192 first \u22658% 4H flush \u2192 asset 4H return trails BTC by 3.05\u20135.38pp \u2192 3-bar normalized OBV delta between -0.11293 and -0.03545.",
+      "validation": {
+        "venue": "Hyperliquid primary perps",
+        "n": 29,
+        "hit5": 0.8965517241,
+        "target_before_stop": 0.8275862069,
+        "actual_funding_net_roi": 0.0272445489,
+        "stop_reference_pct": 0.075,
+        "external_binance_full_n": 23,
+        "external_binance_hit5": 0.7826086957,
+        "external_binance_target_before_stop": 0.7391304348,
+        "external_binance_net_roi": 0.0168239673
+      },
+      "params": {
+        "daily_ret5_min": 0.15,
+        "daily_rv20_min": 0.025,
+        "daily_prior_high_days": 60,
+        "setup_cooldown_days": 10,
+        "flush_window_days": 5,
+        "first_flush_min": 0.08,
+        "relative_ret4_min": -0.05382078204024199,
+        "relative_ret4_max": -0.03050418191478533,
+        "obv_delta3_norm_min": -0.11293352517433576,
+        "obv_delta3_norm_max": -0.035453733606862416
+      }
+    },
+    {
+      "id": "N06",
+      "key": "novel_proportional_washout",
+      "name": "Novel 06 \u00b7 Proportional Breakout Washout",
+      "enabled": true,
+      "status": "SHADOW_ONLY",
+      "research_id": "NOVEL-20261005-06",
+      "description": "First post-breakout 8% flush where the breakout was exceptionally strong but the washout remains in a historically favorable proportional drawdown band.",
+      "trigger_summary": "Daily breakout regime \u2192 5-day gain 31.40\u201357.95% \u2192 first \u22658% 4H flush \u2192 trigger closes 10.42\u201313.94% below the post-arm peak.",
+      "validation": {
+        "venue": "Hyperliquid primary perps",
+        "n": 31,
+        "hit5": 0.8387096774,
+        "target_before_stop": 0.7419354839,
+        "actual_funding_net_roi": 0.0187526257,
+        "stop_reference_pct": 0.075,
+        "external_binance_full_n": 16,
+        "external_binance_hit5": 0.9375,
+        "external_binance_target_before_stop": 0.875,
+        "external_binance_net_roi": 0.030975
+      },
+      "params": {
+        "daily_ret5_min": 0.31396113303210554,
+        "daily_ret5_max": 0.5795319768388887,
+        "daily_rv20_min": 0.025,
+        "daily_prior_high_days": 60,
+        "setup_cooldown_days": 10,
+        "flush_window_days": 5,
+        "first_flush_min": 0.08,
+        "price_dd_min": -0.1394393733853019,
+        "price_dd_max": -0.10419042571418308
+      }
     }
   ],
   "signals": [
@@ -188,6 +255,41 @@
         "close_location": 0.09281961471103253,
         "volume_ratio20": 2.4405222737618764
       },
+      "liquidity": {
+        "status": "ok",
+        "day_volume": 1590316.7863199997,
+        "sizes": {
+          "1000": {
+            "full_fill": true,
+            "best_bid": 0.16682,
+            "best_ask": 0.16693,
+            "mid": 0.166875,
+            "entry_slippage_pct": 0.0008739403939523882,
+            "roundtrip_book_impact_pct": 0.0012475802836623417,
+            "buy_book_coverage": 1.0
+          },
+          "5000": {
+            "full_fill": false,
+            "best_bid": 0.16682,
+            "best_ask": 0.16693,
+            "mid": 0.166875,
+            "entry_slippage_pct": null,
+            "roundtrip_book_impact_pct": null,
+            "buy_book_coverage": 0.26076924599999995
+          },
+          "10000": {
+            "full_fill": false,
+            "best_bid": 0.16682,
+            "best_ask": 0.16693,
+            "mid": 0.166875,
+            "entry_slippage_pct": null,
+            "roundtrip_book_impact_pct": null,
+            "buy_book_coverage": 0.13038462299999998
+          }
+        },
+        "bid_levels": 20,
+        "ask_levels": 20
+      },
       "stop_touched": false,
       "settled_at": "2026-10-02T20:00:00+00:00",
       "realized_target_pct": 0.05,
@@ -205,12 +307,50 @@
       "entry_reference": 0.21198,
       "target_5pct": 0.222579,
       "risk_stop_reference": 0.19608150000000002,
-      "status": "RECENT",
+      "status": "SUCCESS",
       "metrics": {
         "close_location": 0.15117219078415392,
         "volume_ratio20": 1.9567367945991145
       },
-      "stop_touched": false
+      "liquidity": {
+        "status": "ok",
+        "day_volume": 2630714.8795900014,
+        "sizes": {
+          "1000": {
+            "full_fill": true,
+            "best_bid": 0.22278,
+            "best_ask": 0.22279,
+            "mid": 0.222785,
+            "entry_slippage_pct": 2.2443162690288787e-05,
+            "roundtrip_book_impact_pct": 4.729063602482153e-05,
+            "buy_book_coverage": 1.0
+          },
+          "5000": {
+            "full_fill": true,
+            "best_bid": 0.22278,
+            "best_ask": 0.22279,
+            "mid": 0.222785,
+            "entry_slippage_pct": 0.00016269812008529172,
+            "roundtrip_book_impact_pct": 0.0003240182837780381,
+            "buy_book_coverage": 1.0
+          },
+          "10000": {
+            "full_fill": true,
+            "best_bid": 0.22278,
+            "best_ask": 0.22279,
+            "mid": 0.222785,
+            "entry_slippage_pct": 0.0002365154747785425,
+            "roundtrip_book_impact_pct": 0.0004678725200341072,
+            "buy_book_coverage": 1.0
+          }
+        },
+        "bid_levels": 20,
+        "ask_levels": 20
+      },
+      "stop_touched": false,
+      "settled_at": "2026-10-04T20:00:00+00:00",
+      "realized_target_pct": 0.05,
+      "target_after_stop": false
     },
     {
       "id": "C3F:XLM:2026-10-02T16:00:00+00:00",
@@ -224,13 +364,51 @@
       "entry_reference": 0.21198,
       "target_5pct": 0.222579,
       "risk_stop_reference": 0.19608150000000002,
-      "status": "RECENT",
+      "status": "SUCCESS",
       "metrics": {
         "close_location": 0.15117219078415392,
         "volume_ratio20": 1.9567367945991145,
         "funding_rate_at_trigger": 3.11255e-05
       },
-      "stop_touched": false
+      "liquidity": {
+        "status": "ok",
+        "day_volume": 2630714.8795900014,
+        "sizes": {
+          "1000": {
+            "full_fill": true,
+            "best_bid": 0.22278,
+            "best_ask": 0.22279,
+            "mid": 0.222785,
+            "entry_slippage_pct": 2.2443162690288787e-05,
+            "roundtrip_book_impact_pct": 4.729063602482153e-05,
+            "buy_book_coverage": 1.0
+          },
+          "5000": {
+            "full_fill": true,
+            "best_bid": 0.22278,
+            "best_ask": 0.22279,
+            "mid": 0.222785,
+            "entry_slippage_pct": 0.00016269812008529172,
+            "roundtrip_book_impact_pct": 0.0003240182837780381,
+            "buy_book_coverage": 1.0
+          },
+          "10000": {
+            "full_fill": true,
+            "best_bid": 0.22278,
+            "best_ask": 0.22279,
+            "mid": 0.222785,
+            "entry_slippage_pct": 0.0002365154747785425,
+            "roundtrip_book_impact_pct": 0.0004678725200341072,
+            "buy_book_coverage": 1.0
+          }
+        },
+        "bid_levels": 20,
+        "ask_levels": 20
+      },
+      "stop_touched": false,
+      "settled_at": "2026-10-04T20:00:00+00:00",
+      "realized_target_pct": 0.05,
+      "target_after_stop": false
     },
     {
       "id": "C1:VIRTUAL:2026-10-02T16:00:00+00:00",
@@ -249,6 +427,41 @@
         "rsi": 39.44009675870216,
         "rsi_pct1": -0.25524946514928326,
         "rsi_accel": -12.738019857304373
+      },
+      "liquidity": {
+        "status": "ok",
+        "day_volume": 5100002.659201002,
+        "sizes": {
+          "1000": {
+            "full_fill": true,
+            "best_bid": 0.87506,
+            "best_ask": 0.8751,
+            "mid": 0.87508,
+            "entry_slippage_pct": 2.285505325239079e-05,
+            "roundtrip_book_impact_pct": 0.00024452435275978956,
+            "buy_book_coverage": 1.0
+          },
+          "5000": {
+            "full_fill": true,
+            "best_bid": 0.87506,
+            "best_ask": 0.8751,
+            "mid": 0.87508,
+            "entry_slippage_pct": 0.00021261591997578932,
+            "roundtrip_book_impact_pct": 0.0006635369772302058,
+            "buy_book_coverage": 1.0
+          },
+          "10000": {
+            "full_fill": true,
+            "best_bid": 0.87506,
+            "best_ask": 0.8751,
+            "mid": 0.87508,
+            "entry_slippage_pct": 0.00037481578491527223,
+            "roundtrip_book_impact_pct": 0.000954622421576623,
+            "buy_book_coverage": 1.0
+          }
+        },
+        "bid_levels": 20,
+        "ask_levels": 20
       },
       "stop_touched": false,
       "settled_at": "2026-10-03T08:00:00+00:00",
@@ -270,7 +483,42 @@
       "status": "SUCCESS",
       "metrics": {
         "rsi_accel": -12.738019857304373,
-        "rsi_vs_sma3": -0.19033217214291098
+        "rsi_vs_sma3": -0.19033217214291065
+      },
+      "liquidity": {
+        "status": "ok",
+        "day_volume": 5100002.659201002,
+        "sizes": {
+          "1000": {
+            "full_fill": true,
+            "best_bid": 0.87506,
+            "best_ask": 0.8751,
+            "mid": 0.87508,
+            "entry_slippage_pct": 2.285505325239079e-05,
+            "roundtrip_book_impact_pct": 0.00024452435275978956,
+            "buy_book_coverage": 1.0
+          },
+          "5000": {
+            "full_fill": true,
+            "best_bid": 0.87506,
+            "best_ask": 0.8751,
+            "mid": 0.87508,
+            "entry_slippage_pct": 0.00021261591997578932,
+            "roundtrip_book_impact_pct": 0.0006635369772302058,
+            "buy_book_coverage": 1.0
+          },
+          "10000": {
+            "full_fill": true,
+            "best_bid": 0.87506,
+            "best_ask": 0.8751,
+            "mid": 0.87508,
+            "entry_slippage_pct": 0.00037481578491527223,
+            "roundtrip_book_impact_pct": 0.000954622421576623,
+            "buy_book_coverage": 1.0
+          }
+        },
+        "bid_levels": 20,
+        "ask_levels": 20
       },
       "stop_touched": false,
       "settled_at": "2026-10-03T08:00:00+00:00",
@@ -294,15 +542,112 @@
         "close_location": 0.134957825679475,
         "volume_ratio20": 2.825512569939751
       },
+      "liquidity": {
+        "status": "ok",
+        "day_volume": 5100002.659201002,
+        "sizes": {
+          "1000": {
+            "full_fill": true,
+            "best_bid": 0.87506,
+            "best_ask": 0.8751,
+            "mid": 0.87508,
+            "entry_slippage_pct": 2.285505325239079e-05,
+            "roundtrip_book_impact_pct": 0.00024452435275978956,
+            "buy_book_coverage": 1.0
+          },
+          "5000": {
+            "full_fill": true,
+            "best_bid": 0.87506,
+            "best_ask": 0.8751,
+            "mid": 0.87508,
+            "entry_slippage_pct": 0.00021261591997578932,
+            "roundtrip_book_impact_pct": 0.0006635369772302058,
+            "buy_book_coverage": 1.0
+          },
+          "10000": {
+            "full_fill": true,
+            "best_bid": 0.87506,
+            "best_ask": 0.8751,
+            "mid": 0.87508,
+            "entry_slippage_pct": 0.00037481578491527223,
+            "roundtrip_book_impact_pct": 0.000954622421576623,
+            "buy_book_coverage": 1.0
+          }
+        },
+        "bid_levels": 20,
+        "ask_levels": 20
+      },
       "stop_touched": false,
       "settled_at": "2026-10-03T08:00:00+00:00",
       "realized_target_pct": 0.05,
       "target_after_stop": false
     }
   ],
-  "shadow_signals": [],
+  "shadow_signals": [
+    {
+      "id": "N06:SAND:2026-10-03T08:00:00+00:00",
+      "coin": "SAND",
+      "method_id": "N06",
+      "method_key": "novel_proportional_washout",
+      "method_name": "Novel 06 \u00b7 Proportional Breakout Washout",
+      "trigger_time": "2026-10-03T08:00:00+00:00",
+      "entry_time": "2026-10-03T12:00:00+00:00",
+      "trigger_price": 0.072463,
+      "entry_reference": 0.072449,
+      "target_5pct": 0.07607145,
+      "risk_stop_reference": 0.067015325,
+      "status": "SHADOW_SUCCESS",
+      "metrics": {
+        "daily_ret5": 0.5005170403291457,
+        "price_dd": -0.13216924753589865,
+        "asset_ret4": -0.06554819075129603,
+        "btc_ret4": 0.001277668019259659,
+        "relative_ret4": -0.06682585877055569,
+        "obv_delta3_norm": -0.03289551473182012
+      },
+      "liquidity": {
+        "status": "ok",
+        "day_volume": 25720673.213501982,
+        "sizes": {
+          "1000": {
+            "full_fill": true,
+            "best_bid": 0.072237,
+            "best_ask": 0.07225,
+            "mid": 0.07224349999999999,
+            "entry_slippage_pct": 0.00013251082076570775,
+            "roundtrip_book_impact_pct": 0.00038773646215606306,
+            "buy_book_coverage": 1.0000000000000002
+          },
+          "5000": {
+            "full_fill": false,
+            "best_bid": 0.072237,
+            "best_ask": 0.07225,
+            "mid": 0.07224349999999999,
+            "entry_slippage_pct": null,
+            "roundtrip_book_impact_pct": null,
+            "buy_book_coverage": 0.9126370935999999
+          },
+          "10000": {
+            "full_fill": false,
+            "best_bid": 0.072237,
+            "best_ask": 0.07225,
+            "mid": 0.07224349999999999,
+            "entry_slippage_pct": null,
+            "roundtrip_book_impact_pct": null,
+            "buy_book_coverage": 0.45631854679999995
+          }
+        },
+        "bid_levels": 20,
+        "ask_levels": 20
+      },
+      "stop_touched": false,
+      "settled_at": "2026-10-03T12:00:00+00:00",
+      "realized_target_pct": 0.05,
+      "target_after_stop": false
+    }
+  ],
   "history_count": 6,
-  "shadow_history_count": 0,
+  "shadow_history_count": 1,
   "coverage": {
     "ok": 178,
     "short": 0,
