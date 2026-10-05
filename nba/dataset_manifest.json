@@ -1,0 +1,415 @@
+{
+  "generated_at_utc": "2026-10-05T01:26:52.746092+00:00",
+  "seasons": {
+    "2025-26": {
+      "post season": {
+        "games": 85,
+        "team_boxscores": 170,
+        "player_boxscores": 2419,
+        "playbyplay": 41682
+      },
+      "regular season": {
+        "games": 1230,
+        "team_boxscores": 2460,
+        "player_boxscores": 32191,
+        "playbyplay": 597200
+      }
+    },
+    "2026-27": {
+      "pre season": {
+        "games": 66,
+        "team_boxscores": 132,
+        "player_boxscores": 114,
+        "playbyplay": 1550
+      },
+      "regular season": {
+        "games": 1200,
+        "team_boxscores": 2400,
+        "player_boxscores": 0,
+        "playbyplay": 0
+      }
+    }
+  },
+  "layers": {
+    "roster_profiles": {
+      "present": true,
+      "rows": 606
+    },
+    "availability_snapshots": {
+      "present": true,
+      "rows": 67
+    },
+    "market_snapshots_espn": {
+      "present": true,
+      "rows": 0
+    },
+    "market_snapshots_external": {
+      "present": true,
+      "rows": 1612
+    },
+    "team_rolling_features": {
+      "present": true,
+      "rows": 5162
+    },
+    "player_rolling_features": {
+      "present": true,
+      "rows": 34681
+    },
+    "pregame_strength": {
+      "present": true,
+      "rows": 2581
+    },
+    "availability_impact_players": {
+      "present": true,
+      "rows": 67
+    },
+    "team_game_context": {
+      "present": true,
+      "rows": 5162
+    },
+    "integrity_report.json": {
+      "slices": [
+        {
+          "path": "data/2025_26/post_season",
+          "summary": {
+            "season": "2025-26",
+            "season_type": "Post Season",
+            "source": "espn_site_api",
+            "resolved_game_ids": 85,
+            "attempted_game_ids": 85,
+            "games_written": 85,
+            "team_rows": 170,
+            "player_rows": 2419,
+            "playbyplay_rows": 41682,
+            "scoreboard_requests": 91,
+            "scoreboard_success": 91,
+            "summary_requests": 85,
+            "summary_success": 85,
+            "rejected_historical_shells": 0,
+            "generated_at_utc": "2026-10-05T01:23:21.946036+00:00"
+          },
+          "checks": {
+            "duplicate_games": 0,
+            "games_without_exactly_two_team_rows": 0,
+            "duplicate_player_game_rows": 0,
+            "duplicate_playbyplay_action_rows": 0,
+            "game_count_matches_summary": true
+          },
+          "ok": true
+        },
+        {
+          "path": "data/2025_26/regular_season",
+          "summary": {
+            "season": "2025-26",
+            "season_type": "Regular Season",
+            "source": "espn_site_api",
+            "resolved_game_ids": 1234,
+            "attempted_game_ids": 1234,
+            "games_written": 1230,
+            "team_rows": 2460,
+            "player_rows": 32191,
+            "playbyplay_rows": 597200,
+            "scoreboard_requests": 174,
+            "scoreboard_success": 174,
+            "summary_requests": 1234,
+            "summary_success": 1234,
+            "rejected_historical_shells": 4,
+            "generated_at_utc": "2026-10-05T01:22:59.194554+00:00"
+          },
+          "checks": {
+            "duplicate_games": 0,
+            "games_without_exactly_two_team_rows": 0,
+            "duplicate_player_game_rows": 0,
+            "duplicate_playbyplay_action_rows": 0,
+            "game_count_matches_summary": true
+          },
+          "ok": true
+        },
+        {
+          "path": "data/2026_27/pre_season",
+          "summary": {
+            "season": "2026-27",
+            "season_type": "Pre Season",
+            "source": "espn_site_api",
+            "resolved_game_ids": 66,
+            "attempted_game_ids": 66,
+            "games_written": 66,
+            "team_rows": 132,
+            "player_rows": 114,
+            "playbyplay_rows": 1550,
+            "scoreboard_requests": 36,
+            "scoreboard_success": 36,
+            "summary_requests": 3,
+            "summary_success": 3,
+            "rejected_historical_shells": 0,
+            "generated_at_utc": "2026-10-05T01:23:26.554976+00:00"
+          },
+          "checks": {
+            "duplicate_games": 0,
+            "games_without_exactly_two_team_rows": 0,
+            "duplicate_player_game_rows": 0,
+            "duplicate_playbyplay_action_rows": 0,
+            "game_count_matches_summary": true
+          },
+          "ok": true
+        },
+        {
+          "path": "data/2026_27/regular_season",
+          "summary": {
+            "season": "2026-27",
+            "season_type": "Regular Season",
+            "source": "espn_site_api",
+            "resolved_game_ids": 1200,
+            "attempted_game_ids": 1200,
+            "games_written": 1200,
+            "team_rows": 2400,
+            "player_rows": 0,
+            "playbyplay_rows": 0,
+            "scoreboard_requests": 174,
+            "scoreboard_success": 174,
+            "summary_requests": 0,
+            "summary_success": 0,
+            "rejected_historical_shells": 0,
+            "generated_at_utc": "2026-10-05T01:23:46.116116+00:00"
+          },
+          "checks": {
+            "duplicate_games": 0,
+            "games_without_exactly_two_team_rows": 0,
+            "duplicate_player_game_rows": 0,
+            "duplicate_playbyplay_action_rows": 0,
+            "game_count_matches_summary": true
+          },
+          "ok": true
+        }
+      ],
+      "ok": true
+    },
+    "completeness_report.json": {
+      "generated_at_utc": "2026-10-05T01:23:51.025705+00:00",
+      "seasons": [
+        {
+          "season": "2025-26",
+          "regular_games": 1230,
+          "unique_teams": 30,
+          "team_game_min": 82,
+          "team_game_max": 82,
+          "teams_not_82": [],
+          "team_boxscore_rows": 2460,
+          "player_rows": 32191,
+          "playbyplay_rows": 597200,
+          "player_rows_per_game_median": 26.0,
+          "playbyplay_rows_per_game_median": 483.5,
+          "core_team_stat_coverage": {
+            "points": 1.0,
+            "field_goals_attempted": 1.0,
+            "three_pointers_attempted": 1.0,
+            "free_throws_attempted": 1.0,
+            "rebounds_total": 1.0,
+            "assists": 1.0,
+            "turnovers": 1.0
+          },
+          "hard_checks": {
+            "regular_game_count": true,
+            "team_count": true,
+            "each_team_game_count": true,
+            "team_rows_exactly_two_per_game": true,
+            "player_rows_nonempty": true,
+            "playbyplay_rows_nonempty": true
+          },
+          "ok": true
+        },
+        {
+          "season": "2026-27",
+          "regular_games": 1200,
+          "unique_teams": 30,
+          "team_game_min": 80,
+          "team_game_max": 80,
+          "teams_not_82": [
+            {
+              "team_id": "1",
+              "team": "Atlanta Hawks",
+              "games": 80
+            },
+            {
+              "team_id": "10",
+              "team": "Houston Rockets",
+              "games": 80
+            },
+            {
+              "team_id": "11",
+              "team": "Indiana Pacers",
+              "games": 80
+            },
+            {
+              "team_id": "12",
+              "team": "LA Clippers",
+              "games": 80
+            },
+            {
+              "team_id": "13",
+              "team": "Los Angeles Lakers",
+              "games": 80
+            },
+            {
+              "team_id": "14",
+              "team": "Miami Heat",
+              "games": 80
+            },
+            {
+              "team_id": "15",
+              "team": "Milwaukee Bucks",
+              "games": 80
+            },
+            {
+              "team_id": "16",
+              "team": "Minnesota Timberwolves",
+              "games": 80
+            },
+            {
+              "team_id": "17",
+              "team": "Brooklyn Nets",
+              "games": 80
+            },
+            {
+              "team_id": "18",
+              "team": "New York Knicks",
+              "games": 80
+            },
+            {
+              "team_id": "19",
+              "team": "Orlando Magic",
+              "games": 80
+            },
+            {
+              "team_id": "2",
+              "team": "Boston Celtics",
+              "games": 80
+            },
+            {
+              "team_id": "20",
+              "team": "Philadelphia 76ers",
+              "games": 80
+            },
+            {
+              "team_id": "21",
+              "team": "Phoenix Suns",
+              "games": 80
+            },
+            {
+              "team_id": "22",
+              "team": "Portland Trail Blazers",
+              "games": 80
+            },
+            {
+              "team_id": "23",
+              "team": "Sacramento Kings",
+              "games": 80
+            },
+            {
+              "team_id": "24",
+              "team": "San Antonio Spurs",
+              "games": 80
+            },
+            {
+              "team_id": "25",
+              "team": "Oklahoma City Thunder",
+              "games": 80
+            },
+            {
+              "team_id": "26",
+              "team": "Utah Jazz",
+              "games": 80
+            },
+            {
+              "team_id": "27",
+              "team": "Washington Wizards",
+              "games": 80
+            },
+            {
+              "team_id": "28",
+              "team": "Toronto Raptors",
+              "games": 80
+            },
+            {
+              "team_id": "29",
+              "team": "Memphis Grizzlies",
+              "games": 80
+            },
+            {
+              "team_id": "3",
+              "team": "New Orleans Pelicans",
+              "games": 80
+            },
+            {
+              "team_id": "30",
+              "team": "Charlotte Hornets",
+              "games": 80
+            },
+            {
+              "team_id": "4",
+              "team": "Chicago Bulls",
+              "games": 80
+            },
+            {
+              "team_id": "5",
+              "team": "Cleveland Cavaliers",
+              "games": 80
+            },
+            {
+              "team_id": "6",
+              "team": "Dallas Mavericks",
+              "games": 80
+            },
+            {
+              "team_id": "7",
+              "team": "Denver Nuggets",
+              "games": 80
+            },
+            {
+              "team_id": "8",
+              "team": "Detroit Pistons",
+              "games": 80
+            },
+            {
+              "team_id": "9",
+              "team": "Golden State Warriors",
+              "games": 80
+            }
+          ],
+          "team_boxscore_rows": 2400,
+          "player_rows": 0,
+          "playbyplay_rows": 0,
+          "player_rows_per_game_median": 0,
+          "playbyplay_rows_per_game_median": 0,
+          "core_team_stat_coverage": {
+            "points": 1.0,
+            "field_goals_attempted": 0.0,
+            "three_pointers_attempted": 0.0,
+            "free_throws_attempted": 0.0,
+            "rebounds_total": 0.0,
+            "assists": 0.0,
+            "turnovers": 0.0
+          },
+          "hard_checks": "not enforced for an incomplete/current season",
+          "ok": true
+        }
+      ],
+      "ok": true
+    },
+    "official_crosscheck_report.json": {
+      "generated_at_utc": "2026-10-05T01:24:12.783488+00:00",
+      "schedule_url": "https://cdn.nba.com/static/json/staticData/scheduleLeagueV2_1.json",
+      "espn_games": 1266,
+      "available": false,
+      "http_status": 403,
+      "error": "403 Client Error: Forbidden for url: https://cdn.nba.com/static/json/staticData/scheduleLeagueV2_1.json"
+    },
+    "context_summary.json": {
+      "team_game_context_rows": 5162,
+      "teams": 30,
+      "games_seen": 2581,
+      "overtime_games_detected": 59,
+      "generated_at_utc": "2026-10-05T01:23:59.783745+00:00"
+    }
+  }
+}
