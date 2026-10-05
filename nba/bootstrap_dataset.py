@@ -19,6 +19,10 @@ NBA_TRICODES = {
     "MEM","MIA","MIL","MIN","NO","NOP","NY","NYK","OKC","ORL","PHI","PHX","POR","SAC","SA","SAS",
     "TOR","UTAH","UTA","WSH","WAS"
 }
+REGULAR_START_DATES = {
+    "2025-26": date(2025,10,21),
+    "2026-27": date(2026,10,20),
+}
 REGULAR_END_DATES = {
     "2025-26": date(2026,4,12),
     "2026-27": date(2027,4,11),
@@ -65,7 +69,7 @@ def slice_window(season, season_type):
     if season_type=="Pre Season":
         return date(start,9,20),date(start,10,25)
     if season_type=="Regular Season":
-        return date(start,10,1),REGULAR_END_DATES.get(season,date(end,4,30))
+        return REGULAR_START_DATES.get(season,date(start,10,1)),REGULAR_END_DATES.get(season,date(end,4,30))
     if season_type=="Post Season":
         return date(end,4,1),date(end,6,30)
     raise ValueError(f"unsupported season type: {season_type}")
@@ -202,11 +206,11 @@ def enrich_team_rows(seed, summary):
             row[f"stat_{name}"]=raw
             key=TEAM_MAP.get(name)
             if key: row[key]=as_num(st.get("value") if st.get("value") is not None else raw)
-            if name in ("fieldgoalsmade-fieldgoalsattempted","fieldgoals"):
+            if name in ("fieldgoalsmade_fieldgoalsattempted","fieldgoals"):
                 m,a=parse_made_attempted(raw); row["field_goals_made"]=m; row["field_goals_attempted"]=a
-            elif name in ("threepointfieldgoalsmade-threepointfieldgoalsattempted","threepointfieldgoals"):
+            elif name in ("threepointfieldgoalsmade_threepointfieldgoalsattempted","threepointfieldgoals"):
                 m,a=parse_made_attempted(raw); row["three_pointers_made"]=m; row["three_pointers_attempted"]=a
-            elif name in ("freethrowsmade-freethrowsattempted","freethrows"):
+            elif name in ("freethrowsmade_freethrowsattempted","freethrows"):
                 m,a=parse_made_attempted(raw); row["free_throws_made"]=m; row["free_throws_attempted"]=a
     return list(by_id.values())
 
