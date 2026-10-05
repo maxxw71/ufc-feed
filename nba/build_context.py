@@ -54,7 +54,7 @@ for g in games:
         team_id=g.get(f"{side}_team_id")
         opp="away" if side=="home" else "home"
         if not team_id: continue
-        team_games[team_id].append({
+        team_games[(g.get("season"),team_id)].append({
             "season":g.get("season"),"season_type":g.get("season_type"),"game_id":g.get("game_id"),
             "tipoff_utc":dt,"team_id":team_id,"team":g.get(f"{side}_team"),
             "team_tricode":g.get(f"{side}_tricode"),"opponent_id":g.get(f"{opp}_team_id"),
@@ -64,7 +64,7 @@ for g in games:
         })
 
 rows=[]
-for team_id,arr in team_games.items():
+for (season_key,team_id),arr in team_games.items():
     arr.sort(key=lambda x:x["tipoff_utc"])
     history=[]
     home_run=0; road_run=0
@@ -111,7 +111,7 @@ out=ROOT/"team_game_context.csv.gz"
 write_rows(out,rows)
 summary={
     "team_game_context_rows":len(rows),
-    "teams":len(team_games),
+    "teams":len(set(k[1] for k in team_games)),
     "games_seen":len(games),
     "overtime_games_detected":sum(1 for p in ot.values() if p>4),
     "generated_at_utc":datetime.now(timezone.utc).isoformat()
