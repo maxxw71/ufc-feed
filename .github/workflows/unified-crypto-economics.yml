@@ -1,0 +1,79 @@
+name: Unified crypto economics and liquidity
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'crypto/research/unified_method_economic_rank.py'
+      - '.github/workflows/unified-crypto-economics.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: unified-crypto-economics
+  cancel-in-progress: true
+
+jobs:
+  replay:
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [0,1,2,3,4,5]
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install --quiet pandas numpy requests
+      - name: Replay method holdouts with actual funding
+        run: |
+          python crypto/research/unified_method_economic_rank.py \
+            --mode scan \
+            --shard-index ${{ matrix.shard }} \
+            --shard-count 6 \
+            --sleep 0.20 \
+            --out econ_out
+      - uses: actions/upload-artifact@v4
+        with:
+          name: unified-econ-${{ matrix.shard }}
+          path: econ_out/
+          retention-days: 2
+
+  aggregate:
+    needs: replay
+    if: always() && needs.replay.result == 'success'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install --quiet pandas numpy requests
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: unified-econ-*
+          path: econ_shards
+          merge-multiple: true
+      - name: Rank economics and snapshot current L2 capacity
+        run: |
+          python crypto/research/unified_method_economic_rank.py \
+            --mode aggregate \
+            --input-dir econ_shards \
+            --out crypto/research/results_unified_method_economics
+      - name: Commit unified results
+        run: |
+          git config user.name "appwiza-research-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add crypto/research/results_unified_method_economics
+          if ! git diff --cached --quiet; then
+            git commit -m "Update unified crypto economic ranking"
+            git pull --rebase origin main
+            git push origin HEAD:main
+          fi
