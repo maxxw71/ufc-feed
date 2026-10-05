@@ -1,0 +1,55 @@
+{
+  "venue": "OKX USDT perpetual swaps",
+  "policy": "Frozen Hyperliquid N02/N06 thresholds; no OKX tuning",
+  "cost_contract": "+5/-7.5/5d; 0.05% taker + 0.10% slippage per side; funding excluded",
+  "coverage": {
+    "instruments": 484,
+    "ok": 455
+  },
+  "methods": {
+    "N02": {
+      "all": {
+        "n": 90,
+        "coins": 70,
+        "hit5": 0.7222222222222222,
+        "hit10": 0.5222222222222223,
+        "target_before_stop": 0.6666666666666666,
+        "modeled_net_roi": 0.007002178888401284,
+        "median_mfe": 0.1113629159147412,
+        "median_mae": -0.09517338859619826
+      },
+      "latest40": {
+        "n": 36,
+        "coins": 31,
+        "hit5": 0.6666666666666666,
+        "hit10": 0.5277777777777778,
+        "target_before_stop": 0.6388888888888888,
+        "modeled_net_roi": 0.006033224998780989,
+        "median_mfe": 0.11684539689964529,
+        "median_mae": -0.07283915402520935
+      }
+    },
+    "N06": {
+      "all": {
+        "n": 77,
+        "coins": 69,
+        "hit5": 0.8311688311688312,
+        "hit10": 0.6493506493506493,
+        "target_before_stop": 0.7402597402597403,
+        "modeled_net_roi": 0.01674187955454897,
+        "median_mfe": 0.1222361284939508,
+        "median_mae": -0.1031270791749833
+      },
+      "latest40": {
+        "n": 31,
+        "coins": 30,
+        "hit5": 0.8709677419354839,
+        "hit10": 0.6774193548387096,
+        "target_before_stop": 0.7096774193548387,
+        "modeled_net_roi": 0.016197571796782943,
+        "median_mfe": 0.1184033774707349,
+        "median_mae": -0.0691598360655738
+      }
+    }
+  }
+}
