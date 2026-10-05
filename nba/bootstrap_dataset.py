@@ -240,7 +240,7 @@ def play_rows(season, season_type, game_id, summary, stamp):
         coord=a.get("coordinate") or {}
         out.append({
             "season":season,"season_type":season_type,"game_id":game_id,
-            "action_number":a.get("sequenceNumber") or a.get("id") or i+1,
+            "action_number":i+1,"source_action_id":a.get("id"),"source_sequence":a.get("sequenceNumber"),
             "period":period.get("number"),"clock":clock.get("displayValue"),"time_actual":a.get("wallclock"),
             "action_type":typ.get("text") or typ.get("type"),"sub_type":typ.get("id"),
             "description":a.get("text"),"team_id":str(team.get("id") or ""),"team_tricode":team.get("abbreviation"),
