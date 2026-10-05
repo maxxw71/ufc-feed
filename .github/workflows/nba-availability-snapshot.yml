@@ -1,0 +1,46 @@
+name: NBA Availability Snapshot
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "11 0,4,8,12,16,20 * * *"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: nba-availability-snapshot
+  cancel-in-progress: false
+
+jobs:
+  snapshot:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - run: python -m pip install --upgrade requests
+
+      - name: Capture timestamped injury/availability state
+        run: python nba/availability/capture_availability.py
+
+      - name: Commit snapshot
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "appwiza-nba-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add nba/availability
+          if git diff --cached --quiet; then
+            echo "No availability changes."
+            exit 0
+          fi
+          git commit -m "nba: capture availability snapshot"
+          git pull --rebase origin main
+          git push
