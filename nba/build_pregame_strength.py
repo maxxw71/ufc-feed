@@ -46,8 +46,8 @@ state=defaultdict(lambda:{
 })
 rows=[]
 
-def snap(tid):
-    s=state[tid]
+def snap(season,tid):
+    s=state[(season,tid)]
     return {
       "prior_games":s["g"],"prior_wins":s["w"],"prior_losses":s["l"],
       "prior_win_pct":s["w"]/s["g"] if s["g"] else None,
