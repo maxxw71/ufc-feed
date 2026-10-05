@@ -1,0 +1,44 @@
+name: NBA Roster Profile Snapshot
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - "nba/rosters/capture_rosters.py"
+      - ".github/workflows/nba-roster-profile-snapshot.yml"
+  schedule:
+    - cron: "41 9 * * *"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: nba-roster-profile-snapshot
+  cancel-in-progress: true
+
+jobs:
+  snapshot:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: python -m pip install --upgrade requests
+      - name: Capture NBA roster/player profiles
+        run: python nba/rosters/capture_rosters.py
+      - name: Commit roster snapshot
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "appwiza-nba-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add nba/rosters
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m "nba: refresh roster profiles"
+          git pull --rebase origin main
+          git push
