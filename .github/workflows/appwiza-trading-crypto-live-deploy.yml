@@ -53,10 +53,10 @@ jobs:
           python3 - <<'PY'
           import json
           x=json.load(open('crypto/live/methods.json'))
-          assert len(x['methods'])==6
+          assert len(x['methods'])==8
           assert all(m['enabled'] for m in x['methods'])
           assert {m['id'] for m in x['methods'] if m.get('status')=='LIVE'}=={'C1','C2','C3','C3F','C4','C2D'}
-          assert {m['id'] for m in x['methods'] if m.get('status')=='SHADOW_ONLY'}==set()
+          assert {m['id'] for m in x['methods'] if m.get('status')=='SHADOW_ONLY'}=={'N02','N06'}
           PY
           grep -q 'Trading · Crypto' crypto/live/crypto_index.html
           grep -q '/trading/crypto/' crypto/live/trading_index.html
@@ -149,9 +149,9 @@ jobs:
           python3 - <<'PY'
           import json
           x=json.load(open('/tmp/trading-signals.json'))
-          assert len(x['methods'])==6
+          assert len(x['methods'])==8
           assert {m['id'] for m in x['methods'] if m.get('status')=='LIVE'}=={'C1','C2','C3','C3F','C4','C2D'}
-          assert {m['id'] for m in x['methods'] if m.get('status')=='SHADOW_ONLY'}==set()
+          assert {m['id'] for m in x['methods'] if m.get('status')=='SHADOW_ONLY'}=={'N02','N06'}
           assert 'shadow_signals' in x
           print('PUBLIC_TRADING_VERIFY=PASS signals',len(x['signals']),'shadow',len(x['shadow_signals']))
           PY
