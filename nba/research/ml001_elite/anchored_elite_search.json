@@ -1,0 +1,36 @@
+{
+  "generated_at_utc": "2026-10-05T12:29:27.855038+00:00",
+  "base_rule": "net5_gap>=7.759, rest_diff>=2.0, def5_adv<=5.5",
+  "base_discA": {
+    "n": 42,
+    "wins": 31,
+    "hit": 0.7380952380952381,
+    "roi": 0.14085768374057825,
+    "profit": 5.916022717104287,
+    "wilson_low": 0.5893098001502446
+  },
+  "conditions_tested": 61,
+  "retained": 1,
+  "candidates": [
+    {
+      "extra_filter": "ts5_gap >= 0.05603",
+      "condition": "[\"ts5_gap\", \">=\", 0.05603199206897114]",
+      "discA_n": 22,
+      "discA_hit": 0.8181818181818182,
+      "discA_roi": 0.3851255146503593,
+      "discB_n": 16,
+      "discB_hit": 0.875,
+      "discB_roi": 0.26990144562021473,
+      "validation_n": 12,
+      "validation_hit": 0.8333333333333334,
+      "validation_roi": 0.08268756924133035,
+      "holdout_n": 10,
+      "holdout_hit": 0.9,
+      "holdout_roi": 0.3503770387196129,
+      "holdout_worst_roi": 0.3503770387196129,
+      "holdout_wilson_low": 0.5958436145024277,
+      "method_id": "NBA_ML001DEF_ELITE_001"
+    }
+  ],
+  "policy": "One-extra-filter search only. Thresholds formed from early discovery block; later phases used as forward pass/fail. Because later seasons have already been inspected in prior work, all descendants still require 2026-27 prospective confirmation."
+}
