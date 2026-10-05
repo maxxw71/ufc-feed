@@ -20,12 +20,40 @@ NBA_TRICODES = {
     "TOR","UTAH","UTA","WSH","WAS"
 }
 REGULAR_START_DATES = {
+    "2015-16": date(2015,10,27),
+    "2016-17": date(2016,10,25),
+    "2017-18": date(2017,10,17),
+    "2018-19": date(2018,10,16),
+    "2019-20": date(2019,10,22),
+    "2020-21": date(2020,12,22),
+    "2021-22": date(2021,10,19),
+    "2022-23": date(2022,10,18),
+    "2023-24": date(2023,10,24),
+    "2024-25": date(2024,10,22),
     "2025-26": date(2025,10,21),
     "2026-27": date(2026,10,20),
 }
 REGULAR_END_DATES = {
+    "2015-16": date(2016,4,13),
+    "2016-17": date(2017,4,12),
+    "2017-18": date(2018,4,11),
+    "2018-19": date(2019,4,10),
+    "2019-20": date(2020,8,14),
+    "2020-21": date(2021,5,16),
+    "2021-22": date(2022,4,10),
+    "2022-23": date(2023,4,9),
+    "2023-24": date(2024,4,14),
+    "2024-25": date(2025,4,13),
     "2025-26": date(2026,4,12),
     "2026-27": date(2027,4,11),
+}
+POST_START_DATES = {
+    "2019-20": date(2020,8,15),
+    "2020-21": date(2021,5,18),
+}
+POST_END_DATES = {
+    "2019-20": date(2020,10,11),
+    "2020-21": date(2021,7,20),
 }
 
 def now_utc():
@@ -71,7 +99,7 @@ def slice_window(season, season_type):
     if season_type=="Regular Season":
         return REGULAR_START_DATES.get(season,date(start,10,1)),REGULAR_END_DATES.get(season,date(end,4,30))
     if season_type=="Post Season":
-        return date(end,4,1),date(end,6,30)
+        return POST_START_DATES.get(season,date(end,4,1)),POST_END_DATES.get(season,date(end,6,30))
     raise ValueError(f"unsupported season type: {season_type}")
 
 def daterange(a,b):
