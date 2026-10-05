@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+# Unified NBA dataset coverage manifest.\n#!/usr/bin/env python3
 import csv,gzip,json
 from pathlib import Path
 from datetime import datetime,timezone
