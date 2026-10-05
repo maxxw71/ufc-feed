@@ -130,6 +130,10 @@ def enrich(e,btc,trigger_col="trigger_time"):
     # features themselves are based on a completed 4H trigger candle, so the
     # same timestamp BTC candle is also completed in both source tables.
     b=btc.sort_values("time").copy()
+    # Normalize timestamp units explicitly; pandas 3 can preserve different
+    # datetime resolutions from CSV vs API construction (us vs ms).
+    x[trigger_col]=pd.to_datetime(x[trigger_col],utc=True).astype("datetime64[ns, UTC]")
+    b["time"]=pd.to_datetime(b["time"],utc=True).astype("datetime64[ns, UTC]")
     x=pd.merge_asof(x.sort_values(trigger_col),b,left_on=trigger_col,right_on="time",direction="backward")
     x=x.drop(columns=["time"],errors="ignore")
 
