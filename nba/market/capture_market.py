@@ -49,6 +49,7 @@ def main():
         all_events.extend(payload.get("events") or [])
 
     rows=[]
+    core_diag={"requests":0,"status_counts":{},"nonempty_responses":0,"first_response_shape":null}
     for ev in all_events:
         comps=ev.get("competitions") or []
         if not comps: continue
@@ -67,10 +68,16 @@ def main():
             competition_id=str(comp.get("id") or event_id)
             try:
                 ou=CORE_ODDS.format(event_id=event_id,competition_id=competition_id)
-                rr=requests.get(ou,headers=HEADERS,timeout=20)
+                rr=requests.get(ou,params={"limit":100},headers=HEADERS,timeout=20)
+                core_diag["requests"]+=1
+                key=str(rr.status_code)
+                core_diag["status_counts"][key]=core_diag["status_counts"].get(key,0)+1
                 if rr.ok:
                     core=rr.json()
+                    if core_diag["first_response_shape"] is None:
+                        core_diag["first_response_shape"]={"keys":sorted(core.keys()),"count":core.get("count"),"items_len":len(core.get("items") or [])}
                     odds=core.get("items") or []
+                    if odds: core_diag["nonempty_responses"]+=1
             except Exception:
                 odds=[]
         for o in odds:
@@ -113,7 +120,7 @@ def main():
       "games_with_odds":len(set(r["game_id"] for r in rows)),
       "providers":sorted(set(r["provider"] for r in rows if r.get("provider"))),
       "raw_snapshot":str(raw_path.relative_to(ROOT)),
-      "source":"espn_scoreboard_odds",
+      "source":"espn_scoreboard_odds","core_odds_diagnostics":core_diag,
       "notes":"Prospective market snapshots only. Historical market backfill remains a separate lane."
     }
     (OUT/"latest.json").write_text(json.dumps(latest,indent=2)+"\n")
