@@ -61,7 +61,8 @@ def snap(tid):
 for g in games:
     hid=g.get("home_team_id"); aid=g.get("away_team_id")
     if not hid or not aid: continue
-    season=g.get("season")\n    hs=snap(season,hid); as_=snap(season,aid)
+    season=g.get("season")
+    hs=snap(season,hid); as_=snap(season,aid)
     base={
       "season":g.get("season"),"season_type":g.get("season_type"),
       "game_id":g.get("game_id"),"game_date":g.get("game_date"),
