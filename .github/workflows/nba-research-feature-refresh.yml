@@ -13,6 +13,8 @@ on:
       - "nba/build_game_flow_features.py"
       - "nba/build_availability_impact.py"
       - "nba/build_manifest.py"
+      - "nba/build_market_features.py"
+      - "nba/market/historical/**"
 
 permissions:
   contents: write
@@ -45,6 +47,9 @@ jobs:
 
       - name: Build availability impact
         run: python nba/build_availability_impact.py
+
+      - name: Build historical market features
+        run: python nba/build_market_features.py
 
       - name: Build coverage manifest
         run: python nba/build_manifest.py
