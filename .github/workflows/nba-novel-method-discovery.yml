@@ -42,6 +42,8 @@ jobs:
           git add nba/research/novel
           if git diff --cached --quiet; then exit 0; fi
           git commit -m "nba: add novel flow and workload method discovery"
+          git reset --hard HEAD
+          git clean -fd
           for attempt in 1 2 3; do
             git fetch origin main
             if git rebase origin/main && git push; then exit 0; fi
