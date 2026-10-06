@@ -35,7 +35,7 @@ def get(url, tries=3):
 def parse_date(s):
     return pd.to_datetime(s, errors="coerce")
 
-index_url="http://ufcstats.com/statistics/events/completed?page=all"
+index_url="https://ufcstats.com/statistics/events/completed?page=all"
 html=get(index_url)
 soup=BeautifulSoup(html,"html.parser")
 events=[]
@@ -100,10 +100,21 @@ fx["a_norm"]=fx.fighter_a.map(norm)
 fx["b_norm"]=fx.fighter_b.map(norm)
 fx.to_csv(OUT/"historical_fights.csv",index=False)
 
-src=ROOT/"new_category_discovery/prefight_favorite_features.csv"
-if not src.exists():
-    raise SystemExit(f"Missing feature master: {src}")
+candidates=[
+    ROOT/"new_category_discovery/prefight_favorite_features.csv",
+    ROOT/"ufc_age_reach_overlap/age_reach_market_sample.csv",
+    ROOT/"ufc_height_method_analysis/height_market_sample.csv",
+    ROOT/"ufc_reach_method_analysis/reach_market_sample.csv",
+]
+src=next((p for p in candidates if p.exists()),None)
+if src is None:
+    raise SystemExit("No usable prefight feature source found in checkout.")
 d=pd.read_csv(src,low_memory=False)
+required={"event_date","favorite","opponent","won"}
+missing=required-set(d.columns)
+if missing:
+    raise SystemExit(f"Feature source {src} missing required columns: {sorted(missing)}")
+
 d["event_date"]=pd.to_datetime(d["event_date"],errors="coerce").dt.normalize()
 d["fav_norm"]=d["favorite"].map(norm)
 d["opp_norm"]=d["opponent"].map(norm)
