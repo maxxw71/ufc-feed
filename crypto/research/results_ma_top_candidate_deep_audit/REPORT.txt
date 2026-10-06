@@ -1,0 +1,40 @@
+MA TOP CANDIDATE DEEP AUDIT
+
+{
+  "rule": "sma350_break_ma111_touch + dist350>=0.0165551 + btc_rsi>=59.4615",
+  "train": {
+    "n": 72,
+    "replayed_n": 0,
+    "target_rate": NaN,
+    "stop_rate": NaN,
+    "timeout_rate": NaN,
+    "avg_funding": NaN,
+    "net_roi": NaN,
+    "pnl_per_10000": NaN
+  },
+  "holdout": {
+    "n": 48,
+    "replayed_n": 0,
+    "target_rate": NaN,
+    "stop_rate": NaN,
+    "timeout_rate": NaN,
+    "avg_funding": NaN,
+    "net_roi": NaN,
+    "pnl_per_10000": NaN
+  },
+  "binance_frozen": {
+    "n": 27,
+    "hit5": 0.888889,
+    "risk": 0.851852,
+    "modeled_roi": 0.031086
+  },
+  "capacity": {
+    "coins": 42,
+    "full_fill_10k_fraction": 0.9047619047619048,
+    "median_entry_slippage_10k": 0.0011781677022308923,
+    "p90_entry_slippage_10k": 0.0031556527593249242,
+    "median_roundtrip_book_impact_10k": 0.0024808348689956405,
+    "p90_roundtrip_book_impact_10k": 0.007300937379338613
+  },
+  "promotion_gate": false
+}
