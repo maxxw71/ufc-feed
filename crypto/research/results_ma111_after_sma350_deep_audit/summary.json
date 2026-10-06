@@ -1,0 +1,44 @@
+{
+  "generated_at": "2026-10-06T00:42:40.179614+00:00",
+  "rule": "SMA350 breakout -> >=5% extension -> first MA111 touch <=24 bars -> prior completed RSI rises 2 consecutive 4H bars -> touch entry",
+  "target": 0.05,
+  "stop": 0.075,
+  "horizon_days": 5,
+  "hyperliquid_train": {
+    "n": 49,
+    "replayed_n": 49,
+    "target_rate": 0.8163265306122449,
+    "stop_rate": 0.14285714285714285,
+    "timeout_rate": 0.04081632653061224,
+    "avg_funding": -0.0003661678469387796,
+    "net_roi": 0.02570020882787691,
+    "pnl_per_10000": 257.0020882787691
+  },
+  "hyperliquid_holdout": {
+    "n": 33,
+    "replayed_n": 33,
+    "target_rate": 0.9090909090909091,
+    "stop_rate": 0.09090909090909091,
+    "timeout_rate": 0.0,
+    "avg_funding": 0.0002053529666666515,
+    "net_roi": 0.03553101066969698,
+    "pnl_per_10000": 355.3101066969698
+  },
+  "binance_frozen": {
+    "n": 24,
+    "hit5": 0.875,
+    "target_before_stop": 0.875,
+    "modeled_net_roi": 0.030975
+  },
+  "current_l2_capacity": {
+    "historical_holdout_coins": 29,
+    "current_books_ok": 29,
+    "full_fill_10k_fraction": 0.7931034482758621,
+    "median_entry_slippage_10k": 0.0008813935139568851,
+    "p90_entry_slippage_10k": 0.0028553093744976277,
+    "median_roundtrip_book_impact_10k": 0.0019986637822697606,
+    "p90_roundtrip_book_impact_10k": 0.005560010179963505
+  },
+  "promotion_ready": true,
+  "promotion_note": "No live order execution. If promoted, this means scanner/site/email qualification only."
+}
