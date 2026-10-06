@@ -1,5 +1,5 @@
 {
-  "version": "2026-10-05-novel-forward-and-refined-shadow",
+  "version": "2026-10-06-c5-live-ma-c6-audit",
   "venue": "Hyperliquid primary perpetuals",
   "timeframe": "4h",
   "target_pct": 0.05,
@@ -204,13 +204,13 @@
       }
     },
     {
-      "id": "N06",
+      "id": "C5",
       "key": "novel_proportional_washout",
-      "name": "Novel 06 · Proportional Breakout Washout",
+      "name": "Proportional Breakout Washout",
       "enabled": true,
-      "status": "SHADOW_ONLY",
+      "status": "LIVE",
       "research_id": "NOVEL-20261005-06",
-      "description": "First post-breakout 8% flush where the breakout was exceptionally strong but the washout remains in a historically favorable proportional drawdown band.",
+      "description": "A strong 5-day breakout enters its first post-breakout 4H flush, with the trigger closing in the validated proportional drawdown band from the post-arm peak.",
       "trigger_summary": "Daily breakout regime → 5-day gain 31.40–57.95% → first ≥8% 4H flush → trigger closes 10.42–13.94% below the post-arm peak.",
       "validation": {
         "venue": "Hyperliquid primary perps",
@@ -222,7 +222,16 @@
         "external_binance_full_n": 16,
         "external_binance_hit5": 0.9375,
         "external_binance_target_before_stop": 0.875,
-        "external_binance_net_roi": 0.030975
+        "external_binance_net_roi": 0.030975,
+        "third_venue": "OKX USDT perpetual swaps",
+        "okx_n": 77,
+        "okx_hit5": 0.8311688312,
+        "okx_target_before_stop": 0.7402597403,
+        "okx_modeled_net_roi": 0.0167418796,
+        "okx_latest40_n": 31,
+        "okx_latest40_hit5": 0.8709677419,
+        "okx_latest40_target_before_stop": 0.7096774194,
+        "okx_latest40_net_roi": 0.0161975718
       },
       "params": {
         "daily_ret5_min": 0.31396113303210554,
