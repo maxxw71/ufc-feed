@@ -4,7 +4,7 @@ from collections import defaultdict
 from pathlib import Path
 from datetime import datetime,timezone
 
-NBA=Path(__file__).resolve().parents[1]
+NBA=Path(__file__).resolve().parent
 F=NBA/"features"; SRC=F/"player_workload.csv.gz"; OUT=F
 
 def rgz(p):
@@ -18,6 +18,7 @@ def wgz(p,rows):
     for r in rows:
         for k in r:
             if k not in fs:fs.append(k)
+    p.parent.mkdir(parents=True,exist_ok=True)
     with gzip.open(p,"wt",encoding="utf-8",newline="") as f:
         w=csv.DictWriter(f,fieldnames=fs or ["_empty"]);w.writeheader();w.writerows(rows)
 
@@ -29,7 +30,6 @@ for r in rows:
 
 out=[]
 for (season,gid,tid),arr in by.items():
-    # Rank rotation burden from prior-only information.
     arr=sorted(arr,key=lambda r:(n(r.get("minutes_prev_7d")),n(r.get("prior_game_minutes"))),reverse=True)
     active=[r for r in arr if n(r.get("minutes_prev_7d"))>0 or n(r.get("prior_game_minutes"))>0]
     top5=active[:5];top8=active[:8]
