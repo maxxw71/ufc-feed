@@ -1,0 +1,20 @@
+name: DWCS Isolation Guard
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'dwcs/**'
+      - '.github/workflows/dwcs-isolation-guard.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate DWCS remains separate from UFC
+        run: python dwcs/validate_dwcs.py
