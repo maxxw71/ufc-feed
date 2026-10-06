@@ -23,7 +23,6 @@ jobs:
           python - <<'PY'
           import os, re, json, gzip, csv
           from pathlib import Path
-          import pandas as pd
 
           root=Path('.')
           out=root/'dwcs/research/repo_scan'
@@ -59,8 +58,16 @@ jobs:
               except Exception as e:
                   filehits.append({'path':str(p),'error':repr(e)})
 
-          pd.DataFrame(filehits).to_csv(out/'files_with_dwcs_mentions.csv',index=False)
-          pd.DataFrame(rows).to_csv(out/'matching_lines.csv',index=False)
+          with (out/'files_with_dwcs_mentions.csv').open('w',newline='',encoding='utf-8') as fh:
+              fields=['path','bytes','needle_count','error']
+              w=csv.DictWriter(fh,fieldnames=fields)
+              w.writeheader()
+              for x in filehits: w.writerow({k:x.get(k,'') for k in fields})
+          with (out/'matching_lines.csv').open('w',newline='',encoding='utf-8') as fh:
+              fields=['path','line','text']
+              w=csv.DictWriter(fh,fieldnames=fields)
+              w.writeheader()
+              for x in rows: w.writerow(x)
 
           report=[
               'DWCS REPOSITORY ARCHIVE SCAN',
