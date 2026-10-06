@@ -4,7 +4,7 @@ from collections import defaultdict
 from pathlib import Path
 from datetime import datetime,timezone
 
-NBA=Path(__file__).resolve().parents[1]
+NBA=Path(__file__).resolve().parent
 DATA=NBA/"data"; F=NBA/"features"
 SRC=F/"game_flow.csv.gz"; OUT=F
 OUT.mkdir(parents=True,exist_ok=True)
