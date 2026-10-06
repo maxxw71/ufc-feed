@@ -188,20 +188,24 @@ def scan_rail_retests(x,coin,venue,m):
             "below_frac_24":below,"extension_before_touch":maxext,
             "delay_bars":j-i,"touch_close_vs_rail":close/rv-1,
             "base_sma350":float(x.loc[j,"sma350"]),
-            "rail_value":rv,
-            **support_context(x,j,i)
+            "rail_value":rv
         }
         nxt=NEXT.get(m)
         if j+1<n:
             o=outcome(x,j+1,rv,"touch",j,nxt)
-            if o:rows.append({**common,"mode":"touch",**o})
+            # Touch entry occurs intrabar, so only information from the PRIOR
+            # completed 4H bar may be used as an RSI filter. This prevents
+            # using the touch candle close to justify an entry that happened
+            # earlier in that same candle.
+            ctx_idx=max(i,j-1)
+            if o:rows.append({**common,"mode":"touch","rsi_context_time":x.loc[ctx_idx,"time"],**support_context(x,ctx_idx,i),**o})
         if close>=rv and j+1<n:
             o=outcome(x,j+1,float(x.loc[j+1,"o"]),"confirmed",None,nxt)
-            if o:rows.append({**common,"mode":"confirmed",**o})
+            if o:rows.append({**common,"mode":"confirmed","rsi_context_time":x.loc[j,"time"],**support_context(x,j,i),**o})
         if -0.03<=close/rv-1<0 and j+2<n:
             if float(x.loc[j+1,"c"])>=float(x.loc[j+1,rail]):
                 o=outcome(x,j+2,float(x.loc[j+2,"o"]),"reclaim",None,nxt)
-                if o:rows.append({**common,"mode":"reclaim","reclaim_time":x.loc[j+1,"time"],**support_context(x,j+1,i),**o})
+                if o:rows.append({**common,"mode":"reclaim","reclaim_time":x.loc[j+1,"time"],"rsi_context_time":x.loc[j+1,"time"],**support_context(x,j+1,i),**o})
         last=x.loc[i,"time"];i=j+1
     return rows
 
@@ -231,19 +235,19 @@ def scan_ma111_after_rail_break(x,coin,venue,m):
             "below_frac_24":below,"extension_before_touch":maxext,"delay_bars":j-i,
             "touch_close_vs_rail":close/float(x.loc[j,rail])-1,
             "touch_close_vs_ma111":close/ma111-1,
-            "base_sma350":float(x.loc[j,"sma350"]),"rail_value":float(x.loc[j,rail]),
-            **support_context(x,j,i)
+            "base_sma350":float(x.loc[j,"sma350"]),"rail_value":float(x.loc[j,rail])
         }
         nxt=NEXT.get(m)
         if j+1<n:
             o=outcome(x,j+1,ma111,"touch",j,nxt)
-            if o:rows.append({**common,"mode":"touch",**o})
+            ctx_idx=max(i,j-1)
+            if o:rows.append({**common,"mode":"touch","rsi_context_time":x.loc[ctx_idx,"time"],**support_context(x,ctx_idx,i),**o})
         if close>=ma111 and j+1<n:
             o=outcome(x,j+1,float(x.loc[j+1,"o"]),"confirmed",None,nxt)
-            if o:rows.append({**common,"mode":"confirmed",**o})
+            if o:rows.append({**common,"mode":"confirmed","rsi_context_time":x.loc[j,"time"],**support_context(x,j,i),**o})
         if -0.03<=close/ma111-1<0 and j+2<n and float(x.loc[j+1,"c"])>=float(x.loc[j+1,"sma111"]):
             o=outcome(x,j+2,float(x.loc[j+2,"o"]),"reclaim",None,nxt)
-            if o:rows.append({**common,"mode":"reclaim","reclaim_time":x.loc[j+1,"time"],**support_context(x,j+1,i),**o})
+            if o:rows.append({**common,"mode":"reclaim","reclaim_time":x.loc[j+1,"time"],"rsi_context_time":x.loc[j+1,"time"],**support_context(x,j+1,i),**o})
         last=x.loc[i,"time"];i=j+1
     return rows
 
@@ -266,15 +270,15 @@ def scan_cross111_350(x,coin,venue):
             "breakout_time":x.loc[i,"time"],"touch_time":x.loc[j,"time"],
             "below_frac_24":np.nan,"extension_before_touch":float(x.loc[i:j,"h"].max()/ma-1),
             "delay_bars":j-i,"touch_close_vs_ma111":close/ma-1,
-            "base_sma350":float(x.loc[j,"sma350"]),"rail_value":float(x.loc[j,"sma350"]),
-            **support_context(x,j,i)
+            "base_sma350":float(x.loc[j,"sma350"]),"rail_value":float(x.loc[j,"sma350"])
         }
         if j+1<n:
             o=outcome(x,j+1,ma,"touch",j,2)
-            if o:rows.append({**common,"mode":"touch",**o})
+            ctx_idx=max(i,j-1)
+            if o:rows.append({**common,"mode":"touch","rsi_context_time":x.loc[ctx_idx,"time"],**support_context(x,ctx_idx,i),**o})
         if close>=ma and j+1<n:
             o=outcome(x,j+1,float(x.loc[j+1,"o"]),"confirmed",None,2)
-            if o:rows.append({**common,"mode":"confirmed",**o})
+            if o:rows.append({**common,"mode":"confirmed","rsi_context_time":x.loc[j,"time"],**support_context(x,j,i),**o})
         last=x.loc[i,"time"]
     return rows
 
