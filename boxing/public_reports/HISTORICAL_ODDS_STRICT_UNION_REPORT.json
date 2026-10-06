@@ -1,15 +1,22 @@
 {
-  "generated_at": "2026-09-27T11:49:43.876789+00:00",
+  "generated_at": "2026-10-03T01:01:00.707868+00:00",
+  "input_unique_signatures": 3145,
+  "quote_signatures_validated_by_both_routes": 339,
+  "event_page_only_quote_rows": 170,
+  "homepage_only_quote_rows": 2609,
   "input_rows": {
     "event_page": 515,
-    "homepage": 1253
+    "homepage": 2975
   },
-  "stable_unique_quote_rows": 1651,
-  "quote_signatures_validated_by_both_routes": 117,
-  "event_page_only_quote_rows": 398,
-  "homepage_only_quote_rows": 1136,
-  "distinct_validated_bouts": 443,
-  "distinct_validated_events": 123,
+  "input_sha256": {
+    "HISTORICAL_ODDS_VALIDATED_ROWS.json": "bb288b59d2dce2b91b5f3e1e26413543646dd130d1e370163a745138463d5a99",
+    "HISTORICAL_ODDS_HOME_VALIDATED_ROWS.json": "0ef2732e3f32e0e904c39074aaf475984ff1f40a27dc040042385113153243bc"
+  },
+  "stable_unique_quote_rows": 3118,
+  "held_current_signatures": 27,
+  "old_signatures_absent": 26,
+  "distinct_validated_bouts": 850,
+  "distinct_validated_events": 225,
   "date_min": "2021-06-20",
   "date_max": "2026-05-31",
   "validated_bookmakers": [
@@ -22,5 +29,7 @@
     "PointsBet",
     "Unibet"
   ],
-  "policy": "Union of strict exact pre-event Wayback event-page and homepage quote validation. Stable quote signature = event date + bout id + bookmaker + selection + stored decimal price. No unverified historical rows."
+  "fresh_archive_replay": false,
+  "settlement_verified": false,
+  "policy": "Reconciliation of published pre-event archive evidence; American-to-decimal price equivalence <=1e-6. Each retained route must pass its own price/time metadata checks. This step does not replay archives. Closing price and bookmaker settlement are unverified; no production or ROI eligibility is conferred."
 }
