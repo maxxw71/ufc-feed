@@ -1,0 +1,157 @@
+{
+  "generated_at_utc": "2026-10-06T11:19:23.622542+00:00",
+  "rows": 19004,
+  "rules_tested": 87936,
+  "candidates": 4,
+  "top_methods": [
+    {
+      "rule": "points5_topshare_adv <= -0.02858 AND plusminus5_gap >= 6.32 AND lineup_diversity_adv >= 21",
+      "status": "interaction_shadow_candidate",
+      "discA": {
+        "n": 109,
+        "wins": 81,
+        "hit": 0.7431192660550459,
+        "roi": 0.0840760625838535,
+        "profit": 9.164290821640032,
+        "wilson_low": 0.6538035762098546
+      },
+      "discB": {
+        "n": 80,
+        "wins": 58,
+        "hit": 0.725,
+        "roi": 0.08328756171467322,
+        "profit": 6.6630049371738576,
+        "wilson_low": 0.618557347158301
+      },
+      "validation": {
+        "n": 49,
+        "wins": 36,
+        "hit": 0.7346938775510204,
+        "roi": 0.0765596069985625,
+        "profit": 3.7514207429295627,
+        "wilson_low": 0.5973744384734165
+      },
+      "holdout": {
+        "n": 137,
+        "wins": 108,
+        "hit": 0.7883211678832117,
+        "roi": 0.07214601982186088,
+        "profit": 9.88400471559494,
+        "wilson_low": 0.7125347293985421
+      },
+      "method_id": "NBA_INTERACT_001"
+    },
+    {
+      "rule": "plusminus5_gap >= 6.32 AND starter_overlap_gap >= 1 AND work_top5_3d_adv >= 45",
+      "status": "interaction_shadow_candidate",
+      "discA": {
+        "n": 88,
+        "wins": 65,
+        "hit": 0.7386363636363636,
+        "roi": 0.04042836620315455,
+        "profit": 3.5576962258776006,
+        "wilson_low": 0.6382402375069727
+      },
+      "discB": {
+        "n": 70,
+        "wins": 55,
+        "hit": 0.7857142857142857,
+        "roi": 0.0805609874385404,
+        "profit": 5.639269120697828,
+        "wilson_low": 0.6760859281841939
+      },
+      "validation": {
+        "n": 49,
+        "wins": 37,
+        "hit": 0.7551020408163265,
+        "roi": 0.012727311370866268,
+        "profit": 0.6236382571724471,
+        "wilson_low": 0.619134127396842
+      },
+      "holdout": {
+        "n": 93,
+        "wins": 74,
+        "hit": 0.7956989247311828,
+        "roi": 0.11354350617645327,
+        "profit": 10.559546074410154,
+        "wilson_low": 0.7028131210677944
+      },
+      "method_id": "NBA_INTERACT_002"
+    },
+    {
+      "rule": "plusminus5_gap >= 3 AND starter_overlap_gap >= 1 AND work_top5_3d_adv >= 45",
+      "status": "interaction_shadow_candidate",
+      "discA": {
+        "n": 141,
+        "wins": 104,
+        "hit": 0.7375886524822695,
+        "roi": 0.07796085501551105,
+        "profit": 10.992480557187058,
+        "wilson_low": 0.6593619478776587
+      },
+      "discB": {
+        "n": 117,
+        "wins": 94,
+        "hit": 0.8034188034188035,
+        "roi": 0.14127733223388514,
+        "profit": 16.52944787136456,
+        "wilson_low": 0.7222613341736048
+      },
+      "validation": {
+        "n": 77,
+        "wins": 59,
+        "hit": 0.7662337662337663,
+        "roi": 0.10048213858675988,
+        "profit": 7.73712467118051,
+        "wilson_low": 0.66045961195063
+      },
+      "holdout": {
+        "n": 142,
+        "wins": 109,
+        "hit": 0.7676056338028169,
+        "roi": 0.13574208708725366,
+        "profit": 19.27537636639002,
+        "wilson_low": 0.6916467949991447
+      },
+      "method_id": "NBA_INTERACT_003"
+    },
+    {
+      "rule": "plusminus5_gap >= 3 AND starter_overlap_gap >= 1 AND work_top8_3d_adv >= 14",
+      "status": "interaction_shadow_candidate",
+      "discA": {
+        "n": 211,
+        "wins": 156,
+        "hit": 0.7393364928909952,
+        "roi": 0.0760090619490789,
+        "profit": 16.037912071255647,
+        "wilson_low": 0.6761984078749517
+      },
+      "discB": {
+        "n": 149,
+        "wins": 114,
+        "hit": 0.7651006711409396,
+        "roi": 0.10302886782003319,
+        "profit": 15.351301305184945,
+        "wilson_low": 0.6908977670088365
+      },
+      "validation": {
+        "n": 97,
+        "wins": 72,
+        "hit": 0.7422680412371134,
+        "roi": 0.06245040689254545,
+        "profit": 6.057689468576909,
+        "wilson_low": 0.6471721989159661
+      },
+      "holdout": {
+        "n": 197,
+        "wins": 146,
+        "hit": 0.7411167512690355,
+        "roi": 0.10347465882980977,
+        "profit": 20.384507789472526,
+        "wilson_low": 0.6757501466422497
+      },
+      "method_id": "NBA_INTERACT_004"
+    }
+  ],
+  "policy": "Independent interaction lane combining starter-core with lineup/workload/rest/market context. Explicitly excludes ML001 team-efficiency and PHYSCOACH body-size inputs."
+}
