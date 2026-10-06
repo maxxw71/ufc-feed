@@ -1,0 +1,41 @@
+name: DWCS Historical Backfill & Research
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/dwcs-historical-research.yml'
+      - 'dwcs/research/**'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  research:
+    runs-on: [self-hosted, Linux, X64, appwiza]
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Backfill all historical Contender Series events and research
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          ROOT=/home/anestishkurti92/ufc-predictor-v1
+          PY="$ROOT/venv/bin/python"
+          [ -x "$PY" ] || PY="$ROOT/venv.google-original/bin/python"
+          OUT="$GITHUB_WORKSPACE/dwcs/research/results"
+          mkdir -p "$OUT"
+          ROOT="$ROOT" OUT="$OUT" "$PY" "$GITHUB_WORKSPACE/dwcs/research/backfill_and_research.py"
+
+      - name: Commit DWCS historical research
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          git config user.name 'appwiza-research-bot'
+          git config user.email 'actions@users.noreply.github.com'
+          git add dwcs/research/results
+          git diff --cached --quiet && exit 0
+          git commit -m 'Backfill and research historical DWCS events'
+          git push
