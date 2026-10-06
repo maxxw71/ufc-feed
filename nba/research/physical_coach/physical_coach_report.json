@@ -1,0 +1,27 @@
+{
+  "generated_at_utc": "2026-10-06T00:22:35.958845+00:00",
+  "rows": 19004,
+  "rules_tested": 50490,
+  "candidates": 1,
+  "top_methods": [
+    {
+      "rule": "guard_weight_gap <= -10 AND big_weight_gap >= 8 AND market_prob >= 0.5968",
+      "status": "confirmed_starter_shadow_candidate",
+      "discA_n": 127,
+      "discA_hit": 0.7716535433070866,
+      "discA_roi": 0.047225233610552385,
+      "discB_n": 76,
+      "discB_hit": 0.7894736842105263,
+      "discB_roi": 0.045746982739082384,
+      "validation_n": 45,
+      "validation_hit": 0.8,
+      "validation_roi": 0.06322500169901767,
+      "holdout_n": 58,
+      "holdout_hit": 0.8103448275862069,
+      "holdout_roi": 0.09706758681663229,
+      "holdout_wilson_low": 0.6914738161458368,
+      "method_id": "NBA_PHYSCOACH_001"
+    }
+  ],
+  "policy": "Confirmed-starter lane. Physical thresholds formed from early discovery only; season-level coaching continuity is used only where team assignment exists."
+}
