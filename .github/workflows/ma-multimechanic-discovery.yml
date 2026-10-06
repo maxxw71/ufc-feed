@@ -1,0 +1,65 @@
+name: Broad MA crypto method discovery
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'crypto/research/ma_multimechanic_discovery.py'
+      - '.github/workflows/ma-multimechanic-discovery.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: ma-multimechanic-discovery
+  cancel-in-progress: true
+
+jobs:
+  scan:
+    strategy:
+      fail-fast: false
+      matrix:
+        venue: [hl,bn]
+        shard: [0,1,2,3,4,5,6,7]
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.12'}
+      - run: python -m pip install --quiet pandas numpy requests
+      - run: python crypto/research/ma_multimechanic_discovery.py --mode scan --venue ${{ matrix.venue }} --days 600 --binance-symbols 160 --shard-index ${{ matrix.shard }} --shard-count 8 --out ma_multi_out
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ma-multi-${{ matrix.venue }}-${{ matrix.shard }}
+          path: ma_multi_out/
+          retention-days: 2
+
+  aggregate:
+    needs: scan
+    if: always() && needs.scan.result == 'success'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with: {fetch-depth: 0}
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.12'}
+      - run: python -m pip install --quiet pandas numpy requests
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: ma-multi-*
+          path: ma_multi_shards
+          merge-multiple: true
+      - run: python crypto/research/ma_multimechanic_discovery.py --mode aggregate --input-dir ma_multi_shards --out crypto/research/results_ma_multimechanic
+      - name: Commit results
+        run: |
+          git config user.name "appwiza-research-bot"
+          git config user.email actions@users.noreply.github.com
+          git add crypto/research/results_ma_multimechanic
+          if ! git diff --cached --quiet; then
+            git commit -m "Update broad MA crypto method discovery"
+            git pull --rebase -X ours origin main || true
+            git push origin HEAD:main || true
+          fi
