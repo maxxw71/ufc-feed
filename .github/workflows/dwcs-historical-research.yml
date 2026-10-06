@@ -13,21 +13,21 @@ permissions:
 
 jobs:
   research:
-    runs-on: [self-hosted, Linux, X64, appwiza]
+    runs-on: ubuntu-latest
     timeout-minutes: 25
     steps:
       - uses: actions/checkout@v4
+
+      - name: Install research dependencies
+        run: python -m pip install --quiet pandas numpy requests beautifulsoup4
 
       - name: Backfill all historical Contender Series events and research
         shell: bash
         run: |
           set -Eeuo pipefail
-          ROOT=/home/anestishkurti92/ufc-predictor-v1
-          PY="$ROOT/venv/bin/python"
-          [ -x "$PY" ] || PY="$ROOT/venv.google-original/bin/python"
           OUT="$GITHUB_WORKSPACE/dwcs/research/results"
           mkdir -p "$OUT"
-          ROOT="$ROOT" OUT="$OUT" "$PY" "$GITHUB_WORKSPACE/dwcs/research/backfill_and_research.py"
+          ROOT="$GITHUB_WORKSPACE" OUT="$OUT" python "$GITHUB_WORKSPACE/dwcs/research/backfill_and_research.py"
 
       - name: Commit DWCS historical research
         shell: bash
@@ -38,4 +38,5 @@ jobs:
           git add dwcs/research/results
           git diff --cached --quiet && exit 0
           git commit -m 'Backfill and research historical DWCS events'
+          git pull --rebase origin main
           git push
