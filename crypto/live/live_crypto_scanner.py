@@ -655,7 +655,10 @@ def main():
                         continue
                     if not (float(p["price_dd_min"])<=z["price_dd"]<=float(p["price_dd_max"])):
                         continue
-                    shadow_candidates.append(("novel_proportional_washout",dict(z)))
+                    if nm.get("status")=="LIVE":
+                        candidates.append(("novel_proportional_washout",dict(z)))
+                    else:
+                        shadow_candidates.append(("novel_proportional_washout",dict(z)))
 
             if "refined_novel01_btc_regime" in methods and methods["refined_novel01_btc_regime"].get("enabled"):
                 nm=methods["refined_novel01_btc_regime"];p=nm["params"]

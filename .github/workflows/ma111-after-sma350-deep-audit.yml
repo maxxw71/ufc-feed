@@ -1,0 +1,67 @@
+name: MA111 after SMA350 deep economic audit
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'crypto/research/ma111_after_sma350_deep_audit.py'
+      - '.github/workflows/ma111-after-sma350-deep-audit.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: ma111-after-sma350-deep-audit
+  cancel-in-progress: true
+
+jobs:
+  replay:
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [0,1,2,3]
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.12'}
+      - run: python -m pip install --quiet pandas numpy requests
+      - run: |
+          python crypto/research/ma111_after_sma350_deep_audit.py \
+            --mode scan --shard-index ${{ matrix.shard }} --shard-count 4 \
+            --sleep 0.10 --out ma_c6_out
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ma-c6-${{ matrix.shard }}
+          path: ma_c6_out/
+          retention-days: 2
+
+  aggregate:
+    needs: replay
+    if: always() && needs.replay.result == 'success'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with: {fetch-depth: 0}
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.12'}
+      - run: python -m pip install --quiet pandas numpy requests
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: ma-c6-*
+          path: ma_c6_shards
+          merge-multiple: true
+      - run: python crypto/research/ma111_after_sma350_deep_audit.py --mode aggregate --input-dir ma_c6_shards --out crypto/research/results_ma111_after_sma350_deep_audit
+      - name: Commit audit
+        run: |
+          git config user.name "appwiza-research-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add crypto/research/results_ma111_after_sma350_deep_audit
+          if ! git diff --cached --quiet; then
+            git commit -m "Update MA111 after SMA350 deep audit"
+            git pull --rebase -X ours origin main || true
+            git push origin HEAD:main || true
+          fi
