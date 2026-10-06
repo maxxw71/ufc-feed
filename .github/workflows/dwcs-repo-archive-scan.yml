@@ -1,0 +1,87 @@
+name: DWCS Repository Archive Scan
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/dwcs-repo-archive-scan.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - name: Scan repository MMA data for Contender Series history
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          python - <<'PY'
+          import os, re, json, gzip, csv
+          from pathlib import Path
+          import pandas as pd
+
+          root=Path('.')
+          out=root/'dwcs/research/repo_scan'
+          out.mkdir(parents=True,exist_ok=True)
+          needles=('contender series','tuesday night contender','dwcs','tncs')
+          skip_parts={'node_modules','.git'}
+          rows=[]
+          filehits=[]
+
+          candidates=[]
+          for p in root.rglob('*'):
+              if not p.is_file(): continue
+              if any(part in skip_parts for part in p.parts): continue
+              if p.suffix.lower() in {'.csv','.json','.jsonl','.txt','.md'} or p.name.endswith('.csv.gz'):
+                  candidates.append(p)
+
+          for p in candidates:
+              try:
+                  opener=gzip.open if p.name.endswith('.gz') else open
+                  mode='rt'
+                  with opener(p,mode,encoding='utf-8',errors='ignore') as fh:
+                      text=fh.read()
+                  low=text.lower()
+                  if not any(n in low for n in needles):
+                      continue
+                  count=sum(low.count(n) for n in needles)
+                  filehits.append({'path':str(p),'bytes':p.stat().st_size,'needle_count':count})
+                  # Preserve matching text lines for forensic inspection.
+                  for ln,line in enumerate(text.splitlines(),1):
+                      ll=line.lower()
+                      if any(n in ll for n in needles):
+                          rows.append({'path':str(p),'line':ln,'text':line[:12000]})
+              except Exception as e:
+                  filehits.append({'path':str(p),'error':repr(e)})
+
+          pd.DataFrame(filehits).to_csv(out/'files_with_dwcs_mentions.csv',index=False)
+          pd.DataFrame(rows).to_csv(out/'matching_lines.csv',index=False)
+
+          report=[
+              'DWCS REPOSITORY ARCHIVE SCAN',
+              '='*80,
+              f'candidate files scanned: {len(candidates)}',
+              f'files with DWCS/TNCS mentions: {len(filehits)}',
+              f'matching lines captured: {len(rows)}',
+              '',
+          ]
+          for x in sorted(filehits,key=lambda z:z.get('needle_count',0),reverse=True)[:80]:
+              report.append(f"{x.get('needle_count',0):5d}  {x['path']}")
+          (out/'report.txt').write_text('\n'.join(report)+'\n')
+          print('\n'.join(report))
+          PY
+      - name: Commit scan
+        run: |
+          set -Eeuo pipefail
+          git config user.name 'appwiza-research-bot'
+          git config user.email 'actions@users.noreply.github.com'
+          git add dwcs/research/repo_scan
+          git diff --cached --quiet && exit 0
+          git commit -m 'Scan repository for historical DWCS data'
+          git pull --rebase origin main
+          git push
