@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-10-05T12:17:00+00:00",
+  "generated_at": "2026-10-06T00:41:00+00:00",
   "venue": "Hyperliquid primary perpetuals",
   "timeframe": "4h",
   "target_pct": 0.05,
@@ -204,13 +204,13 @@
       }
     },
     {
-      "id": "N06",
+      "id": "C5",
       "key": "novel_proportional_washout",
-      "name": "Novel 06 \u00b7 Proportional Breakout Washout",
+      "name": "Proportional Breakout Washout",
       "enabled": true,
-      "status": "SHADOW_ONLY",
+      "status": "LIVE",
       "research_id": "NOVEL-20261005-06",
-      "description": "First post-breakout 8% flush where the breakout was exceptionally strong but the washout remains in a historically favorable proportional drawdown band.",
+      "description": "A strong 5-day breakout enters its first post-breakout 4H flush, with the trigger closing in the validated proportional drawdown band from the post-arm peak.",
       "trigger_summary": "Daily breakout regime \u2192 5-day gain 31.40\u201357.95% \u2192 first \u22658% 4H flush \u2192 trigger closes 10.42\u201313.94% below the post-arm peak.",
       "validation": {
         "venue": "Hyperliquid primary perps",
@@ -222,7 +222,16 @@
         "external_binance_full_n": 16,
         "external_binance_hit5": 0.9375,
         "external_binance_target_before_stop": 0.875,
-        "external_binance_net_roi": 0.030975
+        "external_binance_net_roi": 0.030975,
+        "third_venue": "OKX USDT perpetual swaps",
+        "okx_n": 77,
+        "okx_hit5": 0.8311688312,
+        "okx_target_before_stop": 0.7402597403,
+        "okx_modeled_net_roi": 0.0167418796,
+        "okx_latest40_n": 31,
+        "okx_latest40_hit5": 0.8709677419,
+        "okx_latest40_target_before_stop": 0.7096774194,
+        "okx_latest40_net_roi": 0.0161975718
       },
       "params": {
         "daily_ret5_min": 0.31396113303210554,
@@ -303,369 +312,131 @@
   ],
   "signals": [
     {
-      "id": "C3:PURR:2026-10-02T16:00:00+00:00",
-      "coin": "PURR",
-      "method_id": "C3",
-      "method_key": "volume_capitulation_flush",
-      "method_name": "Volume Capitulation Flush",
-      "trigger_time": "2026-10-02T16:00:00+00:00",
-      "entry_time": "2026-10-02T20:00:00+00:00",
-      "trigger_price": 0.14975,
-      "entry_reference": 0.14977,
-      "target_5pct": 0.1572585,
-      "risk_stop_reference": 0.13853725,
-      "status": "SUCCESS",
-      "metrics": {
-        "close_location": 0.09281961471103253,
-        "volume_ratio20": 2.4405222737618764
-      },
-      "liquidity": {
-        "status": "ok",
-        "day_volume": 1752722.7795799992,
-        "sizes": {
-          "1000": {
-            "full_fill": false,
-            "best_bid": 0.1676,
-            "best_ask": 0.16779,
-            "mid": 0.16769499999999998,
-            "entry_slippage_pct": null,
-            "roundtrip_book_impact_pct": null,
-            "buy_book_coverage": 0.8271513699999999
-          },
-          "5000": {
-            "full_fill": false,
-            "best_bid": 0.1676,
-            "best_ask": 0.16779,
-            "mid": 0.16769499999999998,
-            "entry_slippage_pct": null,
-            "roundtrip_book_impact_pct": null,
-            "buy_book_coverage": 0.165430274
-          },
-          "10000": {
-            "full_fill": false,
-            "best_bid": 0.1676,
-            "best_ask": 0.16779,
-            "mid": 0.16769499999999998,
-            "entry_slippage_pct": null,
-            "roundtrip_book_impact_pct": null,
-            "buy_book_coverage": 0.082715137
-          }
-        },
-        "bid_levels": 20,
-        "ask_levels": 20
-      },
-      "stop_touched": false,
-      "settled_at": "2026-10-02T20:00:00+00:00",
-      "realized_target_pct": 0.05,
-      "target_after_stop": false
-    },
-    {
-      "id": "C3:XLM:2026-10-02T16:00:00+00:00",
-      "coin": "XLM",
-      "method_id": "C3",
-      "method_key": "volume_capitulation_flush",
-      "method_name": "Volume Capitulation Flush",
-      "trigger_time": "2026-10-02T16:00:00+00:00",
-      "entry_time": "2026-10-02T20:00:00+00:00",
-      "trigger_price": 0.21216,
-      "entry_reference": 0.21198,
-      "target_5pct": 0.222579,
-      "risk_stop_reference": 0.19608150000000002,
-      "status": "SUCCESS",
-      "metrics": {
-        "close_location": 0.15117219078415392,
-        "volume_ratio20": 1.9567367945991145
-      },
-      "liquidity": {
-        "status": "ok",
-        "day_volume": 2795417.3120999993,
-        "sizes": {
-          "1000": {
-            "full_fill": true,
-            "best_bid": 0.22096,
-            "best_ask": 0.22098,
-            "mid": 0.22097,
-            "entry_slippage_pct": 4.525501199270643e-05,
-            "roundtrip_book_impact_pct": 0.00012057185627656342,
-            "buy_book_coverage": 1.0
-          },
-          "5000": {
-            "full_fill": true,
-            "best_bid": 0.22096,
-            "best_ask": 0.22098,
-            "mid": 0.22097,
-            "entry_slippage_pct": 0.00016411803264326785,
-            "roundtrip_book_impact_pct": 0.0003786037907166362,
-            "buy_book_coverage": 1.0
-          },
-          "10000": {
-            "full_fill": true,
-            "best_bid": 0.22096,
-            "best_ask": 0.22098,
-            "mid": 0.22097,
-            "entry_slippage_pct": 0.0002625839872147928,
-            "roundtrip_book_impact_pct": 0.0005508192418004487,
-            "buy_book_coverage": 0.9999999999999998
-          }
-        },
-        "bid_levels": 20,
-        "ask_levels": 20
-      },
-      "stop_touched": false,
-      "settled_at": "2026-10-04T20:00:00+00:00",
-      "realized_target_pct": 0.05,
-      "target_after_stop": false
-    },
-    {
-      "id": "C3F:XLM:2026-10-02T16:00:00+00:00",
-      "coin": "XLM",
-      "method_id": "C3F",
-      "method_key": "volume_capitulation_funding",
-      "method_name": "Volume Capitulation + Funding",
-      "trigger_time": "2026-10-02T16:00:00+00:00",
-      "entry_time": "2026-10-02T20:00:00+00:00",
-      "trigger_price": 0.21216,
-      "entry_reference": 0.21198,
-      "target_5pct": 0.222579,
-      "risk_stop_reference": 0.19608150000000002,
-      "status": "SUCCESS",
-      "metrics": {
-        "close_location": 0.15117219078415392,
-        "volume_ratio20": 1.9567367945991145,
-        "funding_rate_at_trigger": 3.11255e-05
-      },
-      "liquidity": {
-        "status": "ok",
-        "day_volume": 2795417.3120999993,
-        "sizes": {
-          "1000": {
-            "full_fill": true,
-            "best_bid": 0.22096,
-            "best_ask": 0.22098,
-            "mid": 0.22097,
-            "entry_slippage_pct": 4.525501199270643e-05,
-            "roundtrip_book_impact_pct": 0.00012057185627656342,
-            "buy_book_coverage": 1.0
-          },
-          "5000": {
-            "full_fill": true,
-            "best_bid": 0.22096,
-            "best_ask": 0.22098,
-            "mid": 0.22097,
-            "entry_slippage_pct": 0.00016411803264326785,
-            "roundtrip_book_impact_pct": 0.0003786037907166362,
-            "buy_book_coverage": 1.0
-          },
-          "10000": {
-            "full_fill": true,
-            "best_bid": 0.22096,
-            "best_ask": 0.22098,
-            "mid": 0.22097,
-            "entry_slippage_pct": 0.0002625839872147928,
-            "roundtrip_book_impact_pct": 0.0005508192418004487,
-            "buy_book_coverage": 0.9999999999999998
-          }
-        },
-        "bid_levels": 20,
-        "ask_levels": 20
-      },
-      "stop_touched": false,
-      "settled_at": "2026-10-04T20:00:00+00:00",
-      "realized_target_pct": 0.05,
-      "target_after_stop": false
-    },
-    {
-      "id": "C1:VIRTUAL:2026-10-02T16:00:00+00:00",
-      "coin": "VIRTUAL",
-      "method_id": "C1",
-      "method_key": "blowoff_first_flush",
-      "method_name": "Blow-Off First Flush",
-      "trigger_time": "2026-10-02T16:00:00+00:00",
-      "entry_time": "2026-10-02T20:00:00+00:00",
-      "trigger_price": 0.74892,
-      "entry_reference": 0.74907,
-      "target_5pct": 0.7865235,
-      "risk_stop_reference": 0.6928897500000001,
-      "status": "SUCCESS",
-      "metrics": {
-        "rsi": 39.44009675870216,
-        "rsi_pct1": -0.25524946514928326,
-        "rsi_accel": -12.738019857304373
-      },
-      "liquidity": {
-        "status": "ok",
-        "day_volume": 5523093.224267001,
-        "sizes": {
-          "1000": {
-            "full_fill": true,
-            "best_bid": 0.86365,
-            "best_ask": 0.86373,
-            "mid": 0.8636900000000001,
-            "entry_slippage_pct": 8.45203903085956e-05,
-            "roundtrip_book_impact_pct": 0.0001453032455027703,
-            "buy_book_coverage": 1.0
-          },
-          "5000": {
-            "full_fill": true,
-            "best_bid": 0.86365,
-            "best_ask": 0.86373,
-            "mid": 0.8636900000000001,
-            "entry_slippage_pct": 0.00029905348020586864,
-            "roundtrip_book_impact_pct": 0.00045306064363792586,
-            "buy_book_coverage": 1.0
-          },
-          "10000": {
-            "full_fill": true,
-            "best_bid": 0.86365,
-            "best_ask": 0.86373,
-            "mid": 0.8636900000000001,
-            "entry_slippage_pct": 0.0005044447736244351,
-            "roundtrip_book_impact_pct": 0.0006911538600761213,
-            "buy_book_coverage": 1.0
-          }
-        },
-        "bid_levels": 20,
-        "ask_levels": 20
-      },
-      "stop_touched": false,
-      "settled_at": "2026-10-03T08:00:00+00:00",
-      "realized_target_pct": 0.05,
-      "target_after_stop": false
-    },
-    {
-      "id": "C4:VIRTUAL:2026-10-02T16:00:00+00:00",
-      "coin": "VIRTUAL",
+      "id": "C4:STRK:2026-10-05T12:00:00+00:00",
+      "coin": "STRK",
       "method_id": "C4",
       "method_key": "rsi_shock_sma3",
       "method_name": "RSI Shock vs 3-Bar Mean",
-      "trigger_time": "2026-10-02T16:00:00+00:00",
-      "entry_time": "2026-10-02T20:00:00+00:00",
-      "trigger_price": 0.74892,
-      "entry_reference": 0.74907,
-      "target_5pct": 0.7865235,
-      "risk_stop_reference": 0.6928897500000001,
-      "status": "SUCCESS",
+      "trigger_time": "2026-10-05T12:00:00+00:00",
+      "entry_time": "2026-10-05T16:00:00+00:00",
+      "trigger_price": 0.05209,
+      "entry_reference": 0.05216,
+      "target_5pct": 0.054768,
+      "risk_stop_reference": 0.048248,
+      "status": "RECENT",
       "metrics": {
-        "rsi_accel": -12.738019857304373,
-        "rsi_vs_sma3": -0.19033217214291065
+        "rsi_accel": -11.107810538517668,
+        "rsi_vs_sma3": -0.13562269805434435
       },
       "liquidity": {
         "status": "ok",
-        "day_volume": 5523093.224267001,
+        "day_volume": 7532084.795486999,
         "sizes": {
           "1000": {
             "full_fill": true,
-            "best_bid": 0.86365,
-            "best_ask": 0.86373,
-            "mid": 0.8636900000000001,
-            "entry_slippage_pct": 8.45203903085956e-05,
-            "roundtrip_book_impact_pct": 0.0001453032455027703,
+            "best_bid": 0.05278,
+            "best_ask": 0.0528,
+            "mid": 0.052790000000000004,
+            "entry_slippage_pct": 0.0002530698069531656,
+            "roundtrip_book_impact_pct": 0.0005548284470744402,
             "buy_book_coverage": 1.0
           },
           "5000": {
             "full_fill": true,
-            "best_bid": 0.86365,
-            "best_ask": 0.86373,
-            "mid": 0.8636900000000001,
-            "entry_slippage_pct": 0.00029905348020586864,
-            "roundtrip_book_impact_pct": 0.00045306064363792586,
+            "best_bid": 0.05278,
+            "best_ask": 0.0528,
+            "mid": 0.052790000000000004,
+            "entry_slippage_pct": 0.0003536991364068154,
+            "roundtrip_book_impact_pct": 0.0010757610714637877,
             "buy_book_coverage": 1.0
           },
           "10000": {
             "full_fill": true,
-            "best_bid": 0.86365,
-            "best_ask": 0.86373,
-            "mid": 0.8636900000000001,
-            "entry_slippage_pct": 0.0005044447736244351,
-            "roundtrip_book_impact_pct": 0.0006911538600761213,
+            "best_bid": 0.05278,
+            "best_ask": 0.0528,
+            "mid": 0.052790000000000004,
+            "entry_slippage_pct": 0.0003662792262519865,
+            "roundtrip_book_impact_pct": 0.0012599330170615097,
             "buy_book_coverage": 1.0
           }
         },
         "bid_levels": 20,
         "ask_levels": 20
       },
-      "stop_touched": false,
-      "settled_at": "2026-10-03T08:00:00+00:00",
-      "realized_target_pct": 0.05,
-      "target_after_stop": false
+      "stop_touched": false
     },
     {
-      "id": "C3:VIRTUAL:2026-10-02T16:00:00+00:00",
-      "coin": "VIRTUAL",
+      "id": "C3:STRK:2026-10-05T12:00:00+00:00",
+      "coin": "STRK",
       "method_id": "C3",
       "method_key": "volume_capitulation_flush",
       "method_name": "Volume Capitulation Flush",
-      "trigger_time": "2026-10-02T16:00:00+00:00",
-      "entry_time": "2026-10-02T20:00:00+00:00",
-      "trigger_price": 0.74892,
-      "entry_reference": 0.74907,
-      "target_5pct": 0.7865235,
-      "risk_stop_reference": 0.6928897500000001,
-      "status": "SUCCESS",
+      "trigger_time": "2026-10-05T12:00:00+00:00",
+      "entry_time": "2026-10-05T16:00:00+00:00",
+      "trigger_price": 0.05209,
+      "entry_reference": 0.05216,
+      "target_5pct": 0.054768,
+      "risk_stop_reference": 0.048248,
+      "status": "RECENT",
       "metrics": {
-        "close_location": 0.134957825679475,
-        "volume_ratio20": 2.825512569939751
+        "close_location": 0.10460992907801411,
+        "volume_ratio20": 3.388202297072233
       },
       "liquidity": {
         "status": "ok",
-        "day_volume": 5523093.224267001,
+        "day_volume": 7532084.795486999,
         "sizes": {
           "1000": {
             "full_fill": true,
-            "best_bid": 0.86365,
-            "best_ask": 0.86373,
-            "mid": 0.8636900000000001,
-            "entry_slippage_pct": 8.45203903085956e-05,
-            "roundtrip_book_impact_pct": 0.0001453032455027703,
+            "best_bid": 0.05278,
+            "best_ask": 0.0528,
+            "mid": 0.052790000000000004,
+            "entry_slippage_pct": 0.0002530698069531656,
+            "roundtrip_book_impact_pct": 0.0005548284470744402,
             "buy_book_coverage": 1.0
           },
           "5000": {
             "full_fill": true,
-            "best_bid": 0.86365,
-            "best_ask": 0.86373,
-            "mid": 0.8636900000000001,
-            "entry_slippage_pct": 0.00029905348020586864,
-            "roundtrip_book_impact_pct": 0.00045306064363792586,
+            "best_bid": 0.05278,
+            "best_ask": 0.0528,
+            "mid": 0.052790000000000004,
+            "entry_slippage_pct": 0.0003536991364068154,
+            "roundtrip_book_impact_pct": 0.0010757610714637877,
             "buy_book_coverage": 1.0
           },
           "10000": {
             "full_fill": true,
-            "best_bid": 0.86365,
-            "best_ask": 0.86373,
-            "mid": 0.8636900000000001,
-            "entry_slippage_pct": 0.0005044447736244351,
-            "roundtrip_book_impact_pct": 0.0006911538600761213,
+            "best_bid": 0.05278,
+            "best_ask": 0.0528,
+            "mid": 0.052790000000000004,
+            "entry_slippage_pct": 0.0003662792262519865,
+            "roundtrip_book_impact_pct": 0.0012599330170615097,
             "buy_book_coverage": 1.0
           }
         },
         "bid_levels": 20,
         "ask_levels": 20
       },
-      "stop_touched": false,
-      "settled_at": "2026-10-03T08:00:00+00:00",
-      "realized_target_pct": 0.05,
-      "target_after_stop": false
-    }
-  ],
-  "shadow_signals": [
+      "stop_touched": false
+    },
     {
-      "id": "N06:SAND:2026-10-03T08:00:00+00:00",
+      "id": "C5:SAND:2026-10-03T08:00:00+00:00",
       "coin": "SAND",
-      "method_id": "N06",
+      "method_id": "C5",
       "method_key": "novel_proportional_washout",
-      "method_name": "Novel 06 \u00b7 Proportional Breakout Washout",
+      "method_name": "Proportional Breakout Washout",
       "trigger_time": "2026-10-03T08:00:00+00:00",
       "entry_time": "2026-10-03T12:00:00+00:00",
       "trigger_price": 0.072463,
       "entry_reference": 0.072449,
       "target_5pct": 0.07607145,
       "risk_stop_reference": 0.067015325,
-      "status": "SHADOW_SUCCESS",
+      "status": "SUCCESS",
       "metrics": {
         "daily_ret5": 0.5005170403291457,
-        "daily_rsi": 83.50349560305948,
+        "daily_rsi": 83.49002914702945,
         "trigger_rsi": 69.5755525537538,
-        "daily_4h_rsi_gap": 13.927943049305682,
+        "daily_4h_rsi_gap": 13.914476593275651,
         "price_dd": -0.13216924753589865,
         "asset_ret4": -0.06554819075129603,
         "btc_ret4": 0.001277668019259659,
@@ -677,114 +448,49 @@
       },
       "liquidity": {
         "status": "ok",
-        "day_volume": 12957870.283982005,
+        "day_volume": 6726950.664074003,
         "sizes": {
           "1000": {
             "full_fill": true,
-            "best_bid": 0.071501,
-            "best_ask": 0.07152,
-            "mid": 0.0715105,
-            "entry_slippage_pct": 0.00023929408363643212,
-            "roundtrip_book_impact_pct": 0.0004139506713545238,
+            "best_bid": 0.068061,
+            "best_ask": 0.068073,
+            "mid": 0.06806699999999999,
+            "entry_slippage_pct": 0.0001586605447205791,
+            "roundtrip_book_impact_pct": 0.00033467659825214824,
             "buy_book_coverage": 1.0
           },
           "5000": {
             "full_fill": true,
-            "best_bid": 0.071501,
-            "best_ask": 0.07152,
-            "mid": 0.0715105,
-            "entry_slippage_pct": 0.0004296013846549762,
-            "roundtrip_book_impact_pct": 0.0008830723903567872,
+            "best_bid": 0.068061,
+            "best_ask": 0.068073,
+            "mid": 0.06806699999999999,
+            "entry_slippage_pct": 0.0005363529385804533,
+            "roundtrip_book_impact_pct": 0.0009751815104442896,
             "buy_book_coverage": 1.0
           },
           "10000": {
             "full_fill": false,
-            "best_bid": 0.071501,
-            "best_ask": 0.07152,
-            "mid": 0.0715105,
+            "best_bid": 0.068061,
+            "best_ask": 0.068073,
+            "mid": 0.06806699999999999,
             "entry_slippage_pct": null,
             "roundtrip_book_impact_pct": null,
-            "buy_book_coverage": 0.7078541634
+            "buy_book_coverage": 0.9274410285
           }
         },
         "bid_levels": 20,
         "ask_levels": 20
       },
-      "stop_touched": false,
+      "stop_touched": true,
+      "stop_touched_at": "2026-10-05T12:00:00+00:00",
       "settled_at": "2026-10-03T12:00:00+00:00",
-      "realized_target_pct": 0.05,
-      "target_after_stop": false
-    },
-    {
-      "id": "R03:PURR:2026-10-02T16:00:00+00:00",
-      "coin": "PURR",
-      "method_id": "R03",
-      "method_key": "refined_novel03_btc_vol",
-      "method_name": "Refined Novel 03 \u00b7 BTC-Volatility Flow Wick",
-      "trigger_time": "2026-10-02T16:00:00+00:00",
-      "entry_time": "2026-10-02T20:00:00+00:00",
-      "trigger_price": 0.14975,
-      "entry_reference": 0.14977,
-      "target_5pct": 0.1572585,
-      "risk_stop_reference": 0.13853725,
-      "status": "SHADOW_SUCCESS",
-      "metrics": {
-        "daily_ret5": 0.2643883495145629,
-        "daily_rsi": 63.360956235715456,
-        "trigger_rsi": 46.62687859545273,
-        "daily_4h_rsi_gap": 16.734077640262726,
-        "price_dd": -0.18543298520452567,
-        "asset_ret4": -0.11756040070713025,
-        "btc_ret4": -0.012142949236377265,
-        "btc_rsi14": 49.26185327248771,
-        "btc_atr14_pct": 0.01306513754159131,
-        "relative_ret4": -0.10541745147075299,
-        "lower_wick": 0.09281961471103253,
-        "obv_delta3_norm": -0.1309971871682553
-      },
-      "liquidity": {
-        "status": "ok",
-        "day_volume": 1752722.7795799992,
-        "sizes": {
-          "1000": {
-            "full_fill": false,
-            "best_bid": 0.1676,
-            "best_ask": 0.16779,
-            "mid": 0.16769499999999998,
-            "entry_slippage_pct": null,
-            "roundtrip_book_impact_pct": null,
-            "buy_book_coverage": 0.8271513699999999
-          },
-          "5000": {
-            "full_fill": false,
-            "best_bid": 0.1676,
-            "best_ask": 0.16779,
-            "mid": 0.16769499999999998,
-            "entry_slippage_pct": null,
-            "roundtrip_book_impact_pct": null,
-            "buy_book_coverage": 0.165430274
-          },
-          "10000": {
-            "full_fill": false,
-            "best_bid": 0.1676,
-            "best_ask": 0.16779,
-            "mid": 0.16769499999999998,
-            "entry_slippage_pct": null,
-            "roundtrip_book_impact_pct": null,
-            "buy_book_coverage": 0.082715137
-          }
-        },
-        "bid_levels": 20,
-        "ask_levels": 20
-      },
-      "stop_touched": false,
-      "settled_at": "2026-10-02T20:00:00+00:00",
       "realized_target_pct": 0.05,
       "target_after_stop": false
     }
   ],
-  "history_count": 6,
-  "shadow_history_count": 2,
+  "shadow_signals": [],
+  "history_count": 3,
+  "shadow_history_count": 0,
   "coverage": {
     "ok": 178,
     "short": 0,
