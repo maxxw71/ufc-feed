@@ -9,6 +9,7 @@ on:
       - "nba/build_coach_continuity.py"
       - "nba/research/discover_physical_coach.py"
       - "nba/research/audit_physcoach_001.py"
+      - "nba/research/audit_physcoach_losses.py"
       - ".github/workflows/nba-physical-coaching-discovery.yml"
 
 permissions:
@@ -34,6 +35,7 @@ jobs:
       - run: python nba/build_market_features.py
       - run: python nba/research/discover_physical_coach.py
       - run: python nba/research/audit_physcoach_001.py
+      - run: python nba/research/audit_physcoach_losses.py
       - shell: bash
         run: |
           set -euo pipefail
