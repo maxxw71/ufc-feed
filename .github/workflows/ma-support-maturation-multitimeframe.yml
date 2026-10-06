@@ -1,0 +1,67 @@
+name: Multi-timeframe support maturation research
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'crypto/research/ma_support_maturation_multitimeframe.py'
+      - '.github/workflows/ma-support-maturation-multitimeframe.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: ma-support-maturation-multitimeframe
+  cancel-in-progress: true
+
+jobs:
+  scan:
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [0,1,2,3,4,5,6,7]
+    runs-on: [self-hosted, Linux, X64]
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+      - name: Scan repeated support across 1h 4h 1d
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          python3 -m venv /tmp/ma-support-mtf-venv
+          /tmp/ma-support-mtf-venv/bin/pip install --quiet pandas numpy requests
+          /tmp/ma-support-mtf-venv/bin/python crypto/research/ma_support_maturation_multitimeframe.py --mode scan --symbols 180 --shard-index ${{ matrix.shard }} --shard-count 8 --out ma_support_mtf_out
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ma-support-mtf-${{ matrix.shard }}
+          path: ma_support_mtf_out/
+          retention-days: 2
+
+  aggregate:
+    needs: scan
+    if: always() && needs.scan.result == 'success'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with: {fetch-depth: 0}
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.12'}
+      - run: python -m pip install --quiet pandas numpy requests
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: ma-support-mtf-*
+          path: ma_support_mtf_shards
+          merge-multiple: true
+      - run: python crypto/research/ma_support_maturation_multitimeframe.py --mode aggregate --input-dir ma_support_mtf_shards --out crypto/research/results_ma_support_maturation_multitimeframe
+      - name: Commit results
+        run: |
+          git config user.name appwiza-research-bot
+          git config user.email actions@users.noreply.github.com
+          git add crypto/research/results_ma_support_maturation_multitimeframe
+          if ! git diff --cached --quiet; then
+            git commit -m "Update multi-timeframe support maturation research"
+            git pull --rebase -X ours origin main || true
+            git push origin HEAD:main || true
+          fi
