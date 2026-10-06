@@ -4,7 +4,7 @@ from collections import defaultdict
 from datetime import datetime,timezone
 from pathlib import Path
 
-NBA=Path(__file__).resolve().parents[1]
+NBA=Path(__file__).resolve().parent
 SRC=NBA/"coaching"/"historical_coaches.csv.gz"; OUT=NBA/"features"
 
 def rgz(p):
@@ -15,6 +15,7 @@ def wgz(p,rows):
     for r in rows:
         for k in r:
             if k not in fs:fs.append(k)
+    p.parent.mkdir(parents=True,exist_ok=True)
     with gzip.open(p,"wt",encoding="utf-8",newline="") as f:
         w=csv.DictWriter(f,fieldnames=fs or ["_empty"]);w.writeheader();w.writerows(rows)
 
