@@ -1,0 +1,82 @@
+name: Repeated SMA350 support research
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'crypto/research/ma_repeated_support_research.py'
+      - '.github/workflows/ma-repeated-support.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: ma-repeated-support
+  cancel-in-progress: true
+
+jobs:
+  hl_scan:
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [0,1,2,3,4,5,6,7]
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.12'}
+      - run: python -m pip install --quiet pandas numpy requests
+      - run: python crypto/research/ma_repeated_support_research.py --mode scan --venue hl --days 600 --shard-index ${{ matrix.shard }} --shard-count 8 --out repeat_ma_out
+      - uses: actions/upload-artifact@v4
+        with:
+          name: repeat-ma-hl-${{ matrix.shard }}
+          path: repeat_ma_out/
+          retention-days: 2
+
+  binance_perps:
+    runs-on: [self-hosted, Linux, X64]
+    timeout-minutes: 50
+    steps:
+      - uses: actions/checkout@v4
+      - name: Scan Binance USD-M perpetuals
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          python3 -m venv /tmp/repeat-ma-venv
+          /tmp/repeat-ma-venv/bin/pip install --quiet pandas numpy requests
+          /tmp/repeat-ma-venv/bin/python crypto/research/ma_repeated_support_research.py --mode scan --venue bf --days 600 --binance-symbols 160 --out repeat_ma_out
+      - uses: actions/upload-artifact@v4
+        with:
+          name: repeat-ma-bf
+          path: repeat_ma_out/
+          retention-days: 2
+
+  aggregate:
+    needs: [hl_scan,binance_perps]
+    if: always() && needs.hl_scan.result == 'success' && needs.binance_perps.result == 'success'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with: {fetch-depth: 0}
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.12'}
+      - run: python -m pip install --quiet pandas numpy requests
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: repeat-ma-*
+          path: repeat_ma_shards
+          merge-multiple: true
+      - run: python crypto/research/ma_repeated_support_research.py --mode aggregate --input-dir repeat_ma_shards --out crypto/research/results_ma_repeated_support
+      - name: Commit results
+        run: |
+          git config user.name appwiza-research-bot
+          git config user.email actions@users.noreply.github.com
+          git add crypto/research/results_ma_repeated_support
+          if ! git diff --cached --quiet; then
+            git commit -m "Update repeated SMA350 support research"
+            git pull --rebase -X ours origin main || true
+            git push origin HEAD:main || true
+          fi
