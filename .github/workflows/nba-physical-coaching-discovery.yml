@@ -8,6 +8,7 @@ on:
       - "nba/build_starter_physical.py"
       - "nba/build_coach_continuity.py"
       - "nba/research/discover_physical_coach.py"
+      - "nba/research/audit_physcoach_001.py"
       - ".github/workflows/nba-physical-coaching-discovery.yml"
 
 permissions:
@@ -32,6 +33,7 @@ jobs:
       - run: python nba/build_coach_continuity.py
       - run: python nba/build_market_features.py
       - run: python nba/research/discover_physical_coach.py
+      - run: python nba/research/audit_physcoach_001.py
       - shell: bash
         run: |
           set -euo pipefail
