@@ -72,37 +72,56 @@ sources=[
  ROOT/"ufc_reach_method_analysis/reach_market_sample.csv",
 ]
 source_reports=[]; matched_frames=[]
+# De-duplicate archive pairs defensively.
+fx["pair_norm"]=fx.apply(lambda r:"|".join(sorted([r.a_norm,r.b_norm])),axis=1)
+fx=fx.drop_duplicates(["event_date","pair_norm"]).copy()
+keys={(r.event_date,r.pair_norm):i for i,r in fx.iterrows()}
+
 for src in sources:
     if not src.exists(): continue
     d=pd.read_csv(src,low_memory=False)
     source_reports.append({"source":str(src),"rows":len(d),"columns":"|".join(d.columns)})
-    need={"event_date","favorite","opponent"}
-    if not need.issubset(d.columns): continue
+    if "event_date" not in d.columns: continue
     d["event_date"]=pd.to_datetime(d["event_date"],errors="coerce").dt.normalize()
-    d["fav_norm"]=d.favorite.map(norm); d["opp_norm"]=d.opponent.map(norm)
-    keys={(r.event_date,tuple(sorted((r.a_norm,r.b_norm)))):i for i,r in fx.iterrows()}
-    keep=[]
-    for _,r in d.iterrows():
-        k=(r.event_date,tuple(sorted((r.fav_norm,r.opp_norm))))
-        if k in keys:
+
+    # Existing UFC research files use player1/player2 rather than favorite/opponent.
+    if {"player1","player2"}.issubset(d.columns):
+        d["p1_norm_join"]=d.player1.map(norm); d["p2_norm_join"]=d.player2.map(norm)
+        d["pair_norm"]=d.apply(lambda r:"|".join(sorted([r.p1_norm_join,r.p2_norm_join])),axis=1)
+        keep=[]
+        for _,r in d.iterrows():
+            k=(r.event_date,r.pair_norm)
+            if k not in keys: continue
             fr=fx.loc[keys[k]]
             z=r.to_dict()
+            fav_is_p1=bool(r.get("fav_is_p1",r.get("market_fav_is_p1",True)))
+            z["favorite"]=r.player1 if fav_is_p1 else r.player2
+            z["opponent"]=r.player2 if fav_is_p1 else r.player1
+            z["won"]=bool(r.get("fav_won",r.get("market_fav_won",norm(z["favorite"])==fr.winner_norm)))
+            if "fav_prob" in r: z["market_prob"]=r.fav_prob
+            elif "market_prob" in r: z["market_prob"]=r.market_prob
+            if "fav_dec" in r: z["fav_decimal"]=r.fav_dec
+            elif "fav_decimal" in r: z["fav_decimal"]=r.fav_decimal
+            if "profit100" in r: z["profit100"]=r.profit100
+            elif "profit_100" in r: z["profit100"]=r.profit_100
+            # Standardized favorite-relative advantages from existing research.
+            if "age_adv" in r: z["age_gap"]=r.age_adv
+            if "reach_adv" in r: z["reach_gap"]=r.reach_adv
+            if "height_gap" in r and "market_fav_taller" in r:
+                z["height_gap"]=abs(pd.to_numeric(r.height_gap,errors="coerce")) if bool(r.market_fav_taller) else -abs(pd.to_numeric(r.height_gap,errors="coerce"))
             z["dwcs_season"]=fr.season; z["dwcs_event_name"]=fr.event_name; z["dwcs_winner"]=fr.winner
-            if "won" not in z or pd.isna(z.get("won")):
-                z["won"]=norm(r.favorite)==fr.winner_norm
             keep.append(z)
-    if keep:
-        q=pd.DataFrame(keep); q["source_file"]=str(src); matched_frames.append(q)
+        if keep:
+            q=pd.DataFrame(keep); q["source_file"]=str(src); matched_frames.append(q)
 
 pd.DataFrame(source_reports).to_csv(OUT/"feature_sources.csv",index=False)
 if matched_frames:
-    # Prefer age+reach source, then add uniquely named columns from other matched sources by date/fighter/opponent.
     base=matched_frames[0].copy()
     for extra in matched_frames[1:]:
         key=["event_date","favorite","opponent"]
-        add=[c for c in extra.columns if c not in base.columns and c not in key]
+        add=[col for col in extra.columns if col not in base.columns and col not in key]
         if add: base=base.merge(extra[key+add],on=key,how="left")
-    m=base
+    m=base.drop_duplicates(["event_date","favorite","opponent"]).copy()
 else:
     m=pd.DataFrame()
 m.to_csv(OUT/"matched_prefight_features.csv",index=False)
