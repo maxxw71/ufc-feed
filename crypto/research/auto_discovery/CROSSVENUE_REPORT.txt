@@ -1,14 +1,14 @@
 AUTO DISCOVERY — BINANCE CROSS-VENUE VALIDATION
 
-Binance 8% first-flush events: 800
-Independent Binance holdout events: 320
-Candidates checked: 5
+Binance 8% first-flush events: 772
+Independent Binance holdout events: 309
+Candidates checked: 4
 Cross-validated shadow candidates: 3
 Binance net ROI gate: >= 1.00%/trade under the same +5/-7.5/5d contract
 
-    candidate_id                 status                                                    rule  binance_n  binance_hit5  binance_hit10  binance_t5_s7p5  binance_net_roi  binance_wilson_lower unsupported_features
-AUTO-20261005-02 CROSS_VALIDATED_SHADOW close_location <= 0.070281 AND price_pct1 <= -0.0347543         49      0.795918       0.591837         0.734694         0.013437              0.663627                     
-AUTO-20261005-04 CROSS_VALIDATED_SHADOW   close_location <= 0.0855158 AND rsi_accel <= -9.01822         34      0.852941       0.617647         0.764706         0.017188              0.698716                     
-AUTO-20261005-05 CROSS_VALIDATED_SHADOW    rsi_accel <= -10.0906 AND close_location <= 0.121222         46      0.782609       0.586957         0.717391         0.011274              0.644260                     
+    candidate_id                 status                                                     rule  binance_n  binance_hit5  binance_hit10  binance_t5_s7p5  binance_net_roi  binance_wilson_lower unsupported_features
+AUTO-20261006-01 CROSS_VALIDATED_SHADOW close_location <= 0.0855167 AND rsi_vs_sma3 <= -0.120231         37      0.783784       0.567568         0.756757         0.016195              0.628045                     
+AUTO-20261006-02 CROSS_VALIDATED_SHADOW close_location <= 0.0703409 AND price_pct1 <= -0.0341797         47      0.787234       0.553191         0.723404         0.012026              0.650957                     
+AUTO-20261006-04 CROSS_VALIDATED_SHADOW    close_location <= 0.0855167 AND rsi_accel <= -8.98354         31      0.870968       0.645161         0.806452         0.022406              0.711472                     
 
 No candidate is auto-promoted live. CROSS_VALIDATED_SHADOW still requires forward shadow performance and manual review.
