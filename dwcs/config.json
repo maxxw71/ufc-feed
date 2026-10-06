@@ -1,0 +1,35 @@
+{
+  "promotion": "DWCS",
+  "event_type": "contender_series",
+  "storage_namespace": "dwcs",
+  "count_toward_ufc_record": false,
+  "live_promoted_methods": [],
+  "research_status": "shadow_only",
+  "transfer_test_methods": [
+    "Age Hybrid · Strong",
+    "Striking + TD Defense · Risk Gated",
+    "Striking Differential + Opponent Context"
+  ],
+  "method_key_prefix": "DW",
+  "required_point_in_time_fields": [
+    "event_date",
+    "fighter",
+    "opponent",
+    "age",
+    "age_gap",
+    "height",
+    "reach",
+    "pro_fights",
+    "wins",
+    "losses",
+    "draws",
+    "finish_rate",
+    "first_round_finish_rate",
+    "regional_promotion_context",
+    "opponent_quality_context",
+    "layoff_days",
+    "market_odds",
+    "market_timestamp"
+  ],
+  "track_contract_outcome": true
+}
