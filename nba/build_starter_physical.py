@@ -3,7 +3,7 @@ import csv,gzip,json,statistics
 from datetime import datetime,timezone
 from pathlib import Path
 
-NBA=Path(__file__).resolve().parents[1]
+NBA=Path(__file__).resolve().parent
 F=NBA/"features"; PLAYERS=NBA/"players"/"historical_player_profiles.csv.gz"
 LINE=F/"lineup_pregame.csv.gz"
 
@@ -24,6 +24,7 @@ def wgz(p,rows):
     for r in rows:
         for k in r:
             if k not in fs:fs.append(k)
+    p.parent.mkdir(parents=True,exist_ok=True)
     with gzip.open(p,"wt",encoding="utf-8",newline="") as f:
         w=csv.DictWriter(f,fieldnames=fs or ["_empty"]);w.writeheader();w.writerows(rows)
 
@@ -42,6 +43,8 @@ for r in rgz(LINE):
         for p in ps:
             dob=parse_dt(p.get("date_of_birth"))
             if dob:
+                if gd.tzinfo is None and dob.tzinfo is not None: gd=gd.replace(tzinfo=timezone.utc)
+                if dob.tzinfo is None and gd.tzinfo is not None: dob=dob.replace(tzinfo=timezone.utc)
                 ages.append((gd-dob).days/365.2425)
     pos=[(p.get("position_abbr") or "").upper() for p in ps]
     def pos_avg(cats,key):
