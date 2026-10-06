@@ -1,0 +1,32 @@
+name: DWCS BoutMetrics Historical Research
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/dwcs-boutmetrics-research.yml'
+      - 'dwcs/research/backfill_from_boutmetrics.py'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  research:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - run: python -m pip install --quiet pandas numpy requests beautifulsoup4
+      - name: Build historical DWCS archive and backtest
+        run: |
+          set -Eeuo pipefail
+          mkdir -p dwcs/research/results_boutmetrics
+          ROOT="$GITHUB_WORKSPACE" OUT="$GITHUB_WORKSPACE/dwcs/research/results_boutmetrics" python dwcs/research/backfill_from_boutmetrics.py
+      - name: Commit results
+        run: |
+          set -Eeuo pipefail
+          git config user.name 'appwiza-research-bot'
+          git config user.email 'actions@users.noreply.github.com'
+          git add dwcs/research/results_boutmetrics
+          git diff --cached --quiet && exit 0
+          git commit -m 'Add historical DWCS BoutMetrics research results'
+          git pull --rebase origin main
+          git push
