@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-import csv,gzip,json,math,re,statistics
+import argparse,csv,gzip,json,math,re,statistics
 from collections import defaultdict
 from datetime import datetime,timedelta,timezone
 from pathlib import Path
@@ -9,6 +9,11 @@ DATA=NBA/"data"/"2026_27"/"regular_season"
 F=NBA/"features";LIVE=NBA/"live";PRO=NBA/"prospective";MARKET=NBA/"market"
 OUT=NBA/"scanner";OUT.mkdir(parents=True,exist_ok=True)
 SEASON="2026-27"
+
+ap=argparse.ArgumentParser()
+ap.add_argument("--scheduled",action="store_true",help="Apply 30-minute baseline / 10-minute near-tip cadence gating")
+ap.add_argument("--force",action="store_true",help="Force scan after a material source update")
+ARGS=ap.parse_args()
 
 def rgz(p):
     if not p.exists(): return []
@@ -73,6 +78,20 @@ for g in games:
     hrs=(when-now).total_seconds()/3600
     if -0.25<=hrs<=72:upcoming.append(g)
 upcoming.sort(key=game_sort_date)
+
+# Scheduled heartbeat runs every 10 minutes. Outside the final two hours before any tip,
+# suppress redundant runs until roughly 30 minutes have elapsed. Push-triggered runs use --force.
+if ARGS.scheduled and not ARGS.force:
+    near_tip=any(0 <= (dt(g.get("game_date"))-now).total_seconds()/3600 <= 2.0 for g in upcoming if dt(g.get("game_date")))
+    last=None
+    try:
+        last=json.loads((OUT/"latest.json").read_text())
+    except Exception:
+        last=None
+    last_dt=dt((last or {}).get("scanned_at_utc"))
+    if (not near_tip) and last_dt and (now-last_dt).total_seconds() < 25*60:
+        print(json.dumps({"skipped":True,"reason":"baseline_cadence","last_scan":last_dt.isoformat(),"near_tip":False},indent=2))
+        raise SystemExit(0)
 
 # Historical feature indexes for target game context.
 def idx(path):
