@@ -8,7 +8,7 @@ on:
       - "nba/depthcharts/capture_depthcharts.py"
       - ".github/workflows/nba-depthchart-snapshot.yml"
   schedule:
-    - cron: "29 12 * * *"
+    - cron: "29 */3 * * *"
 
 permissions:
   contents: write
