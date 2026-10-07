@@ -1,0 +1,28 @@
+name: DWCS Official UFC Context Archive
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/dwcs-official-ufc-context.yml'
+      - 'dwcs/research/build_official_ufc_context.py'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+      - run: python -m pip install --quiet pandas numpy requests
+      - name: Build dated official UFC context archive
+        run: python dwcs/research/build_official_ufc_context.py
+      - name: Commit results
+        run: |
+          git config user.name appwiza-research-bot
+          git config user.email actions@users.noreply.github.com
+          git add dwcs/research/official_ufc_context
+          git diff --cached --quiet && exit 0
+          git commit -m 'Add dated official UFC DWCS context archive'
+          git pull --rebase origin main
+          git push
