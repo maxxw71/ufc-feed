@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 from __future__ import annotations
-import json,re,unicodedata,urllib.parse
-from concurrent.futures import ThreadPoolExecutor,as_completed
+import json,re,unicodedata,urllib.parse,time
 from pathlib import Path
 import pandas as pd,requests
 
@@ -88,22 +87,70 @@ def fetch_profile(row):
 def main():
     fights=pd.read_csv(ROOT/"dwcs/research/results_boutmetrics/historical_fights.csv",low_memory=False)
     names=sorted(set(fights.fighter_a.dropna().astype(str))|set(fights.fighter_b.dropna().astype(str)))
+    prior_path=OUT/"search_results.csv"
+    prior=pd.read_csv(prior_path,low_memory=False) if prior_path.exists() else pd.DataFrame()
+    prior_ok={}
+    if len(prior):
+        for _,z in prior.iterrows():
+            if bool(z.get("resolved",False)) or str(z.get("search_status",""))=="200":
+                prior_ok[str(z.get("fighter"))]=z.to_dict()
     searched=[]
-    with ThreadPoolExecutor(max_workers=20) as ex:
-        fut=[ex.submit(search_one,n) for n in names]
-        for i,f in enumerate(as_completed(fut),1):
-            searched.append(f.result())
-            if i%100==0: print("searched",i,"/",len(names),flush=True)
+    sess=requests.Session()
+    sess.headers.update({"User-Agent":UA,"Accept":"text/plain"})
+    for i,name in enumerate(names,1):
+        if name in prior_ok:
+            searched.append(prior_ok[name]); continue
+        q=urllib.parse.quote(name)
+        surl=f"https://www.ufc.com/athletes/all?search={q}"
+        rec=None
+        for attempt,delay in enumerate([0,1,3,7,15,30]):
+            if delay: time.sleep(delay)
+            try:
+                r=sess.get(JINA+surl,timeout=35)
+                if r.status_code==429: continue
+                txt=r.text if r.status_code==200 else ""
+                links=re.findall(r"\[Athlete Profile\]\((https://www\.ufc\.com/athlete/[^)]+)\)",txt,re.I)
+                countm=re.search(r"# Athletes - All\s+(\d+) Athletes",txt,re.I|re.S)
+                count=int(countm.group(1)) if countm else None
+                chosen=""
+                for u in links:
+                    if norm(u.rstrip("/").split("/")[-1].replace("-"," "))==norm(name):
+                        chosen=u; break
+                if not chosen and count==1 and links: chosen=links[0]
+                if not chosen:
+                    for u in links:
+                        sn=norm(u.rstrip("/").split("/")[-1].replace("-"," "))
+                        if norm(name) in sn or sn in norm(name):
+                            chosen=u; break
+                rec={"fighter":name,"search_url":surl,"search_status":r.status_code,"result_count":count,
+                     "profile_url":chosen,"profile_candidates":";".join(links[:20]),"resolved":bool(chosen)}
+                break
+            except Exception as e:
+                rec={"fighter":name,"search_url":surl,"resolved":False,"error":repr(e)}
+        if rec is None:
+            rec={"fighter":name,"search_url":surl,"search_status":429,"resolved":False,"error":"rate_limited_after_retries"}
+        searched.append(rec)
+        if i%25==0:
+            pd.DataFrame(searched).to_csv(prior_path,index=False)
+            print("searched",i,"/",len(names),"resolved",sum(bool(x.get("resolved")) for x in searched),flush=True)
+        time.sleep(.35)
     sdf=pd.DataFrame(searched)
     sdf.to_csv(OUT/"search_results.csv",index=False)
 
     resolved=[x for x in searched if x.get("resolved")]
     prof=[]
-    with ThreadPoolExecutor(max_workers=16) as ex:
-        fut=[ex.submit(fetch_profile,x) for x in resolved]
-        for i,f in enumerate(as_completed(fut),1):
-            prof.append(f.result())
-            if i%100==0: print("profiles",i,"/",len(resolved),flush=True)
+    # Keep profile-page fetching deliberately slow and separate from search bursts.
+    for i,x in enumerate(resolved,1):
+        rec=None
+        for delay in [0,1,3,7,15]:
+            if delay: time.sleep(delay)
+            rec=fetch_profile(x)
+            if rec.get("profile_status")!=429: break
+        prof.append(rec)
+        if i%20==0:
+            pd.DataFrame(prof).to_csv(OUT/"official_profiles.csv",index=False)
+            print("profiles",i,"/",len(resolved),"verified",sum(bool(z.get("verified")) for z in prof),flush=True)
+        time.sleep(.5)
     pdf=pd.DataFrame(prof)
     pdf.to_csv(OUT/"official_profiles.csv",index=False)
 
