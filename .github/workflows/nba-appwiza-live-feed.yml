@@ -6,7 +6,8 @@ on:
     branches: [main]
     paths:
       - "nba/live/**"
-      - "nba/scanner/**"
+      - "nba/scanner/active_picks.json"
+      - "nba/scanner/latest.json"
       - ".github/workflows/nba-appwiza-live-feed.yml"
   schedule:
     - cron: "17 * * * *"
