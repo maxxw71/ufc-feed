@@ -80,6 +80,11 @@ def main():
         rec=pd.read_csv(rp,low_memory=False)
         for _,x in rec.iterrows():
             aliases[(str(x.fighter),str(pd.to_datetime(x.dwcs_date).date()))]=str(x.matched_norm)
+    rp2=ROOT/"dwcs/research/regional_identity_recovery_v2/recovered_aliases.csv"
+    if rp2.exists():
+        rec2=pd.read_csv(rp2,low_memory=False)
+        for _,x in rec2.iterrows():
+            aliases[(str(x.fighter),str(pd.to_datetime(x.dwcs_date).date()))]=str(x.archive_alias_norm)
 
     rows=[]
     for season,event,date,name,opp in targets:
