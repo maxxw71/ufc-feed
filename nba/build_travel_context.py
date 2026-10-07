@@ -53,7 +53,7 @@ for g in games:
           "season":g.get("season"),"game_id":g.get("game_id"),"game_date":g.get("game_date"),"when":when,
           "team_id":tid,"is_home":home,"venue_id":vc.get("venue_id"),"venue_name":vc.get("venue_name"),
           "venue_city":vc.get("venue_city"),"venue_state":vc.get("venue_state"),
-          "lat":lat,"lon":lon,"timezone":tz,
+          "lat":lat,"lon":lon,"timezone":tz,"elevation_ft":v.get("elevation_ft"),
           "completed":str(g.get("completed")).lower() in ("true","1")
         })
 
@@ -76,9 +76,16 @@ for (season,tid),arr in team_games.items():
             if None not in (a.get("lat"),a.get("lon"),b.get("lat"),b.get("lon")):
                 segments.append((b["when"],hav(float(a["lat"]),float(a["lon"]),float(b["lat"]),float(b["lon"]))))
         if miles is not None:segments.append((x["when"],miles))
+        cur_elev=x.get("elevation_ft")
+        prev_elev=prev.get("elevation_ft") if prev else None
+        elev_gain=(float(cur_elev)-float(prev_elev)) if cur_elev is not None and prev_elev is not None else None
         row={
           "season":season,"game_id":x["game_id"],"game_date":x["game_date"],"team_id":tid,
           "is_home":x["is_home"],"venue_id":x["venue_id"],"venue_timezone":x.get("timezone"),
+          "venue_elevation_ft":cur_elev,"prev_venue_elevation_ft":prev_elev,
+          "elevation_gain_ft_from_prev":elev_gain,
+          "high_altitude_4000plus":bool(float(cur_elev)>=4000) if cur_elev is not None else None,
+          "elevation_gain_2500plus":bool(elev_gain>=2500) if elev_gain is not None else None,
           "travel_miles_from_prev":miles,
           "timezone_shift_hours":shift,
           "eastward_shift_hours":max(0.0,shift) if shift is not None else None,
@@ -103,7 +110,8 @@ summary={
  "generated_at_utc":datetime.now(timezone.utc).isoformat(),"rows":len(rows),"team_seasons":len(team_games),
  "distance_coverage":sum(1 for r in rows if r.get("travel_miles_from_prev") is not None)/len(rows) if rows else 0,
  "timezone_coverage":sum(1 for r in rows if r.get("timezone_shift_hours") is not None)/len(rows) if rows else 0,
- "policy":"Travel uses actual prior completed-game venue to target-game venue. Current target location is known pregame; no target outcome data are used."
+ "elevation_coverage":sum(1 for r in rows if r.get("venue_elevation_ft") is not None)/len(rows) if rows else 0,
+ "policy":"Travel uses actual prior completed-game venue to target-game venue. Current target location/elevation is known pregame; no target outcome data are used."
 }
 (OUT/"travel_pregame_summary.json").write_text(json.dumps(summary,indent=2)+"\n")
 print(json.dumps(summary,indent=2))
