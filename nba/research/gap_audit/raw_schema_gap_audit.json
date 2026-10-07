@@ -1,0 +1,467 @@
+{
+  "generated_at_utc": "2026-10-07T07:57:28.139300+00:00",
+  "files_seen": {
+    "games": 9,
+    "team_boxscores": 9,
+    "player_boxscores": 9,
+    "playbyplay": 9
+  },
+  "schemas": {
+    "games": [
+      "arena_city",
+      "arena_name",
+      "arena_state",
+      "away_score",
+      "away_team",
+      "away_team_id",
+      "away_tricode",
+      "completed",
+      "game_date",
+      "game_id",
+      "home_score",
+      "home_team",
+      "home_team_id",
+      "home_tricode",
+      "ingested_at_utc",
+      "season",
+      "season_type",
+      "source_boxscore_url",
+      "source_game_id",
+      "source_system",
+      "status",
+      "status_state"
+    ],
+    "team_boxscores": [
+      "assists",
+      "blocks",
+      "field_goals_attempted",
+      "field_goals_made",
+      "field_goals_percentage",
+      "fouls_personal",
+      "free_throws_attempted",
+      "free_throws_made",
+      "free_throws_percentage",
+      "game_id",
+      "ingested_at_utc",
+      "is_home",
+      "points",
+      "points_fast_break",
+      "rebounds_defensive",
+      "rebounds_offensive",
+      "rebounds_total",
+      "season",
+      "season_type",
+      "stat_assists",
+      "stat_blocks",
+      "stat_defensiverebounds",
+      "stat_fastbreakpoints",
+      "stat_fieldgoalpct",
+      "stat_fieldgoalsmade_fieldgoalsattempted",
+      "stat_flagrantfouls",
+      "stat_fouls",
+      "stat_freethrowpct",
+      "stat_freethrowsmade_freethrowsattempted",
+      "stat_largestlead",
+      "stat_leadchanges",
+      "stat_leadpercentage",
+      "stat_offensiverebounds",
+      "stat_pointsinpaint",
+      "stat_steals",
+      "stat_teamturnovers",
+      "stat_technicalfouls",
+      "stat_threepointfieldgoalpct",
+      "stat_threepointfieldgoalsmade_threepointfieldgoalsattempted",
+      "stat_totalrebounds",
+      "stat_totaltechnicalfouls",
+      "stat_totalturnovers",
+      "stat_turnoverpoints",
+      "stat_turnovers",
+      "steals",
+      "team_id",
+      "team_name",
+      "team_tricode",
+      "three_pointers_attempted",
+      "three_pointers_made",
+      "three_pointers_percentage",
+      "turnovers",
+      "winner"
+    ],
+    "player_boxscores": [
+      "_empty",
+      "assists",
+      "blocks",
+      "field_goals_attempted",
+      "field_goals_made",
+      "fouls_personal",
+      "free_throws_attempted",
+      "free_throws_made",
+      "game_id",
+      "ingested_at_utc",
+      "minutes",
+      "not_playing_reason",
+      "person_id",
+      "played",
+      "player_name",
+      "plus_minus",
+      "points",
+      "rebounds_defensive",
+      "rebounds_offensive",
+      "rebounds_total",
+      "season",
+      "season_type",
+      "starter",
+      "stat_",
+      "stat_3pt",
+      "stat_ast",
+      "stat_blk",
+      "stat_dreb",
+      "stat_fg",
+      "stat_ft",
+      "stat_min",
+      "stat_oreb",
+      "stat_pf",
+      "stat_pts",
+      "stat_reb",
+      "stat_stl",
+      "stat_to",
+      "status",
+      "steals",
+      "team_id",
+      "team_tricode",
+      "three_pointers_attempted",
+      "three_pointers_made",
+      "turnovers"
+    ],
+    "playbyplay": [
+      "_empty",
+      "action_number",
+      "action_type",
+      "clock",
+      "description",
+      "game_id",
+      "ingested_at_utc",
+      "is_field_goal",
+      "period",
+      "person_id",
+      "player_name",
+      "points_total",
+      "score_away",
+      "score_home",
+      "scoring_play",
+      "season",
+      "season_type",
+      "shot_distance",
+      "shot_result",
+      "source_action_id",
+      "source_sequence",
+      "sub_type",
+      "team_id",
+      "team_tricode",
+      "time_actual",
+      "x",
+      "y"
+    ]
+  },
+  "keyword_hits": {
+    "games": {
+      "x": [
+        "source_boxscore_url"
+      ],
+      "y": [
+        "arena_city",
+        "away_score",
+        "away_team",
+        "away_team_id",
+        "away_tricode",
+        "season_type",
+        "source_system"
+      ],
+      "arena": [
+        "arena_city",
+        "arena_name",
+        "arena_state"
+      ],
+      "city": [
+        "arena_city"
+      ],
+      "state": [
+        "arena_state",
+        "status_state"
+      ],
+      "type": [
+        "season_type"
+      ],
+      "team": [
+        "away_team",
+        "away_team_id",
+        "home_team",
+        "home_team_id"
+      ]
+    },
+    "team_boxscores": {
+      "y": [
+        "season_type"
+      ],
+      "lead": [
+        "stat_largestlead",
+        "stat_leadchanges",
+        "stat_leadpercentage"
+      ],
+      "type": [
+        "season_type"
+      ],
+      "team": [
+        "stat_teamturnovers",
+        "team_id",
+        "team_name",
+        "team_tricode"
+      ],
+      "person": [
+        "fouls_personal"
+      ]
+    },
+    "player_boxscores": {
+      "starter": [
+        "starter"
+      ],
+      "start": [
+        "starter"
+      ],
+      "y": [
+        "_empty",
+        "not_playing_reason",
+        "played",
+        "player_name",
+        "season_type"
+      ],
+      "type": [
+        "season_type"
+      ],
+      "play": [
+        "not_playing_reason",
+        "played",
+        "player_name"
+      ],
+      "team": [
+        "team_id",
+        "team_tricode"
+      ],
+      "person": [
+        "fouls_personal",
+        "person_id"
+      ]
+    },
+    "playbyplay": {
+      "x": [
+        "x"
+      ],
+      "y": [
+        "_empty",
+        "action_type",
+        "player_name",
+        "score_away",
+        "scoring_play",
+        "season_type",
+        "sub_type",
+        "y"
+      ],
+      "shot": [
+        "shot_distance",
+        "shot_result"
+      ],
+      "distance": [
+        "shot_distance"
+      ],
+      "clock": [
+        "clock"
+      ],
+      "period": [
+        "period"
+      ],
+      "type": [
+        "action_type",
+        "season_type",
+        "sub_type"
+      ],
+      "play": [
+        "player_name",
+        "scoring_play"
+      ],
+      "team": [
+        "team_id",
+        "team_tricode"
+      ],
+      "person": [
+        "person_id"
+      ]
+    }
+  },
+  "sample_nonempty_values": {
+    "games": {
+      "arena_city": "Boston",
+      "arena_name": "TD Garden",
+      "arena_state": "MA",
+      "away_score": "87",
+      "away_team": "Philadelphia 76ers",
+      "away_team_id": "20",
+      "away_tricode": "PHI",
+      "completed": "True",
+      "game_date": "2018-10-17T00:00Z",
+      "game_id": "401070213",
+      "home_score": "105",
+      "home_team": "Boston Celtics",
+      "home_team_id": "2",
+      "home_tricode": "BOS",
+      "ingested_at_utc": "2026-10-05T02:59:01.740771+00:00",
+      "season": "2018-19",
+      "season_type": "Regular Season",
+      "source_boxscore_url": "https://site.api.espn.com/apis/site/v2/sports/basketball/nba/summary?event=401070213",
+      "source_game_id": "401070213",
+      "source_system": "espn",
+      "status": "Final",
+      "status_state": "post"
+    },
+    "team_boxscores": {
+      "assists": "21",
+      "blocks": "5",
+      "field_goals_attempted": "97",
+      "field_goals_made": "42",
+      "field_goals_percentage": "43",
+      "fouls_personal": "20",
+      "free_throws_attempted": "14",
+      "free_throws_made": "10",
+      "free_throws_percentage": "71",
+      "game_id": "401070213",
+      "ingested_at_utc": "2026-10-05T02:59:01.740771+00:00",
+      "is_home": "True",
+      "points": "105",
+      "points_fast_break": "6",
+      "rebounds_defensive": "43",
+      "rebounds_offensive": "12",
+      "rebounds_total": "64",
+      "season": "2018-19",
+      "season_type": "Regular Season",
+      "stat_assists": "21",
+      "stat_blocks": "5",
+      "stat_defensiverebounds": "43",
+      "stat_fastbreakpoints": "6",
+      "stat_fieldgoalpct": "43",
+      "stat_fieldgoalsmade_fieldgoalsattempted": "42-97",
+      "stat_flagrantfouls": "0",
+      "stat_fouls": "20",
+      "stat_freethrowpct": "71",
+      "stat_freethrowsmade_freethrowsattempted": "10-14",
+      "stat_largestlead": "18",
+      "stat_leadchanges": null,
+      "stat_leadpercentage": null,
+      "stat_offensiverebounds": "12",
+      "stat_pointsinpaint": "34",
+      "stat_steals": "7",
+      "stat_teamturnovers": "1",
+      "stat_technicalfouls": "0",
+      "stat_threepointfieldgoalpct": "30",
+      "stat_threepointfieldgoalsmade_threepointfieldgoalsattempted": "11-37",
+      "stat_totalrebounds": "64",
+      "stat_totaltechnicalfouls": "0",
+      "stat_totalturnovers": "15",
+      "stat_turnoverpoints": "11",
+      "stat_turnovers": "14",
+      "steals": "7",
+      "team_id": "2",
+      "team_name": "Boston Celtics",
+      "team_tricode": "BOS",
+      "three_pointers_attempted": "37",
+      "three_pointers_made": "11",
+      "three_pointers_percentage": "30",
+      "turnovers": "14",
+      "winner": "True"
+    },
+    "player_boxscores": {
+      "_empty": null,
+      "assists": "0",
+      "blocks": "1",
+      "field_goals_attempted": "10",
+      "field_goals_made": "3",
+      "fouls_personal": "1",
+      "free_throws_attempted": "0",
+      "free_throws_made": "0",
+      "game_id": "401070213",
+      "ingested_at_utc": "2026-10-05T02:59:01.740771+00:00",
+      "minutes": "34",
+      "not_playing_reason": "COACH'S DECISION",
+      "person_id": "2490620",
+      "played": "True",
+      "player_name": "Robert Covington",
+      "plus_minus": "-11",
+      "points": "8",
+      "rebounds_defensive": "5",
+      "rebounds_offensive": "1",
+      "rebounds_total": "6",
+      "season": "2018-19",
+      "season_type": "Regular Season",
+      "starter": "True",
+      "stat_": "-11",
+      "stat_3pt": "2-7",
+      "stat_ast": "0",
+      "stat_blk": "1",
+      "stat_dreb": "5",
+      "stat_fg": "3-10",
+      "stat_ft": "0-0",
+      "stat_min": "34",
+      "stat_oreb": "1",
+      "stat_pf": "1",
+      "stat_pts": "8",
+      "stat_reb": "6",
+      "stat_stl": "2",
+      "stat_to": "2",
+      "status": "played",
+      "steals": "2",
+      "team_id": "20",
+      "team_tricode": "PHI",
+      "three_pointers_attempted": "7",
+      "three_pointers_made": "2",
+      "turnovers": "2"
+    },
+    "playbyplay": {
+      "_empty": null,
+      "action_number": "1",
+      "action_type": "Jump Ball",
+      "clock": "12:00",
+      "description": "Joel Embiid vs. Al Horford (Ben Simmons gains possession)",
+      "game_id": "401070213",
+      "ingested_at_utc": "2026-10-05T02:59:01.740771+00:00",
+      "is_field_goal": "False",
+      "period": "1",
+      "person_id": "3059318",
+      "player_name": null,
+      "points_total": "0",
+      "score_away": "0",
+      "score_home": "0",
+      "scoring_play": "False",
+      "season": "2018-19",
+      "season_type": "Regular Season",
+      "shot_distance": null,
+      "shot_result": "False",
+      "source_action_id": "4010702134",
+      "source_sequence": "4",
+      "sub_type": "11",
+      "team_id": "20",
+      "team_tricode": null,
+      "time_actual": "2018-10-17T00:02:52Z",
+      "x": "50",
+      "y": "-5"
+    }
+  },
+  "current_feature_gaps": [
+    "historical officials/referee assignments",
+    "travel distance/time-zone/altitude context",
+    "historical injury/availability status",
+    "exact in-season coaching change dates",
+    "starter-vs-bench/rotation role production",
+    "shot-location/rim/midrange/corner-three profile if raw coordinates/types allow",
+    "clutch scoring/efficiency rather than clutch action count only",
+    "quarter/half team rolling splits beyond current halftime/second-half margins",
+    "roster transactions/trades and days-since-acquisition",
+    "market microstructure: book disagreement, open-to-close dispersion and stale-price detection"
+  ]
+}
