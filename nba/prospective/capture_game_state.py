@@ -76,7 +76,8 @@ def stable_state(ev,summary):
       "home_team_id":str(((home.get("team") or {}).get("id")) or ""),"away_team_id":str(((away.get("team") or {}).get("id")) or ""),
       "venue_id":str(venue.get("id") or ""),"venue_name":venue.get("fullName") or venue.get("shortName"),
       "neutral_site":comp.get("neutralSite"),
-      "officials":extract_officials(summary),"starters":extract_starters(summary),"injuries":injury_digest(summary)
+      "officials":extract_officials(summary),"starters":extract_starters(summary),"injuries":injury_digest(summary),
+      "odds":comp.get("odds") or []
     }
 
 def main():
@@ -94,7 +95,7 @@ def main():
     hashes_path=OUT/"latest_state_hashes.json"
     old_hashes=load_json(hashes_path,{})
     new_hashes=dict(old_hashes)
-    snapshot_rows=[];starter_rows=[];official_rows=[];change_events=[];raw_changes={}
+    snapshot_rows=[];starter_rows=[];official_rows=[];odds_rows=[];change_events=[];raw_changes={}
     summaries_attempted=0;summaries_ok=0
 
     for gid,ev in sorted(events.items()):
@@ -132,6 +133,18 @@ def main():
         for o in state["officials"]:
             official_rows.append({"captured_at_utc":captured,"game_id":gid,"scheduled_utc":state["scheduled_utc"],"hours_to_tip":hours,
                                   "official_name":o["name"],"official_order":o.get("order"),"official_position":o.get("position")})
+        odds=state.get("odds") or []
+        if isinstance(odds,dict): odds=[odds]
+        for o in odds:
+            provider=o.get("provider") or {}
+            ho=o.get("homeTeamOdds") or {}; ao=o.get("awayTeamOdds") or {}
+            odds_rows.append({"captured_at_utc":captured,"game_id":gid,"scheduled_utc":state["scheduled_utc"],"hours_to_tip":hours,
+                              "provider_id":str(provider.get("id") or ""),"provider":provider.get("name"),"details":o.get("details"),
+                              "spread":o.get("spread"),"over_under":o.get("overUnder"),
+                              "home_moneyline":ho.get("moneyLine"),"away_moneyline":ao.get("moneyLine"),
+                              "home_spread_odds":ho.get("spreadOdds"),"away_spread_odds":ao.get("spreadOdds"),
+                              "over_odds":o.get("overOdds") if o.get("overOdds") is not None else (o.get("over") or {}).get("odds"),
+                              "under_odds":o.get("underOdds") if o.get("underOdds") is not None else (o.get("under") or {}).get("odds")})
         if changed:
             change_events.append({"captured_at_utc":captured,"game_id":gid,"scheduled_utc":state["scheduled_utc"],"hours_to_tip":hours,
                                   "previous_hash":old_hashes.get(gid),"state_hash":h,
@@ -139,7 +152,7 @@ def main():
                                   "status_name":state["status_name"],"venue_name":state["venue_name"]})
             raw_changes[gid]={"event":ev,"summary":summary,"normalized_state":state}
 
-    for fname,new in [("game_state_snapshots.csv.gz",snapshot_rows),("starter_snapshots.csv.gz",starter_rows),("official_assignment_snapshots.csv.gz",official_rows),("state_change_events.csv.gz",change_events)]:
+    for fname,new in [("game_state_snapshots.csv.gz",snapshot_rows),("starter_snapshots.csv.gz",starter_rows),("official_assignment_snapshots.csv.gz",official_rows),("near_tip_odds_snapshots.csv.gz",odds_rows),("state_change_events.csv.gz",change_events)]:
         p=OUT/fname
         write_gz(p,read_gz(p)+new)
 
@@ -152,7 +165,7 @@ def main():
 
     hashes_path.write_text(json.dumps(new_hashes,indent=2,sort_keys=True)+"\n")
     latest={"captured_at_utc":captured,"events_seen":len(events),"summary_attempted":summaries_attempted,"summary_success":summaries_ok,
-            "game_snapshot_rows":len(snapshot_rows),"starter_rows":len(starter_rows),"official_rows":len(official_rows),
+            "game_snapshot_rows":len(snapshot_rows),"starter_rows":len(starter_rows),"official_rows":len(official_rows),"odds_rows":len(odds_rows),
             "state_changes":len(change_events),"raw_change_snapshot":raw_ref,
             "near_tip_only":args.near_tip_only,"near_tip_hours":args.near_tip_hours,
             "policy":"Prospective 2026+ event ledger. Raw summary payloads are preserved only when stable pregame state changes; normalized snapshots retain every capture time."}
