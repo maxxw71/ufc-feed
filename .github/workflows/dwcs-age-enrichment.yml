@@ -1,0 +1,122 @@
+name: DWCS Age Enrichment
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/dwcs-age-enrichment.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  enrich:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - run: python -m pip install --quiet pandas requests beautifulsoup4
+      - name: Build fighter DOB and point-in-time age layer
+        shell: bash
+        run: |
+          python - <<'PY'
+          import re,json,time,requests
+          from pathlib import Path
+          import pandas as pd, numpy as np
+          from bs4 import BeautifulSoup
+
+          root=Path('.'); out=root/'dwcs/research/age_enrichment'; out.mkdir(parents=True,exist_ok=True)
+          phys=pd.read_csv(root/'dwcs/research/enrichment_probe/dwcs_fighter_physicals.csv',low_memory=False)
+          hist=pd.read_csv(root/'dwcs/research/results_boutmetrics/historical_fights.csv',low_memory=False)
+          hist['event_date']=pd.to_datetime(hist.event_date,errors='coerce').dt.normalize()
+
+          s=requests.Session(); s.headers.update({'User-Agent':'Mozilla/5.0 Appwiza-DWCS-Age/1.0'})
+          dob_rows=[]
+          # Probe all matched BoutMetrics profiles for DOB / age strings.
+          for i,r in phys.iterrows():
+              url=r.profile_url
+              dob=None; raw=''
+              try:
+                  x=s.get(url,timeout=25)
+                  if x.status_code!=200:
+                      dob_rows.append({'fighter':r.fighter,'profile_url':url,'status':x.status_code}); continue
+                  soup=BeautifulSoup(x.text,'html.parser')
+                  text=' '.join(soup.get_text(' ',strip=True).split())
+                  raw=text[:5000]
+                  pats=[
+                    r'(?:Date of Birth|DOB|Born)\s*[:\-]?\s*([A-Z][a-z]+\s+\d{1,2},\s+\d{4})',
+                    r'(?:Date of Birth|DOB|Born)\s*[:\-]?\s*(\d{4}-\d{2}-\d{2})',
+                    r'(?:Date of Birth|DOB|Born)\s*[:\-]?\s*(\d{1,2}/\d{1,2}/\d{4})',
+                  ]
+                  for p in pats:
+                      m=re.search(p,text,re.I)
+                      if m:
+                          d=pd.to_datetime(m.group(1),errors='coerce')
+                          if pd.notna(d): dob=d.normalize(); break
+                  dob_rows.append({'fighter':r.fighter,'profile_url':url,'status':x.status_code,
+                                   'dob':dob.date().isoformat() if dob is not None else '',
+                                   'has_dob':dob is not None})
+              except Exception as e:
+                  dob_rows.append({'fighter':r.fighter,'profile_url':url,'error':repr(e)})
+              if (i+1)%100==0: print('profiles',i+1)
+              time.sleep(.03)
+
+          dobdf=pd.DataFrame(dob_rows)
+          dobdf.to_csv(out/'fighter_dobs.csv',index=False)
+
+          # Fallback DOB source from existing UFC-derived physical research files when available.
+          extra={}
+          for pth in [root/'ufc_age_reach_overlap/age_reach_market_sample.csv']:
+              if not pth.exists(): continue
+              d=pd.read_csv(pth,low_memory=False)
+              for _,x in d.iterrows():
+                  if 'player1' in d and 'dob1' in d and pd.notna(x.get('dob1')):
+                      extra[str(x.player1)]=pd.to_datetime(x.dob1,errors='coerce')
+                  if 'player2' in d and 'dob2' in d and pd.notna(x.get('dob2')):
+                      extra[str(x.player2)]=pd.to_datetime(x.dob2,errors='coerce')
+
+          def norm(s):
+              s=str(s or '').lower().replace('’',"'").replace('-',' ')
+              s=re.sub(r'\b(jr|sr|ii|iii|iv)\b',' ',s)
+              s=re.sub(r'[^a-z0-9]+',' ',s)
+              return re.sub(r'\s+',' ',s).strip()
+
+          dm={}
+          for _,x in dobdf.iterrows():
+              if str(x.get('dob','')).strip():
+                  dt=pd.to_datetime(x.dob,errors='coerce')
+                  if pd.notna(dt): dm[norm(x.fighter)]=dt
+          for name,dt in extra.items():
+              if pd.notna(dt): dm.setdefault(norm(name),dt.normalize())
+
+          rows=[]
+          for _,x in hist.iterrows():
+              da=dm.get(norm(x.fighter_a)); db=dm.get(norm(x.fighter_b)); date=x.event_date
+              aa=((date-da).days/365.2425) if da is not None and pd.notna(date) else np.nan
+              ab=((date-db).days/365.2425) if db is not None and pd.notna(date) else np.nan
+              rows.append({'season':x.season,'event_name':x.event_name,'event_date':date,
+                           'fighter_a':x.fighter_a,'fighter_b':x.fighter_b,'winner':x.winner,
+                           'a_dob':da.date().isoformat() if da is not None else '',
+                           'b_dob':db.date().isoformat() if db is not None else '',
+                           'a_age':aa,'b_age':ab,'age_gap_abs':abs(aa-ab) if pd.notna(aa) and pd.notna(ab) else np.nan,
+                           'younger_fighter':x.fighter_a if pd.notna(aa) and pd.notna(ab) and aa<ab else (x.fighter_b if pd.notna(aa) and pd.notna(ab) else ''),
+                           'younger_won':(norm(x.winner)==norm(x.fighter_a if aa<ab else x.fighter_b)) if pd.notna(aa) and pd.notna(ab) and str(x.winner).strip() else np.nan})
+          af=pd.DataFrame(rows)
+          af.to_csv(out/'fight_age_features.csv',index=False)
+          cov={
+            'fighter_profiles':len(dobdf),
+            'fighters_with_dob':len(dm),
+            'historical_fights':len(af),
+            'fights_both_ages_known':int((af.a_age.notna()&af.b_age.notna()).sum()),
+            'fight_age_coverage':float((af.a_age.notna()&af.b_age.notna()).mean()),
+          }
+          (out/'coverage.json').write_text(json.dumps(cov,indent=2)+'\n')
+          print(json.dumps(cov,indent=2))
+          PY
+      - name: Commit age enrichment
+        run: |
+          git config user.name appwiza-research-bot
+          git config user.email actions@users.noreply.github.com
+          git add dwcs/research/age_enrichment
+          git diff --cached --quiet && exit 0
+          git commit -m 'Add point-in-time DWCS age enrichment'
+          git pull --rebase origin main
+          git push
