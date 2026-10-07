@@ -46,7 +46,8 @@ def parse_page(season,txt,url):
         if not a or not b:continue
         wa=float(m.group(2)) if m.group(2) else np.nan
         wb=float(m.group(5)) if m.group(5) else np.nan
-        note=" ".join(clean_md(x) for x in lines[i+1:i+4] if clean_md(x).startswith("*"))
+        nearby_raw=" ".join(lines[i:i+7])
+        note=clean_md(nearby_raw)
         rows.append({"season":season,"week":week,"fighter_a":a,"fighter_b":b,
                      "weight_a":wa,"weight_b":wb,
                      "fighter_a_marker":bool(m.group(3)),"fighter_b_marker":bool(m.group(6)),
@@ -65,8 +66,9 @@ def main():
             pages.append({"season":season,"url":url,"status":"error","error":repr(e),"parsed_bouts":0})
     w=pd.DataFrame(rows)
     if len(w):
-        w["fighter_a_missed_weight"]=w.fighter_a_marker | w.note.astype(str).str.contains("above|forfeit|missed|unable to weigh",case=False,na=False)
-        w["fighter_b_missed_weight"]=w.fighter_b_marker | w.note.astype(str).str.contains("above|forfeit|missed|unable to weigh",case=False,na=False)
+        miss=w.note.astype(str).str.contains("above the|over the|missed weight|forfeit|unable to weigh|did not weigh|not weigh in",case=False,na=False)
+        w["fighter_a_missed_weight"]=w.fighter_a_marker | miss
+        w["fighter_b_missed_weight"]=w.fighter_b_marker | miss
     w.to_csv(OUT/"official_weighins_s6_s10.csv",index=False)
     pd.DataFrame(pages).to_csv(OUT/"page_status.csv",index=False)
 
