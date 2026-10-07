@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 from __future__ import annotations
-import json
+import json,re
 from pathlib import Path
 import pandas as pd
 
@@ -21,6 +21,15 @@ def jload(path):
 
 def pct(a,b):
     return float(a/b) if b else 0.0
+
+def norm(s):
+    s=str(s or "").lower().replace("’","'").replace("-"," ")
+    s=re.sub(r"\\b(jr|sr|ii|iii|iv)\\b"," ",s)
+    s=re.sub(r"[^a-z0-9]+"," ",s)
+    return re.sub(r"\\s+"," ",s).strip()
+
+def pair_key(date,a,b):
+    return (str(pd.to_datetime(date).date()),tuple(sorted((norm(a),norm(b)))))
 
 def main():
     hist=pd.read_csv(ROOT/"dwcs/research/results_boutmetrics/historical_fights.csv",low_memory=False)
@@ -65,6 +74,24 @@ def main():
     reach_known=static_phys.get("reach_known",phys.get("reach_known",0))
     priced=odds.get("total_priced_after",odds.get("unique_priced_fights",0))
 
+    # Keep strict BFO historical closing coverage separate from verified secondary
+    # historical price snapshots. Secondary prices improve context coverage but do
+    # not silently become BFO closing prices or line-movement inputs.
+    hist_keys={pair_key(x.event_date,x.fighter_a,x.fighter_b) for _,x in hist.iterrows()}
+    strict_keys=set()
+    hp=ROOT/"dwcs/research/historical_odds/historical_odds.csv"
+    if hp.exists():
+        hd=pd.read_csv(hp,low_memory=False)
+        strict_keys={pair_key(x.event_date,x.fighter_a,x.fighter_b) for _,x in hd.iterrows()}
+    sp=ROOT/"dwcs/research/historical_odds/verified_secondary_odds.csv"
+    secondary_keys=set()
+    if sp.exists():
+        sd=pd.read_csv(sp,low_memory=False)
+        secondary_keys={pair_key(x.event_date,x.fighter_a,x.fighter_b) for _,x in sd.iterrows()}
+    any_price_keys=(strict_keys|secondary_keys)&hist_keys
+    any_priced=len(any_price_keys)
+    secondary_only=len((secondary_keys-strict_keys)&hist_keys)
+
     rows=[
       ("historical_fights","core",n,n,1.0,"complete historical S1-9 archive"),
       ("both_ages_known","identity",age.get("fights_both_ages_known",0),n,pct(age.get("fights_both_ages_known",0),n),"point-in-time age"),
@@ -72,7 +99,8 @@ def main():
       ("height_known","physical",height_known,unique_fighters,pct(height_known,unique_fighters),"height after verified UFC.com static fills"),
       ("reach_known","physical",reach_known,unique_fighters,pct(reach_known,unique_fighters),"reach after verified UFC.com static fills"),
       ("stance_known","physical",phys.get("stance_known",0),unique_fighters,pct(phys.get("stance_known",0),unique_fighters),"fighter-level stance"),
-      ("historical_odds","market",priced,n,pct(priced,n),"priced historical fights"),
+      ("historical_odds","market",priced,n,pct(priced,n),"strict BestFightOdds historical closing-price coverage"),
+      ("historical_price_any_verified","market_context",any_priced,n,pct(any_priced,n),f"any verified historical price snapshot; {secondary_only} secondary-only rows kept semantically separate"),
       ("regional_history","career",reg_after,reg_rows,pct(reg_after,reg_rows),"pre-DWCS regional history after event/opponent identity recovery"),
       ("global_elo_sos","career",sos.get("rows_with_global_history",0),sos.get("fighter_fight_rows",0),sos.get("coverage",0),"point-in-time global Elo/SOS"),
       ("dwcs_fight_technical_rows","technical",tech.get("fighter_fight_total_rows",0),2*n,pct(tech.get("fighter_fight_total_rows",0),2*n),"historical DWCS fight technical totals"),
@@ -131,11 +159,15 @@ def main():
 
     regional_cov=pct(reg_after,reg_rows)
     odds_cov=pct(priced,n)
+    any_price_cov=pct(any_priced,n)
     sos_cov=float(sos.get("coverage",0) or 0)
 
     freeze={
       "dataset_readiness_score_10":round(score,3),
       "historical_method_discovery_ready":bool(score>=8.5 and odds_cov>=.75 and regional_cov>=.75),
+      "strict_bfo_closing_coverage":round(odds_cov,6),
+      "any_verified_historical_price_coverage":round(any_price_cov,6),
+      "secondary_price_rows_kept_separate":int(secondary_only),
       "mature_9_of_10_target_met":bool(score>=9.0 and odds_cov>=.90 and regional_cov>=.90 and sos_cov>=.90),
       "quality_freeze_recommended":bool(score>=8.9 and odds_cov>=.95 and regional_cov>=.82 and sos_cov>=.82),
       "historical_data_leakage_guard":True,
