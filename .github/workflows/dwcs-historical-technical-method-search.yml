@@ -1,0 +1,115 @@
+name: DWCS Historical Technical Method Search
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/dwcs-historical-technical-method-search.yml'
+      - 'dwcs/research/historical_technical/**'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  research:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - run: python -m pip install --quiet pandas numpy
+      - name: Search point-in-time technical methods
+        run: |
+          python - <<'PY'
+          import re
+          from pathlib import Path
+          import pandas as pd, numpy as np
+          root=Path('.'); out=root/'dwcs/research/technical_methods'; out.mkdir(parents=True,exist_ok=True)
+          t=pd.read_csv(root/'dwcs/research/historical_technical/prefight_technical_snapshots.csv',low_memory=False)
+          o=pd.read_csv(root/'dwcs/research/historical_odds/historical_odds.csv',low_memory=False)
+          a=pd.read_csv(root/'dwcs/research/age_enrichment/fight_age_features.csv',low_memory=False)
+          r=pd.read_csv(root/'dwcs/research/regional_history/dwcs_prefight_regional_features.csv',low_memory=False)
+          for d,c in [(t,'event_date'),(o,'event_date'),(a,'event_date'),(r,'dwcs_date')]:
+              d[c]=pd.to_datetime(d[c],errors='coerce').dt.normalize()
+          def n(s):
+              s=str(s or '').lower().replace('’',"'").replace('-',' ')
+              s=re.sub(r'\b(jr|sr|ii|iii|iv)\b',' ',s)
+              s=re.sub(r'[^a-z0-9]+',' ',s)
+              return re.sub(r'\s+',' ',s).strip()
+          tm={(x.event_date,n(x.fighter)):x for _,x in t.iterrows()}
+          rm={(x.dwcs_date,n(x.fighter)):x for _,x in r.iterrows()}
+          am={(x.event_date,tuple(sorted([n(x.fighter_a),n(x.fighter_b)]))):x for _,x in a.iterrows()}
+          rows=[]
+          for _,x in o.iterrows():
+              sn,on=n(x.selected_profile),n(x.opponent)
+              ts=tm.get((x.event_date,sn)); to=tm.get((x.event_date,on))
+              if ts is None or int(ts.prior_technical_fights)<1: continue
+              z=x.to_dict()
+              techcols=['prior_technical_fights','prior_sig_accuracy','prior_sig_defense','prior_sig_diff',
+                        'prior_td_accuracy','prior_td_defense','prior_control_diff','prior_knockdowns','prior_sub_attempts']
+              for c in techcols:
+                  z[c]=getattr(ts,c)
+                  z['opp_'+c]=getattr(to,c) if to is not None else np.nan
+              z['both_prior_technical']=bool(to is not None and int(to.prior_technical_fights)>=1)
+              ra,rb=rm.get((x.event_date,sn)),rm.get((x.event_date,on))
+              for c in ['prior_fights','prior_win_pct','prior_avg_opponent_win_pct']:
+                  try:z['gap_'+c]=float(getattr(ra,c))-float(getattr(rb,c))
+                  except:z['gap_'+c]=np.nan
+              ag=am.get((x.event_date,tuple(sorted([n(x.fighter_a),n(x.fighter_b)]))))
+              z['age_adv']=np.nan
+              if ag is not None:
+                  if sn==n(ag.fighter_a): z['age_adv']=float(ag.b_age)-float(ag.a_age)
+                  elif sn==n(ag.fighter_b): z['age_adv']=float(ag.a_age)-float(ag.b_age)
+              rows.append(z)
+          d=pd.DataFrame(rows)
+          for c in list(d.columns):
+              if c.startswith('prior_') or c.startswith('opp_prior_') or c.startswith('gap_') or c in ['selected_close','selected_open','age_adv']:
+                  d[c]=pd.to_numeric(d[c],errors='coerce')
+          d['selected_won']=d.selected_won.astype(str).str.lower().map({'true':True,'1':True,'false':False,'0':False})
+          def p100(od,w):
+              if pd.isna(od) or pd.isna(w): return np.nan
+              return -100 if not w else (10000/abs(od) if od<0 else od)
+          d['profit100']=[p100(x,y) for x,y in zip(d.selected_close,d.selected_won)]
+          d.to_csv(out/'matched_rows.csv',index=False)
+          res=[]
+          def add(fam,rule,m):
+              q=d[m.fillna(False)&d.selected_won.notna()&d.profit100.notna()]
+              if len(q)<8:return
+              ss=[sg.profit100.sum()/(100*len(sg)) for _,sg in q.groupby('season')]
+              res.append({'family':fam,'rule':rule,'n':len(q),'wins':int(q.selected_won.sum()),
+                          'win_rate':q.selected_won.mean(),'roi':q.profit100.sum()/(100*len(q)),
+                          'seasons':len(ss),'profitable_seasons':sum(x>0 for x in ss),'worst_season_roi':min(ss)})
+          for x in [.40,.45,.50,.55,.60]: add('SIG_ACC',f'sig accuracy >= {x:.2f}',d.prior_sig_accuracy>=x)
+          for x in [.40,.50,.55,.60,.65,.70]: add('SIG_DEF',f'sig defense >= {x:.2f}',d.prior_sig_defense>=x)
+          for x in [0,10,20,30,50]: add('SIG_DIFF',f'sig diff >= {x}',d.prior_sig_diff>=x)
+          for x in [.30,.40,.50,.60]: add('TD_ACC',f'td accuracy >= {x:.2f}',d.prior_td_accuracy>=x)
+          for x in [.50,.60,.70,.80,.90]: add('TD_DEF',f'td defense >= {x:.2f}',d.prior_td_defense>=x)
+          for x in [0,60,120,180]: add('CONTROL',f'control diff >= {x}s',d.prior_control_diff>=x)
+          for x in [1,2,3]: add('KD',f'prior knockdowns >= {x}',d.prior_knockdowns>=x)
+          for x in [1,2,3]: add('SUB_PRESSURE',f'prior sub attempts >= {x}',d.prior_sub_attempts>=x)
+          for ag in [2,4,6]:
+              add('YOUTH_SIG_DEF',f'age>={ag}y + sigdef>=.55',(d.age_adv>=ag)&(d.prior_sig_defense>=.55))
+              add('YOUTH_TD_DEF',f'age>={ag}y + tddef>=.70',(d.age_adv>=ag)&(d.prior_td_defense>=.70))
+              add('YOUTH_SIG_DIFF',f'age>={ag}y + sigdiff>=10',(d.age_adv>=ag)&(d.prior_sig_diff>=10))
+          for oq in [.05,.10,.15]:
+              add('OPPQUAL_SIG_DEF',f'oppqual>={oq:.2f} + sigdef>=.55',(d.gap_prior_avg_opponent_win_pct>=oq)&(d.prior_sig_defense>=.55))
+              add('OPPQUAL_TD_DEF',f'oppqual>={oq:.2f} + tddef>=.70',(d.gap_prior_avg_opponent_win_pct>=oq)&(d.prior_td_defense>=.70))
+          add('BOTH_TECH','both fighters have prior tracked technical fights',d.both_prior_technical)
+          rr=pd.DataFrame(res)
+          if len(rr): rr=rr.sort_values(['roi','win_rate','n'],ascending=[False,False,False])
+          rr.to_csv(out/'all_rules.csv',index=False)
+          lines=['DWCS POINT-IN-TIME TECHNICAL METHOD SEARCH','='*96,
+                 f'Priced selections with >=1 prior technical fight: {len(d)}',
+                 f'Both fighters with prior technical history: {int(d.both_prior_technical.sum())}','',
+                 'TOP RULES','-'*96]
+          for _,z in rr.head(30).iterrows():
+              lines.append(f"{z.family:<20} n={int(z.n):3d} win={z.win_rate*100:5.1f}% ROI={z.roi*100:+6.1f}% prof={int(z.profitable_seasons)}/{int(z.seasons)} | {z.rule}")
+          (out/'report.txt').write_text('\n'.join(lines)+'\n')
+          print('\n'.join(lines))
+          PY
+      - name: Commit
+        run: |
+          git config user.name appwiza-research-bot
+          git config user.email actions@users.noreply.github.com
+          git add dwcs/research/technical_methods
+          git diff --cached --quiet && exit 0
+          git commit -m 'Search point-in-time DWCS technical methods'
+          git pull --rebase origin main
+          git push
