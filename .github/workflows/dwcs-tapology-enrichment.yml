@@ -1,0 +1,30 @@
+name: DWCS Tapology Enrichment
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/dwcs-tapology-enrichment.yml'
+      - 'dwcs/research/tapology_archive.py'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  enrich:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - run: python -m pip install --quiet requests beautifulsoup4
+      - name: Collect historical Tapology DWCS event pages
+        run: |
+          mkdir -p dwcs/research/tapology
+          OUT="$GITHUB_WORKSPACE/dwcs/research/tapology" python dwcs/research/tapology_archive.py
+      - name: Commit
+        run: |
+          git config user.name appwiza-research-bot
+          git config user.email actions@users.noreply.github.com
+          git add dwcs/research/tapology
+          git diff --cached --quiet && exit 0
+          git commit -m 'Add Tapology DWCS historical enrichment'
+          git pull --rebase origin main
+          git push
