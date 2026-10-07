@@ -36,21 +36,36 @@ def main():
     t=datetime.now(timezone.utc);local=t.astimezone(ET)
     idx=load_index();reports=idx.setdefault("reports",{})
     found=[];saved=[];errors=[]
-    # Today + tomorrow reports can contain tonight/tomorrow games; also check yesterday
-    # so a late previous-day report used for today's early games is preserved.
-    for delta in (-1,0,1):
-        day=(local.date()+timedelta(days=delta)).isoformat()
+    # Preserve only report timestamps that could already exist. A current report can
+    # include tomorrow's games, so there is no need to probe future report timestamps.
+    for delta in (-1,0):
+        report_day=(local.date()+timedelta(days=delta))
+        day=report_day.isoformat()
         for h in range(6,24):
+            nominal=datetime(report_day.year,report_day.month,report_day.day,h,30,tzinfo=ET)
+            if nominal > local+timedelta(minutes=20):
+                continue
             fn=fname(day,h);url=BASE+fn
             ok,err=fetch(url,"HEAD")
+            b=b"";derr=None
+            if ok:
+                b,derr=fetch(url,"GET",timeout=30)
+            elif err in ("HTTP 403","HTTP 405"):
+                # Some NBA static-host objects reject HEAD while serving GET.
+                b,derr=fetch(url,"GET",timeout=30)
+                ok=bool(b and b[:5]==b"%PDF-")
             if not ok:
-                if err and "404" not in err:errors.append({"url":url,"error":err})
+                if err and err not in ("HTTP 403","HTTP 404","HTTP 405"):
+                    errors.append({"url":url,"error":err})
                 continue
             found.append(url)
             if url in reports:continue
-            b,derr=fetch(url,"GET",timeout=30)
             if not b:
-                errors.append({"url":url,"error":derr or "empty download"});continue
+                b,derr=fetch(url,"GET",timeout=30)
+            if not b or b[:5]!=b"%PDF-":
+                if derr and derr not in ("HTTP 403","HTTP 404","HTTP 405"):
+                    errors.append({"url":url,"error":derr})
+                continue
             sha=hashlib.sha256(b).hexdigest()
             rday=day
             rawdir=RAW/rday;rawdir.mkdir(parents=True,exist_ok=True)
