@@ -1,0 +1,194 @@
+{
+  "generated_at_utc": "2026-10-07T08:26:59.143211+00:00",
+  "rows": 19004,
+  "rules_tested": 38003,
+  "candidates": 5,
+  "top_methods": [
+    {
+      "rule": "opp_seed6_gap >= 0.07692 AND market_prob >= 0.5968 AND is_home == 1",
+      "status": "standings_shadow_candidate",
+      "discA": {
+        "n": 129,
+        "wins": 95,
+        "hit": 0.7364341085271318,
+        "roi": 0.039583394277243944,
+        "profit": 5.106257861764469,
+        "wilson_low": 0.6543649222612533
+      },
+      "discB": {
+        "n": 100,
+        "wins": 73,
+        "hit": 0.73,
+        "roi": 0.025429740098586763,
+        "profit": 2.542974009858676,
+        "wilson_low": 0.6356769977376873
+      },
+      "validation": {
+        "n": 37,
+        "wins": 31,
+        "hit": 0.8378378378378378,
+        "roi": 0.17971079828980144,
+        "profit": 6.649299536722653,
+        "wilson_low": 0.6886320070454415
+      },
+      "holdout": {
+        "n": 71,
+        "wins": 55,
+        "hit": 0.7746478873239436,
+        "roi": 0.07685638067750875,
+        "profit": 5.456803028103121,
+        "wilson_low": 0.6648460480022997
+      },
+      "method_id": "NBA_STAND_001"
+    },
+    {
+      "rule": "opp_seed6_gap >= 0 AND streak_gap <= -2 AND market_prob >= 0.5968",
+      "status": "standings_shadow_candidate",
+      "discA": {
+        "n": 134,
+        "wins": 103,
+        "hit": 0.7686567164179104,
+        "roi": 0.08288557539248044,
+        "profit": 11.106667102592379,
+        "wilson_low": 0.6903742500361434
+      },
+      "discB": {
+        "n": 107,
+        "wins": 84,
+        "hit": 0.7850467289719626,
+        "roi": 0.11686102621169304,
+        "profit": 12.504129804651155,
+        "wilson_low": 0.6980560989198505
+      },
+      "validation": {
+        "n": 56,
+        "wins": 44,
+        "hit": 0.7857142857142857,
+        "roi": 0.11589353736968326,
+        "profit": 6.490038092702263,
+        "wilson_low": 0.6618028634399505
+      },
+      "holdout": {
+        "n": 92,
+        "wins": 70,
+        "hit": 0.7608695652173914,
+        "roi": 0.0706329132713633,
+        "profit": 6.498228020965423,
+        "wilson_low": 0.66437665131467
+      },
+      "method_id": "NBA_STAND_002"
+    },
+    {
+      "rule": "opp_rank <= 6 AND streak_gap <= -2 AND market_prob >= 0.5968",
+      "status": "standings_shadow_candidate",
+      "discA": {
+        "n": 129,
+        "wins": 99,
+        "hit": 0.7674418604651163,
+        "roi": 0.08529657072646091,
+        "profit": 11.003257623713457,
+        "wilson_low": 0.6874508458439789
+      },
+      "discB": {
+        "n": 104,
+        "wins": 82,
+        "hit": 0.7884615384615384,
+        "roi": 0.12163061875101636,
+        "profit": 12.649584350105702,
+        "wilson_low": 0.7004227763289638
+      },
+      "validation": {
+        "n": 53,
+        "wins": 41,
+        "hit": 0.7735849056603774,
+        "roi": 0.10219707583224885,
+        "profit": 5.416445019109189,
+        "wilson_low": 0.6447347199775757
+      },
+      "holdout": {
+        "n": 87,
+        "wins": 65,
+        "hit": 0.7471264367816092,
+        "roi": 0.0560943652346648,
+        "profit": 4.880209775415838,
+        "wilson_low": 0.6466822904287989
+      },
+      "method_id": "NBA_STAND_003"
+    },
+    {
+      "rule": "opp_rank <= 3 AND opp_seed6_gap >= 0.07692 AND market_prob >= 0.5968",
+      "status": "standings_shadow_candidate",
+      "discA": {
+        "n": 117,
+        "wins": 88,
+        "hit": 0.7521367521367521,
+        "roi": 0.05704270793589529,
+        "profit": 6.673996828499749,
+        "wilson_low": 0.6667207450882539
+      },
+      "discB": {
+        "n": 94,
+        "wins": 68,
+        "hit": 0.723404255319149,
+        "roi": 0.014620688284698868,
+        "profit": 1.3743446987616936,
+        "wilson_low": 0.6255641807495841
+      },
+      "validation": {
+        "n": 34,
+        "wins": 28,
+        "hit": 0.8235294117647058,
+        "roi": 0.17210014029722615,
+        "profit": 5.851404770105689,
+        "wilson_low": 0.6648593225994784
+      },
+      "holdout": {
+        "n": 70,
+        "wins": 53,
+        "hit": 0.7571428571428571,
+        "roi": 0.04414803936929509,
+        "profit": 3.090362755850656,
+        "wilson_low": 0.6450473904731996
+      },
+      "method_id": "NBA_STAND_004"
+    },
+    {
+      "rule": "streak_gap <= -2 AND opp_seed10_gap >= 0.1233 AND market_prob >= 0.5968",
+      "status": "standings_shadow_candidate",
+      "discA": {
+        "n": 107,
+        "wins": 80,
+        "hit": 0.7476635514018691,
+        "roi": 0.0520797933089316,
+        "profit": 5.572537884055682,
+        "wilson_low": 0.657762993970251
+      },
+      "discB": {
+        "n": 64,
+        "wins": 48,
+        "hit": 0.75,
+        "roi": 0.08234933251102845,
+        "profit": 5.270357280705821,
+        "wilson_low": 0.6318349082561627
+      },
+      "validation": {
+        "n": 38,
+        "wins": 30,
+        "hit": 0.7894736842105263,
+        "roi": 0.1292962444550212,
+        "profit": 4.913257289290805,
+        "wilson_low": 0.6365391162355784
+      },
+      "holdout": {
+        "n": 63,
+        "wins": 47,
+        "hit": 0.746031746031746,
+        "roi": 0.05861732279427603,
+        "profit": 3.69289133603939,
+        "wilson_low": 0.6265857791515483
+      },
+      "method_id": "NBA_STAND_005"
+    }
+  ],
+  "policy": "Standings/motivation lane uses only point-in-time conference records/ranks and basic market/rest context. No future standings or season-end seed are used."
+}
