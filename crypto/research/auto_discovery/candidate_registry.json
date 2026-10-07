@@ -1,12 +1,12 @@
 {
-  "generated_at": "2026-10-06T12:12:26.329866+00:00",
+  "generated_at": "2026-10-07T11:57:08.450875+00:00",
   "source": "Hyperliquid all-pairs 4H research",
   "candidates": [
     {
-      "candidate_id": "AUTO-20261006-01",
-      "status": "CROSS_VALIDATED_SHADOW",
+      "candidate_id": "AUTO-20261007-01",
+      "status": "SHADOW_ONLY",
       "segment": "primary_perps",
-      "rule": "close_location <= 0.0855167 AND rsi_vs_sma3 <= -0.120231",
+      "rule": "close_location <= 0.0855175 AND rsi_vs_sma3 <= -0.120053",
       "features": [
         "close_location",
         "rsi_vs_sma3"
@@ -15,13 +15,13 @@
         {
           "feature": "close_location",
           "op": "<=",
-          "a": 0.08551667063892983,
+          "a": 0.08551751240700016,
           "b": null
         },
         {
           "feature": "rsi_vs_sma3",
           "op": "<=",
-          "a": -0.1202305245777122,
+          "a": -0.12005278764362004,
           "b": null
         }
       ],
@@ -47,21 +47,76 @@
       "cross_venue_validation": {
         "venue": "Binance USDT spot",
         "split": "latest 40%",
-        "n": 37,
-        "hit5": 0.7837837837837838,
-        "hit10": 0.5675675675675675,
-        "t5_before_s7p5": 0.7567567567567568,
-        "net_roi": 0.016194594594594592,
-        "wilson_lower": 0.628045387261231,
+        "n": 36,
+        "hit5": 0.7777777777777778,
+        "hit10": 0.5277777777777778,
+        "t5_before_s7p5": 0.7222222222222222,
+        "net_roi": 0.011877777777777777,
+        "wilson_lower": 0.6191498017214091,
+        "unsupported_features": [],
+        "passed": false
+      }
+    },
+    {
+      "candidate_id": "AUTO-20261007-02",
+      "status": "CROSS_VALIDATED_SHADOW",
+      "segment": "primary_perps",
+      "rule": "rsi_accel <= -11.7418 AND price_pct1 <= -0.0547084",
+      "features": [
+        "rsi_accel",
+        "price_pct1"
+      ],
+      "conditions": [
+        {
+          "feature": "rsi_accel",
+          "op": "<=",
+          "a": -11.741768017251161,
+          "b": null
+        },
+        {
+          "feature": "price_pct1",
+          "op": "<=",
+          "a": -0.054708382471662924,
+          "b": null
+        }
+      ],
+      "validation": {
+        "train_n": 59,
+        "train_hit5": 0.847457627118644,
+        "hold_n": 46,
+        "hold_hit5": 0.8913043478260869,
+        "hold_hit10": 0.6739130434782609,
+        "hold_t5_before_s7p5": 0.8043478260869565,
+        "train_net_roi": 0.01320169491525424,
+        "hold_net_roi": 0.02264347826086957,
+        "hold_wilson_lower": 0.7696189698736853,
+        "episodes": 15,
+        "episode_hit5": 0.76
+      },
+      "promotion_requirements": [
+        "independent cross-venue validation with frozen thresholds",
+        "full fees/slippage/actual-funding economic replay",
+        "forward shadow signals",
+        "manual review before assignment of C-number"
+      ],
+      "cross_venue_validation": {
+        "venue": "Binance USDT spot",
+        "split": "latest 40%",
+        "n": 56,
+        "hit5": 0.8571428571428571,
+        "hit10": 0.7142857142857143,
+        "t5_before_s7p5": 0.7321428571428571,
+        "net_roi": 0.013117857142857145,
+        "wilson_lower": 0.7426383257914846,
         "unsupported_features": [],
         "passed": true
       }
     },
     {
-      "candidate_id": "AUTO-20261006-02",
+      "candidate_id": "AUTO-20261007-03",
       "status": "CROSS_VALIDATED_SHADOW",
       "segment": "primary_perps",
-      "rule": "close_location <= 0.0703409 AND price_pct1 <= -0.0341797",
+      "rule": "close_location <= 0.0704008 AND price_pct1 <= -0.0343191",
       "features": [
         "close_location",
         "price_pct1"
@@ -70,13 +125,13 @@
         {
           "feature": "close_location",
           "op": "<=",
-          "a": 0.07034088546347,
+          "a": 0.07040079503525755,
           "b": null
         },
         {
           "feature": "price_pct1",
           "op": "<=",
-          "a": -0.0341796874999998,
+          "a": -0.0343190823471287,
           "b": null
         }
       ],
@@ -87,7 +142,7 @@
         "hold_hit5": 0.8717948717948718,
         "hold_hit10": 0.5897435897435898,
         "hold_t5_before_s7p5": 0.7435897435897436,
-        "train_net_roi": 0.021185365853658544,
+        "train_net_roi": 0.02118536585365854,
         "hold_net_roi": 0.015048717948717956,
         "hold_wilson_lower": 0.7329395096236953,
         "episodes": 17,
@@ -102,21 +157,21 @@
       "cross_venue_validation": {
         "venue": "Binance USDT spot",
         "split": "latest 40%",
-        "n": 47,
-        "hit5": 0.7872340425531915,
-        "hit10": 0.5531914893617021,
-        "t5_before_s7p5": 0.723404255319149,
-        "net_roi": 0.012025531914893615,
-        "wilson_lower": 0.6509569794902073,
+        "n": 49,
+        "hit5": 0.8163265306122449,
+        "hit10": 0.5714285714285714,
+        "t5_before_s7p5": 0.7142857142857143,
+        "net_roi": 0.010885714285714288,
+        "wilson_lower": 0.6864212843271743,
         "unsupported_features": [],
         "passed": true
       }
     },
     {
-      "candidate_id": "AUTO-20261006-03",
+      "candidate_id": "AUTO-20261007-04",
       "status": "SHADOW_ONLY",
       "segment": "primary_perps",
-      "rule": "close_location <= 0.0703409 AND rsi_pct1 <= -0.141562",
+      "rule": "close_location <= 0.0704008 AND rsi_pct1 <= -0.141776",
       "features": [
         "close_location",
         "rsi_pct1"
@@ -125,13 +180,13 @@
         {
           "feature": "close_location",
           "op": "<=",
-          "a": 0.07034088546347,
+          "a": 0.07040079503525755,
           "b": null
         },
         {
           "feature": "rsi_pct1",
           "op": "<=",
-          "a": -0.14156182199091966,
+          "a": -0.14177638086948785,
           "b": null
         }
       ],
@@ -157,21 +212,21 @@
       "cross_venue_validation": {
         "venue": "Binance USDT spot",
         "split": "latest 40%",
-        "n": 36,
-        "hit5": 0.75,
-        "hit10": 0.5277777777777778,
-        "t5_before_s7p5": 0.6944444444444444,
-        "net_roi": 0.008405555555555558,
-        "wilson_lower": 0.5892923231679656,
+        "n": 37,
+        "hit5": 0.7837837837837838,
+        "hit10": 0.5405405405405406,
+        "t5_before_s7p5": 0.7027027027027027,
+        "net_roi": 0.009437837837837837,
+        "wilson_lower": 0.628045387261231,
         "unsupported_features": [],
         "passed": false
       }
     },
     {
-      "candidate_id": "AUTO-20261006-04",
+      "candidate_id": "AUTO-20261007-05",
       "status": "CROSS_VALIDATED_SHADOW",
       "segment": "primary_perps",
-      "rule": "close_location <= 0.0855167 AND rsi_accel <= -8.98354",
+      "rule": "close_location <= 0.0855175 AND rsi_accel <= -8.9969",
       "features": [
         "close_location",
         "rsi_accel"
@@ -180,13 +235,13 @@
         {
           "feature": "close_location",
           "op": "<=",
-          "a": 0.08551667063892983,
+          "a": 0.08551751240700016,
           "b": null
         },
         {
           "feature": "rsi_accel",
           "op": "<=",
-          "a": -8.983536457351914,
+          "a": -8.99689904389345,
           "b": null
         }
       ],
@@ -212,16 +267,16 @@
       "cross_venue_validation": {
         "venue": "Binance USDT spot",
         "split": "latest 40%",
-        "n": 31,
-        "hit5": 0.8709677419354839,
-        "hit10": 0.6451612903225806,
-        "t5_before_s7p5": 0.8064516129032258,
-        "net_roi": 0.022406451612903222,
-        "wilson_lower": 0.7114724304561464,
+        "n": 32,
+        "hit5": 0.875,
+        "hit10": 0.625,
+        "t5_before_s7p5": 0.78125,
+        "net_roi": 0.019256250000000003,
+        "wilson_lower": 0.7193135021517204,
         "unsupported_features": [],
         "passed": true
       }
     }
   ],
-  "cross_venue_updated_at": "2026-10-06T12:12:26.799411+00:00"
+  "cross_venue_updated_at": "2026-10-07T11:57:08.899365+00:00"
 }
