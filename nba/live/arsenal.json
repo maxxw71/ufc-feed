@@ -12,7 +12,7 @@
     "no_preseason_signals": true,
     "frozen_rules": true,
     "prospective_tracking_from": "2026-27",
-    "notes": "Methods are exposed in the live Appwiza NBA arsenal. Rules are frozen; no retrospective retuning on 2026-27 outcomes."
+    "notes": "All listed NBA methods are live in the Appwiza arsenal with frozen historical rules; 2026-27 results are prospective only and are not used to retune thresholds."
   },
   "methods": [
     {
@@ -22,7 +22,7 @@
       "market": "moneyline",
       "rule": {
         "net5_gap_min": 7.759,
-        "rest_diff_min_days": 2.0,
+        "rest_diff_min_days": 2,
         "def5_adv_max": 5.5,
         "ts5_gap_min": 0.05603199206897114
       },
@@ -38,7 +38,11 @@
         "holdout_hit_rate": 0.9,
         "holdout_roi": 0.3504
       },
-      "requirements": ["pregame_market_price", "team_rolling_form", "rest_context"],
+      "requirements": [
+        "pregame_market_price",
+        "team_rolling_form",
+        "rest_context"
+      ],
       "description": "Recent net-rating edge plus rest advantage, capped defensive profile and a material recent true-shooting advantage."
     },
     {
@@ -47,8 +51,8 @@
       "status": "live_arsenal",
       "market": "moneyline",
       "rule": {
-        "guard_weight_gap_max_lbs": -10.0,
-        "big_weight_gap_min_lbs": 8.0,
+        "guard_weight_gap_max_lbs": -10,
+        "big_weight_gap_min_lbs": 8,
         "market_probability_min": 0.5968
       },
       "historical": {
@@ -63,7 +67,11 @@
         "holdout_hit_rate": 0.8103448275862069,
         "holdout_roi": 0.09706758681663229
       },
-      "requirements": ["pregame_market_price", "confirmed_starting_five", "starter_physical_profiles"],
+      "requirements": [
+        "pregame_market_price",
+        "confirmed_starting_five",
+        "starter_physical_profiles"
+      ],
       "description": "Moderate-or-better market favorite with lighter guards but materially heavier bigs than the opponent."
     },
     {
@@ -72,9 +80,9 @@
       "status": "live_arsenal",
       "market": "moneyline",
       "rule": {
-        "starter_plusminus5_gap_min": 3.0,
-        "starter_overlap_gap_min": 1.0,
-        "opponent_top5_minutes_3d_adv_min": 45.0
+        "starter_plusminus5_gap_min": 3,
+        "starter_overlap_gap_min": 1,
+        "opponent_top5_minutes_3d_adv_min": 45
       },
       "historical": {
         "signals": 478,
@@ -89,8 +97,165 @@
         "holdout_roi": 0.13574208708725366,
         "worst_price_roi": 0.09941247924229402
       },
-      "requirements": ["pregame_market_price", "confirmed_starting_five", "starter_rolling_form", "lineup_continuity", "player_workload"],
+      "requirements": [
+        "pregame_market_price",
+        "confirmed_starting_five",
+        "starter_rolling_form",
+        "lineup_continuity",
+        "player_workload"
+      ],
       "description": "Better recent starter plus-minus, stronger starter continuity and a materially fresher top-five rotation than the opponent."
+    },
+    {
+      "method_id": "NBA_TRAVEL_001",
+      "name": "Travel Imbalance Away Favorite",
+      "status": "live_arsenal",
+      "market": "moneyline",
+      "rule": {
+        "side": "away",
+        "opponent_minus_side_travel7d_min_miles": 576.9,
+        "market_probability_min": 0.7023
+      },
+      "historical": {
+        "signals": 264,
+        "wins": 232,
+        "losses": 32,
+        "hit_rate": 0.8787878787878788,
+        "roi": 0.07249455100482549,
+        "holdout_signals": 76,
+        "holdout_wins": 67,
+        "holdout_losses": 9,
+        "holdout_hit_rate": 0.881578947368421,
+        "holdout_roi": 0.05069329551837685,
+        "worst_price_roi": 0.05881067735798436
+      },
+      "requirements": [
+        "pregame_market_price",
+        "travel_context",
+        "venue_timezone"
+      ],
+      "description": "Away favorite whose opponent has accumulated at least 576.9 more travel miles over the prior seven days."
+    },
+    {
+      "method_id": "NBA_LQ_003",
+      "name": "Confirmed Five Lineup Quality",
+      "status": "live_arsenal",
+      "market": "moneyline",
+      "rule": {
+        "starting_five_prior_pm48_gap_min": 10.55,
+        "unit_volatility5_adv_min": 10.97,
+        "market_probability_min": 0.5968
+      },
+      "historical": {
+        "signals": 379,
+        "wins": 310,
+        "losses": 69,
+        "hit_rate": 0.8179419525065963,
+        "roi": 0.07749375908603762,
+        "holdout_signals": 75,
+        "holdout_wins": 61,
+        "holdout_losses": 14,
+        "holdout_hit_rate": 0.8133333333333334,
+        "holdout_roi": 0.04805813989043335,
+        "worst_price_roi": 0.0567369277257328
+      },
+      "requirements": [
+        "pregame_market_price",
+        "confirmed_starting_five",
+        "historical_lineup_stints",
+        "lineup_quality"
+      ],
+      "description": "Confirmed starting five has a large prior shared PM/48 advantage with favorable recent lineup-unit volatility."
+    },
+    {
+      "method_id": "NBA_STAND_002",
+      "name": "Standings Pressure + Streak Disagreement",
+      "status": "live_arsenal",
+      "market": "moneyline",
+      "rule": {
+        "opponent_seed6_gap_min": 0,
+        "streak_gap_max": -2,
+        "market_probability_min": 0.5968
+      },
+      "historical": {
+        "signals": 389,
+        "wins": 301,
+        "losses": 88,
+        "hit_rate": 0.7737789203084833,
+        "roi": 0.09408499491236819,
+        "holdout_signals": 92,
+        "holdout_wins": 70,
+        "holdout_losses": 22,
+        "holdout_hit_rate": 0.7608695652173914,
+        "holdout_roi": 0.0706329132713633,
+        "worst_price_roi": 0.07522381084553229
+      },
+      "requirements": [
+        "pregame_market_price",
+        "point_in_time_standings",
+        "current_streak"
+      ],
+      "description": "Favorite despite a materially worse recent streak against an opponent at or above the sixth-seed pace."
+    },
+    {
+      "method_id": "NBA_ROTSHAPE_001",
+      "name": "Starter-Heavy Rotation + Clutch Edge",
+      "status": "live_arsenal",
+      "market": "moneyline",
+      "rule": {
+        "bench_points_share5_gap_max": -0.08308,
+        "bench_used5_gap_min": 1,
+        "clutch_margin10_gap_min": 0.5
+      },
+      "historical": {
+        "signals": 199,
+        "wins": 152,
+        "losses": 47,
+        "hit_rate": 0.7638190954773869,
+        "roi": 0.0752236118788806,
+        "holdout_signals": 57,
+        "holdout_wins": 47,
+        "holdout_losses": 10,
+        "holdout_hit_rate": 0.8245614035087719,
+        "holdout_roi": 0.08278398866207716,
+        "worst_price_roi": 0.05398147110306978
+      },
+      "requirements": [
+        "pregame_market_price",
+        "starter_bench_rolling",
+        "scoring_shape_rolling"
+      ],
+      "description": "Starter-driven scoring profile with broader recent bench usage and a positive ten-game clutch-margin edge."
+    },
+    {
+      "method_id": "NBA_STYLE_TOT_001",
+      "name": "Paint Pressure + Low-Foul OVER",
+      "status": "live_arsenal",
+      "market": "total_over",
+      "rule": {
+        "combined_paint_share5_min": 0.8907,
+        "combined_fouls_per100_5_max": 38.5,
+        "combined_rest_days_max": 3
+      },
+      "historical": {
+        "signals": 498,
+        "wins": 275,
+        "losses": 217,
+        "hit_rate": 0.5589430894308943,
+        "roi": 0.06557935773727742,
+        "holdout_signals": 146,
+        "holdout_wins": 81,
+        "holdout_losses": 65,
+        "holdout_hit_rate": 0.5547945205479452,
+        "holdout_roi": 0.058484395515366314,
+        "worst_price_roi": 0.028169088104412075
+      },
+      "requirements": [
+        "pregame_total_price",
+        "team_style_rolling",
+        "rest_context"
+      ],
+      "description": "OVER when both teams combine for high recent paint-scoring share, relatively low foul rate and short combined rest."
     }
   ]
 }
