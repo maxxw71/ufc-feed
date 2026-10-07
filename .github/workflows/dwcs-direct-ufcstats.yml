@@ -1,0 +1,28 @@
+name: DWCS Direct Official UFCStats Archive
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/dwcs-direct-ufcstats.yml'
+      - 'dwcs/research/fetch_direct_ufcstats_dwcs.py'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - run: python -m pip install --quiet pandas numpy requests lxml
+      - name: Collect direct official UFCStats DWCS archive
+        run: python dwcs/research/fetch_direct_ufcstats_dwcs.py
+      - name: Commit results
+        run: |
+          git config user.name appwiza-research-bot
+          git config user.email actions@users.noreply.github.com
+          git add dwcs/research/official_ufcstats_direct
+          git diff --cached --quiet && exit 0
+          git commit -m 'Add direct official UFCStats DWCS archive'
+          git pull --rebase origin main
+          git push
