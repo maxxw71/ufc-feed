@@ -34,7 +34,44 @@ CRON_TZ=UTC
 */15 * * * * /home/anestishkurti92/ufc-predictor-v1/venv/bin/python /home/anestishkurti92/crypto-trading/ensure_trading_nav.py >> /home/anestishkurti92/crypto-trading/scanner.log 2>&1; /home/anestishkurti92/ufc-predictor-v1/venv/bin/python /home/anestishkurti92/crypto-trading/live_crypto_scanner.py --methods /home/anestishkurti92/crypto-trading/methods.json --output /srv/appwiza-sports/public/trading/crypto/signals.json --history /home/anestishkurti92/crypto-trading/history.json --days 125 --recent-hours 72 >> /home/anestishkurti92/crypto-trading/scanner.log 2>&1
 
 === UFC PROCESSES / SYSTEMD TIMERS ===
-Wed 2026-10-07 14:00:00 UTC  2h 1min Tue 2026-10-06 14:00:00 UTC       21h ago ufc-model-watcher.timer        ufc-model-watcher.service
+Wed 2026-10-07 14:00:00 UTC  2h 0min Tue 2026-10-06 14:00:00 UTC       21h ago ufc-model-watcher.timer        ufc-model-watcher.service
+
+=== UFC MODEL WATCHER TIMER ===
+# /etc/systemd/system/ufc-model-watcher.timer
+[Unit]
+Description=Daily ufc-model-watcher scan on appwiza (every 24 hours)
+[Timer]
+OnCalendar=*-*-* 10:00:00 America/New_York
+Persistent=true
+AccuracySec=1min
+Unit=ufc-model-watcher.service
+[Install]
+WantedBy=timers.target
+# /etc/systemd/system/ufc-model-watcher.service
+[Unit]
+Description=UFC prediction email watcher on appwiza
+After=network-online.target
+Wants=network-online.target
+[Service]
+Type=oneshot
+User=anestishkurti92
+Environment=HOME=/home/anestishkurti92
+Environment=OMP_NUM_THREADS=1
+Environment=OPENBLAS_NUM_THREADS=1
+WorkingDirectory=/home/anestishkurti92/ufc-predictor-v1
+EnvironmentFile=/home/anestishkurti92/.config/ufc-watcher.env
+ExecStart=/home/anestishkurti92/ufc-predictor-v1/venv/bin/python /home/anestishkurti92/ufc-predictor-v1/ufc_email_watcher.py --run
+TimeoutStartSec=15min
+UMask=0077
+Nice=5
+● ufc-model-watcher.timer - Daily ufc-model-watcher scan on appwiza (every 24 hours)
+     Loaded: loaded (/etc/systemd/system/ufc-model-watcher.timer; enabled; preset: enabled)
+     Active: active (waiting) since Mon 2026-09-14 07:01:41 UTC; 3 weeks 2 days ago
+ Invocation: 2fb95fa80d4f48dbad035050cfcf1132
+    Trigger: Wed 2026-10-07 14:00:00 UTC; 2h 0min left
+   Triggers: ● ufc-model-watcher.service
+
+Warning: some journal files were not opened due to insufficient permissions.
 
 === WATCHER FILE TIMESTAMPS ===
 2026-10-04 02:52:30.007538083 +0000 /home/anestishkurti92/ufc-predictor-v1/ufc_email_watcher.py
