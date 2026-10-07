@@ -16,7 +16,7 @@
 
 <article class="card"><span class="pill">LIVE TOTAL</span><h3>STYLE_TOT_001 · Paint Pressure OVER</h3><p class="muted">OVER when combined recent paint share is high, foul rate is relatively low and combined rest is short.</p><div class="stats"><div><span class="muted">Historical</span><b>275–217</b></div><div><span class="muted">Win rate</span><b>55.9%</b></div><div><span class="muted">ROI</span><b class="positive">+6.56%</b></div></div><p class="muted">Holdout: 81–65 · 55.5% · +5.85% ROI · worst-price +2.82%</p></article>
 
-</div><div class="section-kicker" style="margin-top:38px">Current board</div><h2>Available selections</h2><div class="empty">No regular-season NBA selections yet. Preseason games are intentionally excluded. Picks appear only when a frozen method qualifies with the required pregame features and confirmed starters where applicable.</div>
+</div><div class="section-kicker" style="margin-top:38px">Current board</div><h2>Available selections</h2><div id="nba-board" class="empty">Loading active NBA scanner state…</div><p id="nba-scan-meta" class="muted"></p>
 
 <details class="method-key"><summary><span>Method Key · NBA</span></summary><div class="grid">
 <article class="card"><h3>ML001_DEF_TS</h3><p>net5 gap ≥ 7.759 · rest advantage ≥ 2 days · defensive advantage capped at 5.5 · TS5 gap ≥ 0.056032.</p></article>
@@ -27,4 +27,43 @@
 <article class="card"><h3>STAND_002</h3><p>opponent sixth-seed pace gap ≥ 0 · selected-side streak gap ≤ -2 · market probability ≥ 59.68%.</p></article>
 <article class="card"><h3>ROTSHAPE_001</h3><p>bench scoring-share gap ≤ -0.08308 · bench-used gap ≥ 1 · clutch-margin10 gap ≥ 0.5.</p></article>
 <article class="card"><h3>STYLE_TOT_001</h3><p>combined paint-share5 ≥ 0.8907 · combined foul rate ≤ 38.5 · combined rest ≤ 3 days · bet OVER.</p></article>
-</div></details><footer>Historical win rates and ROI describe retrospectively tested groups at archived prices and do not guarantee future results. Rules are frozen for 2026–27 prospective tracking; no bets are placed by this website.</footer></main></body></html>
+</div></details>
+<script>
+(async function(){
+  const board=document.getElementById('nba-board');
+  const meta=document.getElementById('nba-scan-meta');
+  try{
+    const r=await fetch('/sports/nba/current.json',{cache:'no-store'});
+    if(!r.ok) throw new Error('feed '+r.status);
+    const d=await r.json();
+    const picks=Array.isArray(d.picks)?d.picks:[];
+    const generated=(d.status&&d.status.scanner_generated_at_utc)||d.generated_at_utc;
+    meta.textContent=generated?'Scanner updated '+new Date(generated).toLocaleString(): '';
+    if(!picks.length){
+      board.className='empty';
+      board.textContent='No regular-season NBA methods qualify right now. Preseason is excluded, and starter-dependent methods wait for confirmed lineups.';
+      return;
+    }
+    board.className='grid';
+    board.innerHTML='';
+    for(const p of picks){
+      const card=document.createElement('article'); card.className='card';
+      const tip=p.scheduled_utc?new Date(p.scheduled_utc).toLocaleString():'';
+      const first=p.first_qualified_at?new Date(p.first_qualified_at).toLocaleString():'';
+      const px=(p.price!==undefined&&p.price!==null)?p.price:'—';
+      const line=(p.line!==undefined&&p.line!==null)?(' · line '+p.line):'';
+      card.innerHTML='<span class="pill">ACTIVE</span><h3>'+String(p.method_id||'')+'</h3>'+
+        '<p><b>'+String(p.selection||'')+'</b></p>'+
+        '<p class="muted">Price '+px+line+'</p>'+
+        '<p class="muted">Tip '+tip+'</p>'+
+        '<p class="muted">First qualified '+first+'</p>'+
+        '<p class="muted">Current-season prior games '+(p.prior_games??'—')+(p.starters_confirmed?' · starters confirmed':'')+'</p>';
+      board.appendChild(card);
+    }
+  }catch(e){
+    board.className='empty';
+    board.textContent='NBA scanner feed is temporarily unavailable.';
+  }
+})();
+</script>
+<footer>Historical win rates and ROI describe retrospectively tested groups at archived prices and do not guarantee future results. Rules are frozen for 2026–27 prospective tracking; no bets are placed by this website.</footer></main></body></html>
