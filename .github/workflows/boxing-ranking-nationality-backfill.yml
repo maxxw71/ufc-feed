@@ -22,9 +22,11 @@ permissions:
 jobs:
   enrich:
     if: github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success'
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, Linux, X64, appwiza]
     timeout-minutes: 10
     steps:
+      - name: Prepare isolated boxing scratch space
+        run: mkdir -p "${{ runner.temp }}/boxing-${{ github.run_id }}-${{ github.run_attempt }}"
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
@@ -38,15 +40,15 @@ jobs:
         shell: bash
         run: |
           set -Eeuo pipefail
-          mkdir -p /tmp/boxing-nationality
-          cp boxing/profile_supplements/verified_profiles.jsonl /tmp/boxing-nationality/verified_profiles.jsonl
-          cp boxing/profile_supplements/ranking_nationality_backfill_report.json /tmp/boxing-nationality/report.json
+          mkdir -p ${{ runner.temp }}/boxing-${{ github.run_id }}-${{ github.run_attempt }}/boxing-nationality
+          cp boxing/profile_supplements/verified_profiles.jsonl ${{ runner.temp }}/boxing-${{ github.run_id }}-${{ github.run_attempt }}/boxing-nationality/verified_profiles.jsonl
+          cp boxing/profile_supplements/ranking_nationality_backfill_report.json ${{ runner.temp }}/boxing-${{ github.run_id }}-${{ github.run_attempt }}/boxing-nationality/report.json
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git fetch origin main
           git reset --hard origin/main
-          cp /tmp/boxing-nationality/verified_profiles.jsonl boxing/profile_supplements/verified_profiles.jsonl
-          cp /tmp/boxing-nationality/report.json boxing/profile_supplements/ranking_nationality_backfill_report.json
+          cp ${{ runner.temp }}/boxing-${{ github.run_id }}-${{ github.run_attempt }}/boxing-nationality/verified_profiles.jsonl boxing/profile_supplements/verified_profiles.jsonl
+          cp ${{ runner.temp }}/boxing-${{ github.run_id }}-${{ github.run_attempt }}/boxing-nationality/report.json boxing/profile_supplements/ranking_nationality_backfill_report.json
           git add boxing/profile_supplements/verified_profiles.jsonl boxing/profile_supplements/ranking_nationality_backfill_report.json
           if git diff --cached --quiet; then
             echo 'No ranking-nationality changes.'
@@ -54,3 +56,7 @@ jobs:
             git commit -m 'Expand boxer nationalities from official rankings'
             git push origin HEAD:main
           fi
+
+      - name: Remove this run temporary boxing files
+        if: always()
+        run: rm -rf -- "${{ runner.temp }}/boxing-${{ github.run_id }}-${{ github.run_attempt }}"

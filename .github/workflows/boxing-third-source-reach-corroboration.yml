@@ -11,9 +11,11 @@ permissions:
   contents: write
 jobs:
   corroborate:
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, Linux, X64, appwiza]
     timeout-minutes: 20
     steps:
+      - name: Prepare isolated boxing scratch space
+        run: mkdir -p "${{ runner.temp }}/boxing-${{ github.run_id }}-${{ github.run_attempt }}"
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
@@ -79,3 +81,7 @@ jobs:
           git diff --cached --quiet || (git commit -m 'Add corroborated boxing reach values' && git push origin HEAD:main)
 
 # batch-refresh-current-gaps: 2026-10-01T02:35-04:00
+
+      - name: Remove this run temporary boxing files
+        if: always()
+        run: rm -rf -- "${{ runner.temp }}/boxing-${{ github.run_id }}-${{ github.run_attempt }}"

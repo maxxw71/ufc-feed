@@ -7,13 +7,14 @@ against the live verified bout graph. A result is accepted only when all
 matching finished source rows agree on the winner/draw identity.
 """
 from __future__ import annotations
-import datetime as dt,json,re,sqlite3,unicodedata
+import datetime as dt,json,re,sqlite3,unicodedata,os
+from urllib.parse import urlparse
 from pathlib import Path
 from collections import defaultdict,Counter
 
 ROOT=Path(__file__).resolve().parents[1]
-ODDS=ROOT/'prospective_odds'
-DB=Path('/home/anestishkurti92/boxing-research/boxing.sqlite3')
+ODDS=Path(os.environ.get('APPWIZA_BOXING_ODDS_ROOT',str(ROOT/'prospective_odds')))
+DB=Path(os.environ.get('APPWIZA_BOXING_DB','/home/anestishkurti92/boxing-research/boxing.sqlite3'))
 RESULT_SUPPLEMENTS=ODDS/'result_supplements.json'
 
 def nk(s):
@@ -92,6 +93,28 @@ def result_for_pair(d,date,names):
         winner=matches[0]
     return {'winner':winner,'matching_source_rows':len(sources),'result_sources':sources[:20]}
 
+def result_diagnostics(d,date,names):
+    """Keep disagreement and nearby-date leads visible; never silently settle them."""
+    target=sorted(nk(x) for x in names)
+    exact=[]; nearby=[]; outcomes=set()
+    for row in d.execute("select source,source_id,date,boxer_a,boxer_b,winner,status,url from bouts where date between date(?,'-7 days') and date(?,'+7 days')",(date,date)):
+        r=dict(row)
+        if sorted([nk(r['boxer_a']),nk(r['boxer_b'])])!=target:continue
+        if r['date']!=date:
+            nearby.append(r);continue
+        exact.append(r)
+        if r['status']!='FINISHED':continue
+        w=str(r['winner'] or '').upper()
+        outcomes.add(nk(r['boxer_a']) if w=='BOXER A' else nk(r['boxer_b']) if w=='BOXER B' else w or 'UNKNOWN')
+    if len(outcomes)>1:reason='conflicting_exact_pair_results'
+    elif outcomes and not outcomes <= set(target)|{'DRAW'}:reason='nondecisive_or_unknown_result_requires_rules'
+    elif not exact and nearby:reason='possible_date_change_requires_review'
+    elif not exact:reason='missing_exact_date_pair_result'
+    elif not outcomes:reason='event_not_confirmed_finished'
+    else:reason=None
+    return {'review_reason':reason,'exact_evidence':exact,'nearby_date_leads':nearby,
+            'automatic_settlement_blocked':reason in {'conflicting_exact_pair_results','nondecisive_or_unknown_result_requires_rules'}}
+
 def result_from_supplements(records,date,names):
     target=sorted(nk(x) for x in names)
     if len(target)!=2 or target[0]==target[1]:return None
@@ -102,7 +125,8 @@ def result_from_supplements(records,date,names):
         if len(participants)!=2 or sorted(nk(x) for x in participants)!=target:continue
         sources=sorted({str(x).strip() for x in (r.get('sources') or []) if str(x).strip()})
         winner=str(r.get('winner') or '').strip()
-        if len(sources)<2 or nk(winner) not in target:continue
+        domains={urlparse(x).hostname.removeprefix('www.') for x in sources if urlparse(x).scheme in {'http','https'} and urlparse(x).hostname}
+        if len(domains)<2 or nk(winner) not in target:continue
         matches.append((nk(winner),winner,sources,r))
     if not matches or len({x[0] for x in matches})!=1:return None
     key=matches[0][0]
@@ -167,7 +191,16 @@ def main():
                 'selections':sorted({q.get('selection') for q in qs if q.get('selection')})}
         if event_date>=now.date():
             pending.append(record);continue
-        result=result_for_pair(d,date,names) or result_from_supplements(result_supplements,date,names)
+        diagnostic=result_diagnostics(d,date,names)
+        result=None if diagnostic['automatic_settlement_blocked'] else result_for_pair(d,date,names)
+        supplement=result_from_supplements(result_supplements,date,names)
+        if result and supplement and nk(result['winner'])!=nk(supplement['winner']):
+            diagnostic.update(review_reason='database_supplement_result_conflict',automatic_settlement_blocked=True)
+            result=None
+        if not result and not diagnostic['automatic_settlement_blocked']:
+            result=supplement
+        record['evidence_review']=diagnostic
+        record['wager_settlement_status']='unverified_bookmaker_rules'
         if result:
             record.update(result);settled.append(record)
         else:
@@ -196,6 +229,8 @@ def main():
         'date_max':max((q.get('event_date') for q in eligible if q.get('event_date')),default=None),
         'policy':'Only originally timestamped pre-event quotes are eligible; results require exact date+pair and either unanimous matching finished source rows or a strict manual supplement with at least two independent published result sources. Sportsbook and prediction-market observations are reported separately. For sportsbook validation, opening=first verified observation and latest=last verified observation before listed event start/date; consensus latest is the median of each sportsbook latest observation, never a retrospectively chosen price.'
     }
+    coverage['unresolved_reasons']=dict(Counter(r['evidence_review']['review_reason'] for r in unresolved))
+    coverage['settled_count_meaning']='Verified fight outcomes; bookmaker-specific wager settlement remains separately unverified.'
     (ODDS/'coverage.json').write_text(json.dumps(coverage,indent=2,ensure_ascii=False))
     (ODDS/'settled_bouts.json').write_text(json.dumps({'generated_at':now.isoformat(),'settled':settled,'past_unresolved':unresolved},indent=2,ensure_ascii=False))
     print(json.dumps({**coverage,'settled_sample':settled[:10],'unresolved_sample':unresolved[:10]},indent=2,ensure_ascii=False))

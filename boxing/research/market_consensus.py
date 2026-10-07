@@ -25,8 +25,26 @@ def _fighter_win(row):
 
 def load_master(path):
     path=Path(path)
+    # Market research needs priced groups and every perspective of those groups.
+    # Preserve unpriced duplicate/opponent perspectives so integrity gates are unchanged.
+    keys=set();sources=set()
+    def key(row):
+        a=(row.get('fighter') or {}).get('id');b=(row.get('opponent') or {}).get('id')
+        return (row.get('bout_date'),*sorted([a,b])) if a and b else None
     with path.open() as f:
-        return [json.loads(line) for line in f if line.strip()]
+        for line in f:
+            if not line.strip():continue
+            row=json.loads(line)
+            if row.get('quotes'):
+                sources.add(row.get('source_id'))
+                if key(row):keys.add(key(row))
+    out=[]
+    with path.open() as f:
+        for line in f:
+            if not line.strip():continue
+            row=json.loads(line)
+            if row.get('source_id') in sources or key(row) in keys:out.append(row)
+    return out
 
 
 def quote_signature(row):
@@ -44,7 +62,7 @@ def quote_signature(row):
     return (event_date,bout_id,bookmaker,selection,price)
 
 
-def canonical_market_rows(master_rows,min_books=2,allowed_quote_rowids=None,allowed_quote_signatures=None):
+def canonical_market_rows(master_rows,min_books=2,allowed_quote_rowids=None,allowed_quote_signatures=None,audit=None):
     """Return one consensus favorite row per canonical bout.
 
     Each bookmaker must expose exactly one quote for each fighter and both quotes
@@ -56,13 +74,24 @@ def canonical_market_rows(master_rows,min_books=2,allowed_quote_rowids=None,allo
     allowed=None if allowed_quote_rowids is None else {str(x) for x in allowed_quote_rowids}
     allowed_sigs=None if allowed_quote_signatures is None else set(allowed_quote_signatures)
     groups=defaultdict(list)
+    def record(rows, reasons, key=None, clean_books=None):
+        if audit is not None:
+            audit.append({'canonical_key':key,'source_ids':[r.get('source_id') for r in rows],
+                'odds_bout_ids':sorted({str(q.get('odds_bout_id')) for r in rows for q in r.get('quotes') or [] if q.get('odds_bout_id')}),
+                'fighters':sorted({str(r.get('fighter_name')) for r in rows if r.get('fighter_name')}),
+                'fighter_ids':sorted({str((r.get(s) or {}).get('id')) for r in rows for s in ('fighter','opponent') if (r.get(s) or {}).get('id')}),
+                'reasons':reasons,'clean_books':clean_books,'eligible':not reasons})
     for row in master_rows:
         a=row.get('fighter') or {}; b=row.get('opponent') or {}
+        reasons=[]
         if not row.get('canonical_verified_pair') or not a.get('id') or not b.get('id'):
-            continue
+            reasons.append('unverified_pair_or_unresolved_identity')
         if not (a.get('record_totals_match') and b.get('record_totals_match')):
-            continue
+            reasons.append('prior_record_incomplete_or_inconsistent')
         if min((a.get('summary') or {}).get('observed_prior_bouts',0),(b.get('summary') or {}).get('observed_prior_bouts',0))<5:
+            reasons.append('fewer_than_five_prior_bouts')
+        if reasons:
+            record([row],reasons)
             continue
         key=(row.get('bout_date'),*sorted([a['id'],b['id']]))
         groups[key].append(row)
@@ -75,11 +104,13 @@ def canonical_market_rows(master_rows,min_books=2,allowed_quote_rowids=None,allo
             if fid:
                 by_id[fid].append(row)
         if set(by_id)!=set(key[1:]) or any(len(v)!=1 for v in by_id.values()):
+            record(rows,['missing_or_duplicate_fighter_perspective'],key)
             continue
         side_rows={fid:vals[0] for fid,vals in by_id.items()}
         ids=sorted(side_rows)
         wins={fid:_fighter_win(side_rows[fid]) for fid in ids}
         if sorted(wins.values(),key=lambda x:(x is None,x))!=[False,True]:
+            record(rows,['nondecisive_or_conflicting_result'],key)
             continue
 
         books=defaultdict(lambda:defaultdict(list))
@@ -112,11 +143,14 @@ def canonical_market_rows(master_rows,min_books=2,allowed_quote_rowids=None,allo
                           'quote_rowids':{ids[0]:q0.get('quote_rowid'),ids[1]:q1.get('quote_rowid')},
                           'odds_bout_id':q0.get('odds_bout_id')})
         if len(clean)<min_books:
+            record(rows,['insufficient_verified_two_sided_books' if allowed_sigs is not None or allowed is not None else 'insufficient_clean_two_sided_books'],key,len(clean))
             continue
 
         p0=_median([b['p0'] for b in clean])
         if p0 is None or math.isclose(p0,.5,abs_tol=1e-12):
+            record(rows,['no_unique_consensus_favorite'],key,len(clean))
             continue
+        record(rows,[],key,len(clean))
         fav=ids[0] if p0>.5 else ids[1]; dog=ids[1] if fav==ids[0] else ids[0]
         market_prob=p0 if fav==ids[0] else 1-p0
         fav_prices=[b['prices'][fav] for b in clean]

@@ -10,11 +10,17 @@ permissions:
   contents: read
 jobs:
   audit:
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, Linux, X64, appwiza]
     timeout-minutes: 5
     steps:
+      - name: Prepare isolated boxing scratch space
+        run: mkdir -p "${{ runner.temp }}/boxing-${{ github.run_id }}-${{ github.run_attempt }}"
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
       - run: python boxing/research/audit_identity_source_overlap.py
+
+      - name: Remove this run temporary boxing files
+        if: always()
+        run: rm -rf -- "${{ runner.temp }}/boxing-${{ github.run_id }}-${{ github.run_attempt }}"

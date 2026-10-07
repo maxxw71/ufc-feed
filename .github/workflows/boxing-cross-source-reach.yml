@@ -13,9 +13,11 @@ permissions:
 
 jobs:
   backfill:
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, Linux, X64, appwiza]
     timeout-minutes: 35
     steps:
+      - name: Prepare isolated boxing scratch space
+        run: mkdir -p "${{ runner.temp }}/boxing-${{ github.run_id }}-${{ github.run_attempt }}"
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
@@ -26,9 +28,9 @@ jobs:
       - name: Collect exact two-source reach consensus
         run: |
           python boxing/research/backfill_cross_source_reach.py --limit 300 --sleep 0.04
-          mkdir -p /tmp/boxing-reach
-          cp boxing/profile_supplements/cross_source_reach_additions.jsonl /tmp/boxing-reach/additions.jsonl
-          cp boxing/profile_supplements/cross_source_reach_report.json /tmp/boxing-reach/report.json
+          mkdir -p ${{ runner.temp }}/boxing-${{ github.run_id }}-${{ github.run_attempt }}/boxing-reach
+          cp boxing/profile_supplements/cross_source_reach_additions.jsonl ${{ runner.temp }}/boxing-${{ github.run_id }}-${{ github.run_attempt }}/boxing-reach/additions.jsonl
+          cp boxing/profile_supplements/cross_source_reach_report.json ${{ runner.temp }}/boxing-${{ github.run_id }}-${{ github.run_attempt }}/boxing-reach/report.json
       - name: Merge additions into latest main without overwriting newer supplements
         shell: bash
         run: |
@@ -39,8 +41,8 @@ jobs:
             git fetch origin main
             git reset --hard origin/main
             mkdir -p boxing/profile_supplements
-            cp /tmp/boxing-reach/additions.jsonl boxing/profile_supplements/cross_source_reach_additions.jsonl
-            cp /tmp/boxing-reach/report.json boxing/profile_supplements/cross_source_reach_report.json
+            cp ${{ runner.temp }}/boxing-${{ github.run_id }}-${{ github.run_attempt }}/boxing-reach/additions.jsonl boxing/profile_supplements/cross_source_reach_additions.jsonl
+            cp ${{ runner.temp }}/boxing-${{ github.run_id }}-${{ github.run_attempt }}/boxing-reach/report.json boxing/profile_supplements/cross_source_reach_report.json
             python boxing/research/backfill_cross_source_reach.py --merge-only --additions boxing/profile_supplements/cross_source_reach_additions.jsonl
             git add boxing/profile_supplements/verified_profiles.jsonl boxing/profile_supplements/cross_source_reach_additions.jsonl boxing/profile_supplements/cross_source_reach_report.json
             if git diff --cached --quiet; then
@@ -54,3 +56,7 @@ jobs:
           done
           echo 'Failed to merge reach additions after retries.' >&2
           exit 1
+
+      - name: Remove this run temporary boxing files
+        if: always()
+        run: rm -rf -- "${{ runner.temp }}/boxing-${{ github.run_id }}-${{ github.run_attempt }}"

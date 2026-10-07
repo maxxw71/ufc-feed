@@ -7,9 +7,11 @@ on:
   workflow_dispatch:
 jobs:
   probe:
-    runs-on: ubuntu-24.04
+    runs-on: [self-hosted, Linux, X64, appwiza]
     timeout-minutes: 5
     steps:
+      - name: Prepare isolated boxing scratch space
+        run: mkdir -p "${{ runner.temp }}/boxing-${{ github.run_id }}-${{ github.run_attempt }}"
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with: {python-version: '3.12'}
@@ -29,3 +31,7 @@ jobs:
               for tr in t.find_all('tr')[:8]:
                   print('ROW',[(x.name,x.get('class'),x.get_text(' ',strip=True),x.attrs) for x in tr.find_all(['th','td'])])
           PY
+
+      - name: Remove this run temporary boxing files
+        if: always()
+        run: rm -rf -- "${{ runner.temp }}/boxing-${{ github.run_id }}-${{ github.run_attempt }}"

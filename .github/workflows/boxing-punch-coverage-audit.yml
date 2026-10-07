@@ -11,9 +11,11 @@ permissions:
 
 jobs:
   audit:
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, Linux, X64, appwiza]
     timeout-minutes: 10
     steps:
+      - name: Prepare isolated boxing scratch space
+        run: mkdir -p "${{ runner.temp }}/boxing-${{ github.run_id }}-${{ github.run_attempt }}"
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
@@ -27,7 +29,7 @@ jobs:
           with urllib.request.urlopen(req,timeout=180) as r:data=r.read()
           z=zipfile.ZipFile(io.BytesIO(data))
           dbname=next(n for n in z.namelist() if n.endswith('.sqlite3'))
-          path='/tmp/boxing_research.sqlite3';open(path,'wb').write(z.read(dbname))
+          path='${{ runner.temp }}/boxing-${{ github.run_id }}-${{ github.run_attempt }}/boxing_research.sqlite3';open(path,'wb').write(z.read(dbname))
           db=sqlite3.connect(path);db.row_factory=sqlite3.Row
           names=['punch_reports','round_punches','fight_punch_totals','historical_punch_observations','published_fight_punch_totals','secondary_round_punches','reviewed_chart_rounds','reviewed_round_charts']
           out={'archive_bytes':len(data),'tables':{}}
@@ -77,3 +79,7 @@ jobs:
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add boxing/public_punch_audit
           if git diff --cached --quiet; then echo 'No punch-audit changes.'; else git commit -m 'Update public boxing punch coverage audit'; git push; fi
+
+      - name: Remove this run temporary boxing files
+        if: always()
+        run: rm -rf -- "${{ runner.temp }}/boxing-${{ github.run_id }}-${{ github.run_attempt }}"

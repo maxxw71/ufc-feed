@@ -10,9 +10,11 @@ permissions:
   contents: write
 jobs:
   probe:
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, Linux, X64, appwiza]
     timeout-minutes: 20
     steps:
+      - name: Prepare isolated boxing scratch space
+        run: mkdir -p "${{ runner.temp }}/boxing-${{ github.run_id }}-${{ github.run_attempt }}"
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
@@ -25,16 +27,16 @@ jobs:
         shell: bash
         run: |
           set -Eeuo pipefail
-          mkdir -p /tmp/boxingdata-reach
-          cp boxing/profile_supplements/boxingdata_reach_probe.json /tmp/boxingdata-reach/
-          cp boxing/profile_supplements/boxingdata_reach_additions.jsonl /tmp/boxingdata-reach/
+          mkdir -p ${{ runner.temp }}/boxing-${{ github.run_id }}-${{ github.run_attempt }}/boxingdata-reach
+          cp boxing/profile_supplements/boxingdata_reach_probe.json ${{ runner.temp }}/boxing-${{ github.run_id }}-${{ github.run_attempt }}/boxingdata-reach/
+          cp boxing/profile_supplements/boxingdata_reach_additions.jsonl ${{ runner.temp }}/boxing-${{ github.run_id }}-${{ github.run_attempt }}/boxingdata-reach/
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           for attempt in 1 2 3 4; do
             git fetch origin main
             git reset --hard origin/main
-            cp /tmp/boxingdata-reach/boxingdata_reach_probe.json boxing/profile_supplements/
-            cp /tmp/boxingdata-reach/boxingdata_reach_additions.jsonl boxing/profile_supplements/
+            cp ${{ runner.temp }}/boxing-${{ github.run_id }}-${{ github.run_attempt }}/boxingdata-reach/boxingdata_reach_probe.json boxing/profile_supplements/
+            cp ${{ runner.temp }}/boxing-${{ github.run_id }}-${{ github.run_attempt }}/boxingdata-reach/boxingdata_reach_additions.jsonl boxing/profile_supplements/
             git add boxing/profile_supplements/boxingdata_reach_probe.json boxing/profile_supplements/boxingdata_reach_additions.jsonl
             if git diff --cached --quiet; then exit 0; fi
             git commit -m 'Publish Boxing Data reach probe'
@@ -42,3 +44,7 @@ jobs:
             sleep $((attempt * 2))
           done
           exit 1
+
+      - name: Remove this run temporary boxing files
+        if: always()
+        run: rm -rf -- "${{ runner.temp }}/boxing-${{ github.run_id }}-${{ github.run_attempt }}"

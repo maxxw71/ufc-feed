@@ -6,7 +6,7 @@ explicit strict-completeness flag before insertion; incomplete or ambiguous
 careers are skipped rather than weakening the research layer.
 """
 from __future__ import annotations
-import json,os,re,sqlite3,unicodedata
+import json,os,re,sqlite3,unicodedata,hashlib,collections
 from pathlib import Path
 from features import cm
 ROOT=Path(__file__).resolve().parent
@@ -33,8 +33,14 @@ def main():
     if not SUP.exists():
         finish({'supplemental_fighters':0,'inserted_bouts':0,'quote_links_added':0,'skipped_incomplete':0,'by_source':{}});return
     con=sqlite3.connect(DB);con.row_factory=sqlite3.Row
-    added_bouts=0;added_quotes=0;fighters=0;skipped=0;by_source={}
-    for line in SUP.read_text().splitlines():
+    added_bouts=0;added_quotes=0;fighters=0;skipped=0;by_source={};reused=0;held=[]
+    existing=collections.defaultdict(list)
+    for row in con.execute('select source,source_id,url,date,boxer_b,winner from bouts'):
+        existing[(row['source'],row['url'],row['date'],nk(row['boxer_b']))].append(dict(row))
+    lines=SUP.read_text().splitlines()
+    recovered=SUP.parent/'recovered_priced_careers.jsonl'
+    if SUP==_default_sup and recovered.exists():lines.extend(recovered.read_text().splitlines())
+    for line in lines:
         if not line.strip():continue
         x=json.loads(line);source=x.get('source') or 'wikipedia'
         if source in {'champinon','wba_consensus'} and x.get('career_complete') is not True:
@@ -49,12 +55,21 @@ def main():
                     (url,name,born,h,reach,stance_value(profile.get('Stance')),profile.get('Nationality'),profile.get('Division') or profile.get('Weight'),url,quality))
         by_key={}
         for i,r in enumerate(x.get('career_rows') or []):
-            ident=url+'#supp-'+str(i)+'-'+r['date'];raw=r.get('raw') or {}
+            event_key=(source,url,r['date'],nk(r['opponent']))
+            prior=existing.get(event_key,[])
+            if prior:
+                if any(z['winner']!=outcome(r['result']) for z in prior):
+                    held.append({'source_url':url,'date':r['date'],'opponent':r['opponent'],'reason':'existing_result_conflict'});continue
+                # Reuse the existing identity; refreshing/reordering a table must not add fights.
+                ident=min((z['source_id'] for z in prior),key=lambda z:('#supp-' in z,z))
+                by_key[(r['date'],nk(r['opponent']))]=ident;reused+=1;continue
+            ident=url+'#event-'+hashlib.sha256(json.dumps(event_key).encode()).hexdigest()[:20];raw=r.get('raw') or {}
             raw={**raw,'supplemental_source':source,'supplemental_quality':quality,'career_complete':x.get('career_complete')}
             con.execute('''INSERT OR REPLACE INTO bouts(source,source_id,date,boxer_a,boxer_b,winner,method,rounds,scheduled_rounds,division,venue,status,url,data)
                            VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?)''',
                         (source,ident,r['date'],name,r['opponent'],outcome(r['result']),r.get('type') or '',r.get('round_time') or '',None,None,r.get('location') or '', 'FINISHED',url,json.dumps(raw)))
             by_key[(r['date'],nk(r['opponent']))]=ident;added_bouts+=1
+            existing[event_key].append({'source_id':ident,'winner':outcome(r['result'])})
         for e in x.get('matched_price_evidence') or []:
             ident=by_key.get((e['date'],nk(e['opponent'])))
             if not ident:continue
@@ -69,6 +84,6 @@ def main():
     con.commit()
     linked_after=con.execute("SELECT count(*) FROM priced_bout_research WHERE feature_bout_id IS NOT NULL").fetchone()[0]
     distinct_after=con.execute("SELECT count(DISTINCT odds_bout_id) FROM priced_bout_research WHERE feature_bout_id IS NOT NULL").fetchone()[0]
-    finish({'supplemental_fighters':fighters,'inserted_bouts':added_bouts,'quote_links_added':added_quotes,'skipped_incomplete':skipped,
+    finish({'supplemental_fighters':fighters,'inserted_bouts':added_bouts,'reused_existing_bouts':reused,'held_result_conflicts':held,'quote_links_added':added_quotes,'skipped_incomplete':skipped,
             'linked_quote_rows_after':linked_after,'distinct_price_bouts_with_feature_side_after':distinct_after,'by_source':by_source})
 if __name__=='__main__':main()

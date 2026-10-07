@@ -12,9 +12,11 @@ permissions:
   contents: write
 jobs:
   parse:
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, Linux, X64, appwiza]
     timeout-minutes: 20
     steps:
+      - name: Prepare isolated boxing scratch space
+        run: mkdir -p "${{ runner.temp }}/boxing-${{ github.run_id }}-${{ github.run_attempt }}"
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
@@ -30,14 +32,14 @@ jobs:
           with urllib.request.urlopen(req,timeout=180) as r:data=r.read()
           with zipfile.ZipFile(io.BytesIO(data)) as z:
               name=next(n for n in z.namelist() if n.endswith('.sqlite3'))
-              open('/tmp/boxing_research.sqlite3','wb').write(z.read(name))
-          print(os.path.getsize('/tmp/boxing_research.sqlite3'))
+              open('${{ runner.temp }}/boxing-${{ github.run_id }}-${{ github.run_attempt }}/boxing_research.sqlite3','wb').write(z.read(name))
+          print(os.path.getsize('${{ runner.temp }}/boxing-${{ github.run_id }}-${{ github.run_attempt }}/boxing_research.sqlite3'))
           PY
       - name: Strict parse legacy punch tables
         run: |
-          python boxing/research/parse_legacy_compubox_candidates.py --db /tmp/boxing_research.sqlite3
-          python boxing/research/export_legacy_compubox_final_totals.py --db /tmp/boxing_research.sqlite3
-          python boxing/research/audit_legacy_compubox_identity.py --db /tmp/boxing_research.sqlite3
+          python boxing/research/parse_legacy_compubox_candidates.py --db ${{ runner.temp }}/boxing-${{ github.run_id }}-${{ github.run_attempt }}/boxing_research.sqlite3
+          python boxing/research/export_legacy_compubox_final_totals.py --db ${{ runner.temp }}/boxing-${{ github.run_id }}-${{ github.run_attempt }}/boxing_research.sqlite3
+          python boxing/research/audit_legacy_compubox_identity.py --db ${{ runner.temp }}/boxing-${{ github.run_id }}-${{ github.run_attempt }}/boxing_research.sqlite3
       - name: Persist strict legacy reports
         shell: bash
         run: |
@@ -67,3 +69,7 @@ jobs:
           exit 1
 
 # retrigger-on-current-main: 2026-09-27T11:00Z
+
+      - name: Remove this run temporary boxing files
+        if: always()
+        run: rm -rf -- "${{ runner.temp }}/boxing-${{ github.run_id }}-${{ github.run_attempt }}"

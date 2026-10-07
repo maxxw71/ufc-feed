@@ -17,9 +17,11 @@ permissions:
 
 jobs:
   collect:
-    runs-on: ubuntu-24.04
+    runs-on: [self-hosted, Linux, X64, appwiza]
     timeout-minutes: 20
     steps:
+      - name: Prepare isolated boxing scratch space
+        run: mkdir -p "${{ runner.temp }}/boxing-${{ github.run_id }}-${{ github.run_attempt }}"
       - uses: actions/checkout@v4
         with: {fetch-depth: 0}
       - uses: actions/setup-python@v5
@@ -53,3 +55,7 @@ jobs:
           done
           echo 'Unable to publish WBC archive after retries.'
           exit 1
+
+      - name: Remove this run temporary boxing files
+        if: always()
+        run: rm -rf -- "${{ runner.temp }}/boxing-${{ github.run_id }}-${{ github.run_attempt }}"

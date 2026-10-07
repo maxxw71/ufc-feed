@@ -12,9 +12,11 @@ permissions:
 
 jobs:
   test:
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, Linux, X64, appwiza]
     timeout-minutes: 10
     steps:
+      - name: Prepare isolated boxing scratch space
+        run: mkdir -p "${{ runner.temp }}/boxing-${{ github.run_id }}-${{ github.run_attempt }}"
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
@@ -26,4 +28,8 @@ jobs:
         run: python -m py_compile *.py
       - name: Run leakage, audit, identity and market-policy tests
         working-directory: boxing/research
-        run: python -m unittest test_chronological_master test_sample_audit test_market_consensus test_identity_links_v2 test_priced_career_backfill test_punch_profiles test_archived_compubox_rounds test_archived_compubox_summaries test_ring_compubox_summaries test_historical_odds_snapshot test_prospective_odds test_ready_to_fight_punch test_wba_consensus_careers test_boxingscene_compubox_summaries test_ranking_archives test_boxerlist_reach
+        run: python -m unittest test_release_safeguards test_chronological_master test_sample_audit test_market_consensus test_identity_links_v2 test_priced_career_backfill test_punch_profiles test_archived_compubox_rounds test_archived_compubox_summaries test_ring_compubox_summaries test_historical_odds_snapshot test_prospective_odds test_ready_to_fight_punch test_wba_consensus_careers test_boxingscene_compubox_summaries test_ranking_archives test_boxerlist_reach
+
+      - name: Remove this run temporary boxing files
+        if: always()
+        run: rm -rf -- "${{ runner.temp }}/boxing-${{ github.run_id }}-${{ github.run_attempt }}"

@@ -10,9 +10,11 @@ permissions:
   contents: write
 jobs:
   inventory:
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, Linux, X64, appwiza]
     timeout-minutes: 20
     steps:
+      - name: Prepare isolated boxing scratch space
+        run: mkdir -p "${{ runner.temp }}/boxing-${{ github.run_id }}-${{ github.run_attempt }}"
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
@@ -43,3 +45,7 @@ jobs:
 # refresh-current-gap-inventory: 2026-10-01T04:42-04:00
 
 # refresh-current-missing-reach: 2026-10-01T21:22Z
+
+      - name: Remove this run temporary boxing files
+        if: always()
+        run: rm -rf -- "${{ runner.temp }}/boxing-${{ github.run_id }}-${{ github.run_attempt }}"

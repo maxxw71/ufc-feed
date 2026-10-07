@@ -34,9 +34,11 @@ permissions:
 jobs:
   backfill:
     if: github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success'
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, Linux, X64, appwiza]
     timeout-minutes: 50
     steps:
+      - name: Prepare isolated boxing scratch space
+        run: mkdir -p "${{ runner.temp }}/boxing-${{ github.run_id }}-${{ github.run_attempt }}"
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
@@ -55,8 +57,8 @@ jobs:
           url='https://appwiza.com/sports/downloads/boxing/research-database.zip'
           req=urllib.request.Request(url,headers={'User-Agent':'Mozilla/5.0 AppwizaCareerBackfill/1.0'})
           with urllib.request.urlopen(req,timeout=180) as r:data=r.read()
-          z=zipfile.ZipFile(io.BytesIO(data));z.extractall('/tmp/boxing-careers')
-          db=next(os.path.join(root,f) for root,_,files in os.walk('/tmp/boxing-careers') for f in files if f.endswith('.sqlite3'))
+          z=zipfile.ZipFile(io.BytesIO(data));z.extractall('${{ runner.temp }}/boxing-${{ github.run_id }}-${{ github.run_attempt }}/boxing-careers')
+          db=next(os.path.join(root,f) for root,_,files in os.walk('${{ runner.temp }}/boxing-${{ github.run_id }}-${{ github.run_attempt }}/boxing-careers') for f in files if f.endswith('.sqlite3'))
           shutil.copy2(db,'boxing/research/boxing.sqlite3')
           PY
       - name: Refresh stored secondary careers under strict completeness audit
@@ -81,10 +83,10 @@ jobs:
           set -Eeuo pipefail
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          rm -rf /tmp/boxing-generated
-          mkdir -p /tmp/boxing-generated
-          [ ! -d boxing/supplemental_careers ] || cp -a boxing/supplemental_careers /tmp/boxing-generated/
-          [ ! -d boxing/backfill_state ] || cp -a boxing/backfill_state /tmp/boxing-generated/
+          rm -rf ${{ runner.temp }}/boxing-${{ github.run_id }}-${{ github.run_attempt }}/boxing-generated
+          mkdir -p ${{ runner.temp }}/boxing-${{ github.run_id }}-${{ github.run_attempt }}/boxing-generated
+          [ ! -d boxing/supplemental_careers ] || cp -a boxing/supplemental_careers ${{ runner.temp }}/boxing-${{ github.run_id }}-${{ github.run_attempt }}/boxing-generated/
+          [ ! -d boxing/backfill_state ] || cp -a boxing/backfill_state ${{ runner.temp }}/boxing-${{ github.run_id }}-${{ github.run_attempt }}/boxing-generated/
           git fetch origin main
           git reset --hard origin/main
           python - <<'PY'
@@ -93,7 +95,7 @@ jobs:
           def nk(s):
               x=unicodedata.normalize('NFKD',str(s or '')).encode('ascii','ignore').decode().lower()
               return re.sub(r'[^a-z0-9]','',x)
-          base=Path('boxing/supplemental_careers');gen=Path('/tmp/boxing-generated/supplemental_careers')
+          base=Path('boxing/supplemental_careers');gen=Path('${{ runner.temp }}/boxing-${{ github.run_id }}-${{ github.run_attempt }}/boxing-generated/supplemental_careers')
           base.mkdir(parents=True,exist_ok=True)
           # Union career JSONL by requested fighter. Prefer generated records when
           # they carry a successful strict refresh/completeness audit.
@@ -121,7 +123,7 @@ jobs:
                   if p.name=='verified_priced_careers.jsonl':continue
                   if p.is_file():shutil.copy2(p,base/p.name)
           # Merge Wikipedia cooldown cache by newest attempt timestamp.
-          bstate=Path('boxing/backfill_state');gstate=Path('/tmp/boxing-generated/backfill_state');bstate.mkdir(parents=True,exist_ok=True)
+          bstate=Path('boxing/backfill_state');gstate=Path('${{ runner.temp }}/boxing-${{ github.run_id }}-${{ github.run_attempt }}/boxing-generated/backfill_state');bstate.mkdir(parents=True,exist_ok=True)
           bp=bstate/'wikipedia_failures.json';gp=gstate/'wikipedia_failures.json'
           def read_obj(p):
               try:return json.loads(p.read_text())
@@ -138,3 +140,7 @@ jobs:
             git commit -m 'Update verified boxing career supplements'
             git push origin HEAD:main
           fi
+
+      - name: Remove this run temporary boxing files
+        if: always()
+        run: rm -rf -- "${{ runner.temp }}/boxing-${{ github.run_id }}-${{ github.run_attempt }}"

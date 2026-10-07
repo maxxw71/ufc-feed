@@ -10,9 +10,11 @@ permissions:
   contents: write
 jobs:
   discover:
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, Linux, X64, appwiza]
     timeout-minutes: 15
     steps:
+      - name: Prepare isolated boxing scratch space
+        run: mkdir -p "${{ runner.temp }}/boxing-${{ github.run_id }}-${{ github.run_attempt }}"
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
@@ -35,3 +37,7 @@ jobs:
           cp /tmp/legacy_compubox_cdx_index.json boxing/public_punch_audit/legacy_compubox_cdx_index.json
           git add boxing/public_punch_audit/legacy_compubox_cdx_index.json
           git diff --cached --quiet || (git commit -m 'Index legacy CompuBox archive candidates' && git push origin HEAD:main)
+
+      - name: Remove this run temporary boxing files
+        if: always()
+        run: rm -rf -- "${{ runner.temp }}/boxing-${{ github.run_id }}-${{ github.run_attempt }}"
