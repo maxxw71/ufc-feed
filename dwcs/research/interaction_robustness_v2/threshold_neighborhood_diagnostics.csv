@@ -1,0 +1,91 @@
+parent_passed_rule,mechanism_signature,neighbor_rule,is_exact_parent,discovery_n,discovery_win_rate,discovery_roi,validation_n,validation_win_rate,validation_roi,validation_profitable_seasons,validation_seasons
+sos_gap>=25 & exp_gap>=4,exp_gap|sos_gap,sos_gap>=25 & exp_gap>=4,True,12,1.0,0.811881908074946,12,0.75,0.20160882387116605,2,3
+sos_gap>=25 & exp_gap>=4,exp_gap|sos_gap,exp_gap>=4 & sos_gap>=25,False,12,1.0,0.811881908074946,12,0.75,0.20160882387116605,2,3
+sos_gap>=25 & exp_gap>=4,exp_gap|sos_gap,exp_gap>=2 & sos_gap>=25,False,19,0.7368421052631579,0.2704775855247119,14,0.6428571428571429,0.029950420460999518,2,3
+sos_gap>=25 & exp_gap>=4,exp_gap|sos_gap,sos_gap>=25 & exp_gap>=2,False,19,0.7368421052631579,0.2704775855247119,14,0.6428571428571429,0.029950420460999518,2,3
+sos_gap>=25 & exp_gap>=4,exp_gap|sos_gap,sos_gap>=25 & exp_gap>=0,False,24,0.6666666666666666,0.1562114218737303,19,0.5263157894736842,-0.15556284808136878,1,3
+younger_y>=3 & finish_gap>=0.1 & prior_sig_diff>=0,finish_gap|prior_sig_diff|younger_y,younger_y>=4 & finish_gap>=0.1 & prior_sig_diff>=0,False,15,0.8,0.9382604422604424,8,0.875,0.9425155611296916,2,3
+younger_y>=3 & finish_gap>=0.1 & prior_sig_diff>=0,finish_gap|prior_sig_diff|younger_y,younger_y>=3 & finish_gap>=0.1 & prior_sig_diff>=0,True,19,0.7894736842105263,0.7758196473985948,11,0.7272727272727273,0.9581931353670484,2,3
+younger_y>=3 & finish_gap>=0.1 & prior_sig_diff>=0,finish_gap|prior_sig_diff|younger_y,younger_y>=5 & finish_gap>=0.1 & prior_sig_diff>=0,False,12,0.75,0.8367144417144418,7,1.0,1.220017784148219,3,3
+younger_y>=3 & finish_gap>=0.1 & prior_sig_diff>=0,finish_gap|prior_sig_diff|younger_y,finish_gap>=0.15 & younger_y>=3 & prior_sig_diff>=0,False,17,0.7647058823529411,0.7443164893010095,11,0.7272727272727273,0.9581931353670484,2,3
+younger_y>=3 & finish_gap>=0.1 & prior_sig_diff>=0,finish_gap|prior_sig_diff|younger_y,younger_y>=3 & finish_gap>=0.2 & prior_sig_diff>=0,False,14,0.7142857142857143,0.7297459557985874,9,0.8888888888888888,1.3933471654486147,3,3
+younger_y>=4 & finish_gap>=0.1,finish_gap|younger_y,younger_y>=4 & finish_gap>=0.1,True,16,0.75,0.8171191646191648,11,0.8181818181818182,0.6858422977988196,2,3
+younger_y>=4 & finish_gap>=0.1,finish_gap|younger_y,younger_y>=4 & finish_gap>=0.2,False,12,0.6666666666666666,0.7855808080808081,8,1.0,1.1037474451876625,3,3
+younger_y>=4 & finish_gap>=0.1,finish_gap|younger_y,younger_y>=5 & finish_gap>=0.1,False,13,0.6923076923076923,0.6954287154287154,7,1.0,1.220017784148219,3,3
+younger_y>=4 & finish_gap>=0.1,finish_gap|younger_y,younger_y>=3 & finish_gap>=0.1,False,21,0.7142857142857143,0.6066939666939667,14,0.7142857142857143,0.7531618054133581,1,3
+younger_y>=4 & finish_gap>=0.1,finish_gap|younger_y,finish_gap>=0.15 & younger_y>=5,False,12,0.6666666666666666,0.6525477750477751,7,1.0,1.220017784148219,3,3
+younger_y>=4 & finish_gap>=0.1,finish_gap|younger_y,finish_gap>=0.15 & younger_y>=3,False,19,0.6842105263157895,0.5607042272693242,13,0.6923076923076923,0.7561522739616384,1,3
+younger_y>=4 & finish_gap>=0.1,finish_gap|younger_y,younger_y>=3 & finish_gap>=0.2,False,16,0.625,0.513527711323764,10,0.9,1.28299795615013,3,3
+younger_y>=4 & reach_gap>=2 & prior_sig_diff>=0,prior_sig_diff|reach_gap|younger_y,reach_gap>=2 & younger_y>=6 & prior_sig_diff>=0,False,17,0.8235294117647058,0.9110770786037404,6,0.6666666666666666,-0.0643874643874644,1,2
+younger_y>=4 & reach_gap>=2 & prior_sig_diff>=0,prior_sig_diff|reach_gap|younger_y,younger_y>=6 & reach_gap>=2 & prior_sig_diff>=0,False,17,0.8235294117647058,0.9110770786037404,6,0.6666666666666666,-0.0643874643874644,1,2
+younger_y>=4 & reach_gap>=2 & prior_sig_diff>=0,prior_sig_diff|reach_gap|younger_y,younger_y>=4 & reach_gap>=2 & prior_sig_diff>=0,True,21,0.7619047619047619,0.7551705050730408,13,0.6923076923076923,0.17784267345278487,2,3
+younger_y>=4 & reach_gap>=2 & prior_sig_diff>=0,prior_sig_diff|reach_gap|younger_y,reach_gap>=2 & younger_y>=5 & prior_sig_diff>=0,False,20,0.75,0.687929030326693,8,0.75,0.14355722779635824,2,3
+younger_y>=4 & reach_gap>=2 & prior_sig_diff>=0,prior_sig_diff|reach_gap|younger_y,younger_y>=5 & reach_gap>=2 & prior_sig_diff>=0,False,20,0.75,0.687929030326693,8,0.75,0.14355722779635824,2,3
+younger_y>=4 & reach_gap>=2 & prior_sig_diff>=0,prior_sig_diff|reach_gap|younger_y,younger_y>=5 & reach_gap>=4 & prior_sig_diff>=0,False,13,0.7692307692307693,0.6503786118679735,6,0.6666666666666666,0.007648953301127221,2,3
+younger_y>=4 & reach_gap>=2 & prior_sig_diff>=0,prior_sig_diff|reach_gap|younger_y,younger_y>=4 & reach_gap>=4 & prior_sig_diff>=0,False,13,0.7692307692307693,0.6503786118679735,9,0.5555555555555556,-0.050456253354804075,2,3
+younger_y>=4 & reach_gap>=2 & prior_sig_diff>=0,prior_sig_diff|reach_gap|younger_y,reach_gap>=4 & younger_y>=5 & prior_sig_diff>=0,False,13,0.7692307692307693,0.6503786118679735,6,0.6666666666666666,0.007648953301127221,2,3
+younger_y>=4 & reach_gap>=2 & prior_sig_diff>=0,prior_sig_diff|reach_gap|younger_y,reach_gap>=4 & younger_y>=3 & prior_sig_diff>=0,False,14,0.7142857142857143,0.5324944253059753,11,0.5454545454545454,0.32235397452788755,2,3
+younger_y>=4 & reach_gap>=2 & prior_sig_diff>=0,prior_sig_diff|reach_gap|younger_y,younger_y>=3 & reach_gap>=4 & prior_sig_diff>=0,False,14,0.7142857142857143,0.5324944253059753,11,0.5454545454545454,0.32235397452788755,2,3
+younger_y>=4 & reach_gap>=2 & prior_sig_diff>=0,prior_sig_diff|reach_gap|younger_y,younger_y>=3 & reach_gap>=2 & prior_sig_diff>=0,False,29,0.6551724137931034,0.4547521164056768,16,0.6875,0.40323843092164635,3,3
+younger_y>=4 & reach_gap>=2 & prior_sig_diff>=0,prior_sig_diff|reach_gap|younger_y,reach_gap>=2 & younger_y>=3 & prior_sig_diff>=0,False,29,0.6551724137931034,0.4547521164056768,16,0.6875,0.40323843092164635,3,3
+finish_gap>=0.15 & younger_y>=3 & prior_sig_diff>=0,finish_gap|prior_sig_diff|younger_y,younger_y>=4 & finish_gap>=0.1 & prior_sig_diff>=0,False,15,0.8,0.9382604422604424,8,0.875,0.9425155611296916,2,3
+finish_gap>=0.15 & younger_y>=3 & prior_sig_diff>=0,finish_gap|prior_sig_diff|younger_y,younger_y>=3 & finish_gap>=0.1 & prior_sig_diff>=0,False,19,0.7894736842105263,0.7758196473985948,11,0.7272727272727273,0.9581931353670484,2,3
+finish_gap>=0.15 & younger_y>=3 & prior_sig_diff>=0,finish_gap|prior_sig_diff|younger_y,younger_y>=5 & finish_gap>=0.1 & prior_sig_diff>=0,False,12,0.75,0.8367144417144418,7,1.0,1.220017784148219,3,3
+finish_gap>=0.15 & younger_y>=3 & prior_sig_diff>=0,finish_gap|prior_sig_diff|younger_y,finish_gap>=0.15 & younger_y>=3 & prior_sig_diff>=0,True,17,0.7647058823529411,0.7443164893010095,11,0.7272727272727273,0.9581931353670484,2,3
+finish_gap>=0.15 & younger_y>=3 & prior_sig_diff>=0,finish_gap|prior_sig_diff|younger_y,younger_y>=3 & finish_gap>=0.2 & prior_sig_diff>=0,False,14,0.7142857142857143,0.7297459557985874,9,0.8888888888888888,1.3933471654486147,3,3
+younger_y>=4 & reach_gap>=2 & not_worse_than_-500,price|reach_gap|younger_y,younger_y>=6 & reach_gap>=2 & not_worse_than_-500,False,14,0.7857142857142857,1.0721568470106506,5,0.6,-0.0994871794871795,1,2
+younger_y>=4 & reach_gap>=2 & not_worse_than_-500,price|reach_gap|younger_y,reach_gap>=2 & younger_y>=6 & not_worse_than_-500,False,14,0.7857142857142857,1.0721568470106506,5,0.6,-0.0994871794871795,1,2
+younger_y>=4 & reach_gap>=2 & not_worse_than_-500,price|reach_gap|younger_y,reach_gap>=2 & younger_y>=5 & not_worse_than_-500,False,17,0.7058823529411765,0.7812038899070224,7,0.7142857142857143,0.14819238732282208,2,3
+younger_y>=4 & reach_gap>=2 & not_worse_than_-500,price|reach_gap|younger_y,younger_y>=5 & reach_gap>=2 & not_worse_than_-500,False,17,0.7058823529411765,0.7812038899070224,7,0.7142857142857143,0.14819238732282208,2,3
+younger_y>=4 & reach_gap>=2 & not_worse_than_-500,price|reach_gap|younger_y,younger_y>=4 & reach_gap>=2 & not_worse_than_-500,True,19,0.6842105263157895,0.756866638337862,14,0.7142857142857143,0.2289274593231839,2,3
+younger_y>=4 & reach_gap>=2 & not_worse_than_-500,price|reach_gap|younger_y,younger_y>=4 & reach_gap>=4 & not_worse_than_-500,False,12,0.6666666666666666,0.5968327217795303,8,0.5,-0.07065217391304347,2,3
+younger_y>=4 & reach_gap>=2 & not_worse_than_-500,price|reach_gap|younger_y,younger_y>=3 & reach_gap>=4 & not_worse_than_-500,False,13,0.6153846153846154,0.4739994354887972,10,0.5,0.34347826086956523,2,3
+younger_y>=4 & reach_gap>=2 & not_worse_than_-500,price|reach_gap|younger_y,reach_gap>=4 & younger_y>=3 & not_worse_than_-500,False,13,0.6153846153846154,0.4739994354887972,10,0.5,0.34347826086956523,2,3
+younger_y>=4 & reach_gap>=2 & not_worse_than_-500,price|reach_gap|younger_y,younger_y>=3 & reach_gap>=2 & not_worse_than_-500,False,27,0.5555555555555556,0.3907295147277833,17,0.6470588235294118,0.3649990841485044,2,3
+younger_y>=4 & reach_gap>=2 & not_worse_than_-500,price|reach_gap|younger_y,reach_gap>=2 & younger_y>=3 & not_worse_than_-500,False,27,0.5555555555555556,0.3907295147277833,17,0.6470588235294118,0.3649990841485044,2,3
+sos_gap>=25 & exp_gap>=2 & elo_gap>=25,elo_gap|exp_gap|sos_gap,sos_gap>=25 & exp_gap>=2 & elo_gap>=25,True,15,0.8666666666666667,0.4969428412080141,11,0.7272727272727273,0.08811871695036302,2,3
+sos_gap>=25 & exp_gap>=2 & elo_gap>=25,elo_gap|exp_gap|sos_gap,exp_gap>=2 & elo_gap>=25 & sos_gap>=25,False,15,0.8666666666666667,0.4969428412080141,11,0.7272727272727273,0.08811871695036302,2,3
+sos_gap>=25 & exp_gap>=2 & elo_gap>=25,elo_gap|exp_gap|sos_gap,elo_gap>=25 & exp_gap>=2 & sos_gap>=25,False,15,0.8666666666666667,0.4969428412080141,11,0.7272727272727273,0.08811871695036302,2,3
+sos_gap>=25 & exp_gap>=2 & elo_gap>=25,elo_gap|exp_gap|sos_gap,sos_gap>=25 & exp_gap>=0 & elo_gap>=25,False,16,0.875,0.4815089136325132,11,0.7272727272727273,0.08811871695036302,2,3
+sos_gap>=25 & exp_gap>=2 & elo_gap>=25,elo_gap|exp_gap|sos_gap,elo_gap>=25 & exp_gap>=0 & sos_gap>=25,False,16,0.875,0.4815089136325132,11,0.7272727272727273,0.08811871695036302,2,3
+younger_y>=4 & reach_gap>=2,reach_gap|younger_y,reach_gap>=2 & younger_y>=6,False,17,0.8235294117647058,0.9110770786037404,6,0.6666666666666666,-0.0643874643874644,1,2
+younger_y>=4 & reach_gap>=2,reach_gap|younger_y,younger_y>=6 & reach_gap>=2,False,17,0.8235294117647058,0.9110770786037404,6,0.6666666666666666,-0.0643874643874644,1,2
+younger_y>=4 & reach_gap>=2,reach_gap|younger_y,younger_y>=5 & reach_gap>=2,False,20,0.75,0.687929030326693,8,0.75,0.14355722779635824,2,3
+younger_y>=4 & reach_gap>=2,reach_gap|younger_y,reach_gap>=2 & younger_y>=5,False,20,0.75,0.687929030326693,8,0.75,0.14355722779635824,2,3
+younger_y>=4 & reach_gap>=2,reach_gap|younger_y,reach_gap>=4 & younger_y>=5,False,13,0.7692307692307693,0.6503786118679735,6,0.6666666666666666,0.007648953301127221,2,3
+younger_y>=4 & reach_gap>=2,reach_gap|younger_y,younger_y>=5 & reach_gap>=4,False,13,0.7692307692307693,0.6503786118679735,6,0.6666666666666666,0.007648953301127221,2,3
+younger_y>=4 & reach_gap>=2,reach_gap|younger_y,younger_y>=4 & reach_gap>=2,True,22,0.7272727272727273,0.6753900275697208,15,0.7333333333333333,0.22107303610904572,2,3
+younger_y>=4 & reach_gap>=2,reach_gap|younger_y,younger_y>=4 & reach_gap>=4,False,14,0.7142857142857143,0.5324944253059753,9,0.5555555555555556,-0.050456253354804075,2,3
+younger_y>=4 & reach_gap>=2,reach_gap|younger_y,younger_y>=3 & reach_gap>=4,False,15,0.6666666666666666,0.430328130285577,11,0.5454545454545454,0.32235397452788755,2,3
+younger_y>=4 & reach_gap>=2,reach_gap|younger_y,reach_gap>=4 & younger_y>=3,False,15,0.6666666666666666,0.430328130285577,11,0.5454545454545454,0.32235397452788755,2,3
+younger_y>=4 & reach_gap>=2,reach_gap|younger_y,reach_gap>=2 & younger_y>=3,False,31,0.6129032258064516,0.3608971411536976,19,0.6842105263157895,0.3397871411313592,3,3
+younger_y>=4 & reach_gap>=2,reach_gap|younger_y,younger_y>=3 & reach_gap>=2,False,31,0.6129032258064516,0.3608971411536976,19,0.6842105263157895,0.3397871411313592,3,3
+sos_gap>=25 & elo_gap>=25,elo_gap|sos_gap,sos_gap>=25 & elo_gap>=25,True,16,0.875,0.4815089136325132,11,0.7272727272727273,0.08811871695036302,2,3
+sos_gap>=25 & elo_gap>=25,elo_gap|sos_gap,elo_gap>=25 & sos_gap>=25,False,16,0.875,0.4815089136325132,11,0.7272727272727273,0.08811871695036302,2,3
+reach_gap>=6 & prior_sig_diff>=0 & not_worse_than_-500,price|prior_sig_diff|reach_gap,reach_gap>=6 & prior_sig_diff>=0 & not_worse_than_-500,True,12,0.6666666666666666,0.5496501208712922,11,0.5454545454545454,0.3313917204077388,2,3
+reach_gap>=6 & prior_sig_diff>=0 & not_worse_than_-500,price|prior_sig_diff|reach_gap,reach_gap>=4 & prior_sig_diff>=0 & fav_-250_-100,False,14,0.6428571428571429,0.0669234539854413,9,0.6666666666666666,0.0163986096382703,1,3
+exp_gap>=2 & prior_dwcs_n>=1,exp_gap|prior_dwcs_n,exp_gap>=2 & prior_dwcs_n>=1,True,22,0.7272727272727273,0.3911075754300138,12,0.6666666666666666,0.13239432642217067,2,3
+exp_gap>=2 & prior_dwcs_n>=1,exp_gap|prior_dwcs_n,exp_gap>=6 & prior_dwcs_n>=1,False,13,0.6923076923076923,0.3757863321761743,7,0.5714285714285714,0.24678414649441865,2,3
+exp_gap>=2 & prior_dwcs_n>=1,exp_gap|prior_dwcs_n,exp_gap>=4 & prior_dwcs_n>=1,False,15,0.6666666666666666,0.2816136912758482,9,0.5555555555555556,0.10552347196479477,2,3
+younger_y>=3 & finish_gap>=0.2,finish_gap|younger_y,younger_y>=4 & finish_gap>=0.1,False,16,0.75,0.8171191646191648,11,0.8181818181818182,0.6858422977988196,2,3
+younger_y>=3 & finish_gap>=0.2,finish_gap|younger_y,younger_y>=4 & finish_gap>=0.2,False,12,0.6666666666666666,0.7855808080808081,8,1.0,1.1037474451876625,3,3
+younger_y>=3 & finish_gap>=0.2,finish_gap|younger_y,younger_y>=5 & finish_gap>=0.1,False,13,0.6923076923076923,0.6954287154287154,7,1.0,1.220017784148219,3,3
+younger_y>=3 & finish_gap>=0.2,finish_gap|younger_y,younger_y>=3 & finish_gap>=0.1,False,21,0.7142857142857143,0.6066939666939667,14,0.7142857142857143,0.7531618054133581,1,3
+younger_y>=3 & finish_gap>=0.2,finish_gap|younger_y,finish_gap>=0.15 & younger_y>=5,False,12,0.6666666666666666,0.6525477750477751,7,1.0,1.220017784148219,3,3
+younger_y>=3 & finish_gap>=0.2,finish_gap|younger_y,finish_gap>=0.15 & younger_y>=3,False,19,0.6842105263157895,0.5607042272693242,13,0.6923076923076923,0.7561522739616384,1,3
+younger_y>=3 & finish_gap>=0.2,finish_gap|younger_y,younger_y>=3 & finish_gap>=0.2,True,16,0.625,0.513527711323764,10,0.9,1.28299795615013,3,3
+height_gap>=2 & younger_y>=3 & prior_sig_diff>=0,height_gap|prior_sig_diff|younger_y,younger_y>=6 & height_gap>=2 & prior_sig_diff>=0,False,19,0.8421052631578947,0.6588384937773332,5,0.6,-0.14393162393162393,1,2
+height_gap>=2 & younger_y>=3 & prior_sig_diff>=0,height_gap|prior_sig_diff|younger_y,height_gap>=2 & younger_y>=6 & prior_sig_diff>=0,False,19,0.8421052631578947,0.6588384937773332,5,0.6,-0.14393162393162393,1,2
+height_gap>=2 & younger_y>=3 & prior_sig_diff>=0,height_gap|prior_sig_diff|younger_y,height_gap>=2 & younger_y>=5 & prior_sig_diff>=0,False,21,0.8571428571428571,0.6262780007464746,7,0.7142857142857143,0.11644635557679037,2,3
+height_gap>=2 & younger_y>=3 & prior_sig_diff>=0,height_gap|prior_sig_diff|younger_y,younger_y>=5 & height_gap>=2 & prior_sig_diff>=0,False,21,0.8571428571428571,0.6262780007464746,7,0.7142857142857143,0.11644635557679037,2,3
+height_gap>=2 & younger_y>=3 & prior_sig_diff>=0,height_gap|prior_sig_diff|younger_y,younger_y>=4 & height_gap>=2 & prior_sig_diff>=0,False,25,0.8,0.5026189751724932,10,0.7,0.19286214215528696,2,3
+height_gap>=2 & younger_y>=3 & prior_sig_diff>=0,height_gap|prior_sig_diff|younger_y,height_gap>=2 & younger_y>=3 & prior_sig_diff>=0,True,30,0.7,0.3288491459770776,12,0.6666666666666666,0.08904013011775082,2,3
+height_gap>=2 & younger_y>=3 & prior_sig_diff>=0,height_gap|prior_sig_diff|younger_y,younger_y>=3 & height_gap>=2 & prior_sig_diff>=0,False,30,0.7,0.3288491459770776,12,0.6666666666666666,0.08904013011775082,2,3
+younger_y>=4 & not_worse_than_-500,price|younger_y,younger_y>=6 & not_worse_than_-500,False,38,0.7105263157894737,0.4812684773442917,19,0.5789473684210527,0.27329284750337385,2,3
+younger_y>=4 & not_worse_than_-500,price|younger_y,younger_y>=6 & fav_-250_-100,False,15,0.8,0.2369742991738025,9,0.4444444444444444,-0.2867521367521368,1,3
+younger_y>=4 & not_worse_than_-500,price|younger_y,younger_y>=5 & fav_-250_-100,False,17,0.7647058823529411,0.1894871267219826,11,0.5454545454545454,-0.15468565251173946,1,3
+younger_y>=4 & not_worse_than_-500,price|younger_y,younger_y>=5 & not_worse_than_-500,False,49,0.6326530612244898,0.2785464375440079,26,0.6153846153846154,0.25853042906554613,2,3
+younger_y>=4 & not_worse_than_-500,price|younger_y,younger_y>=6 & fav_-400_-100,False,20,0.75,0.1219191617291666,10,0.5,-0.2247435897435897,1,3
+younger_y>=4 & not_worse_than_-500,price|younger_y,younger_y>=4 & not_worse_than_-500,True,67,0.582089552238806,0.1558219491665536,36,0.6111111111111112,0.46915080208247273,2,3
+younger_y>=4 & not_worse_than_-500,price|younger_y,younger_y>=5 & fav_-400_-100,False,26,0.6923076923076923,0.028421405198332,13,0.6153846153846154,-0.08601606494583083,1,3
+reach_gap>=2 & exp_gap>=0 & fav_-250_-100,exp_gap|price|reach_gap,reach_gap>=2 & exp_gap>=0 & fav_-250_-100,True,20,0.65,0.0585275085737608,12,0.6666666666666666,0.04091843200276173,2,3

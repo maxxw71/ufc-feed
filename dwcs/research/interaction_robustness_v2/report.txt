@@ -1,0 +1,23 @@
+DWCS INTERACTION ROBUSTNESS V2
+====================================================================================================================
+No Season 10 data used. No thresholds retuned on S7-9.
+Passed interaction rules entering robustness: 15
+Validation portfolio: {"passed_methods": 15, "method_signals": 202, "unique_bets": 66, "unique_bet_wins": 42, "unique_bet_win_rate": 0.6363636363636364, "net_units_at_1u_per_unique_bet": 23.716874890533234, "roi_per_unique_bet": 0.35934658925050356, "max_method_overlap_same_pick": 11, "fights_with_conflicting_picks_across_passed_methods": 8}
+
+ROBUSTNESS RANKING
+--------------------------------------------------------------------------------------------------------------------
+research_only            VAL n= 36 win= 61.1% ROI=  +46.9% bootROI=[  -8.1,+118.3] neighbors+= 42.9% | younger_y>=4 & not_worse_than_-500
+research_only            VAL n= 11 win= 54.5% ROI=  +33.1% bootROI=[ -55.1,+146.2] neighbors+=100.0% | reach_gap>=6 & prior_sig_diff>=0 & not_worse_than_-500
+strong_shadow_candidate  VAL n= 10 win= 90.0% ROI= +128.3% bootROI=[ +35.7,+235.9] neighbors+=100.0% | younger_y>=3 & finish_gap>=0.2
+strong_shadow_candidate  VAL n= 11 win= 72.7% ROI=  +95.8% bootROI=[  -0.3,+205.3] neighbors+=100.0% | younger_y>=3 & finish_gap>=0.1 & prior_sig_diff>=0
+strong_shadow_candidate  VAL n= 11 win= 72.7% ROI=  +95.8% bootROI=[  -2.1,+207.0] neighbors+=100.0% | finish_gap>=0.15 & younger_y>=3 & prior_sig_diff>=0
+strong_shadow_candidate  VAL n= 11 win= 81.8% ROI=  +68.6% bootROI=[  +1.9,+135.5] neighbors+=100.0% | younger_y>=4 & finish_gap>=0.1
+strong_shadow_candidate  VAL n= 14 win= 71.4% ROI=  +22.9% bootROI=[ -22.7, +67.2] neighbors+= 70.0% | younger_y>=4 & reach_gap>=2 & not_worse_than_-500
+strong_shadow_candidate  VAL n= 15 win= 73.3% ROI=  +22.1% bootROI=[ -20.1, +61.9] neighbors+= 75.0% | younger_y>=4 & reach_gap>=2
+strong_shadow_candidate  VAL n= 12 win= 75.0% ROI=  +20.2% bootROI=[ -25.6, +64.2] neighbors+= 80.0% | sos_gap>=25 & exp_gap>=4
+strong_shadow_candidate  VAL n= 13 win= 69.2% ROI=  +17.8% bootROI=[ -28.3, +63.5] neighbors+= 75.0% | younger_y>=4 & reach_gap>=2 & prior_sig_diff>=0
+strong_shadow_candidate  VAL n= 12 win= 66.7% ROI=  +13.2% bootROI=[ -42.5, +75.4] neighbors+=100.0% | exp_gap>=2 & prior_dwcs_n>=1
+strong_shadow_candidate  VAL n= 12 win= 66.7% ROI=   +8.9% bootROI=[ -39.8, +56.1] neighbors+= 71.4% | height_gap>=2 & younger_y>=3 & prior_sig_diff>=0
+strong_shadow_candidate  VAL n= 11 win= 72.7% ROI=   +8.8% bootROI=[ -34.7, +50.5] neighbors+=100.0% | sos_gap>=25 & exp_gap>=2 & elo_gap>=25
+strong_shadow_candidate  VAL n= 11 win= 72.7% ROI=   +8.8% bootROI=[ -35.8, +48.7] neighbors+=100.0% | sos_gap>=25 & elo_gap>=25
+strong_shadow_candidate  VAL n= 12 win= 66.7% ROI=   +4.1% bootROI=[ -37.8, +43.7] neighbors+=100.0% | reach_gap>=2 & exp_gap>=0 & fav_-250_-100
