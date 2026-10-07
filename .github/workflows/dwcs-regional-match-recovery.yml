@@ -1,0 +1,87 @@
+name: DWCS Regional Match Recovery
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  recover:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - run: python -m pip install --quiet pandas duckdb rapidfuzz requests
+      - name: Recover unmatched regional histories with fuzzy identity matching
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          mkdir -p /tmp/mmadb dwcs/research/regional_history_recovery
+          python - <<'PY'
+          import io,zipfile,requests
+          r=requests.get('https://www.kaggle.com/api/v1/datasets/download/leandroiber/mmastats',timeout=120)
+          r.raise_for_status()
+          zipfile.ZipFile(io.BytesIO(r.content)).extractall('/tmp/mmadb')
+          PY
+          python - <<'PY'
+          import re,glob,json
+          from pathlib import Path
+          import duckdb,pandas as pd,numpy as np
+          from rapidfuzz import process,fuzz
+          root=Path('.'); out=root/'dwcs/research/regional_history_recovery'
+          old=pd.read_csv(root/'dwcs/research/regional_history/dwcs_prefight_regional_features.csv',low_memory=False)
+          db=glob.glob('/tmp/mmadb/**/*.duckdb',recursive=True)[0]
+          con=duckdb.connect(db,read_only=True)
+          f=con.execute('select * from fights_career_longitudinal').fetchdf()
+          f['event_date']=pd.to_datetime(f.event_date,errors='coerce').dt.normalize()
+          def n(s):
+              s=str(s or '').lower().replace('’',"'").replace('-',' ')
+              s=re.sub(r'\b(jr|sr|ii|iii|iv)\b',' ',s)
+              s=re.sub(r'[^a-z0-9]+',' ',s)
+              return re.sub(r'\s+',' ',s).strip()
+          f['n1']=f.fighter_1.map(n); f['n2']=f.fighter_2.map(n)
+          names=sorted(set(f.n1)|set(f.n2))
+          unmatched=old[~old.regional_history_matched.fillna(False)].copy()
+          cand=[]
+          for _,x in unmatched.iterrows():
+              q=n(x.fighter)
+              # surname-prefilter reduces false matches
+              last=q.split()[-1] if q.split() else q
+              pool=[z for z in names if last and last in z.split()]
+              if not pool: pool=names
+              m=process.extractOne(q,pool,scorer=fuzz.WRatio,score_cutoff=88)
+              if m:
+                  cand.append({'fighter':x.fighter,'dwcs_date':x.dwcs_date,'candidate_norm':m[0],'score':m[1]})
+          c=pd.DataFrame(cand)
+          c.to_csv(out/'fuzzy_candidates.csv',index=False)
+          # Conservative automatic acceptance: >=96, or >=93 with same last name and first initial.
+          acc={}
+          for _,x in c.iterrows():
+              q=n(x.fighter); z=x.candidate_norm
+              same_last=q.split()[-1:]==z.split()[-1:]
+              same_initial=(q[:1]==z[:1])
+              if x.score>=96 or (x.score>=93 and same_last and same_initial):
+                  acc[(str(x.fighter),str(x.dwcs_date))]=z
+          recovered=[]
+          for _,x in unmatched.iterrows():
+              key=(str(x.fighter),str(x.dwcs_date))
+              z=acc.get(key)
+              if not z: continue
+              date=pd.to_datetime(x.dwcs_date)
+              g=f[((f.n1==z)|(f.n2==z))&(f.event_date<date)].sort_values('event_date')
+              if len(g):
+                  recovered.append({'fighter':x.fighter,'dwcs_date':x.dwcs_date,'matched_norm':z,'prior_fights':len(g)})
+          pd.DataFrame(recovered).to_csv(out/'recovered_histories.csv',index=False)
+          before=int(old.regional_history_matched.fillna(False).sum())
+          after=before+len(recovered)
+          status={'rows':len(old),'matched_before':before,'recovered':len(recovered),'matched_after_estimate':after,'coverage_after_estimate':after/len(old)}
+          (out/'status.json').write_text(json.dumps(status,indent=2)+'\n')
+          print(json.dumps(status,indent=2))
+          PY
+      - name: Commit
+        run: |
+          git config user.name appwiza-research-bot
+          git config user.email actions@users.noreply.github.com
+          git add dwcs/research/regional_history_recovery
+          git diff --cached --quiet && exit 0
+          git commit -m 'Recover unmatched DWCS regional histories'
+          git pull --rebase origin main
+          git push
