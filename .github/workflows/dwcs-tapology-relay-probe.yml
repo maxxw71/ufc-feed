@@ -1,0 +1,40 @@
+name: DWCS Tapology Relay Probe
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/dwcs-tapology-relay-probe.yml'
+permissions:
+  contents: write
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: python - <<'PY'
+          import requests,json,re
+          from pathlib import Path
+          urls=[
+            'https://r.jina.ai/https://www.tapology.com/fightcenter/events/70389-contender-series-2020-week-1',
+            'https://r.jina.ai/https://www.tapology.com/fightcenter/events/46361-dana-whites-contender-series-1'
+          ]
+          out=Path('dwcs/research/tapology_relay_probe');out.mkdir(parents=True,exist_ok=True)
+          rows=[]
+          for i,u in enumerate(urls):
+            try:
+              r=requests.get(u,headers={'User-Agent':'ufc-feed/1.1','Accept':'text/plain'},timeout=60)
+              rows.append({'url':u,'status':r.status_code,'chars':len(r.text),
+                           'has_betting_odds':'Betting Odds' in r.text,'has_age':'Age at Fight' in r.text,
+                           'has_reach':'Reach' in r.text,'has_contract':'Won UFC Contract' in r.text})
+              (out/f'page_{i}.txt').write_text(r.text[:250000])
+            except Exception as e:rows.append({'url':u,'error':repr(e)})
+          (out/'status.json').write_text(json.dumps(rows,indent=2)+'\n')
+          print(json.dumps(rows,indent=2))
+          PY
+      - run: |
+          git config user.name appwiza-research-bot
+          git config user.email actions@users.noreply.github.com
+          git add dwcs/research/tapology_relay_probe
+          git commit -m 'Probe Tapology relay for DWCS enrichment' || exit 0
+          git pull --rebase origin main
+          git push
