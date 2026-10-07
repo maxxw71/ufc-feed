@@ -66,9 +66,19 @@ def main():
             pages.append({"season":season,"url":url,"status":"error","error":repr(e),"parsed_bouts":0})
     w=pd.DataFrame(rows)
     if len(w):
-        miss=w.note.astype(str).str.contains("above the|over the|missed weight|forfeit|unable to weigh|did not weigh|not weigh in",case=False,na=False)
-        w["fighter_a_missed_weight"]=w.fighter_a_marker | miss
-        w["fighter_b_missed_weight"]=w.fighter_b_marker | miss
+        kw=w.note.astype(str).str.contains("above the|over the|missed weight|forfeit|unable to weigh|did not weigh|not weigh in|weight management",case=False,na=False)
+        def named_issue(row,field):
+            if not bool(kw.loc[row.name]): return False
+            nm=norm(row[field]); note=norm(row.note)
+            if not nm or not note:return False
+            last=nm.split()[-1]
+            return nm in note or (len(last)>=4 and re.search(r"\\b"+re.escape(last)+r"\\b",note) is not None)
+        w["fighter_a_missed_weight"]=w.fighter_a_marker | w.apply(lambda z:named_issue(z,"fighter_a"),axis=1)
+        w["fighter_b_missed_weight"]=w.fighter_b_marker | w.apply(lambda z:named_issue(z,"fighter_b"),axis=1)
+        w["bout_cancelled_weight_or_medical"]=w.apply(lambda z:("cancel" in str(z.note).lower()) and
+            (norm(z.fighter_a) in norm(z.note) or norm(z.fighter_b) in norm(z.note)),axis=1)
+        w["bout_proceeded_despite_weight_issue"]=w.apply(lambda z:("proceeds as scheduled" in str(z.note).lower()) and
+            (norm(z.fighter_a) in norm(z.note) or norm(z.fighter_b) in norm(z.note)),axis=1)
     w.to_csv(OUT/"official_weighins_s6_s10.csv",index=False)
     pd.DataFrame(pages).to_csv(OUT/"page_status.csv",index=False)
 
@@ -104,7 +114,9 @@ def main():
             "official_weighin_bouts":len(w),"matched_archive_bouts":len(m),
             "weight_a_known":int(w.weight_a.notna().sum()) if len(w) else 0,
             "weight_b_known":int(w.weight_b.notna().sum()) if len(w) else 0,
-            "marked_weight_miss_rows":int((w["fighter_a_missed_weight"]|w["fighter_b_missed_weight"]).sum()) if len(w) else 0}
+            "marked_weight_miss_rows":int((w["fighter_a_missed_weight"]|w["fighter_b_missed_weight"]).sum()) if len(w) else 0,
+            "cancelled_weight_or_medical_rows":int(w["bout_cancelled_weight_or_medical"].sum()) if len(w) else 0,
+            "proceeded_despite_weight_issue_rows":int(w["bout_proceeded_despite_weight_issue"].sum()) if len(w) else 0}
     (OUT/"status.json").write_text(json.dumps(status,indent=2)+"\n")
     print(json.dumps(status,indent=2))
 if __name__=="__main__":main()
