@@ -1,0 +1,42 @@
+name: DWCS Fight Page DOM Probe
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/dwcs-fight-page-dom-probe.yml'
+permissions:
+  contents: write
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: python -m pip install --quiet requests beautifulsoup4
+      - name: Probe one BoutMetrics fight page
+        run: |
+          python - <<'PY'
+          import requests,json
+          from bs4 import BeautifulSoup
+          from pathlib import Path
+          out=Path('dwcs/research/fight_page_probe'); out.mkdir(parents=True,exist_ok=True)
+          url='https://boutmetrics.com/dwcs/dwcs-9-10/kwon-wonil-vs-juan-diaz'
+          r=requests.get(url,headers={'User-Agent':'Mozilla/5.0 Appwiza/1.0'},timeout=30); r.raise_for_status()
+          s=BeautifulSoup(r.text,'html.parser')
+          (out/'html_head.txt').write_text(r.text[:120000])
+          (out/'text.txt').write_text('\n'.join(x.strip() for x in s.get_text('\n').splitlines() if x.strip())[:50000])
+          tags=[]
+          for tag in s.find_all(True):
+              txt=' '.join(tag.get_text(' ',strip=True).split())
+              if any(k in txt for k in ['Sig. str.','Kwon Wonil','Juan Diaz','Control','Sub att','TD']):
+                  tags.append({'name':tag.name,'class':tag.get('class'),'id':tag.get('id'),'text':txt[:1000]})
+          (out/'matching_tags.json').write_text(json.dumps(tags[:500],indent=2))
+          print('tags',len(tags))
+          PY
+      - name: Commit probe
+        run: |
+          git config user.name appwiza-research-bot
+          git config user.email actions@users.noreply.github.com
+          git add dwcs/research/fight_page_probe
+          git commit -m 'Probe BoutMetrics fight DOM' || exit 0
+          git pull --rebase origin main
+          git push
