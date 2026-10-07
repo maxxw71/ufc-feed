@@ -85,10 +85,12 @@ def main():
     write(release/'release_manifest.json',manifest)
     write(a.releases/'CURRENT.json',{'release':str(release),'manifest_sha256':sha(release/'release_manifest.json'),'status':manifest['status'],'eligibility':manifest['eligibility'],'input_fingerprint':fingerprint})
     public=a.repo/'boxing/public_phase2';public.mkdir(exist_ok=True)
-    for name in ['release_manifest.json','history_repair_queue.json','frozen_hypotheses.json','priced_bout_exclusions.jsonl.gz','coverage.json','punch_profile_coverage.json','PROFILE_GAP_AUDIT.json','REACH_INTEGRITY_AUDIT.json','validated_price_method_search.json','validated_price_method_search.txt']:
+    # Detailed ledgers, manifests and hypotheses remain private on the server.
+    # Only the established aggregate reports enter the repository publication path.
+    for name in ['coverage.json','punch_profile_coverage.json','PROFILE_GAP_AUDIT.json','REACH_INTEGRITY_AUDIT.json','validated_price_method_search.json','validated_price_method_search.txt']:
         shutil.copy2(release/name,public/name)
-    write(public/'status.json',{'status':'audited_research_release_not_live_methods','authoritative_manifest':'release_manifest.json','release':str(release)})
-    write(public/'AUTHORITATIVE_RELEASE.json',json.loads((a.releases/'CURRENT.json').read_text()))
+    write(public/'status.json',{'status':'audited_research_release_not_live_methods','built_at':manifest['built_at'],'eligibility':manifest['eligibility'],'detailed_audit_location':'private_appwiza_server'})
+    subprocess.run([sys.executable,str(a.repo/'boxing/research/build_current_dataset_status.py')],check=True,stdout=subprocess.DEVNULL)
     print('RELEASE '+str(release),flush=True)
     # Preserve every pre-existing research snapshot. Only our successful build workspace is disposable.
     shutil.rmtree(a.work)
