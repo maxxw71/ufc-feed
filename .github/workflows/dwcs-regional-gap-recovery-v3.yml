@@ -1,0 +1,51 @@
+name: DWCS Regional Gap Recovery V3
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/dwcs-regional-gap-recovery-v3.yml'
+      - 'dwcs/research/recover_regional_neardate.py'
+      - 'dwcs/research/apply_regional_identity_recovery.py'
+      - 'dwcs/research/build_point_in_time_sos.py'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: dwcs-regional-gap-recovery-v3
+  cancel-in-progress: false
+
+jobs:
+  recover:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - run: python -m pip install --quiet pandas numpy duckdb requests rapidfuzz
+      - name: Download global MMA archive
+        run: |
+          mkdir -p /tmp/mmadb
+          python - <<'PY'
+          import io,zipfile,requests
+          r=requests.get('https://www.kaggle.com/api/v1/datasets/download/leandroiber/mmastats',timeout=120)
+          r.raise_for_status()
+          zipfile.ZipFile(io.BytesIO(r.content)).extractall('/tmp/mmadb')
+          PY
+      - name: Diagnose unresolved regional gaps and recover conservative near-date aliases
+        run: python dwcs/research/recover_regional_neardate.py
+      - name: Rebuild regional history and global SOS
+        run: |
+          python dwcs/research/apply_regional_identity_recovery.py
+          python dwcs/research/build_point_in_time_sos.py
+          python dwcs/research/build_completeness_audit.py
+      - name: Commit recovery outputs
+        run: |
+          git config user.name appwiza-research-bot
+          git config user.email actions@users.noreply.github.com
+          git add             dwcs/research/regional_gap_diagnostic             dwcs/research/regional_history_v2             dwcs/research/point_in_time_sos             dwcs/research/completeness_audit
+          git diff --cached --quiet && exit 0
+          git commit -m 'Advance DWCS regional and SOS gap recovery v3'
+          git pull --rebase origin main
+          git push
