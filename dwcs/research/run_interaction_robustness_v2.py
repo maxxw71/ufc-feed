@@ -206,7 +206,14 @@ def main():
         & z.validation_profitable_seasons.ge(2)
         & z.positive_roi_neighbor_rate.fillna(0).ge(.60)
     )
-    z.loc[strong,"robustness_tier"]="strong_shadow_candidate"
+    z.loc[strong,"robustness_tier"]="strong_research_candidate"
+    priority=(
+        strong
+        & z.validation_win_rate.ge(.70)
+        & z.validation_roi.ge(.20)
+        & z.validation_bootstrap_roi_low.gt(0)
+    )
+    z.loc[priority,"robustness_tier"]="priority_shadow_candidate"
     z.to_csv(OUT/"robustness_tiers.csv",index=False)
 
     lines=[
@@ -219,8 +226,10 @@ def main():
         "ROBUSTNESS RANKING",
         "-"*116,
     ]
+    tier_order={"priority_shadow_candidate":0,"strong_research_candidate":1,"research_only":2}
+    z["_tier_order"]=z.robustness_tier.map(tier_order).fillna(9)
     order=z.sort_values(
-        ["robustness_tier","validation_roi","validation_win_rate"],
+        ["_tier_order","validation_roi","validation_win_rate"],
         ascending=[True,False,False]
     )
     for _,x in order.iterrows():
