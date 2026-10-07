@@ -1,0 +1,41 @@
+name: NBA official injury PDF selfhosted probe
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/nba-official-injury-selfhosted-probe.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  probe:
+    runs-on: [self-hosted, Linux, X64, appwiza]
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Probe archive and official NBA host
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          python3 nba/probe_official_injury_pdfs.py
+          cp nba/research/gap_audit/official_injury_pdf_probe.json nba/research/gap_audit/official_injury_pdf_probe_selfhosted.json
+      - name: Commit probe
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          git config user.name appwiza-nba-bot
+          git config user.email actions@users.noreply.github.com
+          git add nba/research/gap_audit/official_injury_pdf_probe_selfhosted.json
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m "nba: add selfhosted official injury probe"
+          for attempt in 1 2 3; do
+            git fetch origin main
+            if git rebase origin/main && git push; then exit 0; fi
+            git rebase --abort 2>/dev/null || true
+            sleep 3
+          done
+          exit 1
