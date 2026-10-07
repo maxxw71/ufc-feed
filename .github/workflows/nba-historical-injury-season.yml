@@ -1,0 +1,38 @@
+name: NBA historical injury season backfill
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'nba/backfill_official_injury_season.py'
+      - '.github/workflows/nba-historical-injury-season.yml'
+permissions:
+  contents: write
+jobs:
+  backfill:
+    runs-on: [self-hosted, Linux, X64, appwiza]
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v4
+        with: {fetch-depth: 0}
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.12"}
+      - run: python -m pip install -q pypdf
+      - run: python nba/backfill_official_injury_season.py --season 2022-23 --sleep 0.18
+      - shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name appwiza-nba-bot
+          git config user.email actions@users.noreply.github.com
+          git add nba/availability/historical_by_season/2022_23
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m "nba: add 2022-23 historical injury coverage"
+          git reset --hard HEAD
+          git clean -fd
+          for attempt in 1 2 3; do
+            git fetch origin main
+            if git rebase origin/main && git push; then exit 0; fi
+            git rebase --abort 2>/dev/null || true
+            sleep 4
+          done
+          exit 1
