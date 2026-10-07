@@ -1,0 +1,43 @@
+name: UFC Sitemap Athlete Probe
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/ufc-sitemap-athlete-probe.yml'
+permissions:
+  contents: write
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: |
+          python - <<'PY'
+          import requests,json,re
+          from pathlib import Path
+          out=Path('dwcs/research/ufc_sitemap_probe');out.mkdir(parents=True,exist_ok=True)
+          urls=[
+            'https://r.jina.ai/https://www.ufc.com/robots.txt',
+            'https://r.jina.ai/https://www.ufc.com/sitemap.xml',
+            'https://r.jina.ai/https://www.ufc.com/sitemap_index.xml'
+          ]
+          rows=[]
+          for i,u in enumerate(urls):
+            try:
+              r=requests.get(u,headers={'User-Agent':'ufc-feed/1.1','Accept':'text/plain'},timeout=60)
+              txt=r.text
+              rows.append({'url':u,'status':r.status_code,'chars':len(txt),
+                           'athlete_links':len(re.findall(r'https://www\.ufc\.com/athlete/[A-Za-z0-9._~-]+',txt,re.I)),
+                           'sitemap_links':len(re.findall(r'https?://[^\s<>"]+sitemap[^\s<>"]+',txt,re.I))})
+              (out/f'probe_{i}.txt').write_text(txt[:500000])
+            except Exception as e:rows.append({'url':u,'error':repr(e)})
+          (out/'status.json').write_text(json.dumps(rows,indent=2)+'\n')
+          print(json.dumps(rows,indent=2))
+          PY
+      - run: |
+          git config user.name appwiza-research-bot
+          git config user.email actions@users.noreply.github.com
+          git add dwcs/research/ufc_sitemap_probe
+          git commit -m 'Probe UFC sitemap for athlete URLs' || exit 0
+          git pull --rebase origin main
+          git push
