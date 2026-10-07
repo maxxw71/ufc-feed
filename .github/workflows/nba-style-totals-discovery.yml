@@ -6,6 +6,7 @@ on:
     paths:
       - 'nba/features/team_style_rolling.csv.gz'
       - 'nba/research/discover_style_totals.py'
+      - 'nba/research/audit_style_totals_001.py'
       - '.github/workflows/nba-style-totals-discovery.yml'
 
 permissions:
@@ -24,6 +25,7 @@ jobs:
           python-version: "3.12"
       - run: python nba/build_team_style_rolling.py
       - run: python nba/research/discover_style_totals.py
+      - run: python nba/research/audit_style_totals_001.py
       - shell: bash
         run: |
           set -euo pipefail
