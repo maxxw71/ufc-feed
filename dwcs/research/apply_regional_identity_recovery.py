@@ -47,6 +47,11 @@ def main():
         d=pd.read_csv(p2,low_memory=False)
         for _,x in d.iterrows():
             aliases[(str(pd.to_datetime(x.dwcs_date).date()),str(x.fighter))]=norm(x.archive_alias_norm)
+    p3=ROOT/"dwcs/research/regional_gap_diagnostic/near_date_recovered_aliases.csv"
+    if p3.exists():
+        d=pd.read_csv(p3,low_memory=False)
+        for _,x in d.iterrows():
+            aliases[(str(pd.to_datetime(x.dwcs_date).date()),str(x.fighter))]=norm(x.archive_alias_norm)
 
     record_cache={}
     def prior_record(name,date):
@@ -107,7 +112,7 @@ def main():
           "prior_distinct_promotions":len(orgs),
           "prior_avg_opponent_win_pct":float(np.mean(oppq)) if oppq else np.nan,
           "prior_days_since_last_fight":int((x.dwcs_date-lastdate).days) if pd.notna(lastdate) else np.nan,
-          "regional_history_matched":True,"history_source":"recovered_event_opponent_alias","archive_alias":an
+          "regional_history_matched":True,"history_source":"recovered_verified_alias","archive_alias":an
         })
         upgraded+=1
         outrows.append(z)
