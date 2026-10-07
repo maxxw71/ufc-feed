@@ -1,0 +1,10 @@
+feature_family,classification,historical_use,source
+age_at_fight,POINT_IN_TIME,allowed,DOB + exact fight date
+historical_odds,POINT_IN_TIME,allowed,BestFightOdds historical pages
+height_reach_stance,STATIC_OK,allowed,BoutMetrics + verified UFC.com static gap fill
+regional_career,POINT_IN_TIME,allowed,global MMA archive strictly before fight date
+global_elo_sos,POINT_IN_TIME,allowed,global MMA archive chronological Elo strictly before fight date
+prior_dwcs_technical,POINT_IN_TIME,allowed,historical DWCS technical rows strictly before fight date
+prior_official_ufcstats,POINT_IN_TIME,allowed,UFCStats rows strictly before fight date
+current_ufc_com_dynamic_metrics,CURRENT_ONLY,FORBIDDEN,UFC.com current athlete profile
+fight_outcome,POST_FIGHT_TARGET,target_only,historical result
