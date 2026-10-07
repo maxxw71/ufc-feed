@@ -84,13 +84,33 @@ def meet(r,cs):
     return True
 def phase(cs,ss):return met([r for r in rows if r["season"] in ss and meet(r,cs)])
 
-res=[];tested=0
-for k in (2,3):
-  for cs in itertools.combinations(conds,k):
-    fs={x[0] for x in cs}
-    if len(fs)!=k:continue
-    if not any(f.startswith(("net_","incoming_","outgoing_")) for f in fs):continue
-    tested+=1
+# Screen single conditions on discovery first so the pair/triple search stays bounded.
+screen=[]
+for c in conds:
+    a=phase((c,),A)
+    if a["n"]>=90 and a["hit"] is not None and a["roi"] is not None and (a["hit"]>=0.64 or a["roi"]>=0.025):
+        screen.append(c)
+
+rules=[]
+for x,y in itertools.combinations(screen,2):
+    if x[0]!=y[0] and any(z[0].startswith(("net_","incoming_","outgoing_")) for z in (x,y)):
+        rules.append((x,y))
+# Triples only from the strongest screened conditions, ranked by discovery Wilson/ROI.
+ranked=[]
+for c in screen:
+    m=phase((c,),A)
+    ranked.append((m["wilson_low"] or 0,m["roi"] or -9,c))
+ranked.sort(reverse=True,key=lambda z:(z[0],z[1]))
+triple_pool=[z[2] for z in ranked[:28]]
+for cs in itertools.combinations(triple_pool,3):
+    if len({x[0] for x in cs})==3 and any(x[0].startswith(("net_","incoming_","outgoing_")) for x in cs):
+        rules.append(cs)
+
+res=[];tested=0;seen=set()
+for cs in rules:
+    key=tuple((x[0],x[1],round(x[2],8)) for x in cs)
+    if key in seen:continue
+    seen.add(key);tested+=1
     a=phase(cs,A);b=phase(cs,B);v=phase(cs,V);h=phase(cs,H)
     if a["n"]<55 or b["n"]<30 or v["n"]<15 or h["n"]<30:continue
     if None in (a["hit"],a["roi"],b["hit"],b["roi"],v["hit"],v["roi"],h["hit"],h["roi"]):continue
@@ -102,7 +122,7 @@ for k in (2,3):
                 "status":"transaction_value_shadow_candidate","discA":a,"discB":b,"validation":v,"holdout":h})
 res.sort(key=lambda x:(x["holdout"]["wilson_low"] or 0,x["holdout"]["roi"],x["holdout"]["n"]),reverse=True)
 for i,r in enumerate(res,1):r["method_id"]=f"NBA_TXVAL_{i:03d}"
-report={"generated_at_utc":datetime.now(timezone.utc).isoformat(),"rows":len(rows),"rules_tested":tested,"candidates":len(res),"top_methods":res[:50],
+report={"generated_at_utc":datetime.now(timezone.utc).isoformat(),"rows":len(rows),"screened_conditions":len(screen),"rules_tested":tested,"candidates":len(res),"top_methods":res[:50],
         "policy":"Transaction-value lane weights dated player moves using each player's NBA history strictly before the move. Same-day moves are excluded from target-game features."}
 (OUT/"transaction_value_report.json").write_text(json.dumps(report,indent=2)+"\n")
 print(json.dumps(report,indent=2))
