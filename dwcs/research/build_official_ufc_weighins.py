@@ -37,7 +37,7 @@ def parse_page(season,txt,url):
         wm=re.search(r"\bweek\s*(\d{1,2})\b",line,re.I)
         if wm and ("weigh" in line.lower() or line.upper().startswith("WEEK") or "official" in line.lower()):
             week=int(wm.group(1))
-        if week is None or " vs " not in line.lower():continue
+        if week is None or (" vs " not in line.lower() and " vs." not in line.lower()):continue
         body=line.split(":",1)[1].strip() if ":" in line else line
         m=re.search(r"(.+?)\s*\((\d{2,3}(?:\.\d+)?)?\)\s*(\*)?\s*vs\.?\s*(.+?)\s*\((\d{2,3}(?:\.\d+)?)?\)\s*(\*)?",body,re.I)
         if not m:continue
@@ -66,19 +66,26 @@ def main():
             pages.append({"season":season,"url":url,"status":"error","error":repr(e),"parsed_bouts":0})
     w=pd.DataFrame(rows)
     if len(w):
-        kw=w.note.astype(str).str.contains("above the|over the|missed weight|forfeit|unable to weigh|did not weigh|not weigh in|weight management",case=False,na=False)
-        def named_issue(row,field):
-            if not bool(kw.loc[row.name]): return False
-            nm=norm(row[field]); note=norm(row.note)
-            if not nm or not note:return False
+        issue_re=re.compile(r"above the|over the|missed weight|forfeit|unable to weigh|did not weigh|not weigh in|weight management|medically cleared",re.I)
+        def relevant_sentences(note,pattern):
+            parts=re.split(r"(?<=[.!?])\s+|(?=DWCS Week|Week \d+|WEEK \d+)",str(note))
+            return [p for p in parts if re.search(pattern,p,re.I)]
+        def sentence_mentions(sentence,name):
+            nm=norm(name); sn=norm(sentence)
+            if not nm or not sn:return False
             last=nm.split()[-1]
-            return nm in note or (len(last)>=4 and re.search(r"\\b"+re.escape(last)+r"\\b",note) is not None)
-        w["fighter_a_missed_weight"]=w.fighter_a_marker | w.apply(lambda z:named_issue(z,"fighter_a"),axis=1)
-        w["fighter_b_missed_weight"]=w.fighter_b_marker | w.apply(lambda z:named_issue(z,"fighter_b"),axis=1)
-        w["bout_cancelled_weight_or_medical"]=w.apply(lambda z:("cancel" in str(z.note).lower()) and
-            (norm(z.fighter_a) in norm(z.note) or norm(z.fighter_b) in norm(z.note)),axis=1)
-        w["bout_proceeded_despite_weight_issue"]=w.apply(lambda z:("proceeds as scheduled" in str(z.note).lower()) and
-            (norm(z.fighter_a) in norm(z.note) or norm(z.fighter_b) in norm(z.note)),axis=1)
+            return nm in sn or (len(last)>=4 and re.search(r"\b"+re.escape(last)+r"\b",sn) is not None)
+        def named_issue(row,field):
+            if bool(row[field+"_marker"]):return True
+            return any(sentence_mentions(s,row[field]) for s in relevant_sentences(row.note,issue_re.pattern))
+        def bout_flag(row,pattern):
+            for s in relevant_sentences(row.note,pattern):
+                if sentence_mentions(s,row.fighter_a) or sentence_mentions(s,row.fighter_b): return True
+            return False
+        w["fighter_a_missed_weight"]=w.apply(lambda z:named_issue(z,"fighter_a"),axis=1)
+        w["fighter_b_missed_weight"]=w.apply(lambda z:named_issue(z,"fighter_b"),axis=1)
+        w["bout_cancelled_weight_or_medical"]=w.apply(lambda z:bout_flag(z,r"cancelled|canceled|removed from.*card"),axis=1)
+        w["bout_proceeded_despite_weight_issue"]=w.apply(lambda z:bout_flag(z,r"proceeds as scheduled|proceed as scheduled"),axis=1)
     w.to_csv(OUT/"official_weighins_s6_s10.csv",index=False)
     pd.DataFrame(pages).to_csv(OUT/"page_status.csv",index=False)
 
