@@ -1,0 +1,90 @@
+name: DWCS Research Expansion V2
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/dwcs-research-expansion-v2.yml'
+      - 'dwcs/research/run_interaction_search_v2.py'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: dwcs-research-expansion-v2
+  cancel-in-progress: false
+
+jobs:
+  expand:
+    runs-on: ubuntu-latest
+    timeout-minutes: 70
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install research dependencies
+        run: python -m pip install --quiet pandas numpy duckdb requests beautifulsoup4 rapidfuzz
+
+      - name: Verify immutable frozen master before research
+        run: |
+          python - <<'PY'
+          import hashlib,json
+          from pathlib import Path
+          p=Path('dwcs/frozen/dwcs_historical_master_frozen.csv')
+          m=json.loads(Path('dwcs/frozen/freeze_manifest.json').read_text())
+          got=hashlib.sha256(p.read_bytes()).hexdigest()
+          exp=m.get('master_sha256')
+          print('frozen_master_sha256',got)
+          if exp and got != exp:
+              raise SystemExit(f'frozen master hash mismatch: {got} != {exp}')
+          PY
+
+      - name: Retry final historical odds gaps
+        run: |
+          python dwcs/research/recover_bfo_odds_via_events.py
+          python dwcs/research/recover_bfo_odds_alias_aware.py
+          python dwcs/research/retry_missing_bfo_odds.py
+
+      - name: Download global MMA archive
+        run: |
+          mkdir -p /tmp/mmadb
+          python - <<'PY'
+          import io,zipfile,requests
+          r=requests.get('https://www.kaggle.com/api/v1/datasets/download/leandroiber/mmastats',timeout=120)
+          r.raise_for_status()
+          zipfile.ZipFile(io.BytesIO(r.content)).extractall('/tmp/mmadb')
+          PY
+
+      - name: Push regional identity recovery and PIT SOS
+        run: |
+          python dwcs/research/recover_regional_by_event_opponent.py
+          python dwcs/research/apply_regional_identity_recovery.py
+          python dwcs/research/build_point_in_time_sos.py
+          python dwcs/research/build_completeness_audit.py
+
+      - name: Run broad immutable interaction search
+        run: python dwcs/research/run_interaction_search_v2.py
+
+      - name: Verify frozen master remained unchanged
+        run: |
+          python - <<'PY'
+          import hashlib,json
+          from pathlib import Path
+          p=Path('dwcs/frozen/dwcs_historical_master_frozen.csv')
+          m=json.loads(Path('dwcs/frozen/freeze_manifest.json').read_text())
+          got=hashlib.sha256(p.read_bytes()).hexdigest()
+          exp=m.get('master_sha256')
+          if exp and got != exp:
+              raise SystemExit(f'frozen master changed during expansion: {got} != {exp}')
+          print('immutable frozen master preserved',got)
+          PY
+
+      - name: Commit expansion outputs
+        run: |
+          git config user.name appwiza-research-bot
+          git config user.email actions@users.noreply.github.com
+          git add             dwcs/research/historical_odds             dwcs/research/regional_identity_recovery_v2             dwcs/research/regional_history_v2             dwcs/research/point_in_time_sos             dwcs/research/completeness_audit             dwcs/research/interaction_search_v2
+          git diff --cached --quiet && exit 0
+          git commit -m 'Run DWCS coverage recovery and broad interaction search'
+          git pull --rebase origin main
+          git push
