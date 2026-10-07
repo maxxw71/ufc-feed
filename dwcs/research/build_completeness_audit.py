@@ -11,7 +11,7 @@ OUT.mkdir(parents=True,exist_ok=True)
 def jload(path):
     p=ROOT/path
     if not p.exists(): return {}
-    return json.loads(p.read_text())
+    txt=p.read_text().strip()\n    try: return json.loads(txt)\n    except json.JSONDecodeError:\n        obj,_=json.JSONDecoder().raw_decode(txt)\n        return obj
 
 def pct(a,b):
     return float(a/b) if b else 0.0
