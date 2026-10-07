@@ -10,7 +10,7 @@ OUT=ROOT/"availability"/"official_reports"
 RAW=OUT/"raw";TEXT=OUT/"text"
 INDEX=OUT/"index.json"
 ET=ZoneInfo("America/New_York")
-BASE="https://ak-static.cms.nba.com/referee/injury/Injury-Report_"
+BASE="https://ak-static.cms.nba.com/referee/injury/"
 UA={"User-Agent":"Mozilla/5.0 AppwizaNBAProspective/1.0"}
 
 def load_index():
