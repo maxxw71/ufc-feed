@@ -1,0 +1,99 @@
+name: DWCS Price Method Backtest
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/dwcs-price-method-backtest.yml'
+      - 'dwcs/research/historical_odds/historical_odds.csv'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  backtest:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - run: python -m pip install --quiet pandas numpy
+      - name: Run price and movement research
+        run: |
+          python - <<'PY'
+          import math
+          from pathlib import Path
+          import pandas as pd, numpy as np
+          root=Path('.'); out=root/'dwcs/research/price_backtest'; out.mkdir(parents=True,exist_ok=True)
+          d=pd.read_csv(root/'dwcs/research/historical_odds/historical_odds.csv',low_memory=False)
+          for c in ['selected_open','selected_close','opponent_open','opponent_close']:
+              d[c]=pd.to_numeric(d[c],errors='coerce')
+          d['selected_won']=d.selected_won.astype(str).str.lower().map({'true':True,'1':True,'false':False,'0':False})
+          def imp(a):
+              if pd.isna(a): return np.nan
+              return (-a)/((-a)+100) if a<0 else 100/(a+100)
+          d['p_open']=d.selected_open.map(imp); d['p_close']=d.selected_close.map(imp)
+          d['move_pp']=(d.p_close-d.p_open)*100
+          d['is_fav_open']=d.selected_open<0
+          d['is_fav_close']=d.selected_close<0
+          def profit100(odds,won):
+              if pd.isna(odds): return np.nan
+              if not won:return -100.0
+              return 10000/abs(odds) if odds<0 else float(odds)
+          d['profit_close']=[profit100(o,w) for o,w in zip(d.selected_close,d.selected_won)]
+          rows=[]
+          def add(fam,rule,mask):
+              g=d[mask.fillna(False)&d.selected_won.notna()&d.profit_close.notna()].copy()
+              if len(g)<8:return
+              n=len(g); w=int(g.selected_won.sum()); pl=float(g.profit_close.sum())
+              ss=[]
+              for s,sg in g.groupby('season'):
+                  ss.append((int(s),len(sg),float(sg.selected_won.mean()),float(sg.profit_close.sum()/(100*len(sg)))))
+              rows.append({'family':fam,'rule':rule,'n':n,'wins':w,'win_rate':w/n,'roi':pl/(100*n),
+                           'profit100':pl,'seasons':len(ss),'worst_season_win':min(x[2] for x in ss),
+                           'worst_season_roi':min(x[3] for x in ss),
+                           'season_detail':'|'.join(f'{s}:{nn}:{wr:.3f}:{roi:.3f}' for s,nn,wr,roi in ss)})
+          # closing favorite bands
+          for lo,hi in [(-150,-100),(-200,-150),(-250,-200),(-300,-250),(-400,-300),(-500,-400),(-750,-500),(-1000,-750),(-10000,-1000)]:
+              add('CLOSING_FAVORITE_BAND',f'{lo} to {hi}',(d.selected_close<=lo)&(d.selected_close>hi) if lo<hi else pd.Series(False,index=d.index))
+          # cleaner favorite threshold views
+          for x in [150,200,250,300,400,500,750,1000]:
+              add('FAVORITE_MIN_PRICE',f'favorite <= -{x}',d.selected_close<=-x)
+              add('FAVORITE_MAX_PRICE',f'favorite between -{x} and -100',(d.selected_close>=-x)&(d.selected_close<0))
+          # dogs
+          for lo,hi in [(100,150),(150,200),(200,300),(300,500),(500,10000)]:
+              add('UNDERDOG_BAND',f'+{lo} to +{hi}',(d.selected_close>=lo)&(d.selected_close<hi))
+          # steam / drift
+          for pp in [5,10,15,20]:
+              add('STEAM',f'implied probability increased >= {pp}pp',d.move_pp>=pp)
+              add('DRIFT',f'implied probability decreased <= -{pp}pp',d.move_pp<=-pp)
+          # flips
+          add('FAVORITE_FLIP','dog at open -> favorite at close',(~d.is_fav_open)&d.is_fav_close)
+          add('DOG_FLIP','favorite at open -> dog at close',d.is_fav_open&(~d.is_fav_close))
+          # movement conditional on final side
+          for pp in [5,10,15]:
+              add('FAV_STEAM',f'close favorite + steam >= {pp}pp',d.is_fav_close&(d.move_pp>=pp))
+              add('DOG_STEAM',f'close dog + steam >= {pp}pp',(~d.is_fav_close)&(d.move_pp>=pp))
+          r=pd.DataFrame(rows)
+          if len(r): r=r.sort_values(['roi','win_rate','n'],ascending=[False,False,False])
+          r.to_csv(out/'rules.csv',index=False)
+          strong=r[(r.n>=20)&(r.win_rate>=.68)&(r.roi>0)&(r.seasons>=3)] if len(r) else r
+          strong.to_csv(out/'strong_candidates.csv',index=False)
+          lines=['DWCS PRICE/MOVEMENT BACKTEST','='*94,f'Priced fights: {len(d)}','',
+                 'STRONG CANDIDATES (n>=20, win>=68%, ROI>0, 3+ seasons)','-'*94]
+          if strong.empty: lines.append('None.')
+          else:
+              for _,z in strong.head(30).iterrows():
+                  lines.append(f"{z.family:<22} n={int(z.n):3d} win={z.win_rate*100:5.1f}% ROI={z.roi*100:+6.2f}% worstROI={z.worst_season_roi*100:+6.2f}% | {z.rule}")
+          lines+=['','TOP RULES BY ROI','-'*94]
+          for _,z in r.head(30).iterrows():
+              lines.append(f"{z.family:<22} n={int(z.n):3d} win={z.win_rate*100:5.1f}% ROI={z.roi*100:+6.2f}% | {z.rule}")
+          (out/'report.txt').write_text('\n'.join(lines)+'\n')
+          print('\n'.join(lines))
+          PY
+      - name: Commit
+        run: |
+          git config user.name appwiza-research-bot
+          git config user.email actions@users.noreply.github.com
+          git add dwcs/research/price_backtest
+          git diff --cached --quiet && exit 0
+          git commit -m 'Add DWCS price and line movement backtest'
+          git pull --rebase origin main
+          git push
