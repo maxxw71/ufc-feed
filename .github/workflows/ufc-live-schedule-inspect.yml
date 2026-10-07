@@ -28,6 +28,11 @@ jobs:
           echo '=== UFC PROCESSES / SYSTEMD TIMERS ==='
           systemctl list-timers --all 2>/dev/null | grep -i ufc || true
           echo
+          echo '=== UFC MODEL WATCHER TIMER ==='
+          systemctl cat ufc-model-watcher.timer 2>/dev/null || true
+          systemctl cat ufc-model-watcher.service 2>/dev/null || true
+          systemctl status ufc-model-watcher.timer --no-pager 2>/dev/null || true
+          echo
           echo '=== WATCHER FILE TIMESTAMPS ==='
           stat -c '%y %n' /home/anestishkurti92/ufc-predictor-v1/ufc_email_watcher.py /home/anestishkurti92/ufc-predictor-v1/watcher_state.json 2>/dev/null || true
           EOF
