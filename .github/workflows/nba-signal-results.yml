@@ -2,6 +2,11 @@ name: NBA Signal Results
 
 on:
   workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'nba/live/settle_scanner_signals.py'
+      - '.github/workflows/nba-signal-results.yml'
   schedule:
     - cron: '55 * * * *'
 
