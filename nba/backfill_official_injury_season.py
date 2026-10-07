@@ -25,31 +25,35 @@ def fname(day,h):
     return f"{BASE}{day}_{hh:02d}{apm}.pdf"
 def request(url,method="HEAD",tries=4,timeout=15):
     last=None
+    if method=="GET":
+        for attempt in range(tries):
+            try:
+                cp=subprocess.run(
+                    ["curl","-L","--silent","--show-error","--connect-timeout","8","--max-time",str(timeout),
+                     "--retry","2","--retry-delay","1","-A","Mozilla/5.0",url],
+                    stdout=subprocess.PIPE,stderr=subprocess.PIPE,check=False
+                )
+                if cp.returncode==0 and cp.stdout[:5]==b"%PDF-":
+                    return cp.stdout,None
+                last=cp.stderr.decode("utf-8","replace").strip() or f"curl exit {cp.returncode}"
+                if "404" in last:return b"",last
+            except Exception as e:
+                last=str(e)
+            time.sleep((attempt+1)*1.5)
+        return b"",last
     for attempt in range(tries):
         try:
-            req=urllib.request.Request(url,method=method,headers={"User-Agent":"Mozilla/5.0"})
+            req=urllib.request.Request(url,method="HEAD",headers={"User-Agent":"Mozilla/5.0"})
             with urllib.request.urlopen(req,timeout=timeout) as r:
-                if method=="HEAD":
-                    ok=r.status==200 and "pdf" in (r.headers.get("Content-Type") or "").lower()
-                    return ok,None
-                return r.read(),None
+                ok=r.status==200 and "pdf" in (r.headers.get("Content-Type") or "").lower()
+                return ok,None
         except urllib.error.HTTPError as e:
             last=f"HTTP {e.code}"
-            if method=="GET" and e.code in (403,405):
-                try:
-                    cp=subprocess.run(
-                        ["curl","-fsSL","--retry","3","--max-time",str(timeout),"-A","Mozilla/5.0",url],
-                        stdout=subprocess.PIPE,stderr=subprocess.PIPE,check=False
-                    )
-                    if cp.returncode==0 and cp.stdout[:5]==b"%PDF-":
-                        return cp.stdout,None
-                except Exception:
-                    pass
-            if e.code in (403,404): return (False,last) if method=="HEAD" else (b"",last)
+            if e.code in (403,404):return False,last
             time.sleep((attempt+1)*1.5)
         except Exception as e:
             last=str(e);time.sleep((attempt+1)*1.5)
-    return (False,last) if method=="HEAD" else (b"",last)
+    return False,last
 
 p=DATA/SEASON.replace("-","_")/"regular_season"/"games.csv.gz"
 games=[g for g in rgz(p) if str(g.get("completed")).lower() in ("true","1")]
