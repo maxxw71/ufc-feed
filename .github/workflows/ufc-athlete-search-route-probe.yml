@@ -1,0 +1,70 @@
+name: UFC Athlete Search Route Probe
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/ufc-athlete-search-route-probe.yml'
+permissions:
+  contents: write
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: python -m pip install --quiet requests beautifulsoup4
+      - name: Probe UFC athlete directory search routes
+        run: |
+          python - <<'PY'
+          import requests,json,re
+          from pathlib import Path
+          from bs4 import BeautifulSoup
+          out=Path('dwcs/research/ufc_search_probe'); out.mkdir(parents=True,exist_ok=True)
+          sess=requests.Session(); sess.headers.update({'User-Agent':'Mozilla/5.0 Appwiza-UFC-Probe/1.0','Accept-Language':'en-US,en;q=0.9'})
+          urls=[
+            'https://www.ufc.com/athletes/all',
+            'https://www.ufc.com/athletes/all?search=Akbar%20Abdullaev',
+            'https://www.ufc.com/athletes/all?query=Akbar%20Abdullaev',
+            'https://www.ufc.com/athletes/all?filters%5B0%5D=Akbar%20Abdullaev',
+            'https://r.jina.ai/https://www.ufc.com/athletes/all?search=Akbar%20Abdullaev',
+            'https://r.jina.ai/https://www.ufc.com/athletes/all?query=Akbar%20Abdullaev'
+          ]
+          rows=[]
+          for u in urls:
+            try:
+              r=sess.get(u,timeout=60,allow_redirects=True)
+              txt=r.text
+              rows.append({'url':u,'status':r.status_code,'final_url':r.url,'chars':len(txt),
+                           'has_akbar':'akbar abdullaev' in txt.lower(),
+                           'athlete_links':len(re.findall(r'https://www\\.ufc\\.com/athlete/[^)"\\s]+',txt,re.I)),
+                           'views_ajax':'views/ajax' in txt.lower()})
+              safe=re.sub(r'[^a-z0-9]+','_',u.lower())[-120:]
+              (out/f'{safe}.txt').write_text(txt[:200000])
+            except Exception as e:
+              rows.append({'url':u,'error':repr(e)})
+          (out/'results.json').write_text(json.dumps(rows,indent=2)+'\n')
+          # inspect forms/data attrs from direct page
+          try:
+            r=sess.get('https://www.ufc.com/athletes/all',timeout=60)
+            s=BeautifulSoup(r.text,'html.parser')
+            forms=[]
+            for f in s.find_all('form'):
+              forms.append({'action':f.get('action'),'method':f.get('method'),'class':f.get('class'),
+                            'inputs':[{'name':i.get('name'),'value':i.get('value'),'type':i.get('type')} for i in f.find_all('input')]})
+            attrs=[]
+            for tag in s.find_all(True):
+              dd={k:v for k,v in tag.attrs.items() if 'view' in k.lower() or 'ajax' in k.lower() or 'filter' in k.lower()}
+              if dd: attrs.append({'tag':tag.name,'attrs':dd})
+            (out/'forms.json').write_text(json.dumps(forms[:100],indent=2))
+            (out/'attrs.json').write_text(json.dumps(attrs[:500],indent=2))
+          except Exception as e:
+            (out/'form_error.txt').write_text(repr(e))
+          print(json.dumps(rows,indent=2))
+          PY
+      - name: Commit probe
+        run: |
+          git config user.name appwiza-research-bot
+          git config user.email actions@users.noreply.github.com
+          git add dwcs/research/ufc_search_probe
+          git commit -m 'Probe UFC athlete directory search route' || exit 0
+          git pull --rebase origin main
+          git push
