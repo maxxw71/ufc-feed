@@ -30,13 +30,15 @@ def main():
     phys=jload("dwcs/research/enrichment_probe/coverage.json")
     odds=jload("dwcs/research/historical_odds/event_recovery_status.json") or jload("dwcs/research/historical_odds/retry_status.json") or jload("dwcs/research/historical_odds/status.json")
     regional=jload("dwcs/research/regional_history/coverage.json")
-    recovery=jload("dwcs/research/regional_history_recovery/status.json")
+    recovery_v1=jload("dwcs/research/regional_history_recovery/status.json")
+    recovery_v2=jload("dwcs/research/regional_identity_recovery_v2/status.json")
+    recovery=recovery_v2 or recovery_v1
     sos=jload("dwcs/research/point_in_time_sos/status.json")
     tech=jload("dwcs/research/historical_technical/status.json")
     offhist=jload("dwcs/research/official_ufc_history/coverage.json")
     ufccom=jload("dwcs/research/ufc_com_search_enrichment/status.json")
 
-    reg_after=recovery.get("matched_after_estimate",regional.get("rows_with_prior_history",0))
+    reg_after=recovery.get("estimated_matched_after",recovery.get("matched_after_estimate",regional.get("rows_with_prior_history",0)))
     reg_rows=recovery.get("rows",regional.get("dwcs_fighter_fight_rows",0))
     priced=odds.get("total_priced_after",odds.get("unique_priced_fights",0))
 
