@@ -1,0 +1,38 @@
+name: NBA altitude interaction discovery
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'nba/research/discover_altitude.py'
+      - 'nba/features/travel_pregame.csv.gz'
+      - '.github/workflows/nba-altitude-discovery.yml'
+permissions:
+  contents: write
+jobs:
+  discover:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: python nba/research/discover_altitude.py
+      - shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "appwiza-nba-bot"
+          git config user.email actions@users.noreply.github.com
+          git add nba/research/altitude
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m "nba: add altitude discovery results"
+          for attempt in 1 2 3; do
+            git fetch origin main
+            if git rebase origin/main && git push; then exit 0; fi
+            git rebase --abort 2>/dev/null || true
+            sleep 3
+          done
+          exit 1
