@@ -1,0 +1,55 @@
+{
+  "generated_at_utc": "2026-10-07T09:00:02.044883+00:00",
+  "base_rule": "away AND travel7d_adv >= 576.9 AND market_prob >= 0.7023",
+  "base": {
+    "overall": {
+      "n": 264,
+      "wins": 232,
+      "losses": 32,
+      "hit": 0.8787878787878788,
+      "roi": 0.07249455100482549,
+      "profit": 19.13856146527393,
+      "wilson_low": 0.8338922539358679
+    },
+    "discA": {
+      "n": 94,
+      "wins": 82,
+      "losses": 12,
+      "hit": 0.8723404255319149,
+      "roi": 0.07515092385958286,
+      "profit": 7.064186842800789,
+      "wilson_low": 0.7899995060049553
+    },
+    "discB": {
+      "n": 60,
+      "wins": 52,
+      "losses": 8,
+      "hit": 0.8666666666666667,
+      "roi": 0.06890741181174151,
+      "profit": 4.134444708704491,
+      "wilson_low": 0.758346054099279
+    },
+    "validation": {
+      "n": 34,
+      "wins": 31,
+      "losses": 3,
+      "hit": 0.9117647058823529,
+      "roi": 0.1202129251285886,
+      "profit": 4.087239454372012,
+      "wilson_low": 0.7703918204763959
+    },
+    "holdout": {
+      "n": 76,
+      "wins": 67,
+      "losses": 9,
+      "hit": 0.881578947368421,
+      "roi": 0.05069329551837685,
+      "profit": 3.8526904593966402,
+      "wilson_low": 0.7900058191184283
+    }
+  },
+  "filters_tested": 36,
+  "retained_filters": 0,
+  "top_filters": [],
+  "policy": "Filters are derived from discovery-A quantiles only. A refinement must improve holdout ROI by >=1 point while remaining profitable in every phase; no team/season exclusions."
+}
