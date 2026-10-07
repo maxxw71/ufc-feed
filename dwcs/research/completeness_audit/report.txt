@@ -1,28 +1,29 @@
 DWCS DATASET COMPLETENESS AUDIT
 ================================================================================================
-Readiness score: 8.93/10
+Readiness score: 9.02/10
 Historical method discovery ready: True
-Mature 9/10-style freeze target met: False
+Mature 9/10 target met: False
+Quality freeze recommended: True
 
 COVERAGE
 ------------------------------------------------------------------------------------------------
 historical_fights                356/356    100.0%  complete historical S1-9 archive
 both_ages_known                  350/356     98.3%  point-in-time age
 fighter_profile_match            695/702     99.0%  identity/profile matching
-height_known                     626/702     89.2%  fighter-level height
-reach_known                      586/702     83.5%  fighter-level reach
+height_known                     630/702     89.7%  height after verified UFC.com static fills
+reach_known                      602/702     85.8%  reach after verified UFC.com static fills
 stance_known                     695/702     99.0%  fighter-level stance
-historical_odds                  341/356     95.8%  priced historical fights
-regional_history                 629/790     79.6%  pre-DWCS regional history after conservative recovery
+historical_odds                  348/356     97.8%  priced historical fights
+regional_history                 654/790     82.8%  pre-DWCS regional history after event/opponent identity recovery
 global_elo_sos                   659/800     82.4%  point-in-time global Elo/SOS
 dwcs_fight_technical_rows        712/712    100.0%  historical DWCS fight technical totals
 prior_dwcs_technical              79/712     11.1%  pre-fight technical history for repeat entrants
 prior_ufcstats_history            10/712      1.4%  strict-before-date UFCStats history
-ufc_com_profiles_resolved         18/633      2.8%  official UFC.com search-resolved profiles; current-only metrics
+ufc_com_profiles_verified        385/633     60.8%  verified UFC.com profiles; current dynamic metrics quarantined
 
 REMAINING TARGET GAPS
 ------------------------------------------------------------------------------------------------
-MEDIUM height_known                  89.2% ->  95.0%
-MEDIUM reach_known                   83.5% ->  90.0%
-HIGH   regional_history              79.6% ->  90.0%
+MEDIUM height_known                  89.7% ->  95.0%
+MEDIUM reach_known                   85.8% ->  90.0%
+HIGH   regional_history              82.8% ->  90.0%
 HIGH   global_elo_sos                82.4% ->  90.0%

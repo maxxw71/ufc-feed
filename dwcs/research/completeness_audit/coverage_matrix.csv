@@ -2,13 +2,13 @@ metric,category,covered,denominator,coverage,notes
 historical_fights,core,356,356,1.0,complete historical S1-9 archive
 both_ages_known,identity,350,356,0.9831460674157303,point-in-time age
 fighter_profile_match,identity,695,702,0.99002849002849,identity/profile matching
-height_known,physical,626,702,0.8917378917378918,fighter-level height
-reach_known,physical,586,702,0.8347578347578347,fighter-level reach
+height_known,physical,630,702,0.8974358974358975,height after verified UFC.com static fills
+reach_known,physical,602,702,0.8575498575498576,reach after verified UFC.com static fills
 stance_known,physical,695,702,0.99002849002849,fighter-level stance
-historical_odds,market,341,356,0.9578651685393258,priced historical fights
-regional_history,career,629,790,0.7962025316455696,pre-DWCS regional history after conservative recovery
+historical_odds,market,348,356,0.9775280898876404,priced historical fights
+regional_history,career,654,790,0.8278481012658228,pre-DWCS regional history after event/opponent identity recovery
 global_elo_sos,career,659,800,0.82375,point-in-time global Elo/SOS
 dwcs_fight_technical_rows,technical,712,712,1.0,historical DWCS fight technical totals
 prior_dwcs_technical,technical,79,712,0.11095505617977527,pre-fight technical history for repeat entrants
 prior_ufcstats_history,technical,10,712,0.014044943820224719,strict-before-date UFCStats history
-ufc_com_profiles_resolved,official_profile,18,633,0.02843601895734597,official UFC.com search-resolved profiles; current-only metrics
+ufc_com_profiles_verified,official_profile,385,633,0.608214849921011,verified UFC.com profiles; current dynamic metrics quarantined
