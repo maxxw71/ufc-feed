@@ -1,0 +1,43 @@
+name: NBA ROTSHAPE 001 robustness
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'nba/research/audit_rotshape_001.py'
+      - '.github/workflows/nba-rotshape-001-robustness.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: python nba/build_starter_bench_rolling.py
+      - run: python nba/build_scoring_shape_rolling.py
+      - run: python nba/build_starter_core.py
+      - run: python nba/build_team_workload.py
+      - run: python nba/research/audit_rotshape_001.py
+      - shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "appwiza-nba-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add nba/features/starter_bench_rolling.csv.gz nba/features/starter_bench_rolling_summary.json nba/features/scoring_shape_rolling.csv.gz nba/features/scoring_shape_rolling_summary.json nba/features/starter_core_pregame.csv.gz nba/features/starter_core_pregame_summary.json nba/features/team_workload_pregame.csv.gz nba/features/team_workload_pregame_summary.json nba/research/rotation_shape/rotshape_001_robustness.json
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m "nba: add ROTSHAPE 001 robustness results"
+          for attempt in 1 2 3; do
+            git fetch origin main
+            if git rebase origin/main && git push; then exit 0; fi
+            git rebase --abort 2>/dev/null || true
+            sleep 3
+          done
+          exit 1
