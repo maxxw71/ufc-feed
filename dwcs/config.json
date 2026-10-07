@@ -31,5 +31,39 @@
     "market_odds",
     "market_timestamp"
   ],
-  "track_contract_outcome": true
+  "track_contract_outcome": true,
+  "shadow_methods": [
+    "DW-A01",
+    "DW-V01",
+    "DW-C01",
+    "DW-T01",
+    "DW-M01"
+  ],
+  "global_risk_gates": {
+    "reject_four_digit_favorites": true,
+    "minimum_accepted_favorite_odds": -999,
+    "stacking": {
+      "AGE_CORE": "single_exposure_only",
+      "AGE_VALUE": "no_additive_stack_with_AGE_CORE_until_incremental_edge_validated"
+    }
+  },
+  "dataset_freeze": {
+    "historical_discovery_seasons": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6
+    ],
+    "locked_validation_seasons": [
+      7,
+      8,
+      9
+    ],
+    "prospective_shadow_seasons": [
+      10
+    ],
+    "current_ufc_com_dynamic_metrics_in_historical_backtests": false
+  }
 }
