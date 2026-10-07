@@ -211,9 +211,11 @@ def evaluate(df,rule):
         o=odds(r,s)
         if pd.isna(o):continue
         fighter=r[f"fighter_{s}"]
-        winner=str(r.get("winner",""))
-        if not winner:continue
-        won=(str(fighter)==winner)
+        winner_raw=r.get("winner","")
+        if pd.isna(winner_raw) or not str(winner_raw).strip() or str(winner_raw).strip().lower() in {"nan","none","draw","nc","no contest"}:
+            continue
+        winner=str(winner_raw).strip()
+        won=(str(fighter).strip()==winner)
         picks.append({
           "season":int(r.season),"event_date":r.event_date,"event_name":r.event_name,
           "pick":fighter,"opponent":r[f"fighter_{other(s)}"],"close_odds":o,
