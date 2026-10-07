@@ -1,0 +1,36 @@
+name: DWCS Interaction Robustness V2
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/dwcs-interaction-robustness-v2.yml'
+      - 'dwcs/research/run_interaction_robustness_v2.py'
+      - 'dwcs/research/interaction_search_v2/**'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: dwcs-interaction-robustness-v2
+  cancel-in-progress: false
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+      - run: python -m pip install --quiet pandas numpy
+      - name: Run robustness overlap and threshold-neighborhood audits
+        run: python dwcs/research/run_interaction_robustness_v2.py
+      - name: Commit robustness outputs
+        run: |
+          git config user.name appwiza-research-bot
+          git config user.email actions@users.noreply.github.com
+          git add dwcs/research/interaction_robustness_v2
+          git diff --cached --quiet && exit 0
+          git commit -m 'Audit robustness of DWCS interaction methods'
+          git pull --rebase origin main
+          git push
