@@ -2,6 +2,19 @@ name: NBA Active Live Scanner
 
 on:
   workflow_dispatch:
+  workflow_run:
+    workflows:
+      - NBA Market Snapshot
+      - NBA Availability Snapshot
+      - NBA External Odds Snapshot
+      - NBA Prospective Game State
+      - NBA Near Tip Live State
+      - NBA Depth Chart Snapshot
+      - NBA Roster Profile Snapshot
+      - NBA Current Season Enrichment
+      - NBA Research Feature Refresh
+    types: [completed]
+    branches: [main]
   push:
     branches: [main]
     paths:
@@ -28,6 +41,7 @@ concurrency:
 
 jobs:
   scan:
+    if: github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success'
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
@@ -41,18 +55,20 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          if [[ "\${{ github.event_name }}" == "schedule" ]]; then
+          if [[ "${{ github.event_name }}" == "schedule" ]]; then
             python nba/live/scan_live_methods.py --scheduled
           else
             python nba/live/scan_live_methods.py --force
           fi
+      - name: Build Appwiza feed from active scanner
+        run: python nba/live/build_appwiza_feed.py
       - name: Commit scanner state
         shell: bash
         run: |
           set -euo pipefail
           git config user.name appwiza-nba-bot
           git config user.email actions@users.noreply.github.com
-          git add nba/scanner
+          git add nba/scanner nba/live/appwiza_feed.json
           if git diff --cached --quiet; then
             echo "No scanner state changes."
             exit 0
