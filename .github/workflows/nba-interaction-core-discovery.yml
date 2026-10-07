@@ -6,6 +6,7 @@ on:
     branches: [main]
     paths:
       - "nba/research/discover_interaction_core.py"
+      - "nba/research/audit_interact_003.py"
       - ".github/workflows/nba-interaction-core-discovery.yml"
 
 permissions:
@@ -29,6 +30,7 @@ jobs:
       - run: python nba/build_starter_core.py
       - run: python nba/build_team_workload.py
       - run: python nba/research/discover_interaction_core.py
+      - run: python nba/research/audit_interact_003.py
       - shell: bash
         run: |
           set -euo pipefail
