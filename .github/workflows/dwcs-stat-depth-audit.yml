@@ -1,0 +1,84 @@
+name: DWCS Stat Depth Audit
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/dwcs-stat-depth-audit.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - run: python -m pip install --quiet pandas requests beautifulsoup4
+      - name: Audit round-stat and prior-history depth
+        run: |
+          python - <<'PY'
+          import re,json,time,requests
+          from pathlib import Path
+          import pandas as pd
+          from bs4 import BeautifulSoup
+          root=Path('.'); out=root/'dwcs/research/stat_depth'; out.mkdir(parents=True,exist_ok=True)
+          f=pd.read_csv(root/'dwcs/research/results_boutmetrics/historical_fights.csv',low_memory=False)
+          f['event_date']=pd.to_datetime(f.event_date,errors='coerce')
+          def norm(s):
+              s=str(s or '').lower().replace('’',"'").replace('-',' ')
+              s=re.sub(r'\b(jr|sr|ii|iii|iv)\b',' ',s)
+              s=re.sub(r'[^a-z0-9]+',' ',s)
+              return re.sub(r'\s+',' ',s).strip()
+          # Appearance history: how many bouts occur with prior DWCS experience for each side.
+          app={}
+          rows=[]
+          for _,r in f.sort_values(['event_date','event_name']).iterrows():
+              a,b=norm(r.fighter_a),norm(r.fighter_b)
+              pa,pb=app.get(a,0),app.get(b,0)
+              rows.append({'event_date':r.event_date,'event_name':r.event_name,'fighter_a':r.fighter_a,'fighter_b':r.fighter_b,
+                           'a_prior_dwcs':pa,'b_prior_dwcs':pb,'both_prior':pa>0 and pb>0,'either_prior':pa>0 or pb>0})
+              app[a]=pa+1; app[b]=pb+1
+          hist=pd.DataFrame(rows)
+          # Probe all event pages for core round-stat labels; archive has 72 event URLs.
+          s=requests.Session(); s.headers.update({'User-Agent':'Mozilla/5.0 Appwiza-DWCS-StatAudit/1.0'})
+          ev=f[['event_url','event_name','event_date']].drop_duplicates()
+          erows=[]
+          for _,e in ev.iterrows():
+              try:
+                  r=s.get(e.event_url,timeout=25); r.raise_for_status()
+                  txt=' '.join(BeautifulSoup(r.text,'html.parser').get_text(' ',strip=True).split())
+                  erows.append({'event_url':e.event_url,'event_name':e.event_name,
+                    'sig_str':('Sig. str.' in txt),'kd':re.search(r'\bKD\b',txt) is not None,
+                    'td':re.search(r'\bTD\b',txt) is not None,'sub_att':('Sub att' in txt),
+                    'control':('Control' in txt),'status':r.status_code})
+              except Exception as ex:
+                  erows.append({'event_url':e.event_url,'event_name':e.event_name,'error':repr(ex)})
+          er=pd.DataFrame(erows)
+          cov={
+            'historical_fights':len(f),
+            'unique_fighters':len(app),
+            'fights_either_side_prior_dwcs':int(hist.either_prior.sum()),
+            'fights_both_sides_prior_dwcs':int(hist.both_prior.sum()),
+            'either_prior_rate':float(hist.either_prior.mean()),
+            'both_prior_rate':float(hist.both_prior.mean()),
+            'events_checked':len(er),
+            'events_with_sig_str':int(er.get('sig_str',pd.Series(dtype=bool)).fillna(False).sum()),
+            'events_with_kd':int(er.get('kd',pd.Series(dtype=bool)).fillna(False).sum()),
+            'events_with_td':int(er.get('td',pd.Series(dtype=bool)).fillna(False).sum()),
+            'events_with_sub_att':int(er.get('sub_att',pd.Series(dtype=bool)).fillna(False).sum()),
+            'events_with_control':int(er.get('control',pd.Series(dtype=bool)).fillna(False).sum()),
+          }
+          hist.to_csv(out/'prior_dwcs_history.csv',index=False)
+          er.to_csv(out/'event_stat_presence.csv',index=False)
+          (out/'coverage.json').write_text(json.dumps(cov,indent=2)+'\n')
+          print(json.dumps(cov,indent=2))
+          PY
+      - name: Commit audit
+        run: |
+          git config user.name appwiza-research-bot
+          git config user.email actions@users.noreply.github.com
+          git add dwcs/research/stat_depth
+          git diff --cached --quiet && exit 0
+          git commit -m 'Audit DWCS statistical depth'
+          git pull --rebase origin main
+          git push
