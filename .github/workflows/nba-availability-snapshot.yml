@@ -8,7 +8,7 @@ on:
       - "nba/availability/capture_availability.py"
       - ".github/workflows/nba-availability-snapshot.yml"
   schedule:
-    - cron: "11 0,4,8,12,16,20 * * *"
+    - cron: "11 * * * *"
 
 permissions:
   contents: write
