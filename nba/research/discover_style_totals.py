@@ -101,7 +101,7 @@ for lane,outk,pk in (("over","over_result","over_price"),("under","under_result"
       if a["n"]<120 or b["n"]<70 or v["n"]<35 or h["n"]<100:continue
       if None in (a["hit"],a["roi"],b["hit"],b["roi"],v["hit"],v["roi"],h["hit"],h["roi"]):continue
       if a["hit"]<0.54 or a["roi"]<0.025:continue
-      if b["hit"]<0.535 or b["roi"]> -0.005 is False:continue
+      if b["hit"]<0.535 or b["roi"] < -0.005:continue
       if v["hit"]<0.535 or v["roi"]<=0:continue
       if h["hit"]<0.545 or h["roi"]<0.035:continue
       res.append({"side":lane,"rule":" AND ".join(f"{f} {o} {vv:.4g}" for f,o,vv in cs),"status":"style_totals_shadow_candidate",
