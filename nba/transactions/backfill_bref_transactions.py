@@ -56,7 +56,7 @@ def iso_date(s):
     return None
 
 allrows=[];coach=[];edges=[]
-for y in range(2019,2027):
+for y in range(2019,2028):
     body=fetch(y);p=TxParser();p.feed(body)
     for x in p.rows:
         date=iso_date(x["date"])
@@ -108,7 +108,7 @@ summary={
  "generated_at_utc":datetime.now(timezone.utc).isoformat(),
  "transaction_rows":len(allrows),"player_edge_rows":len(edges),"coach_event_rows":len(coach),
  "by_kind":{k:sum(1 for r in allrows if r["kind"]==k) for k in sorted(set(r["kind"] for r in allrows))},
- "season_end_years":list(range(2019,2027)),
+ "season_end_years":list(range(2019,2028)),
  "source":"Basketball-Reference NBA season transaction pages",
  "policy":"Transaction date is treated as day-level only. Target-game features exclude events on the same calendar date because event time relative to tipoff is unknown."
 }
