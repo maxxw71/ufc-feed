@@ -1,0 +1,56 @@
+name: DWCS BoutMetrics Schema Probe
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/dwcs-boutmetrics-schema-probe.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - run: python -m pip install --quiet requests beautifulsoup4
+      - name: Probe event and fighter page structure
+        run: |
+          python - <<'PY'
+          import json,re,requests
+          from pathlib import Path
+          from bs4 import BeautifulSoup
+          out=Path('dwcs/research/boutmetrics_probe'); out.mkdir(parents=True,exist_ok=True)
+          s=requests.Session(); s.headers.update({'User-Agent':'Mozilla/5.0 Appwiza/1.0'})
+          url='https://boutmetrics.com/dwcs/dwcs-9-10'
+          r=s.get(url,timeout=30); r.raise_for_status()
+          soup=BeautifulSoup(r.text,'html.parser')
+          links=[]
+          for a in soup.find_all('a',href=True):
+              txt=' '.join(a.get_text(' ',strip=True).split())
+              href=a['href']
+              if txt or 'fighter' in href.lower():
+                  links.append({'text':txt,'href':href})
+          (out/'event_links.json').write_text(json.dumps(links,indent=2))
+          (out/'event_text.txt').write_text('\n'.join(x.strip() for x in soup.get_text('\n').splitlines() if x.strip())[:100000])
+          prof=next((x for x in links if '/fighter' in x['href'].lower()),None)
+          if prof:
+              from urllib.parse import urljoin
+              purl=urljoin(url,prof['href'])
+              pr=s.get(purl,timeout=30)
+              (out/'fighter_profile_status.json').write_text(json.dumps({'url':purl,'status':pr.status_code},indent=2))
+              if pr.status_code==200:
+                  ps=BeautifulSoup(pr.text,'html.parser')
+                  (out/'fighter_profile_text.txt').write_text('\n'.join(x.strip() for x in ps.get_text('\n').splitlines() if x.strip())[:100000])
+                  (out/'fighter_profile_links.json').write_text(json.dumps([{'text':' '.join(a.get_text(' ',strip=True).split()),'href':a.get('href')} for a in ps.find_all('a',href=True)],indent=2))
+          print('links',len(links),'profile',prof)
+          PY
+      - name: Commit probe
+        run: |
+          git config user.name appwiza-research-bot
+          git config user.email actions@users.noreply.github.com
+          git add dwcs/research/boutmetrics_probe
+          git diff --cached --quiet && exit 0
+          git commit -m 'Probe BoutMetrics DWCS enrichment schema'
+          git pull --rebase origin main
+          git push
