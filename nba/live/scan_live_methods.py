@@ -158,22 +158,30 @@ for gid,g in completed.items():
 for tid in by_team_games:by_team_games[tid].sort()
 
 player_by_team_game=defaultdict(list)
+player_hist=defaultdict(list)
 for r in players:
-    if r.get("game_id") and r.get("team_id"):player_by_team_game[(r["game_id"],str(r["team_id"]))].append(r)
+    if r.get("game_id") and r.get("team_id"):
+        player_by_team_game[(r["game_id"],str(r["team_id"]))].append(r)
+    pid=str(r.get("person_id") or "")
+    g=game_by.get(r.get("game_id"));when=dt((g or {}).get("game_date"))
+    if pid and when and truth((g or {}).get("completed")) and str(r.get("played")).lower() not in ("false","0","dnp","none",""):
+        player_hist[pid].append((when,r))
+for pid in player_hist:player_hist[pid].sort(key=lambda z:z[0])
+
+pb_by_game=defaultdict(list)
+for p in plays:
+    if p.get("game_id"):pb_by_game[p["game_id"]].append(p)
 
 def prior_games(tid,target_when,limit=None):
     z=[x for x in by_team_games.get(str(tid),[]) if x[0]<target_when]
     return z[-limit:] if limit else z
 def player_last5_pm(pid,target_when):
     vals=[]
-    for r in players:
-        if str(r.get("person_id") or "")!=str(pid):continue
-        g=game_by.get(r.get("game_id"));when=dt((g or {}).get("game_date"))
-        if not when or when>=target_when or not truth((g or {}).get("completed")):continue
-        if str(r.get("played")).lower() in ("false","0","dnp","none",""):continue
+    for when,r in player_hist.get(str(pid),[]):
+        if when>=target_when:break
         v=n(r.get("plus_minus"))
-        if v is not None:vals.append((when,v))
-    vals.sort();return mean([v for _,v in vals[-5:]])
+        if v is not None:vals.append(v)
+    return mean(vals[-5:])
 
 def prev_starter_set(tid,target_when):
     pg=prior_games(tid,target_when,1)
@@ -248,9 +256,6 @@ def bench_shape(tid,target_when):
         if pts>0:bshares.append(bp/pts)
         bused.append(len(bench))
     # clutch margin from PBP in final 5 min Q4, score margin <=5 before action.
-    pb_by_game=defaultdict(list)
-    for p in plays:
-        if p.get("game_id"):pb_by_game[p["game_id"]].append(p)
     clutch=[]
     for when,gid in last10:
         g=game_by.get(gid,{});hid=str(g.get("home_team_id") or "");side_home=(str(tid)==hid)
