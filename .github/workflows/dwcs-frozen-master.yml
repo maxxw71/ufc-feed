@@ -1,0 +1,34 @@
+name: DWCS Frozen Master Build
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/dwcs-frozen-master.yml'
+      - 'dwcs/research/build_frozen_master.py'
+      - 'dwcs/research/static_profile_merge/**'
+      - 'dwcs/research/regional_history_v2/**'
+      - 'dwcs/research/point_in_time_sos/**'
+      - 'dwcs/research/historical_odds/**'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  freeze:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - run: python -m pip install --quiet pandas numpy
+      - name: Build frozen point-in-time research master
+        env:
+          GITHUB_SHA: ${{ github.sha }}
+        run: python dwcs/research/build_frozen_master.py
+      - name: Commit frozen master
+        run: |
+          git config user.name appwiza-research-bot
+          git config user.email actions@users.noreply.github.com
+          git add dwcs/frozen
+          git diff --cached --quiet && exit 0
+          git commit -m 'Freeze DWCS point-in-time research master'
+          git pull --rebase origin main
+          git push
