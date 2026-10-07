@@ -153,7 +153,10 @@ def main():
         })
 
     dd=pd.DataFrame(diagnostics)
-    rr=pd.DataFrame(recovered).drop_duplicates(["dwcs_date","fighter"]) if recovered else pd.DataFrame()
+    recovered_cols=["season","dwcs_event","dwcs_date","fighter","opponent_dwcs","archive_alias","archive_alias_norm","opponent_match_score","fighter_name_score","date_distance_days","identity_basis"]
+    rr=pd.DataFrame(recovered,columns=recovered_cols)
+    if len(rr):
+        rr=rr.drop_duplicates(["dwcs_date","fighter"])
     dd.to_csv(OUT/"gap_diagnostic.csv",index=False)
     rr.to_csv(OUT/"near_date_recovered_aliases.csv",index=False)
 
