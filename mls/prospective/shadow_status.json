@@ -1,47 +1,21 @@
 {
-  "built_at": "2026-10-07T07:34:11.099479+00:00",
-  "market_captured_at": "2026-10-07T07:33:42.874079+00:00",
+  "built_at": "2026-10-07T14:43:08.774356+00:00",
+  "market_captured_at": "2026-10-07T14:42:38.716227+00:00",
   "elo_updated_at": "2026-10-07T00:00:00+00:00",
-  "elo_age_days": 0.3152951599884259,
-  "qualifier_count": 10,
+  "elo_age_days": 0.6131858768865741,
+  "qualifier_count": 8,
   "qualifiers": [
     {
-      "method_id": "MLS-R02V2",
+      "method_id": "MLS-A02",
       "selection": "Chicago Fire FC",
       "opponent": "New York City FC",
       "commence_time": "2026-10-10T18:30Z",
-      "american_price": "-115",
+      "american_price": "-125",
       "book": "DraftKings",
-      "market_prob": 0.4868282269688324,
-      "research_status": "SHADOW_READY_REFINED",
-      "confidence_tier": "BASE",
-      "portfolio_conflict": true,
-      "same_side_consensus": null
-    },
-    {
-      "method_id": "MLS-R03",
-      "selection": "New York City FC",
-      "opponent": "Chicago Fire FC",
-      "commence_time": "2026-10-10T18:30Z",
-      "american_price": "+245",
-      "book": "DraftKings",
-      "market_prob": 0.26381365796672707,
-      "research_status": "SHADOW_READY",
-      "confidence_tier": "BASE",
-      "portfolio_conflict": true,
-      "same_side_consensus": null
-    },
-    {
-      "method_id": "MLS-A03",
-      "selection": "New York City FC",
-      "opponent": "Chicago Fire FC",
-      "commence_time": "2026-10-10T18:30Z",
-      "american_price": "+245",
-      "book": "DraftKings",
-      "market_prob": 0.26381365796672707,
+      "market_prob": 0.5085211654755359,
       "research_status": "PROSPECTIVE_PRIORITY_SHADOW",
       "confidence_tier": "BASE",
-      "portfolio_conflict": true,
+      "portfolio_conflict": false,
       "same_side_consensus": null
     },
     {
@@ -148,9 +122,21 @@
   "watch_only_method_ids": [
     "MLS-A04"
   ],
-  "active_qualifier_count": 10,
+  "active_qualifier_count": 8,
   "watch_qualifier_count": 0,
   "portfolio_matches": [
+    {
+      "event_id": "761846",
+      "home_team": "Chicago Fire FC",
+      "away_team": "New York City FC",
+      "selection": "Chicago Fire FC",
+      "methods": [
+        "MLS-A02"
+      ],
+      "consensus": false,
+      "max_bankroll_exposure_pct": 1.0,
+      "staking_policy": "MAX_1_PERCENT_CURRENT_BANKROLL_PER_MATCH"
+    },
     {
       "event_id": "761848",
       "home_team": "Orlando City SC",
@@ -177,22 +163,6 @@
     }
   ],
   "portfolio_conflicts": [
-    {
-      "event_id": "761846",
-      "home_team": "Chicago Fire FC",
-      "away_team": "New York City FC",
-      "methods": [
-        "MLS-R02V2",
-        "MLS-R03",
-        "MLS-A03"
-      ],
-      "selections": [
-        "Chicago Fire FC",
-        "New York City FC",
-        "New York City FC"
-      ],
-      "policy": "NO_PORTFOLIO_ACTION"
-    },
     {
       "event_id": "761857",
       "home_team": "Colorado Rapids",
@@ -225,22 +195,6 @@
     }
   ],
   "conflicts": [
-    {
-      "event_id": "761846",
-      "home_team": "Chicago Fire FC",
-      "away_team": "New York City FC",
-      "methods": [
-        "MLS-R02V2",
-        "MLS-R03",
-        "MLS-A03"
-      ],
-      "selections": [
-        "Chicago Fire FC",
-        "New York City FC",
-        "New York City FC"
-      ],
-      "policy": "TRACK_FOR_RESEARCH"
-    },
     {
       "event_id": "761857",
       "home_team": "Colorado Rapids",
