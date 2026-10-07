@@ -1,0 +1,53 @@
+{
+  "sport": "nba",
+  "season": "2026-27",
+  "status": "shadow_only",
+  "policy": {
+    "frozen_rules": true,
+    "prospective_only": true,
+    "no_retuning_on_2026_27_results": true,
+    "promotion_requires_review": true
+  },
+  "methods": [
+    {
+      "method_id": "NBA_TRAVEL_001",
+      "priority": 1,
+      "market": "moneyline",
+      "rule": "away side AND opponent_minus_side_travel7d >= 576.9 miles AND market_prob >= 0.7023",
+      "historical": {"signals":264,"wins":232,"losses":32,"hit_rate":0.8788,"roi":0.07249,"holdout_signals":76,"holdout_wins":67,"holdout_losses":9,"holdout_hit_rate":0.8816,"holdout_roi":0.0507,"worst_price_roi":0.05881},
+      "notes": "Strongest new independent family. Same-price-gate away-favorite baseline was negative ROI; travel filter adds material edge. ~84.5% unique vs current live methods."
+    },
+    {
+      "method_id": "NBA_LQ_003",
+      "priority": 2,
+      "market": "moneyline",
+      "rule": "start5_prior_pm48_gap >= 10.55 AND unit_volatility5_adv >= 10.97 AND market_prob >= 0.5968",
+      "historical": {"signals":379,"wins":310,"losses":69,"hit_rate":0.8179,"roi":0.0775,"holdout_signals":75,"holdout_wins":61,"holdout_losses":14,"holdout_hit_rate":0.8133,"holdout_roi":0.0481,"worst_price_roi":0.0567},
+      "notes": "Exact confirmed-five historical shared-unit quality. ~89.7% unique vs current live methods. Two individual negative-ROI seasons."
+    },
+    {
+      "method_id": "NBA_STAND_002",
+      "priority": 3,
+      "market": "moneyline",
+      "rule": "opp_seed6_gap >= 0 AND streak_gap <= -2 AND market_prob >= 0.5968",
+      "historical": {"signals":389,"wins":304,"losses":85,"hit_rate":0.7815,"roi":0.0609,"holdout_signals":102,"holdout_wins":81,"holdout_losses":21,"holdout_hit_rate":0.7941,"holdout_roi":0.0712,"worst_price_roi":0.0401},
+      "notes": "Standings/market-vs-recent-streak disagreement. ~93.8% unique vs current live methods. Two individual seasons slightly negative ROI."
+    },
+    {
+      "method_id": "NBA_ROTSHAPE_001",
+      "priority": 4,
+      "market": "moneyline",
+      "rule": "bench_points_share5_gap <= -0.08308 AND bench_used5_gap >= 1 AND clutch_margin10_gap >= 0.5",
+      "historical": {"signals":199,"wins":152,"losses":47,"hit_rate":0.7638,"roi":0.0752,"holdout_signals":57,"holdout_wins":47,"holdout_losses":10,"holdout_hit_rate":0.8246,"holdout_roi":0.0828,"worst_price_roi":0.0540},
+      "notes": "Independent rotation/scoring-shape mechanism but weaker season-by-season stability. ~91.5% unique vs current live methods."
+    },
+    {
+      "method_id": "NBA_STYLE_TOT_001",
+      "priority": 5,
+      "market": "total_over",
+      "rule": "paint_share_sum >= 0.8907 AND foulrate_sum <= 38.5 AND rest_sum <= 3",
+      "historical": {"signals":498,"hit_rate":0.559,"roi":0.0656,"holdout_signals":146,"holdout_hit_rate":0.555,"holdout_roi":0.0585,"worst_price_roi":0.0282},
+      "notes": "First credible totals-family lead from newly exposed style features; edge is thinner than moneyline candidates."
+    }
+  ]
+}
