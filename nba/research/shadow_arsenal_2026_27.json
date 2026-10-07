@@ -117,6 +117,28 @@
       "promoted_live": true
     },
     {
+      "method_id": "NBA_H3_OVER_002",
+      "priority": 9,
+      "market": "total_over",
+      "status": "shadow_only",
+      "research_type": "independent_cross_family",
+      "rule": "clutch_abs_gap >= 1.7 AND stand_rank_abs_gap >= 8 AND starterpm_abs_gap >= 7.16",
+      "historical": {
+        "signals": 346,
+        "wins": 205,
+        "losses": 137,
+        "hit_rate": 0.5994152046783626,
+        "roi": 0.14184643810917277,
+        "holdout_signals": 96,
+        "holdout_wins": 57,
+        "holdout_losses": 39,
+        "holdout_hit_rate": 0.59375,
+        "holdout_roi": 0.13245507176666596,
+        "worst_price_roi": 0.0999621593081745
+      },
+      "notes": "Strongest V3 totals lead. Positive ROI in every individual season, positive worst-price stress, and all 27 tested threshold-neighborhood variants positive overall and in holdout. Keep shadow pending overlap and mechanism-loss audit."
+    },
+    {
       "method_id": "NBA_XOVER_002",
       "priority": 10,
       "market": "total_over",
@@ -291,6 +313,28 @@
         "holdout_roi": 0.1670377395015076
       },
       "notes": "Interesting totals interaction but unstable threshold neighborhood and poor 2021-22. Research-only."
+    },
+    {
+      "method_id": "NBA_H3_OVER_001",
+      "priority": 18,
+      "market": "total_over",
+      "status": "research_only",
+      "research_type": "independent_cross_family",
+      "rule": "forced_tov_sum <= 25.8 AND stand_rank_abs_gap >= 9 AND net_abs_gap >= 12.958",
+      "historical": {
+        "signals": 372,
+        "wins": 208,
+        "losses": 162,
+        "hit_rate": 0.5621621621621622,
+        "roi": 0.07291399734194584,
+        "holdout_signals": 107,
+        "holdout_wins": 64,
+        "holdout_losses": 43,
+        "holdout_hit_rate": 0.5981308411214953,
+        "holdout_roi": 0.14319205626815346,
+        "worst_price_roi": 0.033595142174824275
+      },
+      "notes": "Interesting V3 OVER lead, but 2018-19 was negative ROI and threshold neighborhood is materially less stable. Research-only."
     }
   ]
 }
