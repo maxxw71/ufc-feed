@@ -70,7 +70,10 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: boxing-public-phase2
-          path: boxing/public_phase2/
+          path: |
+            boxing/public_phase2/coverage.json
+            boxing/public_phase2/status.json
+            boxing/public_phase2/CURRENT_DATASET_STATUS.json
           if-no-files-found: warn
       - name: Commit compact public results
         if: success()
@@ -86,7 +89,7 @@ jobs:
             git fetch origin main
             git reset --hard origin/main
             cp -R ${{ runner.temp }}/boxing-${{ github.run_id }}-${{ github.run_attempt }}/boxing-phase2-results/. boxing/public_phase2/
-            git add boxing/public_phase2
+            git add boxing/public_phase2/coverage.json boxing/public_phase2/status.json boxing/public_phase2/CURRENT_DATASET_STATUS.json
             if git diff --cached --quiet; then
               echo 'No research result changes.'
               exit 0

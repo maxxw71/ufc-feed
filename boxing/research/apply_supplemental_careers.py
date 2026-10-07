@@ -40,6 +40,13 @@ def main():
     lines=SUP.read_text().splitlines()
     recovered=SUP.parent/'recovered_priced_careers.jsonl'
     if SUP==_default_sup and recovered.exists():lines.extend(recovered.read_text().splitlines())
+    if SUP==_default_sup:
+        private=SUP.parent/'private_verified_careers.jsonl'
+        if not private.exists():
+            private=Path(os.environ.get('APPWIZA_BOXING_CAREER_SUPPLEMENTS','/srv/appwiza-sports/boxing-maintenance/private-supplements/verified_careers.jsonl'))
+        if private.exists():lines.extend(private.read_text().splitlines())
+    # Identical overlay records must not inflate the input inventory.
+    lines=list(dict.fromkeys(line for line in lines if line.strip()))
     for line in lines:
         if not line.strip():continue
         x=json.loads(line);source=x.get('source') or 'wikipedia'

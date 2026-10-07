@@ -16,6 +16,7 @@ ROOT=Path(__file__).resolve().parents[1]
 ODDS=Path(os.environ.get('APPWIZA_BOXING_ODDS_ROOT',str(ROOT/'prospective_odds')))
 DB=Path(os.environ.get('APPWIZA_BOXING_DB','/home/anestishkurti92/boxing-research/boxing.sqlite3'))
 RESULT_SUPPLEMENTS=ODDS/'result_supplements.json'
+PRIVATE_RESULT_SUPPLEMENTS=Path(os.environ.get('APPWIZA_BOXING_RESULT_SUPPLEMENTS','/srv/appwiza-sports/boxing-maintenance/private-supplements/result_supplements.json'))
 
 def nk(s):
     x=unicodedata.normalize('NFKD',str(s or '')).encode('ascii','ignore').decode().lower()
@@ -144,11 +145,13 @@ def result_from_supplements(records,date,names):
     }
 
 def load_result_supplements():
-    try:
-        obj=json.loads(RESULT_SUPPLEMENTS.read_text())
-        return obj.get('results') or []
-    except Exception:
-        return []
+    records=[]
+    for path in dict.fromkeys([RESULT_SUPPLEMENTS,PRIVATE_RESULT_SUPPLEMENTS]):
+        if not path.exists():continue
+        obj=json.loads(path.read_text())
+        records.extend(obj.get('results') or [])
+    # Keep conflicting records: result_from_supplements must block disagreement.
+    return records
 
 def main():
     snaps=snapshots()
@@ -230,6 +233,7 @@ def main():
         'policy':'Only originally timestamped pre-event quotes are eligible; results require exact date+pair and either unanimous matching finished source rows or a strict manual supplement with at least two independent published result sources. Sportsbook and prediction-market observations are reported separately. For sportsbook validation, opening=first verified observation and latest=last verified observation before listed event start/date; consensus latest is the median of each sportsbook latest observation, never a retrospectively chosen price.'
     }
     coverage['unresolved_reasons']=dict(Counter(r['evidence_review']['review_reason'] for r in unresolved))
+    coverage['bout_level_results_location']='private_appwiza_server' if PRIVATE_RESULT_SUPPLEMENTS.exists() else 'settled_bouts.json'
     coverage['settled_count_meaning']='Verified fight outcomes; bookmaker-specific wager settlement remains separately unverified.'
     # Keep detailed repair evidence off the repository/public report path.
     review_root=Path(os.environ.get('APPWIZA_BOXING_REVIEW_ROOT','/srv/appwiza-sports/boxing-releases/outcome-review'))
@@ -239,7 +243,9 @@ def main():
     public_settled=[{k:v for k,v in r.items() if k!='evidence_review'} for r in settled]
     public_unresolved=[{k:v for k,v in r.items() if k!='evidence_review'} for r in unresolved]
     (ODDS/'coverage.json').write_text(json.dumps(coverage,indent=2,ensure_ascii=False))
-    (ODDS/'settled_bouts.json').write_text(json.dumps({'generated_at':now.isoformat(),'settled':public_settled,'past_unresolved':public_unresolved},indent=2,ensure_ascii=False))
+    # Private overlays must never flow into public bout-level exports.
+    if not PRIVATE_RESULT_SUPPLEMENTS.exists():
+        (ODDS/'settled_bouts.json').write_text(json.dumps({'generated_at':now.isoformat(),'settled':public_settled,'past_unresolved':public_unresolved},indent=2,ensure_ascii=False))
     print(json.dumps(coverage,indent=2,ensure_ascii=False))
 
 if __name__=='__main__':main()

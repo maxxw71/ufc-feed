@@ -12,7 +12,9 @@ def main():
     if not pathlib.Path('/opt/sports-python').is_dir():raise SystemExit('Run on appwiza only')
     a.releases.mkdir(parents=True,exist_ok=True)
     lock=open(a.releases/'build.lock','a');fcntl.flock(lock,fcntl.LOCK_EX|fcntl.LOCK_NB)
+    private_careers=pathlib.Path(os.environ.get('APPWIZA_BOXING_CAREER_SUPPLEMENTS','/srv/appwiza-sports/boxing-maintenance/private-supplements/verified_careers.jsonl'))
     inventory={}
+    if private_careers.exists():inventory['private_verified_careers']=sha(private_careers)
     for folder in ['research','profile_supplements','supplemental_careers','punch_supplements','rankings','official_bouts']:
         for p in sorted((a.repo/'boxing'/folder).rglob('*')):
             if p.is_file() and '__pycache__' not in p.parts and (folder!='research' or p.suffix=='.py'):
@@ -34,6 +36,10 @@ def main():
     for name in ['profile_supplements','supplemental_careers','punch_supplements','rankings','official_bouts','collectors']:
         src=a.repo/'boxing'/name
         if src.exists() and not a.resume_master:shutil.copytree(src,a.work/name)
+    if private_careers.exists() and not a.resume_master:
+        staged=a.work/'supplemental_careers/private_verified_careers.jsonl'
+        staged.parent.mkdir(parents=True,exist_ok=True);shutil.copy2(private_careers,staged)
+        assert sha(staged)==inventory['private_verified_careers'],'Private career inputs changed during staging'
     for p in (a.repo/'boxing/public_reports').glob('HISTORICAL_ODDS*ROWS.json'):shutil.copy2(p,root/p.name)
     archive_hash=sha(a.archive)
     if not a.resume_master:

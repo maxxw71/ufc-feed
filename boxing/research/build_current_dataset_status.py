@@ -232,6 +232,7 @@ out={
 release=load(PHASE2/'status.json')
 if release.get('eligibility'):
     out['research_eligibility']=release['eligibility']
+    out['research_universe']['consensus_priced_bouts']=release['eligibility']['broad']
     out['detailed_release_audit']='private_appwiza_server'
     out['outcome_vs_wager_settlement']='Prospective settled counts verify fight outcomes; bookmaker rules are separately unverified.'
 PHASE2.mkdir(parents=True,exist_ok=True)

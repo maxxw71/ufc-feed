@@ -2,6 +2,7 @@
 import collections, datetime as dt, hashlib, json, math, re, sqlite3
 from pathlib import Path
 from features import summary, age, namekey
+from adjacent_date_quotes import archive_times, matches_bout
 from enrich_history import stats, rounds_value
 from build_punch_profiles import weighted as punch_weighted, norm_name as punch_namekey
 ROOT=Path(__file__).resolve().parent
@@ -553,6 +554,8 @@ def main():
                 if x is not None:
                     strength[r['source_id']]=x
                     strength_source['source_stated_prefight_record']+=1
+    evidence_path=ROOT/'HISTORICAL_ODDS_STRICT_UNION_ROWS.json'
+    verified_times=archive_times(json.loads(evidence_path.read_text()).get('rows',[])) if evidence_path.exists() else {}
     quotes=collections.defaultdict(list)
     for r in d.execute('select * from priced_bout_research where feature_bout_id is not null'):quotes[r['feature_bout_id']].append(dict(r))
     years=collections.defaultdict(collections.Counter); total=0;source_rows=collections.Counter();context_counts=collections.Counter()
@@ -607,7 +610,7 @@ def main():
                     sides[label]['ibf_champion_status']=_ibc.get('status') if _ibc else None
                     sides[label]['ibf_ranking_quality']='official_ibf_api_post_date_plus_one_day' if (_ibr or _ibc) else None
                     assert not s['latest_input_bout_date'] or s['latest_input_bout_date']<date
-                matched=[q for q in quotes[r['source_id']] if q['event_date']==date]
+                matched=[q for q in quotes[r['source_id']] if matches_bout(q,r,verified_times)]
                 _ctx=bout_context(r)
                 _ibf_ctx=ibf_bout_context.get((date,*sorted((namekey(r['boxer_a']),namekey(r['boxer_b'])))))
                 row={'source_id':r['source_id'],'career_source':r['source'],'bout_date':date,'fighter_name':r['boxer_a'],'opponent_name':r['boxer_b'],
