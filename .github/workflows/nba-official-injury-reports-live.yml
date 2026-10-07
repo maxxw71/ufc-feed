@@ -1,0 +1,48 @@
+name: NBA Official Injury Reports
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'nba/availability/capture_official_reports.py'
+      - '.github/workflows/nba-official-injury-reports-live.yml'
+  schedule:
+    - cron: '23 * * * *'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: nba-official-injury-reports-live
+  cancel-in-progress: false
+
+jobs:
+  capture:
+    runs-on: [self-hosted, Linux, X64, appwiza]
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install -q pypdf
+      - run: python nba/availability/capture_official_reports.py
+      - shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name appwiza-nba-bot
+          git config user.email actions@users.noreply.github.com
+          git add nba/availability/official_reports
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m "nba: preserve official injury reports"
+          git reset --hard HEAD
+          git clean -fd
+          for attempt in 1 2 3; do
+            git fetch origin main
+            if git rebase origin/main && git push; then exit 0; fi
+            git rebase --abort 2>/dev/null || true
+            sleep 4
+          done
+          exit 1
