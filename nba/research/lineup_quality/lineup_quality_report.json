@@ -1,0 +1,231 @@
+{
+  "generated_at_utc": "2026-10-07T08:27:06.078092+00:00",
+  "rows": 19004,
+  "rules_tested": 9912,
+  "candidates": 6,
+  "top_methods": [
+    {
+      "rule": "start5_prior_seconds_gap >= 1345 AND unit_volatility5_adv <= -10.97 AND start_pm48_10_gap >= 7.92",
+      "status": "lineup_quality_shadow_candidate",
+      "discA": {
+        "n": 250,
+        "wins": 185,
+        "hit": 0.74,
+        "roi": 0.04665872143901987,
+        "profit": 11.664680359754968,
+        "wilson_low": 0.6822851203436464
+      },
+      "discB": {
+        "n": 124,
+        "wins": 89,
+        "hit": 0.717741935483871,
+        "roi": 0.06209909301053764,
+        "profit": 7.700287533306668,
+        "wilson_low": 0.6329011494920659
+      },
+      "validation": {
+        "n": 60,
+        "wins": 44,
+        "hit": 0.7333333333333333,
+        "roi": 0.004958682295317929,
+        "profit": 0.29752093771907573,
+        "wilson_low": 0.6099104639810864
+      },
+      "holdout": {
+        "n": 130,
+        "wins": 106,
+        "hit": 0.8153846153846154,
+        "roi": 0.15652693096366213,
+        "profit": 20.34850102527608,
+        "wilson_low": 0.7399800318075411
+      },
+      "method_id": "NBA_LQ_001"
+    },
+    {
+      "rule": "start5_prior_seconds_gap >= 4819 AND top_pm48_5_gap >= 9.221 AND unit_volatility5_adv <= -10.97",
+      "status": "lineup_quality_shadow_candidate",
+      "discA": {
+        "n": 110,
+        "wins": 83,
+        "hit": 0.7545454545454545,
+        "roi": 0.03774897316217458,
+        "profit": 4.152387047839204,
+        "wilson_low": 0.6664346908368605
+      },
+      "discB": {
+        "n": 58,
+        "wins": 44,
+        "hit": 0.7586206896551724,
+        "roi": 0.06354064293099762,
+        "profit": 3.685357289997862,
+        "wilson_low": 0.6346977437031314
+      },
+      "validation": {
+        "n": 35,
+        "wins": 25,
+        "hit": 0.7142857142857143,
+        "roi": 0.0010717025914620823,
+        "profit": 0.03750959070117288,
+        "wilson_low": 0.5494475193017891
+      },
+      "holdout": {
+        "n": 65,
+        "wins": 54,
+        "hit": 0.8307692307692308,
+        "roi": 0.13815822365264177,
+        "profit": 8.980284537421715,
+        "wilson_low": 0.721833508048396
+      },
+      "method_id": "NBA_LQ_002"
+    },
+    {
+      "rule": "start5_prior_pm48_gap >= 10.55 AND unit_volatility5_adv >= 10.97 AND market_prob >= 0.5968",
+      "status": "lineup_quality_shadow_candidate",
+      "discA": {
+        "n": 158,
+        "wins": 129,
+        "hit": 0.8164556962025317,
+        "roi": 0.07492274487424663,
+        "profit": 11.837793690130967,
+        "wilson_low": 0.7488314913962383
+      },
+      "discB": {
+        "n": 85,
+        "wins": 68,
+        "hit": 0.8,
+        "roi": 0.08346393132893776,
+        "profit": 7.094434162959709,
+        "wilson_low": 0.7028443198871105
+      },
+      "validation": {
+        "n": 62,
+        "wins": 53,
+        "hit": 0.8548387096774194,
+        "roi": 0.11476187886419599,
+        "profit": 7.115236489580151,
+        "wilson_low": 0.7465637464683085
+      },
+      "holdout": {
+        "n": 75,
+        "wins": 61,
+        "hit": 0.8133333333333334,
+        "roi": 0.04805813989043335,
+        "profit": 3.604360491782501,
+        "wilson_low": 0.7107120474561753
+      },
+      "method_id": "NBA_LQ_003"
+    },
+    {
+      "rule": "start5_prior_games_gap >= 7 AND nonstart_pm48_5_gap <= -4.911 AND market_prob >= 0.5968",
+      "status": "lineup_quality_shadow_candidate",
+      "discA": {
+        "n": 129,
+        "wins": 102,
+        "hit": 0.7906976744186046,
+        "roi": 0.06383703599041952,
+        "profit": 8.234977642764118,
+        "wilson_low": 0.7126020732447343
+      },
+      "discB": {
+        "n": 101,
+        "wins": 82,
+        "hit": 0.8118811881188119,
+        "roi": 0.1019284300840904,
+        "profit": 10.29477143849313,
+        "wilson_low": 0.7247767973823279
+      },
+      "validation": {
+        "n": 54,
+        "wins": 42,
+        "hit": 0.7777777777777778,
+        "roi": 0.028033428364194667,
+        "profit": 1.513805131666512,
+        "wilson_low": 0.6506107316841219
+      },
+      "holdout": {
+        "n": 73,
+        "wins": 59,
+        "hit": 0.8082191780821918,
+        "roi": 0.09430447038586155,
+        "profit": 6.884226338167894,
+        "wilson_low": 0.7034428294648695
+      },
+      "method_id": "NBA_LQ_004"
+    },
+    {
+      "rule": "nonstart_pm48_5_gap >= 10.66 AND unit_volatility5_adv <= -10.97 AND start_pm48_10_gap >= 7.92",
+      "status": "lineup_quality_shadow_candidate",
+      "discA": {
+        "n": 115,
+        "wins": 90,
+        "hit": 0.782608695652174,
+        "roi": 0.06641663231365778,
+        "profit": 7.637912716070645,
+        "wilson_low": 0.6987534627541625
+      },
+      "discB": {
+        "n": 64,
+        "wins": 52,
+        "hit": 0.8125,
+        "roi": 0.16495696050480305,
+        "profit": 10.557245472307395,
+        "wilson_low": 0.7002540844522482
+      },
+      "validation": {
+        "n": 45,
+        "wins": 33,
+        "hit": 0.7333333333333333,
+        "roi": 0.011361346017708265,
+        "profit": 0.5112605707968719,
+        "wilson_low": 0.5896088330282472
+      },
+      "holdout": {
+        "n": 106,
+        "wins": 83,
+        "hit": 0.7830188679245284,
+        "roi": 0.04079901039524087,
+        "profit": 4.324695101895532,
+        "wilson_low": 0.6954026791051231
+      },
+      "method_id": "NBA_LQ_005"
+    },
+    {
+      "rule": "start5_prior_seconds_gap >= 4819 AND nonstart_pm48_5_gap <= -4.911 AND market_prob >= 0.5968",
+      "status": "lineup_quality_shadow_candidate",
+      "discA": {
+        "n": 117,
+        "wins": 92,
+        "hit": 0.7863247863247863,
+        "roi": 0.05102766123155691,
+        "profit": 5.970236364092158,
+        "wilson_low": 0.7035731606884225
+      },
+      "discB": {
+        "n": 90,
+        "wins": 69,
+        "hit": 0.7666666666666667,
+        "roi": 0.05318057106923629,
+        "profit": 4.7862513962312665,
+        "wilson_low": 0.6694810141144782
+      },
+      "validation": {
+        "n": 59,
+        "wins": 49,
+        "hit": 0.8305084745762712,
+        "roi": 0.1044258148247374,
+        "profit": 6.161123074659506,
+        "wilson_low": 0.7153653834518579
+      },
+      "holdout": {
+        "n": 59,
+        "wins": 47,
+        "hit": 0.7966101694915254,
+        "roi": 0.07393622732848719,
+        "profit": 4.362237412380744,
+        "wilson_low": 0.6773174503671768
+      },
+      "method_id": "NBA_LQ_006"
+    }
+  ],
+  "policy": "Lineup-quality lane uses exact five-man stint minutes/plus-minus from prior games and target confirmed starting-five identity. No target-game outcome information."
+}
