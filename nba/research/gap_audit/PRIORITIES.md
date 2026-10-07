@@ -36,6 +36,25 @@ High combined paint scoring share + lower combined foul rate + short total rest.
 - Worst-price ROI: +2.82%
 - Status: shadow only; totals edge is materially thinner than TRAVEL_001.
 
+### NBA_LQ_003 — strong exact-lineup-quality candidate
+Confirmed starting-five prior shared PM48 gap >= 10.55, selected team has materially lower recent lineup-stint volatility, and market probability >= 59.68%.
+- Overall: 310-69 (81.8%), +7.75% ROI
+- Holdout 2024-26: 61-14 (81.3%), +4.81%
+- Worst historical price: +5.67%
+- Same-price-gate baseline without lineup filters: 73.1%, -3.89% ROI
+- Unique vs existing live NBA families: 340 / 379 signals (~89.7%)
+- Caveat: negative ROI in 2018-19 and 2024-25; keep shadow pending prospective evidence.
+
+### NBA_STAND_002 — strong standings/market disagreement candidate
+Opponent at-or-above #6-seed win-percentage pace, selected team has a materially worse recent streak, but market still prices selected side >= 59.68%.
+- Overall: 304-85 (78.1%), +6.09% ROI
+- Holdout: 81-21 (79.4%), +7.12%
+- Worst historical price: +4.01%
+- Same-price favorite baseline: 73.1%, -3.89% ROI
+- Unique vs existing live NBA families: 365 / 389 signals (~93.8%)
+- Remains positive after 20, 40 and 55 prior games; two individual seasons are slightly negative.
+- Status: shadow / promotion candidate.
+
 ## Searches rejected at current standards
 
 - Pure starter-core production concentration: 37,760 rules, 0 candidates.
@@ -45,6 +64,7 @@ High combined paint scoring share + lower combined foul rate + short total rest.
 - Market microstructure / book disagreement: 5,026 rules, 0 candidates.
 - Playing-style moneyline: 36,036 rules, 0 candidates.
 - Referee-only lanes: 12,192 rules, 0 candidates.
+- Altitude/elevation interactions: 11,136 rules, 0 candidates.
 - Roster-transaction moneyline lane: 27,712 rules, 0 candidates.
 
 ## Data-quality rejections / leakage guards
@@ -57,7 +77,7 @@ High combined paint scoring share + lower combined foul rate + short total rest.
 
 1. **True historical availability / injuries** from timestamped or archived reports, not rewritten current-state pages.
 2. **Validated exact coaching changes for 2024-25 and 2025-26** to complete game-level coaching context.
-3. **Historical salary / contract / roster-value features** (team salary, top-player salary concentration, value lost/added around trades).
+3. **Historical salary / contract / roster-value features** (team salary, top-player salary concentration, value lost/added around trades). Basketball-Reference contract query parameters were tested and rejected because they always returned the current 2026-27 table; HoopsHype returned HTTP 402; ESPN HTML returned only anti-bot 202 responses. Continue only with a genuinely season-addressable source.
 4. **Validated shot-location / shot-type data** from a source with official-attempt reconciliation.
 5. **Advanced player impact / on-off** derived from exact lineup stints or a timestamp-safe historical source.
 6. **Referee interactions rather than referee-only rules**, especially totals + foul/FTA style.
