@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 from __future__ import annotations
 import io,re,json,unicodedata,urllib.request
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path
 import numpy as np,pandas as pd,requests
 
@@ -96,19 +97,24 @@ def main():
     # UFC.com athlete pages: capture current official profile metadata separately.
     # These are dated current snapshots and are NEVER backfilled into old fight rows.
     names=sorted(set(fights.fighter_a.dropna().astype(str))|set(fights.fighter_b.dropna().astype(str)))
-    urows=[]
-    for name in names:
+    def fetch_ufc_profile(name):
         slug=norm(name).replace(" ","-")
         url=f"https://www.ufc.com/athlete/{slug}"
         try:
-            r=requests.get(JINA+url,headers={"User-Agent":UA,"Accept":"text/plain"},timeout=35)
+            r=requests.get(JINA+url,headers={"User-Agent":UA,"Accept":"text/plain"},timeout=20)
             txt=r.text if r.status_code==200 else ""
             matched=(r.status_code==200 and norm(name) in norm(txt[:5000]))
-            urows.append({"fighter":name,"ufc_url":url,"http_status":r.status_code,"matched":matched,
-                          "snapshot_scope":"current_only_not_historical","raw_excerpt":txt[:8000] if matched else ""})
+            return {"fighter":name,"ufc_url":url,"http_status":r.status_code,"matched":matched,
+                    "snapshot_scope":"current_only_not_historical","raw_excerpt":txt[:8000] if matched else ""}
         except Exception as e:
-            urows.append({"fighter":name,"ufc_url":url,"matched":False,"error":repr(e),
-                          "snapshot_scope":"current_only_not_historical"})
+            return {"fighter":name,"ufc_url":url,"matched":False,"error":repr(e),
+                    "snapshot_scope":"current_only_not_historical"}
+    urows=[]
+    with ThreadPoolExecutor(max_workers=16) as ex:
+        fut={ex.submit(fetch_ufc_profile,name):name for name in names}
+        for i,f in enumerate(as_completed(fut),1):
+            urows.append(f.result())
+            if i%100==0: print(f"ufc.com profiles {i}/{len(names)}",flush=True)
     udf=pd.DataFrame(urows)
     udf.to_csv(OUT/"ufc_com_current_profiles.csv",index=False)
 
