@@ -28,7 +28,7 @@ def main():
 
     age=jload("dwcs/research/age_enrichment/coverage.json")
     phys=jload("dwcs/research/enrichment_probe/coverage.json")
-    odds=jload("dwcs/research/historical_odds/retry_status.json") or jload("dwcs/research/historical_odds/status.json")
+    odds=jload("dwcs/research/historical_odds/event_recovery_status.json") or jload("dwcs/research/historical_odds/retry_status.json") or jload("dwcs/research/historical_odds/status.json")
     regional=jload("dwcs/research/regional_history/coverage.json")
     recovery=jload("dwcs/research/regional_history_recovery/status.json")
     sos=jload("dwcs/research/point_in_time_sos/status.json")
