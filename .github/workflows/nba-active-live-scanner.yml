@@ -1,0 +1,69 @@
+name: NBA Active Live Scanner
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'nba/prospective/**'
+      - 'nba/market/**'
+      - 'nba/availability/**'
+      - 'nba/depthcharts/**'
+      - 'nba/rosters/**'
+      - 'nba/contracts/**'
+      - 'nba/features/**'
+      - 'nba/data/2026_27/**'
+      - 'nba/live/arsenal.json'
+      - 'nba/live/scan_live_methods.py'
+      - '.github/workflows/nba-active-live-scanner.yml'
+  schedule:
+    - cron: '*/10 * * * *'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: nba-active-live-scanner
+  cancel-in-progress: true
+
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Evaluate frozen live methods
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [[ "\${{ github.event_name }}" == "schedule" ]]; then
+            python nba/live/scan_live_methods.py --scheduled
+          else
+            python nba/live/scan_live_methods.py --force
+          fi
+      - name: Commit scanner state
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name appwiza-nba-bot
+          git config user.email actions@users.noreply.github.com
+          git add nba/scanner
+          if git diff --cached --quiet; then
+            echo "No scanner state changes."
+            exit 0
+          fi
+          git commit -m "nba: refresh active scanner state"
+          git reset --hard HEAD
+          git clean -fd
+          for attempt in 1 2 3; do
+            git fetch origin main
+            if git rebase origin/main && git push; then exit 0; fi
+            git rebase --abort 2>/dev/null || true
+            sleep 3
+          done
+          exit 1
