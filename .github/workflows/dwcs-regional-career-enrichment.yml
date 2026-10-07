@@ -1,0 +1,167 @@
+name: DWCS Regional Career Enrichment
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/dwcs-regional-career-enrichment.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  enrich:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+      - run: python -m pip install --quiet pandas duckdb requests
+      - name: Download public MMA global archive
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          mkdir -p /tmp/mmadb
+          python - <<'PY'
+          import requests,zipfile,io,os
+          url='https://www.kaggle.com/api/v1/datasets/download/leandroiber/mmastats'
+          r=requests.get(url,timeout=120)
+          r.raise_for_status()
+          z=zipfile.ZipFile(io.BytesIO(r.content))
+          z.extractall('/tmp/mmadb')
+          print('\n'.join(z.namelist()[:50]))
+          PY
+      - name: Build point-in-time regional features for DWCS fighters
+        shell: bash
+        run: |
+          python - <<'PY'
+          import os,re,json,glob
+          from pathlib import Path
+          import duckdb,pandas as pd,numpy as np
+
+          root=Path('.'); out=root/'dwcs/research/regional_history'; out.mkdir(parents=True,exist_ok=True)
+          dbs=glob.glob('/tmp/mmadb/**/*.duckdb',recursive=True)
+          if not dbs: raise SystemExit('No duckdb found in Kaggle archive')
+          db=dbs[0]
+          con=duckdb.connect(db,read_only=True)
+          tables=[x[0] for x in con.execute('SHOW TABLES').fetchall()]
+          if 'fights_career_longitudinal' not in tables:
+              raise SystemExit(f'fights_career_longitudinal missing: {tables}')
+          allf=con.execute('SELECT * FROM fights_career_longitudinal').fetchdf()
+          allf['event_date']=pd.to_datetime(allf['event_date'],errors='coerce').dt.normalize()
+
+          hist=pd.read_csv(root/'dwcs/research/results_boutmetrics/historical_fights.csv',low_memory=False)
+          hist['event_date']=pd.to_datetime(hist.event_date,errors='coerce').dt.normalize()
+          if (root/'dwcs/data/season10_2026_master.csv').exists():
+              s10=pd.read_csv(root/'dwcs/data/season10_2026_master.csv',low_memory=False)
+              s10['event_date']=pd.to_datetime(s10.event_date,errors='coerce').dt.normalize()
+          else: s10=pd.DataFrame()
+
+          def norm(s):
+              s=str(s or '').lower().replace('’',"'").replace('-',' ')
+              s=re.sub(r'\b(jr|sr|ii|iii|iv)\b',' ',s)
+              s=re.sub(r'[^a-z0-9]+',' ',s)
+              return re.sub(r'\s+',' ',s).strip()
+
+          # Flexible schema mapping.
+          cols=set(allf.columns)
+          f1=next(c for c in ['fighter_1','fighter1','red_fighter'] if c in cols)
+          f2=next(c for c in ['fighter_2','fighter2','blue_fighter'] if c in cols)
+          winner=next(c for c in ['winner','winner_name'] if c in cols)
+          method=next((c for c in ['method_normalized','method'] if c in cols),None)
+          org=next((c for c in ['organization','promotion'] if c in cols),None)
+          rnd=next((c for c in ['round_num','round'] if c in cols),None)
+          finishsec=next((c for c in ['time_finish_seconds','finish_seconds'] if c in cols),None)
+          allf['f1n']=allf[f1].map(norm); allf['f2n']=allf[f2].map(norm); allf['wn']=allf[winner].map(norm)
+          byfighter={}
+          for idx,r in allf.iterrows():
+              byfighter.setdefault(r.f1n,[]).append(idx)
+              byfighter.setdefault(r.f2n,[]).append(idx)
+
+          # DWCS targets (completed S1-9 plus completed S10 rows).
+          targets=[]
+          for _,r in hist.iterrows():
+              targets.append((r.event_date,r.fighter_a,r.fighter_b,r.winner,int(r.season),str(r.event_name)))
+          if not s10.empty:
+              for _,r in s10[s10.status.eq('completed')].iterrows():
+                  targets.append((r.event_date,r.winner,r.loser,r.winner,10,f'DWCS 10.{int(r.week)}'))
+
+          # opponent quality is measured point-in-time by opponent's career W/L prior to that regional fight.
+          cache_record={}
+          def prior_record(name,date):
+              key=(norm(name),pd.Timestamp(date))
+              if key in cache_record:return cache_record[key]
+              inds=byfighter.get(norm(name),[])
+              g=allf.loc[inds]
+              g=g[g.event_date<date]
+              wins=sum(g.wn.eq(norm(name)))
+              losses=sum((g.wn.notna()) & (~g.wn.eq(norm(name))) & (g.wn!=''))
+              rec=(int(wins),int(losses))
+              cache_record[key]=rec
+              return rec
+
+          rows=[]; detail=[]
+          for date,a,b,winner_dwcs,season,event_name in targets:
+              for role,name,opp in [('A',a,b),('B',b,a)]:
+                  n=norm(name); inds=byfighter.get(n,[])
+                  g=allf.loc[inds].copy() if inds else allf.iloc[0:0].copy()
+                  g=g[g.event_date<date].sort_values('event_date')
+                  wins=losses=draws=kos=subs=decs=first_round_fin=0
+                  oppq=[]; orgs=set(); lastdate=pd.NaT
+                  for _,x in g.iterrows():
+                      won=x.wn==n
+                      if won: wins+=1
+                      elif x.wn in ('','nan','none'): draws+=1
+                      else: losses+=1
+                      m=str(x[method]).lower() if method else ''
+                      if won and ('ko' in m or 'tko' in m): kos+=1
+                      if won and 'sub' in m: subs+=1
+                      if won and 'decision' in m: decs+=1
+                      rr=pd.to_numeric(x[rnd],errors='coerce') if rnd else np.nan
+                      if won and pd.notna(rr) and rr<=1 and (('ko' in m) or ('tko' in m) or ('sub' in m)): first_round_fin+=1
+                      other=x[f2] if norm(x[f1])==n else x[f1]
+                      ow,ol=prior_record(other,x.event_date)
+                      if ow+ol>=1: oppq.append(ow/(ow+ol))
+                      if org: orgs.add(str(x[org]))
+                      lastdate=x.event_date
+                      detail.append({'dwcs_event':event_name,'dwcs_date':date,'fighter':name,'prior_fight_date':x.event_date,
+                                     'opponent':other,'result':'W' if won else 'L','method':x[method] if method else '',
+                                     'organization':x[org] if org else '','opp_prior_wins':ow,'opp_prior_losses':ol})
+                  total=wins+losses+draws
+                  fin=kos+subs
+                  rows.append({
+                    'season':season,'dwcs_event':event_name,'dwcs_date':date,'fighter':name,'opponent_dwcs':opp,
+                    'prior_fights':total,'prior_wins':wins,'prior_losses':losses,'prior_draws':draws,
+                    'prior_win_pct':wins/(wins+losses) if wins+losses else np.nan,
+                    'prior_ko_wins':kos,'prior_sub_wins':subs,'prior_decision_wins':decs,
+                    'prior_finish_wins':fin,'prior_finish_rate':fin/wins if wins else np.nan,
+                    'prior_first_round_finishes':first_round_fin,
+                    'prior_first_round_finish_rate':first_round_fin/wins if wins else np.nan,
+                    'prior_distinct_promotions':len(orgs),
+                    'prior_avg_opponent_win_pct':float(np.mean(oppq)) if oppq else np.nan,
+                    'prior_days_since_last_fight':int((date-lastdate).days) if pd.notna(lastdate) else np.nan,
+                    'regional_history_matched':bool(total>0)
+                  })
+          feat=pd.DataFrame(rows)
+          feat.to_csv(out/'dwcs_prefight_regional_features.csv',index=False)
+          pd.DataFrame(detail).to_csv(out/'dwcs_prefight_regional_fight_detail.csv',index=False)
+          cov={
+            'dwcs_fighter_fight_rows':len(feat),
+            'rows_with_prior_history':int(feat.regional_history_matched.sum()),
+            'row_coverage':float(feat.regional_history_matched.mean()) if len(feat) else 0,
+            'rows_with_3plus_prior_fights':int((feat.prior_fights>=3).sum()),
+            'rows_with_5plus_prior_fights':int((feat.prior_fights>=5).sum()),
+            'rows_with_opponent_quality':int(feat.prior_avg_opponent_win_pct.notna().sum()),
+            'median_prior_fights':float(feat.prior_fights.median()) if len(feat) else None,
+            'database_source':db,
+            'database_max_date':str(allf.event_date.max().date())
+          }
+          (out/'coverage.json').write_text(json.dumps(cov,indent=2)+'\n')
+          print(json.dumps(cov,indent=2))
+          PY
+      - name: Commit regional features
+        run: |
+          git config user.name appwiza-research-bot
+          git config user.email actions@users.noreply.github.com
+          git add dwcs/research/regional_history
+          git diff --cached --quiet && exit 0
+          git commit -m 'Add point-in-time DWCS regional career features'
+          git pull --rebase origin main
+          git push
