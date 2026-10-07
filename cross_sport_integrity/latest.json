@@ -1,7 +1,14 @@
 {
-  "built_at": "2026-10-06T11:54:44.573955+00:00",
-  "status": "PASS",
-  "hard_failures": [],
+  "built_at": "2026-10-07T03:15:30.160360+00:00",
+  "status": "FAIL",
+  "hard_failures": [
+    {
+      "name": "UFC canonical_future_tracker_exact",
+      "ok": false,
+      "detail": "canonical=['UFC:ufc-fight-night-october-10-2026:brendsonribeiro:felipefranco', 'UFC:ufc-fight-night-october-10-2026:geraldmeerschaert:juliuswalker'] tracker=['UFC:ufc-fight-night-october-10-2026:brendsonribeiro:felipefranco']",
+      "hard": true
+    }
+  ],
   "warnings": [],
   "checks": [
     {
@@ -73,13 +80,13 @@
     {
       "name": "UFC canonical_public_current_exact",
       "ok": true,
-      "detail": "canonical=['UFC:ufc-fight-night-october-10-2026:brendsonribeiro:felipefranco'] public=['UFC:ufc-fight-night-october-10-2026:brendsonribeiro:felipefranco']",
+      "detail": "canonical=['UFC:ufc-fight-night-october-10-2026:brendsonribeiro:felipefranco', 'UFC:ufc-fight-night-october-10-2026:geraldmeerschaert:juliuswalker'] public=['UFC:ufc-fight-night-october-10-2026:brendsonribeiro:felipefranco', 'UFC:ufc-fight-night-october-10-2026:geraldmeerschaert:juliuswalker']",
       "hard": true
     },
     {
       "name": "UFC canonical_state_ids_exact",
       "ok": true,
-      "detail": "canonical=['UFC:ufc-fight-night-october-10-2026:brendsonribeiro:felipefranco'] state=['UFC:ufc-fight-night-october-10-2026:brendsonribeiro:felipefranco']",
+      "detail": "canonical=['UFC:ufc-fight-night-october-10-2026:brendsonribeiro:felipefranco', 'UFC:ufc-fight-night-october-10-2026:geraldmeerschaert:juliuswalker'] state=['UFC:ufc-fight-night-october-10-2026:brendsonribeiro:felipefranco', 'UFC:ufc-fight-night-october-10-2026:geraldmeerschaert:juliuswalker']",
       "hard": true
     },
     {
@@ -89,9 +96,15 @@
       "hard": true
     },
     {
-      "name": "UFC canonical_future_tracker_exact",
+      "name": "UFC methods_exact:UFC:ufc-fight-night-october-10-2026:geraldmeerschaert:juliuswalker",
       "ok": true,
-      "detail": "canonical=['UFC:ufc-fight-night-october-10-2026:brendsonribeiro:felipefranco'] tracker=['UFC:ufc-fight-night-october-10-2026:brendsonribeiro:felipefranco']",
+      "detail": "canonical=['U1'] state=['U1']",
+      "hard": true
+    },
+    {
+      "name": "UFC canonical_future_tracker_exact",
+      "ok": false,
+      "detail": "canonical=['UFC:ufc-fight-night-october-10-2026:brendsonribeiro:felipefranco', 'UFC:ufc-fight-night-october-10-2026:geraldmeerschaert:juliuswalker'] tracker=['UFC:ufc-fight-night-october-10-2026:brendsonribeiro:felipefranco']",
       "hard": true
     },
     {
