@@ -66,26 +66,35 @@ def main():
             pages.append({"season":season,"url":url,"status":"error","error":repr(e),"parsed_bouts":0})
     w=pd.DataFrame(rows)
     if len(w):
-        issue_re=re.compile(r"above the|over the|missed weight|forfeit|unable to weigh|did not weigh|not weigh in|weight management|medically cleared",re.I)
-        def relevant_sentences(note,pattern):
-            parts=re.split(r"(?<=[.!?])\s+|(?=DWCS Week|Week \d+|WEEK \d+)",str(note))
-            return [p for p in parts if re.search(pattern,p,re.I)]
-        def sentence_mentions(sentence,name):
-            nm=norm(name); sn=norm(sentence)
-            if not nm or not sn:return False
-            last=nm.split()[-1]
-            return nm in sn or (len(last)>=4 and re.search(r"\b"+re.escape(last)+r"\b",sn) is not None)
+        def issue_subjects(note):
+            s=str(note)
+            pats=[
+              r"([A-Z][A-Za-z'’.\\-]+(?:\\s+[A-Z][A-Za-z'’.\\-]+){0,3})\\s+weighed in above",
+              r"([A-Z][A-Za-z'’.\\-]+(?:\\s+[A-Z][A-Za-z'’.\\-]+){0,3})\\s+weighed in over",
+              r"([A-Z][A-Za-z'’.\\-]+(?:\\s+[A-Z][A-Za-z'’.\\-]+){0,3})\\s+(?:missed|misses) weight",
+              r"([A-Z][A-Za-z'’.\\-]+(?:\\s+[A-Z][A-Za-z'’.\\-]+){0,3})\\s+was unable to weigh",
+              r"Due to [^,.]+,\\s*([A-Z][A-Za-z'’.\\-]+(?:\\s+[A-Z][A-Za-z'’.\\-]+){0,3})\\s+was removed",
+            ]
+            out=[]
+            for p in pats:
+                out.extend(re.findall(p,s,re.I))
+            return [norm(x) for x in out if norm(x)]
+        def same_person(a,b):
+            a=norm(a);b=norm(b)
+            if not a or not b:return False
+            if a==b or a in b or b in a:return True
+            ap=a.split();bp=b.split()
+            return bool(ap and bp and ap[-1]==bp[-1] and ap[0][:1]==bp[0][:1])
         def named_issue(row,field):
             if bool(row[field+"_marker"]):return True
-            return any(sentence_mentions(s,row[field]) for s in relevant_sentences(row.note,issue_re.pattern))
-        def bout_flag(row,pattern):
-            for s in relevant_sentences(row.note,pattern):
-                if sentence_mentions(s,row.fighter_a) or sentence_mentions(s,row.fighter_b): return True
-            return False
+            return any(same_person(row[field],subj) for subj in issue_subjects(row.note))
+        def issue_in_bout(row):
+            subs=issue_subjects(row.note)
+            return any(same_person(row.fighter_a,s) or same_person(row.fighter_b,s) for s in subs)
         w["fighter_a_missed_weight"]=w.apply(lambda z:named_issue(z,"fighter_a"),axis=1)
         w["fighter_b_missed_weight"]=w.apply(lambda z:named_issue(z,"fighter_b"),axis=1)
-        w["bout_cancelled_weight_or_medical"]=w.apply(lambda z:bout_flag(z,r"cancelled|canceled|removed from.*card"),axis=1)
-        w["bout_proceeded_despite_weight_issue"]=w.apply(lambda z:bout_flag(z,r"proceeds as scheduled|proceed as scheduled"),axis=1)
+        w["bout_cancelled_weight_or_medical"]=w.apply(lambda z:issue_in_bout(z) and bool(re.search(r"cancelled|canceled|removed from.*card",str(z.note),re.I)),axis=1)
+        w["bout_proceeded_despite_weight_issue"]=w.apply(lambda z:issue_in_bout(z) and bool(re.search(r"proceeds as scheduled|proceed as scheduled",str(z.note),re.I)),axis=1)
     w.to_csv(OUT/"official_weighins_s6_s10.csv",index=False)
     pd.DataFrame(pages).to_csv(OUT/"page_status.csv",index=False)
 
