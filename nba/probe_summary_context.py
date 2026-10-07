@@ -35,7 +35,11 @@ for g in samples:
         req=urllib.request.Request(url,headers={"User-Agent":"Mozilla/5.0"})
         with urllib.request.urlopen(req,timeout=20) as r:data=json.load(r)
         hits=paths(data)
-        rows.append({"season":g.get("season"),"game_id":gid,"http_status":200,"hits":[{"path":p,"value":v} for p,v in hits]})
+        gi=data.get("gameInfo") or {}
+        rows.append({"season":g.get("season"),"game_id":gid,"http_status":200,
+                     "hits":[{"path":p,"value":v} for p,v in hits],
+                     "officials_sample":gi.get("officials"),
+                     "venue_sample":gi.get("venue")})
     except Exception as e:
         rows.append({"season":g.get("season"),"game_id":gid,"error":str(e)})
 
