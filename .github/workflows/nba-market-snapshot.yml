@@ -8,7 +8,7 @@ on:
       - "nba/market/capture_market.py"
       - ".github/workflows/nba-market-snapshot.yml"
   schedule:
-    - cron: "23 */3 * * *"
+    - cron: "17,47 * * * *"
 
 permissions:
   contents: write
@@ -32,10 +32,6 @@ jobs:
       - name: Capture timestamped NBA market state
         run: python nba/market/capture_market.py
 
-      - name: Capture external bookmaker odds when configured
-        env:
-          THE_ODDS_API_KEY: ${{ secrets.THE_ODDS_API_KEY }}
-        run: python nba/market/capture_external_odds.py
       - name: Commit market snapshot
         shell: bash
         run: |
