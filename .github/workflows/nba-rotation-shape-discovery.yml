@@ -7,6 +7,7 @@ on:
       - 'nba/build_starter_bench_rolling.py'
       - 'nba/build_scoring_shape_rolling.py'
       - 'nba/research/discover_rotation_shape.py'
+      - 'nba/research/audit_rotshape_001.py'
       - '.github/workflows/nba-rotation-shape-discovery.yml'
 
 permissions:
@@ -26,6 +27,7 @@ jobs:
       - run: python nba/build_starter_bench_rolling.py
       - run: python nba/build_scoring_shape_rolling.py
       - run: python nba/research/discover_rotation_shape.py
+      - run: python nba/research/audit_rotshape_001.py
       - shell: bash
         run: |
           set -euo pipefail
