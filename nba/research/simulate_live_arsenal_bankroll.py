@@ -90,47 +90,70 @@ season_end={}
 method_attrib=defaultdict(lambda:{"signals":0,"wins":0,"losses":0,"pushes":0,"profit_dollars":0.0})
 overlap_count=defaultdict(int)
 
-for b in bets:
-    season=b["season"]
-    season_start.setdefault(season,bank)
-    stake=bank*b["stake_fraction"]
-    u=unit_profit(b["price"],b["outcome"])
-    pnl=stake*u
-    before=bank
-    bank+=pnl
+# Settle wagers in exact scheduled-tip batches. Every wager in the same tip-time batch
+# uses the same pre-batch bankroll, removing arbitrary ordering effects between simultaneous games.
+by_time=defaultdict(list)
+for b in bets:by_time[b["when"]].append(b)
+for when in sorted(by_time):
+    batch=by_time[when]
+    base_bank=bank
+    batch_pnl=0.0
+    staged=[]
+    for b in batch:
+        season=b["season"]
+        season_start.setdefault(season,base_bank)
+        stake=base_bank*b["stake_fraction"]
+        u=unit_profit(b["price"],b["outcome"])
+        pnl=stake*u
+        batch_pnl+=pnl
+        overlap_count[b["method_count"]]+=1
+        per_method_pnl=pnl/b["method_count"]
+        for m in b["methods"]:
+            a=method_attrib[m];a["signals"]+=1;a["profit_dollars"]+=per_method_pnl
+            if b["outcome"]=="win":a["wins"]+=1
+            elif b["outcome"]=="loss":a["losses"]+=1
+            else:a["pushes"]+=1
+        staged.append((b,stake,u,pnl))
+    bank=base_bank+batch_pnl
     peak=max(peak,bank)
     dd=(peak-bank)/peak if peak>0 else 0
     dd_dollars=peak-bank
     if dd>max_dd:
         max_dd=dd;max_dd_dollars=dd_dollars
-    season_end[season]=bank
-    overlap_count[b["method_count"]]+=1
-    # Attribute P&L equally per 1% method sleeve within an overlap.
-    per_method_pnl=pnl/b["method_count"]
-    for m in b["methods"]:
-        a=method_attrib[m];a["signals"]+=1;a["profit_dollars"]+=per_method_pnl
-        if b["outcome"]=="win":a["wins"]+=1
-        elif b["outcome"]=="loss":a["losses"]+=1
-        else:a["pushes"]+=1
-    ledger.append({
-      "season":season,"game_date":b["game_date"],"game_id":b["game_id"],"market":b["market"],"selection":b["selection"],
-      "methods":"|".join(b["methods"]),"method_count":b["method_count"],"stake_fraction":b["stake_fraction"],
-      "bankroll_before":before,"stake_dollars":stake,"american_odds":b["price"],"line":b["line"],"outcome":b["outcome"],
-      "unit_profit_multiple":u,"pnl_dollars":pnl,"bankroll_after":bank
-    })
+    for b,stake,u,pnl in staged:
+        season_end[b["season"]]=bank
+        ledger.append({
+          "season":b["season"],"game_date":b["game_date"],"game_id":b["game_id"],"market":b["market"],"selection":b["selection"],
+          "methods":"|".join(b["methods"]),"method_count":b["method_count"],"stake_fraction":b["stake_fraction"],
+          "bankroll_before":base_bank,"stake_dollars":stake,"american_odds":b["price"],"line":b["line"],"outcome":b["outcome"],
+          "unit_profit_multiple":u,"pnl_dollars":pnl,"bankroll_after_batch":bank
+        })
+
+# Flat comparison: fixed $500 per method unit, stacked on overlaps.
+flat_unit=START*BASE_FRACTION
+flat_profit=0.0
+for b in bets:
+    stake=flat_unit*b["method_count"]
+    flat_profit += stake*unit_profit(b["price"],b["outcome"])
+flat_bank=START+flat_profit
 
 season_rows=[]
 for s in SEASONS:
     st=season_start.get(s)
     en=season_end.get(s,st)
     season_bets=[x for x in ledger if x["season"]==s]
+    # Flat season P&L from the same exact wagers.
+    flat_season=0.0
+    for b in [x for x in bets if x["season"]==s]:
+        flat_season += flat_unit*b["method_count"]*unit_profit(b["price"],b["outcome"])
     season_rows.append({
       "season":s,"starting_bankroll":st,"ending_bankroll":en,
       "profit":(en-st) if st is not None and en is not None else None,
       "return":((en/st)-1) if st and en is not None else None,
       "unique_wagers":len(season_bets),
       "method_signals":sum(x["method_count"] for x in season_bets),
-      "total_stake_dollars":sum(x["stake_dollars"] for x in season_bets)
+      "total_stake_dollars":sum(x["stake_dollars"] for x in season_bets),
+      "flat_500_profit":flat_season
     })
 
 wins=sum(1 for b in bets if b["outcome"]=="win")
@@ -143,13 +166,23 @@ profit=bank-START
 years=8.0
 cagr=(bank/START)**(1/years)-1 if bank>0 else None
 
+combo=defaultdict(lambda:{"wagers":0,"wins":0,"losses":0,"pushes":0})
+for b in bets:
+    if b["method_count"]<=1:continue
+    k="+".join(sorted(b["methods"]))
+    combo[k]["wagers"]+=1
+    if b["outcome"]=="win":combo[k]["wins"]+=1
+    elif b["outcome"]=="loss":combo[k]["losses"]+=1
+    else:combo[k]["pushes"]+=1
+overlap_combos=sorted([{"methods":k,**v} for k,v in combo.items()],key=lambda x:(x["wagers"],x["wins"]),reverse=True)
+
 summary={
  "generated_at_utc":datetime.now(timezone.utc).isoformat(),
  "window":{"start_season":SEASONS[0],"end_season":SEASONS[-1],"seasons":SEASONS,"note":"Validated live-method research window; 2017-18 is not included in all eight live methods."},
  "sizing_policy":{
    "starting_bankroll":START,
    "base_stake_fraction_per_method_signal":BASE_FRACTION,
-   "compounding":"Each unique wager is staked as method_count × 1% of bankroll immediately before that wager in chronological game-tip order.",
+   "compounding":"Each unique wager is staked as method_count × 1% of bankroll immediately before its scheduled-tip batch. All simultaneous tipoffs use the same pre-batch bankroll.",
    "overlap":"Same game + same market + same selection merges into one wager and adds another 1% stake for each additional qualifying live method.",
    "different_markets_or_opposite_sides":"Remain separate wagers.",
    "odds":"Archived median executable historical American price used by the frozen method backtests: moneyline median for ML methods and over-price median for STYLE_TOT_001.",
@@ -169,7 +202,9 @@ summary={
  "max_drawdown_fraction":max_dd,
  "max_drawdown_dollars_at_peak_basis":max_dd_dollars,
  "total_dollars_staked":total_stake,
+ "flat_500_per_method_unit":{"ending_bankroll":flat_bank,"net_profit":flat_profit,"return":flat_bank/START-1},
  "season_results":season_rows,
+ "top_overlap_combinations":overlap_combos[:50],
  "method_attribution":dict(sorted(method_attrib.items()))
 }
 (OUT/"live_arsenal_50k_1pct_compound.json").write_text(json.dumps(summary,indent=2)+"\n")
