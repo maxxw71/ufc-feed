@@ -1,0 +1,92 @@
+name: DWCS Official UFC Enrichment Audit
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/dwcs-official-ufc-enrichment-audit.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - run: python -m pip install --quiet pandas requests beautifulsoup4
+      - name: Match DWCS fighters to official UFC athlete pages
+        shell: bash
+        run: |
+          python - <<'PY'
+          import re,json,time,urllib.parse,requests
+          from pathlib import Path
+          import pandas as pd
+          from bs4 import BeautifulSoup
+          root=Path('.'); out=root/'dwcs/research/official_ufc_enrichment'; out.mkdir(parents=True,exist_ok=True)
+          phys=pd.read_csv(root/'dwcs/research/enrichment_probe/dwcs_fighter_physicals.csv',low_memory=False)
+          names=list(dict.fromkeys(phys.fighter.dropna().astype(str)))
+          s=requests.Session(); s.headers.update({'User-Agent':'Mozilla/5.0 Appwiza-DWCS-UFC/1.0','Accept-Language':'en-US,en;q=0.9'})
+          rows=[]
+          def norm(x):
+              return re.sub(r'\s+',' ',re.sub(r'[^a-z0-9]+',' ',str(x or '').lower())).strip()
+          for i,name in enumerate(names):
+              slug=norm(name).replace(' ','-')
+              urls=[f'https://www.ufc.com/athlete/{slug}']
+              hit=None
+              for url in urls:
+                  try:
+                      r=s.get(url,timeout=25)
+                      if r.status_code!=200: continue
+                      soup=BeautifulSoup(r.text,'html.parser')
+                      h=soup.find('h1')
+                      title=' '.join(h.get_text(' ',strip=True).split()) if h else ''
+                      if title and norm(name) not in norm(title) and norm(title) not in norm(name): continue
+                      txt=' '.join(soup.get_text(' ',strip=True).split())
+                      hit=(url,txt); break
+                  except Exception:
+                      pass
+              if not hit:
+                  rows.append({'fighter':name,'matched':False}); continue
+              url,txt=hit
+              def grab(label,pat):
+                  m=re.search(pat,txt,re.I); return m.group(1) if m else ''
+              rec={
+                'fighter':name,'matched':True,'url':url,
+                'age_current':grab('age',r'\bAge\s+(\d{1,2})\b'),
+                'height':grab('height',r'\bHeight\s+([0-9.]+)'),
+                'reach':grab('reach',r'\bReach\s+([0-9.]+)'),
+                'sig_str_def_pct':grab('ssd',r'(\d{1,3})\s*%\s*Sig\. Str\. Defense'),
+                'td_def_pct':grab('tdd',r'(\d{1,3})\s*%\s*Takedown Defense'),
+                'sig_str_landed_per_min':grab('slpm',r'([0-9.]+)\s*Sig\. Str\. Landed\s*Per Min'),
+                'sig_str_absorbed_per_min':grab('sapm',r'([0-9.]+)\s*Sig\. Str\. Absorbed\s*Per Min'),
+                'td_avg_15':grab('td15',r'([0-9.]+)\s*Takedown avg\s*Per 15 Min'),
+                'sub_avg_15':grab('sub15',r'([0-9.]+)\s*Submission avg\s*Per 15 Min'),
+                'kd_avg_15':grab('kd15',r'([0-9.]+)\s*Knockdown Avg'),
+                'pro_since':grab('pro',r'Pro since\s+([A-Za-z]+\s+\d{4}|\d{4})'),
+                'first_round_finishes':grab('r1',r'(\d+)\s+first-round finishes'),
+                'raw_excerpt':txt[:12000],
+              }
+              rows.append(rec)
+              if (i+1)%100==0: print(i+1)
+              time.sleep(.03)
+          df=pd.DataFrame(rows); df.to_csv(out/'official_ufc_profile_features.csv',index=False)
+          cov={
+            'dwcs_fighters':len(names),
+            'matched_ufc_profiles':int(df.matched.fillna(False).sum()),
+            'match_rate':float(df.matched.fillna(False).mean()),
+            'with_td_def':int(df.td_def_pct.astype(str).str.len().gt(0).sum()) if 'td_def_pct' in df else 0,
+            'with_sig_str_def':int(df.sig_str_def_pct.astype(str).str.len().gt(0).sum()) if 'sig_str_def_pct' in df else 0,
+            'with_slpm':int(df.sig_str_landed_per_min.astype(str).str.len().gt(0).sum()) if 'sig_str_landed_per_min' in df else 0,
+          }
+          (out/'coverage.json').write_text(json.dumps(cov,indent=2)+'\n')
+          print(json.dumps(cov,indent=2))
+          PY
+      - name: Commit audit
+        run: |
+          git config user.name appwiza-research-bot
+          git config user.email actions@users.noreply.github.com
+          git add dwcs/research/official_ufc_enrichment
+          git diff --cached --quiet && exit 0
+          git commit -m 'Audit official UFC enrichment for DWCS fighters'
+          git pull --rebase origin main
+          git push
