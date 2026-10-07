@@ -1,0 +1,30 @@
+name: DWCS Season 10 Official Backfill
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/dwcs-season10-official.yml'
+      - 'dwcs/research/season10_official_ufc.py'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  backfill:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - run: python -m pip install --quiet pandas requests beautifulsoup4
+      - name: Backfill Season 10 through latest completed week
+        run: |
+          mkdir -p dwcs/research/season10
+          OUT="$GITHUB_WORKSPACE/dwcs/research/season10" python dwcs/research/season10_official_ufc.py
+      - name: Commit
+        run: |
+          git config user.name appwiza-research-bot
+          git config user.email actions@users.noreply.github.com
+          git add dwcs/research/season10
+          git diff --cached --quiet && exit 0
+          git commit -m 'Backfill DWCS Season 10 through latest completed week'
+          git pull --rebase origin main
+          git push
