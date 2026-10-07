@@ -1,0 +1,106 @@
+name: DWCS Physicals and Odds Probe
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/dwcs-physicals-odds-probe.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  enrich:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - run: python -m pip install --quiet requests beautifulsoup4 pandas
+      - name: Match DWCS fighters to BoutMetrics physical index and probe historical odds
+        shell: bash
+        run: |
+          python - <<'PY'
+          import re,json,time,requests
+          from pathlib import Path
+          import pandas as pd
+          from bs4 import BeautifulSoup
+
+          root=Path('.'); out=root/'dwcs/research/enrichment_probe'; out.mkdir(parents=True,exist_ok=True)
+          hist=pd.read_csv(root/'dwcs/research/results_boutmetrics/historical_fights.csv',low_memory=False)
+          names=set(hist.fighter_a.dropna().astype(str))|set(hist.fighter_b.dropna().astype(str))
+          if (root/'dwcs/data/season10_2026_master.csv').exists():
+              s10=pd.read_csv(root/'dwcs/data/season10_2026_master.csv',low_memory=False)
+              for c in ['winner','loser']:
+                  if c in s10: names|=set(s10[c].dropna().astype(str))
+          def norm(s):
+              s=str(s or '').lower().replace('’',"'").replace('-',' ')
+              s=re.sub(r'\b(jr|sr|ii|iii|iv)\b',' ',s)
+              s=re.sub(r'[^a-z0-9]+',' ',s)
+              return re.sub(r'\s+',' ',s).strip()
+          target={norm(n):n for n in names if norm(n)}
+          ses=requests.Session(); ses.headers.update({'User-Agent':'Mozilla/5.0 Appwiza-DWCS/1.0'})
+          found={}
+          for page in range(1,98):
+              url='https://boutmetrics.com/explore/fighters'+(f'?page={page}' if page>1 else '')
+              r=ses.get(url,timeout=30); r.raise_for_status()
+              soup=BeautifulSoup(r.text,'html.parser')
+              for a in soup.find_all('a',href=True):
+                  href=a['href']; txt=' '.join(a.get_text(' ',strip=True).split())
+                  if not href.startswith('/explore/fighters/') or 'View profile' not in txt: continue
+                  # extract profile name from href as fallback and card text fields
+                  slug=href.rsplit('/',1)[-1]
+                  candidates=[]
+                  # target matching by occurrence in card text
+                  for nk,orig in target.items():
+                      if nk in norm(txt):
+                          candidates.append((len(nk),nk,orig))
+                  if not candidates: continue
+                  _,nk,orig=max(candidates)
+                  hm=re.search(r"Height\s+(\d+)'\s*(\d+)\"",txt)
+                  rm=re.search(r'Reach\s+(\d+(?:\.\d+)?)\"',txt)
+                  sf=re.search(r'^(Orthodox|Southpaw|Switch|Stance —)',txt)
+                  uf=re.search(r'UFC fights\s+(\d+)',txt)
+                  rec=re.search(r'(\d+-\d+-\d+(?:\s*\(\d+ NC\))?)',txt)
+                  found[nk]={
+                    'fighter':orig,'profile_url':'https://boutmetrics.com'+href,
+                    'height_in': (int(hm.group(1))*12+int(hm.group(2))) if hm else None,
+                    'reach_in': float(rm.group(1)) if rm else None,
+                    'stance': sf.group(1) if sf else None,
+                    'current_ufc_record': rec.group(1) if rec else None,
+                    'ufc_fights': int(uf.group(1)) if uf else None,
+                    'card_text':txt
+                  }
+              time.sleep(.03)
+          pdf=pd.DataFrame(found.values())
+          pdf.to_csv(out/'dwcs_fighter_physicals.csv',index=False)
+          cov={
+             'unique_dwcs_fighters':len(target),'matched_profiles':len(found),
+             'profile_match_rate':len(found)/len(target) if target else None,
+             'height_known':int(pdf.height_in.notna().sum()) if len(pdf) else 0,
+             'reach_known':int(pdf.reach_in.notna().sum()) if len(pdf) else 0,
+             'stance_known':int(pdf.stance.notna().sum()) if len(pdf) else 0,
+          }
+          # Probe selected BestFightOdds pages known to contain DWCS price history.
+          probes=[
+            'https://www.bestfightodds.com/fighters/torrez-finney-16619',
+            'https://www.bestfightodds.com/fighters/nick-klein-13742',
+            'https://www.bestfightodds.com/fighters/kevin-vallejos-13516',
+          ]
+          odds=[]
+          for url in probes:
+              try:
+                  r=ses.get(url,timeout=30)
+                  odds.append({'url':url,'status':r.status_code,'text':' '.join(BeautifulSoup(r.text,'html.parser').get_text(' ',strip=True).split())[:40000]})
+              except Exception as e: odds.append({'url':url,'error':repr(e)})
+          (out/'bestfightodds_probe.json').write_text(json.dumps(odds,indent=2))
+          (out/'coverage.json').write_text(json.dumps(cov,indent=2)+'\n')
+          print(json.dumps(cov,indent=2))
+          print('BFO statuses',[(x.get('status'),x['url']) for x in odds])
+          PY
+      - name: Commit enrichment probe
+        run: |
+          git config user.name appwiza-research-bot
+          git config user.email actions@users.noreply.github.com
+          git add dwcs/research/enrichment_probe
+          git diff --cached --quiet && exit 0
+          git commit -m 'Add DWCS physical enrichment and odds probe'
+          git pull --rebase origin main
+          git push
