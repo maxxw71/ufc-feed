@@ -11,7 +11,7 @@ permissions:
   contents: write
 jobs:
   enrich:
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, Linux, X64, appwiza]
     timeout-minutes: 25
     steps:
       - uses: actions/checkout@v4

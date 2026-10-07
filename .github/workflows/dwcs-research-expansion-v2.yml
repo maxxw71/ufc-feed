@@ -17,9 +17,12 @@ concurrency:
 
 jobs:
   expand:
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, Linux, X64, appwiza]
     timeout-minutes: 70
     steps:
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
       - uses: actions/checkout@v4
 
       - name: Install research dependencies

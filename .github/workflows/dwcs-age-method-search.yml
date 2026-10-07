@@ -12,9 +12,12 @@ permissions:
   contents: write
 jobs:
   research:
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, Linux, X64, appwiza]
     timeout-minutes: 20
     steps:
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
       - uses: actions/checkout@v4
       - run: python -m pip install --quiet pandas numpy
       - name: Search age-based DWCS methods

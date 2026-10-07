@@ -35,7 +35,7 @@ concurrency:
 jobs:
   enrich:
     if: github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success'
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, Linux, X64, appwiza]
     timeout-minutes: 90
     steps:
       - uses: actions/checkout@v4
