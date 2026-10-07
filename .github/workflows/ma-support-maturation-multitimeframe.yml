@@ -29,9 +29,10 @@ jobs:
         shell: bash
         run: |
           set -Eeuo pipefail
-          python3 -m venv /tmp/ma-support-mtf-venv
-          /tmp/ma-support-mtf-venv/bin/pip install --quiet pandas numpy requests
-          /tmp/ma-support-mtf-venv/bin/python crypto/research/ma_support_maturation_multitimeframe.py --mode scan --symbols 180 --shard-index ${{ matrix.shard }} --shard-count 8 --out ma_support_mtf_out
+          mkdir -p /home/appwiza-runner/.cache/venvs
+          python3 -m venv /home/appwiza-runner/.cache/venvs/ma-support-mtf-venv
+          /home/appwiza-runner/.cache/venvs/ma-support-mtf-venv/bin/pip install --quiet pandas numpy requests
+          /home/appwiza-runner/.cache/venvs/ma-support-mtf-venv/bin/python crypto/research/ma_support_maturation_multitimeframe.py --mode scan --symbols 180 --shard-index ${{ matrix.shard }} --shard-count 8 --out ma_support_mtf_out
       - uses: actions/upload-artifact@v4
         with:
           name: ma-support-mtf-${{ matrix.shard }}

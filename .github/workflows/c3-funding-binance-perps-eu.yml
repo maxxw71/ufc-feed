@@ -22,9 +22,10 @@ jobs:
         shell: bash
         run: |
           set -Eeuo pipefail
-          python3 -m venv /tmp/c3funding-venv
-          /tmp/c3funding-venv/bin/pip install --quiet pandas numpy requests
-          /tmp/c3funding-venv/bin/python crypto/research/c3_funding_binance_perps.py --symbols 120 --days 600
+          mkdir -p /home/appwiza-runner/.cache/venvs
+          python3 -m venv /home/appwiza-runner/.cache/venvs/c3funding-venv
+          /home/appwiza-runner/.cache/venvs/c3funding-venv/bin/pip install --quiet pandas numpy requests
+          /home/appwiza-runner/.cache/venvs/c3funding-venv/bin/python crypto/research/c3_funding_binance_perps.py --symbols 120 --days 600
       - name: Commit results
         shell: bash
         run: |

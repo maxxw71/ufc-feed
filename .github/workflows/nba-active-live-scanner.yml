@@ -7,8 +7,6 @@ on:
       - NBA Market Snapshot
       - NBA Availability Snapshot
       - NBA External Odds Snapshot
-      - NBA Prospective Game State
-      - NBA Near Tip Live State
       - NBA Depth Chart Snapshot
       - NBA Roster Profile Snapshot
       - NBA Current Season Enrichment
@@ -18,7 +16,6 @@ on:
   push:
     branches: [main]
     paths:
-      - 'nba/prospective/**'
       - 'nba/market/**'
       - 'nba/availability/**'
       - 'nba/depthcharts/**'
@@ -38,6 +35,9 @@ permissions:
 concurrency:
   group: nba-active-live-scanner
   cancel-in-progress: true
+
+env:
+  APPWIZA_NBA_PROSPECTIVE_ROOT: /srv/appwiza-sports/capture/nba/prospective
 
 jobs:
   scan:

@@ -44,9 +44,10 @@ jobs:
         shell: bash
         run: |
           set -Eeuo pipefail
-          python3 -m venv /tmp/repeat-ma-venv
-          /tmp/repeat-ma-venv/bin/pip install --quiet pandas numpy requests
-          /tmp/repeat-ma-venv/bin/python crypto/research/ma_repeated_support_research.py --mode scan --venue bf --days 600 --binance-symbols 160 --out repeat_ma_out
+          mkdir -p /home/appwiza-runner/.cache/venvs
+          python3 -m venv /home/appwiza-runner/.cache/venvs/repeat-ma-venv
+          /home/appwiza-runner/.cache/venvs/repeat-ma-venv/bin/pip install --quiet pandas numpy requests
+          /home/appwiza-runner/.cache/venvs/repeat-ma-venv/bin/python crypto/research/ma_repeated_support_research.py --mode scan --venue bf --days 600 --binance-symbols 160 --out repeat_ma_out
       - uses: actions/upload-artifact@v4
         with:
           name: repeat-ma-bf

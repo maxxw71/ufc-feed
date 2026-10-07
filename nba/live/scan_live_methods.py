@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
-import argparse,csv,gzip,json,math,re,statistics
+import argparse,csv,gzip,json,math,re,statistics,os
 from collections import defaultdict
 from datetime import datetime,timedelta,timezone
 from pathlib import Path
 
 NBA=Path(__file__).resolve().parents[1]
 DATA=NBA/"data"/"2026_27"/"regular_season"
-F=NBA/"features";LIVE=NBA/"live";PRO=NBA/"prospective";MARKET=NBA/"market"
+F=NBA/"features";LIVE=NBA/"live";PRO=Path(os.environ.get("APPWIZA_NBA_PROSPECTIVE_ROOT", NBA/"prospective"));MARKET=NBA/"market"
 OUT=NBA/"scanner";OUT.mkdir(parents=True,exist_ok=True)
 SEASON="2026-27"
 
@@ -82,9 +82,6 @@ def parse_height(v):
 def game_sort_date(g):return dt(g.get("game_date")) or datetime.min.replace(tzinfo=timezone.utc)
 
 games=rgz(DATA/"games.csv.gz")
-teams=rgz(DATA/"team_boxscores.csv.gz")
-players=rgz(DATA/"player_boxscores.csv.gz")
-plays=rgz(DATA/"playbyplay.csv.gz")
 game_by={g.get("game_id"):g for g in games if g.get("game_id")}
 completed={gid:g for gid,g in game_by.items() if truth(g.get("completed"))}
 now=datetime.now(timezone.utc)
@@ -113,6 +110,23 @@ if ARGS.scheduled and not ARGS.force:
     if (not near_tip) and last_dt and (now-last_dt).total_seconds() < 25*60:
         print(json.dumps({"skipped":True,"reason":"baseline_cadence","last_scan":last_dt.isoformat(),"near_tip":False},indent=2))
         raise SystemExit(0)
+
+# No games means no method evaluation. Preserve the qualification ledger and
+# publish an empty current board before loading large historical feature tables.
+if not upcoming:
+    summary={"scanned_at_utc":now.isoformat(),"season":SEASON,"upcoming_games":0,
+      "evaluations":0,"ready_evaluations":0,"qualified":0,"transitions":0,"next_game":None,
+      "policy":"Regular-season only. Evaluates frozen live arsenal against latest point-in-time data; no preseason picks.",
+      "skip_reason":"no_upcoming_games"}
+    (OUT/"active_picks.json").write_text(json.dumps({"generated_at_utc":now.isoformat(),"season":SEASON,"picks":[]},indent=2)+"\n")
+    (OUT/"latest.json").write_text(json.dumps(summary,indent=2)+"\n")
+    append_jsonl(OUT/"history"/now.strftime("%Y-%m-%d")/"scan_history.jsonl",[summary])
+    print(json.dumps(summary,indent=2))
+    raise SystemExit(0)
+
+teams=rgz(DATA/"team_boxscores.csv.gz")
+players=rgz(DATA/"player_boxscores.csv.gz")
+plays=rgz(DATA/"playbyplay.csv.gz")
 
 # Historical feature indexes for target game context.
 def idx(path):

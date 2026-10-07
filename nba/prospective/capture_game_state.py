@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-import argparse,csv,gzip,hashlib,json
+import argparse,csv,gzip,hashlib,json,os
 from datetime import datetime,timedelta,timezone
 from pathlib import Path
 import requests
@@ -10,6 +10,9 @@ RAW=OUT/"raw"
 SCOREBOARD="https://site.api.espn.com/apis/site/v2/sports/basketball/nba/scoreboard"
 SUMMARY="https://site.api.espn.com/apis/site/v2/sports/basketball/nba/summary"
 HEADERS={"User-Agent":"Mozilla/5.0 AppwizaNBAProspective/1.0","Accept":"application/json, text/plain, */*"}
+
+def atomic_text(path,text):
+    tmp=path.with_suffix(path.suffix+".tmp");tmp.write_text(text);os.replace(tmp,path)
 
 def now(): return datetime.now(timezone.utc)
 def dt(v):
@@ -177,13 +180,13 @@ def main():
         raw_ref=str(p.relative_to(ROOT))
     else:raw_ref=None
 
-    hashes_path.write_text(json.dumps(new_hashes,indent=2,sort_keys=True)+"\n")
+    atomic_text(hashes_path,json.dumps(new_hashes,indent=2,sort_keys=True)+"\n")
     latest={"captured_at_utc":captured,"events_seen":len(events),"summary_attempted":summaries_attempted,"summary_success":summaries_ok,
             "game_snapshot_rows":len(snapshot_rows),"starter_rows":len(starter_rows),"official_rows":len(official_rows),"odds_rows":len(odds_rows),
             "state_changes":len(change_events),"raw_change_snapshot":raw_ref,
             "near_tip_only":args.near_tip_only,"near_tip_hours":args.near_tip_hours,"post_tip_hours":args.post_tip_hours,
             "policy":"Prospective 2026+ event ledger. Raw summary payloads are preserved only when stable pregame state changes; normalized snapshots retain every capture time."}
-    (OUT/"latest.json").write_text(json.dumps(latest,indent=2)+"\n")
+    atomic_text(OUT/"latest.json",json.dumps(latest,indent=2)+"\n")
     print(json.dumps(latest,indent=2))
 
 if __name__=="__main__":main()

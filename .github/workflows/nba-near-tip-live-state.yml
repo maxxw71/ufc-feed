@@ -1,55 +1,16 @@
 name: NBA Near Tip Live State
-
 on:
   workflow_dispatch:
-  push:
-    branches: [main]
-    paths:
-      - 'nba/prospective/capture_game_state.py'
-      - '.github/workflows/nba-near-tip-live-state.yml'
-  schedule:
-    - cron: '*/10 * * * *'
-
 permissions:
-  contents: write
-
-concurrency:
-  group: nba-prospective-game-state
-  cancel-in-progress: false
-
+  contents: read
 jobs:
-  capture:
+  health:
     runs-on: [self-hosted, Linux, X64, appwiza]
-    timeout-minutes: 25
+    timeout-minutes: 2
     steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-      - uses: actions/setup-python@v5
-        with:
-          python-version: '3.12'
-      - name: Sync latest main before capture
+      - name: Check independent appwiza capture
         shell: bash
         run: |
-          set -euo pipefail
-          git fetch origin main
-          git reset --hard origin/main
-      - run: python -m pip install --upgrade requests
-      - run: python nba/prospective/capture_game_state.py --near-tip-only --near-tip-hours 2 --post-tip-hours 4
-      - shell: bash
-        run: |
-          set -euo pipefail
-          git config user.name appwiza-nba-bot
-          git config user.email actions@users.noreply.github.com
-          git add nba/prospective
-          if git diff --cached --quiet; then exit 0; fi
-          git commit -m "nba: capture near-tip live state"
-          git reset --hard HEAD
-          git clean -fd
-          for attempt in 1 2 3; do
-            git fetch origin main
-            if git rebase origin/main && git push; then exit 0; fi
-            git rebase --abort 2>/dev/null || true
-            sleep 3
-          done
-          exit 1
+          test -s /srv/appwiza-sports/capture/near-tip-status.json
+          cat /srv/appwiza-sports/capture/near-tip-status.json
+          systemctl is-active nba-prospective-near-tip.timer
