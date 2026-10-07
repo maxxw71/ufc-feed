@@ -29,6 +29,13 @@ def write_gz(p,rows):
     p.parent.mkdir(parents=True,exist_ok=True)
     with gzip.open(p,"wt",encoding="utf-8",newline="") as f:
         w=csv.DictWriter(f,fieldnames=fields or ["_empty"]);w.writeheader();w.writerows(rows)
+def append_jsonl(p,rows):
+    rows=list(rows)
+    if not rows:return
+    p.parent.mkdir(parents=True,exist_ok=True)
+    with open(p,"a",encoding="utf-8") as f:
+        for r in rows:
+            f.write(json.dumps(r,separators=(",",":"),sort_keys=True,default=str)+"\n")
 def scalar(x):
     if isinstance(x,(str,int,float,bool)) or x is None:return x
     return json.dumps(x,separators=(",",":"),sort_keys=True)
@@ -154,9 +161,14 @@ def main():
                                   "status_name":state["status_name"],"venue_name":state["venue_name"]})
             raw_changes[gid]={"event":ev,"summary":summary,"normalized_state":state}
 
-    for fname,new in [("game_state_snapshots.csv.gz",snapshot_rows),("starter_snapshots.csv.gz",starter_rows),("official_assignment_snapshots.csv.gz",official_rows),("near_tip_odds_snapshots.csv.gz",odds_rows),("state_change_events.csv.gz",change_events)]:
-        p=OUT/fname
-        write_gz(p,read_gz(p)+new)
+    # High-frequency prospective history is partitioned by capture date as append-only
+    # JSONL so 10-minute scans do not rewrite giant binary gzip files all season.
+    histdir=OUT/"history"/t.strftime("%Y-%m-%d")
+    append_jsonl(histdir/"game_state.jsonl",snapshot_rows)
+    append_jsonl(histdir/"starters.jsonl",starter_rows)
+    append_jsonl(histdir/"officials.jsonl",official_rows)
+    append_jsonl(histdir/"odds.jsonl",odds_rows)
+    append_jsonl(histdir/"changes.jsonl",change_events)
 
     if raw_changes:
         d=RAW/t.strftime("%Y-%m-%d");d.mkdir(parents=True,exist_ok=True)
