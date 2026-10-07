@@ -1,0 +1,42 @@
+name: NBA referee method discovery
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'nba/officials/historical_game_officials.csv.gz'
+      - 'nba/build_official_pregame.py'
+      - 'nba/research/discover_officials.py'
+      - '.github/workflows/nba-referee-discovery.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  discover:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: python nba/build_official_pregame.py
+      - run: python nba/research/discover_officials.py
+      - shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "appwiza-nba-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add nba/features/official_crew_pregame.csv.gz nba/features/official_crew_pregame_summary.json nba/research/officials
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m "nba: add referee discovery results"
+          for attempt in 1 2 3; do
+            git fetch origin main
+            if git rebase origin/main && git push; then exit 0; fi
+            git rebase --abort 2>/dev/null || true
+            sleep 3
+          done
+          exit 1
