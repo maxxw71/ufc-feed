@@ -55,7 +55,7 @@ def iso_date(s):
         except:pass
     return None
 
-allrows=[];coach=[]
+allrows=[];coach=[];edges=[]
 for y in range(2019,2027):
     body=fetch(y);p=TxParser();p.feed(body)
     for x in p.rows:
@@ -73,12 +73,22 @@ for y in range(2019,2027):
               "released" if " released " in f" {lo} " else
               "coach" if "head coach" in lo else "other")
         if kind!="other":
+            source_url=f"https://www.basketball-reference.com/leagues/NBA_{y}_transactions.html"
             allrows.append({
               "season_end_year":y,"date":date,"kind":kind,"from_teams":"|".join(from_teams),"to_teams":"|".join(to_teams),
               "player_ids":"|".join((a.get("href") or "").split("/")[-1].replace(".html","") for a in players),
               "player_names":"|".join(a.get("text") or "" for a in players),"text":text,
-              "source_url":f"https://www.basketball-reference.com/leagues/NBA_{y}_transactions.html"
+              "source_url":source_url
             })
+            for a in players:
+                pid=(a.get("href") or "").split("/")[-1].replace(".html","")
+                edges.append({
+                  "season_end_year":y,"date":date,"kind":kind,
+                  "player_bref_id":pid,"player_name":a.get("text") or "",
+                  "from_team_bref":a.get("from") or "",
+                  "to_team_bref":a.get("to") or "",
+                  "text":text,"source_url":source_url
+                })
         if "head coach" in lo:
             action=("fired" if " fired " in f" {lo} " else "resigned" if "resign" in lo else
                     "appointed" if " appointed " in f" {lo} " else "hired" if " hired " in f" {lo} " else "coach_event")
@@ -92,10 +102,11 @@ for y in range(2019,2027):
                 })
 
 wgz(OUT/"bref_team_transactions.csv.gz",allrows)
+wgz(OUT/"bref_player_transaction_edges.csv.gz",edges)
 wgz(OUT/"bref_coach_events.csv.gz",coach)
 summary={
  "generated_at_utc":datetime.now(timezone.utc).isoformat(),
- "transaction_rows":len(allrows),"coach_event_rows":len(coach),
+ "transaction_rows":len(allrows),"player_edge_rows":len(edges),"coach_event_rows":len(coach),
  "by_kind":{k:sum(1 for r in allrows if r["kind"]==k) for k in sorted(set(r["kind"] for r in allrows))},
  "season_end_years":list(range(2019,2027)),
  "source":"Basketball-Reference NBA season transaction pages",
