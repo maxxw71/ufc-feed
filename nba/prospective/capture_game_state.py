@@ -84,6 +84,7 @@ def main():
     ap=argparse.ArgumentParser()
     ap.add_argument("--near-tip-only",action="store_true")
     ap.add_argument("--near-tip-hours",type=float,default=2.0)
+    ap.add_argument("--post-tip-hours",type=float,default=4.0)
     args=ap.parse_args()
     t=now();captured=t.isoformat()
     events={}
@@ -102,11 +103,12 @@ def main():
         game_time=dt(ev.get("date"))
         if not game_time:continue
         hours=(game_time-t).total_seconds()/3600
-        if args.near_tip_only and not (-0.5 <= hours <= args.near_tip_hours):
+        if args.near_tip_only and not (-args.post_tip_hours <= hours <= args.near_tip_hours):
             continue
-        # rich summary capture only from 48h before tip through 30m after tip.
+        # Rich summary capture from 48h before tip through four hours after tip.
+        # This preserves confirmed starters/officials and normalized live-game state.
         summary={}
-        if -0.5<=hours<=48:
+        if -4.0<=hours<=48:
             summaries_attempted+=1
             try:
                 rr=requests.get(SUMMARY,params={"event":gid},headers=HEADERS,timeout=30);rr.raise_for_status()
@@ -167,7 +169,7 @@ def main():
     latest={"captured_at_utc":captured,"events_seen":len(events),"summary_attempted":summaries_attempted,"summary_success":summaries_ok,
             "game_snapshot_rows":len(snapshot_rows),"starter_rows":len(starter_rows),"official_rows":len(official_rows),"odds_rows":len(odds_rows),
             "state_changes":len(change_events),"raw_change_snapshot":raw_ref,
-            "near_tip_only":args.near_tip_only,"near_tip_hours":args.near_tip_hours,
+            "near_tip_only":args.near_tip_only,"near_tip_hours":args.near_tip_hours,"post_tip_hours":args.post_tip_hours,
             "policy":"Prospective 2026+ event ledger. Raw summary payloads are preserved only when stable pregame state changes; normalized snapshots retain every capture time."}
     (OUT/"latest.json").write_text(json.dumps(latest,indent=2)+"\n")
     print(json.dumps(latest,indent=2))
