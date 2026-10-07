@@ -29,6 +29,20 @@ def wgz(p,rows):
     p.parent.mkdir(parents=True,exist_ok=True)
     with gzip.open(p,"wt",encoding="utf-8",newline="") as f:
         w=csv.DictWriter(f,fieldnames=fs or ["_empty"],extrasaction="ignore");w.writeheader();w.writerows(rows)
+def recent_jsonl(filename,days=4):
+    out=[]
+    root=PRO/"history"
+    today=datetime.now(timezone.utc).date()
+    for delta in range(days):
+        p=root/(today-timedelta(days=delta)).isoformat()/filename
+        if not p.exists():continue
+        with open(p,"r",encoding="utf-8") as f:
+            for line in f:
+                line=line.strip()
+                if not line:continue
+                try:out.append(json.loads(line))
+                except Exception:pass
+    return out
 def append_jsonl(p,rows):
     rows=list(rows)
     if not rows:return
@@ -109,7 +123,7 @@ stand=idx(F/"standings_pregame.csv.gz")
 context={(r.get("game_id"),r.get("team_id")):r for r in rgz(NBA/"team_game_context.csv.gz")}
 
 # Latest prospective confirmed starters, strictly before scan time.
-starter_rows=rgz(PRO/"starter_snapshots.csv.gz")
+starter_rows=rgz(PRO/"starter_snapshots.csv.gz")+recent_jsonl("starters.jsonl")
 starter_latest={}
 for r in starter_rows:
     cap=dt(r.get("captured_at_utc"))
@@ -305,7 +319,7 @@ def style_last5(tid,target_when):
 
 # Latest prices. Use near-tip ESPN odds first, then general ESPN market snapshots.
 def latest_market_rows():
-    rows=rgz(PRO/"near_tip_odds_snapshots.csv.gz")+rgz(MARKET/"market_snapshots.csv.gz")
+    rows=rgz(PRO/"near_tip_odds_snapshots.csv.gz")+recent_jsonl("odds.jsonl")+rgz(MARKET/"market_snapshots.csv.gz")
     by=defaultdict(list)
     for r in rows:
         gid=r.get("game_id");cap=dt(r.get("captured_at_utc"))
