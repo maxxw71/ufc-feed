@@ -84,11 +84,11 @@ for _,e in events.iterrows():
                     except: pass
                 return (np.nan,np.nan)
             def times(label):
-                vals=labeled_values(".fight-total-grid article",label)
-                if len(vals)>=2:
-                    return (ctrl_sec(vals[0]),ctrl_sec(vals[1]))
+                lab=sec.find("span",string=lambda x: x and clean(x).lower()==label.lower())
+                art=lab.find_parent("article") if lab else None
+                vals=[clean(x.get_text(" ",strip=True)) for x in art.find_all("strong")] if art else []
+                if len(vals)>=2: return (ctrl_sec(vals[0]),ctrl_sec(vals[1]))
                 return (np.nan,np.nan)
-
             sig=pair("Significant strikes")
             td=pair("Takedowns")
             ctrl=times("Control time")
