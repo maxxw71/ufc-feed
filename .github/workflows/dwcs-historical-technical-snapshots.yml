@@ -1,0 +1,30 @@
+name: DWCS Historical Technical Snapshots
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/dwcs-historical-technical-snapshots.yml'
+      - 'dwcs/research/build_historical_technical_snapshots.py'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+      - run: python -m pip install --quiet pandas numpy requests beautifulsoup4
+      - name: Build point-in-time technical snapshots
+        run: |
+          mkdir -p dwcs/research/historical_technical
+          ROOT="$GITHUB_WORKSPACE" OUT="$GITHUB_WORKSPACE/dwcs/research/historical_technical" python dwcs/research/build_historical_technical_snapshots.py
+      - name: Commit
+        run: |
+          git config user.name appwiza-research-bot
+          git config user.email actions@users.noreply.github.com
+          git add dwcs/research/historical_technical
+          git diff --cached --quiet && exit 0
+          git commit -m 'Add point-in-time DWCS technical snapshots'
+          git pull --rebase origin main
+          git push
