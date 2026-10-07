@@ -1,0 +1,83 @@
+{
+  "generated_at_utc": "2026-10-07T08:09:15.805134+00:00",
+  "rows": 19004,
+  "rules_tested": 61632,
+  "candidates": 2,
+  "top_methods": [
+    {
+      "rule": "role_bench_share5_gap <= -0.08308 AND role_bench_used5_gap >= 1 AND shape_clutchm10_gap >= 0.5",
+      "status": "rotation_shape_shadow_candidate",
+      "discA": {
+        "n": 70,
+        "wins": 52,
+        "hit": 0.7428571428571429,
+        "roi": 0.07643195630046269,
+        "profit": 5.350236941032389,
+        "wilson_low": 0.6297364802928458
+      },
+      "discB": {
+        "n": 46,
+        "wins": 34,
+        "hit": 0.7391304347826086,
+        "roi": 0.05056623163774887,
+        "profit": 2.326046655336448,
+        "wilson_low": 0.5974057019172069
+      },
+      "validation": {
+        "n": 26,
+        "wins": 19,
+        "hit": 0.7307692307692307,
+        "roi": 0.09902030053038485,
+        "profit": 2.5745278137900063,
+        "wilson_low": 0.5391659658023868
+      },
+      "holdout": {
+        "n": 57,
+        "wins": 47,
+        "hit": 0.8245614035087719,
+        "roi": 0.08278398866207716,
+        "profit": 4.718687353738398,
+        "wilson_low": 0.7063240094940684
+      },
+      "method_id": "NBA_ROTSHAPE_001"
+    },
+    {
+      "rule": "role_starter_share5_gap >= 0.08297 AND role_bench_used5_gap >= 1 AND shape_clutchm10_gap >= 0.5",
+      "status": "rotation_shape_shadow_candidate",
+      "discA": {
+        "n": 70,
+        "wins": 52,
+        "hit": 0.7428571428571429,
+        "roi": 0.07643195630046269,
+        "profit": 5.350236941032389,
+        "wilson_low": 0.6297364802928458
+      },
+      "discB": {
+        "n": 46,
+        "wins": 34,
+        "hit": 0.7391304347826086,
+        "roi": 0.05056623163774887,
+        "profit": 2.326046655336448,
+        "wilson_low": 0.5974057019172069
+      },
+      "validation": {
+        "n": 26,
+        "wins": 19,
+        "hit": 0.7307692307692307,
+        "roi": 0.09902030053038485,
+        "profit": 2.5745278137900063,
+        "wilson_low": 0.5391659658023868
+      },
+      "holdout": {
+        "n": 57,
+        "wins": 47,
+        "hit": 0.8245614035087719,
+        "roi": 0.08278398866207716,
+        "profit": 4.718687353738398,
+        "wilson_low": 0.7063240094940684
+      },
+      "method_id": "NBA_ROTSHAPE_002"
+    }
+  ],
+  "policy": "Independent role+scoring-shape lane. Uses only prior-game starter/bench structure, quarter/clutch history and basic market/rest context; excludes ML001 efficiency and PHYSCOACH body-size inputs."
+}
