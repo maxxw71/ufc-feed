@@ -29,6 +29,13 @@ def wgz(p,rows):
     p.parent.mkdir(parents=True,exist_ok=True)
     with gzip.open(p,"wt",encoding="utf-8",newline="") as f:
         w=csv.DictWriter(f,fieldnames=fs or ["_empty"],extrasaction="ignore");w.writeheader();w.writerows(rows)
+def append_jsonl(p,rows):
+    rows=list(rows)
+    if not rows:return
+    p.parent.mkdir(parents=True,exist_ok=True)
+    with open(p,"a",encoding="utf-8") as f:
+        for r in rows:
+            f.write(json.dumps(r,separators=(",",":"),sort_keys=True,default=str)+"\n")
 def n(v):
     if v in (None,"","None","nan","NaN"):return None
     try:return float(v)
@@ -477,9 +484,10 @@ for g in upcoming:
     evaluations.append(ev)
     if ok:qualified.append(ev.copy())
 
-# Append evaluation ledger.
-eval_path=OUT/"method_evaluations.csv.gz"
-wgz(eval_path,rgz(eval_path)+evaluations)
+# Append point-in-time scanner history to daily text partitions. This is intentionally
+# not a cumulative gzip: append-only JSONL keeps Git deltas small at 10-minute cadence.
+daydir=OUT/"history"/now.strftime("%Y-%m-%d")
+append_jsonl(daydir/"method_evaluations.jsonl",evaluations)
 
 # Transition ledger and active picks.
 state_path=OUT/"qualification_state.json"
@@ -501,8 +509,7 @@ for ev in evaluations:
                 "last_qualified_at":now.isoformat() if qual else old.get("last_qualified_at"),"last_features_json":ev["features_json"]}
     if qual:
         q=ev.copy();q["first_qualified_at"]=first;q["last_qualified_at"]=now.isoformat();current[key]=q
-trans_path=OUT/"qualification_events.csv.gz"
-wgz(trans_path,rgz(trans_path)+events)
+append_jsonl(daydir/"qualification_events.jsonl",events)
 state_path.write_text(json.dumps(state,indent=2,sort_keys=True)+"\n")
 
 active=list(current.values());active.sort(key=lambda r:(r["scheduled_utc"],r["method_id"],r["selection"]))
@@ -511,7 +518,6 @@ scan_summary={"scanned_at_utc":now.isoformat(),"season":SEASON,"upcoming_games":
               "ready_evaluations":sum(1 for e in evaluations if e["ready"]),"qualified":len(active),"transitions":len(events),
               "next_game":upcoming[0].get("game_date") if upcoming else None,
               "policy":"Regular-season only. Evaluates frozen live arsenal against latest point-in-time data; no preseason picks."}
-hist_path=OUT/"scan_history.csv.gz"
-wgz(hist_path,rgz(hist_path)+[scan_summary])
+append_jsonl(daydir/"scan_history.jsonl",[scan_summary])
 (OUT/"latest.json").write_text(json.dumps(scan_summary,indent=2)+"\n")
 print(json.dumps(scan_summary,indent=2))
