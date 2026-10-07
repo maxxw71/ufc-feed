@@ -1,0 +1,52 @@
+name: DWCS UFC Historical Preview Probe
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/dwcs-ufc-historical-preview-probe.yml'
+permissions:
+  contents: write
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: python -m pip install --quiet requests
+      - name: Probe UFC historical preview discovery
+        run: |
+          python - <<'PY'
+          import json,re,requests,urllib.parse
+          from pathlib import Path
+          out=Path('dwcs/research/ufc_preview_probe'); out.mkdir(parents=True,exist_ok=True)
+          qs=[
+            'Contender Series Week 8 Fight by Fight Preview',
+            'Dana White Contender Series 2024 Week 1 Preview',
+            'Dana White Contender Series 2025 Week 1 Preview'
+          ]
+          rows=[]
+          for q in qs:
+            for key in ['query','search']:
+              u='https://r.jina.ai/https://www.ufc.com/search?'+key+'='+urllib.parse.quote(q)
+              try:
+                r=requests.get(u,headers={'User-Agent':'ufc-feed/1.1','Accept':'text/plain'},timeout=45)
+                links=re.findall(r'\[([^\]]+)\]\((https://www\.ufc\.com/(?:news|video)/[^)]+)\)',r.text,re.I)
+                rows.append({'q':q,'key':key,'status':r.status_code,'chars':len(r.text),'links':links[:30]})
+                (out/f'{key}_{len(rows)}.txt').write_text(r.text[:100000])
+              except Exception as e:
+                rows.append({'q':q,'key':key,'error':repr(e)})
+          for u in ['https://r.jina.ai/https://www.ufc.com/sitemap.xml','https://r.jina.ai/https://www.ufc.com/sitemap_index.xml']:
+            try:
+              r=requests.get(u,headers={'User-Agent':'ufc-feed/1.1'},timeout=45)
+              rows.append({'sitemap':u,'status':r.status_code,'chars':len(r.text),'sample':r.text[:5000]})
+            except Exception as e: rows.append({'sitemap':u,'error':repr(e)})
+          (out/'results.json').write_text(json.dumps(rows,indent=2))
+          print(json.dumps(rows,indent=2)[:30000])
+          PY
+      - name: Commit
+        run: |
+          git config user.name appwiza-research-bot
+          git config user.email actions@users.noreply.github.com
+          git add dwcs/research/ufc_preview_probe
+          git commit -m 'Probe official UFC historical DWCS preview discovery' || exit 0
+          git pull --rebase origin main
+          git push
