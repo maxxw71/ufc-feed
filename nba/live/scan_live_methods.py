@@ -310,7 +310,48 @@ def latest_market_rows():
     return out
 market_latest=latest_market_rows()
 
-def market_state(gid):
+# Fresh multi-book consensus. The external feed is allowed to override ESPN only
+# when its latest capture is <=2 hours old; otherwise near-tip ESPN pricing wins.
+external_rows=rgz(MARKET/"external_bookmaker_snapshots.csv.gz")
+external_by_match=defaultdict(list)
+for r in external_rows:
+    cap=dt(r.get("captured_at_utc"))
+    if not cap or cap>now:continue
+    key=(norm(r.get("home_team")),norm(r.get("away_team")))
+    if all(key):external_by_match[key].append((cap,r))
+
+def external_state(g):
+    key=(norm(g.get("home_team")),norm(g.get("away_team")))
+    arr=external_by_match.get(key,[])
+    if not arr:return None
+    latest=max(cap for cap,r in arr)
+    if (now-latest).total_seconds()>2*3600:return None
+    rows=[r for cap,r in arr if cap==latest]
+    home_name=norm(g.get("home_team"));away_name=norm(g.get("away_team"))
+    books=defaultdict(dict);totals=[]
+    for r in rows:
+        book=r.get("bookmaker_key") or r.get("bookmaker") or ""
+        mk=(r.get("market") or "").lower();out=norm(r.get("outcome"))
+        if mk=="h2h":
+            if out==home_name:books[book]["home"]=n(r.get("price"))
+            elif out==away_name:books[book]["away"]=n(r.get("price"))
+        elif mk=="totals":
+            totals.append(r)
+    pairs=[v for v in books.values() if v.get("home") is not None and v.get("away") is not None]
+    hml=median([v["home"] for v in pairs]);aml=median([v["away"] for v in pairs])
+    hi,ai=imp(hml),imp(aml)
+    hp=hi/(hi+ai) if hi is not None and ai is not None and hi+ai>0 else None
+    ap=ai/(hi+ai) if hi is not None and ai is not None and hi+ai>0 else None
+    over=[r for r in totals if str(r.get("outcome") or "").lower()=="over"]
+    under=[r for r in totals if str(r.get("outcome") or "").lower()=="under"]
+    line=median([r.get("point") for r in over+under])
+    op=median([r.get("price") for r in over if line is None or n(r.get("point"))==line])
+    up=median([r.get("price") for r in under if line is None or n(r.get("point"))==line])
+    if hml is None and aml is None and line is None:return None
+    return {"home_ml":hml,"away_ml":aml,"home_prob":hp,"away_prob":ap,"total":line,"over_price":op,"under_price":up,
+            "captured_at":latest.isoformat(),"source":"external_consensus","books":len(pairs)}
+
+def market_state(gid,g):
     rows=market_latest.get(gid,[])
     hml=median([r.get("home_moneyline") for r in rows]);aml=median([r.get("away_moneyline") for r in rows])
     hi,ai=imp(hml),imp(aml)
@@ -318,8 +359,10 @@ def market_state(gid):
         hp=hi/(hi+ai);ap=ai/(hi+ai)
     else:hp=ap=None
     total=median([r.get("over_under") for r in rows]);op=median([r.get("over_odds") for r in rows]);up=median([r.get("under_odds") for r in rows])
-    return {"home_ml":hml,"away_ml":aml,"home_prob":hp,"away_prob":ap,"total":total,"over_price":op,"under_price":up,
-            "captured_at":max([r.get("captured_at_utc") for r in rows],default=None)}
+    espn={"home_ml":hml,"away_ml":aml,"home_prob":hp,"away_prob":ap,"total":total,"over_price":op,"under_price":up,
+          "captured_at":max([r.get("captured_at_utc") for r in rows],default=None),"source":"espn_latest","books":len(rows)}
+    ext=external_state(g)
+    return ext or espn
 
 # Method evaluator helpers.
 def val(row,key):return n((row or {}).get(key))
@@ -344,7 +387,7 @@ arsenal=json.loads((LIVE/"arsenal.json").read_text())
 for g in upcoming:
     gid=g["game_id"];when=dt(g.get("game_date"));hrs=(when-now).total_seconds()/3600
     hid=str(g.get("home_team_id") or "");aid=str(g.get("away_team_id") or "")
-    ms=market_state(gid)
+    ms=market_state(gid,g)
     sides=[("home",hid,aid,g.get("home_team"),ms["home_ml"],ms["home_prob"]),("away",aid,hid,g.get("away_team"),ms["away_ml"],ms["away_prob"])]
     dynamic={}
     for side,tid,oid,tname,price,prob in sides:
@@ -410,7 +453,8 @@ for g in upcoming:
             ev={"scanned_at_utc":now.isoformat(),"season":SEASON,"game_id":gid,"scheduled_utc":g.get("game_date"),"hours_to_tip":hrs,
                 "method_id":mid,"market":"moneyline","selection":x["team"],"selection_team_id":x["team_id"],"side":side,
                 "qualified":ok,"ready":ready,"missing_inputs":"|".join(missing),"price":x["price"],"market_prob":x["market_prob"],
-                "market_captured_at":ms["captured_at"],"starters_confirmed":x["starters_confirmed"],"prior_games":x["prior_games"],
+                "market_captured_at":ms["captured_at"],"market_source":ms.get("source"),"market_books":ms.get("books"),
+                "starters_confirmed":x["starters_confirmed"],"prior_games":x["prior_games"],
                 "features_json":json.dumps({name:v for name,v,fn in conds},separators=(",",":"),sort_keys=True)}
             evaluations.append(ev)
             if ok:qualified.append(ev.copy())
@@ -426,7 +470,8 @@ for g in upcoming:
     ev={"scanned_at_utc":now.isoformat(),"season":SEASON,"game_id":gid,"scheduled_utc":g.get("game_date"),"hours_to_tip":hrs,
         "method_id":"NBA_STYLE_TOT_001","market":"total_over","selection":"OVER","selection_team_id":"","side":"game",
         "qualified":ok,"ready":ready,"missing_inputs":"|".join(missing),"price":ms["over_price"],"line":ms["total"],
-        "market_captured_at":ms["captured_at"],"starters_confirmed":h["starters_confirmed"] and a["starters_confirmed"],
+        "market_captured_at":ms["captured_at"],"market_source":ms.get("source"),"market_books":ms.get("books"),
+        "starters_confirmed":h["starters_confirmed"] and a["starters_confirmed"],
         "prior_games":min([v for v in (h["prior_games"],a["prior_games"]) if v is not None],default=None),
         "features_json":json.dumps({name:v for name,v,fn in conds},separators=(",",":"),sort_keys=True)}
     evaluations.append(ev)
