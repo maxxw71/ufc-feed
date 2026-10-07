@@ -3,7 +3,7 @@ name: NBA External Odds Snapshot
 on:
   workflow_dispatch:
   schedule:
-    - cron: "47 22 * * *"
+    - cron: "47 */3 * * *"
 
 permissions:
   contents: write
