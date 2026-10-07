@@ -38,6 +38,7 @@ def parse_page(season,txt,url):
         if wm and ("weigh" in line.lower() or line.upper().startswith("WEEK") or "official" in line.lower()):
             week=int(wm.group(1))
         if week is None or (" vs " not in line.lower() and " vs." not in line.lower()):continue
+        weight_class_label=line.split(":",1)[0].strip() if ":" in line else ""
         body=line.split(":",1)[1].strip() if ":" in line else line
         m=re.search(r"(.+?)\s*\((\d{2,3}(?:\.\d+)?)?\)\s*(\*)?\s*vs\.?\s*(.+?)\s*\((\d{2,3}(?:\.\d+)?)?\)\s*(\*)?",body,re.I)
         if not m:continue
@@ -48,8 +49,8 @@ def parse_page(season,txt,url):
         wb=float(m.group(5)) if m.group(5) else np.nan
         nearby_raw=" ".join(lines[i:i+7])
         note=clean_md(nearby_raw)
-        rows.append({"season":season,"week":week,"fighter_a":a,"fighter_b":b,
-                     "weight_a":wa,"weight_b":wb,
+        rows.append({"season":season,"week":week,"weight_class_label":weight_class_label,
+                     "fighter_a":a,"fighter_b":b,"weight_a":wa,"weight_b":wb,
                      "fighter_a_marker":bool(m.group(3)),"fighter_b_marker":bool(m.group(6)),
                      "weight_gap_abs":abs(wa-wb) if pd.notna(wa) and pd.notna(wb) else np.nan,
                      "note":note,"source_url":url})
@@ -66,35 +67,29 @@ def main():
             pages.append({"season":season,"url":url,"status":"error","error":repr(e),"parsed_bouts":0})
     w=pd.DataFrame(rows)
     if len(w):
-        def issue_subjects(note):
-            s=str(note)
-            pats=[
-              r"([A-Z][A-Za-z'’.\\-]+(?:\\s+[A-Z][A-Za-z'’.\\-]+){0,3})\\s+weighed in above",
-              r"([A-Z][A-Za-z'’.\\-]+(?:\\s+[A-Z][A-Za-z'’.\\-]+){0,3})\\s+weighed in over",
-              r"([A-Z][A-Za-z'’.\\-]+(?:\\s+[A-Z][A-Za-z'’.\\-]+){0,3})\\s+(?:missed|misses) weight",
-              r"([A-Z][A-Za-z'’.\\-]+(?:\\s+[A-Z][A-Za-z'’.\\-]+){0,3})\\s+was unable to weigh",
-              r"Due to [^,.]+,\\s*([A-Z][A-Za-z'’.\\-]+(?:\\s+[A-Z][A-Za-z'’.\\-]+){0,3})\\s+was removed",
-            ]
-            out=[]
-            for p in pats:
-                out.extend(re.findall(p,s,re.I))
-            return [norm(x) for x in out if norm(x)]
-        def same_person(a,b):
-            a=norm(a);b=norm(b)
-            if not a or not b:return False
-            if a==b or a in b or b in a:return True
-            ap=a.split();bp=b.split()
-            return bool(ap and bp and ap[-1]==bp[-1] and ap[0][:1]==bp[0][:1])
-        def named_issue(row,field):
-            if bool(row[field+"_marker"]):return True
-            return any(same_person(row[field],subj) for subj in issue_subjects(row.note))
-        def issue_in_bout(row):
-            subs=issue_subjects(row.note)
-            return any(same_person(row.fighter_a,s) or same_person(row.fighter_b,s) for s in subs)
-        w["fighter_a_missed_weight"]=w.apply(lambda z:named_issue(z,"fighter_a"),axis=1)
-        w["fighter_b_missed_weight"]=w.apply(lambda z:named_issue(z,"fighter_b"),axis=1)
-        w["bout_cancelled_weight_or_medical"]=w.apply(lambda z:issue_in_bout(z) and bool(re.search(r"cancelled|canceled|removed from.*card",str(z.note),re.I)),axis=1)
-        w["bout_proceeded_despite_weight_issue"]=w.apply(lambda z:issue_in_bout(z) and bool(re.search(r"proceeds as scheduled|proceed as scheduled",str(z.note),re.I)),axis=1)
+        def limit_for(label):
+            s=str(label).lower()
+            # DWCS non-title allowance: one pound above the class championship limit.
+            if "strawweight" in s:return 116.0
+            if "flyweight" in s:return 126.0
+            if "bantamweight" in s:return 136.0
+            if "featherweight" in s:return 146.0
+            if "light heavyweight" in s:return 206.0
+            if "lightweight" in s:return 156.0
+            if "welterweight" in s:return 171.0
+            if "middleweight" in s:return 186.0
+            if "heavyweight" in s:return 266.0
+            return np.nan
+        w["class_limit_lb"]=w.weight_class_label.map(limit_for)
+        w["fighter_a_missed_weight"]=w.apply(lambda z:bool(z.fighter_a_marker) or
+            (pd.notna(z.weight_a) and pd.notna(z.class_limit_lb) and float(z.weight_a)>float(z.class_limit_lb)+1e-9),axis=1)
+        w["fighter_b_missed_weight"]=w.apply(lambda z:bool(z.fighter_b_marker) or
+            (pd.notna(z.weight_b) and pd.notna(z.class_limit_lb) and float(z.weight_b)>float(z.class_limit_lb)+1e-9),axis=1)
+        w["fighter_a_no_weight"]=w.weight_a.isna()
+        w["fighter_b_no_weight"]=w.weight_b.isna()
+        has_issue=w.fighter_a_missed_weight|w.fighter_b_missed_weight|w.fighter_a_no_weight|w.fighter_b_no_weight
+        w["bout_cancelled_weight_or_medical"]=has_issue & w.note.astype(str).str.contains("cancelled|canceled|removed from.*card",case=False,regex=True,na=False)
+        w["bout_proceeded_despite_weight_issue"]=(w.fighter_a_missed_weight|w.fighter_b_missed_weight) & w.note.astype(str).str.contains("proceeds as scheduled|proceed as scheduled",case=False,regex=True,na=False)
     w.to_csv(OUT/"official_weighins_s6_s10.csv",index=False)
     pd.DataFrame(pages).to_csv(OUT/"page_status.csv",index=False)
 
