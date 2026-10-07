@@ -1,0 +1,25 @@
+DWCS FROZEN METHOD DISCOVERY — S1-6 DISCOVERY / S7-9 LOCKED VALIDATION
+================================================================================================================
+Discovery rows: 241
+Locked validation rows: 115
+Rules tested on discovery only: 194
+Frozen candidates: 16
+
+FROZEN CANDIDATES + LOCKED VALIDATION
+----------------------------------------------------------------------------------------------------------------
+value            OPP_QUALITY_EDGE         DISC n= 66 win= 60.6% ROI= +16.9% | VAL n= 18 win= 55.6% ROI=  +4.5% failed_initial_holdout | opponent_quality_gap>=0.20
+high_probability YOUTH_PLUS_EXP           DISC n= 19 win= 73.7% ROI= +45.4% | VAL n= 11 win= 54.5% ROI=  +1.8% failed_initial_holdout | younger>=6y & exp_gap>=0
+high_probability SOS_EDGE                 DISC n= 33 win= 69.7% ROI= +23.7% | VAL n= 22 win= 59.1% ROI=  -4.4% failed_initial_holdout | avg_opponent_elo_gap>=40
+value            SOS_EDGE                 DISC n= 61 win= 60.7% ROI= +13.9% | VAL n= 38 win= 52.6% ROI=  -7.4% failed_initial_holdout | avg_opponent_elo_gap>=25
+value            WIN_RATE_EDGE            DISC n= 56 win= 67.9% ROI= +12.5% | VAL n= 23 win= 47.8% ROI= -22.3% failed_initial_holdout | win_pct_gap>=0.25
+value            REPEAT_SIG_DIFF          DISC n= 23 win= 60.9% ROI= +13.1% | VAL n=  6 win= 66.7% ROI= +70.2% insufficient_holdout_sample | prior_DWCS_tech & sig_diff>=0
+high_probability STEAM                    DISC n= 41 win= 70.7% ROI=  +2.5% | VAL n=  3 win=100.0% ROI= +56.5% insufficient_holdout_sample | implied_prob_steam>=15pp
+high_probability ELO_PLUS_OPPQUAL         DISC n= 16 win= 81.2% ROI= +17.4% | VAL n=  7 win= 85.7% ROI= +38.0% insufficient_holdout_sample | elo_gap>=25 & oppqual_gap>=0.15
+value            WIN_PLUS_OPPQUAL         DISC n= 28 win= 64.3% ROI= +26.9% | VAL n=  7 win= 57.1% ROI= -14.0% insufficient_holdout_sample | win_gap>=0.10 & oppqual_gap>=0.10
+high_probability YOUTH_MOD_FAV            DISC n= 15 win= 80.0% ROI= +23.7% | VAL n=  9 win= 44.4% ROI= -28.7% insufficient_holdout_sample | younger>=6y & favorite -250..-100
+high_probability WIN_PLUS_OPPQUAL         DISC n= 20 win= 70.0% ROI= +38.4% | VAL n=  4 win= 50.0% ROI= -32.9% insufficient_holdout_sample | win_gap>=0.15 & oppqual_gap>=0.15
+value            REPEAT_TD_DEF            DISC n= 21 win= 61.9% ROI= +15.9% | VAL n=  6 win= 50.0% ROI= -38.5% insufficient_holdout_sample | prior_DWCS_tech & td_def>=0.60
+value            YOUTH_VALUE_DOG          DISC n= 22 win= 54.5% ROI= +40.9% | VAL n= 13 win= 69.2% ROI= +64.5% passed_initial_holdout | younger>=3y & dog +100..+250
+high_probability AGE_EDGE                 DISC n= 42 win= 73.8% ROI= +45.0% | VAL n= 20 win= 65.0% ROI= +32.0% passed_initial_holdout | younger_by>=6y
+value            AGE_EDGE                 DISC n= 54 win= 66.7% ROI= +26.7% | VAL n= 28 win= 67.9% ROI= +28.9% passed_initial_holdout | younger_by>=5y
+value            YOUTH_PLUS_EXP           DISC n= 27 win= 59.3% ROI= +14.3% | VAL n= 17 win= 64.7% ROI= +14.4% passed_initial_holdout | younger>=5y & exp_gap>=0
