@@ -59,17 +59,35 @@ for _,e in events.iterrows():
 
             sec=fs.select_one(".fight-totals-section")
             if sec is None: raise ValueError("fight totals section missing")
-            st=clean(sec.get_text(" ",strip=True))
+            def labeled_values(container_selector,label):
+                for node in sec.select(container_selector):
+                    lab=node.find(["span","b"])
+                    labels=[clean(x.get_text(" ",strip=True)) for x in node.find_all(["span","b"])]
+                    if any(x.lower()==label.lower() for x in labels):
+                        vals=[clean(x.get_text(" ",strip=True)) for x in node.find_all("strong")]
+                        return vals
+                return []
 
             def pair(label):
-                m=re.search(r"(\\d+)\\s+of\\s+(\\d+)\\s+"+re.escape(label)+r"\\s+(\\d+)\\s+of\\s+(\\d+)",st,re.I)
-                return tuple(map(int,m.groups())) if m else (np.nan,np.nan,np.nan,np.nan)
+                vals=labeled_values(".fight-total-grid article",label)
+                if len(vals)>=2:
+                    def pp(v):
+                        m=re.match(r"^(\\d+)\\s+of\\s+(\\d+)$",v)
+                        return tuple(map(int,m.groups())) if m else (np.nan,np.nan)
+                    a=pp(vals[0]); b=pp(vals[1])
+                    return a+b
+                return (np.nan,np.nan,np.nan,np.nan)
             def scalar(label):
-                m=re.search(r"(\\d+)\\s+"+re.escape(label)+r"\\s+(\\d+)",st,re.I)
-                return tuple(map(int,m.groups())) if m else (np.nan,np.nan)
+                vals=labeled_values(".fight-mini-kpis > div",label)
+                if len(vals)>=2:
+                    try: return (int(vals[0]),int(vals[1]))
+                    except: pass
+                return (np.nan,np.nan)
             def times(label):
-                m=re.search(r"(\\d+:\\d{2})\\s+"+re.escape(label)+r"\\s+(\\d+:\\d{2})",st,re.I)
-                return (ctrl_sec(m.group(1)),ctrl_sec(m.group(2))) if m else (np.nan,np.nan)
+                vals=labeled_values(".fight-total-grid article",label)
+                if len(vals)>=2:
+                    return (ctrl_sec(vals[0]),ctrl_sec(vals[1]))
+                return (np.nan,np.nan)
 
             sig=pair("Significant strikes")
             td=pair("Takedowns")
