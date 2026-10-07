@@ -19,7 +19,7 @@ def get(url):
     r=S.get(url,timeout=30); r.raise_for_status(); return r.text
 
 events=[]; fights=[]
-for season in range(1,11):
+for season in range(1,10):
     surl=f"https://boutmetrics.com/dwcs/season/{season}"
     soup=BeautifulSoup(get(surl),"html.parser")
     links=[]
