@@ -1,0 +1,35 @@
+name: NBA Research V3
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'nba/research/discover_method_hunt_v3.py'
+      - '.github/workflows/nba-research-v3.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 75
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python nba/research/discover_method_hunt_v3.py
+      - shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name appwiza-nba-bot
+          git config user.email actions@users.noreply.github.com
+          git add nba/research/hunt_v3
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m 'nba: add research v3 results'
+          git pull --rebase origin main
+          git push
