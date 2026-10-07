@@ -1,0 +1,47 @@
+{
+  "generated_at_utc": "2026-10-07T08:11:16.891958+00:00",
+  "games": 9519,
+  "rules_tested": 37504,
+  "candidates": 1,
+  "top_methods": [
+    {
+      "side": "over",
+      "rule": "paint_share_sum >= 0.8907 AND foulrate_sum <= 38.5 AND rest_sum <= 3",
+      "status": "style_totals_shadow_candidate",
+      "discA": {
+        "n": 129,
+        "wins": 75,
+        "hit": 0.5859375,
+        "roi": 0.11643916419859791,
+        "profit": 15.02065218161913,
+        "wilson_low": 0.4993170001197534
+      },
+      "discB": {
+        "n": 117,
+        "wins": 61,
+        "hit": 0.5350877192982456,
+        "roi": 0.020768704026622564,
+        "profit": 2.42993837111484,
+        "wilson_low": 0.44388224357839473
+      },
+      "validation": {
+        "n": 106,
+        "wins": 58,
+        "hit": 0.5576923076923077,
+        "roi": 0.0629170552376104,
+        "profit": 6.669207855186702,
+        "wilson_low": 0.4618751630220258
+      },
+      "holdout": {
+        "n": 146,
+        "wins": 81,
+        "hit": 0.5547945205479452,
+        "roi": 0.058484395515366314,
+        "profit": 8.538721745243482,
+        "wilson_low": 0.4738005631604948
+      },
+      "method_id": "NBA_STYLE_TOT_001"
+    }
+  ],
+  "policy": "Totals lane requires at least one new style feature. Discovery 2018-21, confirmation 2021-23, validation 2023-24, holdout 2024-26."
+}
