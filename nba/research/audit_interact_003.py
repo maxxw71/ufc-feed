@@ -13,7 +13,11 @@ PM=3.0; SO=1.0; W3=45.0
 
 def rgz(p):
     if not p.exists():return []
-    with gzip.open(p,"rt",encoding="utf-8",newline="") as f:return list(csv.DictReader(f))
+    opener=gzip.open if p.suffix==".gz" else open
+    try:
+        with opener(p,"rt",encoding="utf-8",newline="") as f:return list(csv.DictReader(f))
+    except gzip.BadGzipFile:
+        with open(p,"rt",encoding="utf-8",newline="") as f:return list(csv.DictReader(f))
 def n(v):
     try:return float(v)
     except:return None
