@@ -1,0 +1,45 @@
+name: DWCS BFO Event Search Probe
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/dwcs-bfo-event-search-probe.yml'
+permissions:
+  contents: write
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: python -m pip install --quiet requests beautifulsoup4
+      - name: Probe event-level BestFightOdds search
+        run: |
+          python - <<'PY'
+          import requests,urllib.parse,json,re
+          from pathlib import Path
+          from bs4 import BeautifulSoup
+          out=Path('dwcs/research/bfo_event_probe');out.mkdir(parents=True,exist_ok=True)
+          s=requests.Session();s.headers.update({'User-Agent':'Mozilla/5.0 Appwiza-DWCS/1.0'})
+          qs=["Dana White's Contender Series 14","Dana White's Contender Series 1","DWCS Week 1 2025","Contender Series 2020 Week 1"]
+          rows=[]
+          for q in qs:
+            u='https://www.bestfightodds.com/search?query='+urllib.parse.quote_plus(q)
+            r=s.get(u,timeout=30)
+            rec={'query':q,'status':r.status_code,'chars':len(r.text),'links':[]}
+            if r.status_code==200:
+              soup=BeautifulSoup(r.text,'html.parser')
+              for a in soup.find_all('a',href=True):
+                href=a['href'];txt=' '.join(a.get_text(' ',strip=True).split())
+                if href.startswith('/events/') or href.startswith('/fighters/'):
+                  rec['links'].append({'text':txt,'href':href})
+            rows.append(rec)
+          (out/'results.json').write_text(json.dumps(rows,indent=2)+'\n')
+          print(json.dumps(rows,indent=2))
+          PY
+      - run: |
+          git config user.name appwiza-research-bot
+          git config user.email actions@users.noreply.github.com
+          git add dwcs/research/bfo_event_probe
+          git commit -m 'Probe event-level BestFightOdds resolution' || exit 0
+          git pull --rebase origin main
+          git push
