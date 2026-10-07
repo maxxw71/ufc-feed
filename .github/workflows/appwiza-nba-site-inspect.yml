@@ -1,0 +1,37 @@
+name: Appwiza NBA site inspect
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  inspect:
+    runs-on: [self-hosted, Linux, X64, appwiza]
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - name: Inspect live sports site over SSH
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          KEY=/home/appwiza-runner/.ssh/appwiza_vps
+          HOST=anestishkurti92@127.0.0.1
+          SSH="ssh -i $KEY -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=accept-new $HOST"
+          mkdir -p nba/live
+          {
+            echo '=== sports root listing ==='
+            $SSH 'find /srv/appwiza-sports/public -maxdepth 2 -type f | sort | head -120'
+            echo '=== sports index ==='
+            $SSH 'sed -n "1,260p" /srv/appwiza-sports/public/index.html 2>/dev/null || true'
+            echo '=== nfl index excerpt ==='
+            $SSH 'sed -n "1,260p" /srv/appwiza-sports/public/nfl/index.html 2>/dev/null || true'
+            echo '=== css excerpt ==='
+            $SSH 'sed -n "1,320p" /srv/appwiza-sports/public/style.css 2>/dev/null || true'
+          } > nba/live/site_inspect.txt
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git add nba/live/site_inspect.txt
+          if ! git diff --cached --quiet; then
+            git commit -m 'nba: inspect live Appwiza sports site'
+            git pull --rebase origin main
+            git push origin HEAD:main
+          fi
