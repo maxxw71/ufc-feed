@@ -22,67 +22,26 @@ def norm(v):
     x=re.sub(r"\b(jr|sr|ii|iii|iv)\b"," ",x)
     return " ".join(re.sub(r"[^a-z0-9]+"," ",x).split())
 
-def parse_cards(html):
-    soup=BeautifulSoup(html,"html.parser")
+def parse_directory_markdown(txt):
     rows=[]
-    cards=soup.select("li, .view-items-wrp > *, .c-listing-athlete")
     seen=set()
-    for card in cards:
-        a=card.find("a",href=re.compile(r"^/athlete/|^https://www\.ufc\.com/athlete/",re.I))
-        if not a: continue
-        href=a.get("href","")
-        if href.startswith("/"): href=BASE+href
-        if "/athlete/" not in href: continue
-        name=""
-        for sel in [".c-listing-athlete__name",".field--name-title","h3","h2","span"]:
-            t=card.select_one(sel)
-            if t:
-                txt=" ".join(t.get_text(" ",strip=True).split())
-                if txt and txt.lower() not in {"athlete profile","follow"}:
-                    name=txt; break
-        if not name:
-            # profile link often says Athlete Profile, infer from slug
-            name=href.rstrip("/").split("/")[-1].replace("-"," ").title()
-        key=href.split("?")[0].rstrip("/")
-        if key in seen: continue
-        seen.add(key)
-        rows.append({"name":name,"url":key})
+    for m in re.finditer(r"https://www\\.ufc\\.com/athlete/[A-Za-z0-9._~-]+",txt,re.I):
+        url=m.group(0).rstrip(".,)")
+        url=url.split("?")[0].rstrip("/")
+        if url in seen: continue
+        seen.add(url)
+        slug=url.rsplit("/",1)[-1]
+        rows.append({"name":slug.replace("-"," ").title(),"url":url})
     return rows
 
-def get_initial(session):
-    r=session.get(BASE+"/athletes/all",timeout=60)
-    r.raise_for_status()
-    return r.text
-
-def ajax_page(session,page,view_dom_id=""):
-    payload={
-      "view_name":"all_athletes",
-      "view_display_id":"page",
-      "view_args":"",
-      "view_path":"/athletes/all",
-      "view_base_path":"",
-      "pager_element":"0",
-      "gender":"All",
-      "page":str(page),
-      "_drupal_ajax":"1",
-      "ajax_page_state[theme]":"ufc",
-      "ajax_page_state[theme_token]":""
-    }
-    if view_dom_id: payload["view_dom_id"]=view_dom_id
-    r=session.post(AJAX,data=payload,timeout=60)
-    r.raise_for_status()
-    data=r.json()
-    html_parts=[]
-    for item in data if isinstance(data,list) else []:
-        if isinstance(item,dict) and isinstance(item.get("data"),str):
-            html_parts.append(item["data"])
-    return "\n".join(html_parts)
-
-def extract_dom_id(html):
-    m=re.search(r"view-dom-id-([a-f0-9]{16,})",html,re.I)
-    if m:return m.group(1)
-    m=re.search(r'"view_dom_id"\s*:\s*"([^"]+)"',html)
-    return m.group(1) if m else ""
+def fetch_directory_page(page):
+    target=f"https://www.ufc.com/athletes/all/active?filters%5B0%5D=status%3A23&page={page}"
+    try:
+        r=requests.get(JINA+target,headers={"User-Agent":"ufc-feed/1.1","Accept":"text/plain"},timeout=35)
+        if r.status_code!=200:return page,[],r.status_code
+        return page,parse_directory_markdown(r.text),r.status_code
+    except Exception:
+        return page,[],0
 
 def grab(txt,pat):
     m=re.search(pat,txt,re.I|re.S)
@@ -123,37 +82,21 @@ def profile_fetch(row):
         return {**row,"page_matched":False,"error":repr(e),"snapshot_scope":"current_official_profile_not_historical"}
 
 def main():
-    s=requests.Session(); s.headers.update({"User-Agent":UA,"Accept-Language":"en-US,en;q=0.9"})
     directory=[]
-    initial=""
-    try:
-        initial=get_initial(s)
-        directory.extend(parse_cards(initial))
-    except Exception as e:
-        print("initial warning",e,flush=True)
-    dom=extract_dom_id(initial)
-    seen_urls={x["url"] for x in directory}
-    empty=0
-    for page in range(0,360):
-        try:
-            html=ajax_page(s,page,dom)
-        except Exception as e:
-            print("ajax warning",page,e,flush=True)
-            empty+=1
-            if empty>=5: break
-            continue
-        cards=parse_cards(html)
-        new=0
-        for x in cards:
-            if x["url"] not in seen_urls:
-                directory.append(x);seen_urls.add(x["url"]);new+=1
-        if new==0: empty+=1
-        else: empty=0
-        if page%25==0: print("page",page,"profiles",len(directory),flush=True)
-        if empty>=8 and page>20: break
-        time.sleep(.03)
-    d=pd.DataFrame(directory).drop_duplicates("url")
-    d["norm"]=d["name"].map(norm)
+    page_results=[]
+    with ThreadPoolExecutor(max_workers=24) as ex:
+        fut=[ex.submit(fetch_directory_page,p) for p in range(0,330)]
+        for i,f in enumerate(as_completed(fut),1):
+            page,cards,status=f.result()
+            page_results.append({"page":page,"status":status,"profiles":len(cards)})
+            directory.extend(cards)
+            if i%50==0: print("directory pages",i,"/330",flush=True)
+    d=pd.DataFrame(directory,columns=["name","url"]).drop_duplicates("url")
+    if len(d):
+        d["norm"]=d["name"].map(norm)
+    else:
+        d=pd.DataFrame(columns=["name","url","norm"])
+    pd.DataFrame(page_results).sort_values("page").to_csv(OUT/"directory_page_status.csv",index=False)
     d.to_csv(OUT/"official_ufc_directory.csv",index=False)
 
     fights=pd.read_csv(ROOT/"dwcs/research/results_boutmetrics/historical_fights.csv",low_memory=False)
