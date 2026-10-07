@@ -8,7 +8,7 @@ on:
       - "nba/rosters/capture_rosters.py"
       - ".github/workflows/nba-roster-profile-snapshot.yml"
   schedule:
-    - cron: "41 9 * * *"
+    - cron: "41 */6 * * *"
 
 permissions:
   contents: write
