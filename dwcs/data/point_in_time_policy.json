@@ -1,0 +1,23 @@
+{
+  "policy": "DWCS point-in-time historical feature policy",
+  "cutoff_rule": "For a bout on date D, every feature must be computed only from observations with event_date < D.",
+  "forbidden": [
+    "Current 2026 career aggregates backfilled into historical bouts",
+    "Any fight/result/stat occurring on or after the target bout date",
+    "Current UFC.com aggregate metrics used as if they existed historically"
+  ],
+  "allowed": [
+    "Historical bout-level UFCStats/DWCS technical rows dated before the target bout",
+    "Historical odds snapshots/open-close data for the target bout",
+    "Regional career history dated before the target bout",
+    "DOB-derived age calculated on the target bout date",
+    "Physical attributes with source provenance and no post-bout transformation"
+  ],
+  "example": {
+    "fighter_2023": "2023 snapshot uses only fights/stats known before the 2023 DWCS bout.",
+    "fighter_2026": "2026 snapshot may additionally use valid 2023-2025 tracked fights that occurred before the 2026 bout."
+  },
+  "technical_snapshot_file": "dwcs/research/historical_technical/prefight_technical_snapshots.csv",
+  "historical_odds_file": "dwcs/research/historical_odds/historical_odds.csv",
+  "regional_context_file": "dwcs/research/regional_history/dwcs_prefight_regional_features.csv"
+}
