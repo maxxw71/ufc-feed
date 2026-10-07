@@ -1,0 +1,94 @@
+name: DWCS BestFightOdds Pilot
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/dwcs-bfo-pilot.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  pilot:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - run: python -m pip install --quiet requests beautifulsoup4 pandas
+      - name: Resolve fighter pages and harvest Contender odds pilot
+        shell: bash
+        run: |
+          python - <<'PY'
+          import re,json,time,urllib.parse,requests
+          from pathlib import Path
+          import pandas as pd
+          from bs4 import BeautifulSoup
+
+          root=Path('.'); out=root/'dwcs/research/bfo_pilot'; out.mkdir(parents=True,exist_ok=True)
+          fights=pd.read_csv(root/'dwcs/research/results_boutmetrics/historical_fights.csv',low_memory=False)
+          phys=pd.read_csv(root/'dwcs/research/enrichment_probe/dwcs_fighter_physicals.csv',low_memory=False)
+          names=[]
+          # Balanced pilot: fighters from every season, prioritizing profiles with physical data.
+          for season,g in fights.groupby('season'):
+              ns=list(dict.fromkeys(list(g.fighter_a.astype(str))+list(g.fighter_b.astype(str))))
+              names += ns[:14]
+          names=list(dict.fromkeys(names))[:130]
+          def norm(s):
+              s=str(s or '').lower().replace('’',"'").replace('-',' ')
+              s=re.sub(r'\b(jr|sr|ii|iii|iv)\b',' ',s)
+              s=re.sub(r'[^a-z0-9]+',' ',s)
+              return re.sub(r'\s+',' ',s).strip()
+          s=requests.Session(); s.headers.update({'User-Agent':'Mozilla/5.0 Appwiza-DWCS/1.0'})
+          resolved=[]; odds_rows=[]
+          for idx,name in enumerate(names):
+              try:
+                  q='https://www.bestfightodds.com/search?query='+urllib.parse.quote_plus(name)
+                  r=s.get(q,timeout=25)
+                  if r.status_code!=200:
+                      resolved.append({'fighter':name,'search_status':r.status_code}); continue
+                  soup=BeautifulSoup(r.text,'html.parser')
+                  links=[]
+                  for a in soup.find_all('a',href=True):
+                      if not a['href'].startswith('/fighters/'): continue
+                      txt=' '.join(a.get_text(' ',strip=True).split())
+                      links.append((norm(txt),txt,a['href']))
+                  exact=next((x for x in links if x[0]==norm(name)),None)
+                  if not exact:
+                      resolved.append({'fighter':name,'search_status':200,'matched':False}); continue
+                  purl='https://www.bestfightodds.com'+exact[2]
+                  pr=s.get(purl,timeout=25)
+                  resolved.append({'fighter':name,'search_status':200,'matched':True,'profile_url':purl,'profile_status':pr.status_code})
+                  if pr.status_code!=200: continue
+                  ps=BeautifulSoup(pr.text,'html.parser')
+                  # Save any table rows mentioning Contender Series; these typically contain fighter/opponent/open/close/event.
+                  for tr in ps.find_all('tr'):
+                      txt=' '.join(tr.get_text(' ',strip=True).split())
+                      low=txt.lower()
+                      if 'contender series' in low:
+                          odds_rows.append({'fighter':name,'profile_url':purl,'row_text':txt})
+                  # Also capture compact body lines around Contender occurrences for pages using div layouts.
+                  body=' '.join(ps.get_text(' ',strip=True).split())
+                  for m in re.finditer(r'(?i)(?:dana white[^ ]*s?\s+)?contender series',body):
+                      odds_rows.append({'fighter':name,'profile_url':purl,'row_text':body[max(0,m.start()-250):m.start()+650]})
+                  time.sleep(.05)
+              except Exception as e:
+                  resolved.append({'fighter':name,'error':repr(e)})
+          pd.DataFrame(resolved).to_csv(out/'resolved_profiles.csv',index=False)
+          pd.DataFrame(odds_rows).drop_duplicates().to_csv(out/'contender_odds_snippets.csv',index=False)
+          status={
+            'pilot_fighters':len(names),
+            'resolved_profiles':sum(1 for x in resolved if x.get('matched')),
+            'profiles_200':sum(1 for x in resolved if x.get('profile_status')==200),
+            'contender_snippets':len(odds_rows)
+          }
+          (out/'status.json').write_text(json.dumps(status,indent=2)+'\n')
+          print(json.dumps(status,indent=2))
+          PY
+      - name: Commit pilot
+        run: |
+          git config user.name appwiza-research-bot
+          git config user.email actions@users.noreply.github.com
+          git add dwcs/research/bfo_pilot
+          git diff --cached --quiet && exit 0
+          git commit -m 'Pilot DWCS historical odds harvesting'
+          git pull --rebase origin main
+          git push
