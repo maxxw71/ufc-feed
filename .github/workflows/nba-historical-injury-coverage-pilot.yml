@@ -1,0 +1,38 @@
+name: NBA historical injury coverage pilot
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'nba/backfill_official_injury_coverage_pilot.py'
+      - '.github/workflows/nba-historical-injury-coverage-pilot.yml'
+permissions:
+  contents: write
+jobs:
+  pilot:
+    runs-on: [self-hosted, Linux, X64, appwiza]
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+        with: {fetch-depth: 0}
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.12"}
+      - run: python -m pip install -q pypdf
+      - run: python nba/backfill_official_injury_coverage_pilot.py
+      - shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name appwiza-nba-bot
+          git config user.email actions@users.noreply.github.com
+          git add nba/availability/historical_pilot
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m "nba: add historical injury coverage pilot results"
+          git reset --hard HEAD
+          git clean -fd
+          for attempt in 1 2 3; do
+            git fetch origin main
+            if git rebase origin/main && git push; then exit 0; fi
+            git rebase --abort 2>/dev/null || true
+            sleep 3
+          done
+          exit 1
