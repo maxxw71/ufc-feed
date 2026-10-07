@@ -8,7 +8,7 @@ on:
       - "nba/teams/capture_team_profiles.py"
       - ".github/workflows/nba-team-coach-snapshot.yml"
   schedule:
-    - cron: "17 11 * * 1"
+    - cron: "17 11 * * *"
 
 permissions:
   contents: write
