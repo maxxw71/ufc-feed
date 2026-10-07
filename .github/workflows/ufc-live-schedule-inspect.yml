@@ -1,0 +1,40 @@
+name: UFC Live Schedule Inspect
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/ufc-live-schedule-inspect.yml'
+permissions:
+  contents: write
+jobs:
+  inspect:
+    runs-on: [self-hosted, Linux, X64, appwiza]
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with: {fetch-depth: 0}
+      - shell: bash
+        run: |
+          set -euo pipefail
+          KEY=/home/appwiza-runner/.ssh/appwiza_vps
+          HOST=anestishkurti92@127.0.0.1
+          mkdir -p diagnostics
+          ssh -i "$KEY" -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=accept-new "$HOST" 'bash -s' > diagnostics/ufc_live_schedule.txt <<'EOF'
+          set -euo pipefail
+          echo '=== USER CRONTAB ==='
+          crontab -l 2>/dev/null || true
+          echo
+          echo '=== UFC PROCESSES / SYSTEMD TIMERS ==='
+          systemctl list-timers --all 2>/dev/null | grep -i ufc || true
+          echo
+          echo '=== WATCHER FILE TIMESTAMPS ==='
+          stat -c '%y %n' /home/anestishkurti92/ufc-predictor-v1/ufc_email_watcher.py /home/anestishkurti92/ufc-predictor-v1/watcher_state.json 2>/dev/null || true
+          EOF
+          git config user.name appwiza-nba-bot
+          git config user.email actions@users.noreply.github.com
+          git add diagnostics/ufc_live_schedule.txt
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m "diagnostics: capture live UFC schedule"
+          git pull --rebase origin main
+          git push
