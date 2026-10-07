@@ -1,0 +1,28 @@
+name: DWCS Direct UFCStats Target History
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/dwcs-direct-ufcstats-target-history.yml'
+      - 'dwcs/research/fetch_direct_ufcstats_target_history.py'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 55
+    steps:
+      - uses: actions/checkout@v4
+      - run: python -m pip install --quiet pandas numpy requests lxml
+      - name: Scan official UFCStats for all DWCS fighter history
+        run: python dwcs/research/fetch_direct_ufcstats_target_history.py
+      - name: Commit results
+        run: |
+          git config user.name appwiza-research-bot
+          git config user.email actions@users.noreply.github.com
+          git add dwcs/research/ufcstats_target_history
+          git diff --cached --quiet && exit 0
+          git commit -m 'Add direct UFCStats pre-DWCS fighter history'
+          git pull --rebase origin main
+          git push
