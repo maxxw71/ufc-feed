@@ -103,9 +103,28 @@ def main():
         try:
             r=requests.get(JINA+url,headers={"User-Agent":UA,"Accept":"text/plain"},timeout=20)
             txt=r.text if r.status_code==200 else ""
-            matched=(r.status_code==200 and norm(name) in norm(txt[:5000]))
-            return {"fighter":name,"ufc_url":url,"http_status":r.status_code,"matched":matched,
-                    "snapshot_scope":"current_only_not_historical","raw_excerpt":txt[:8000] if matched else ""}
+            matched=(r.status_code==200 and norm(name) in norm(txt))
+            def grab(pattern):
+                m=re.search(pattern,txt,re.I|re.S)
+                return m.group(1).strip() if m else ""
+            rec={"fighter":name,"ufc_url":url,"http_status":r.status_code,"matched":matched,
+                 "snapshot_scope":"current_only_not_historical","raw_excerpt":txt[:12000] if matched else ""}
+            if matched:
+                rec.update({
+                  "ufc_record":grab(r"(\\d+-\\d+(?:-\\d+)?)\\s*\\(W-L-D\\)"),
+                  "sig_str_landed_total":grab(r"Sig\\. Strikes Landed\\s+(\\d+)"),
+                  "sig_str_attempted_total":grab(r"Sig\\. Strikes Attempted\\s+(\\d+)"),
+                  "sig_str_landed_per_min":grab(r"([0-9.]+)\\s*Sig\\. Str\\. Landed\\s*Per Min"),
+                  "sig_str_absorbed_per_min":grab(r"([0-9.]+)\\s*Sig\\. Str\\. Absorbed\\s*Per Min"),
+                  "takedowns_landed_total":grab(r"Takedowns Landed\\s+(\\d+)"),
+                  "takedowns_attempted_total":grab(r"Takedowns Attempted\\s+(\\d+)"),
+                  "takedown_defense_pct":grab(r"(\\d{1,3})%\\s*Takedown Defense"),
+                  "sig_str_defense_pct":grab(r"(\\d{1,3})%\\s*Sig\\. Str\\. Defense"),
+                  "submission_avg_15":grab(r"([0-9.]+)\\s*Submission avg\\s*Per 15 Min"),
+                  "takedown_avg_15":grab(r"([0-9.]+)\\s*Takedown avg\\s*Per 15 Min"),
+                  "knockdown_avg":grab(r"([0-9.]+)\\s*Knockdown Avg")
+                })
+            return rec
         except Exception as e:
             return {"fighter":name,"ufc_url":url,"matched":False,"error":repr(e),
                     "snapshot_scope":"current_only_not_historical"}
