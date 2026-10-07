@@ -1,0 +1,132 @@
+name: DWCS Regional Context Method Search
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/dwcs-regional-context-method-search.yml'
+      - 'dwcs/research/regional_history/**'
+      - 'dwcs/research/historical_odds/**'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  research:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - run: python -m pip install --quiet pandas numpy
+      - name: Search regional-context + price methods
+        shell: bash
+        run: |
+          python - <<'PY'
+          import re
+          from pathlib import Path
+          import pandas as pd, numpy as np
+          root=Path('.'); out=root/'dwcs/research/regional_context_methods'; out.mkdir(parents=True,exist_ok=True)
+          o=pd.read_csv(root/'dwcs/research/historical_odds/historical_odds.csv',low_memory=False)
+          r=pd.read_csv(root/'dwcs/research/regional_history/dwcs_prefight_regional_features.csv',low_memory=False)
+          o['event_date']=pd.to_datetime(o.event_date,errors='coerce').dt.normalize()
+          r['dwcs_date']=pd.to_datetime(r.dwcs_date,errors='coerce').dt.normalize()
+          def norm(s):
+              s=str(s or '').lower().replace('’',"'").replace('-',' ')
+              s=re.sub(r'\b(jr|sr|ii|iii|iv)\b',' ',s)
+              s=re.sub(r'[^a-z0-9]+',' ',s)
+              return re.sub(r'\s+',' ',s).strip()
+          o['sn']=o.selected_profile.map(norm); o['on']=o.opponent.map(norm)
+          r['fn']=r.fighter.map(norm)
+          rm={(x.dwcs_date,x.fn):x for _,x in r.iterrows()}
+          rows=[]
+          for _,x in o.iterrows():
+              a=rm.get((x.event_date,x.sn)); b=rm.get((x.event_date,x.on))
+              if a is None or b is None: continue
+              z=x.to_dict()
+              for c in ['prior_fights','prior_win_pct','prior_finish_rate','prior_first_round_finish_rate','prior_distinct_promotions','prior_avg_opponent_win_pct','prior_days_since_last_fight']:
+                  z['sel_'+c]=getattr(a,c); z['opp_'+c]=getattr(b,c)
+                  if c not in ['prior_days_since_last_fight']:
+                      try:z['gap_'+c]=float(getattr(a,c))-float(getattr(b,c))
+                      except:z['gap_'+c]=np.nan
+              rows.append(z)
+          d=pd.DataFrame(rows)
+          for c in ['selected_close','selected_open','sel_prior_fights','opp_prior_fights','gap_prior_fights','gap_prior_win_pct','gap_prior_finish_rate','gap_prior_first_round_finish_rate','gap_prior_avg_opponent_win_pct','sel_prior_days_since_last_fight','opp_prior_days_since_last_fight']:
+              if c in d:d[c]=pd.to_numeric(d[c],errors='coerce')
+          d['selected_won']=d.selected_won.astype(str).str.lower().map({'true':True,'1':True,'false':False,'0':False})
+          def profit(odds,won):
+              if pd.isna(odds):return np.nan
+              return -100 if not won else (10000/abs(odds) if odds<0 else odds)
+          d['profit100']=[profit(x,y) for x,y in zip(d.selected_close,d.selected_won)]
+          d.to_csv(out/'matched_context_price_rows.csv',index=False)
+          res=[]
+          def add(fam,rule,mask):
+              g=d[mask.fillna(False)&d.selected_won.notna()&d.profit100.notna()].copy()
+              if len(g)<10:return
+              n=len(g); w=int(g.selected_won.sum()); pl=float(g.profit100.sum())
+              ss=[]
+              for s,sg in g.groupby('season'):
+                  ss.append((int(s),len(sg),float(sg.selected_won.mean()),float(sg.profit100.sum()/(100*len(sg)))))
+              res.append({'family':fam,'rule':rule,'n':n,'wins':w,'win_rate':w/n,'roi':pl/(100*n),'seasons':len(ss),
+                          'profitable_seasons':sum(x[3]>0 for x in ss),'worst_season_roi':min(x[3] for x in ss),
+                          'season_detail':'|'.join(f'{s}:{nn}:{wr:.3f}:{roi:.3f}' for s,nn,wr,roi in ss)})
+          # Experience mismatch
+          for g in [2,4,6,8,10]:
+              add('EXPERIENCE_EDGE',f'fight gap >= {g}',d.gap_prior_fights>=g)
+          # Career quality
+          for g in [.05,.10,.15,.20,.25]:
+              add('WIN_RATE_EDGE',f'win pct gap >= {g:.2f}',d.gap_prior_win_pct>=g)
+          # Finish profile
+          for g in [.10,.20,.30,.40]:
+              add('FINISH_EDGE',f'finish-rate gap >= {g:.2f}',d.gap_prior_finish_rate>=g)
+              add('EARLY_FINISH_EDGE',f'R1 finish-rate gap >= {g:.2f}',d.gap_prior_first_round_finish_rate>=g)
+          # Opponent quality
+          for g in [.05,.10,.15,.20]:
+              add('OPPONENT_QUALITY',f'opp-quality gap >= {g:.2f}',d.gap_prior_avg_opponent_win_pct>=g)
+          # combinations with minimum sample
+          for eg in [2,4,6]:
+              for wg in [.05,.10,.15]:
+                  add('EXP_PLUS_WIN',f'exp>={eg}; winpct>={wg:.2f}',(d.gap_prior_fights>=eg)&(d.gap_prior_win_pct>=wg))
+          for eg in [2,4]:
+              for oq in [.05,.10,.15]:
+                  add('EXP_PLUS_OPPQUAL',f'exp>={eg}; oppqual>={oq:.2f}',(d.gap_prior_fights>=eg)&(d.gap_prior_avg_opponent_win_pct>=oq))
+          for fg in [.10,.20,.30]:
+              for oq in [.05,.10]:
+                  add('FINISH_PLUS_OPPQUAL',f'finish>={fg:.2f}; oppqual>={oq:.2f}',(d.gap_prior_finish_rate>=fg)&(d.gap_prior_avg_opponent_win_pct>=oq))
+          # Market filters layered on context
+          for maxfav in [150,200,250,300,400]:
+              price=(d.selected_close<0)&(d.selected_close>=-maxfav)
+              for eg in [2,4,6]:
+                  add('VALUE_EXP_FAV',f'-{maxfav}..-100 + exp>={eg}',price&(d.gap_prior_fights>=eg))
+              for oq in [.05,.10,.15]:
+                  add('VALUE_OPPQUAL_FAV',f'-{maxfav}..-100 + oppqual>={oq:.2f}',price&(d.gap_prior_avg_opponent_win_pct>=oq))
+          for dogmax in [150,200,250,300]:
+              price=(d.selected_close>=100)&(d.selected_close<=dogmax)
+              for oq in [.05,.10,.15]:
+                  add('VALUE_OPPQUAL_DOG',f'+100..+{dogmax} + oppqual>={oq:.2f}',price&(d.gap_prior_avg_opponent_win_pct>=oq))
+              for eg in [2,4,6]:
+                  add('VALUE_EXP_DOG',f'+100..+{dogmax} + exp>={eg}',price&(d.gap_prior_fights>=eg))
+          rr=pd.DataFrame(res)
+          if len(rr): rr=rr.sort_values(['roi','win_rate','n'],ascending=[False,False,False])
+          rr.to_csv(out/'all_rules.csv',index=False)
+          robust=rr[(rr.n>=20)&(rr.roi>0)&(rr.seasons>=4)&(rr.profitable_seasons>=3)] if len(rr) else rr
+          robust.to_csv(out/'robust_candidates.csv',index=False)
+          lines=['DWCS REGIONAL CONTEXT + PRICE SEARCH','='*96,f'Matched priced/context fights: {len(d)}','',
+                 'ROBUST CANDIDATES (n>=20, ROI>0, >=4 seasons, >=3 profitable seasons)','-'*96]
+          if robust.empty: lines.append('None.')
+          else:
+              for _,z in robust.head(30).iterrows():
+                  lines.append(f"{z.family:<22} n={int(z.n):3d} win={z.win_rate*100:5.1f}% ROI={z.roi*100:+6.1f}% "
+                               f"prof={int(z.profitable_seasons)}/{int(z.seasons)} worst={z.worst_season_roi*100:+6.1f}% | {z.rule}")
+          lines+=['','TOP 30 BY ROI','-'*96]
+          for _,z in rr.head(30).iterrows():
+              lines.append(f"{z.family:<22} n={int(z.n):3d} win={z.win_rate*100:5.1f}% ROI={z.roi*100:+6.1f}% | {z.rule}")
+          (out/'report.txt').write_text('\n'.join(lines)+'\n')
+          print('\n'.join(lines))
+          PY
+      - name: Commit results
+        run: |
+          git config user.name appwiza-research-bot
+          git config user.email actions@users.noreply.github.com
+          git add dwcs/research/regional_context_methods
+          git diff --cached --quiet && exit 0
+          git commit -m 'Add DWCS regional-context method search'
+          git pull --rebase origin main
+          git push
