@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-import argparse,csv,gzip,io,json,re,time,urllib.request,urllib.error
+import argparse,csv,gzip,io,json,re,time,urllib.request,urllib.error,subprocess
 from collections import defaultdict
 from datetime import datetime,timedelta,timezone
 from pathlib import Path
@@ -27,7 +27,7 @@ def request(url,method="HEAD",tries=4,timeout=15):
     last=None
     for attempt in range(tries):
         try:
-            req=urllib.request.Request(url,method=method,headers={"User-Agent":"Mozilla/5.0 AppwizaNBAResearch/1.0"})
+            req=urllib.request.Request(url,method=method,headers={"User-Agent":"Mozilla/5.0"})
             with urllib.request.urlopen(req,timeout=timeout) as r:
                 if method=="HEAD":
                     ok=r.status==200 and "pdf" in (r.headers.get("Content-Type") or "").lower()
@@ -35,6 +35,16 @@ def request(url,method="HEAD",tries=4,timeout=15):
                 return r.read(),None
         except urllib.error.HTTPError as e:
             last=f"HTTP {e.code}"
+            if method=="GET" and e.code in (403,405):
+                try:
+                    cp=subprocess.run(
+                        ["curl","-fsSL","--retry","3","--max-time",str(timeout),"-A","Mozilla/5.0",url],
+                        stdout=subprocess.PIPE,stderr=subprocess.PIPE,check=False
+                    )
+                    if cp.returncode==0 and cp.stdout[:5]==b"%PDF-":
+                        return cp.stdout,None
+                except Exception:
+                    pass
             if e.code in (403,404): return (False,last) if method=="HEAD" else (b"",last)
             time.sleep((attempt+1)*1.5)
         except Exception as e:
