@@ -1,0 +1,181 @@
+{
+  "version": 1,
+  "season_start": "2026-27",
+  "principle": "Prospective captures are immutable point-in-time observations. Historical reconstruction must never overwrite or replace what was actually observed live.",
+  "scanner": {
+    "schedule": "10-minute heartbeat; backs off to ~30 minutes when no game is within 2 hours of tip",
+    "forced_triggers": [
+      "prospective game-state update",
+      "market update",
+      "availability update",
+      "depth-chart update",
+      "roster update",
+      "contract update",
+      "feature refresh",
+      "current-season data refresh"
+    ],
+    "regular_season_only": true,
+    "outputs": [
+      "active picks",
+      "method-by-game readiness/qualification state",
+      "qualification transitions",
+      "first-qualified timestamp",
+      "latest market/feature snapshot used"
+    ]
+  },
+  "captures": [
+    {
+      "name": "prospective_game_state",
+      "cadence": "30 minutes",
+      "window": "all games -1 to +2 calendar days; rich summaries from 48h pre-tip through 4h post-tip",
+      "retains": [
+        "schedule",
+        "status",
+        "venue",
+        "starter state",
+        "officials",
+        "injury groups",
+        "odds",
+        "normalized live score/clock state",
+        "raw payload on meaningful structural change"
+      ]
+    },
+    {
+      "name": "near_tip_live_state",
+      "cadence": "10 minutes",
+      "window": "2h pre-tip through 4h post-tip",
+      "retains": [
+        "confirmed starters",
+        "official assignments",
+        "near-tip ESPN odds",
+        "status/score/period/clock snapshots",
+        "state changes"
+      ]
+    },
+    {
+      "name": "espn_market",
+      "cadence": "30 minutes",
+      "retains": [
+        "moneyline",
+        "spread",
+        "total",
+        "provider",
+        "open values",
+        "raw scoreboard payload"
+      ]
+    },
+    {
+      "name": "external_multibook_odds",
+      "cadence": "3 hours",
+      "retains": [
+        "bookmaker",
+        "h2h",
+        "spread",
+        "total",
+        "price",
+        "point",
+        "bookmaker update timestamp"
+      ]
+    },
+    {
+      "name": "availability",
+      "cadence": "hourly",
+      "retains": [
+        "team",
+        "player",
+        "status",
+        "injury type",
+        "detail",
+        "injury date",
+        "raw team-scoped payload"
+      ]
+    },
+    {
+      "name": "official_nba_injury_pdfs",
+      "cadence": "hourly",
+      "retains": [
+        "original PDF bytes",
+        "SHA256",
+        "extracted native text",
+        "report date/time",
+        "source URL"
+      ]
+    },
+    {
+      "name": "depth_charts",
+      "cadence": "3 hours",
+      "retains": [
+        "raw team depth-chart payloads",
+        "source timestamps"
+      ]
+    },
+    {
+      "name": "rosters_profiles",
+      "cadence": "6 hours",
+      "retains": [
+        "team assignment",
+        "position",
+        "height",
+        "weight",
+        "DOB",
+        "age",
+        "experience",
+        "active/status",
+        "raw roster payloads"
+      ]
+    },
+    {
+      "name": "contracts_salaries",
+      "cadence": "daily",
+      "retains": [
+        "2026-27 and future contract years",
+        "guaranteed amount",
+        "team",
+        "raw HTML when source changes"
+      ]
+    },
+    {
+      "name": "team_coach_profiles",
+      "cadence": "daily",
+      "retains": [
+        "coach/team profile state and change timing"
+      ]
+    },
+    {
+      "name": "warehouse_bootstrap",
+      "cadence": "daily",
+      "retains": [
+        "games",
+        "team box scores",
+        "player box scores",
+        "full PBP",
+        "provenance"
+      ]
+    },
+    {
+      "name": "current_season_advanced_enrichment",
+      "cadence": "after successful core feature refresh",
+      "retains": [
+        "exact lineup stints",
+        "lineup quality",
+        "starter/bench rolling",
+        "clutch/quarter shape",
+        "style",
+        "workload",
+        "standings",
+        "travel",
+        "Elo/SOS",
+        "starter physicals",
+        "starter individual impact",
+        "prior-season continuity"
+      ]
+    }
+  ],
+  "research_only_no_leakage_rules": [
+    "No future injury/status data may be inserted into earlier game snapshots.",
+    "No later market price may replace the price observed at an earlier scan.",
+    "Confirmed-starter methods require actual confirmed prospective starters; projected depth charts are not treated as confirmed.",
+    "2026-27 live outcomes may evaluate frozen rules but may not retroactively retune them.",
+    "Preseason games may enrich the prospective archive but cannot create regular-season live picks unless a separately validated preseason method exists."
+  ]
+}
