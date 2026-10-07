@@ -24,5 +24,8 @@ jobs:
           git add dwcs/research/historical_odds
           git diff --cached --quiet && exit 0
           git commit -m 'Recover DWCS historical odds through BFO event identity'
-          git pull --rebase origin main
-          git push
+          for i in 1 2 3 4 5; do
+            git pull --rebase origin main && git push && exit 0
+            sleep $((i * 2))
+          done
+          exit 1
