@@ -84,7 +84,7 @@ for _,e in events.iterrows():
                     except: pass
                 return (np.nan,np.nan)
             def times(label):
-                m=re.search(r"<strong>(\\d+:\\d{2})</strong><span>"+re.escape(label)+r"</span><strong>(\\d+:\\d{2})</strong>",fr.text,re.I)
+                m=re.search(r"<strong>(\d+:\d{2})</strong><span>"+re.escape(label)+r"</span><strong>(\d+:\d{2})</strong>",fr.text,re.I)
                 if m: return (ctrl_sec(m.group(1)),ctrl_sec(m.group(2)))
                 return (np.nan,np.nan)
             sig=pair("Significant strikes")
