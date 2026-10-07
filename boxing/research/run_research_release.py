@@ -89,6 +89,10 @@ def main():
     # Only the established aggregate reports enter the repository publication path.
     for name in ['coverage.json','punch_profile_coverage.json','PROFILE_GAP_AUDIT.json','REACH_INTEGRITY_AUDIT.json','validated_price_method_search.json','validated_price_method_search.txt']:
         shutil.copy2(release/name,public/name)
+    summary=json.loads((public/'validated_price_method_search.json').read_text())
+    for tier in summary.get('tiers',{}).values():
+        for row in tier.get('existing_candidates',[])+tier.get('notable_fixed_rule_screen',[]):row.pop('selected_bouts',None)
+    write(public/'validated_price_method_search.json',summary)
     write(public/'status.json',{'status':'audited_research_release_not_live_methods','built_at':manifest['built_at'],'eligibility':manifest['eligibility'],'detailed_audit_location':'private_appwiza_server'})
     subprocess.run([sys.executable,str(a.repo/'boxing/research/build_current_dataset_status.py')],check=True,stdout=subprocess.DEVNULL)
     print('RELEASE '+str(release),flush=True)

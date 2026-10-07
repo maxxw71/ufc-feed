@@ -229,6 +229,11 @@ out={
     'older WBC official ranking depth'
   ]
 }
+release=load(PHASE2/'status.json')
+if release.get('eligibility'):
+    out['research_eligibility']=release['eligibility']
+    out['detailed_release_audit']='private_appwiza_server'
+    out['outcome_vs_wager_settlement']='Prospective settled counts verify fight outcomes; bookmaker rules are separately unverified.'
 PHASE2.mkdir(parents=True,exist_ok=True)
 OUT.write_text(json.dumps(out,indent=2,ensure_ascii=False),encoding='utf-8')
 print(json.dumps(out,indent=2,ensure_ascii=False))

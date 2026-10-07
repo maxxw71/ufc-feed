@@ -231,8 +231,15 @@ def main():
     }
     coverage['unresolved_reasons']=dict(Counter(r['evidence_review']['review_reason'] for r in unresolved))
     coverage['settled_count_meaning']='Verified fight outcomes; bookmaker-specific wager settlement remains separately unverified.'
+    # Keep detailed repair evidence off the repository/public report path.
+    review_root=Path(os.environ.get('APPWIZA_BOXING_REVIEW_ROOT','/srv/appwiza-sports/boxing-releases/outcome-review'))
+    review_root.mkdir(parents=True,exist_ok=True)
+    review_path=review_root/(now.strftime('%Y%m%dT%H%M%S%fZ')+'.json')
+    review_path.write_text(json.dumps({'generated_at':now.isoformat(),'settled':settled,'past_unresolved':unresolved},indent=2,ensure_ascii=False))
+    public_settled=[{k:v for k,v in r.items() if k!='evidence_review'} for r in settled]
+    public_unresolved=[{k:v for k,v in r.items() if k!='evidence_review'} for r in unresolved]
     (ODDS/'coverage.json').write_text(json.dumps(coverage,indent=2,ensure_ascii=False))
-    (ODDS/'settled_bouts.json').write_text(json.dumps({'generated_at':now.isoformat(),'settled':settled,'past_unresolved':unresolved},indent=2,ensure_ascii=False))
-    print(json.dumps({**coverage,'settled_sample':settled[:10],'unresolved_sample':unresolved[:10]},indent=2,ensure_ascii=False))
+    (ODDS/'settled_bouts.json').write_text(json.dumps({'generated_at':now.isoformat(),'settled':public_settled,'past_unresolved':public_unresolved},indent=2,ensure_ascii=False))
+    print(json.dumps(coverage,indent=2,ensure_ascii=False))
 
 if __name__=='__main__':main()
