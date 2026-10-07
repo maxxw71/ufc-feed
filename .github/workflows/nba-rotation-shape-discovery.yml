@@ -1,0 +1,38 @@
+name: NBA rotation shape discovery
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'nba/build_starter_bench_rolling.py'
+      - 'nba/build_scoring_shape_rolling.py'
+      - 'nba/research/discover_rotation_shape.py'
+      - '.github/workflows/nba-rotation-shape-discovery.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  discover:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: python nba/build_starter_bench_rolling.py
+      - run: python nba/build_scoring_shape_rolling.py
+      - run: python nba/research/discover_rotation_shape.py
+      - shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "appwiza-nba-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add nba/features/starter_bench_rolling.csv.gz nba/features/starter_bench_rolling_summary.json nba/features/scoring_shape_rolling.csv.gz nba/features/scoring_shape_rolling_summary.json nba/research/rotation_shape
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m "nba: add rotation scoring-shape discovery results"
+          git pull --rebase origin main
+          git push
