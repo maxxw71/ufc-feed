@@ -80,7 +80,6 @@ for gid,g in games.items():
           "shape_q4m5_gap":d(ts,os,"q4_margin_last5_avg"),
           "shape_h2m5_gap":d(ts,os,"second_half_margin_last5_avg"),
           "shape_clutchm5_gap":d(ts,os,"clutch_margin_last5_avg"),
-          "shape_clutchfg5_gap":d(ts,os,"clutch_fg_pct_last5_avg"),
           "shape_clutchtov_adv":d(os,ts,"clutch_turnovers_last5_avg"),
           "shape_q3m10_gap":d(ts,os,"q3_margin_last10_avg"),
           "shape_q4m10_gap":d(ts,os,"q4_margin_last10_avg"),
