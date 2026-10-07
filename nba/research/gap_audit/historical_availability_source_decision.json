@@ -1,0 +1,12 @@
+{
+  "decision": "REJECT_FOR_HISTORICAL_BACKTEST",
+  "source": "ESPN game summary top-level injuries block",
+  "reason": "Current-state leakage: historical game summaries returned injury records timestamped in 2026 for games played in 2018-19 and other past seasons.",
+  "allowed_use": "Current/prospective availability snapshot only",
+  "historical_use": false,
+  "next_routes": [
+    "timestamped injury/news archives",
+    "historical inactive/roster participation reconstructed from pregame sources",
+    "transaction/roster-change archives with known publication timestamps"
+  ]
+}
