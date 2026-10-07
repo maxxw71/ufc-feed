@@ -1,6 +1,12 @@
 name: Appwiza NBA public deploy
 on:
   workflow_dispatch:
+  workflow_run:
+    workflows:
+      - NBA Active Live Scanner
+      - NBA Appwiza Live Feed
+    types: [completed]
+    branches: [main]
   push:
     branches: [main]
     paths:
@@ -18,11 +24,17 @@ permissions:
 
 jobs:
   deploy:
+    if: github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success'
     runs-on: [self-hosted, Linux, X64, appwiza]
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
         with: {fetch-depth: 0}
+      - name: Sync latest main before deploy
+        shell: bash
+        run: |
+          git fetch origin main
+          git reset --hard origin/main
 
       - name: Deploy NBA page and feed over SSH
         shell: bash
