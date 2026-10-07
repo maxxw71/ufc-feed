@@ -1,0 +1,28 @@
+name: DWCS Season 10 Untouched Holdout
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/dwcs-season10-untouched-holdout.yml'
+      - 'dwcs/research/run_s10_untouched_holdout.py'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+      - run: python -m pip install --quiet pandas numpy requests beautifulsoup4 rapidfuzz
+      - name: Evaluate frozen methods on untouched Season 10
+        run: python dwcs/research/run_s10_untouched_holdout.py
+      - name: Commit holdout results
+        run: |
+          git config user.name appwiza-research-bot
+          git config user.email actions@users.noreply.github.com
+          git add dwcs/research/season10_untouched_holdout
+          git diff --cached --quiet && exit 0
+          git commit -m 'Evaluate frozen DWCS methods on untouched Season 10'
+          git pull --rebase origin main
+          git push
