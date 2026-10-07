@@ -13,7 +13,8 @@ fighter_profile_match            695/702     99.0%  identity/profile matching
 height_known                     630/702     89.7%  height after verified UFC.com static fills
 reach_known                      602/702     85.8%  reach after verified UFC.com static fills
 stance_known                     695/702     99.0%  fighter-level stance
-historical_odds                  348/356     97.8%  priced historical fights
+historical_odds                  348/356     97.8%  strict BestFightOdds historical closing-price coverage
+historical_price_any_verified    356/356    100.0%  any verified historical price snapshot; 8 secondary-only rows kept semantically separate
 regional_history                 654/790     82.8%  pre-DWCS regional history after event/opponent identity recovery
 global_elo_sos                   659/800     82.4%  point-in-time global Elo/SOS
 dwcs_fight_technical_rows        712/712    100.0%  historical DWCS fight technical totals

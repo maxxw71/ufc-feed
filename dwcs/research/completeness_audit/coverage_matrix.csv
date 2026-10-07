@@ -5,7 +5,8 @@ fighter_profile_match,identity,695,702,0.99002849002849,identity/profile matchin
 height_known,physical,630,702,0.8974358974358975,height after verified UFC.com static fills
 reach_known,physical,602,702,0.8575498575498576,reach after verified UFC.com static fills
 stance_known,physical,695,702,0.99002849002849,fighter-level stance
-historical_odds,market,348,356,0.9775280898876404,priced historical fights
+historical_odds,market,348,356,0.9775280898876404,strict BestFightOdds historical closing-price coverage
+historical_price_any_verified,market_context,356,356,1.0,any verified historical price snapshot; 8 secondary-only rows kept semantically separate
 regional_history,career,654,790,0.8278481012658228,pre-DWCS regional history after event/opponent identity recovery
 global_elo_sos,career,659,800,0.82375,point-in-time global Elo/SOS
 dwcs_fight_technical_rows,technical,712,712,1.0,historical DWCS fight technical totals
