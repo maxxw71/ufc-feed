@@ -48,7 +48,7 @@ for _,e in events.iterrows():
             fa=clean(red.get_text(" ",strip=True)) if red else ""
             fb=clean(blue.get_text(" ",strip=True)) if blue else ""
             if not fa or not fb:
-                parts=re.split(r"\\s+vs\\.?\\s+",txt,flags=re.I)
+                parts=re.split(r"\s+vs\.?\s+",txt,flags=re.I)
                 if len(parts)==2: fa,fb=map(clean,parts)
             cand=df[df.event_name==e.event_name]
             match=None
@@ -72,7 +72,7 @@ for _,e in events.iterrows():
                 vals=labeled_values(".fight-total-grid article",label)
                 if len(vals)>=2:
                     def pp(v):
-                        m=re.match(r"^(\\d+)\\s+of\\s+(\\d+)$",v)
+                        m=re.match(r"^(\d+)\s+of\s+(\d+)$",v)
                         return tuple(map(int,m.groups())) if m else (np.nan,np.nan)
                     a=pp(vals[0]); b=pp(vals[1])
                     return a+b
