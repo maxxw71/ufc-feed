@@ -1,0 +1,28 @@
+name: DWCS Alias-Aware Odds Recovery
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/dwcs-alias-aware-odds-recovery.yml'
+      - 'dwcs/research/recover_bfo_odds_alias_aware.py'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  recover:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+      - run: python -m pip install --quiet pandas requests beautifulsoup4 rapidfuzz
+      - name: Recover final historical odds gaps
+        run: python dwcs/research/recover_bfo_odds_alias_aware.py
+      - name: Commit recovered odds
+        run: |
+          git config user.name appwiza-research-bot
+          git config user.email actions@users.noreply.github.com
+          git add dwcs/research/historical_odds
+          git diff --cached --quiet && exit 0
+          git commit -m 'Recover alias-matched DWCS historical odds'
+          git pull --rebase origin main
+          git push
