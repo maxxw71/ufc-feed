@@ -109,7 +109,7 @@ def find_pair(target,pairs):
                 best=p;bs=sc
     return best,bs
 
-def parse_profile_row(profile_url,selected,opp,date):
+def parse_profile_row(profile_url,selected,opp,date,event_title):
     r=get(profile_url)
     if r is None or r.status_code!=200:return None
     soup=BeautifulSoup(r.text,"html.parser")
@@ -117,12 +117,14 @@ def parse_profile_row(profile_url,selected,opp,date):
     sn,on=norm(selected),norm(opp);yr=str(date.year);mon=date.strftime("%b").lower()
     candidates=[]
     for j,txt in enumerate(trs):
-        if "contender series" not in txt.lower():continue
+        if "contender series" not in txt.lower() and "dwcs" not in txt.lower():continue
         if sn not in norm(txt):continue
         win=" ".join(trs[max(0,j-3):min(len(trs),j+5)])
-        if yr not in win or mon not in win.lower():continue
-        # opponent can be on same or nearby row depending BFO layout
-        if on not in norm(win):continue
+        # Event identity came from the exact BFO matchup page, so use that exact
+        # event label when it is present. Fall back to year/month only.
+        et=norm(event_title)
+        if et and et not in norm(txt) and et not in norm(win):
+            if yr not in win or mon not in win.lower():continue
         tt=odds_tokens(txt)
         if not tt:continue
         op=tt[0]; plausible=[v for v in tt[1:] if 100<=abs(v)<=10000]
@@ -166,11 +168,11 @@ def main():
             selected=x.fighter_a;opp=x.fighter_b;url=p["fighter_a_url"]
         else:
             selected=x.fighter_a;opp=x.fighter_b;url=p["fighter_b_url"]
-        q=parse_profile_row(url,selected,opp,x.event_date)
+        q=parse_profile_row(url,selected,opp,x.event_date,p["event_title"])
         if not q:
             # try canonical opponent profile
             alt=p["fighter_b_url"] if url==p["fighter_a_url"] else p["fighter_a_url"]
-            q=parse_profile_row(alt,opp,selected,x.event_date)
+            q=parse_profile_row(alt,opp,selected,x.event_date,p["event_title"])
             if q:
                 # parser selected opponent; flip orientation to retain selected_profile semantics
                 selected,opp=opp,selected
