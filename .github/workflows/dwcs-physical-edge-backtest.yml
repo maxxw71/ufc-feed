@@ -1,0 +1,115 @@
+name: DWCS Physical Edge Backtest
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/dwcs-physical-edge-backtest.yml'
+      - 'dwcs/research/enrichment_probe/dwcs_fighter_physicals.csv'
+      - 'dwcs/research/results_boutmetrics/historical_fights.csv'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  backtest:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - run: python -m pip install --quiet pandas numpy
+      - name: Run DWCS physical edge backtest
+        run: |
+          python - <<'PY'
+          import re,json
+          from pathlib import Path
+          import pandas as pd, numpy as np
+          root=Path('.'); out=root/'dwcs/research/physical_backtest'; out.mkdir(parents=True,exist_ok=True)
+          f=pd.read_csv(root/'dwcs/research/results_boutmetrics/historical_fights.csv',low_memory=False)
+          p=pd.read_csv(root/'dwcs/research/enrichment_probe/dwcs_fighter_physicals.csv',low_memory=False)
+          def norm(s):
+              s=str(s or '').lower().replace('’',"'").replace('-',' ')
+              s=re.sub(r'\b(jr|sr|ii|iii|iv)\b',' ',s)
+              s=re.sub(r'[^a-z0-9]+',' ',s)
+              return re.sub(r'\s+',' ',s).strip()
+          p['n']=p.fighter.map(norm); pm=p.drop_duplicates('n').set_index('n').to_dict('index')
+          rows=[]
+          for _,r in f.iterrows():
+              a=pm.get(norm(r.fighter_a),{}); b=pm.get(norm(r.fighter_b),{})
+              w=norm(r.winner)
+              rows.append({
+                'season':r.season,'event_date':r.event_date,'weight_class':r.weight_class,
+                'fighter_a':r.fighter_a,'fighter_b':r.fighter_b,'winner':r.winner,
+                'a_height':a.get('height_in',np.nan),'b_height':b.get('height_in',np.nan),
+                'a_reach':a.get('reach_in',np.nan),'b_reach':b.get('reach_in',np.nan),
+                'a_stance':a.get('stance',None),'b_stance':b.get('stance',None),
+                'a_won':w==norm(r.fighter_a),'b_won':w==norm(r.fighter_b)
+              })
+          d=pd.DataFrame(rows)
+          for c in ['a_height','b_height','a_reach','b_reach']: d[c]=pd.to_numeric(d[c],errors='coerce')
+          d['height_diff']=d.a_height-d.b_height; d['reach_diff']=d.a_reach-d.b_reach
+          d.to_csv(out/'fight_features.csv',index=False)
+          res=[]
+          def add(fam,rule,mask,pick_a):
+              g=d[mask & pick_a.notna()].copy()
+              if len(g)<8:return
+              pa=pick_a.loc[g.index].astype(bool)
+              wins=np.where(pa,g.a_won,g.b_won)
+              n=len(g); w=int(np.sum(wins))
+              # season stability
+              ss=[]
+              for s,sg in g.groupby('season'):
+                  spa=pick_a.loc[sg.index].astype(bool)
+                  sw=int(np.sum(np.where(spa,sg.a_won,sg.b_won)))
+                  ss.append((int(s),len(sg),sw/len(sg)))
+              res.append({'family':fam,'rule':rule,'n':n,'wins':w,'win_rate':w/n,
+                          'seasons':len(ss),'worst_season_win':min(x[2] for x in ss),
+                          'season_detail':'|'.join(f'{s}:{nn}:{wr:.3f}' for s,nn,wr in ss)})
+          for x in [1,2,3,4,5,6]:
+              mask=d.reach_diff.abs()>=x
+              pick=d.reach_diff>0
+              add('REACH_EDGE',f'longer reach by >={x}in',mask,pick)
+          for x in [1,2,3,4,5]:
+              mask=d.height_diff.abs()>=x
+              pick=d.height_diff>0
+              add('HEIGHT_EDGE',f'taller by >={x}in',mask,pick)
+          for rg in [2,3,4]:
+              for hg in [1,2,3]:
+                  same=((d.reach_diff>0)&(d.height_diff>0))|((d.reach_diff<0)&(d.height_diff<0))
+                  mask=(d.reach_diff.abs()>=rg)&(d.height_diff.abs()>=hg)&same
+                  pick=d.reach_diff>0
+                  add('REACH_HEIGHT_ALIGNED',f'reach>={rg}in + height>={hg}in same fighter',mask,pick)
+          # Extreme mismatch within divisions (no odds yet).
+          for rg in [4,5,6]:
+              mask=d.reach_diff.abs()>=rg
+              pick=d.reach_diff>0
+              for wc,gidx in d[mask].groupby('weight_class').groups.items():
+                  submask=d.index.isin(gidx)
+                  add('REACH_BY_DIVISION',f'{wc}: reach>={rg}in',pd.Series(submask,index=d.index),pick)
+          r=pd.DataFrame(res).sort_values(['win_rate','n'],ascending=[False,False])
+          r.to_csv(out/'rules.csv',index=False)
+          strong=r[(r.n>=20)&(r.win_rate>=.65)&(r.seasons>=3)].copy()
+          strong.to_csv(out/'strong_candidates.csv',index=False)
+          lines=['DWCS PHYSICAL EDGE BACKTEST','='*92,
+                 f'Fights: {len(d)}',
+                 f'Both heights known: {int((d.a_height.notna()&d.b_height.notna()).sum())}',
+                 f'Both reaches known: {int((d.a_reach.notna()&d.b_reach.notna()).sum())}',
+                 '',
+                 'STRONG FIRST-PASS CANDIDATES (n>=20, win>=65%, 3+ seasons)','-'*92]
+          if strong.empty: lines.append('None.')
+          else:
+              for _,z in strong.head(25).iterrows():
+                  lines.append(f"{z.family:<24} n={int(z.n):3d} win={z.win_rate*100:5.1f}% worst-season={z.worst_season_win*100:5.1f}% | {z.rule}")
+          lines+=['','TOP 25 RULES','-'*92]
+          for _,z in r.head(25).iterrows():
+              lines.append(f"{z.family:<24} n={int(z.n):3d} win={z.win_rate*100:5.1f}% seasons={int(z.seasons)} | {z.rule}")
+          (out/'report.txt').write_text('\n'.join(lines)+'\n')
+          print('\n'.join(lines))
+          PY
+      - name: Commit results
+        run: |
+          git config user.name appwiza-research-bot
+          git config user.email actions@users.noreply.github.com
+          git add dwcs/research/physical_backtest
+          git diff --cached --quiet && exit 0
+          git commit -m 'Add DWCS physical edge backtest'
+          git pull --rebase origin main
+          git push
