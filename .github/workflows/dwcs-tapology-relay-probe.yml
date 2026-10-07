@@ -11,7 +11,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - run: python - <<'PY'
+      - run: |
+          python - <<'PY'
           import requests,json,re
           from pathlib import Path
           urls=[
