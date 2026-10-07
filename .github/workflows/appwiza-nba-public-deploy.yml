@@ -1,0 +1,83 @@
+name: Appwiza NBA public deploy
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'nba/live/index.html'
+      - 'nba/live/appwiza_feed.json'
+      - 'nba/live/arsenal.json'
+      - '.github/workflows/appwiza-nba-public-deploy.yml'
+
+concurrency:
+  group: appwiza-sports-public-pages
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    runs-on: [self-hosted, Linux, X64, appwiza]
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with: {fetch-depth: 0}
+
+      - name: Deploy NBA page and feed over SSH
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          KEY=/home/appwiza-runner/.ssh/appwiza_vps
+          HOST=anestishkurti92@127.0.0.1
+          SSH="ssh -i $KEY -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=accept-new $HOST"
+
+          cat nba/live/index.html | $SSH 'set -e; mkdir -p /srv/appwiza-sports/public/nba; cat > /srv/appwiza-sports/public/nba/index.html.new; chmod 0644 /srv/appwiza-sports/public/nba/index.html.new; mv -f /srv/appwiza-sports/public/nba/index.html.new /srv/appwiza-sports/public/nba/index.html'
+          cat nba/live/appwiza_feed.json | $SSH 'set -e; mkdir -p /srv/appwiza-sports/public/nba; cat > /srv/appwiza-sports/public/nba/current.json.new; chmod 0644 /srv/appwiza-sports/public/nba/current.json.new; mv -f /srv/appwiza-sports/public/nba/current.json.new /srv/appwiza-sports/public/nba/current.json'
+
+      - name: Add NBA navigation to sports pages
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          KEY=/home/appwiza-runner/.ssh/appwiza_vps
+          HOST=anestishkurti92@127.0.0.1
+          SSH="ssh -i $KEY -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=accept-new $HOST"
+          $SSH 'python3 - <<'"'"'PY'"'"'
+          from pathlib import Path
+          pages=[
+            Path("/srv/appwiza-sports/public/index.html"),
+            Path("/srv/appwiza-sports/public/ufc/index.html"),
+            Path("/srv/appwiza-sports/public/nfl/index.html"),
+            Path("/srv/appwiza-sports/public/boxing/index.html"),
+          ]
+          for p in pages:
+              if not p.exists():
+                  continue
+              s=p.read_text()
+              if "/sports/nba/" not in s:
+                  if '<a href="/sports/nfl/"' in s:
+                      pos=s.find('<a href="/sports/nfl/"')
+                      end=s.find('</a>',pos)+4
+                      s=s[:end]+'<a href="/sports/nba/">NBA</a>'+s[end:]
+                  elif '<a href="/sports/ufc/"' in s:
+                      pos=s.find('<a href="/sports/ufc/"')
+                      end=s.find('</a>',pos)+4
+                      s=s[:end]+'<a href="/sports/nba/">NBA</a>'+s[end:]
+              if p.name=="index.html" and p.parent.name=="public" and 'NBA picks' not in s and '<div class="sportlinks">' in s:
+                  s=s.replace('<div class="sportlinks">','<div class="sportlinks"><a href="/sports/nba/">NBA picks</a>',1)
+              p.write_text(s)
+          PY'
+
+      - name: Verify NBA live page
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          curl -fsSL https://appwiza.com/sports/ > /tmp/sports-live.html
+          curl -fsSL https://appwiza.com/sports/nba/ > /tmp/nba-live.html
+          curl -fsSL https://appwiza.com/sports/nba/current.json > /tmp/nba-current.json
+          grep -q '/sports/nba/' /tmp/sports-live.html
+          grep -q 'NBA qualifying matchups' /tmp/nba-live.html
+          grep -q 'ML001_DEF_TS' /tmp/nba-current.json
+          grep -q 'NBA_PHYSCOACH_001' /tmp/nba-current.json
+          grep -q 'NBA_INTERACT_003' /tmp/nba-current.json
+          echo 'NBA Appwiza public page and navigation verified'
