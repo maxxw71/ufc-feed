@@ -53,8 +53,13 @@ jobs:
           curl -fsSL https://appwiza.com/sports/nba/ > /tmp/nba-live.html
           curl -fsSL https://appwiza.com/sports/nba/current.json > /tmp/nba-current.json
           grep -q '/sports/nba/' /tmp/sports-live.html
-          grep -q 'NBA qualifying matchups' /tmp/nba-live.html
+          grep -q 'NBA live arsenal' /tmp/nba-live.html
           grep -q 'ML001_DEF_TS' /tmp/nba-current.json
           grep -q 'NBA_PHYSCOACH_001' /tmp/nba-current.json
           grep -q 'NBA_INTERACT_003' /tmp/nba-current.json
+          grep -q 'NBA_TRAVEL_001' /tmp/nba-current.json
+          grep -q 'NBA_LQ_003' /tmp/nba-current.json
+          grep -q 'NBA_STAND_002' /tmp/nba-current.json
+          grep -q 'NBA_ROTSHAPE_001' /tmp/nba-current.json
+          grep -q 'NBA_STYLE_TOT_001' /tmp/nba-current.json
           echo 'NBA Appwiza public page and navigation verified'
