@@ -1,0 +1,86 @@
+{
+  "generated_at_utc": "2026-10-07T08:19:00.584691+00:00",
+  "side_rows": 19004,
+  "total_rows": 9519,
+  "rules_tested": 16232,
+  "candidates": 2,
+  "top_methods": [
+    {
+      "lane": "moneyline",
+      "rule": "travel7d_adv >= 576.9 AND market_prob >= 0.7023 AND is_home == 0",
+      "discA": {
+        "n": 94,
+        "wins": 82,
+        "hit": 0.8723404255319149,
+        "roi": 0.07515092385958286,
+        "profit": 7.064186842800789,
+        "wilson_low": 0.7899995060049553
+      },
+      "discB": {
+        "n": 60,
+        "wins": 52,
+        "hit": 0.8666666666666667,
+        "roi": 0.06890741181174151,
+        "profit": 4.134444708704491,
+        "wilson_low": 0.758346054099279
+      },
+      "validation": {
+        "n": 34,
+        "wins": 31,
+        "hit": 0.9117647058823529,
+        "roi": 0.1202129251285886,
+        "profit": 4.087239454372012,
+        "wilson_low": 0.7703918204763959
+      },
+      "holdout": {
+        "n": 76,
+        "wins": 67,
+        "hit": 0.881578947368421,
+        "roi": 0.05069329551837685,
+        "profit": 3.8526904593966402,
+        "wilson_low": 0.7900058191184283
+      },
+      "method_id": "NBA_TRAVEL_001",
+      "status": "travel_shadow_candidate"
+    },
+    {
+      "lane": "moneyline",
+      "rule": "side_travel >= 663 AND travel7d_adv >= 576.9 AND market_prob >= 0.7023",
+      "discA": {
+        "n": 78,
+        "wins": 68,
+        "hit": 0.8717948717948718,
+        "roi": 0.06526023908433606,
+        "profit": 5.090298648578213,
+        "wilson_low": 0.7798385083935379
+      },
+      "discB": {
+        "n": 51,
+        "wins": 43,
+        "hit": 0.8431372549019608,
+        "roi": 0.026549020389633526,
+        "profit": 1.35400003987131,
+        "wilson_low": 0.7198929160164018
+      },
+      "validation": {
+        "n": 28,
+        "wins": 23,
+        "hit": 0.8214285714285714,
+        "roi": 0.007152547406746619,
+        "profit": 0.20027132738890532,
+        "wilson_low": 0.644082084514089
+      },
+      "holdout": {
+        "n": 64,
+        "wins": 56,
+        "hit": 0.875,
+        "roi": 0.04576427662320091,
+        "profit": 2.928913703884858,
+        "wilson_low": 0.7722521366978408
+      },
+      "method_id": "NBA_TRAVEL_002",
+      "status": "travel_shadow_candidate"
+    }
+  ],
+  "policy": "Travel rules require at least one actual venue-distance/time-zone feature. All schedule, venue and prior-trip inputs are known before tipoff."
+}
