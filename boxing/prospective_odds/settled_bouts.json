@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-10-07T15:53:57.637207+00:00",
+  "generated_at": "2026-10-07T21:20:52.305413+00:00",
   "settled": [
     {
       "event_date": "2026-09-21",
@@ -104,6 +104,7 @@
         "David Ssemujju",
         "Jin Sasaki"
       ],
+      "wager_settlement_status": "unverified_bookmaker_rules",
       "winner": "Jin Sasaki",
       "matching_source_rows": 0,
       "result_sources": [
@@ -255,6 +256,7 @@
         "Gerome Warburton",
         "Nathan Heaney"
       ],
+      "wager_settlement_status": "unverified_bookmaker_rules",
       "winner": "Gerome Warburton",
       "matching_source_rows": 3,
       "result_sources": [
@@ -407,6 +409,7 @@
         "Lee Cutler",
         "Louis Greene"
       ],
+      "wager_settlement_status": "unverified_bookmaker_rules",
       "winner": "Lee Cutler",
       "matching_source_rows": 1,
       "result_sources": [
@@ -415,6 +418,158 @@
           "https://champinon.info/boxing/lee-cutler/#supp-18-2026-09-26"
         ]
       ]
+    },
+    {
+      "event_date": "2026-09-26",
+      "bout_id": "18429",
+      "participants": [
+        "Craig Richards",
+        "Radivoje Kalajdzic"
+      ],
+      "first_snapshot": "2026-09-21T12:55:57.664481+00:00",
+      "last_snapshot": "2026-09-22T13:27:10.547562+00:00",
+      "verified_quote_rows": 24,
+      "verified_sportsbook_quote_rows": 24,
+      "verified_prediction_market_quote_rows": 0,
+      "market_classes": [
+        "sportsbook"
+      ],
+      "sportsbooks": [
+        "BetWay",
+        "FanDuel",
+        "Unibet"
+      ],
+      "sportsbook_market_summary": {
+        "per_book": {
+          "BetWay": {
+            "Craig Richards": {
+              "first_verified_pre_event": {
+                "fetched_at": "2026-09-21T12:55:57.664481+00:00",
+                "decimal_price": 2.3,
+                "american_price": 130
+              },
+              "latest_verified_pre_event": {
+                "fetched_at": "2026-09-22T13:27:10.547562+00:00",
+                "decimal_price": 2.15,
+                "american_price": 115
+              },
+              "observations": 5,
+              "decimal_move": -0.15
+            },
+            "Radivoje Kalajdzic": {
+              "first_verified_pre_event": {
+                "fetched_at": "2026-09-21T12:55:57.664481+00:00",
+                "decimal_price": 1.6666666666666665,
+                "american_price": -150
+              },
+              "latest_verified_pre_event": {
+                "fetched_at": "2026-09-22T13:27:10.547562+00:00",
+                "decimal_price": 1.7246376811594204,
+                "american_price": -138
+              },
+              "observations": 5,
+              "decimal_move": 0.057971
+            }
+          },
+          "FanDuel": {
+            "Craig Richards": {
+              "first_verified_pre_event": {
+                "fetched_at": "2026-09-21T12:55:57.664481+00:00",
+                "decimal_price": 2.2,
+                "american_price": 120
+              },
+              "latest_verified_pre_event": {
+                "fetched_at": "2026-09-22T13:27:10.547562+00:00",
+                "decimal_price": 2.2,
+                "american_price": 120
+              },
+              "observations": 5,
+              "decimal_move": 0.0
+            },
+            "Radivoje Kalajdzic": {
+              "first_verified_pre_event": {
+                "fetched_at": "2026-09-21T12:55:57.664481+00:00",
+                "decimal_price": 1.6578947368421053,
+                "american_price": -152
+              },
+              "latest_verified_pre_event": {
+                "fetched_at": "2026-09-22T13:27:10.547562+00:00",
+                "decimal_price": 1.6578947368421053,
+                "american_price": -152
+              },
+              "observations": 5,
+              "decimal_move": 0.0
+            }
+          },
+          "Unibet": {
+            "Craig Richards": {
+              "first_verified_pre_event": {
+                "fetched_at": "2026-09-22T05:04:16.319052+00:00",
+                "decimal_price": 2.02,
+                "american_price": 102
+              },
+              "latest_verified_pre_event": {
+                "fetched_at": "2026-09-22T13:27:10.547562+00:00",
+                "decimal_price": 2.02,
+                "american_price": 102
+              },
+              "observations": 2,
+              "decimal_move": 0.0
+            },
+            "Radivoje Kalajdzic": {
+              "first_verified_pre_event": {
+                "fetched_at": "2026-09-22T05:04:16.319052+00:00",
+                "decimal_price": 1.7462686567164178,
+                "american_price": -134
+              },
+              "latest_verified_pre_event": {
+                "fetched_at": "2026-09-22T13:27:10.547562+00:00",
+                "decimal_price": 1.7462686567164178,
+                "american_price": -134
+              },
+              "observations": 2,
+              "decimal_move": 0.0
+            }
+          }
+        },
+        "consensus_latest_verified": {
+          "Craig Richards": {
+            "books": 3,
+            "median_latest_verified_decimal": 2.15,
+            "min_latest_verified_decimal": 2.02,
+            "max_latest_verified_decimal": 2.2
+          },
+          "Radivoje Kalajdzic": {
+            "books": 3,
+            "median_latest_verified_decimal": 1.724638,
+            "min_latest_verified_decimal": 1.6578947368421053,
+            "max_latest_verified_decimal": 1.7462686567164178
+          }
+        },
+        "books_with_both_sides_latest": 3,
+        "book_selection_pairs": 6
+      },
+      "selections": [
+        "Craig Richards",
+        "Radivoje Kalajdzic"
+      ],
+      "wager_settlement_status": "unverified_bookmaker_rules",
+      "winner": "Radivoje Kalajdzic",
+      "matching_source_rows": 0,
+      "result_sources": [
+        [
+          "external_verified_result",
+          "https://www.boxing247.com/boxing-news/craig-richards-presses-late-radivoje-kalajdzic-drops-him/310137"
+        ],
+        [
+          "external_verified_result",
+          "https://www.skysports.com/boxing/news/13592207/radivoje-kalajdzic-drops-craig-richards-to-hand-him-dramatic-hometown-defeat-at-the-copper-box-arena-in-london"
+        ]
+      ],
+      "result_quality": "two_plus_independent_published_result_sources_exact_date_pair",
+      "result_method": "UD",
+      "result_round": 10,
+      "result_time": null
     },
     {
       "event_date": "2026-09-27",
@@ -581,6 +736,7 @@
         "Takuma Inoue",
         "Tenshin Nasukawa"
       ],
+      "wager_settlement_status": "unverified_bookmaker_rules",
       "winner": "Takuma Inoue",
       "matching_source_rows": 2,
       "result_sources": [
@@ -592,1096 +748,6 @@
           "wikipedia",
           "https://en.wikipedia.org/wiki/Tenshin_Nasukawa#10-2026-09-27"
         ]
-      ]
-    },
-    {
-      "event_date": "2026-09-27",
-      "bout_id": "18382",
-      "participants": [
-        "Ryosuke Nishida",
-        "Sam Goodman"
-      ],
-      "first_snapshot": "2026-09-21T12:55:57.664481+00:00",
-      "last_snapshot": "2026-09-24T13:35:27.719802+00:00",
-      "verified_quote_rows": 104,
-      "verified_sportsbook_quote_rows": 104,
-      "verified_prediction_market_quote_rows": 0,
-      "market_classes": [
-        "sportsbook"
-      ],
-      "sportsbooks": [
-        "BetWay",
-        "Caesars",
-        "FanDuel",
-        "Unibet"
-      ],
-      "sportsbook_market_summary": {
-        "per_book": {
-          "BetWay": {
-            "Ryosuke Nishida": {
-              "first_verified_pre_event": {
-                "fetched_at": "2026-09-21T12:55:57.664481+00:00",
-                "decimal_price": 1.5,
-                "american_price": -200
-              },
-              "latest_verified_pre_event": {
-                "fetched_at": "2026-09-24T13:35:27.719802+00:00",
-                "decimal_price": 1.5,
-                "american_price": -200
-              },
-              "observations": 13,
-              "decimal_move": 0.0
-            },
-            "Sam Goodman": {
-              "first_verified_pre_event": {
-                "fetched_at": "2026-09-21T12:55:57.664481+00:00",
-                "decimal_price": 2.63,
-                "american_price": 163
-              },
-              "latest_verified_pre_event": {
-                "fetched_at": "2026-09-24T13:35:27.719802+00:00",
-                "decimal_price": 2.63,
-                "american_price": 163
-              },
-              "observations": 13,
-              "decimal_move": 0.0
-            }
-          },
-          "Caesars": {
-            "Ryosuke Nishida": {
-              "first_verified_pre_event": {
-                "fetched_at": "2026-09-21T12:55:57.664481+00:00",
-                "decimal_price": 1.5,
-                "american_price": -200
-              },
-              "latest_verified_pre_event": {
-                "fetched_at": "2026-09-24T13:35:27.719802+00:00",
-                "decimal_price": 1.5,
-                "american_price": -200
-              },
-              "observations": 13,
-              "decimal_move": 0.0
-            },
-            "Sam Goodman": {
-              "first_verified_pre_event": {
-                "fetched_at": "2026-09-21T12:55:57.664481+00:00",
-                "decimal_price": 2.5,
-                "american_price": 150
-              },
-              "latest_verified_pre_event": {
-                "fetched_at": "2026-09-24T13:35:27.719802+00:00",
-                "decimal_price": 2.5,
-                "american_price": 150
-              },
-              "observations": 13,
-              "decimal_move": 0.0
-            }
-          },
-          "FanDuel": {
-            "Ryosuke Nishida": {
-              "first_verified_pre_event": {
-                "fetched_at": "2026-09-21T12:55:57.664481+00:00",
-                "decimal_price": 1.3571428571428572,
-                "american_price": -280
-              },
-              "latest_verified_pre_event": {
-                "fetched_at": "2026-09-24T13:35:27.719802+00:00",
-                "decimal_price": 1.5,
-                "american_price": -200
-              },
-              "observations": 13,
-              "decimal_move": 0.142857
-            },
-            "Sam Goodman": {
-              "first_verified_pre_event": {
-                "fetched_at": "2026-09-21T12:55:57.664481+00:00",
-                "decimal_price": 3.0,
-                "american_price": 200
-              },
-              "latest_verified_pre_event": {
-                "fetched_at": "2026-09-24T13:35:27.719802+00:00",
-                "decimal_price": 2.46,
-                "american_price": 146
-              },
-              "observations": 13,
-              "decimal_move": -0.54
-            }
-          },
-          "Unibet": {
-            "Ryosuke Nishida": {
-              "first_verified_pre_event": {
-                "fetched_at": "2026-09-21T12:55:57.664481+00:00",
-                "decimal_price": 1.5714285714285714,
-                "american_price": -175
-              },
-              "latest_verified_pre_event": {
-                "fetched_at": "2026-09-24T13:35:27.719802+00:00",
-                "decimal_price": 1.5,
-                "american_price": -200
-              },
-              "observations": 13,
-              "decimal_move": -0.071429
-            },
-            "Sam Goodman": {
-              "first_verified_pre_event": {
-                "fetched_at": "2026-09-21T12:55:57.664481+00:00",
-                "decimal_price": 2.3,
-                "american_price": 130
-              },
-              "latest_verified_pre_event": {
-                "fetched_at": "2026-09-24T13:35:27.719802+00:00",
-                "decimal_price": 2.48,
-                "american_price": 148
-              },
-              "observations": 13,
-              "decimal_move": 0.18
-            }
-          }
-        },
-        "consensus_latest_verified": {
-          "Ryosuke Nishida": {
-            "books": 4,
-            "median_latest_verified_decimal": 1.5,
-            "min_latest_verified_decimal": 1.5,
-            "max_latest_verified_decimal": 1.5
-          },
-          "Sam Goodman": {
-            "books": 4,
-            "median_latest_verified_decimal": 2.49,
-            "min_latest_verified_decimal": 2.46,
-            "max_latest_verified_decimal": 2.63
-          }
-        },
-        "books_with_both_sides_latest": 4,
-        "book_selection_pairs": 8
-      },
-      "selections": [
-        "Ryosuke Nishida",
-        "Sam Goodman"
-      ],
-      "winner": "Sam Goodman",
-      "matching_source_rows": 2,
-      "result_sources": [
-        [
-          "wikipedia",
-          "https://en.wikipedia.org/wiki/Ryosuke_Nishida#13-2026-09-27"
-        ],
-        [
-          "wikipedia",
-          "https://en.wikipedia.org/wiki/Sam_Goodman_%28boxer%29#24-2026-09-27"
-        ]
-      ]
-    }
-  ],
-  "past_unresolved": [
-    {
-      "event_date": "2026-09-20",
-      "bout_id": "4262",
-      "participants": [
-        "Floyd Mayweather Jr",
-        "Manny Pacquiao"
-      ],
-      "first_snapshot": "2026-09-15T19:43:56.109959+00:00",
-      "last_snapshot": "2026-09-19T12:32:18.162836+00:00",
-      "verified_quote_rows": 32,
-      "verified_sportsbook_quote_rows": 0,
-      "verified_prediction_market_quote_rows": 32,
-      "market_classes": [
-        "prediction_market"
-      ],
-      "sportsbooks": [],
-      "sportsbook_market_summary": {
-        "per_book": {},
-        "consensus_latest_verified": {},
-        "books_with_both_sides_latest": 0,
-        "book_selection_pairs": 0
-      },
-      "selections": [
-        "Floyd Mayweather Jr",
-        "Manny Pacquiao"
-      ]
-    },
-    {
-      "event_date": "2026-09-23",
-      "bout_id": "18523",
-      "participants": [
-        "Kyonosuke Kameda",
-        "Sebastian Hernandez Reyes"
-      ],
-      "first_snapshot": "2026-09-13T08:27:50.090612+00:00",
-      "last_snapshot": "2026-09-23T04:50:16.969312+00:00",
-      "verified_quote_rows": 132,
-      "verified_sportsbook_quote_rows": 132,
-      "verified_prediction_market_quote_rows": 0,
-      "market_classes": [
-        "sportsbook"
-      ],
-      "sportsbooks": [
-        "BetWay",
-        "FanDuel"
-      ],
-      "sportsbook_market_summary": {
-        "per_book": {
-          "BetWay": {
-            "Kyonosuke Kameda": {
-              "first_verified_pre_event": {
-                "fetched_at": "2026-09-16T22:59:43.697999+00:00",
-                "decimal_price": 4.0,
-                "american_price": 300
-              },
-              "latest_verified_pre_event": {
-                "fetched_at": "2026-09-23T04:50:16.969312+00:00",
-                "decimal_price": 4.5,
-                "american_price": 350
-              },
-              "observations": 26,
-              "decimal_move": 0.5
-            },
-            "Sebastian Hernandez Reyes": {
-              "first_verified_pre_event": {
-                "fetched_at": "2026-09-16T22:59:43.697999+00:00",
-                "decimal_price": 1.2857142857142856,
-                "american_price": -350
-              },
-              "latest_verified_pre_event": {
-                "fetched_at": "2026-09-23T04:50:16.969312+00:00",
-                "decimal_price": 1.2,
-                "american_price": -500
-              },
-              "observations": 26,
-              "decimal_move": -0.085714
-            }
-          },
-          "FanDuel": {
-            "Kyonosuke Kameda": {
-              "first_verified_pre_event": {
-                "fetched_at": "2026-09-13T08:27:50.090612+00:00",
-                "decimal_price": 5.0,
-                "american_price": 400
-              },
-              "latest_verified_pre_event": {
-                "fetched_at": "2026-09-23T04:50:16.969312+00:00",
-                "decimal_price": 4.6,
-                "american_price": 360
-              },
-              "observations": 40,
-              "decimal_move": -0.4
-            },
-            "Sebastian Hernandez Reyes": {
-              "first_verified_pre_event": {
-                "fetched_at": "2026-09-13T08:27:50.090612+00:00",
-                "decimal_price": 1.1538461538461537,
-                "american_price": -650
-              },
-              "latest_verified_pre_event": {
-                "fetched_at": "2026-09-23T04:50:16.969312+00:00",
-                "decimal_price": 1.1818181818181819,
-                "american_price": -550
-              },
-              "observations": 40,
-              "decimal_move": 0.027972
-            }
-          }
-        },
-        "consensus_latest_verified": {
-          "Kyonosuke Kameda": {
-            "books": 2,
-            "median_latest_verified_decimal": 4.55,
-            "min_latest_verified_decimal": 4.5,
-            "max_latest_verified_decimal": 4.6
-          },
-          "Sebastian Hernandez Reyes": {
-            "books": 2,
-            "median_latest_verified_decimal": 1.190909,
-            "min_latest_verified_decimal": 1.1818181818181819,
-            "max_latest_verified_decimal": 1.2
-          }
-        },
-        "books_with_both_sides_latest": 2,
-        "book_selection_pairs": 4
-      },
-      "selections": [
-        "Kyonosuke Kameda",
-        "Sebastian Hernandez Reyes"
-      ]
-    },
-    {
-      "event_date": "2026-09-26",
-      "bout_id": "18350",
-      "participants": [
-        "Liam Davies",
-        "Nathaniel Collins"
-      ],
-      "first_snapshot": "2026-09-21T12:55:57.664481+00:00",
-      "last_snapshot": "2026-09-22T13:27:10.547562+00:00",
-      "verified_quote_rows": 34,
-      "verified_sportsbook_quote_rows": 34,
-      "verified_prediction_market_quote_rows": 0,
-      "market_classes": [
-        "sportsbook"
-      ],
-      "sportsbooks": [
-        "BetWay",
-        "Caesars",
-        "FanDuel",
-        "Unibet"
-      ],
-      "sportsbook_market_summary": {
-        "per_book": {
-          "BetWay": {
-            "Liam Davies": {
-              "first_verified_pre_event": {
-                "fetched_at": "2026-09-21T12:55:57.664481+00:00",
-                "decimal_price": 1.25,
-                "american_price": -400
-              },
-              "latest_verified_pre_event": {
-                "fetched_at": "2026-09-22T13:27:10.547562+00:00",
-                "decimal_price": 1.3333333333333333,
-                "american_price": -300
-              },
-              "observations": 5,
-              "decimal_move": 0.083333
-            },
-            "Nathaniel Collins": {
-              "first_verified_pre_event": {
-                "fetched_at": "2026-09-21T12:55:57.664481+00:00",
-                "decimal_price": 4.0,
-                "american_price": 300
-              },
-              "latest_verified_pre_event": {
-                "fetched_at": "2026-09-22T13:27:10.547562+00:00",
-                "decimal_price": 3.5,
-                "american_price": 250
-              },
-              "observations": 5,
-              "decimal_move": -0.5
-            }
-          },
-          "Caesars": {
-            "Liam Davies": {
-              "first_verified_pre_event": {
-                "fetched_at": "2026-09-21T12:55:57.664481+00:00",
-                "decimal_price": 1.2352941176470589,
-                "american_price": -425
-              },
-              "latest_verified_pre_event": {
-                "fetched_at": "2026-09-22T13:27:10.547562+00:00",
-                "decimal_price": 1.2352941176470589,
-                "american_price": -425
-              },
-              "observations": 5,
-              "decimal_move": 0.0
-            },
-            "Nathaniel Collins": {
-              "first_verified_pre_event": {
-                "fetched_at": "2026-09-21T12:55:57.664481+00:00",
-                "decimal_price": 3.9,
-                "american_price": 290
-              },
-              "latest_verified_pre_event": {
-                "fetched_at": "2026-09-22T13:27:10.547562+00:00",
-                "decimal_price": 3.9,
-                "american_price": 290
-              },
-              "observations": 5,
-              "decimal_move": 0.0
-            }
-          },
-          "FanDuel": {
-            "Liam Davies": {
-              "first_verified_pre_event": {
-                "fetched_at": "2026-09-21T12:55:57.664481+00:00",
-                "decimal_price": 1.2777777777777777,
-                "american_price": -360
-              },
-              "latest_verified_pre_event": {
-                "fetched_at": "2026-09-22T13:27:10.547562+00:00",
-                "decimal_price": 1.2777777777777777,
-                "american_price": -360
-              },
-              "observations": 5,
-              "decimal_move": 0.0
-            },
-            "Nathaniel Collins": {
-              "first_verified_pre_event": {
-                "fetched_at": "2026-09-21T12:55:57.664481+00:00",
-                "decimal_price": 3.6,
-                "american_price": 260
-              },
-              "latest_verified_pre_event": {
-                "fetched_at": "2026-09-22T13:27:10.547562+00:00",
-                "decimal_price": 3.6,
-                "american_price": 260
-              },
-              "observations": 5,
-              "decimal_move": 0.0
-            }
-          },
-          "Unibet": {
-            "Liam Davies": {
-              "first_verified_pre_event": {
-                "fetched_at": "2026-09-22T05:04:16.319052+00:00",
-                "decimal_price": 1.2985074626865671,
-                "american_price": -335
-              },
-              "latest_verified_pre_event": {
-                "fetched_at": "2026-09-22T13:27:10.547562+00:00",
-                "decimal_price": 1.2985074626865671,
-                "american_price": -335
-              },
-              "observations": 2,
-              "decimal_move": 0.0
-            },
-            "Nathaniel Collins": {
-              "first_verified_pre_event": {
-                "fetched_at": "2026-09-22T05:04:16.319052+00:00",
-                "decimal_price": 3.35,
-                "american_price": 235
-              },
-              "latest_verified_pre_event": {
-                "fetched_at": "2026-09-22T13:27:10.547562+00:00",
-                "decimal_price": 3.35,
-                "american_price": 235
-              },
-              "observations": 2,
-              "decimal_move": 0.0
-            }
-          }
-        },
-        "consensus_latest_verified": {
-          "Liam Davies": {
-            "books": 4,
-            "median_latest_verified_decimal": 1.288143,
-            "min_latest_verified_decimal": 1.2352941176470589,
-            "max_latest_verified_decimal": 1.3333333333333333
-          },
-          "Nathaniel Collins": {
-            "books": 4,
-            "median_latest_verified_decimal": 3.55,
-            "min_latest_verified_decimal": 3.35,
-            "max_latest_verified_decimal": 3.9
-          }
-        },
-        "books_with_both_sides_latest": 4,
-        "book_selection_pairs": 8
-      },
-      "selections": [
-        "Liam Davies",
-        "Nathaniel Collins"
-      ]
-    },
-    {
-      "event_date": "2026-09-26",
-      "bout_id": "18357",
-      "participants": [
-        "Kay Prospere",
-        "Luke McCormack"
-      ],
-      "first_snapshot": "2026-09-21T12:55:57.664481+00:00",
-      "last_snapshot": "2026-09-22T13:27:10.547562+00:00",
-      "verified_quote_rows": 26,
-      "verified_sportsbook_quote_rows": 26,
-      "verified_prediction_market_quote_rows": 0,
-      "market_classes": [
-        "sportsbook"
-      ],
-      "sportsbooks": [
-        "BetWay",
-        "Caesars",
-        "FanDuel",
-        "Unibet"
-      ],
-      "sportsbook_market_summary": {
-        "per_book": {
-          "BetWay": {
-            "Kay Prospere": {
-              "first_verified_pre_event": {
-                "fetched_at": "2026-09-22T13:27:10.547562+00:00",
-                "decimal_price": 6.0,
-                "american_price": 500
-              },
-              "latest_verified_pre_event": {
-                "fetched_at": "2026-09-22T13:27:10.547562+00:00",
-                "decimal_price": 6.0,
-                "american_price": 500
-              },
-              "observations": 1,
-              "decimal_move": 0.0
-            },
-            "Luke McCormack": {
-              "first_verified_pre_event": {
-                "fetched_at": "2026-09-22T13:27:10.547562+00:00",
-                "decimal_price": 1.125,
-                "american_price": -800
-              },
-              "latest_verified_pre_event": {
-                "fetched_at": "2026-09-22T13:27:10.547562+00:00",
-                "decimal_price": 1.125,
-                "american_price": -800
-              },
-              "observations": 1,
-              "decimal_move": 0.0
-            }
-          },
-          "Caesars": {
-            "Kay Prospere": {
-              "first_verified_pre_event": {
-                "fetched_at": "2026-09-21T12:55:57.664481+00:00",
-                "decimal_price": 5.5,
-                "american_price": 450
-              },
-              "latest_verified_pre_event": {
-                "fetched_at": "2026-09-22T13:27:10.547562+00:00",
-                "decimal_price": 5.5,
-                "american_price": 450
-              },
-              "observations": 5,
-              "decimal_move": 0.0
-            },
-            "Luke McCormack": {
-              "first_verified_pre_event": {
-                "fetched_at": "2026-09-21T12:55:57.664481+00:00",
-                "decimal_price": 1.1333333333333333,
-                "american_price": -750
-              },
-              "latest_verified_pre_event": {
-                "fetched_at": "2026-09-22T13:27:10.547562+00:00",
-                "decimal_price": 1.1333333333333333,
-                "american_price": -750
-              },
-              "observations": 5,
-              "decimal_move": 0.0
-            }
-          },
-          "FanDuel": {
-            "Kay Prospere": {
-              "first_verified_pre_event": {
-                "fetched_at": "2026-09-21T12:55:57.664481+00:00",
-                "decimal_price": 6.0,
-                "american_price": 500
-              },
-              "latest_verified_pre_event": {
-                "fetched_at": "2026-09-22T13:27:10.547562+00:00",
-                "decimal_price": 6.0,
-                "american_price": 500
-              },
-              "observations": 5,
-              "decimal_move": 0.0
-            },
-            "Luke McCormack": {
-              "first_verified_pre_event": {
-                "fetched_at": "2026-09-21T12:55:57.664481+00:00",
-                "decimal_price": 1.1052631578947367,
-                "american_price": -950
-              },
-              "latest_verified_pre_event": {
-                "fetched_at": "2026-09-22T13:27:10.547562+00:00",
-                "decimal_price": 1.1052631578947367,
-                "american_price": -950
-              },
-              "observations": 5,
-              "decimal_move": 0.0
-            }
-          },
-          "Unibet": {
-            "Kay Prospere": {
-              "first_verified_pre_event": {
-                "fetched_at": "2026-09-22T05:04:16.319052+00:00",
-                "decimal_price": 6.1,
-                "american_price": 510
-              },
-              "latest_verified_pre_event": {
-                "fetched_at": "2026-09-22T13:27:10.547562+00:00",
-                "decimal_price": 6.1,
-                "american_price": 510
-              },
-              "observations": 2,
-              "decimal_move": 0.0
-            },
-            "Luke McCormack": {
-              "first_verified_pre_event": {
-                "fetched_at": "2026-09-22T05:04:16.319052+00:00",
-                "decimal_price": 1.1197604790419162,
-                "american_price": -835
-              },
-              "latest_verified_pre_event": {
-                "fetched_at": "2026-09-22T13:27:10.547562+00:00",
-                "decimal_price": 1.1197604790419162,
-                "american_price": -835
-              },
-              "observations": 2,
-              "decimal_move": 0.0
-            }
-          }
-        },
-        "consensus_latest_verified": {
-          "Kay Prospere": {
-            "books": 4,
-            "median_latest_verified_decimal": 6.0,
-            "min_latest_verified_decimal": 5.5,
-            "max_latest_verified_decimal": 6.1
-          },
-          "Luke McCormack": {
-            "books": 4,
-            "median_latest_verified_decimal": 1.12238,
-            "min_latest_verified_decimal": 1.1052631578947367,
-            "max_latest_verified_decimal": 1.1333333333333333
-          }
-        },
-        "books_with_both_sides_latest": 4,
-        "book_selection_pairs": 8
-      },
-      "selections": [
-        "Kay Prospere",
-        "Luke McCormack"
-      ]
-    },
-    {
-      "event_date": "2026-09-26",
-      "bout_id": "18429",
-      "participants": [
-        "Craig Richards",
-        "Radivoje Kalajdzic"
-      ],
-      "first_snapshot": "2026-09-21T12:55:57.664481+00:00",
-      "last_snapshot": "2026-09-22T13:27:10.547562+00:00",
-      "verified_quote_rows": 24,
-      "verified_sportsbook_quote_rows": 24,
-      "verified_prediction_market_quote_rows": 0,
-      "market_classes": [
-        "sportsbook"
-      ],
-      "sportsbooks": [
-        "BetWay",
-        "FanDuel",
-        "Unibet"
-      ],
-      "sportsbook_market_summary": {
-        "per_book": {
-          "BetWay": {
-            "Craig Richards": {
-              "first_verified_pre_event": {
-                "fetched_at": "2026-09-21T12:55:57.664481+00:00",
-                "decimal_price": 2.3,
-                "american_price": 130
-              },
-              "latest_verified_pre_event": {
-                "fetched_at": "2026-09-22T13:27:10.547562+00:00",
-                "decimal_price": 2.15,
-                "american_price": 115
-              },
-              "observations": 5,
-              "decimal_move": -0.15
-            },
-            "Radivoje Kalajdzic": {
-              "first_verified_pre_event": {
-                "fetched_at": "2026-09-21T12:55:57.664481+00:00",
-                "decimal_price": 1.6666666666666665,
-                "american_price": -150
-              },
-              "latest_verified_pre_event": {
-                "fetched_at": "2026-09-22T13:27:10.547562+00:00",
-                "decimal_price": 1.7246376811594204,
-                "american_price": -138
-              },
-              "observations": 5,
-              "decimal_move": 0.057971
-            }
-          },
-          "FanDuel": {
-            "Craig Richards": {
-              "first_verified_pre_event": {
-                "fetched_at": "2026-09-21T12:55:57.664481+00:00",
-                "decimal_price": 2.2,
-                "american_price": 120
-              },
-              "latest_verified_pre_event": {
-                "fetched_at": "2026-09-22T13:27:10.547562+00:00",
-                "decimal_price": 2.2,
-                "american_price": 120
-              },
-              "observations": 5,
-              "decimal_move": 0.0
-            },
-            "Radivoje Kalajdzic": {
-              "first_verified_pre_event": {
-                "fetched_at": "2026-09-21T12:55:57.664481+00:00",
-                "decimal_price": 1.6578947368421053,
-                "american_price": -152
-              },
-              "latest_verified_pre_event": {
-                "fetched_at": "2026-09-22T13:27:10.547562+00:00",
-                "decimal_price": 1.6578947368421053,
-                "american_price": -152
-              },
-              "observations": 5,
-              "decimal_move": 0.0
-            }
-          },
-          "Unibet": {
-            "Craig Richards": {
-              "first_verified_pre_event": {
-                "fetched_at": "2026-09-22T05:04:16.319052+00:00",
-                "decimal_price": 2.02,
-                "american_price": 102
-              },
-              "latest_verified_pre_event": {
-                "fetched_at": "2026-09-22T13:27:10.547562+00:00",
-                "decimal_price": 2.02,
-                "american_price": 102
-              },
-              "observations": 2,
-              "decimal_move": 0.0
-            },
-            "Radivoje Kalajdzic": {
-              "first_verified_pre_event": {
-                "fetched_at": "2026-09-22T05:04:16.319052+00:00",
-                "decimal_price": 1.7462686567164178,
-                "american_price": -134
-              },
-              "latest_verified_pre_event": {
-                "fetched_at": "2026-09-22T13:27:10.547562+00:00",
-                "decimal_price": 1.7462686567164178,
-                "american_price": -134
-              },
-              "observations": 2,
-              "decimal_move": 0.0
-            }
-          }
-        },
-        "consensus_latest_verified": {
-          "Craig Richards": {
-            "books": 3,
-            "median_latest_verified_decimal": 2.15,
-            "min_latest_verified_decimal": 2.02,
-            "max_latest_verified_decimal": 2.2
-          },
-          "Radivoje Kalajdzic": {
-            "books": 3,
-            "median_latest_verified_decimal": 1.724638,
-            "min_latest_verified_decimal": 1.6578947368421053,
-            "max_latest_verified_decimal": 1.7462686567164178
-          }
-        },
-        "books_with_both_sides_latest": 3,
-        "book_selection_pairs": 6
-      },
-      "selections": [
-        "Craig Richards",
-        "Radivoje Kalajdzic"
-      ]
-    },
-    {
-      "event_date": "2026-09-26",
-      "bout_id": "18453",
-      "participants": [
-        "Johnny Fisher",
-        "Michael Pirotton"
-      ],
-      "first_snapshot": "2026-09-21T12:55:57.664481+00:00",
-      "last_snapshot": "2026-09-22T13:27:10.547562+00:00",
-      "verified_quote_rows": 24,
-      "verified_sportsbook_quote_rows": 24,
-      "verified_prediction_market_quote_rows": 0,
-      "market_classes": [
-        "sportsbook"
-      ],
-      "sportsbooks": [
-        "BetWay",
-        "FanDuel",
-        "Unibet"
-      ],
-      "sportsbook_market_summary": {
-        "per_book": {
-          "BetWay": {
-            "Johnny Fisher": {
-              "first_verified_pre_event": {
-                "fetched_at": "2026-09-21T12:55:57.664481+00:00",
-                "decimal_price": 1.0630119722747322,
-                "american_price": -1587
-              },
-              "latest_verified_pre_event": {
-                "fetched_at": "2026-09-22T13:27:10.547562+00:00",
-                "decimal_price": 1.0630119722747322,
-                "american_price": -1587
-              },
-              "observations": 5,
-              "decimal_move": 0.0
-            },
-            "Michael Pirotton": {
-              "first_verified_pre_event": {
-                "fetched_at": "2026-09-21T12:55:57.664481+00:00",
-                "decimal_price": 8.5,
-                "american_price": 750
-              },
-              "latest_verified_pre_event": {
-                "fetched_at": "2026-09-22T13:27:10.547562+00:00",
-                "decimal_price": 8.5,
-                "american_price": 750
-              },
-              "observations": 5,
-              "decimal_move": 0.0
-            }
-          },
-          "FanDuel": {
-            "Johnny Fisher": {
-              "first_verified_pre_event": {
-                "fetched_at": "2026-09-21T12:55:57.664481+00:00",
-                "decimal_price": 1.05,
-                "american_price": -2000
-              },
-              "latest_verified_pre_event": {
-                "fetched_at": "2026-09-22T13:27:10.547562+00:00",
-                "decimal_price": 1.05,
-                "american_price": -2000
-              },
-              "observations": 5,
-              "decimal_move": 0.0
-            },
-            "Michael Pirotton": {
-              "first_verified_pre_event": {
-                "fetched_at": "2026-09-21T12:55:57.664481+00:00",
-                "decimal_price": 8.3,
-                "american_price": 730
-              },
-              "latest_verified_pre_event": {
-                "fetched_at": "2026-09-22T13:27:10.547562+00:00",
-                "decimal_price": 8.3,
-                "american_price": 730
-              },
-              "observations": 5,
-              "decimal_move": 0.0
-            }
-          },
-          "Unibet": {
-            "Johnny Fisher": {
-              "first_verified_pre_event": {
-                "fetched_at": "2026-09-22T05:04:16.319052+00:00",
-                "decimal_price": 1.06993006993007,
-                "american_price": -1430
-              },
-              "latest_verified_pre_event": {
-                "fetched_at": "2026-09-22T13:27:10.547562+00:00",
-                "decimal_price": 1.06993006993007,
-                "american_price": -1430
-              },
-              "observations": 2,
-              "decimal_move": 0.0
-            },
-            "Michael Pirotton": {
-              "first_verified_pre_event": {
-                "fetched_at": "2026-09-22T05:04:16.319052+00:00",
-                "decimal_price": 9.0,
-                "american_price": 800
-              },
-              "latest_verified_pre_event": {
-                "fetched_at": "2026-09-22T13:27:10.547562+00:00",
-                "decimal_price": 9.0,
-                "american_price": 800
-              },
-              "observations": 2,
-              "decimal_move": 0.0
-            }
-          }
-        },
-        "consensus_latest_verified": {
-          "Johnny Fisher": {
-            "books": 3,
-            "median_latest_verified_decimal": 1.063012,
-            "min_latest_verified_decimal": 1.05,
-            "max_latest_verified_decimal": 1.06993006993007
-          },
-          "Michael Pirotton": {
-            "books": 3,
-            "median_latest_verified_decimal": 8.5,
-            "min_latest_verified_decimal": 8.3,
-            "max_latest_verified_decimal": 9.0
-          }
-        },
-        "books_with_both_sides_latest": 3,
-        "book_selection_pairs": 6
-      },
-      "selections": [
-        "Johnny Fisher",
-        "Michael Pirotton"
-      ]
-    },
-    {
-      "event_date": "2026-09-26",
-      "bout_id": "18534",
-      "participants": [
-        "Amir Abubaker",
-        "Bradley Goldsmith"
-      ],
-      "first_snapshot": "2026-09-21T12:55:57.664481+00:00",
-      "last_snapshot": "2026-09-22T13:27:10.547562+00:00",
-      "verified_quote_rows": 12,
-      "verified_sportsbook_quote_rows": 12,
-      "verified_prediction_market_quote_rows": 0,
-      "market_classes": [
-        "sportsbook"
-      ],
-      "sportsbooks": [
-        "BetWay",
-        "FanDuel"
-      ],
-      "sportsbook_market_summary": {
-        "per_book": {
-          "BetWay": {
-            "Amir Abubaker": {
-              "first_verified_pre_event": {
-                "fetched_at": "2026-09-22T13:27:10.547562+00:00",
-                "decimal_price": 5.5,
-                "american_price": 450
-              },
-              "latest_verified_pre_event": {
-                "fetched_at": "2026-09-22T13:27:10.547562+00:00",
-                "decimal_price": 5.5,
-                "american_price": 450
-              },
-              "observations": 1,
-              "decimal_move": 0.0
-            },
-            "Bradley Goldsmith": {
-              "first_verified_pre_event": {
-                "fetched_at": "2026-09-22T13:27:10.547562+00:00",
-                "decimal_price": 1.1430615164520743,
-                "american_price": -699
-              },
-              "latest_verified_pre_event": {
-                "fetched_at": "2026-09-22T13:27:10.547562+00:00",
-                "decimal_price": 1.1430615164520743,
-                "american_price": -699
-              },
-              "observations": 1,
-              "decimal_move": 0.0
-            }
-          },
-          "FanDuel": {
-            "Amir Abubaker": {
-              "first_verified_pre_event": {
-                "fetched_at": "2026-09-21T12:55:57.664481+00:00",
-                "decimal_price": 5.3,
-                "american_price": 430
-              },
-              "latest_verified_pre_event": {
-                "fetched_at": "2026-09-22T13:27:10.547562+00:00",
-                "decimal_price": 5.3,
-                "american_price": 430
-              },
-              "observations": 5,
-              "decimal_move": 0.0
-            },
-            "Bradley Goldsmith": {
-              "first_verified_pre_event": {
-                "fetched_at": "2026-09-21T12:55:57.664481+00:00",
-                "decimal_price": 1.1333333333333333,
-                "american_price": -750
-              },
-              "latest_verified_pre_event": {
-                "fetched_at": "2026-09-22T13:27:10.547562+00:00",
-                "decimal_price": 1.1333333333333333,
-                "american_price": -750
-              },
-              "observations": 5,
-              "decimal_move": 0.0
-            }
-          }
-        },
-        "consensus_latest_verified": {
-          "Amir Abubaker": {
-            "books": 2,
-            "median_latest_verified_decimal": 5.4,
-            "min_latest_verified_decimal": 5.3,
-            "max_latest_verified_decimal": 5.5
-          },
-          "Bradley Goldsmith": {
-            "books": 2,
-            "median_latest_verified_decimal": 1.138197,
-            "min_latest_verified_decimal": 1.1333333333333333,
-            "max_latest_verified_decimal": 1.1430615164520743
-          }
-        },
-        "books_with_both_sides_latest": 2,
-        "book_selection_pairs": 4
-      },
-      "selections": [
-        "Amir Abubaker",
-        "Bradley Goldsmith"
-      ]
-    },
-    {
-      "event_date": "2026-09-26",
-      "bout_id": "18537",
-      "participants": [
-        "Lewis Morris",
-        "Nelson Birchall"
-      ],
-      "first_snapshot": "2026-09-21T12:55:57.664481+00:00",
-      "last_snapshot": "2026-09-22T13:27:10.547562+00:00",
-      "verified_quote_rows": 10,
-      "verified_sportsbook_quote_rows": 10,
-      "verified_prediction_market_quote_rows": 0,
-      "market_classes": [
-        "sportsbook"
-      ],
-      "sportsbooks": [
-        "FanDuel"
-      ],
-      "sportsbook_market_summary": {
-        "per_book": {
-          "FanDuel": {
-            "Lewis Morris": {
-              "first_verified_pre_event": {
-                "fetched_at": "2026-09-21T12:55:57.664481+00:00",
-                "decimal_price": 9.1,
-                "american_price": 810
-              },
-              "latest_verified_pre_event": {
-                "fetched_at": "2026-09-22T13:27:10.547562+00:00",
-                "decimal_price": 9.1,
-                "american_price": 810
-              },
-              "observations": 5,
-              "decimal_move": 0.0
-            },
-            "Nelson Birchall": {
-              "first_verified_pre_event": {
-                "fetched_at": "2026-09-21T12:55:57.664481+00:00",
-                "decimal_price": 1.0416666666666667,
-                "american_price": -2400
-              },
-              "latest_verified_pre_event": {
-                "fetched_at": "2026-09-22T13:27:10.547562+00:00",
-                "decimal_price": 1.0416666666666667,
-                "american_price": -2400
-              },
-              "observations": 5,
-              "decimal_move": 0.0
-            }
-          }
-        },
-        "consensus_latest_verified": {
-          "Lewis Morris": {
-            "books": 1,
-            "median_latest_verified_decimal": 9.1,
-            "min_latest_verified_decimal": 9.1,
-            "max_latest_verified_decimal": 9.1
-          },
-          "Nelson Birchall": {
-            "books": 1,
-            "median_latest_verified_decimal": 1.041667,
-            "min_latest_verified_decimal": 1.0416666666666667,
-            "max_latest_verified_decimal": 1.0416666666666667
-          }
-        },
-        "books_with_both_sides_latest": 1,
-        "book_selection_pairs": 2
-      },
-      "selections": [
-        "Lewis Morris",
-        "Nelson Birchall"
       ]
     },
     {
@@ -1848,7 +914,1140 @@
       "selections": [
         "Ricardo Malajika",
         "Tomoya Tsuboi"
+      ],
+      "wager_settlement_status": "unverified_bookmaker_rules",
+      "winner": "Ricardo Malajika",
+      "matching_source_rows": 0,
+      "result_sources": [
+        [
+          "external_verified_result",
+          "https://www.ringmagazine.com/news/malajika-upsets-tsuboi-to-win-wbc-gold-matsumoto-outworks-acosta-3qphqJNTtKDCuJ5gBMNFwa"
+        ],
+        [
+          "external_verified_result",
+          "https://www.timeslive.co.za/sport/2026-09-27-ricardo-malajika-wins-wbc-crown-by-split-decision-in-tokyo/"
+        ]
+      ],
+      "result_quality": "two_plus_independent_published_result_sources_exact_date_pair",
+      "result_method": "SD",
+      "result_round": 12,
+      "result_time": null
+    },
+    {
+      "event_date": "2026-09-27",
+      "bout_id": "18382",
+      "participants": [
+        "Ryosuke Nishida",
+        "Sam Goodman"
+      ],
+      "first_snapshot": "2026-09-21T12:55:57.664481+00:00",
+      "last_snapshot": "2026-09-24T13:35:27.719802+00:00",
+      "verified_quote_rows": 104,
+      "verified_sportsbook_quote_rows": 104,
+      "verified_prediction_market_quote_rows": 0,
+      "market_classes": [
+        "sportsbook"
+      ],
+      "sportsbooks": [
+        "BetWay",
+        "Caesars",
+        "FanDuel",
+        "Unibet"
+      ],
+      "sportsbook_market_summary": {
+        "per_book": {
+          "BetWay": {
+            "Ryosuke Nishida": {
+              "first_verified_pre_event": {
+                "fetched_at": "2026-09-21T12:55:57.664481+00:00",
+                "decimal_price": 1.5,
+                "american_price": -200
+              },
+              "latest_verified_pre_event": {
+                "fetched_at": "2026-09-24T13:35:27.719802+00:00",
+                "decimal_price": 1.5,
+                "american_price": -200
+              },
+              "observations": 13,
+              "decimal_move": 0.0
+            },
+            "Sam Goodman": {
+              "first_verified_pre_event": {
+                "fetched_at": "2026-09-21T12:55:57.664481+00:00",
+                "decimal_price": 2.63,
+                "american_price": 163
+              },
+              "latest_verified_pre_event": {
+                "fetched_at": "2026-09-24T13:35:27.719802+00:00",
+                "decimal_price": 2.63,
+                "american_price": 163
+              },
+              "observations": 13,
+              "decimal_move": 0.0
+            }
+          },
+          "Caesars": {
+            "Ryosuke Nishida": {
+              "first_verified_pre_event": {
+                "fetched_at": "2026-09-21T12:55:57.664481+00:00",
+                "decimal_price": 1.5,
+                "american_price": -200
+              },
+              "latest_verified_pre_event": {
+                "fetched_at": "2026-09-24T13:35:27.719802+00:00",
+                "decimal_price": 1.5,
+                "american_price": -200
+              },
+              "observations": 13,
+              "decimal_move": 0.0
+            },
+            "Sam Goodman": {
+              "first_verified_pre_event": {
+                "fetched_at": "2026-09-21T12:55:57.664481+00:00",
+                "decimal_price": 2.5,
+                "american_price": 150
+              },
+              "latest_verified_pre_event": {
+                "fetched_at": "2026-09-24T13:35:27.719802+00:00",
+                "decimal_price": 2.5,
+                "american_price": 150
+              },
+              "observations": 13,
+              "decimal_move": 0.0
+            }
+          },
+          "FanDuel": {
+            "Ryosuke Nishida": {
+              "first_verified_pre_event": {
+                "fetched_at": "2026-09-21T12:55:57.664481+00:00",
+                "decimal_price": 1.3571428571428572,
+                "american_price": -280
+              },
+              "latest_verified_pre_event": {
+                "fetched_at": "2026-09-24T13:35:27.719802+00:00",
+                "decimal_price": 1.5,
+                "american_price": -200
+              },
+              "observations": 13,
+              "decimal_move": 0.142857
+            },
+            "Sam Goodman": {
+              "first_verified_pre_event": {
+                "fetched_at": "2026-09-21T12:55:57.664481+00:00",
+                "decimal_price": 3.0,
+                "american_price": 200
+              },
+              "latest_verified_pre_event": {
+                "fetched_at": "2026-09-24T13:35:27.719802+00:00",
+                "decimal_price": 2.46,
+                "american_price": 146
+              },
+              "observations": 13,
+              "decimal_move": -0.54
+            }
+          },
+          "Unibet": {
+            "Ryosuke Nishida": {
+              "first_verified_pre_event": {
+                "fetched_at": "2026-09-21T12:55:57.664481+00:00",
+                "decimal_price": 1.5714285714285714,
+                "american_price": -175
+              },
+              "latest_verified_pre_event": {
+                "fetched_at": "2026-09-24T13:35:27.719802+00:00",
+                "decimal_price": 1.5,
+                "american_price": -200
+              },
+              "observations": 13,
+              "decimal_move": -0.071429
+            },
+            "Sam Goodman": {
+              "first_verified_pre_event": {
+                "fetched_at": "2026-09-21T12:55:57.664481+00:00",
+                "decimal_price": 2.3,
+                "american_price": 130
+              },
+              "latest_verified_pre_event": {
+                "fetched_at": "2026-09-24T13:35:27.719802+00:00",
+                "decimal_price": 2.48,
+                "american_price": 148
+              },
+              "observations": 13,
+              "decimal_move": 0.18
+            }
+          }
+        },
+        "consensus_latest_verified": {
+          "Ryosuke Nishida": {
+            "books": 4,
+            "median_latest_verified_decimal": 1.5,
+            "min_latest_verified_decimal": 1.5,
+            "max_latest_verified_decimal": 1.5
+          },
+          "Sam Goodman": {
+            "books": 4,
+            "median_latest_verified_decimal": 2.49,
+            "min_latest_verified_decimal": 2.46,
+            "max_latest_verified_decimal": 2.63
+          }
+        },
+        "books_with_both_sides_latest": 4,
+        "book_selection_pairs": 8
+      },
+      "selections": [
+        "Ryosuke Nishida",
+        "Sam Goodman"
+      ],
+      "wager_settlement_status": "unverified_bookmaker_rules",
+      "winner": "Sam Goodman",
+      "matching_source_rows": 2,
+      "result_sources": [
+        [
+          "wikipedia",
+          "https://en.wikipedia.org/wiki/Ryosuke_Nishida#13-2026-09-27"
+        ],
+        [
+          "wikipedia",
+          "https://en.wikipedia.org/wiki/Sam_Goodman_%28boxer%29#24-2026-09-27"
+        ]
       ]
+    },
+    {
+      "event_date": "2026-10-03",
+      "bout_id": "18443",
+      "participants": [
+        "Bilal Fawaz",
+        "Eithan James"
+      ],
+      "first_snapshot": "2026-09-21T12:55:57.664481+00:00",
+      "last_snapshot": "2026-09-29T10:44:12.451749+00:00",
+      "verified_quote_rows": 152,
+      "verified_sportsbook_quote_rows": 148,
+      "verified_prediction_market_quote_rows": 4,
+      "market_classes": [
+        "prediction_market",
+        "sportsbook"
+      ],
+      "sportsbooks": [
+        "BetWay",
+        "Caesars",
+        "FanDuel"
+      ],
+      "sportsbook_market_summary": {
+        "per_book": {
+          "BetWay": {
+            "Bilal Fawaz": {
+              "first_verified_pre_event": {
+                "fetched_at": "2026-09-22T13:27:10.547562+00:00",
+                "decimal_price": 1.1430615164520743,
+                "american_price": -699
+              },
+              "latest_verified_pre_event": {
+                "fetched_at": "2026-09-29T10:44:12.451749+00:00",
+                "decimal_price": 1.1430615164520743,
+                "american_price": -699
+              },
+              "observations": 27,
+              "decimal_move": 0.0
+            },
+            "Eithan James": {
+              "first_verified_pre_event": {
+                "fetched_at": "2026-09-22T13:27:10.547562+00:00",
+                "decimal_price": 5.5,
+                "american_price": 450
+              },
+              "latest_verified_pre_event": {
+                "fetched_at": "2026-09-29T10:44:12.451749+00:00",
+                "decimal_price": 5.5,
+                "american_price": 450
+              },
+              "observations": 27,
+              "decimal_move": 0.0
+            }
+          },
+          "Caesars": {
+            "Bilal Fawaz": {
+              "first_verified_pre_event": {
+                "fetched_at": "2026-09-25T05:02:58.898351+00:00",
+                "decimal_price": 1.1333333333333333,
+                "american_price": -750
+              },
+              "latest_verified_pre_event": {
+                "fetched_at": "2026-09-29T10:44:12.451749+00:00",
+                "decimal_price": 1.1333333333333333,
+                "american_price": -750
+              },
+              "observations": 16,
+              "decimal_move": 0.0
+            },
+            "Eithan James": {
+              "first_verified_pre_event": {
+                "fetched_at": "2026-09-25T05:02:58.898351+00:00",
+                "decimal_price": 5.6,
+                "american_price": 460
+              },
+              "latest_verified_pre_event": {
+                "fetched_at": "2026-09-29T10:44:12.451749+00:00",
+                "decimal_price": 5.6,
+                "american_price": 460
+              },
+              "observations": 16,
+              "decimal_move": 0.0
+            }
+          },
+          "FanDuel": {
+            "Bilal Fawaz": {
+              "first_verified_pre_event": {
+                "fetched_at": "2026-09-21T12:55:57.664481+00:00",
+                "decimal_price": 1.1333333333333333,
+                "american_price": -750
+              },
+              "latest_verified_pre_event": {
+                "fetched_at": "2026-09-29T10:44:12.451749+00:00",
+                "decimal_price": 1.1333333333333333,
+                "american_price": -750
+              },
+              "observations": 31,
+              "decimal_move": 0.0
+            },
+            "Eithan James": {
+              "first_verified_pre_event": {
+                "fetched_at": "2026-09-21T12:55:57.664481+00:00",
+                "decimal_price": 5.3,
+                "american_price": 430
+              },
+              "latest_verified_pre_event": {
+                "fetched_at": "2026-09-29T10:44:12.451749+00:00",
+                "decimal_price": 5.3,
+                "american_price": 430
+              },
+              "observations": 31,
+              "decimal_move": 0.0
+            }
+          }
+        },
+        "consensus_latest_verified": {
+          "Bilal Fawaz": {
+            "books": 3,
+            "median_latest_verified_decimal": 1.133333,
+            "min_latest_verified_decimal": 1.1333333333333333,
+            "max_latest_verified_decimal": 1.1430615164520743
+          },
+          "Eithan James": {
+            "books": 3,
+            "median_latest_verified_decimal": 5.5,
+            "min_latest_verified_decimal": 5.3,
+            "max_latest_verified_decimal": 5.6
+          }
+        },
+        "books_with_both_sides_latest": 3,
+        "book_selection_pairs": 6
+      },
+      "selections": [
+        "Bilal Fawaz",
+        "Eithan James"
+      ],
+      "wager_settlement_status": "unverified_bookmaker_rules",
+      "winner": "Bilal Fawaz",
+      "matching_source_rows": 0,
+      "result_sources": [
+        [
+          "external_verified_result",
+          "https://www.boxingnews24.com/2026/10/bilal-fawaz-stops-eithan-james-in-eight-rounds/"
+        ],
+        [
+          "external_verified_result",
+          "https://www.ringmagazine.com/news/fawaz-knocks-out-james-retains-british-title-1KAkQi02gqPGdfwtbj4t6x"
+        ]
+      ],
+      "result_quality": "two_plus_independent_published_result_sources_exact_date_pair",
+      "result_method": "TKO",
+      "result_round": 8,
+      "result_time": null
+    }
+  ],
+  "past_unresolved": [
+    {
+      "event_date": "2026-09-20",
+      "bout_id": "4262",
+      "participants": [
+        "Floyd Mayweather Jr",
+        "Manny Pacquiao"
+      ],
+      "first_snapshot": "2026-09-15T19:43:56.109959+00:00",
+      "last_snapshot": "2026-09-19T12:32:18.162836+00:00",
+      "verified_quote_rows": 32,
+      "verified_sportsbook_quote_rows": 0,
+      "verified_prediction_market_quote_rows": 32,
+      "market_classes": [
+        "prediction_market"
+      ],
+      "sportsbooks": [],
+      "sportsbook_market_summary": {
+        "per_book": {},
+        "consensus_latest_verified": {},
+        "books_with_both_sides_latest": 0,
+        "book_selection_pairs": 0
+      },
+      "selections": [
+        "Floyd Mayweather Jr",
+        "Manny Pacquiao"
+      ],
+      "wager_settlement_status": "unverified_bookmaker_rules"
+    },
+    {
+      "event_date": "2026-09-23",
+      "bout_id": "18523",
+      "participants": [
+        "Kyonosuke Kameda",
+        "Sebastian Hernandez Reyes"
+      ],
+      "first_snapshot": "2026-09-13T08:27:50.090612+00:00",
+      "last_snapshot": "2026-09-23T04:50:16.969312+00:00",
+      "verified_quote_rows": 132,
+      "verified_sportsbook_quote_rows": 132,
+      "verified_prediction_market_quote_rows": 0,
+      "market_classes": [
+        "sportsbook"
+      ],
+      "sportsbooks": [
+        "BetWay",
+        "FanDuel"
+      ],
+      "sportsbook_market_summary": {
+        "per_book": {
+          "BetWay": {
+            "Kyonosuke Kameda": {
+              "first_verified_pre_event": {
+                "fetched_at": "2026-09-16T22:59:43.697999+00:00",
+                "decimal_price": 4.0,
+                "american_price": 300
+              },
+              "latest_verified_pre_event": {
+                "fetched_at": "2026-09-23T04:50:16.969312+00:00",
+                "decimal_price": 4.5,
+                "american_price": 350
+              },
+              "observations": 26,
+              "decimal_move": 0.5
+            },
+            "Sebastian Hernandez Reyes": {
+              "first_verified_pre_event": {
+                "fetched_at": "2026-09-16T22:59:43.697999+00:00",
+                "decimal_price": 1.2857142857142856,
+                "american_price": -350
+              },
+              "latest_verified_pre_event": {
+                "fetched_at": "2026-09-23T04:50:16.969312+00:00",
+                "decimal_price": 1.2,
+                "american_price": -500
+              },
+              "observations": 26,
+              "decimal_move": -0.085714
+            }
+          },
+          "FanDuel": {
+            "Kyonosuke Kameda": {
+              "first_verified_pre_event": {
+                "fetched_at": "2026-09-13T08:27:50.090612+00:00",
+                "decimal_price": 5.0,
+                "american_price": 400
+              },
+              "latest_verified_pre_event": {
+                "fetched_at": "2026-09-23T04:50:16.969312+00:00",
+                "decimal_price": 4.6,
+                "american_price": 360
+              },
+              "observations": 40,
+              "decimal_move": -0.4
+            },
+            "Sebastian Hernandez Reyes": {
+              "first_verified_pre_event": {
+                "fetched_at": "2026-09-13T08:27:50.090612+00:00",
+                "decimal_price": 1.1538461538461537,
+                "american_price": -650
+              },
+              "latest_verified_pre_event": {
+                "fetched_at": "2026-09-23T04:50:16.969312+00:00",
+                "decimal_price": 1.1818181818181819,
+                "american_price": -550
+              },
+              "observations": 40,
+              "decimal_move": 0.027972
+            }
+          }
+        },
+        "consensus_latest_verified": {
+          "Kyonosuke Kameda": {
+            "books": 2,
+            "median_latest_verified_decimal": 4.55,
+            "min_latest_verified_decimal": 4.5,
+            "max_latest_verified_decimal": 4.6
+          },
+          "Sebastian Hernandez Reyes": {
+            "books": 2,
+            "median_latest_verified_decimal": 1.190909,
+            "min_latest_verified_decimal": 1.1818181818181819,
+            "max_latest_verified_decimal": 1.2
+          }
+        },
+        "books_with_both_sides_latest": 2,
+        "book_selection_pairs": 4
+      },
+      "selections": [
+        "Kyonosuke Kameda",
+        "Sebastian Hernandez Reyes"
+      ],
+      "wager_settlement_status": "unverified_bookmaker_rules"
+    },
+    {
+      "event_date": "2026-09-26",
+      "bout_id": "18350",
+      "participants": [
+        "Liam Davies",
+        "Nathaniel Collins"
+      ],
+      "first_snapshot": "2026-09-21T12:55:57.664481+00:00",
+      "last_snapshot": "2026-09-22T13:27:10.547562+00:00",
+      "verified_quote_rows": 34,
+      "verified_sportsbook_quote_rows": 34,
+      "verified_prediction_market_quote_rows": 0,
+      "market_classes": [
+        "sportsbook"
+      ],
+      "sportsbooks": [
+        "BetWay",
+        "Caesars",
+        "FanDuel",
+        "Unibet"
+      ],
+      "sportsbook_market_summary": {
+        "per_book": {
+          "BetWay": {
+            "Liam Davies": {
+              "first_verified_pre_event": {
+                "fetched_at": "2026-09-21T12:55:57.664481+00:00",
+                "decimal_price": 1.25,
+                "american_price": -400
+              },
+              "latest_verified_pre_event": {
+                "fetched_at": "2026-09-22T13:27:10.547562+00:00",
+                "decimal_price": 1.3333333333333333,
+                "american_price": -300
+              },
+              "observations": 5,
+              "decimal_move": 0.083333
+            },
+            "Nathaniel Collins": {
+              "first_verified_pre_event": {
+                "fetched_at": "2026-09-21T12:55:57.664481+00:00",
+                "decimal_price": 4.0,
+                "american_price": 300
+              },
+              "latest_verified_pre_event": {
+                "fetched_at": "2026-09-22T13:27:10.547562+00:00",
+                "decimal_price": 3.5,
+                "american_price": 250
+              },
+              "observations": 5,
+              "decimal_move": -0.5
+            }
+          },
+          "Caesars": {
+            "Liam Davies": {
+              "first_verified_pre_event": {
+                "fetched_at": "2026-09-21T12:55:57.664481+00:00",
+                "decimal_price": 1.2352941176470589,
+                "american_price": -425
+              },
+              "latest_verified_pre_event": {
+                "fetched_at": "2026-09-22T13:27:10.547562+00:00",
+                "decimal_price": 1.2352941176470589,
+                "american_price": -425
+              },
+              "observations": 5,
+              "decimal_move": 0.0
+            },
+            "Nathaniel Collins": {
+              "first_verified_pre_event": {
+                "fetched_at": "2026-09-21T12:55:57.664481+00:00",
+                "decimal_price": 3.9,
+                "american_price": 290
+              },
+              "latest_verified_pre_event": {
+                "fetched_at": "2026-09-22T13:27:10.547562+00:00",
+                "decimal_price": 3.9,
+                "american_price": 290
+              },
+              "observations": 5,
+              "decimal_move": 0.0
+            }
+          },
+          "FanDuel": {
+            "Liam Davies": {
+              "first_verified_pre_event": {
+                "fetched_at": "2026-09-21T12:55:57.664481+00:00",
+                "decimal_price": 1.2777777777777777,
+                "american_price": -360
+              },
+              "latest_verified_pre_event": {
+                "fetched_at": "2026-09-22T13:27:10.547562+00:00",
+                "decimal_price": 1.2777777777777777,
+                "american_price": -360
+              },
+              "observations": 5,
+              "decimal_move": 0.0
+            },
+            "Nathaniel Collins": {
+              "first_verified_pre_event": {
+                "fetched_at": "2026-09-21T12:55:57.664481+00:00",
+                "decimal_price": 3.6,
+                "american_price": 260
+              },
+              "latest_verified_pre_event": {
+                "fetched_at": "2026-09-22T13:27:10.547562+00:00",
+                "decimal_price": 3.6,
+                "american_price": 260
+              },
+              "observations": 5,
+              "decimal_move": 0.0
+            }
+          },
+          "Unibet": {
+            "Liam Davies": {
+              "first_verified_pre_event": {
+                "fetched_at": "2026-09-22T05:04:16.319052+00:00",
+                "decimal_price": 1.2985074626865671,
+                "american_price": -335
+              },
+              "latest_verified_pre_event": {
+                "fetched_at": "2026-09-22T13:27:10.547562+00:00",
+                "decimal_price": 1.2985074626865671,
+                "american_price": -335
+              },
+              "observations": 2,
+              "decimal_move": 0.0
+            },
+            "Nathaniel Collins": {
+              "first_verified_pre_event": {
+                "fetched_at": "2026-09-22T05:04:16.319052+00:00",
+                "decimal_price": 3.35,
+                "american_price": 235
+              },
+              "latest_verified_pre_event": {
+                "fetched_at": "2026-09-22T13:27:10.547562+00:00",
+                "decimal_price": 3.35,
+                "american_price": 235
+              },
+              "observations": 2,
+              "decimal_move": 0.0
+            }
+          }
+        },
+        "consensus_latest_verified": {
+          "Liam Davies": {
+            "books": 4,
+            "median_latest_verified_decimal": 1.288143,
+            "min_latest_verified_decimal": 1.2352941176470589,
+            "max_latest_verified_decimal": 1.3333333333333333
+          },
+          "Nathaniel Collins": {
+            "books": 4,
+            "median_latest_verified_decimal": 3.55,
+            "min_latest_verified_decimal": 3.35,
+            "max_latest_verified_decimal": 3.9
+          }
+        },
+        "books_with_both_sides_latest": 4,
+        "book_selection_pairs": 8
+      },
+      "selections": [
+        "Liam Davies",
+        "Nathaniel Collins"
+      ],
+      "wager_settlement_status": "unverified_bookmaker_rules"
+    },
+    {
+      "event_date": "2026-09-26",
+      "bout_id": "18357",
+      "participants": [
+        "Kay Prospere",
+        "Luke McCormack"
+      ],
+      "first_snapshot": "2026-09-21T12:55:57.664481+00:00",
+      "last_snapshot": "2026-09-22T13:27:10.547562+00:00",
+      "verified_quote_rows": 26,
+      "verified_sportsbook_quote_rows": 26,
+      "verified_prediction_market_quote_rows": 0,
+      "market_classes": [
+        "sportsbook"
+      ],
+      "sportsbooks": [
+        "BetWay",
+        "Caesars",
+        "FanDuel",
+        "Unibet"
+      ],
+      "sportsbook_market_summary": {
+        "per_book": {
+          "BetWay": {
+            "Kay Prospere": {
+              "first_verified_pre_event": {
+                "fetched_at": "2026-09-22T13:27:10.547562+00:00",
+                "decimal_price": 6.0,
+                "american_price": 500
+              },
+              "latest_verified_pre_event": {
+                "fetched_at": "2026-09-22T13:27:10.547562+00:00",
+                "decimal_price": 6.0,
+                "american_price": 500
+              },
+              "observations": 1,
+              "decimal_move": 0.0
+            },
+            "Luke McCormack": {
+              "first_verified_pre_event": {
+                "fetched_at": "2026-09-22T13:27:10.547562+00:00",
+                "decimal_price": 1.125,
+                "american_price": -800
+              },
+              "latest_verified_pre_event": {
+                "fetched_at": "2026-09-22T13:27:10.547562+00:00",
+                "decimal_price": 1.125,
+                "american_price": -800
+              },
+              "observations": 1,
+              "decimal_move": 0.0
+            }
+          },
+          "Caesars": {
+            "Kay Prospere": {
+              "first_verified_pre_event": {
+                "fetched_at": "2026-09-21T12:55:57.664481+00:00",
+                "decimal_price": 5.5,
+                "american_price": 450
+              },
+              "latest_verified_pre_event": {
+                "fetched_at": "2026-09-22T13:27:10.547562+00:00",
+                "decimal_price": 5.5,
+                "american_price": 450
+              },
+              "observations": 5,
+              "decimal_move": 0.0
+            },
+            "Luke McCormack": {
+              "first_verified_pre_event": {
+                "fetched_at": "2026-09-21T12:55:57.664481+00:00",
+                "decimal_price": 1.1333333333333333,
+                "american_price": -750
+              },
+              "latest_verified_pre_event": {
+                "fetched_at": "2026-09-22T13:27:10.547562+00:00",
+                "decimal_price": 1.1333333333333333,
+                "american_price": -750
+              },
+              "observations": 5,
+              "decimal_move": 0.0
+            }
+          },
+          "FanDuel": {
+            "Kay Prospere": {
+              "first_verified_pre_event": {
+                "fetched_at": "2026-09-21T12:55:57.664481+00:00",
+                "decimal_price": 6.0,
+                "american_price": 500
+              },
+              "latest_verified_pre_event": {
+                "fetched_at": "2026-09-22T13:27:10.547562+00:00",
+                "decimal_price": 6.0,
+                "american_price": 500
+              },
+              "observations": 5,
+              "decimal_move": 0.0
+            },
+            "Luke McCormack": {
+              "first_verified_pre_event": {
+                "fetched_at": "2026-09-21T12:55:57.664481+00:00",
+                "decimal_price": 1.1052631578947367,
+                "american_price": -950
+              },
+              "latest_verified_pre_event": {
+                "fetched_at": "2026-09-22T13:27:10.547562+00:00",
+                "decimal_price": 1.1052631578947367,
+                "american_price": -950
+              },
+              "observations": 5,
+              "decimal_move": 0.0
+            }
+          },
+          "Unibet": {
+            "Kay Prospere": {
+              "first_verified_pre_event": {
+                "fetched_at": "2026-09-22T05:04:16.319052+00:00",
+                "decimal_price": 6.1,
+                "american_price": 510
+              },
+              "latest_verified_pre_event": {
+                "fetched_at": "2026-09-22T13:27:10.547562+00:00",
+                "decimal_price": 6.1,
+                "american_price": 510
+              },
+              "observations": 2,
+              "decimal_move": 0.0
+            },
+            "Luke McCormack": {
+              "first_verified_pre_event": {
+                "fetched_at": "2026-09-22T05:04:16.319052+00:00",
+                "decimal_price": 1.1197604790419162,
+                "american_price": -835
+              },
+              "latest_verified_pre_event": {
+                "fetched_at": "2026-09-22T13:27:10.547562+00:00",
+                "decimal_price": 1.1197604790419162,
+                "american_price": -835
+              },
+              "observations": 2,
+              "decimal_move": 0.0
+            }
+          }
+        },
+        "consensus_latest_verified": {
+          "Kay Prospere": {
+            "books": 4,
+            "median_latest_verified_decimal": 6.0,
+            "min_latest_verified_decimal": 5.5,
+            "max_latest_verified_decimal": 6.1
+          },
+          "Luke McCormack": {
+            "books": 4,
+            "median_latest_verified_decimal": 1.12238,
+            "min_latest_verified_decimal": 1.1052631578947367,
+            "max_latest_verified_decimal": 1.1333333333333333
+          }
+        },
+        "books_with_both_sides_latest": 4,
+        "book_selection_pairs": 8
+      },
+      "selections": [
+        "Kay Prospere",
+        "Luke McCormack"
+      ],
+      "wager_settlement_status": "unverified_bookmaker_rules"
+    },
+    {
+      "event_date": "2026-09-26",
+      "bout_id": "18453",
+      "participants": [
+        "Johnny Fisher",
+        "Michael Pirotton"
+      ],
+      "first_snapshot": "2026-09-21T12:55:57.664481+00:00",
+      "last_snapshot": "2026-09-22T13:27:10.547562+00:00",
+      "verified_quote_rows": 24,
+      "verified_sportsbook_quote_rows": 24,
+      "verified_prediction_market_quote_rows": 0,
+      "market_classes": [
+        "sportsbook"
+      ],
+      "sportsbooks": [
+        "BetWay",
+        "FanDuel",
+        "Unibet"
+      ],
+      "sportsbook_market_summary": {
+        "per_book": {
+          "BetWay": {
+            "Johnny Fisher": {
+              "first_verified_pre_event": {
+                "fetched_at": "2026-09-21T12:55:57.664481+00:00",
+                "decimal_price": 1.0630119722747322,
+                "american_price": -1587
+              },
+              "latest_verified_pre_event": {
+                "fetched_at": "2026-09-22T13:27:10.547562+00:00",
+                "decimal_price": 1.0630119722747322,
+                "american_price": -1587
+              },
+              "observations": 5,
+              "decimal_move": 0.0
+            },
+            "Michael Pirotton": {
+              "first_verified_pre_event": {
+                "fetched_at": "2026-09-21T12:55:57.664481+00:00",
+                "decimal_price": 8.5,
+                "american_price": 750
+              },
+              "latest_verified_pre_event": {
+                "fetched_at": "2026-09-22T13:27:10.547562+00:00",
+                "decimal_price": 8.5,
+                "american_price": 750
+              },
+              "observations": 5,
+              "decimal_move": 0.0
+            }
+          },
+          "FanDuel": {
+            "Johnny Fisher": {
+              "first_verified_pre_event": {
+                "fetched_at": "2026-09-21T12:55:57.664481+00:00",
+                "decimal_price": 1.05,
+                "american_price": -2000
+              },
+              "latest_verified_pre_event": {
+                "fetched_at": "2026-09-22T13:27:10.547562+00:00",
+                "decimal_price": 1.05,
+                "american_price": -2000
+              },
+              "observations": 5,
+              "decimal_move": 0.0
+            },
+            "Michael Pirotton": {
+              "first_verified_pre_event": {
+                "fetched_at": "2026-09-21T12:55:57.664481+00:00",
+                "decimal_price": 8.3,
+                "american_price": 730
+              },
+              "latest_verified_pre_event": {
+                "fetched_at": "2026-09-22T13:27:10.547562+00:00",
+                "decimal_price": 8.3,
+                "american_price": 730
+              },
+              "observations": 5,
+              "decimal_move": 0.0
+            }
+          },
+          "Unibet": {
+            "Johnny Fisher": {
+              "first_verified_pre_event": {
+                "fetched_at": "2026-09-22T05:04:16.319052+00:00",
+                "decimal_price": 1.06993006993007,
+                "american_price": -1430
+              },
+              "latest_verified_pre_event": {
+                "fetched_at": "2026-09-22T13:27:10.547562+00:00",
+                "decimal_price": 1.06993006993007,
+                "american_price": -1430
+              },
+              "observations": 2,
+              "decimal_move": 0.0
+            },
+            "Michael Pirotton": {
+              "first_verified_pre_event": {
+                "fetched_at": "2026-09-22T05:04:16.319052+00:00",
+                "decimal_price": 9.0,
+                "american_price": 800
+              },
+              "latest_verified_pre_event": {
+                "fetched_at": "2026-09-22T13:27:10.547562+00:00",
+                "decimal_price": 9.0,
+                "american_price": 800
+              },
+              "observations": 2,
+              "decimal_move": 0.0
+            }
+          }
+        },
+        "consensus_latest_verified": {
+          "Johnny Fisher": {
+            "books": 3,
+            "median_latest_verified_decimal": 1.063012,
+            "min_latest_verified_decimal": 1.05,
+            "max_latest_verified_decimal": 1.06993006993007
+          },
+          "Michael Pirotton": {
+            "books": 3,
+            "median_latest_verified_decimal": 8.5,
+            "min_latest_verified_decimal": 8.3,
+            "max_latest_verified_decimal": 9.0
+          }
+        },
+        "books_with_both_sides_latest": 3,
+        "book_selection_pairs": 6
+      },
+      "selections": [
+        "Johnny Fisher",
+        "Michael Pirotton"
+      ],
+      "wager_settlement_status": "unverified_bookmaker_rules"
+    },
+    {
+      "event_date": "2026-09-26",
+      "bout_id": "18534",
+      "participants": [
+        "Amir Abubaker",
+        "Bradley Goldsmith"
+      ],
+      "first_snapshot": "2026-09-21T12:55:57.664481+00:00",
+      "last_snapshot": "2026-09-22T13:27:10.547562+00:00",
+      "verified_quote_rows": 12,
+      "verified_sportsbook_quote_rows": 12,
+      "verified_prediction_market_quote_rows": 0,
+      "market_classes": [
+        "sportsbook"
+      ],
+      "sportsbooks": [
+        "BetWay",
+        "FanDuel"
+      ],
+      "sportsbook_market_summary": {
+        "per_book": {
+          "BetWay": {
+            "Amir Abubaker": {
+              "first_verified_pre_event": {
+                "fetched_at": "2026-09-22T13:27:10.547562+00:00",
+                "decimal_price": 5.5,
+                "american_price": 450
+              },
+              "latest_verified_pre_event": {
+                "fetched_at": "2026-09-22T13:27:10.547562+00:00",
+                "decimal_price": 5.5,
+                "american_price": 450
+              },
+              "observations": 1,
+              "decimal_move": 0.0
+            },
+            "Bradley Goldsmith": {
+              "first_verified_pre_event": {
+                "fetched_at": "2026-09-22T13:27:10.547562+00:00",
+                "decimal_price": 1.1430615164520743,
+                "american_price": -699
+              },
+              "latest_verified_pre_event": {
+                "fetched_at": "2026-09-22T13:27:10.547562+00:00",
+                "decimal_price": 1.1430615164520743,
+                "american_price": -699
+              },
+              "observations": 1,
+              "decimal_move": 0.0
+            }
+          },
+          "FanDuel": {
+            "Amir Abubaker": {
+              "first_verified_pre_event": {
+                "fetched_at": "2026-09-21T12:55:57.664481+00:00",
+                "decimal_price": 5.3,
+                "american_price": 430
+              },
+              "latest_verified_pre_event": {
+                "fetched_at": "2026-09-22T13:27:10.547562+00:00",
+                "decimal_price": 5.3,
+                "american_price": 430
+              },
+              "observations": 5,
+              "decimal_move": 0.0
+            },
+            "Bradley Goldsmith": {
+              "first_verified_pre_event": {
+                "fetched_at": "2026-09-21T12:55:57.664481+00:00",
+                "decimal_price": 1.1333333333333333,
+                "american_price": -750
+              },
+              "latest_verified_pre_event": {
+                "fetched_at": "2026-09-22T13:27:10.547562+00:00",
+                "decimal_price": 1.1333333333333333,
+                "american_price": -750
+              },
+              "observations": 5,
+              "decimal_move": 0.0
+            }
+          }
+        },
+        "consensus_latest_verified": {
+          "Amir Abubaker": {
+            "books": 2,
+            "median_latest_verified_decimal": 5.4,
+            "min_latest_verified_decimal": 5.3,
+            "max_latest_verified_decimal": 5.5
+          },
+          "Bradley Goldsmith": {
+            "books": 2,
+            "median_latest_verified_decimal": 1.138197,
+            "min_latest_verified_decimal": 1.1333333333333333,
+            "max_latest_verified_decimal": 1.1430615164520743
+          }
+        },
+        "books_with_both_sides_latest": 2,
+        "book_selection_pairs": 4
+      },
+      "selections": [
+        "Amir Abubaker",
+        "Bradley Goldsmith"
+      ],
+      "wager_settlement_status": "unverified_bookmaker_rules"
+    },
+    {
+      "event_date": "2026-09-26",
+      "bout_id": "18537",
+      "participants": [
+        "Lewis Morris",
+        "Nelson Birchall"
+      ],
+      "first_snapshot": "2026-09-21T12:55:57.664481+00:00",
+      "last_snapshot": "2026-09-22T13:27:10.547562+00:00",
+      "verified_quote_rows": 10,
+      "verified_sportsbook_quote_rows": 10,
+      "verified_prediction_market_quote_rows": 0,
+      "market_classes": [
+        "sportsbook"
+      ],
+      "sportsbooks": [
+        "FanDuel"
+      ],
+      "sportsbook_market_summary": {
+        "per_book": {
+          "FanDuel": {
+            "Lewis Morris": {
+              "first_verified_pre_event": {
+                "fetched_at": "2026-09-21T12:55:57.664481+00:00",
+                "decimal_price": 9.1,
+                "american_price": 810
+              },
+              "latest_verified_pre_event": {
+                "fetched_at": "2026-09-22T13:27:10.547562+00:00",
+                "decimal_price": 9.1,
+                "american_price": 810
+              },
+              "observations": 5,
+              "decimal_move": 0.0
+            },
+            "Nelson Birchall": {
+              "first_verified_pre_event": {
+                "fetched_at": "2026-09-21T12:55:57.664481+00:00",
+                "decimal_price": 1.0416666666666667,
+                "american_price": -2400
+              },
+              "latest_verified_pre_event": {
+                "fetched_at": "2026-09-22T13:27:10.547562+00:00",
+                "decimal_price": 1.0416666666666667,
+                "american_price": -2400
+              },
+              "observations": 5,
+              "decimal_move": 0.0
+            }
+          }
+        },
+        "consensus_latest_verified": {
+          "Lewis Morris": {
+            "books": 1,
+            "median_latest_verified_decimal": 9.1,
+            "min_latest_verified_decimal": 9.1,
+            "max_latest_verified_decimal": 9.1
+          },
+          "Nelson Birchall": {
+            "books": 1,
+            "median_latest_verified_decimal": 1.041667,
+            "min_latest_verified_decimal": 1.0416666666666667,
+            "max_latest_verified_decimal": 1.0416666666666667
+          }
+        },
+        "books_with_both_sides_latest": 1,
+        "book_selection_pairs": 2
+      },
+      "selections": [
+        "Lewis Morris",
+        "Nelson Birchall"
+      ],
+      "wager_settlement_status": "unverified_bookmaker_rules"
     },
     {
       "event_date": "2026-09-27",
@@ -2014,7 +2213,8 @@
       "selections": [
         "Russell Acosta Silveira",
         "Ryusei Matsumoto"
-      ]
+      ],
+      "wager_settlement_status": "unverified_bookmaker_rules"
     },
     {
       "event_date": "2026-10-02",
@@ -2149,7 +2349,8 @@
       "selections": [
         "Jusiyah Shirley",
         "Kevin Castillo"
-      ]
+      ],
+      "wager_settlement_status": "unverified_bookmaker_rules"
     },
     {
       "event_date": "2026-10-02",
@@ -2284,7 +2485,8 @@
       "selections": [
         "Diego Yaniel Ortiz Nieves",
         "Fidencio Hernandez"
-      ]
+      ],
+      "wager_settlement_status": "unverified_bookmaker_rules"
     },
     {
       "event_date": "2026-10-02",
@@ -2420,7 +2622,8 @@
       "selections": [
         "Donte Layne",
         "Keithland King"
-      ]
+      ],
+      "wager_settlement_status": "unverified_bookmaker_rules"
     },
     {
       "event_date": "2026-10-02",
@@ -2524,7 +2727,8 @@
       "selections": [
         "Angel Hernandez",
         "Dulio Jaramillo Barboza"
-      ]
+      ],
+      "wager_settlement_status": "unverified_bookmaker_rules"
     },
     {
       "event_date": "2026-10-02",
@@ -2660,7 +2864,8 @@
       "selections": [
         "Harvey Smith",
         "Joshua John"
-      ]
+      ],
+      "wager_settlement_status": "unverified_bookmaker_rules"
     },
     {
       "event_date": "2026-10-03",
@@ -2827,143 +3032,8 @@
       "selections": [
         "Ben Whittaker",
         "Conor Wallace"
-      ]
-    },
-    {
-      "event_date": "2026-10-03",
-      "bout_id": "18443",
-      "participants": [
-        "Bilal Fawaz",
-        "Eithan James"
       ],
-      "first_snapshot": "2026-09-21T12:55:57.664481+00:00",
-      "last_snapshot": "2026-09-29T10:44:12.451749+00:00",
-      "verified_quote_rows": 152,
-      "verified_sportsbook_quote_rows": 148,
-      "verified_prediction_market_quote_rows": 4,
-      "market_classes": [
-        "prediction_market",
-        "sportsbook"
-      ],
-      "sportsbooks": [
-        "BetWay",
-        "Caesars",
-        "FanDuel"
-      ],
-      "sportsbook_market_summary": {
-        "per_book": {
-          "BetWay": {
-            "Bilal Fawaz": {
-              "first_verified_pre_event": {
-                "fetched_at": "2026-09-22T13:27:10.547562+00:00",
-                "decimal_price": 1.1430615164520743,
-                "american_price": -699
-              },
-              "latest_verified_pre_event": {
-                "fetched_at": "2026-09-29T10:44:12.451749+00:00",
-                "decimal_price": 1.1430615164520743,
-                "american_price": -699
-              },
-              "observations": 27,
-              "decimal_move": 0.0
-            },
-            "Eithan James": {
-              "first_verified_pre_event": {
-                "fetched_at": "2026-09-22T13:27:10.547562+00:00",
-                "decimal_price": 5.5,
-                "american_price": 450
-              },
-              "latest_verified_pre_event": {
-                "fetched_at": "2026-09-29T10:44:12.451749+00:00",
-                "decimal_price": 5.5,
-                "american_price": 450
-              },
-              "observations": 27,
-              "decimal_move": 0.0
-            }
-          },
-          "Caesars": {
-            "Bilal Fawaz": {
-              "first_verified_pre_event": {
-                "fetched_at": "2026-09-25T05:02:58.898351+00:00",
-                "decimal_price": 1.1333333333333333,
-                "american_price": -750
-              },
-              "latest_verified_pre_event": {
-                "fetched_at": "2026-09-29T10:44:12.451749+00:00",
-                "decimal_price": 1.1333333333333333,
-                "american_price": -750
-              },
-              "observations": 16,
-              "decimal_move": 0.0
-            },
-            "Eithan James": {
-              "first_verified_pre_event": {
-                "fetched_at": "2026-09-25T05:02:58.898351+00:00",
-                "decimal_price": 5.6,
-                "american_price": 460
-              },
-              "latest_verified_pre_event": {
-                "fetched_at": "2026-09-29T10:44:12.451749+00:00",
-                "decimal_price": 5.6,
-                "american_price": 460
-              },
-              "observations": 16,
-              "decimal_move": 0.0
-            }
-          },
-          "FanDuel": {
-            "Bilal Fawaz": {
-              "first_verified_pre_event": {
-                "fetched_at": "2026-09-21T12:55:57.664481+00:00",
-                "decimal_price": 1.1333333333333333,
-                "american_price": -750
-              },
-              "latest_verified_pre_event": {
-                "fetched_at": "2026-09-29T10:44:12.451749+00:00",
-                "decimal_price": 1.1333333333333333,
-                "american_price": -750
-              },
-              "observations": 31,
-              "decimal_move": 0.0
-            },
-            "Eithan James": {
-              "first_verified_pre_event": {
-                "fetched_at": "2026-09-21T12:55:57.664481+00:00",
-                "decimal_price": 5.3,
-                "american_price": 430
-              },
-              "latest_verified_pre_event": {
-                "fetched_at": "2026-09-29T10:44:12.451749+00:00",
-                "decimal_price": 5.3,
-                "american_price": 430
-              },
-              "observations": 31,
-              "decimal_move": 0.0
-            }
-          }
-        },
-        "consensus_latest_verified": {
-          "Bilal Fawaz": {
-            "books": 3,
-            "median_latest_verified_decimal": 1.133333,
-            "min_latest_verified_decimal": 1.1333333333333333,
-            "max_latest_verified_decimal": 1.1430615164520743
-          },
-          "Eithan James": {
-            "books": 3,
-            "median_latest_verified_decimal": 5.5,
-            "min_latest_verified_decimal": 5.3,
-            "max_latest_verified_decimal": 5.6
-          }
-        },
-        "books_with_both_sides_latest": 3,
-        "book_selection_pairs": 6
-      },
-      "selections": [
-        "Bilal Fawaz",
-        "Eithan James"
-      ]
+      "wager_settlement_status": "unverified_bookmaker_rules"
     },
     {
       "event_date": "2026-10-03",
@@ -3068,7 +3138,8 @@
       "selections": [
         "Ibraheem Sulaimaan",
         "Sonny Hardy"
-      ]
+      ],
+      "wager_settlement_status": "unverified_bookmaker_rules"
     },
     {
       "event_date": "2026-10-03",
@@ -3172,7 +3243,8 @@
       "selections": [
         "Alan Sanchez",
         "Omari Jones"
-      ]
+      ],
+      "wager_settlement_status": "unverified_bookmaker_rules"
     }
   ]
 }
