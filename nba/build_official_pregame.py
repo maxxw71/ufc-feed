@@ -74,6 +74,7 @@ for when,g,outcome in events:
 wgz(OUT/"official_crew_pregame.csv.gz",rows)
 summary={"generated_at_utc":datetime.now(timezone.utc).isoformat(),"rows":len(rows),"unique_officials":len(state),
          "games_with_three_officials":sum(1 for r in rows if r["crew_size"]==3),
+         "coverage_gate":"Do not evaluate a crew tendency unless at least one assigned official has prior NBA history.",
          "policy":"Crew assignment is target-game information; all referee tendency features use only that official's earlier games. Prospective use requires officials to be known before bet placement."}
 (OUT/"official_crew_pregame_summary.json").write_text(json.dumps(summary,indent=2)+"\n")
 print(json.dumps(summary,indent=2))
