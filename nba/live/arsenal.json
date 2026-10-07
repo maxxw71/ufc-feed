@@ -1,0 +1,96 @@
+{
+  "sport": "nba",
+  "tab": {
+    "id": "nba",
+    "label": "NBA",
+    "section": "sports",
+    "enabled": true,
+    "display_order_hint": 4
+  },
+  "deployment_policy": {
+    "regular_season_only": true,
+    "no_preseason_signals": true,
+    "frozen_rules": true,
+    "prospective_tracking_from": "2026-27",
+    "notes": "Methods are exposed in the live Appwiza NBA arsenal. Rules are frozen; no retrospective retuning on 2026-27 outcomes."
+  },
+  "methods": [
+    {
+      "method_id": "NBA_ML001_DEF_TS",
+      "name": "Defensive-Cap + True-Shooting Confirmation",
+      "status": "live_arsenal",
+      "market": "moneyline",
+      "rule": {
+        "net5_gap_min": 7.759,
+        "rest_diff_min_days": 2.0,
+        "def5_adv_max": 5.5,
+        "ts5_gap_min": 0.05603199206897114
+      },
+      "historical": {
+        "signals": 60,
+        "wins": 51,
+        "losses": 9,
+        "hit_rate": 0.85,
+        "roi": 0.28812,
+        "holdout_signals": 10,
+        "holdout_wins": 9,
+        "holdout_losses": 1,
+        "holdout_hit_rate": 0.9,
+        "holdout_roi": 0.3504
+      },
+      "requirements": ["pregame_market_price", "team_rolling_form", "rest_context"],
+      "description": "Recent net-rating edge plus rest advantage, capped defensive profile and a material recent true-shooting advantage."
+    },
+    {
+      "method_id": "NBA_PHYSCOACH_001",
+      "name": "Guard-Light / Big-Heavy Physical Matchup",
+      "status": "live_arsenal",
+      "market": "moneyline",
+      "rule": {
+        "guard_weight_gap_max_lbs": -10.0,
+        "big_weight_gap_min_lbs": 8.0,
+        "market_probability_min": 0.5968
+      },
+      "historical": {
+        "signals": 306,
+        "wins": 241,
+        "losses": 65,
+        "hit_rate": 0.7875816993464052,
+        "roi": 0.05865823682526432,
+        "holdout_signals": 58,
+        "holdout_wins": 47,
+        "holdout_losses": 11,
+        "holdout_hit_rate": 0.8103448275862069,
+        "holdout_roi": 0.09706758681663229
+      },
+      "requirements": ["pregame_market_price", "confirmed_starting_five", "starter_physical_profiles"],
+      "description": "Moderate-or-better market favorite with lighter guards but materially heavier bigs than the opponent."
+    },
+    {
+      "method_id": "NBA_INTERACT_003",
+      "name": "Starter Form + Continuity + Opponent Workload",
+      "status": "live_arsenal",
+      "market": "moneyline",
+      "rule": {
+        "starter_plusminus5_gap_min": 3.0,
+        "starter_overlap_gap_min": 1.0,
+        "opponent_top5_minutes_3d_adv_min": 45.0
+      },
+      "historical": {
+        "signals": 478,
+        "wins": 367,
+        "losses": 111,
+        "hit_rate": 0.7677824267782427,
+        "roi": 0.1158845158260138,
+        "holdout_signals": 142,
+        "holdout_wins": 109,
+        "holdout_losses": 33,
+        "holdout_hit_rate": 0.7676056338028169,
+        "holdout_roi": 0.13574208708725366,
+        "worst_price_roi": 0.09941247924229402
+      },
+      "requirements": ["pregame_market_price", "confirmed_starting_five", "starter_rolling_form", "lineup_continuity", "player_workload"],
+      "description": "Better recent starter plus-minus, stronger starter continuity and a materially fresher top-five rotation than the opponent."
+    }
+  ]
+}
