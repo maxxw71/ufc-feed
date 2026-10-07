@@ -1,5 +1,5 @@
 {
-  "generated_at_utc": "2026-10-07T12:24:41.846828+00:00",
+  "generated_at_utc": "2026-10-07T12:40:59.527161+00:00",
   "window": {
     "start_season": "2018-19",
     "end_season": "2025-26",
@@ -18,7 +18,7 @@
   "sizing_policy": {
     "starting_bankroll": 50000.0,
     "base_stake_fraction_per_method_signal": 0.01,
-    "compounding": "Each unique wager is staked as method_count \u00d7 1% of bankroll immediately before that wager in chronological game-tip order.",
+    "compounding": "Each unique wager is staked as method_count \u00d7 1% of bankroll immediately before its scheduled-tip batch. All simultaneous tipoffs use the same pre-batch bankroll.",
     "overlap": "Same game + same market + same selection merges into one wager and adds another 1% stake for each additional qualifying live method.",
     "different_markets_or_opposite_sides": "Remain separate wagers.",
     "odds": "Archived median executable historical American price used by the frozen method backtests: moneyline median for ML methods and over-price median for STYLE_TOT_001.",
@@ -46,93 +46,332 @@
     "3": 16
   },
   "starting_bankroll": 50000.0,
-  "ending_bankroll": 435392.4084510026,
-  "net_profit": 385392.4084510026,
-  "total_return": 7.7078481690200515,
-  "cagr_8yr": 0.3106564104914227,
-  "max_drawdown_fraction": 0.10354114661942589,
-  "max_drawdown_dollars_at_peak_basis": 26752.961874474655,
-  "total_dollars_staked": 4608205.420018915,
+  "ending_bankroll": 436352.62846697716,
+  "net_profit": 386352.62846697716,
+  "total_return": 7.727052569339543,
+  "cagr_8yr": 0.3110173796601938,
+  "max_drawdown_fraction": 0.10368111771369655,
+  "max_drawdown_dollars_at_peak_basis": 26830.395428860473,
+  "total_dollars_staked": 4612808.784019307,
+  "flat_500_per_method_unit": {
+    "ending_bankroll": 161682.60140027181,
+    "net_profit": 111682.6014002718,
+    "return": 2.2336520280054364
+  },
   "season_results": [
     {
       "season": "2018-19",
       "starting_bankroll": 50000.0,
-      "ending_bankroll": 65778.14115631086,
-      "profit": 15778.141156310856,
-      "return": 0.3155628231262171,
+      "ending_bankroll": 65794.44628971277,
+      "profit": 15794.446289712767,
+      "return": 0.3158889257942554,
       "unique_wagers": 269,
       "method_signals": 293,
-      "total_stake_dollars": 159098.9092446683
+      "total_stake_dollars": 159098.0115824459,
+      "flat_500_profit": 14140.423977125976
     },
     {
       "season": "2019-20",
-      "starting_bankroll": 65778.14115631086,
-      "ending_bankroll": 93093.76879863937,
-      "profit": 27315.627642328516,
-      "return": 0.41526907209824393,
+      "starting_bankroll": 65794.44628971277,
+      "ending_bankroll": 93176.68563645499,
+      "profit": 27382.239346742223,
+      "return": 0.4161785817935144,
       "unique_wagers": 245,
       "method_signals": 263,
-      "total_stake_dollars": 208887.16328137944
+      "total_stake_dollars": 208817.28700682463,
+      "flat_500_profit": 17746.704247118865
     },
     {
       "season": "2020-21",
-      "starting_bankroll": 93093.76879863937,
-      "ending_bankroll": 103893.04169988632,
-      "profit": 10799.27290124695,
-      "return": 0.11600425077435239,
+      "starting_bankroll": 93176.68563645499,
+      "ending_bankroll": 104048.01080349994,
+      "profit": 10871.325167044954,
+      "return": 0.11667430637596743,
       "unique_wagers": 295,
       "method_signals": 318,
-      "total_stake_dollars": 317853.37371254625
+      "total_stake_dollars": 318156.89252063836,
+      "flat_500_profit": 5893.218358438001
     },
     {
       "season": "2021-22",
-      "starting_bankroll": 103893.04169988632,
-      "ending_bankroll": 150576.11148527,
-      "profit": 46683.069785383675,
-      "return": 0.44933779030395593,
+      "starting_bankroll": 104048.01080349994,
+      "ending_bankroll": 150766.2464660085,
+      "profit": 46718.23566250857,
+      "return": 0.44900652402416785,
       "unique_wagers": 320,
       "method_signals": 353,
-      "total_stake_dollars": 440187.0903240444
+      "total_stake_dollars": 440542.22601704625,
+      "flat_500_profit": 18972.507240760755
     },
     {
       "season": "2022-23",
-      "starting_bankroll": 150576.11148527,
-      "ending_bankroll": 174948.11988482898,
-      "profit": 24372.00839955898,
-      "return": 0.16185839944434455,
+      "starting_bankroll": 150766.2464660085,
+      "ending_bankroll": 175177.49540569325,
+      "profit": 24411.248939684738,
+      "return": 0.16191454992008736,
       "unique_wagers": 252,
       "method_signals": 272,
-      "total_stake_dollars": 435176.16543302266
+      "total_stake_dollars": 435780.96762076364,
+      "flat_500_profit": 7863.495004707918
     },
     {
       "season": "2023-24",
-      "starting_bankroll": 174948.11988482898,
-      "ending_bankroll": 254350.32124669207,
-      "profit": 79402.20136186309,
-      "return": 0.4538614156821734,
+      "starting_bankroll": 175177.49540569325,
+      "ending_bankroll": 254742.1400495431,
+      "profit": 79564.64464384984,
+      "return": 0.45419444124136055,
       "unique_wagers": 382,
       "method_signals": 418,
-      "total_stake_dollars": 929442.60927386
+      "total_stake_dollars": 930527.3774645828,
+      "flat_500_profit": 19255.375142081703
     },
     {
       "season": "2024-25",
-      "starting_bankroll": 254350.32124669207,
-      "ending_bankroll": 341778.20025027747,
-      "profit": 87427.8790035854,
-      "return": 0.34373016937843737,
+      "starting_bankroll": 254742.1400495431,
+      "ending_bankroll": 342307.63441574783,
+      "profit": 87565.49436620474,
+      "return": 0.34374169247842046,
       "unique_wagers": 338,
       "method_signals": 363,
-      "total_stake_dollars": 1001297.3054171664
+      "total_stake_dollars": 1001823.0526563284,
+      "flat_500_profit": 15366.159330649753
     },
     {
       "season": "2025-26",
-      "starting_bankroll": 341778.20025027747,
-      "ending_bankroll": 435392.4084510026,
-      "profit": 93614.20820072514,
-      "return": 0.2739033915333784,
+      "starting_bankroll": 342307.63441574783,
+      "ending_bankroll": 436352.62846697716,
+      "profit": 94044.99405122933,
+      "return": 0.27473823133318587,
       "unique_wagers": 272,
       "method_signals": 293,
-      "total_stake_dollars": 1116262.8033322273
+      "total_stake_dollars": 1118062.9691506773,
+      "flat_500_profit": 12444.718099388865
+    }
+  ],
+  "top_overlap_combinations": [
+    {
+      "methods": "NBA_INTERACT_003+NBA_TRAVEL_001",
+      "wagers": 23,
+      "wins": 22,
+      "losses": 1,
+      "pushes": 0
+    },
+    {
+      "methods": "NBA_INTERACT_003+NBA_LQ_003",
+      "wagers": 18,
+      "wins": 15,
+      "losses": 3,
+      "pushes": 0
+    },
+    {
+      "methods": "NBA_LQ_003+NBA_STAND_002",
+      "wagers": 14,
+      "wins": 10,
+      "losses": 4,
+      "pushes": 0
+    },
+    {
+      "methods": "NBA_PHYSCOACH_001+NBA_STAND_002",
+      "wagers": 13,
+      "wins": 11,
+      "losses": 2,
+      "pushes": 0
+    },
+    {
+      "methods": "NBA_INTERACT_003+NBA_ML001_DEF_TS",
+      "wagers": 12,
+      "wins": 11,
+      "losses": 1,
+      "pushes": 0
+    },
+    {
+      "methods": "NBA_ROTSHAPE_001+NBA_TRAVEL_001",
+      "wagers": 10,
+      "wins": 10,
+      "losses": 0,
+      "pushes": 0
+    },
+    {
+      "methods": "NBA_LQ_003+NBA_PHYSCOACH_001",
+      "wagers": 10,
+      "wins": 6,
+      "losses": 4,
+      "pushes": 0
+    },
+    {
+      "methods": "NBA_INTERACT_003+NBA_PHYSCOACH_001",
+      "wagers": 9,
+      "wins": 8,
+      "losses": 1,
+      "pushes": 0
+    },
+    {
+      "methods": "NBA_PHYSCOACH_001+NBA_TRAVEL_001",
+      "wagers": 8,
+      "wins": 8,
+      "losses": 0,
+      "pushes": 0
+    },
+    {
+      "methods": "NBA_INTERACT_003+NBA_STAND_002",
+      "wagers": 8,
+      "wins": 7,
+      "losses": 1,
+      "pushes": 0
+    },
+    {
+      "methods": "NBA_PHYSCOACH_001+NBA_ROTSHAPE_001",
+      "wagers": 8,
+      "wins": 5,
+      "losses": 3,
+      "pushes": 0
+    },
+    {
+      "methods": "NBA_ROTSHAPE_001+NBA_STAND_002",
+      "wagers": 6,
+      "wins": 6,
+      "losses": 0,
+      "pushes": 0
+    },
+    {
+      "methods": "NBA_STAND_002+NBA_TRAVEL_001",
+      "wagers": 6,
+      "wins": 5,
+      "losses": 1,
+      "pushes": 0
+    },
+    {
+      "methods": "NBA_LQ_003+NBA_ROTSHAPE_001",
+      "wagers": 6,
+      "wins": 4,
+      "losses": 2,
+      "pushes": 0
+    },
+    {
+      "methods": "NBA_LQ_003+NBA_TRAVEL_001",
+      "wagers": 5,
+      "wins": 5,
+      "losses": 0,
+      "pushes": 0
+    },
+    {
+      "methods": "NBA_INTERACT_003+NBA_ROTSHAPE_001",
+      "wagers": 4,
+      "wins": 3,
+      "losses": 1,
+      "pushes": 0
+    },
+    {
+      "methods": "NBA_LQ_003+NBA_ML001_DEF_TS",
+      "wagers": 3,
+      "wins": 3,
+      "losses": 0,
+      "pushes": 0
+    },
+    {
+      "methods": "NBA_INTERACT_003+NBA_ML001_DEF_TS+NBA_TRAVEL_001",
+      "wagers": 2,
+      "wins": 2,
+      "losses": 0,
+      "pushes": 0
+    },
+    {
+      "methods": "NBA_ML001_DEF_TS+NBA_ROTSHAPE_001",
+      "wagers": 2,
+      "wins": 2,
+      "losses": 0,
+      "pushes": 0
+    },
+    {
+      "methods": "NBA_INTERACT_003+NBA_PHYSCOACH_001+NBA_TRAVEL_001",
+      "wagers": 2,
+      "wins": 2,
+      "losses": 0,
+      "pushes": 0
+    },
+    {
+      "methods": "NBA_INTERACT_003+NBA_LQ_003+NBA_ML001_DEF_TS",
+      "wagers": 2,
+      "wins": 2,
+      "losses": 0,
+      "pushes": 0
+    },
+    {
+      "methods": "NBA_ML001_DEF_TS+NBA_TRAVEL_001",
+      "wagers": 2,
+      "wins": 2,
+      "losses": 0,
+      "pushes": 0
+    },
+    {
+      "methods": "NBA_INTERACT_003+NBA_ROTSHAPE_001+NBA_TRAVEL_001",
+      "wagers": 2,
+      "wins": 2,
+      "losses": 0,
+      "pushes": 0
+    },
+    {
+      "methods": "NBA_INTERACT_003+NBA_LQ_003+NBA_ROTSHAPE_001",
+      "wagers": 1,
+      "wins": 1,
+      "losses": 0,
+      "pushes": 0
+    },
+    {
+      "methods": "NBA_LQ_003+NBA_PHYSCOACH_001+NBA_STAND_002",
+      "wagers": 1,
+      "wins": 1,
+      "losses": 0,
+      "pushes": 0
+    },
+    {
+      "methods": "NBA_ML001_DEF_TS+NBA_PHYSCOACH_001",
+      "wagers": 1,
+      "wins": 1,
+      "losses": 0,
+      "pushes": 0
+    },
+    {
+      "methods": "NBA_LQ_003+NBA_PHYSCOACH_001+NBA_TRAVEL_001",
+      "wagers": 1,
+      "wins": 1,
+      "losses": 0,
+      "pushes": 0
+    },
+    {
+      "methods": "NBA_INTERACT_003+NBA_LQ_003+NBA_PHYSCOACH_001",
+      "wagers": 1,
+      "wins": 1,
+      "losses": 0,
+      "pushes": 0
+    },
+    {
+      "methods": "NBA_INTERACT_003+NBA_LQ_003+NBA_STAND_002",
+      "wagers": 1,
+      "wins": 1,
+      "losses": 0,
+      "pushes": 0
+    },
+    {
+      "methods": "NBA_INTERACT_003+NBA_LQ_003+NBA_TRAVEL_001",
+      "wagers": 1,
+      "wins": 1,
+      "losses": 0,
+      "pushes": 0
+    },
+    {
+      "methods": "NBA_INTERACT_003+NBA_ML001_DEF_TS+NBA_PHYSCOACH_001",
+      "wagers": 1,
+      "wins": 1,
+      "losses": 0,
+      "pushes": 0
+    },
+    {
+      "methods": "NBA_INTERACT_003+NBA_ML001_DEF_TS+NBA_STAND_002",
+      "wagers": 1,
+      "wins": 1,
+      "losses": 0,
+      "pushes": 0
     }
   ],
   "method_attribution": {
@@ -141,56 +380,56 @@
       "wins": 367,
       "losses": 111,
       "pushes": 0,
-      "profit_dollars": 109229.0130792143
+      "profit_dollars": 109458.32446542292
     },
     "NBA_LQ_003": {
       "signals": 379,
       "wins": 310,
       "losses": 69,
       "pushes": 0,
-      "profit_dollars": 51994.12090090539
+      "profit_dollars": 52047.87503154565
     },
     "NBA_ML001_DEF_TS": {
       "signals": 60,
       "wins": 51,
       "losses": 9,
       "pushes": 0,
-      "profit_dollars": 26552.592923810742
+      "profit_dollars": 26572.83710760338
     },
     "NBA_PHYSCOACH_001": {
       "signals": 306,
       "wins": 241,
       "losses": 65,
       "pushes": 0,
-      "profit_dollars": 34219.52000157239
+      "profit_dollars": 34318.38715557742
     },
     "NBA_ROTSHAPE_001": {
       "signals": 199,
       "wins": 152,
       "losses": 47,
       "pushes": 0,
-      "profit_dollars": 26779.528490327575
+      "profit_dollars": 26693.97482675503
     },
     "NBA_STAND_002": {
       "signals": 389,
       "wins": 301,
       "losses": 88,
       "pushes": 0,
-      "profit_dollars": 51361.312393484
+      "profit_dollars": 51654.573763327804
     },
     "NBA_STYLE_TOT_001": {
       "signals": 498,
       "wins": 275,
       "losses": 217,
       "pushes": 6,
-      "profit_dollars": 55247.129760199874
+      "profit_dollars": 55516.75329659171
     },
     "NBA_TRAVEL_001": {
       "signals": 264,
       "wins": 232,
       "losses": 32,
       "pushes": 0,
-      "profit_dollars": 30009.190901488364
+      "profit_dollars": 30089.902820153347
     }
   }
 }
