@@ -83,10 +83,22 @@ jobs:
           set -euo pipefail
           git config user.name "appwiza-nba-bot"
           git config user.email "actions@users.noreply.github.com"
-          git add nba/features nba/players nba/dataset_manifest.json nba/team_game_context.csv.gz nba/context_summary.json
-          if git diff --cached --quiet; then exit 0; fi
-          git commit -m "nba: refresh derived research features"
-          git reset --hard HEAD
-          git clean -fd
-          git pull --rebase origin main
-          git push
+          for attempt in 1 2 3; do
+            git fetch origin main
+            git reset --hard origin/main
+            python nba/build_context.py
+            python nba/build_rolling_features.py
+            python nba/build_pregame_strength.py
+            python nba/build_game_flow_features.py
+            python nba/players/backfill_player_profiles.py
+            python nba/build_availability_impact.py
+            python nba/build_market_features.py
+            python nba/build_player_workload.py
+            python nba/build_manifest.py
+            git add nba/features nba/players nba/dataset_manifest.json nba/team_game_context.csv.gz nba/context_summary.json
+            if git diff --cached --quiet; then exit 0; fi
+            git commit -m "nba: refresh derived research features"
+            if git push origin HEAD:main; then exit 0; fi
+            sleep 4
+          done
+          exit 1
