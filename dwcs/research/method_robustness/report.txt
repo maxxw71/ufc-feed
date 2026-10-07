@@ -1,0 +1,30 @@
+DWCS PASSED-CANDIDATE ROBUSTNESS
+==============================================================================================================
+
+AGE6 — younger_by>=6y
+--------------------------------------------------------------------------------------------------------------
+discovery          n= 42 win= 73.8% ROI= +45.0% 95%win=[58.9,84.7] bootROI=[ +5.5,+90.0] maxLS=3 maxDD=3.27u
+locked_validation  n= 20 win= 65.0% ROI= +32.0% 95%win=[43.3,81.9] bootROI=[-17.0,+84.8] maxLS=4 maxDD=4.00u
+full               n= 62 win= 71.0% ROI= +40.8% 95%win=[58.7,80.8] bootROI=[ +9.4,+75.2] maxLS=4 maxDD=4.00u
+
+AGE5 — younger_by>=5y
+--------------------------------------------------------------------------------------------------------------
+discovery          n= 54 win= 66.7% ROI= +26.7% 95%win=[53.4,77.8] bootROI=[ -6.1,+64.5] maxLS=3 maxDD=5.04u
+locked_validation  n= 28 win= 67.9% ROI= +28.9% 95%win=[49.3,82.1] bootROI=[-10.4,+69.3] maxLS=3 maxDD=3.00u
+full               n= 82 win= 67.1% ROI= +27.5% 95%win=[56.3,76.3] bootROI=[ +1.6,+55.9] maxLS=3 maxDD=5.04u
+
+YOUNG_DOG — younger>=3y & dog +100..+250
+--------------------------------------------------------------------------------------------------------------
+discovery          n= 22 win= 54.5% ROI= +40.9% 95%win=[34.7,73.1] bootROI=[-14.5,+95.5] maxLS=3 maxDD=3.00u
+locked_validation  n= 13 win= 69.2% ROI= +64.5% 95%win=[42.4,87.3] bootROI=[ +1.1,+122.7] maxLS=1 maxDD=1.00u
+full               n= 35 win= 60.0% ROI= +49.7% 95%win=[43.6,74.4] bootROI=[ +7.7,+90.5] maxLS=3 maxDD=3.00u
+
+YOUTH_EXP — younger>=5y & exp_gap>=0
+--------------------------------------------------------------------------------------------------------------
+discovery          n= 27 win= 59.3% ROI= +14.3% 95%win=[40.7,75.5] bootROI=[-31.9,+72.3] maxLS=3 maxDD=4.99u
+locked_validation  n= 17 win= 64.7% ROI= +14.4% 95%win=[41.3,82.7] bootROI=[-31.1,+61.7] maxLS=3 maxDD=3.15u
+full               n= 44 win= 61.4% ROI= +14.3% 95%win=[46.6,74.3] bootROI=[-19.9,+54.1] maxLS=3 maxDD=4.99u
+
+VALIDATION OVERLAP PORTFOLIO
+--------------------------------------------------------------------------------------------------------------
+{"unique_bets": 33, "method_signals": 78, "winning_unique_bets": 21, "unique_bet_win_rate": 0.6363636363636364, "roi_per_method_signal": 0.32494621196962337, "net_units_at_1u_per_method_signal": 25.345804533630623, "max_method_overlap": 4}
