@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-import csv,gzip,json,re
+import argparse,csv,gzip,json,re
 from collections import defaultdict
 from datetime import datetime,timezone
 from pathlib import Path
@@ -9,7 +9,12 @@ DATA=NBA/"data"
 OUT=NBA/"lineups"
 OUT.mkdir(parents=True,exist_ok=True)
 
-SEASONS={"2018-19","2019-20","2020-21","2021-22","2022-23","2023-24","2024-25","2025-26"}
+DEFAULT_SEASONS={"2018-19","2019-20","2020-21","2021-22","2022-23","2023-24","2024-25","2025-26","2026-27"}
+ap=argparse.ArgumentParser()
+ap.add_argument("--season",action="append",dest="seasons")
+ARGS=ap.parse_args()
+SEASONS=set(ARGS.seasons or DEFAULT_SEASONS)
+PARTIAL=bool(ARGS.seasons)
 
 def read_gz(path):
     if not path.exists(): return []
@@ -79,6 +84,13 @@ def write_gz(path,rows):
         w=csv.DictWriter(f,fieldnames=fields or ["_empty"]);w.writeheader();w.writerows(rows)
 
 all_stints=[]; season_summary={}
+if PARTIAL and (OUT/"historical_lineup_stints.csv.gz").exists():
+    all_stints=[r for r in read_gz(OUT/"historical_lineup_stints.csv.gz") if r.get("season") not in SEASONS]
+    try:
+        prior_summary=json.loads((OUT/"historical_lineup_summary.json").read_text()).get("seasons",{})
+        season_summary={k:v for k,v in prior_summary.items() if k not in SEASONS}
+    except Exception:
+        season_summary={}
 for season in sorted(SEASONS):
     base=DATA/season.replace("-","_")/"regular_season"
     gp=base/"games.csv.gz"; pp=base/"player_boxscores.csv.gz"; pb=base/"playbyplay.csv.gz"
