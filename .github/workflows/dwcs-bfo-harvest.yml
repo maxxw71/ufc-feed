@@ -1,0 +1,30 @@
+name: DWCS Historical Odds Harvest
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/dwcs-bfo-harvest.yml'
+      - 'dwcs/research/harvest_bfo_odds.py'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  harvest:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - run: python -m pip install --quiet pandas requests beautifulsoup4
+      - name: Harvest historical DWCS prices
+        run: |
+          mkdir -p dwcs/research/historical_odds
+          ROOT="$GITHUB_WORKSPACE" OUT="$GITHUB_WORKSPACE/dwcs/research/historical_odds" python dwcs/research/harvest_bfo_odds.py
+      - name: Commit odds
+        run: |
+          git config user.name appwiza-research-bot
+          git config user.email actions@users.noreply.github.com
+          git add dwcs/research/historical_odds
+          git diff --cached --quiet && exit 0
+          git commit -m 'Add DWCS historical odds coverage'
+          git pull --rebase origin main
+          git push
