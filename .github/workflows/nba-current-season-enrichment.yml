@@ -1,0 +1,90 @@
+name: NBA Current Season Enrichment
+
+on:
+  workflow_dispatch:
+  workflow_run:
+    workflows:
+      - NBA Research Feature Refresh
+    types: [completed]
+    branches: [main]
+  push:
+    branches: [main]
+    paths:
+      - 'nba/lineups/build_historical_lineups.py'
+      - 'nba/build_lineup_pregame.py'
+      - 'nba/build_lineup_quality_pregame.py'
+      - 'nba/build_team_workload.py'
+      - 'nba/build_starter_bench_rolling.py'
+      - 'nba/build_scoring_shape_rolling.py'
+      - 'nba/build_team_style_rolling.py'
+      - 'nba/build_standings_pregame.py'
+      - 'nba/build_travel_context.py'
+      - 'nba/build_starter_core.py'
+      - 'nba/build_starter_individual_impact.py'
+      - 'nba/build_starter_physical.py'
+      - 'nba/build_elo_sos_pregame.py'
+      - '.github/workflows/nba-current-season-enrichment.yml'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: nba-current-season-enrichment
+  cancel-in-progress: false
+
+jobs:
+  enrich:
+    if: github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success'
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Rebuild exact 2026-27 lineup stints
+        run: python nba/lineups/build_historical_lineups.py --season 2026-27
+
+      - name: Build current-season advanced pregame features
+        shell: bash
+        run: |
+          set -euo pipefail
+          python nba/build_lineup_pregame.py
+          python nba/build_lineup_quality_pregame.py
+          python nba/build_player_workload.py
+          python nba/build_team_workload.py
+          python nba/build_starter_bench_rolling.py
+          python nba/build_scoring_shape_rolling.py
+          python nba/build_team_style_rolling.py
+          python nba/build_standings_pregame.py
+          python nba/build_travel_context.py
+          python nba/build_starter_core.py
+          python nba/build_starter_individual_impact.py
+          python nba/build_starter_physical.py
+          python nba/build_elo_sos_pregame.py
+          python nba/build_starter_prior_season_continuity.py
+
+      - name: Commit enriched current-season state
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name appwiza-nba-bot
+          git config user.email actions@users.noreply.github.com
+          git add nba/lineups nba/features
+          if git diff --cached --quiet; then
+            echo "No current-season enrichment changes."
+            exit 0
+          fi
+          git commit -m "nba: refresh 2026-27 advanced enrichment"
+          git reset --hard HEAD
+          git clean -fd
+          for attempt in 1 2 3; do
+            git fetch origin main
+            if git rebase origin/main && git push; then exit 0; fi
+            git rebase --abort 2>/dev/null || true
+            sleep 4
+          done
+          exit 1
