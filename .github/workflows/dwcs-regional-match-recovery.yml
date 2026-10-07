@@ -1,5 +1,9 @@
 name: DWCS Regional Match Recovery
 on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/dwcs-regional-match-recovery.yml'
   workflow_dispatch:
 permissions:
   contents: write
