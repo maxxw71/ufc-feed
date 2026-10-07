@@ -25,137 +25,130 @@ def ctrl_sec(s):
     return int(m.group(1))*60+int(m.group(2)) if m else np.nan
 
 fight_rows=[]
-round_rows=[]
+totals_rows=[]
 
 events=df[["event_url","event_name","event_date","season"]].drop_duplicates()
-for ei,e in events.iterrows():
+for _,e in events.iterrows():
     r=S.get(e.event_url,timeout=30); r.raise_for_status()
     soup=BeautifulSoup(r.text,"html.parser")
+    seen=set()
     for a in soup.find_all("a",href=True):
         href=a["href"]
         txt=clean(a.get_text(" ",strip=True))
         if not href.startswith("/dwcs/") or "-vs-" not in href: continue
         if not txt or "Full fight stats" in txt: continue
         furl="https://boutmetrics.com"+href
+        if furl in seen: continue
+        seen.add(furl)
         try:
             fr=S.get(furl,timeout=30); fr.raise_for_status()
             fs=BeautifulSoup(fr.text,"html.parser")
-            body=[clean(x) for x in fs.get_text("\n").splitlines() if clean(x)]
-            full=" | ".join(body)
-            # Use known matchup text from link; pair to archive row by normalized names.
-            parts=re.split(r"\s+vs\.?\s+",txt,flags=re.I)
-            if len(parts)!=2: continue
-            fa,fb=clean(parts[0]),clean(parts[1])
-            # Locate corresponding archive row to get winner.
-            cand=df[(df.event_name==e.event_name)]
+            red=fs.select_one(".fight-detail-red a")
+            blue=fs.select_one(".fight-detail-blue a")
+            fa=clean(red.get_text(" ",strip=True)) if red else ""
+            fb=clean(blue.get_text(" ",strip=True)) if blue else ""
+            if not fa or not fb:
+                parts=re.split(r"\\s+vs\\.?\\s+",txt,flags=re.I)
+                if len(parts)==2: fa,fb=map(clean,parts)
+            cand=df[df.event_name==e.event_name]
             match=None
             for _,z in cand.iterrows():
                 if {norm(z.fighter_a),norm(z.fighter_b)}=={norm(fa),norm(fb)}:
                     match=z; break
             if match is None: continue
 
-            # Parse round-stat table from text sequence. BoutMetrics fight pages carry
-            # repeated fighter, round, sigstr L/A, KD, TD L/A, sub, control.
-            text=clean(fs.get_text(" ",strip=True))
-            # Capture totals if present from summary tables first.
-            # Fallback aggregation will come from round rows if exact DOM table parsing succeeds.
-            tables=fs.find_all("table")
-            local=[]
-            for table in tables:
-                headers=[clean(th.get_text(" ",strip=True)).lower() for th in table.find_all("th")]
-                if not any("sig" in h for h in headers): continue
-                for tr in table.find_all("tr"):
-                    cells=[clean(td.get_text(" ",strip=True)) for td in tr.find_all(["td","th"])]
-                    if len(cells)<6: continue
-                    rowtxt=" | ".join(cells)
-                    fighter=None
-                    for nm in [fa,fb]:
-                        if norm(nm) in norm(rowtxt): fighter=nm; break
-                    if fighter is None: continue
-                    rndm=re.search(r"\b([1-5])\b",rowtxt)
-                    sigm=re.search(r"(\d+)\s*/\s*(\d+)",rowtxt)
-                    pairs=re.findall(r"(\d+)\s*/\s*(\d+)",rowtxt)
-                    if not rndm or not pairs: continue
-                    # usually first pair is sig strikes, second is TD
-                    sigL,sigA=map(int,pairs[0])
-                    tdL,tdA=(map(int,pairs[1]) if len(pairs)>1 else (0,0))
-                    # pull scalar fields heuristically after significant-strike pair
-                    nums=[int(x) for x in re.findall(r"(?<![:/])\b\d+\b(?![:/])",rowtxt)]
-                    ctrlm=re.findall(r"\b\d+:\d{2}\b",rowtxt)
-                    rec={"season":e.season,"event_name":e.event_name,"event_date":e.event_date,
-                         "fighter":fighter,"opponent":fb if norm(fighter)==norm(fa) else fa,
-                         "round":int(rndm.group(1)),"sig_landed":sigL,"sig_attempted":sigA,
-                         "td_landed":int(tdL),"td_attempted":int(tdA),
-                         "control_seconds":ctrl_sec(ctrlm[-1]) if ctrlm else np.nan,
-                         "source_url":furl}
-                    local.append(rec)
-            if local:
-                round_rows.extend(local)
-            fight_rows.append({"season":e.season,"event_name":e.event_name,"event_date":e.event_date,
-                              "fighter_a":match.fighter_a,"fighter_b":match.fighter_b,"winner":match.winner,
-                              "fight_url":furl,"round_rows":len(local)})
-        except Exception as ex:
-            fight_rows.append({"season":e.season,"event_name":e.event_name,"event_date":e.event_date,
-                              "fighter_a":fa if 'fa' in locals() else "","fighter_b":fb if 'fb' in locals() else "",
-                              "fight_url":furl,"error":repr(ex),"round_rows":0})
-        time.sleep(.03)
+            sec=fs.select_one(".fight-totals-section")
+            if sec is None: raise ValueError("fight totals section missing")
+            st=clean(sec.get_text(" ",strip=True))
 
-rounds=pd.DataFrame(round_rows)
+            def pair(label):
+                m=re.search(r"(\\d+)\\s+of\\s+(\\d+)\\s+"+re.escape(label)+r"\\s+(\\d+)\\s+of\\s+(\\d+)",st,re.I)
+                return tuple(map(int,m.groups())) if m else (np.nan,np.nan,np.nan,np.nan)
+            def scalar(label):
+                m=re.search(r"(\\d+)\\s+"+re.escape(label)+r"\\s+(\\d+)",st,re.I)
+                return tuple(map(int,m.groups())) if m else (np.nan,np.nan)
+            def times(label):
+                m=re.search(r"(\\d+:\\d{2})\\s+"+re.escape(label)+r"\\s+(\\d+:\\d{2})",st,re.I)
+                return (ctrl_sec(m.group(1)),ctrl_sec(m.group(2))) if m else (np.nan,np.nan)
+
+            sig=pair("Significant strikes")
+            td=pair("Takedowns")
+            ctrl=times("Control time")
+            kd=scalar("Knockdowns")
+            sub=scalar("Submission attempts")
+
+            vals=[
+                dict(season=e.season,event_name=e.event_name,event_date=e.event_date,fighter=fa,opponent=fb,
+                     sig_landed=sig[0],sig_attempted=sig[1],td_landed=td[0],td_attempted=td[1],
+                     control_seconds=ctrl[0],knockdowns=kd[0],sub_attempts=sub[0],source_url=furl),
+                dict(season=e.season,event_name=e.event_name,event_date=e.event_date,fighter=fb,opponent=fa,
+                     sig_landed=sig[2],sig_attempted=sig[3],td_landed=td[2],td_attempted=td[3],
+                     control_seconds=ctrl[1],knockdowns=kd[1],sub_attempts=sub[1],source_url=furl),
+            ]
+            totals_rows.extend(vals)
+            fight_rows.append(dict(season=e.season,event_name=e.event_name,event_date=e.event_date,
+                                   fighter_a=match.fighter_a,fighter_b=match.fighter_b,winner=match.winner,
+                                   fight_url=furl,parsed=True))
+        except Exception as ex:
+            fight_rows.append(dict(season=e.season,event_name=e.event_name,event_date=e.event_date,
+                                   fighter_a=fa if 'fa' in locals() else "",fighter_b=fb if 'fb' in locals() else "",
+                                   fight_url=furl,parsed=False,error=repr(ex)))
+        time.sleep(.02)
+
+totals=pd.DataFrame(totals_rows)
 fights=pd.DataFrame(fight_rows)
 fights.to_csv(OUT/"technical_fight_pages.csv",index=False)
-rounds.to_csv(OUT/"technical_round_rows.csv",index=False)
+totals.to_csv(OUT/"technical_fight_totals.csv",index=False)
 
-# Aggregate historical technical rows and create strictly point-in-time rolling features.
-if not rounds.empty:
-    agg=rounds.groupby(["season","event_name","event_date","fighter","opponent"],as_index=False).agg(
-        sig_landed=("sig_landed","sum"),sig_attempted=("sig_attempted","sum"),
-        td_landed=("td_landed","sum"),td_attempted=("td_attempted","sum"),
-        control_seconds=("control_seconds","sum"),rounds_observed=("round","nunique")
-    )
-    # Derive opponent allowed stats by mirrored pair.
-    pairmap={}
-    for _,x in agg.iterrows():
-        pairmap[(str(x.event_name),norm(x.fighter))]=x
+snaps=[]
+if not totals.empty:
+    pairmap={(str(x.event_name),norm(x.fighter)):x for _,x in totals.iterrows()}
     hist={}
-    snaps=[]
-    for _,x in agg.sort_values(["event_date","event_name"]).iterrows():
+    for _,x in totals.sort_values(["event_date","event_name"]).iterrows():
         fn=norm(x.fighter); on=norm(x.opponent)
         prior=hist.get(fn,[])
-        sigL=sum(z["sig_landed"] for z in prior); sigA=sum(z["sig_attempted"] for z in prior)
-        tdL=sum(z["td_landed"] for z in prior); tdA=sum(z["td_attempted"] for z in prior)
-        oppSigL=sum(z["opp_sig_landed"] for z in prior); oppSigA=sum(z["opp_sig_attempted"] for z in prior)
-        oppTdL=sum(z["opp_td_landed"] for z in prior); oppTdA=sum(z["opp_td_attempted"] for z in prior)
-        ctrl=sum(z["control_seconds"] for z in prior); oppctrl=sum(z["opp_control_seconds"] for z in prior)
-        snaps.append({
-            "season":x.season,"event_name":x.event_name,"event_date":x.event_date,
-            "fighter":x.fighter,"opponent":x.opponent,"prior_technical_fights":len(prior),
-            "prior_sig_landed":sigL,"prior_sig_attempted":sigA,
-            "prior_sig_accuracy":sigL/sigA if sigA else np.nan,
-            "prior_sig_absorbed":oppSigL,"prior_sig_defense":1-(oppSigL/oppSigA) if oppSigA else np.nan,
-            "prior_sig_diff":sigL-oppSigL,
-            "prior_td_landed":tdL,"prior_td_attempted":tdA,
-            "prior_td_accuracy":tdL/tdA if tdA else np.nan,
-            "prior_td_allowed":oppTdL,"prior_td_defense":1-(oppTdL/oppTdA) if oppTdA else np.nan,
-            "prior_control_seconds":ctrl,"prior_control_diff":ctrl-oppctrl
-        })
+        def sm(k): return sum((0 if pd.isna(z.get(k)) else float(z.get(k))) for z in prior)
+        sigL,sigA=sm("sig_landed"),sm("sig_attempted")
+        oppSigL,oppSigA=sm("opp_sig_landed"),sm("opp_sig_attempted")
+        tdL,tdA=sm("td_landed"),sm("td_attempted")
+        oppTdL,oppTdA=sm("opp_td_landed"),sm("opp_td_attempted")
+        ctrl,oppctrl=sm("control_seconds"),sm("opp_control_seconds")
+        kd,sub=sm("knockdowns"),sm("sub_attempts")
+        snaps.append(dict(
+            season=x.season,event_name=x.event_name,event_date=x.event_date,fighter=x.fighter,opponent=x.opponent,
+            prior_technical_fights=len(prior),
+            prior_sig_landed=sigL,prior_sig_attempted=sigA,
+            prior_sig_accuracy=sigL/sigA if sigA else np.nan,
+            prior_sig_absorbed=oppSigL,
+            prior_sig_defense=1-(oppSigL/oppSigA) if oppSigA else np.nan,
+            prior_sig_diff=sigL-oppSigL,
+            prior_td_landed=tdL,prior_td_attempted=tdA,
+            prior_td_accuracy=tdL/tdA if tdA else np.nan,
+            prior_td_allowed=oppTdL,
+            prior_td_defense=1-(oppTdL/oppTdA) if oppTdA else np.nan,
+            prior_control_seconds=ctrl,prior_control_diff=ctrl-oppctrl,
+            prior_knockdowns=kd,prior_sub_attempts=sub
+        ))
         opp=pairmap.get((str(x.event_name),on))
-        cur={"sig_landed":x.sig_landed,"sig_attempted":x.sig_attempted,"td_landed":x.td_landed,
-             "td_attempted":x.td_attempted,"control_seconds":0 if pd.isna(x.control_seconds) else x.control_seconds,
-             "opp_sig_landed":0 if opp is None else opp.sig_landed,
-             "opp_sig_attempted":0 if opp is None else opp.sig_attempted,
-             "opp_td_landed":0 if opp is None else opp.td_landed,
-             "opp_td_attempted":0 if opp is None else opp.td_attempted,
-             "opp_control_seconds":0 if opp is None or pd.isna(opp.control_seconds) else opp.control_seconds}
+        cur=dict(
+            sig_landed=x.sig_landed,sig_attempted=x.sig_attempted,td_landed=x.td_landed,td_attempted=x.td_attempted,
+            control_seconds=x.control_seconds,knockdowns=x.knockdowns,sub_attempts=x.sub_attempts,
+            opp_sig_landed=0 if opp is None else opp.sig_landed,
+            opp_sig_attempted=0 if opp is None else opp.sig_attempted,
+            opp_td_landed=0 if opp is None else opp.td_landed,
+            opp_td_attempted=0 if opp is None else opp.td_attempted,
+            opp_control_seconds=0 if opp is None else opp.control_seconds
+        )
         hist.setdefault(fn,[]).append(cur)
     pd.DataFrame(snaps).to_csv(OUT/"prefight_technical_snapshots.csv",index=False)
-    agg.to_csv(OUT/"technical_fight_totals.csv",index=False)
 
 status={
   "archive_fights":int(len(df)),
   "fight_pages_seen":int(len(fights)),
-  "fight_pages_with_round_rows":int((fights.get("round_rows",pd.Series(dtype=int)).fillna(0)>0).sum()),
-  "round_rows":int(len(rounds)),
-  "snapshot_rows":int(len(pd.DataFrame(snaps))) if not rounds.empty else 0
+  "fight_pages_parsed":int(fights.get("parsed",pd.Series(dtype=bool)).fillna(False).sum()),
+  "fighter_fight_total_rows":int(len(totals)),
+  "snapshot_rows":int(len(snaps)),
+  "snapshots_with_prior_technical_history":int(sum(1 for x in snaps if x["prior_technical_fights"]>0))
 }
-(OUT/"status.json").write_text(json.dumps(status,indent=2,default=str)+"\n")
+(OUT/"status.json").write_text(json.dumps(status,indent=2,default=str)+"\\n")
 print(json.dumps(status,indent=2))
