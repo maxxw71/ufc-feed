@@ -1,0 +1,38 @@
+name: DWCS UFC Athlete Directory Probe
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/dwcs-ufc-athlete-directory-probe.yml'
+permissions:
+  contents: write
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: python -m pip install --quiet requests
+      - name: Probe official UFC athlete directory through existing relay
+        run: |
+          python - <<'PY'
+          import requests,re,json
+          from pathlib import Path
+          out=Path('dwcs/research/ufc_directory_probe'); out.mkdir(parents=True,exist_ok=True)
+          url='https://r.jina.ai/https://www.ufc.com/athletes/all'
+          r=requests.get(url,headers={'User-Agent':'ufc-feed/1.1','Accept':'text/plain'},timeout=60)
+          (out/'status.json').write_text(json.dumps({'status':r.status_code,'chars':len(r.text)},indent=2)+'\n')
+          (out/'directory.txt').write_text(r.text[:250000])
+          links=[]
+          for m in re.finditer(r'\[([^\]]+)\]\((https://www\.ufc\.com/athlete/[^)]+)\)',r.text,re.I):
+              links.append({'name':m.group(1),'url':m.group(2)})
+          (out/'links.json').write_text(json.dumps(links[:5000],indent=2))
+          print('status',r.status_code,'links',len(links))
+          PY
+      - name: Commit probe
+        run: |
+          git config user.name appwiza-research-bot
+          git config user.email actions@users.noreply.github.com
+          git add dwcs/research/ufc_directory_probe
+          git commit -m 'Probe official UFC athlete directory' || exit 0
+          git pull --rebase origin main
+          git push
