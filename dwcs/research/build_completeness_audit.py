@@ -10,8 +10,14 @@ OUT.mkdir(parents=True,exist_ok=True)
 
 def jload(path):
     p=ROOT/path
-    if not p.exists(): return {}
-    txt=p.read_text().strip()\n    try: return json.loads(txt)\n    except json.JSONDecodeError:\n        obj,_=json.JSONDecoder().raw_decode(txt)\n        return obj
+    if not p.exists():
+        return {}
+    txt=p.read_text().strip()
+    try:
+        return json.loads(txt)
+    except json.JSONDecodeError:
+        obj,_=json.JSONDecoder().raw_decode(txt)
+        return obj
 
 def pct(a,b):
     return float(a/b) if b else 0.0
