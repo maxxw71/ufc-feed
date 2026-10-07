@@ -1,0 +1,41 @@
+=== USER CRONTAB ===
+
+# BEGIN APPWIZA UFC AUTORESEARCH
+CRON_TZ=America/New_York
+20 0,6,12,18 * * * cd /home/anestishkurti92/ufc-predictor-v1 && nice -n 12 timeout 10m venv/bin/python ufc_autoresearch_runner.py snapshot >> auto_research/cron.log 2>&1
+30 10 * * * cd /home/anestishkurti92/ufc-predictor-v1 && nice -n 12 timeout 30m venv/bin/python ufc_autoresearch_runner.py daily >> auto_research/cron.log 2>&1
+15 3 * * 1 cd /home/anestishkurti92/ufc-predictor-v1 && nice -n 15 timeout 90m venv/bin/python ufc_autoresearch_runner.py weekly >> auto_research/cron.log 2>&1
+15 4 1 * * cd /home/anestishkurti92/ufc-predictor-v1 && nice -n 15 timeout 120m venv/bin/python ufc_autoresearch_runner.py monthly >> auto_research/cron.log 2>&1
+# END APPWIZA UFC AUTORESEARCH
+# BEGIN APPWIZA UFC IMMUTABLE
+25 0,6,12,18 * * * cd /home/anestishkurti92/ufc-predictor-v1 && nice -n 12 timeout 10m venv/bin/python ufc_immutable_warehouse.py >> auto_research/immutable.log 2>&1
+# END APPWIZA UFC IMMUTABLE
+# BEGIN APPWIZA MLS RESEARCH
+# Explicit UTC schedule; low-priority, locked, shadow-only.
+CRON_TZ=UTC
+10 8 * * * /home/anestishkurti92/mls-predictor-v1/mls_pipeline.sh daily >> /home/anestishkurti92/mls-predictor-v1/auto_research/cron.log 2>&1
+10 9 * * 1 /home/anestishkurti92/mls-predictor-v1/mls_pipeline.sh weekly >> /home/anestishkurti92/mls-predictor-v1/auto_research/cron.log 2>&1
+# END APPWIZA MLS RESEARCH
+7 9,21 * * * cd /home/anestishkurti92/crypto-press-scanner && /home/anestishkurti92/ufc-predictor-v1/venv/bin/python /home/anestishkurti92/crypto-press-scanner/crypto_press_scanner.py run >> /home/anestishkurti92/crypto-press-scanner/scanner.log 2>&1
+# Appwiza crypto scanner: read-only market data, every 15 minutes
+*/15 * * * * /home/anestishkurti92/crypto-trading/run_scan.sh >> /home/anestishkurti92/crypto-trading/scanner.log 2>&1
+5 * * * * /home/anestishkurti92/ufc-predictor-v1/venv/bin/python /home/anestishkurti92/crypto-trading/crypto_market_context_logger.py >> /home/anestishkurti92/crypto-trading/context_logger.log 2>&1
+# Fight-weekend reconciliation: refresh UFCStats/immutable warehouse hourly so completed cards
+# do not wait up to six hours to become finalized prospective research observations.
+CRON_TZ=America/New_York
+10 0,6,12,18 * * * cd /home/anestishkurti92/ufc-predictor-v1 && timeout 10m nice -n 10 venv/bin/python ufc_prospective_pipeline.py capture >> auto_research/prospective.log 2>&1
+40 0,6,12,18 * * * cd /home/anestishkurti92/ufc-predictor-v1 && timeout 45m nice -n 12 venv/bin/python ufc_prospective_pipeline.py finalize >> auto_research/prospective.log 2>&1
+# Fight-weekend reconciliation: refresh UFCStats/immutable warehouse hourly so completed cards
+# do not wait up to six hours to become finalized prospective research observations.
+50 * * * 6,0 cd /home/anestishkurti92/ufc-predictor-v1 && timeout 50m nice -n 12 venv/bin/python ufc_prospective_pipeline.py reconcile >> auto_research/prospective.log 2>&1
+CRON_TZ=UTC
+CRON_TZ=UTC
+CRON_TZ=UTC
+*/15 * * * * /home/anestishkurti92/ufc-predictor-v1/venv/bin/python /home/anestishkurti92/crypto-trading/ensure_trading_nav.py >> /home/anestishkurti92/crypto-trading/scanner.log 2>&1; /home/anestishkurti92/ufc-predictor-v1/venv/bin/python /home/anestishkurti92/crypto-trading/live_crypto_scanner.py --methods /home/anestishkurti92/crypto-trading/methods.json --output /srv/appwiza-sports/public/trading/crypto/signals.json --history /home/anestishkurti92/crypto-trading/history.json --days 125 --recent-hours 72 >> /home/anestishkurti92/crypto-trading/scanner.log 2>&1
+
+=== UFC PROCESSES / SYSTEMD TIMERS ===
+Wed 2026-10-07 14:00:00 UTC  2h 1min Tue 2026-10-06 14:00:00 UTC       21h ago ufc-model-watcher.timer        ufc-model-watcher.service
+
+=== WATCHER FILE TIMESTAMPS ===
+2026-10-04 02:52:30.007538083 +0000 /home/anestishkurti92/ufc-predictor-v1/ufc_email_watcher.py
+2026-10-06 14:00:15.182601574 +0000 /home/anestishkurti92/ufc-predictor-v1/watcher_state.json
