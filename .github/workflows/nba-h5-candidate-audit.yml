@@ -1,0 +1,48 @@
+name: NBA H5 candidate robustness
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'nba/research/audit_h5_candidates.py'
+      - '.github/workflows/nba-h5-candidate-audit.yml'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: nba-h5-candidate-audit
+  cancel-in-progress: false
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+        with: {fetch-depth: 0}
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.12'}
+      - name: Audit frozen H5 research candidates
+        run: python -B nba/research/audit_h5_candidates.py
+      - name: Publish independently auditable results
+        shell: bash
+        run: |
+          set -euo pipefail
+          cp nba/research/hunt_v5/hunt_v5_candidate_audit.json /tmp/h5_candidate_audit.json
+          git config user.name appwiza-nba-bot
+          git config user.email actions@users.noreply.github.com
+          for attempt in 1 2 3; do
+            git fetch origin main
+            git reset --hard origin/main
+            git clean -fd
+            mkdir -p nba/research/hunt_v5
+            cp /tmp/h5_candidate_audit.json nba/research/hunt_v5/hunt_v5_candidate_audit.json
+            git add nba/research/hunt_v5/hunt_v5_candidate_audit.json
+            if git diff --cached --quiet; then exit 0; fi
+            git commit -m 'nba: publish H5 independent candidate robustness findings'
+            if git push origin HEAD:main; then exit 0; fi
+            sleep 5
+          done
+          exit 1
