@@ -12,7 +12,7 @@
     "no_preseason_signals": true,
     "frozen_rules": true,
     "prospective_tracking_from": "2026-27",
-    "notes": "All listed NBA methods are live in the Appwiza arsenal with frozen historical rules; 2026-27 results are prospective only and are not used to retune thresholds."
+    "notes": "Ten frozen live NBA methods, including two explicitly promoted on 2026-10-08. Regular-season-only, fresh executable quote and point-in-time checks; no threshold retuning from 2026-27 outcomes."
   },
   "methods": [
     {
@@ -256,6 +256,76 @@
         "rest_context"
       ],
       "description": "OVER when both teams combine for high recent paint-scoring share, relatively low foul rate and short combined rest."
+    },
+    {
+      "method_id": "NBA_H3_OVER_002",
+      "name": "Clutch / Standings / Starter PM Disparity OVER",
+      "status": "live_arsenal",
+      "market": "total_over",
+      "rule": {
+        "clutch_abs_gap_min": 1.7,
+        "stand_rank_abs_gap_min": 8,
+        "starterpm_abs_gap_min": 7.16
+      },
+      "historical": {
+        "signals": 346,
+        "wins": 205,
+        "losses": 137,
+        "pushes": 4,
+        "hit_rate": 0.5994152046783626,
+        "roi": 0.14184643810917277,
+        "holdout_signals": 96,
+        "holdout_wins": 57,
+        "holdout_losses": 39,
+        "holdout_hit_rate": 0.59375,
+        "holdout_roi": 0.13245507176666596,
+        "worst_price_roi": 0.0999621593081745,
+        "independent_game_fraction": 0.6647398843930635
+      },
+      "requirements": [
+        "pregame_total_line_and_bookmaker_price",
+        "point_in_time_conference_ranks",
+        "rolling_clutch_margin",
+        "confirmed_starting_five",
+        "starter_rolling_plusminus"
+      ],
+      "description": "OVER when pregame absolute clutch, standings rank, and confirmed-starter plus-minus disparities clear frozen thresholds. New totals family; latest bookmaker quote and point-in-time guard required.",
+      "promotion_note": "User-authorized promotion on 2026-10-08. Historical association not a forward performance guarantee; frozen prospective recording required."
+    },
+    {
+      "method_id": "NBA_STAND_002_STARTPM",
+      "name": "Standings Pressure + Starter Form Confirmation",
+      "status": "live_arsenal",
+      "market": "moneyline",
+      "parent_method": "NBA_STAND_002",
+      "rule": {
+        "opponent_seed6_gap_min": 0,
+        "streak_gap_max": -2,
+        "market_probability_min": 0.5968,
+        "starter_plusminus5_gap_min": 0.92
+      },
+      "historical": {
+        "signals": 138,
+        "wins": 117,
+        "losses": 21,
+        "hit_rate": 0.8478260869565217,
+        "roi": 0.18463529435987835,
+        "holdout_signals": 33,
+        "holdout_wins": 28,
+        "holdout_losses": 5,
+        "holdout_hit_rate": 0.8484848484848485,
+        "holdout_roi": 0.19321426996862232,
+        "worst_price_roi": 0.16735836387613645
+      },
+      "requirements": [
+        "pregame_moneyline_bookmaker_quote",
+        "point_in_time_standings",
+        "current_streak",
+        "confirmed_starting_five",
+        "starter_rolling_plusminus"
+      ],
+      "description": "Strict subset of live STAND_002: the favorite also has >=0.92 pregame starter plus-minus advantage. Same-game same-side overlaps increase method count; this is concentrated, not independent exposure.",
+      "promotion_note": "User-authorized promotion on 2026-10-08; keep parent unchanged and record prospective overlap distinctly."
     }
   ]
 }
