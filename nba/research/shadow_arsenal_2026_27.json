@@ -120,7 +120,7 @@
       "method_id": "NBA_H3_OVER_002",
       "priority": 9,
       "market": "total_over",
-      "status": "shadow_only",
+      "status": "promotion_candidate_passed_historical_robustness",
       "research_type": "independent_cross_family",
       "rule": "clutch_abs_gap >= 1.7 AND stand_rank_abs_gap >= 8 AND starterpm_abs_gap >= 7.16",
       "historical": {
@@ -136,7 +136,18 @@
         "holdout_roi": 0.13245507176666596,
         "worst_price_roi": 0.0999621593081745
       },
-      "notes": "Strongest V3 totals lead. Positive ROI in every individual season, positive worst-price stress, and all 27 tested threshold-neighborhood variants positive overall and in holdout. Keep shadow pending overlap and mechanism-loss audit."
+      "notes": "Historical robustness complete: positive ROI in all 8 seasons, +9.996% worst-price ROI, 27/27 threshold-neighborhood variants positive overall and holdout, ~66.5% of H3 games independent of all current live methods. Candidate-bankroll simulation: $50k current arsenal $436,352.63 vs $700,672.74 with H3 added, with max drawdown 10.37% -> 9.90%. Keep non-live until explicit promotion decision.",
+      "robustness": {
+        "positive_roi_seasons": 8,
+        "total_seasons": 8,
+        "threshold_neighborhood_positive_overall": "27/27",
+        "threshold_neighborhood_positive_holdout": "27/27",
+        "worst_price_roi": 0.0999621593081745,
+        "independent_game_fraction": 0.6647398843930635,
+        "current_plus_h3_ending_bankroll_50k": 700672.7434337722,
+        "current_only_ending_bankroll_50k": 436352.62846697716,
+        "current_plus_h3_max_drawdown": 0.09896906897711147
+      }
     },
     {
       "method_id": "NBA_XOVER_002",
@@ -164,7 +175,7 @@
       "method_id": "NBA_STAND_002_STARTPM",
       "priority": 11,
       "market": "moneyline",
-      "status": "shadow_only",
+      "status": "shadow_passed_historical_robustness",
       "research_type": "loss_filter_descendant",
       "parent_method": "NBA_STAND_002",
       "rule": "parent rule AND starter_pm5_gap >= 0.92",
@@ -180,7 +191,7 @@
         "holdout_hit_rate": 0.8484848484848485,
         "holdout_roi": 0.19321426996862232
       },
-      "notes": "No negative-ROI individual seasons in first descendant audit; strong threshold neighborhood. Needs worst-price stress before promotion."
+      "notes": "Passed all current descendant stress gates: 138 signals, 117-21, +18.46% ROI; holdout 28-5 +19.32%; every season with >=5 signals positive, worst-price ROI positive overall/holdout, and 100% tested threshold neighborhood positive. Remains shadow because it was discovered from parent-loss forensics and therefore carries extra selection-bias risk."
     },
     {
       "method_id": "NBA_LQ_003_FOUL",
@@ -335,6 +346,29 @@
         "worst_price_roi": 0.033595142174824275
       },
       "notes": "Interesting V3 OVER lead, but 2018-19 was negative ROI and threshold neighborhood is materially less stable. Research-only."
+    },
+    {
+      "method_id": "NBA_H3_OVER_002_TS",
+      "priority": 19,
+      "market": "total_over",
+      "status": "research_only",
+      "research_type": "loss_filter_descendant",
+      "parent_method": "NBA_H3_OVER_002",
+      "rule": "parent rule AND combined recent true-shooting sum >= 1.1490513454",
+      "historical": {
+        "signals": 174,
+        "wins": 112,
+        "losses": 60,
+        "hit_rate": 0.6511627906976745,
+        "roi": 0.23931458701080668,
+        "holdout_signals": 51,
+        "holdout_wins": 34,
+        "holdout_losses": 17,
+        "holdout_hit_rate": 0.6666666666666666,
+        "holdout_roi": 0.27100307258022516,
+        "worst_price_roi": 0.18750372063462273
+      },
+      "notes": "Strong leakage-safe descendant and 5/5 tested cutoff neighborhood robust, but 2019-20 is slightly negative ROI. Parent H3_OVER_002 is the cleaner promotion candidate."
     }
   ]
 }
