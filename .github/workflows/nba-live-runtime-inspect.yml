@@ -1,0 +1,43 @@
+name: NBA Live Runtime Inspect
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/nba-live-runtime-inspect.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  inspect:
+    runs-on: [self-hosted, Linux, X64, appwiza]
+    timeout-minutes: 6
+    steps:
+      - name: Inspect authorized production scanner paths over SSH
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          KEY=/home/appwiza-runner/.ssh/appwiza_vps
+          HOST=anestishkurti92@127.0.0.1
+          ssh -i "$KEY" -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=accept-new "$HOST" 'bash -s' <<'REMOTE'
+          set -euo pipefail
+          echo '== systemd services =='
+          systemctl cat nba-live-scan.service nba-live-scan.timer 2>&1 | grep -E '^(# /|\[|Description=|ExecStart=|WorkingDirectory=|EnvironmentFile=|OnCalendar=|OnUnitActiveSec=|ActiveState=)' || true
+          echo '== runtime files =='
+          for d in /srv/appwiza-sports/nba-live /srv/appwiza-sports/capture/nba /srv/appwiza-sports/public/nba; do
+            test -d "$d" || continue
+            echo "DIRECTORY $d"
+            find "$d" -maxdepth 2 -type f \( -name 'scan_live_methods.py' -o -name 'live_integrity.py' -o -name 'arsenal.json' -o -name 'current.json' -o -name 'ACTIVE' -o -name 'latest.json' \) -print
+          done
+          echo '== public method ids =='
+          if test -f /srv/appwiza-sports/public/nba/current.json; then
+            python3 - <<'PY'
+          import json
+          d=json.load(open('/srv/appwiza-sports/public/nba/current.json'))
+          print('method_count',len(d.get('arsenal') or []))
+          print('ids',','.join(x.get('method_id','') for x in d.get('arsenal',[])))
+          PY
+          fi
+          REMOTE
