@@ -11,9 +11,13 @@ on:
 permissions:
   contents: write
 
+concurrency:
+  group: nba-research-v4-ml-ats
+  cancel-in-progress: true
+
 jobs:
   run:
-    runs-on: [self-hosted, Linux, X64, appwiza]
+    runs-on: ubuntu-latest
     timeout-minutes: 75
     steps:
       - uses: actions/checkout@v4
