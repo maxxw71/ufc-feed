@@ -7,7 +7,7 @@
     "prospective_only": true,
     "no_retuning_on_2026_27_results": true,
     "promotion_requires_review": false,
-    "note": "These five frozen research candidates were promoted to the live Appwiza NBA arsenal at user direction. Historical rules remain frozen for prospective 2026-27 tracking."
+    "note": "Original live family and two additional 2026-10-08 user-approved candidates are now in the frozen live arsenal. Remaining candidates stay shadow/research. New 2026-27 outcomes never retune thresholds."
   },
   "methods": [
     {
@@ -120,7 +120,7 @@
       "method_id": "NBA_H3_OVER_002",
       "priority": 9,
       "market": "total_over",
-      "status": "promotion_candidate_passed_historical_robustness",
+      "status": "promoted_live_2026_27",
       "research_type": "independent_cross_family",
       "rule": "clutch_abs_gap >= 1.7 AND stand_rank_abs_gap >= 8 AND starterpm_abs_gap >= 7.16",
       "historical": {
@@ -136,7 +136,7 @@
         "holdout_roi": 0.13245507176666596,
         "worst_price_roi": 0.0999621593081745
       },
-      "notes": "Historical robustness complete: positive ROI in all 8 seasons, +9.996% worst-price ROI, 27/27 threshold-neighborhood variants positive overall and holdout, ~66.5% of H3 games independent of all current live methods. Candidate-bankroll simulation: $50k current arsenal $436,352.63 vs $700,672.74 with H3 added, with max drawdown 10.37% -> 9.90%. Keep non-live until explicit promotion decision.",
+      "notes": "Historical robustness complete: positive ROI in all 8 seasons, +9.996% worst-price ROI, 27/27 threshold-neighborhood variants positive overall and holdout, ~66.5% of H3 games independent of all current live methods. Candidate-bankroll simulation: $50k current arsenal $436,352.63 vs $700,672.74 with H3 added, with max drawdown 10.37% -> 9.90%. Keep non-live until explicit promotion decision. Promoted with explicit user approval, historical rules frozen; prospective tracked via live forward ledger and fresh bookmaker quote.",
       "robustness": {
         "positive_roi_seasons": 8,
         "total_seasons": 8,
@@ -147,7 +147,9 @@
         "current_plus_h3_ending_bankroll_50k": 700672.7434337722,
         "current_only_ending_bankroll_50k": 436352.62846697716,
         "current_plus_h3_max_drawdown": 0.09896906897711147
-      }
+      },
+      "promoted_live": true,
+      "promotion_date": "2026-10-08"
     },
     {
       "method_id": "NBA_XOVER_002",
@@ -175,7 +177,7 @@
       "method_id": "NBA_STAND_002_STARTPM",
       "priority": 11,
       "market": "moneyline",
-      "status": "shadow_passed_historical_robustness",
+      "status": "promoted_live_2026_27",
       "research_type": "loss_filter_descendant",
       "parent_method": "NBA_STAND_002",
       "rule": "parent rule AND starter_pm5_gap >= 0.92",
@@ -191,7 +193,9 @@
         "holdout_hit_rate": 0.8484848484848485,
         "holdout_roi": 0.19321426996862232
       },
-      "notes": "Passed all current descendant stress gates: 138 signals, 117-21, +18.46% ROI; holdout 28-5 +19.32%; every season with >=5 signals positive, worst-price ROI positive overall/holdout, and 100% tested threshold neighborhood positive. Remains shadow because it was discovered from parent-loss forensics and therefore carries extra selection-bias risk."
+      "notes": "Passed all current descendant stress gates: 138 signals, 117-21, +18.46% ROI; holdout 28-5 +19.32%; every season with >=5 signals positive, worst-price ROI positive overall/holdout, and 100% tested threshold neighborhood positive. Remains shadow because it was discovered from parent-loss forensics and therefore carries extra selection-bias risk. Promoted with explicit user approval, historical rules frozen; prospective tracked via live forward ledger and fresh bookmaker quote.",
+      "promoted_live": true,
+      "promotion_date": "2026-10-08"
     },
     {
       "method_id": "NBA_LQ_003_FOUL",
