@@ -1,0 +1,38 @@
+name: NBA Historical Injury Format Diagnostic
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'nba/diagnose_historical_injury_format.py'
+      - '.github/workflows/nba-injury-format-diagnostic.yml'
+permissions:
+  contents: write
+jobs:
+  diagnose:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+        with: {fetch-depth: 0}
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.12'}
+      - run: python nba/diagnose_historical_injury_format.py
+      - shell: bash
+        run: |
+          set -euo pipefail
+          cp nba/availability/historical_by_season/report_format_diagnostic.json /tmp/nba_report_format_diagnostic.json
+          git config user.name appwiza-nba-bot
+          git config user.email actions@users.noreply.github.com
+          for attempt in 1 2 3; do
+            git fetch origin main
+            git reset --hard origin/main
+            git clean -fd
+            cp /tmp/nba_report_format_diagnostic.json nba/availability/historical_by_season/report_format_diagnostic.json
+            git add nba/availability/historical_by_season/report_format_diagnostic.json
+            if git diff --cached --quiet; then exit 0; fi
+            git commit -m 'nba: inspect official archive format across seasons'
+            if git push origin HEAD:main; then exit 0; fi
+            sleep 4
+          done
+          exit 1
