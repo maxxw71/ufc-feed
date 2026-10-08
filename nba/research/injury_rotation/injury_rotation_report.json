@@ -1,0 +1,247 @@
+{
+  "generated_at_utc": "2026-10-08T12:36:47.331904+00:00",
+  "seasons_covered": {
+    "2024-25": {
+      "games_with_market": 1230,
+      "games_with_both_official_injury_rows": 0,
+      "sides": 0
+    },
+    "2025-26": {
+      "games_with_market": 1230,
+      "games_with_both_official_injury_rows": 0,
+      "sides": 0
+    },
+    "2021-22": {
+      "games_with_market": 1230,
+      "games_with_both_official_injury_rows": 1213,
+      "sides": 4852
+    },
+    "2022-23": {
+      "games_with_market": 1230,
+      "games_with_both_official_injury_rows": 1209,
+      "sides": 4836
+    },
+    "2023-24": {
+      "games_with_market": 1230,
+      "games_with_both_official_injury_rows": 0,
+      "sides": 0
+    }
+  },
+  "market_side_rows": 9688,
+  "screened_conditions": 22,
+  "research_candidates": 2,
+  "eligible_for_independent_review": 0,
+  "leaders": [
+    {
+      "market": "ats",
+      "rule": "opponent_missing_points_edge >= 18 AND opponent_out_count_edge >= 1 AND market_prob >= 0.5642",
+      "domains": [
+        "injury",
+        "market"
+      ],
+      "phases": {
+        "discovery": {
+          "n": 320,
+          "wins": 165,
+          "losses": 148,
+          "pushes": 7,
+          "hit": 0.5271565495207667,
+          "roi": 0.006249999999999985,
+          "profit_units": 1.9999999999999951
+        },
+        "confirmation": {
+          "n": 321,
+          "wins": 166,
+          "losses": 146,
+          "pushes": 9,
+          "hit": 0.532051282051282,
+          "roi": 0.014522486544859076,
+          "profit_units": 4.661718180899763
+        },
+        "validation": {
+          "n": 0,
+          "wins": 0,
+          "losses": 0,
+          "pushes": 0,
+          "hit": null,
+          "roi": null,
+          "profit_units": 0
+        },
+        "holdout": {
+          "n": 0,
+          "wins": 0,
+          "losses": 0,
+          "pushes": 0,
+          "hit": null,
+          "roi": null,
+          "profit_units": 0
+        }
+      },
+      "price_stress": {
+        "best": {
+          "n": 641,
+          "wins": 331,
+          "losses": 294,
+          "pushes": 16,
+          "hit": 0.5296,
+          "roi": 0.031488332308173904,
+          "profit_units": 20.18402100953947
+        },
+        "median": {
+          "n": 641,
+          "wins": 331,
+          "losses": 294,
+          "pushes": 16,
+          "hit": 0.5296,
+          "roi": 0.010392696070046423,
+          "profit_units": 6.661718180899758
+        },
+        "worst": {
+          "n": 641,
+          "wins": 331,
+          "losses": 294,
+          "pushes": 16,
+          "hit": 0.5296,
+          "roi": -0.06665938354094461,
+          "profit_units": -42.72866484974549
+        }
+      },
+      "holdout_price_stress": {
+        "best": {
+          "n": 0,
+          "wins": 0,
+          "losses": 0,
+          "pushes": 0,
+          "hit": null,
+          "roi": null,
+          "profit_units": 0
+        },
+        "median": {
+          "n": 0,
+          "wins": 0,
+          "losses": 0,
+          "pushes": 0,
+          "hit": null,
+          "roi": null,
+          "profit_units": 0
+        },
+        "worst": {
+          "n": 0,
+          "wins": 0,
+          "losses": 0,
+          "pushes": 0,
+          "hit": null,
+          "roi": null,
+          "profit_units": 0
+        }
+      },
+      "status": "research_only_awaiting_full_2023_26_injury_holdout"
+    },
+    {
+      "market": "ats",
+      "rule": "opponent_missing_assists_edge >= 4.4 AND opponent_out_count_edge >= 1 AND market_prob >= 0.5642",
+      "domains": [
+        "injury",
+        "market"
+      ],
+      "phases": {
+        "discovery": {
+          "n": 328,
+          "wins": 170,
+          "losses": 152,
+          "pushes": 6,
+          "hit": 0.5279503105590062,
+          "roi": 0.007686949355414698,
+          "profit_units": 2.521319388576021
+        },
+        "confirmation": {
+          "n": 330,
+          "wins": 170,
+          "losses": 151,
+          "pushes": 9,
+          "hit": 0.5295950155763239,
+          "roi": 0.010031583084361497,
+          "profit_units": 3.310422417839294
+        },
+        "validation": {
+          "n": 0,
+          "wins": 0,
+          "losses": 0,
+          "pushes": 0,
+          "hit": null,
+          "roi": null,
+          "profit_units": 0
+        },
+        "holdout": {
+          "n": 0,
+          "wins": 0,
+          "losses": 0,
+          "pushes": 0,
+          "hit": null,
+          "roi": null,
+          "profit_units": 0
+        }
+      },
+      "price_stress": {
+        "best": {
+          "n": 658,
+          "wins": 340,
+          "losses": 303,
+          "pushes": 15,
+          "hit": 0.5287713841368584,
+          "roi": 0.030750885334074708,
+          "profit_units": 20.234082549821157
+        },
+        "median": {
+          "n": 658,
+          "wins": 340,
+          "losses": 303,
+          "pushes": 15,
+          "hit": 0.5287713841368584,
+          "roi": 0.008862829493032392,
+          "profit_units": 5.831741806415314
+        },
+        "worst": {
+          "n": 658,
+          "wins": 340,
+          "losses": 303,
+          "pushes": 15,
+          "hit": 0.5287713841368584,
+          "roi": -0.06558050091291123,
+          "profit_units": -43.151969600695594
+        }
+      },
+      "holdout_price_stress": {
+        "best": {
+          "n": 0,
+          "wins": 0,
+          "losses": 0,
+          "pushes": 0,
+          "hit": null,
+          "roi": null,
+          "profit_units": 0
+        },
+        "median": {
+          "n": 0,
+          "wins": 0,
+          "losses": 0,
+          "pushes": 0,
+          "hit": null,
+          "roi": null,
+          "profit_units": 0
+        },
+        "worst": {
+          "n": 0,
+          "wins": 0,
+          "losses": 0,
+          "pushes": 0,
+          "hit": null,
+          "roi": null,
+          "profit_units": 0
+        }
+      },
+      "status": "research_only_awaiting_full_2023_26_injury_holdout"
+    }
+  ],
+  "policy": "Official report mapping must precede target tip, both teams must have parsed rows. Status and player exposure come from pregame reports and prior player games. Thresholds frozen from 2021-22 discovery only. 2022-23 is confirmation, 2023-24 validation, 2024-26 untouched holdout. No promotion if 2024-26 coverage is missing; no hindsight injuries, no missing-as-healthy, and no tuning on validation or holdout."
+}
