@@ -38,8 +38,9 @@ for p in DATA.glob("*_*/regular_season/team_boxscores.csv.gz"):
     for r in rgz(p):team[(r.get("season"),r.get("game_id"),r.get("team_id"))]=r
 
 agg=defaultdict(lambda:{
-    "shooting_plays":0,"free_throws":0,"fg_attempt_plays":0,"fg_coords":0,
-    "pbp_3_text":0,"box_fga":0.0,"box_3pa":0.0,"distance_pairs":0,
+    "shooting_plays":0,"free_throws":0,"fg_attempt_plays":0,"fg_made_plays":0,"fg_coords":0,
+    "pbp_3_text":0,"scorevalue_3pa":0,"scorevalue_3pm":0,
+    "box_fga":0.0,"box_fgm":0.0,"box_3pa":0.0,"box_3pm":0.0,"distance_pairs":0,
     "distance_abs_error_sum":0.0,"distance_errors":[]
 })
 for p in DATA.glob("*_*/regular_season/playbyplay.csv.gz"):
@@ -52,6 +53,11 @@ for p in DATA.glob("*_*/regular_season/playbyplay.csv.gz"):
             a["free_throws"]+=1
             continue
         a["fg_attempt_plays"]+=1
+        made=truth(r.get("scoring_play")) or ((n(r.get("points_total")) or 0)>0 and truth(r.get("shot_result")))
+        if made:a["fg_made_plays"]+=1
+        if n(r.get("points_total"))==3:
+            a["scorevalue_3pa"]+=1
+            if made:a["scorevalue_3pm"]+=1
         if coord(r):a["fg_coords"]+=1
         desc=(r.get("description") or "").lower()
         if re.search(r"three[- ]point|3[- ]pt|3 pointer|3-point",desc):a["pbp_3_text"]+=1
@@ -61,17 +67,20 @@ for p in DATA.glob("*_*/regular_season/playbyplay.csv.gz"):
             if len(a["distance_errors"])<500:a["distance_errors"].append(err)
 
 season=defaultdict(lambda:{
-    "team_games":0,"shooting_plays":0,"free_throws":0,"fg_attempt_plays":0,"fg_coords":0,
-    "pbp_3_text":0,"box_fga":0.0,"box_3pa":0.0,"distance_pairs":0,"distance_abs_error_sum":0.0,
+    "team_games":0,"shooting_plays":0,"free_throws":0,"fg_attempt_plays":0,"fg_made_plays":0,"fg_coords":0,
+    "pbp_3_text":0,"scorevalue_3pa":0,"scorevalue_3pm":0,
+    "box_fga":0.0,"box_fgm":0.0,"box_3pa":0.0,"box_3pm":0.0,"distance_pairs":0,"distance_abs_error_sum":0.0,
     "distance_errors":[]
 })
 for key,a in agg.items():
     tr=team[key];s=key[0];x=season[s]
     x["team_games"]+=1
-    for k in ("shooting_plays","free_throws","fg_attempt_plays","fg_coords","pbp_3_text","distance_pairs"):
+    for k in ("shooting_plays","free_throws","fg_attempt_plays","fg_made_plays","fg_coords","pbp_3_text","scorevalue_3pa","scorevalue_3pm","distance_pairs"):
         x[k]+=a[k]
     x["box_fga"]+=n(tr.get("field_goals_attempted")) or 0
+    x["box_fgm"]+=n(tr.get("field_goals_made")) or 0
     x["box_3pa"]+=n(tr.get("three_pointers_attempted")) or 0
+    x["box_3pm"]+=n(tr.get("three_pointers_made")) or 0
     x["distance_abs_error_sum"]+=a["distance_abs_error_sum"]
     if len(x["distance_errors"])<5000:
         x["distance_errors"].extend(a["distance_errors"][:5000-len(x["distance_errors"])])
@@ -79,13 +88,17 @@ for key,a in agg.items():
 for s,x in season.items():
     x["raw_shooting_play_vs_box_fga_ratio"]=x["shooting_plays"]/x["box_fga"] if x["box_fga"] else None
     x["non_ft_fga_vs_box_ratio"]=x["fg_attempt_plays"]/x["box_fga"] if x["box_fga"] else None
+    x["fgm_play_vs_box_ratio"]=x["fg_made_plays"]/x["box_fgm"] if x["box_fgm"] else None
     x["valid_coordinate_coverage_of_non_ft_fga"]=x["fg_coords"]/x["fg_attempt_plays"] if x["fg_attempt_plays"] else None
     x["text_3pa_vs_box_ratio"]=x["pbp_3_text"]/x["box_3pa"] if x["box_3pa"] else None
+    x["scorevalue_3pa_vs_box_ratio"]=x["scorevalue_3pa"]/x["box_3pa"] if x["box_3pa"] else None
+    x["scorevalue_3pm_vs_box_ratio"]=x["scorevalue_3pm"]/x["box_3pm"] if x["box_3pm"] else None
     x["derived_vs_text_distance_mae_ft"]=x["distance_abs_error_sum"]/x["distance_pairs"] if x["distance_pairs"] else None
     x["derived_vs_text_distance_median_abs_error_ft"]=statistics.median(x["distance_errors"]) if x["distance_errors"] else None
     x["fga_ratio_error_abs"]=abs(x["non_ft_fga_vs_box_ratio"]-1) if x["non_ft_fga_vs_box_ratio"] is not None else None
     x["coordinate_geometry_pass"]=bool(
         x["non_ft_fga_vs_box_ratio"] is not None and 0.97<=x["non_ft_fga_vs_box_ratio"]<=1.03 and
+        x["fgm_play_vs_box_ratio"] is not None and 0.97<=x["fgm_play_vs_box_ratio"]<=1.03 and
         x["valid_coordinate_coverage_of_non_ft_fga"] is not None and x["valid_coordinate_coverage_of_non_ft_fga"]>=0.95 and
         x["derived_vs_text_distance_mae_ft"] is not None and x["derived_vs_text_distance_mae_ft"]<=1.0
     )
@@ -94,6 +107,6 @@ for s,x in season.items():
 report={"generated_at_utc":datetime.now(timezone.utc).isoformat(),"by_season":dict(sorted(season.items())),
         "coordinate_model":{"hoop_x":25.0,"hoop_y":1.0,"distance_formula":"sqrt((x-25)^2 + (y-1)^2)",
                             "free_throw_filter":"exclude shootingPlay rows whose action/description identifies a free throw"},
-        "policy":"Do not create coordinate-derived shot-location methods unless non-free-throw PBP attempt counts reconcile to box-score FGA, valid-coordinate coverage is high, and derived distance agrees with explicit shot-distance text."}
+        "policy":"Do not create coordinate-derived shot-location methods unless non-free-throw PBP attempts and made shots reconcile to box scores, coordinate coverage is high, derived distance agrees with explicit shot-distance text, and point-value classification is audited against 3PA/3PM."}
 (OUT/"shot_profile_audit.json").write_text(json.dumps(report,indent=2)+"\n")
 print(json.dumps(report,indent=2))
