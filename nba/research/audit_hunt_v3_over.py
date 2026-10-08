@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-import csv,gzip,json,math
+import csv,gzip,json,math,statistics
 from pathlib import Path
 from datetime import datetime,timezone
 
@@ -55,8 +55,11 @@ for gid,g in games.items():
   hr,ar=roll.get((gid,h),{}),roll.get((gid,a),{});styh,stya=style.get((gid,h),{}),style.get((gid,a),{})
   sh,sa=stand.get((gid,h),{}),stand.get((gid,a),{});ch,ca=shape.get((gid,h),{}),shape.get((gid,a),{});coh,coa=core.get((gid,h),{}),core.get((gid,a),{})
   actual=hs+aa;out=1 if actual>line else (0 if actual<line else .5)
-  rows.append({"season":g.get("season"),"game_id":gid,"out":out,
+  hp=n(sh.get("prior_games"));ap=n(sa.get("prior_games"))
+  rows.append({"season":g.get("season"),"game_id":gid,"game_date":g.get("game_date"),"out":out,
     "median":n(m.get("over_price_median")),"best":n(m.get("over_price_best")),"worst":n(m.get("over_price_worst")),
+    "total_line":line,"actual_total":actual,"total_margin":actual-line,
+    "prior_games_min":min(hp,ap) if hp is not None and ap is not None else None,
     "forced_tov_sum":sum2(styh,stya,"forced_turnovers_last5_avg"),"rank_gap":absd(sh,sa,"conference_rank"),"net_gap":absd(hr,ar,"_net_rating_est_last5_avg"),
     "clutch_gap":absd(ch,ca,"clutch_margin_last10_avg"),"starterpm_gap":absd(coh,coa,"starter_plusminus5_avg")})
 
@@ -65,6 +68,37 @@ def qual(mid,spec=None):
   if mid=="NBA_H3_OVER_001":
     return [r for r in rows if None not in (r["forced_tov_sum"],r["rank_gap"],r["net_gap"]) and r["forced_tov_sum"]<=s["forced_tov_max"] and r["rank_gap"]>=s["rank_min"] and r["net_gap"]>=s["net_min"]]
   return [r for r in rows if None not in (r["clutch_gap"],r["rank_gap"],r["starterpm_gap"]) and r["clutch_gap"]>=s["clutch_min"] and r["rank_gap"]>=s["rank_min"] and r["starterpm_gap"]>=s["starterpm_min"]]
+
+# Existing live-arsenal ledger is used only to measure exposure overlap.
+# It does not participate in H3 rule selection or threshold tuning.
+live_game_methods={}
+ledger=NBA/"research"/"bankroll"/"live_arsenal_50k_1pct_ledger.csv"
+if ledger.exists():
+  with open(ledger,"rt",encoding="utf-8",newline="") as f:
+    for z in csv.DictReader(f):
+      gid=str(z.get("game_id") or "")
+      if not gid:continue
+      s=live_game_methods.setdefault(gid,set())
+      for mid in str(z.get("methods") or "").split("|"):
+        if mid:s.add(mid)
+
+def slice_metrics(rr,field,bands):
+  out={}
+  for label,lo,hi in bands:
+    z=[r for r in rr if r.get(field) is not None and (lo is None or r[field]>=lo) and (hi is None or r[field]<hi)]
+    out[label]=met(z)
+  return out
+
+def contrast(rr,field):
+  w=[r.get(field) for r in rr if r["out"]==1 and r.get(field) is not None]
+  l=[r.get(field) for r in rr if r["out"]==0 and r.get(field) is not None]
+  return {
+    "wins_n":len(w),"losses_n":len(l),
+    "wins_mean":statistics.mean(w) if w else None,
+    "losses_mean":statistics.mean(l) if l else None,
+    "wins_median":statistics.median(w) if w else None,
+    "losses_median":statistics.median(l) if l else None
+  }
 
 report={"generated_at_utc":datetime.now(timezone.utc).isoformat(),"methods":{}}
 for mid,spec in SPECS.items():
@@ -84,6 +118,67 @@ for mid,spec in SPECS.items():
       for rk in (6,8,10):
         for sp in (5.5,7.16,9):
           z=qual(mid,{"clutch_min":cl,"rank_min":rk,"starterpm_min":sp});neigh.append({"clutch_min":cl,"rank_min":rk,"starterpm_min":sp,**met(z),"holdout":met([r for r in z if r["season"] in H])})
-  x["threshold_neighborhood"]=neigh;report["methods"][mid]=x
+  x["threshold_neighborhood"]=neigh
+  if mid=="NBA_H3_OVER_002":
+    gids={str(r["game_id"]) for r in rr}
+    all_live_methods=sorted({m for ms in live_game_methods.values() for m in ms})
+    per_method={}
+    for lm in all_live_methods:
+      lg={gid for gid,ms in live_game_methods.items() if lm in ms}
+      inter=gids&lg
+      union=gids|lg
+      per_method[lm]={
+        "shared_games":len(inter),
+        "h3_share":len(inter)/len(gids) if gids else None,
+        "jaccard":len(inter)/len(union) if union else None,
+        "h3_performance_on_shared_games":met([r for r in rr if str(r["game_id"]) in inter])
+      }
+    overlap_counts={}
+    for label,pred in [
+      ("0",lambda k:k==0),("1",lambda k:k==1),("2",lambda k:k==2),("3_plus",lambda k:k>=3)
+    ]:
+      z=[r for r in rr if pred(len(live_game_methods.get(str(r["game_id"]),set())))]
+      overlap_counts[label]=met(z)
+    no_overlap=[r for r in rr if not live_game_methods.get(str(r["game_id"]),set())]
+    any_overlap=[r for r in rr if live_game_methods.get(str(r["game_id"]),set())]
+    style_overlap=[r for r in rr if "NBA_STYLE_TOT_001" in live_game_methods.get(str(r["game_id"]),set())]
+    x["live_arsenal_overlap"]={
+      "h3_games":len(gids),
+      "games_with_any_live_method":len({str(r["game_id"]) for r in any_overlap}),
+      "games_with_no_live_method":len({str(r["game_id"]) for r in no_overlap}),
+      "independent_game_fraction":len(no_overlap)/len(rr) if rr else None,
+      "performance_no_live_overlap":met(no_overlap),
+      "performance_any_live_overlap":met(any_overlap),
+      "same_market_style_tot_overlap":{"games":len(style_overlap),"performance":met(style_overlap)},
+      "by_live_method":per_method,
+      "by_live_method_count":overlap_counts
+    }
+    x["mechanism_audit"]={
+      "primary_feature_win_loss_contrasts":{
+        f:contrast(rr,f) for f in ("clutch_gap","rank_gap","starterpm_gap","prior_games_min","total_line")
+      },
+      "season_maturity":{
+        f"min_prior_games_{k}":met([r for r in rr if r.get("prior_games_min") is not None and r["prior_games_min"]>=k])
+        for k in (5,10,15,20,30)
+      },
+      "prior_game_buckets":slice_metrics(rr,"prior_games_min",[
+        ("0_9",0,10),("10_19",10,20),("20_39",20,40),("40_plus",40,None)
+      ]),
+      "closing_total_buckets":slice_metrics(rr,"total_line",[
+        ("under_215",None,215),("215_224_5",215,225),("225_234_5",225,235),("235_plus",235,None)
+      ]),
+      "clutch_strength":slice_metrics(rr,"clutch_gap",[
+        ("1_7_2_49",1.7,2.5),("2_5_3_99",2.5,4.0),("4_plus",4.0,None)
+      ]),
+      "rank_gap_strength":slice_metrics(rr,"rank_gap",[
+        ("8_9",8,10),("10_12",10,13),("13_plus",13,None)
+      ]),
+      "starter_pm_strength":slice_metrics(rr,"starterpm_gap",[
+        ("7_16_9_99",7.16,10),("10_14_99",10,15),("15_plus",15,None)
+      ])
+    }
+  x["threshold_neighborhood"]=neigh
+  report["methods"][mid]=x
+report["policy"]="Rules remain frozen. New H3_OVER_002 diagnostics measure overlap, data maturity, price stress, season stability and mechanism slices only; no 2024-26 thresholds are retuned."
 (OUT/"hunt_v3_over_robustness.json").write_text(json.dumps(report,indent=2)+"\n")
 print(json.dumps(report,indent=2))
