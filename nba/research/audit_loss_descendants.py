@@ -9,6 +9,7 @@ buf=io.StringIO()
 with contextlib.redirect_stdout(buf):
     ns=runpy.run_path(str(NBA/"research"/"audit_live_arsenal_losses.py"))
 methods=ns["methods"];met=ns["met"];A=ns["A"];B=ns["B"];V=ns["V"];H=ns["H"];SEASONS=ns["SEASONS"]
+market=ns["market"];pf=ns["pf"];pftotal=ns["pftotal"];n=ns["n"]
 
 specs={
  "PHYSCOACH_OREB":{"parent":"NBA_PHYSCOACH_001","feature":"oreb5_gap","op":"<=","cut":-0.00869616350911806,"neighborhood":[-0.02,-0.012,-0.00869616350911806,-0.005,0.0]},
@@ -28,24 +29,72 @@ def keep(r,sp,cut=None):
     return x<=c if sp["op"]=="<=" else x>=c
 def phase(rr,ss,total):return met([r for r in rr if r["season"] in ss],total)
 
+def quoted_price(r,total,which):
+    m=market.get(r.get("game_id"),{})
+    if total:
+        return n(m.get(f"over_price_{which}"))
+    home=float(r.get("home") or 0)>=0.5
+    return n(m.get(("home_moneyline_" if home else "away_moneyline_")+which))
+
+def met_price(rr,total,which):
+    vals=[]
+    for r in rr:
+        price=quoted_price(r,total,which)
+        p=pftotal(price,r.get("result")) if total else pf(price,r.get("won"))
+        if p is not None:vals.append((r,p))
+    if not vals:return {"n":0,"wins":0,"losses":0,"hit":None,"roi":None,"profit":0}
+    if total:
+        dec=[r for r,_ in vals if r.get("result")!=0.5]
+        wins=sum(1 for r in dec if r.get("result")==1)
+    else:
+        dec=[r for r,_ in vals]
+        wins=sum(1 for r in dec if r.get("won"))
+    profit=sum(p for _,p in vals)
+    return {"n":len(vals),"wins":wins,"losses":len(dec)-wins,
+            "hit":wins/len(dec) if dec else None,
+            "roi":profit/len(vals) if vals else None,"profit":profit}
+
 report={"generated_at_utc":datetime.now(timezone.utc).isoformat(),"descendants":{},
-        "policy":"These are candidate descendants only. Parent live rules remain frozen. Filters are not promoted unless robustness is stable across phases, seasons and threshold neighborhoods."}
+        "policy":"These are candidate descendants only. Parent live rules remain frozen. Filters are not promoted unless robustness is stable across phases, seasons, threshold neighborhoods and executable best/median/worst historical price stress."}
 for name,sp in specs.items():
     rr=methods.get(sp["parent"],[]);total=(sp["parent"]=="NBA_STYLE_TOT_001")
     child=[r for r in rr if keep(r,sp)]
     parent={"overall":met(rr,total),"phases":{"discA":phase(rr,A,total),"discB":phase(rr,B,total),"validation":phase(rr,V,total),"holdout":phase(rr,H,total)}}
+    child_by_season={s:met([r for r in child if r["season"]==s],total) for s in SEASONS}
+    child_hold=[r for r in child if r["season"] in H]
     x={"parent_method":sp["parent"],"feature":sp["feature"],"op":sp["op"],"cut":sp["cut"],
        "parent":parent,
        "child":{"overall":met(child,total),
                 "phases":{"discA":phase(child,A,total),"discB":phase(child,B,total),"validation":phase(child,V,total),"holdout":phase(child,H,total)},
-                "by_season":{s:met([r for r in child if r["season"]==s],total) for s in SEASONS},
-                "leave_one_season_out":{s:met([r for r in child if r["season"]!=s],total) for s in SEASONS}}}
+                "by_season":child_by_season,
+                "leave_one_season_out":{s:met([r for r in child if r["season"]!=s],total) for s in SEASONS},
+                "price_stress":{
+                  "best":met_price(child,total,"best"),
+                  "median":met(child,total),
+                  "worst":met_price(child,total,"worst"),
+                  "holdout_best":met_price(child_hold,total,"best"),
+                  "holdout_median":met(child_hold,total),
+                  "holdout_worst":met_price(child_hold,total,"worst")
+                }}}
     neigh=[]
     for cut in sp["neighborhood"]:
         z=[r for r in rr if keep(r,sp,cut)]
         neigh.append({"cut":cut,**met(z,total),
                       "discA":phase(z,A,total),"discB":phase(z,B,total),"validation":phase(z,V,total),"holdout":phase(z,H,total)})
     x["threshold_neighborhood"]=neigh
+    robust=[z for z in neigh if (z.get("roi") or -999)>0 and ((z.get("holdout") or {}).get("roi") or -999)>0]
+    season_eval=[v for v in child_by_season.values() if (v.get("n") or 0)>=5]
+    worst=x["child"]["price_stress"]["worst"]
+    hworst=x["child"]["price_stress"]["holdout_worst"]
+    x["promotion_checks"]={
+      "overall_n_at_least_100":(x["child"]["overall"].get("n") or 0)>=100,
+      "holdout_n_at_least_25":(x["child"]["phases"]["holdout"].get("n") or 0)>=25,
+      "all_seasons_with_5plus_signals_positive_roi":bool(season_eval) and all((v.get("roi") or -999)>0 for v in season_eval),
+      "worst_price_positive_overall":(worst.get("roi") or -999)>0,
+      "worst_price_positive_holdout":(hworst.get("roi") or -999)>0,
+      "positive_threshold_neighborhood_fraction":len(robust)/len(neigh) if neigh else None,
+      "threshold_neighborhood_at_least_80pct_positive":bool(neigh) and len(robust)/len(neigh)>=0.8
+    }
     report["descendants"][name]=x
 
 (OUT/"loss_descendant_robustness.json").write_text(json.dumps(report,indent=2)+"\n")
