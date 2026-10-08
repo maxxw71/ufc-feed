@@ -36,12 +36,12 @@ def quantile(values,p):
     vals=sorted(x for x in values if x is not None)
     return vals[min(len(vals)-1,int((len(vals)-1)*p))] if vals else None
 def summaries(rr):
-    return {"n":len(rr),"wins":sum(r["out"]==1 for r in rr),
-            "losses":sum(r["out"]==0 for r in rr),
-            "pushes":sum(r["out"]==.5 for r in rr),
-            "roi":metric(rr)["roi"],"median_roi":metric(rr)["roi"],
+    m=metric(rr)
+    return {"n":m["n"],"raw_signals":len(rr),"wins":m["wins"],
+            "losses":m["losses"],"pushes":m["pushes"],
+            "roi":m["roi"],"median_roi":m["roi"],
             "worst_price_roi":metric(rr,"worst")["roi"],
-            "profit_units":metric(rr)["profit_units"]}
+            "profit_units":m["profit_units"]}
 def contrast(rr,key):
     winners=[r.get(key) for r in rr if r["out"]==1 and r.get(key) is not None]
     losers=[r.get(key) for r in rr if r["out"]==0 and r.get(key) is not None]
@@ -62,7 +62,7 @@ def eval_filter(parent,spec):
             "losses_avoided":p["losses"]-k["losses"],
             "roi_lift":k["roi"]-p["roi"] if k["roi"] is not None and p["roi"] is not None else None,
             "unit_profit_change":k["profit_units"]-p["profit_units"],
-            "bets_retained_pct":len(kept)/len(parent) if parent else None}
+            "bets_retained_pct":k["n"]/p["n"] if p["n"] else None}
 # Existing per-game pre-tip inputs are not calculated from eventual target result.
 roll=idx(F/"team_rolling.csv.gz")
 style=idx(F/"team_style_rolling.csv.gz")
