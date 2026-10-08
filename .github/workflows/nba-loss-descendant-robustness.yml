@@ -8,9 +8,13 @@ on:
       - '.github/workflows/nba-loss-descendant-robustness.yml'
 permissions:
   contents: write
+
+concurrency:
+  group: nba-loss-descendant-robustness
+  cancel-in-progress: true
 jobs:
   audit:
-    runs-on: [self-hosted, Linux, X64, appwiza]
+    runs-on: ubuntu-latest
     timeout-minutes: 45
     steps:
       - uses: actions/checkout@v4
