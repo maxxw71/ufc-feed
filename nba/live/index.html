@@ -55,7 +55,7 @@
       }
       function fmt(x,dp=2){
         const z=Number(x);
-        return Number.isFinite(z)?(100*z).toFixed(dp).replace(/0+$/,'').replace(/\\.$/,'')+'%':'—';
+        return Number.isFinite(z)?(100*z).toFixed(dp).replace(/0+$/,'').replace(/\.$/,'')+'%':'—';
       }
       function points(name,value){
         const wrap=el('div');
