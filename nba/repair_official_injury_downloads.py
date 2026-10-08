@@ -59,7 +59,7 @@ for i,u in enumerate(urls,1):
             reader=PdfReader(io.BytesIO(b))
             plain="\n".join((pg.extract_text() or "") for pg in reader.pages)
             lines=[ln for ln in plain.splitlines() if ln.strip()]
-            statuses=len(re.findall(r"\\b(?:Out|Questionable|Probable|Doubtful|Available)\\b",plain,re.I))
+            statuses=len(re.findall(r"\b(?:Out|Questionable|Probable|Doubtful|Available)\b",plain,re.I))
             needs_layout=statuses>=3 and len(lines)>4*statuses
             txt=("\n".join((pg.extract_text(extraction_mode="layout") or "") for pg in reader.pages)
                  if needs_layout else plain)
