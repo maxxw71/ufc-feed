@@ -10,9 +10,13 @@ on:
 permissions:
   contents: write
 
+concurrency:
+  group: nba-shot-profile-audit
+  cancel-in-progress: true
+
 jobs:
   audit:
-    runs-on: [self-hosted, Linux, X64, appwiza]
+    runs-on: ubuntu-latest
     timeout-minutes: 25
     steps:
       - uses: actions/checkout@v4
