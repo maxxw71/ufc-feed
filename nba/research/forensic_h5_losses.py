@@ -129,6 +129,19 @@ for mid in ids:
         fixed_price_gates[f"implied_prob_below_{int(gate*100)}pct"]={
             k:eval_filter([r for r in subset if r["season"] in ss],("price_prob","<=",gate))
             for k,ss in (("discovery",A),("confirmation",B),("validation",V),("holdout",H))}
+    # Structural zero-gates are pre-specified, not selected using later
+    # seasons. In particular 0 travel advantage means the selected side
+    # traveled no more than its opponent in the preceding seven days.
+    structural_gates={}
+    for label,spec in (
+        ("not_more_travel_than_opponent",("travel_adv",">=",0.0)),
+        ("nonnegative_recent_net_rating_advantage",("net5_gap",">=",0.0)),
+        ("nonnegative_recent_true_shooting_advantage",("ts5_gap",">=",0.0))
+    ):
+        structural_gates[label]={
+            k:eval_filter([r for r in subset if r["season"] in ss],spec)
+            for k,ss in (("discovery",A),("confirmation",B),("validation",V),("holdout",H))
+        }
     # Exploratory loss-filter hunt: all candidate cuts are discovered only in A.
     candidates=[]
     for feature in FEATURES:
@@ -190,6 +203,7 @@ for mid in ids:
         "season_loss_forensics":winloss_by_season,
         "feature_contrasts_discovery":{f:contrast(disc,f) for f in FEATURES},
         "fixed_price_probability_slices":fixed_price_gates,
+        "structural_zero_threshold_gates":structural_gates,
         "eligible_train_only_loss_filters":len(candidates),
         "shortlist_train_ranked_not_holdout_ranked":candidates[:30],
         "train_eligible_filters_improving_roi_in_all_later_phases":sum(1 for z in candidates if z["qualifies_for_further_investigation"]),
