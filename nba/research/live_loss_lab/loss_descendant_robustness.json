@@ -1,5 +1,5 @@
 {
-  "generated_at_utc": "2026-10-07T11:10:16.930569+00:00",
+  "generated_at_utc": "2026-10-08T11:10:59.789569+00:00",
   "descendants": {
     "PHYSCOACH_OREB": {
       "parent_method": "NBA_PHYSCOACH_001",
@@ -250,6 +250,58 @@
             "profit": 16.202624956883046,
             "wilson_low": 0.7602456035382986
           }
+        },
+        "price_stress": {
+          "best": {
+            "n": 127,
+            "wins": 108,
+            "losses": 19,
+            "hit": 0.8503937007874016,
+            "roi": 0.18126003964313875,
+            "profit": 23.02002503467862
+          },
+          "median": {
+            "n": 127,
+            "wins": 108,
+            "losses": 19,
+            "hit": 0.8503937007874016,
+            "roi": 0.15315445725457716,
+            "profit": 19.4506160713313,
+            "wilson_low": 0.7781282329516654
+          },
+          "worst": {
+            "n": 127,
+            "wins": 108,
+            "losses": 19,
+            "hit": 0.8503937007874016,
+            "roi": 0.13716006103688955,
+            "profit": 17.41932775168497
+          },
+          "holdout_best": {
+            "n": 28,
+            "wins": 26,
+            "losses": 2,
+            "hit": 0.9285714285714286,
+            "roi": 0.25708617849809146,
+            "profit": 7.198412997946561
+          },
+          "holdout_median": {
+            "n": 28,
+            "wins": 26,
+            "losses": 2,
+            "hit": 0.9285714285714286,
+            "roi": 0.25670590216395534,
+            "profit": 7.18776526059075,
+            "wilson_low": 0.7735426157408215
+          },
+          "holdout_worst": {
+            "n": 28,
+            "wins": 26,
+            "losses": 2,
+            "hit": 0.9285714285714286,
+            "roi": 0.25636950386837337,
+            "profit": 7.178346108314455
+          }
         }
       },
       "threshold_neighborhood": [
@@ -483,7 +535,16 @@
             "wilson_low": 0.7578150066422117
           }
         }
-      ]
+      ],
+      "promotion_checks": {
+        "overall_n_at_least_100": true,
+        "holdout_n_at_least_25": true,
+        "all_seasons_with_5plus_signals_positive_roi": false,
+        "worst_price_positive_overall": true,
+        "worst_price_positive_holdout": true,
+        "positive_threshold_neighborhood_fraction": 1.0,
+        "threshold_neighborhood_at_least_80pct_positive": true
+      }
     },
     "INTERACT_LQVOL": {
       "parent_method": "NBA_INTERACT_003",
@@ -734,6 +795,58 @@
             "profit": 19.385166653968863,
             "wilson_low": 0.6998123036792053
           }
+        },
+        "price_stress": {
+          "best": {
+            "n": 152,
+            "wins": 121,
+            "losses": 31,
+            "hit": 0.7960526315789473,
+            "roi": 0.21922340691068545,
+            "profit": 33.32195785042419
+          },
+          "median": {
+            "n": 152,
+            "wins": 121,
+            "losses": 31,
+            "hit": 0.7960526315789473,
+            "roi": 0.19092395908146562,
+            "profit": 29.02044178038277,
+            "wilson_low": 0.7250729822703503
+          },
+          "worst": {
+            "n": 152,
+            "wins": 121,
+            "losses": 31,
+            "hit": 0.7960526315789473,
+            "roi": 0.17495683478426327,
+            "profit": 26.593438887208016
+          },
+          "holdout_best": {
+            "n": 42,
+            "wins": 35,
+            "losses": 7,
+            "hit": 0.8333333333333334,
+            "roi": 0.35523776470782553,
+            "profit": 14.919986117728673
+          },
+          "holdout_median": {
+            "n": 42,
+            "wins": 35,
+            "losses": 7,
+            "hit": 0.8333333333333334,
+            "roi": 0.35523776470782553,
+            "profit": 14.919986117728673,
+            "wilson_low": 0.6939570379522572
+          },
+          "holdout_worst": {
+            "n": 42,
+            "wins": 35,
+            "losses": 7,
+            "hit": 0.8333333333333334,
+            "roi": 0.35523776470782553,
+            "profit": 14.919986117728673
+          }
         }
       },
       "threshold_neighborhood": [
@@ -967,7 +1080,16 @@
             "wilson_low": 0.7597803803067411
           }
         }
-      ]
+      ],
+      "promotion_checks": {
+        "overall_n_at_least_100": true,
+        "holdout_n_at_least_25": true,
+        "all_seasons_with_5plus_signals_positive_roi": false,
+        "worst_price_positive_overall": true,
+        "worst_price_positive_holdout": true,
+        "positive_threshold_neighborhood_fraction": 1.0,
+        "threshold_neighborhood_at_least_80pct_positive": true
+      }
     },
     "STAND_STARTPM": {
       "parent_method": "NBA_STAND_002",
@@ -1218,6 +1340,58 @@
             "profit": 23.923829028516227,
             "wilson_low": 0.7848035127258367
           }
+        },
+        "price_stress": {
+          "best": {
+            "n": 138,
+            "wins": 117,
+            "losses": 21,
+            "hit": 0.8478260869565217,
+            "roi": 0.21539895391401148,
+            "profit": 29.725055640133583
+          },
+          "median": {
+            "n": 138,
+            "wins": 117,
+            "losses": 21,
+            "hit": 0.8478260869565217,
+            "roi": 0.18463529435987835,
+            "profit": 25.479670621663214,
+            "wilson_low": 0.7785474356728053
+          },
+          "worst": {
+            "n": 138,
+            "wins": 117,
+            "losses": 21,
+            "hit": 0.8478260869565217,
+            "roi": 0.16735836387613645,
+            "profit": 23.09545421490683
+          },
+          "holdout_best": {
+            "n": 33,
+            "wins": 28,
+            "losses": 5,
+            "hit": 0.8484848484848485,
+            "roi": 0.19349459402322944,
+            "profit": 6.385321602766571
+          },
+          "holdout_median": {
+            "n": 33,
+            "wins": 28,
+            "losses": 5,
+            "hit": 0.8484848484848485,
+            "roi": 0.19321426996862232,
+            "profit": 6.376070908964536,
+            "wilson_low": 0.6907978686153953
+          },
+          "holdout_worst": {
+            "n": 33,
+            "wins": 28,
+            "losses": 5,
+            "hit": 0.8484848484848485,
+            "roi": 0.19294562608295715,
+            "profit": 6.367205660737586
+          }
         }
       },
       "threshold_neighborhood": [
@@ -1451,7 +1625,16 @@
             "wilson_low": 0.6666458812053
           }
         }
-      ]
+      ],
+      "promotion_checks": {
+        "overall_n_at_least_100": true,
+        "holdout_n_at_least_25": true,
+        "all_seasons_with_5plus_signals_positive_roi": true,
+        "worst_price_positive_overall": true,
+        "worst_price_positive_holdout": true,
+        "positive_threshold_neighborhood_fraction": 1.0,
+        "threshold_neighborhood_at_least_80pct_positive": true
+      }
     },
     "LQ_FOUL": {
       "parent_method": "NBA_LQ_003",
@@ -1702,6 +1885,58 @@
             "profit": 13.76574389595693,
             "wilson_low": 0.7581803433040711
           }
+        },
+        "price_stress": {
+          "best": {
+            "n": 126,
+            "wins": 107,
+            "losses": 19,
+            "hit": 0.8492063492063492,
+            "roi": 0.1570506233346852,
+            "profit": 19.788378540170335
+          },
+          "median": {
+            "n": 126,
+            "wins": 107,
+            "losses": 19,
+            "hit": 0.8492063492063492,
+            "roi": 0.12770062080926514,
+            "profit": 16.09027822196741,
+            "wilson_low": 0.7764606132955009
+          },
+          "worst": {
+            "n": 126,
+            "wins": 107,
+            "losses": 19,
+            "hit": 0.8492063492063492,
+            "roi": 0.10537530148848145,
+            "profit": 13.277287987548663
+          },
+          "holdout_best": {
+            "n": 22,
+            "wins": 20,
+            "losses": 2,
+            "hit": 0.9090909090909091,
+            "roi": 0.13503248150912162,
+            "profit": 2.9707145932006753
+          },
+          "holdout_median": {
+            "n": 22,
+            "wins": 20,
+            "losses": 2,
+            "hit": 0.9090909090909091,
+            "roi": 0.13503248150912162,
+            "profit": 2.9707145932006753,
+            "wilson_low": 0.7218461934161421
+          },
+          "holdout_worst": {
+            "n": 22,
+            "wins": 20,
+            "losses": 2,
+            "hit": 0.9090909090909091,
+            "roi": 0.13503248150912162,
+            "profit": 2.9707145932006753
+          }
         }
       },
       "threshold_neighborhood": [
@@ -1935,7 +2170,16 @@
             "wilson_low": 0.6804970794560756
           }
         }
-      ]
+      ],
+      "promotion_checks": {
+        "overall_n_at_least_100": true,
+        "holdout_n_at_least_25": false,
+        "all_seasons_with_5plus_signals_positive_roi": true,
+        "worst_price_positive_overall": true,
+        "worst_price_positive_holdout": true,
+        "positive_threshold_neighborhood_fraction": 1.0,
+        "threshold_neighborhood_at_least_80pct_positive": true
+      }
     },
     "ROTSHAPE_FTOV": {
       "parent_method": "NBA_ROTSHAPE_001",
@@ -2186,6 +2430,58 @@
             "profit": 9.899025149397719,
             "wilson_low": 0.6402486613269722
           }
+        },
+        "price_stress": {
+          "best": {
+            "n": 68,
+            "wins": 53,
+            "losses": 15,
+            "hit": 0.7794117647058824,
+            "roi": 0.17386000182133945,
+            "profit": 11.822480123851083
+          },
+          "median": {
+            "n": 68,
+            "wins": 53,
+            "losses": 15,
+            "hit": 0.7794117647058824,
+            "roi": 0.14913574316571077,
+            "profit": 10.141230535268331,
+            "wilson_low": 0.6674303647622984
+          },
+          "worst": {
+            "n": 68,
+            "wins": 53,
+            "losses": 15,
+            "hit": 0.7794117647058824,
+            "roi": 0.12130935533627554,
+            "profit": 8.249036162866737
+          },
+          "holdout_best": {
+            "n": 24,
+            "wins": 21,
+            "losses": 3,
+            "hit": 0.875,
+            "roi": 0.13061458597563708,
+            "profit": 3.13475006341529
+          },
+          "holdout_median": {
+            "n": 24,
+            "wins": 21,
+            "losses": 3,
+            "hit": 0.875,
+            "roi": 0.13061458597563708,
+            "profit": 3.13475006341529,
+            "wilson_low": 0.6899571185214244
+          },
+          "holdout_worst": {
+            "n": 24,
+            "wins": 21,
+            "losses": 3,
+            "hit": 0.875,
+            "roi": 0.13061458597563708,
+            "profit": 3.13475006341529
+          }
         }
       },
       "threshold_neighborhood": [
@@ -2419,7 +2715,16 @@
             "wilson_low": 0.6397666856325172
           }
         }
-      ]
+      ],
+      "promotion_checks": {
+        "overall_n_at_least_100": false,
+        "holdout_n_at_least_25": false,
+        "all_seasons_with_5plus_signals_positive_roi": true,
+        "worst_price_positive_overall": true,
+        "worst_price_positive_holdout": true,
+        "positive_threshold_neighborhood_fraction": 1.0,
+        "threshold_neighborhood_at_least_80pct_positive": true
+      }
     },
     "TRAVEL_CLUTCH": {
       "parent_method": "NBA_TRAVEL_001",
@@ -2670,6 +2975,58 @@
             "profit": 10.65630879646019,
             "wilson_low": 0.8671174961524586
           }
+        },
+        "price_stress": {
+          "best": {
+            "n": 70,
+            "wins": 67,
+            "losses": 3,
+            "hit": 0.9571428571428572,
+            "roi": 0.20181084054397747,
+            "profit": 14.126758838078423
+          },
+          "median": {
+            "n": 70,
+            "wins": 67,
+            "losses": 3,
+            "hit": 0.9571428571428572,
+            "roi": 0.17422622402634744,
+            "profit": 12.19583568184432,
+            "wilson_low": 0.8814013892581987
+          },
+          "worst": {
+            "n": 70,
+            "wins": 67,
+            "losses": 3,
+            "hit": 0.9571428571428572,
+            "roi": 0.15651445933618022,
+            "profit": 10.956012153532615
+          },
+          "holdout_best": {
+            "n": 14,
+            "wins": 14,
+            "losses": 0,
+            "hit": 1.0,
+            "roi": 0.2102930034844874,
+            "profit": 2.9441020487828236
+          },
+          "holdout_median": {
+            "n": 14,
+            "wins": 14,
+            "losses": 0,
+            "hit": 1.0,
+            "roi": 0.2102930034844874,
+            "profit": 2.9441020487828236,
+            "wilson_low": 0.7846829880728186
+          },
+          "holdout_worst": {
+            "n": 14,
+            "wins": 14,
+            "losses": 0,
+            "hit": 1.0,
+            "roi": 0.2102930034844874,
+            "profit": 2.9441020487828236
+          }
         }
       },
       "threshold_neighborhood": [
@@ -2903,7 +3260,16 @@
             "wilson_low": 0.565508505247919
           }
         }
-      ]
+      ],
+      "promotion_checks": {
+        "overall_n_at_least_100": false,
+        "holdout_n_at_least_25": false,
+        "all_seasons_with_5plus_signals_positive_roi": true,
+        "worst_price_positive_overall": true,
+        "worst_price_positive_holdout": true,
+        "positive_threshold_neighborhood_fraction": 1.0,
+        "threshold_neighborhood_at_least_80pct_positive": true
+      }
     },
     "STYLE_TRAVEL": {
       "parent_method": "NBA_STYLE_TOT_001",
@@ -3154,6 +3520,58 @@
             "profit": 20.824710934233693,
             "wilson_low": 0.5273391477284313
           }
+        },
+        "price_stress": {
+          "best": {
+            "n": 134,
+            "wins": 81,
+            "losses": 52,
+            "hit": 0.6090225563909775,
+            "roi": 0.20321628885077264,
+            "profit": 27.230982706003534
+          },
+          "median": {
+            "n": 134,
+            "wins": 81,
+            "losses": 52,
+            "hit": 0.6090225563909775,
+            "roi": 0.15781142014724864,
+            "profit": 21.146730299731317,
+            "wilson_low": 0.5241449162153448
+          },
+          "worst": {
+            "n": 134,
+            "wins": 81,
+            "losses": 52,
+            "hit": 0.6090225563909775,
+            "roi": 0.12032194057926257,
+            "profit": 16.123140037621184
+          },
+          "holdout_best": {
+            "n": 39,
+            "wins": 24,
+            "losses": 15,
+            "hit": 0.6153846153846154,
+            "roi": 0.1670377395015076,
+            "profit": 6.514471840558796
+          },
+          "holdout_median": {
+            "n": 39,
+            "wins": 24,
+            "losses": 15,
+            "hit": 0.6153846153846154,
+            "roi": 0.1670377395015076,
+            "profit": 6.514471840558796,
+            "wilson_low": 0.45898781310078474
+          },
+          "holdout_worst": {
+            "n": 39,
+            "wins": 24,
+            "losses": 15,
+            "hit": 0.6153846153846154,
+            "roi": 0.1670377395015076,
+            "profit": 6.514471840558796
+          }
         }
       },
       "threshold_neighborhood": [
@@ -3387,8 +3805,17 @@
             "wilson_low": 0.09745880573921469
           }
         }
-      ]
+      ],
+      "promotion_checks": {
+        "overall_n_at_least_100": true,
+        "holdout_n_at_least_25": true,
+        "all_seasons_with_5plus_signals_positive_roi": false,
+        "worst_price_positive_overall": true,
+        "worst_price_positive_holdout": true,
+        "positive_threshold_neighborhood_fraction": 0.6,
+        "threshold_neighborhood_at_least_80pct_positive": false
+      }
     }
   },
-  "policy": "These are candidate descendants only. Parent live rules remain frozen. Filters are not promoted unless robustness is stable across phases, seasons and threshold neighborhoods."
+  "policy": "These are candidate descendants only. Parent live rules remain frozen. Filters are not promoted unless robustness is stable across phases, seasons, threshold neighborhoods and executable best/median/worst historical price stress."
 }
