@@ -3,11 +3,14 @@ import argparse,csv,gzip,json,math,re,statistics,os
 from collections import defaultdict
 from datetime import datetime,timedelta,timezone
 from pathlib import Path
+import live_integrity as integrity
+import hashlib
 
-NBA=Path(__file__).resolve().parents[1]
+NBA=Path(os.environ.get("APPWIZA_NBA_ROOT",Path(__file__).resolve().parents[1]))
 DATA=NBA/"data"/"2026_27"/"regular_season"
 F=NBA/"features";LIVE=NBA/"live";PRO=Path(os.environ.get("APPWIZA_NBA_PROSPECTIVE_ROOT", NBA/"prospective"));MARKET=NBA/"market"
-OUT=NBA/"scanner";OUT.mkdir(parents=True,exist_ok=True)
+OUT=Path(os.environ.get("APPWIZA_NBA_SCANNER_OUT",NBA/"scanner"));OUT.mkdir(parents=True,exist_ok=True)
+FORWARD=Path(os.environ.get("APPWIZA_NBA_FORWARD_ROOT","/srv/appwiza-sports/capture/nba/forward"))
 SEASON="2026-27"
 
 ap=argparse.ArgumentParser()
@@ -83,18 +86,31 @@ def game_sort_date(g):return dt(g.get("game_date")) or datetime.min.replace(tzin
 
 games=rgz(DATA/"games.csv.gz")
 game_by={g.get("game_id"):g for g in games if g.get("game_id")}
-completed={gid:g for gid,g in game_by.items() if truth(g.get("completed"))}
 now=datetime.now(timezone.utc)
+completed={gid:g for gid,g in game_by.items() if integrity.observed_completed(g,now)}
+code_hashes={p.name:hashlib.sha256(p.read_bytes()).hexdigest() for p in (Path(__file__),Path(integrity.__file__))}
+
+catalog_path=NBA/"travel"/"venue_geocode_cache.json"
+catalog=json.loads(catalog_path.read_text()) if catalog_path.exists() else {}
+supplement=LIVE/"venue_supplement.json"
+if supplement.exists():catalog.update(json.loads(supplement.read_text()))
+integrity.readiness(FORWARD,games,catalog,now)
 
 # Upcoming regular-season games: only pregame states, next 72 hours.
 upcoming=[]
+observed_status={}
+for r in recent_jsonl("game_state.jsonl"):
+    cap=dt(r.get("captured_at_utc"));gid=r.get("game_id")
+    if cap and cap<=now and (gid not in observed_status or cap>observed_status[gid][0]):observed_status[gid]=(cap,r)
 for g in games:
     when=dt(g.get("game_date"))
     if not when or truth(g.get("completed")):continue
+    observed=observed_status.get(g.get("game_id"))
+    if observed and (truth(observed[1].get("completed")) or observed[1].get("status_state") in ("in","post")):continue
     state=str(g.get("status_state") or "").lower()
     if state not in ("pre","") and "scheduled" not in str(g.get("status") or "").lower():continue
     hrs=(when-now).total_seconds()/3600
-    if -0.25<=hrs<=72:upcoming.append(g)
+    if 0<hrs<=72 and integrity.pregame(g,now):upcoming.append(g)
 upcoming.sort(key=game_sort_date)
 
 # Scheduled heartbeat runs every 10 minutes. Outside the final two hours before any tip,
@@ -114,6 +130,7 @@ if ARGS.scheduled and not ARGS.force:
 # No games means no method evaluation. Preserve the qualification ledger and
 # publish an empty current board before loading large historical feature tables.
 if not upcoming:
+    integrity.forward(FORWARD,[],games,now,{"code_hashes":code_hashes,"reason":"no_upcoming_games"})
     summary={"scanned_at_utc":now.isoformat(),"season":SEASON,"upcoming_games":0,
       "evaluations":0,"ready_evaluations":0,"qualified":0,"transitions":0,"next_game":None,
       "policy":"Regular-season only. Evaluates frozen live arsenal against latest point-in-time data; no preseason picks.",
@@ -143,7 +160,8 @@ starter_rows=rgz(PRO/"starter_snapshots.csv.gz")+recent_jsonl("starters.jsonl")
 starter_latest={}
 for r in starter_rows:
     cap=dt(r.get("captured_at_utc"))
-    if not cap or cap>now:continue
+    g=game_by.get(r.get("game_id"),{});tip=dt(g.get("game_date"))
+    if not cap or cap>now or now-cap>timedelta(minutes=30) or not tip or cap>=tip or dt(r.get("scheduled_utc"))!=tip:continue
     key=(r.get("game_id"),r.get("team_id"))
     old=starter_latest.get(key)
     if not old or cap>old[0]:starter_latest[key]=(cap,[])
@@ -256,7 +274,7 @@ def lq_values(tid,starter_ids,target_when):
     by_game=defaultdict(list)
     for r in stints_by_team.get(str(tid),[]):
         gid=r.get("game_id");g=game_by.get(gid);when=dt((g or {}).get("game_date"))
-        if not when or when>=target_when:continue
+        if not when or when>=target_when or gid not in completed:continue
         by_game[gid].append(r)
         if (r.get("lineup_player_ids") or "")==key:
             sec+=(n(r.get("stint_duration_sec")) or 0);pm+=(n(r.get("stint_plus_minus")) or 0)
@@ -297,18 +315,15 @@ def bench_shape(tid,target_when):
     for when,gid in last10:
         g=game_by.get(gid,{});hid=str(g.get("home_team_id") or "");side_home=(str(tid)==hid)
         pp=sorted(pb_by_game.get(gid,[]),key=lambda r:n(r.get("action_number")) or 0)
+        if not pp:
+            return {"bench_share5":mean(bshares),"bench_used5":mean(bused),"clutch10":None}
         prev_h=prev_a=0.0;cp=ca=0.0
         for r in pp:
             hs=n(r.get("score_home"));aa=n(r.get("score_away"));per=n(r.get("period"))
-            if hs is None or aa is None or per!=4:continue
-            clk=str(r.get("clock") or "");sec=None
-            m=re.match(r"PT(?:(\d+)M)?([\d.]+)S",clk)
-            if m:sec=60*int(m.group(1) or 0)+float(m.group(2))
-            elif ":" in clk:
-                try:mm,ss=clk.split(":");sec=int(mm)*60+float(ss)
-                except:pass
+            if hs is None or aa is None or per is None:continue
+            sec=integrity.clock_seconds(r.get("clock"))
             before=prev_h-prev_a
-            if sec is not None and sec<=300 and abs(before)<=5:
+            if per==4 and sec is not None and sec<=300 and abs(before)<=5:
                 dh=max(0,hs-prev_h);da=max(0,aa-prev_a)
                 if side_home:cp+=dh;ca+=da
                 else:cp+=da;ca+=dh
@@ -333,87 +348,28 @@ def style_last5(tid,target_when):
         })
     return {"paint_share5":mean([x["paint_share"] for x in vals]),"fouls100_5":mean([x["fouls100"] for x in vals])}
 
-# Latest prices. Use near-tip ESPN odds first, then general ESPN market snapshots.
-def latest_market_rows():
-    rows=rgz(PRO/"near_tip_odds_snapshots.csv.gz")+recent_jsonl("odds.jsonl")+rgz(MARKET/"market_snapshots.csv.gz")
-    by=defaultdict(list)
-    for r in rows:
-        gid=r.get("game_id");cap=dt(r.get("captured_at_utc"))
-        if gid and cap and cap<=now:by[gid].append((cap,r))
-    out={}
-    for gid,arr in by.items():
-        latest=max(x[0] for x in arr)
-        out[gid]=[r for cap,r in arr if cap==latest]
-    return out
-market_latest=latest_market_rows()
-
-# Fresh multi-book consensus. The external feed is allowed to override ESPN only
-# when its latest capture is <=2 hours old; otherwise near-tip ESPN pricing wins.
+# Fresh, event-matched provider quotes; no median price is represented as a real bet.
+espn_rows=rgz(PRO/"near_tip_odds_snapshots.csv.gz")+recent_jsonl("odds.jsonl")+rgz(MARKET/"market_snapshots.csv.gz")
 external_rows=rgz(MARKET/"external_bookmaker_snapshots.csv.gz")
-external_by_match=defaultdict(list)
-for r in external_rows:
-    cap=dt(r.get("captured_at_utc"))
-    if not cap or cap>now:continue
-    key=(norm(r.get("home_team")),norm(r.get("away_team")))
-    if all(key):external_by_match[key].append((cap,r))
-
-def external_state(g):
-    key=(norm(g.get("home_team")),norm(g.get("away_team")))
-    arr=external_by_match.get(key,[])
-    if not arr:return None
-    latest=max(cap for cap,r in arr)
-    if (now-latest).total_seconds()>2*3600:return None
-    rows=[r for cap,r in arr if cap==latest]
-    home_name=norm(g.get("home_team"));away_name=norm(g.get("away_team"))
-    books=defaultdict(dict);totals=[]
-    for r in rows:
-        book=r.get("bookmaker_key") or r.get("bookmaker") or ""
-        mk=(r.get("market") or "").lower();out=norm(r.get("outcome"))
-        if mk=="h2h":
-            if out==home_name:books[book]["home"]=n(r.get("price"))
-            elif out==away_name:books[book]["away"]=n(r.get("price"))
-        elif mk=="totals":
-            totals.append(r)
-    pairs=[v for v in books.values() if v.get("home") is not None and v.get("away") is not None]
-    hml=median([v["home"] for v in pairs]);aml=median([v["away"] for v in pairs])
-    hi,ai=imp(hml),imp(aml)
-    hp=hi/(hi+ai) if hi is not None and ai is not None and hi+ai>0 else None
-    ap=ai/(hi+ai) if hi is not None and ai is not None and hi+ai>0 else None
-    over=[r for r in totals if str(r.get("outcome") or "").lower()=="over"]
-    under=[r for r in totals if str(r.get("outcome") or "").lower()=="under"]
-    line=median([r.get("point") for r in over+under])
-    op=median([r.get("price") for r in over if line is None or n(r.get("point"))==line])
-    up=median([r.get("price") for r in under if line is None or n(r.get("point"))==line])
-    if hml is None and aml is None and line is None:return None
-    return {"home_ml":hml,"away_ml":aml,"home_prob":hp,"away_prob":ap,"total":line,"over_price":op,"under_price":up,
-            "captured_at":latest.isoformat(),"source":"external_consensus","books":len(pairs)}
-
-def market_state(gid,g):
-    rows=market_latest.get(gid,[])
-    hml=median([r.get("home_moneyline") for r in rows]);aml=median([r.get("away_moneyline") for r in rows])
-    hi,ai=imp(hml),imp(aml)
-    if hi is not None and ai is not None and hi+ai>0:
-        hp=hi/(hi+ai);ap=ai/(hi+ai)
-    else:hp=ap=None
-    total=median([r.get("over_under") for r in rows]);op=median([r.get("over_odds") for r in rows]);up=median([r.get("under_odds") for r in rows])
-    espn={"home_ml":hml,"away_ml":aml,"home_prob":hp,"away_prob":ap,"total":total,"over_price":op,"under_price":up,
-          "captured_at":max([r.get("captured_at_utc") for r in rows],default=None),"source":"espn_latest","books":len(rows)}
-    ext=external_state(g)
-    return ext or espn
-
+def market_state(gid,g):return integrity.market(g,espn_rows,external_rows,now)
+live_stand,standing_evidence=integrity.standings(games,now)
+travel_evidence={}
+market_evidence={};dynamic_evidence={}
 # Method evaluator helpers.
 def val(row,key):return n((row or {}).get(key))
 def feature_target(gid,tid,oid):
     tr=roll.get((gid,tid),{});orr=roll.get((gid,oid),{})
     tc=context.get((gid,tid),{});oc=context.get((gid,oid),{})
-    tv=travel.get((gid,tid),{});ov=travel.get((gid,oid),{})
-    ts=stand.get((gid,tid),{});os=stand.get((gid,oid),{})
+    sv,se=integrity.travel(game_by[gid],tid,games,catalog,now)
+    av,ae=integrity.travel(game_by[gid],oid,games,catalog,now)
+    travel_evidence[gid+"|"+tid]=se;travel_evidence[gid+"|"+oid]=ae
+    ts=live_stand.get(tid,{});os=live_stand.get(oid,{})
     return {
       "net5_gap":d(tr,orr,"_net_rating_est_last5_avg"),
       "def5_adv":d(orr,tr,"_def_rating_est_last5_avg"),
       "ts5_gap":d(tr,orr,"_true_shooting_est_last5_avg"),
       "rest_diff":d(tc,oc,"days_since_prev_game"),
-      "travel7d_adv":d(ov,tv,"travel_miles_prev_7d_including_arrival"),
+      "travel7d_adv":av-sv if None not in (av,sv) else None,
       "opp_seed6_gap":val(os,"winpct_gap_to_seed6"),
       "streak_gap":d(ts,os,"current_streak"),
       "prior_games":val(tr,"prior_games_available")
@@ -426,6 +382,7 @@ for g in upcoming:
     gid=g["game_id"];when=dt(g.get("game_date"));hrs=(when-now).total_seconds()/3600
     hid=str(g.get("home_team_id") or "");aid=str(g.get("away_team_id") or "")
     ms=market_state(gid,g)
+    market_evidence[gid]=ms
     sides=[("home",hid,aid,g.get("home_team"),ms["home_ml"],ms["home_prob"]),("away",aid,hid,g.get("away_team"),ms["away_ml"],ms["away_prob"])]
     dynamic={}
     for side,tid,oid,tname,price,prob in sides:
@@ -458,6 +415,7 @@ for g in upcoming:
           "paint_share5":sty["paint_share5"],"fouls100_5":sty["fouls100_5"]
         }
 
+    dynamic_evidence[gid]=dynamic
     # Moneyline methods evaluate both sides.
     for side in ("home","away"):
         x=dynamic[side]
@@ -486,12 +444,14 @@ for g in upcoming:
         }
         for mid,conds in tests.items():
             missing=[name for name,v,fn in conds if v is None]
+            quote=ms.get(side+"_quote")
+            if not quote or integrity.valid_price(x["price"]) is None:missing.append("fresh_bookmaker_price")
             ready=not missing
             ok=ready and all(fn(v) for name,v,fn in conds)
             ev={"scanned_at_utc":now.isoformat(),"season":SEASON,"game_id":gid,"scheduled_utc":g.get("game_date"),"hours_to_tip":hrs,
                 "method_id":mid,"market":"moneyline","selection":x["team"],"selection_team_id":x["team_id"],"side":side,
                 "qualified":ok,"ready":ready,"missing_inputs":"|".join(missing),"price":x["price"],"market_prob":x["market_prob"],
-                "market_captured_at":ms["captured_at"],"market_source":ms.get("source"),"market_books":ms.get("books"),
+                "bookmaker":quote.get("bookmaker") if quote else None,"quote":quote,"market_captured_at":quote.get("captured_at_utc") if quote else None,"market_source":ms.get("source"),"market_books":ms.get("books"),
                 "starters_confirmed":x["starters_confirmed"],"prior_games":x["prior_games"],
                 "features_json":json.dumps({name:v for name,v,fn in conds},separators=(",",":"),sort_keys=True)}
             evaluations.append(ev)
@@ -522,11 +482,14 @@ for g in upcoming:
     hc=context.get((gid,hid),{});ac=context.get((gid,aid),{})
     hr=n(hc.get("days_since_prev_game"));ar=n(ac.get("days_since_prev_game"));rest=hr+ar if None not in (hr,ar) else None
     conds=[("paint_sum",paint,lambda v:v>=0.8907),("foul_sum",foul,lambda v:v<=38.5),("rest_sum",rest,lambda v:v<=3),("total_line",ms["total"],lambda v:True)]
-    missing=[name for name,v,fn in conds if v is None];ready=not missing;ok=ready and all(fn(v) for name,v,fn in conds)
+    missing=[name for name,v,fn in conds if v is None]
+    quote=ms.get("total_quote")
+    if not quote or integrity.valid_price(ms["over_price"]) is None:missing.append("fresh_bookmaker_price")
+    ready=not missing;ok=ready and all(fn(v) for name,v,fn in conds)
     ev={"scanned_at_utc":now.isoformat(),"season":SEASON,"game_id":gid,"scheduled_utc":g.get("game_date"),"hours_to_tip":hrs,
         "method_id":"NBA_STYLE_TOT_001","market":"total_over","selection":"OVER","selection_team_id":"","side":"game",
         "qualified":ok,"ready":ready,"missing_inputs":"|".join(missing),"price":ms["over_price"],"line":ms["total"],
-        "market_captured_at":ms["captured_at"],"market_source":ms.get("source"),"market_books":ms.get("books"),
+        "bookmaker":quote.get("bookmaker") if quote else None,"quote":quote,"market_captured_at":quote.get("captured_at_utc") if quote else None,"market_source":ms.get("source"),"market_books":ms.get("books"),
         "starters_confirmed":h["starters_confirmed"] and a["starters_confirmed"],
         "prior_games":min([v for v in (h["prior_games"],a["prior_games"]) if v is not None],default=None),
         "features_json":json.dumps({name:v for name,v,fn in conds},separators=(",",":"),sort_keys=True)}
@@ -556,6 +519,11 @@ for g in upcoming:
           "features_json":json.dumps({name:v for name,v,fn in h3conds},separators=(",",":"),sort_keys=True)}
     shadow_evaluations.append(h3ev)
     if h3ok:shadow_qualified.append(h3ev.copy())
+
+# Freeze private evidence before any public qualification is published.
+integrity.forward(FORWARD,evaluations,games,now,{"code_hashes":code_hashes,"standings":live_stand,
+    "standing_results":standing_evidence,"travel":travel_evidence,"markets":market_evidence,"dynamic_inputs":dynamic_evidence,"shadow_evaluations":shadow_evaluations,
+    "starter_observations":{gid+"|"+tid:{"captured_at":rec[0].isoformat(),"players":rec[1]} for (gid,tid),rec in starter_latest.items()}})
 
 # Append point-in-time scanner history to daily text partitions. This is intentionally
 # not a cumulative gzip: append-only JSONL keeps Git deltas small at 10-minute cadence.

@@ -37,6 +37,7 @@ concurrency:
   cancel-in-progress: true
 
 env:
+  APPWIZA_NBA_FORWARD_ROOT: /srv/appwiza-sports/capture/nba/forward
   APPWIZA_NBA_PROSPECTIVE_ROOT: /srv/appwiza-sports/capture/nba/prospective
 
 jobs:
@@ -51,6 +52,8 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
+      - name: Validate live input guards
+        run: python -B -m unittest discover -s nba/live -p test_integrity.py
       - name: Evaluate frozen live methods
         shell: bash
         run: |
