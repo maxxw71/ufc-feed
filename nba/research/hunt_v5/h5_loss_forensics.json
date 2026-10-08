@@ -1,5 +1,5 @@
 {
-  "generated_at_utc": "2026-10-08T14:28:37.631948+00:00",
+  "generated_at_utc": "2026-10-08T14:29:06.723228+00:00",
   "policy": {
     "discovery": "2018-19 through 2020-21: train-only filter cutoffs and sorting",
     "confirmation": "2021-22 through 2022-23: displayed out-of-training, never used for threshold selection",
@@ -28,8 +28,9 @@
         ]
       ],
       "baseline": {
-        "n": 229,
-        "wins": 180,
+        "n": 228,
+        "raw_signals": 229,
+        "wins": 179,
         "losses": 49,
         "pushes": 0,
         "roi": 0.10157286692657794,
@@ -41,6 +42,7 @@
         "2018-19": {
           "baseline": {
             "n": 0,
+            "raw_signals": 0,
             "wins": 0,
             "losses": 0,
             "pushes": 0,
@@ -146,6 +148,7 @@
         "2019-20": {
           "baseline": {
             "n": 18,
+            "raw_signals": 18,
             "wins": 12,
             "losses": 6,
             "pushes": 0,
@@ -251,6 +254,7 @@
         "2020-21": {
           "baseline": {
             "n": 46,
+            "raw_signals": 46,
             "wins": 41,
             "losses": 5,
             "pushes": 0,
@@ -356,6 +360,7 @@
         "2021-22": {
           "baseline": {
             "n": 41,
+            "raw_signals": 41,
             "wins": 33,
             "losses": 8,
             "pushes": 0,
@@ -461,6 +466,7 @@
         "2022-23": {
           "baseline": {
             "n": 27,
+            "raw_signals": 27,
             "wins": 16,
             "losses": 11,
             "pushes": 0,
@@ -565,8 +571,9 @@
         },
         "2023-24": {
           "baseline": {
-            "n": 36,
-            "wins": 26,
+            "n": 35,
+            "raw_signals": 36,
+            "wins": 25,
             "losses": 10,
             "pushes": 0,
             "roi": 0.016035285066825028,
@@ -671,6 +678,7 @@
         "2024-25": {
           "baseline": {
             "n": 36,
+            "raw_signals": 36,
             "wins": 31,
             "losses": 5,
             "pushes": 0,
@@ -776,6 +784,7 @@
         "2025-26": {
           "baseline": {
             "n": 25,
+            "raw_signals": 25,
             "wins": 21,
             "losses": 4,
             "pushes": 0,
@@ -1120,6 +1129,7 @@
           "discovery": {
             "base": {
               "n": 64,
+              "raw_signals": 64,
               "wins": 53,
               "losses": 11,
               "pushes": 0,
@@ -1130,6 +1140,7 @@
             },
             "kept": {
               "n": 19,
+              "raw_signals": 19,
               "wins": 12,
               "losses": 7,
               "pushes": 0,
@@ -1140,6 +1151,7 @@
             },
             "removed": {
               "n": 45,
+              "raw_signals": 45,
               "wins": 41,
               "losses": 4,
               "pushes": 0,
@@ -1157,6 +1169,7 @@
           "confirmation": {
             "base": {
               "n": 68,
+              "raw_signals": 68,
               "wins": 49,
               "losses": 19,
               "pushes": 0,
@@ -1167,6 +1180,7 @@
             },
             "kept": {
               "n": 17,
+              "raw_signals": 17,
               "wins": 9,
               "losses": 8,
               "pushes": 0,
@@ -1177,6 +1191,7 @@
             },
             "removed": {
               "n": 51,
+              "raw_signals": 51,
               "wins": 40,
               "losses": 11,
               "pushes": 0,
@@ -1193,8 +1208,9 @@
           },
           "validation": {
             "base": {
-              "n": 36,
-              "wins": 26,
+              "n": 35,
+              "raw_signals": 36,
+              "wins": 25,
               "losses": 10,
               "pushes": 0,
               "roi": 0.016035285066825028,
@@ -1204,6 +1220,7 @@
             },
             "kept": {
               "n": 14,
+              "raw_signals": 14,
               "wins": 9,
               "losses": 5,
               "pushes": 0,
@@ -1213,8 +1230,9 @@
               "profit_units": 2.1443110148897353
             },
             "removed": {
-              "n": 22,
-              "wins": 17,
+              "n": 21,
+              "raw_signals": 22,
+              "wins": 16,
               "losses": 5,
               "pushes": 0,
               "roi": -0.07538457321670758,
@@ -1222,15 +1240,16 @@
               "worst_price_roi": -0.045911450733341796,
               "profit_units": -1.5830760375508592
             },
-            "wins_lost": 17,
+            "wins_lost": 16,
             "losses_avoided": 5,
             "roi_lift": 0.1371297874252989,
             "unit_profit_change": 1.5830760375508595,
-            "bets_retained_pct": 0.3888888888888889
+            "bets_retained_pct": 0.4
           },
           "holdout": {
             "base": {
               "n": 61,
+              "raw_signals": 61,
               "wins": 52,
               "losses": 9,
               "pushes": 0,
@@ -1241,6 +1260,7 @@
             },
             "kept": {
               "n": 9,
+              "raw_signals": 9,
               "wins": 7,
               "losses": 2,
               "pushes": 0,
@@ -1251,6 +1271,7 @@
             },
             "removed": {
               "n": 52,
+              "raw_signals": 52,
               "wins": 45,
               "losses": 7,
               "pushes": 0,
@@ -1270,6 +1291,7 @@
           "discovery": {
             "base": {
               "n": 64,
+              "raw_signals": 64,
               "wins": 53,
               "losses": 11,
               "pushes": 0,
@@ -1280,6 +1302,7 @@
             },
             "kept": {
               "n": 29,
+              "raw_signals": 29,
               "wins": 21,
               "losses": 8,
               "pushes": 0,
@@ -1290,6 +1313,7 @@
             },
             "removed": {
               "n": 35,
+              "raw_signals": 35,
               "wins": 32,
               "losses": 3,
               "pushes": 0,
@@ -1307,6 +1331,7 @@
           "confirmation": {
             "base": {
               "n": 68,
+              "raw_signals": 68,
               "wins": 49,
               "losses": 19,
               "pushes": 0,
@@ -1317,6 +1342,7 @@
             },
             "kept": {
               "n": 31,
+              "raw_signals": 31,
               "wins": 18,
               "losses": 13,
               "pushes": 0,
@@ -1327,6 +1353,7 @@
             },
             "removed": {
               "n": 37,
+              "raw_signals": 37,
               "wins": 31,
               "losses": 6,
               "pushes": 0,
@@ -1343,8 +1370,9 @@
           },
           "validation": {
             "base": {
-              "n": 36,
-              "wins": 26,
+              "n": 35,
+              "raw_signals": 36,
+              "wins": 25,
               "losses": 10,
               "pushes": 0,
               "roi": 0.016035285066825028,
@@ -1354,6 +1382,7 @@
             },
             "kept": {
               "n": 20,
+              "raw_signals": 20,
               "wins": 11,
               "losses": 9,
               "pushes": 0,
@@ -1363,8 +1392,9 @@
               "profit_units": -0.8842604136816934
             },
             "removed": {
-              "n": 16,
-              "wins": 15,
+              "n": 15,
+              "raw_signals": 16,
+              "wins": 14,
               "losses": 1,
               "pushes": 0,
               "roi": 0.09636635940137128,
@@ -1372,15 +1402,16 @@
               "worst_price_roi": 0.1328944825143823,
               "profit_units": 1.4454953910205692
             },
-            "wins_lost": 15,
+            "wins_lost": 14,
             "losses_avoided": 1,
             "roi_lift": -0.0602483057509097,
             "unit_profit_change": -1.4454953910205695,
-            "bets_retained_pct": 0.5555555555555556
+            "bets_retained_pct": 0.5714285714285714
           },
           "holdout": {
             "base": {
               "n": 61,
+              "raw_signals": 61,
               "wins": 52,
               "losses": 9,
               "pushes": 0,
@@ -1391,6 +1422,7 @@
             },
             "kept": {
               "n": 20,
+              "raw_signals": 20,
               "wins": 16,
               "losses": 4,
               "pushes": 0,
@@ -1401,6 +1433,7 @@
             },
             "removed": {
               "n": 41,
+              "raw_signals": 41,
               "wins": 36,
               "losses": 5,
               "pushes": 0,
@@ -1420,6 +1453,7 @@
           "discovery": {
             "base": {
               "n": 64,
+              "raw_signals": 64,
               "wins": 53,
               "losses": 11,
               "pushes": 0,
@@ -1430,6 +1464,7 @@
             },
             "kept": {
               "n": 47,
+              "raw_signals": 47,
               "wins": 37,
               "losses": 10,
               "pushes": 0,
@@ -1440,6 +1475,7 @@
             },
             "removed": {
               "n": 17,
+              "raw_signals": 17,
               "wins": 16,
               "losses": 1,
               "pushes": 0,
@@ -1457,6 +1493,7 @@
           "confirmation": {
             "base": {
               "n": 68,
+              "raw_signals": 68,
               "wins": 49,
               "losses": 19,
               "pushes": 0,
@@ -1467,6 +1504,7 @@
             },
             "kept": {
               "n": 47,
+              "raw_signals": 47,
               "wins": 31,
               "losses": 16,
               "pushes": 0,
@@ -1477,6 +1515,7 @@
             },
             "removed": {
               "n": 21,
+              "raw_signals": 21,
               "wins": 18,
               "losses": 3,
               "pushes": 0,
@@ -1493,8 +1532,9 @@
           },
           "validation": {
             "base": {
-              "n": 36,
-              "wins": 26,
+              "n": 35,
+              "raw_signals": 36,
+              "wins": 25,
               "losses": 10,
               "pushes": 0,
               "roi": 0.016035285066825028,
@@ -1504,6 +1544,7 @@
             },
             "kept": {
               "n": 25,
+              "raw_signals": 25,
               "wins": 16,
               "losses": 9,
               "pushes": 0,
@@ -1513,8 +1554,9 @@
               "profit_units": 0.46820927288460007
             },
             "removed": {
-              "n": 11,
-              "wins": 10,
+              "n": 10,
+              "raw_signals": 11,
+              "wins": 9,
               "losses": 1,
               "pushes": 0,
               "roi": 0.009302570445427585,
@@ -1522,15 +1564,16 @@
               "worst_price_roi": 0.07897913446068262,
               "profit_units": 0.09302570445427585
             },
-            "wins_lost": 10,
+            "wins_lost": 9,
             "losses_avoided": 1,
             "roi_lift": 0.0026930858485589744,
             "unit_profit_change": -0.09302570445427588,
-            "bets_retained_pct": 0.6944444444444444
+            "bets_retained_pct": 0.7142857142857143
           },
           "holdout": {
             "base": {
               "n": 61,
+              "raw_signals": 61,
               "wins": 52,
               "losses": 9,
               "pushes": 0,
@@ -1541,6 +1584,7 @@
             },
             "kept": {
               "n": 40,
+              "raw_signals": 40,
               "wins": 33,
               "losses": 7,
               "pushes": 0,
@@ -1551,6 +1595,7 @@
             },
             "removed": {
               "n": 21,
+              "raw_signals": 21,
               "wins": 19,
               "losses": 2,
               "pushes": 0,
@@ -1570,6 +1615,7 @@
           "discovery": {
             "base": {
               "n": 64,
+              "raw_signals": 64,
               "wins": 53,
               "losses": 11,
               "pushes": 0,
@@ -1580,6 +1626,7 @@
             },
             "kept": {
               "n": 56,
+              "raw_signals": 56,
               "wins": 45,
               "losses": 11,
               "pushes": 0,
@@ -1590,6 +1637,7 @@
             },
             "removed": {
               "n": 8,
+              "raw_signals": 8,
               "wins": 8,
               "losses": 0,
               "pushes": 0,
@@ -1607,6 +1655,7 @@
           "confirmation": {
             "base": {
               "n": 68,
+              "raw_signals": 68,
               "wins": 49,
               "losses": 19,
               "pushes": 0,
@@ -1617,6 +1666,7 @@
             },
             "kept": {
               "n": 58,
+              "raw_signals": 58,
               "wins": 40,
               "losses": 18,
               "pushes": 0,
@@ -1627,6 +1677,7 @@
             },
             "removed": {
               "n": 10,
+              "raw_signals": 10,
               "wins": 9,
               "losses": 1,
               "pushes": 0,
@@ -1643,8 +1694,9 @@
           },
           "validation": {
             "base": {
-              "n": 36,
-              "wins": 26,
+              "n": 35,
+              "raw_signals": 36,
+              "wins": 25,
               "losses": 10,
               "pushes": 0,
               "roi": 0.016035285066825028,
@@ -1654,6 +1706,7 @@
             },
             "kept": {
               "n": 30,
+              "raw_signals": 30,
               "wins": 20,
               "losses": 10,
               "pushes": 0,
@@ -1663,8 +1716,9 @@
               "profit_units": 0.13425085035474896
             },
             "removed": {
-              "n": 6,
-              "wins": 6,
+              "n": 5,
+              "raw_signals": 6,
+              "wins": 5,
               "losses": 0,
               "pushes": 0,
               "roi": 0.08539682539682539,
@@ -1672,15 +1726,16 @@
               "worst_price_roi": 0.2093982544477594,
               "profit_units": 0.42698412698412697
             },
-            "wins_lost": 6,
+            "wins_lost": 5,
             "losses_avoided": 0,
             "roi_lift": -0.01156025672166673,
             "unit_profit_change": -0.426984126984127,
-            "bets_retained_pct": 0.8333333333333334
+            "bets_retained_pct": 0.8571428571428571
           },
           "holdout": {
             "base": {
               "n": 61,
+              "raw_signals": 61,
               "wins": 52,
               "losses": 9,
               "pushes": 0,
@@ -1691,6 +1746,7 @@
             },
             "kept": {
               "n": 51,
+              "raw_signals": 51,
               "wins": 43,
               "losses": 8,
               "pushes": 0,
@@ -1701,6 +1757,7 @@
             },
             "removed": {
               "n": 10,
+              "raw_signals": 10,
               "wins": 9,
               "losses": 1,
               "pushes": 0,
@@ -1730,6 +1787,7 @@
           "discovery": {
             "base": {
               "n": 64,
+              "raw_signals": 64,
               "wins": 53,
               "losses": 11,
               "pushes": 0,
@@ -1740,6 +1798,7 @@
             },
             "kept": {
               "n": 26,
+              "raw_signals": 26,
               "wins": 25,
               "losses": 1,
               "pushes": 0,
@@ -1750,6 +1809,7 @@
             },
             "removed": {
               "n": 38,
+              "raw_signals": 38,
               "wins": 28,
               "losses": 10,
               "pushes": 0,
@@ -1768,6 +1828,7 @@
             "confirmation": {
               "base": {
                 "n": 68,
+                "raw_signals": 68,
                 "wins": 49,
                 "losses": 19,
                 "pushes": 0,
@@ -1778,6 +1839,7 @@
               },
               "kept": {
                 "n": 25,
+                "raw_signals": 25,
                 "wins": 18,
                 "losses": 7,
                 "pushes": 0,
@@ -1788,6 +1850,7 @@
               },
               "removed": {
                 "n": 43,
+                "raw_signals": 43,
                 "wins": 31,
                 "losses": 12,
                 "pushes": 0,
@@ -1804,8 +1867,9 @@
             },
             "validation": {
               "base": {
-                "n": 36,
-                "wins": 26,
+                "n": 35,
+                "raw_signals": 36,
+                "wins": 25,
                 "losses": 10,
                 "pushes": 0,
                 "roi": 0.016035285066825028,
@@ -1815,6 +1879,7 @@
               },
               "kept": {
                 "n": 17,
+                "raw_signals": 17,
                 "wins": 13,
                 "losses": 4,
                 "pushes": 0,
@@ -1824,8 +1889,9 @@
                 "profit_units": -0.9949909687204488
               },
               "removed": {
-                "n": 19,
-                "wins": 13,
+                "n": 18,
+                "raw_signals": 19,
+                "wins": 12,
                 "losses": 6,
                 "pushes": 0,
                 "roi": 0.08645699700329582,
@@ -1833,15 +1899,16 @@
                 "worst_price_roi": 0.10020974994806259,
                 "profit_units": 1.5562259460593246
               },
-              "wins_lost": 13,
+              "wins_lost": 12,
               "losses_avoided": 6,
               "roi_lift": -0.0745641655797926,
               "unit_profit_change": -1.5562259460593246,
-              "bets_retained_pct": 0.4722222222222222
+              "bets_retained_pct": 0.4857142857142857
             },
             "holdout": {
               "base": {
                 "n": 61,
+                "raw_signals": 61,
                 "wins": 52,
                 "losses": 9,
                 "pushes": 0,
@@ -1852,6 +1919,7 @@
               },
               "kept": {
                 "n": 33,
+                "raw_signals": 33,
                 "wins": 29,
                 "losses": 4,
                 "pushes": 0,
@@ -1862,6 +1930,7 @@
               },
               "removed": {
                 "n": 28,
+                "raw_signals": 28,
                 "wins": 23,
                 "losses": 5,
                 "pushes": 0,
@@ -1891,6 +1960,7 @@
           "discovery": {
             "base": {
               "n": 64,
+              "raw_signals": 64,
               "wins": 53,
               "losses": 11,
               "pushes": 0,
@@ -1901,6 +1971,7 @@
             },
             "kept": {
               "n": 46,
+              "raw_signals": 46,
               "wins": 41,
               "losses": 5,
               "pushes": 0,
@@ -1911,6 +1982,7 @@
             },
             "removed": {
               "n": 18,
+              "raw_signals": 18,
               "wins": 12,
               "losses": 6,
               "pushes": 0,
@@ -1929,6 +2001,7 @@
             "confirmation": {
               "base": {
                 "n": 68,
+                "raw_signals": 68,
                 "wins": 49,
                 "losses": 19,
                 "pushes": 0,
@@ -1939,6 +2012,7 @@
               },
               "kept": {
                 "n": 52,
+                "raw_signals": 52,
                 "wins": 37,
                 "losses": 15,
                 "pushes": 0,
@@ -1949,6 +2023,7 @@
               },
               "removed": {
                 "n": 16,
+                "raw_signals": 16,
                 "wins": 12,
                 "losses": 4,
                 "pushes": 0,
@@ -1965,8 +2040,9 @@
             },
             "validation": {
               "base": {
-                "n": 36,
-                "wins": 26,
+                "n": 35,
+                "raw_signals": 36,
+                "wins": 25,
                 "losses": 10,
                 "pushes": 0,
                 "roi": 0.016035285066825028,
@@ -1976,6 +2052,7 @@
               },
               "kept": {
                 "n": 24,
+                "raw_signals": 24,
                 "wins": 18,
                 "losses": 6,
                 "pushes": 0,
@@ -1985,8 +2062,9 @@
                 "profit_units": 0.6515823728491603
               },
               "removed": {
-                "n": 12,
-                "wins": 8,
+                "n": 11,
+                "raw_signals": 12,
+                "wins": 7,
                 "losses": 4,
                 "pushes": 0,
                 "roi": -0.008213399591844035,
@@ -1994,15 +2072,16 @@
                 "worst_price_roi": 0.04447390711415957,
                 "profit_units": -0.0903473955102844
               },
-              "wins_lost": 8,
+              "wins_lost": 7,
               "losses_avoided": 4,
               "roi_lift": 0.01111398046855665,
               "unit_profit_change": 0.09034739551028437,
-              "bets_retained_pct": 0.6666666666666666
+              "bets_retained_pct": 0.6857142857142857
             },
             "holdout": {
               "base": {
                 "n": 61,
+                "raw_signals": 61,
                 "wins": 52,
                 "losses": 9,
                 "pushes": 0,
@@ -2013,6 +2092,7 @@
               },
               "kept": {
                 "n": 53,
+                "raw_signals": 53,
                 "wins": 44,
                 "losses": 9,
                 "pushes": 0,
@@ -2023,6 +2103,7 @@
               },
               "removed": {
                 "n": 8,
+                "raw_signals": 8,
                 "wins": 8,
                 "losses": 0,
                 "pushes": 0,
@@ -2052,6 +2133,7 @@
           "discovery": {
             "base": {
               "n": 64,
+              "raw_signals": 64,
               "wins": 53,
               "losses": 11,
               "pushes": 0,
@@ -2062,6 +2144,7 @@
             },
             "kept": {
               "n": 24,
+              "raw_signals": 24,
               "wins": 23,
               "losses": 1,
               "pushes": 0,
@@ -2072,6 +2155,7 @@
             },
             "removed": {
               "n": 40,
+              "raw_signals": 40,
               "wins": 30,
               "losses": 10,
               "pushes": 0,
@@ -2090,6 +2174,7 @@
             "confirmation": {
               "base": {
                 "n": 68,
+                "raw_signals": 68,
                 "wins": 49,
                 "losses": 19,
                 "pushes": 0,
@@ -2100,6 +2185,7 @@
               },
               "kept": {
                 "n": 27,
+                "raw_signals": 27,
                 "wins": 22,
                 "losses": 5,
                 "pushes": 0,
@@ -2110,6 +2196,7 @@
               },
               "removed": {
                 "n": 41,
+                "raw_signals": 41,
                 "wins": 27,
                 "losses": 14,
                 "pushes": 0,
@@ -2126,8 +2213,9 @@
             },
             "validation": {
               "base": {
-                "n": 36,
-                "wins": 26,
+                "n": 35,
+                "raw_signals": 36,
+                "wins": 25,
                 "losses": 10,
                 "pushes": 0,
                 "roi": 0.016035285066825028,
@@ -2137,6 +2225,7 @@
               },
               "kept": {
                 "n": 20,
+                "raw_signals": 20,
                 "wins": 15,
                 "losses": 5,
                 "pushes": 0,
@@ -2146,8 +2235,9 @@
                 "profit_units": -0.8913951241174101
               },
               "removed": {
-                "n": 16,
-                "wins": 11,
+                "n": 15,
+                "raw_signals": 16,
+                "wins": 10,
                 "losses": 5,
                 "pushes": 0,
                 "roi": 0.09684200676375239,
@@ -2155,15 +2245,16 @@
                 "worst_price_roi": 0.11938998069303293,
                 "profit_units": 1.452630101456286
               },
-              "wins_lost": 11,
+              "wins_lost": 10,
               "losses_avoided": 5,
               "roi_lift": -0.06060504127269553,
               "unit_profit_change": -1.4526301014562861,
-              "bets_retained_pct": 0.5555555555555556
+              "bets_retained_pct": 0.5714285714285714
             },
             "holdout": {
               "base": {
                 "n": 61,
+                "raw_signals": 61,
                 "wins": 52,
                 "losses": 9,
                 "pushes": 0,
@@ -2174,6 +2265,7 @@
               },
               "kept": {
                 "n": 34,
+                "raw_signals": 34,
                 "wins": 30,
                 "losses": 4,
                 "pushes": 0,
@@ -2184,6 +2276,7 @@
               },
               "removed": {
                 "n": 27,
+                "raw_signals": 27,
                 "wins": 22,
                 "losses": 5,
                 "pushes": 0,
@@ -2213,6 +2306,7 @@
           "discovery": {
             "base": {
               "n": 64,
+              "raw_signals": 64,
               "wins": 53,
               "losses": 11,
               "pushes": 0,
@@ -2223,6 +2317,7 @@
             },
             "kept": {
               "n": 42,
+              "raw_signals": 42,
               "wins": 36,
               "losses": 6,
               "pushes": 0,
@@ -2233,6 +2328,7 @@
             },
             "removed": {
               "n": 22,
+              "raw_signals": 22,
               "wins": 17,
               "losses": 5,
               "pushes": 0,
@@ -2251,6 +2347,7 @@
             "confirmation": {
               "base": {
                 "n": 68,
+                "raw_signals": 68,
                 "wins": 49,
                 "losses": 19,
                 "pushes": 0,
@@ -2261,6 +2358,7 @@
               },
               "kept": {
                 "n": 49,
+                "raw_signals": 49,
                 "wins": 36,
                 "losses": 13,
                 "pushes": 0,
@@ -2271,6 +2369,7 @@
               },
               "removed": {
                 "n": 19,
+                "raw_signals": 19,
                 "wins": 13,
                 "losses": 6,
                 "pushes": 0,
@@ -2287,8 +2386,9 @@
             },
             "validation": {
               "base": {
-                "n": 36,
-                "wins": 26,
+                "n": 35,
+                "raw_signals": 36,
+                "wins": 25,
                 "losses": 10,
                 "pushes": 0,
                 "roi": 0.016035285066825028,
@@ -2297,8 +2397,9 @@
                 "profit_units": 0.561234977338876
               },
               "kept": {
-                "n": 27,
-                "wins": 22,
+                "n": 26,
+                "raw_signals": 27,
+                "wins": 21,
                 "losses": 5,
                 "pushes": 0,
                 "roi": 0.13210309920599642,
@@ -2308,6 +2409,7 @@
               },
               "removed": {
                 "n": 9,
+                "raw_signals": 9,
                 "wins": 4,
                 "losses": 5,
                 "pushes": 0,
@@ -2320,11 +2422,12 @@
               "losses_avoided": 5,
               "roi_lift": 0.11606781413917139,
               "unit_profit_change": 2.8734456020170307,
-              "bets_retained_pct": 0.75
+              "bets_retained_pct": 0.7428571428571429
             },
             "holdout": {
               "base": {
                 "n": 61,
+                "raw_signals": 61,
                 "wins": 52,
                 "losses": 9,
                 "pushes": 0,
@@ -2335,6 +2438,7 @@
               },
               "kept": {
                 "n": 47,
+                "raw_signals": 47,
                 "wins": 41,
                 "losses": 6,
                 "pushes": 0,
@@ -2345,6 +2449,7 @@
               },
               "removed": {
                 "n": 14,
+                "raw_signals": 14,
                 "wins": 11,
                 "losses": 3,
                 "pushes": 0,
@@ -2372,6 +2477,7 @@
           "coverage_fraction": 0.975609756097561,
           "observed_only": {
             "n": 40,
+            "raw_signals": 40,
             "wins": 32,
             "losses": 8,
             "pushes": 0,
@@ -2428,6 +2534,7 @@
           "coverage_fraction": 1.0,
           "observed_only": {
             "n": 27,
+            "raw_signals": 27,
             "wins": 16,
             "losses": 11,
             "pushes": 0,
@@ -2483,8 +2590,9 @@
           "both_reports_observed": 32,
           "coverage_fraction": 0.8888888888888888,
           "observed_only": {
-            "n": 32,
-            "wins": 23,
+            "n": 31,
+            "raw_signals": 32,
+            "wins": 22,
             "losses": 9,
             "pushes": 0,
             "roi": 0.03246687330893455,
@@ -2540,6 +2648,7 @@
           "coverage_fraction": 0.5573770491803278,
           "observed_only": {
             "n": 34,
+            "raw_signals": 34,
             "wins": 29,
             "losses": 5,
             "pushes": 0,
@@ -2617,6 +2726,7 @@
       ],
       "baseline": {
         "n": 203,
+        "raw_signals": 203,
         "wins": 177,
         "losses": 26,
         "pushes": 0,
@@ -2629,6 +2739,7 @@
         "2018-19": {
           "baseline": {
             "n": 22,
+            "raw_signals": 22,
             "wins": 19,
             "losses": 3,
             "pushes": 0,
@@ -2734,6 +2845,7 @@
         "2019-20": {
           "baseline": {
             "n": 14,
+            "raw_signals": 14,
             "wins": 14,
             "losses": 0,
             "pushes": 0,
@@ -2839,6 +2951,7 @@
         "2020-21": {
           "baseline": {
             "n": 26,
+            "raw_signals": 26,
             "wins": 23,
             "losses": 3,
             "pushes": 0,
@@ -2944,6 +3057,7 @@
         "2021-22": {
           "baseline": {
             "n": 30,
+            "raw_signals": 30,
             "wins": 24,
             "losses": 6,
             "pushes": 0,
@@ -3049,6 +3163,7 @@
         "2022-23": {
           "baseline": {
             "n": 24,
+            "raw_signals": 24,
             "wins": 22,
             "losses": 2,
             "pushes": 0,
@@ -3154,6 +3269,7 @@
         "2023-24": {
           "baseline": {
             "n": 32,
+            "raw_signals": 32,
             "wins": 28,
             "losses": 4,
             "pushes": 0,
@@ -3259,6 +3375,7 @@
         "2024-25": {
           "baseline": {
             "n": 30,
+            "raw_signals": 30,
             "wins": 26,
             "losses": 4,
             "pushes": 0,
@@ -3364,6 +3481,7 @@
         "2025-26": {
           "baseline": {
             "n": 25,
+            "raw_signals": 25,
             "wins": 21,
             "losses": 4,
             "pushes": 0,
@@ -3708,6 +3826,7 @@
           "discovery": {
             "base": {
               "n": 62,
+              "raw_signals": 62,
               "wins": 56,
               "losses": 6,
               "pushes": 0,
@@ -3718,6 +3837,7 @@
             },
             "kept": {
               "n": 7,
+              "raw_signals": 7,
               "wins": 6,
               "losses": 1,
               "pushes": 0,
@@ -3728,6 +3848,7 @@
             },
             "removed": {
               "n": 55,
+              "raw_signals": 55,
               "wins": 50,
               "losses": 5,
               "pushes": 0,
@@ -3745,6 +3866,7 @@
           "confirmation": {
             "base": {
               "n": 54,
+              "raw_signals": 54,
               "wins": 46,
               "losses": 8,
               "pushes": 0,
@@ -3755,6 +3877,7 @@
             },
             "kept": {
               "n": 9,
+              "raw_signals": 9,
               "wins": 5,
               "losses": 4,
               "pushes": 0,
@@ -3765,6 +3888,7 @@
             },
             "removed": {
               "n": 45,
+              "raw_signals": 45,
               "wins": 41,
               "losses": 4,
               "pushes": 0,
@@ -3782,6 +3906,7 @@
           "validation": {
             "base": {
               "n": 32,
+              "raw_signals": 32,
               "wins": 28,
               "losses": 4,
               "pushes": 0,
@@ -3792,6 +3917,7 @@
             },
             "kept": {
               "n": 1,
+              "raw_signals": 1,
               "wins": 1,
               "losses": 0,
               "pushes": 0,
@@ -3802,6 +3928,7 @@
             },
             "removed": {
               "n": 31,
+              "raw_signals": 31,
               "wins": 27,
               "losses": 4,
               "pushes": 0,
@@ -3819,6 +3946,7 @@
           "holdout": {
             "base": {
               "n": 55,
+              "raw_signals": 55,
               "wins": 47,
               "losses": 8,
               "pushes": 0,
@@ -3829,6 +3957,7 @@
             },
             "kept": {
               "n": 3,
+              "raw_signals": 3,
               "wins": 2,
               "losses": 1,
               "pushes": 0,
@@ -3839,6 +3968,7 @@
             },
             "removed": {
               "n": 52,
+              "raw_signals": 52,
               "wins": 45,
               "losses": 7,
               "pushes": 0,
@@ -3858,6 +3988,7 @@
           "discovery": {
             "base": {
               "n": 62,
+              "raw_signals": 62,
               "wins": 56,
               "losses": 6,
               "pushes": 0,
@@ -3868,6 +3999,7 @@
             },
             "kept": {
               "n": 15,
+              "raw_signals": 15,
               "wins": 12,
               "losses": 3,
               "pushes": 0,
@@ -3878,6 +4010,7 @@
             },
             "removed": {
               "n": 47,
+              "raw_signals": 47,
               "wins": 44,
               "losses": 3,
               "pushes": 0,
@@ -3895,6 +4028,7 @@
           "confirmation": {
             "base": {
               "n": 54,
+              "raw_signals": 54,
               "wins": 46,
               "losses": 8,
               "pushes": 0,
@@ -3905,6 +4039,7 @@
             },
             "kept": {
               "n": 16,
+              "raw_signals": 16,
               "wins": 12,
               "losses": 4,
               "pushes": 0,
@@ -3915,6 +4050,7 @@
             },
             "removed": {
               "n": 38,
+              "raw_signals": 38,
               "wins": 34,
               "losses": 4,
               "pushes": 0,
@@ -3932,6 +4068,7 @@
           "validation": {
             "base": {
               "n": 32,
+              "raw_signals": 32,
               "wins": 28,
               "losses": 4,
               "pushes": 0,
@@ -3942,6 +4079,7 @@
             },
             "kept": {
               "n": 5,
+              "raw_signals": 5,
               "wins": 3,
               "losses": 2,
               "pushes": 0,
@@ -3952,6 +4090,7 @@
             },
             "removed": {
               "n": 27,
+              "raw_signals": 27,
               "wins": 25,
               "losses": 2,
               "pushes": 0,
@@ -3969,6 +4108,7 @@
           "holdout": {
             "base": {
               "n": 55,
+              "raw_signals": 55,
               "wins": 47,
               "losses": 8,
               "pushes": 0,
@@ -3979,6 +4119,7 @@
             },
             "kept": {
               "n": 6,
+              "raw_signals": 6,
               "wins": 5,
               "losses": 1,
               "pushes": 0,
@@ -3989,6 +4130,7 @@
             },
             "removed": {
               "n": 49,
+              "raw_signals": 49,
               "wins": 42,
               "losses": 7,
               "pushes": 0,
@@ -4008,6 +4150,7 @@
           "discovery": {
             "base": {
               "n": 62,
+              "raw_signals": 62,
               "wins": 56,
               "losses": 6,
               "pushes": 0,
@@ -4018,6 +4161,7 @@
             },
             "kept": {
               "n": 31,
+              "raw_signals": 31,
               "wins": 27,
               "losses": 4,
               "pushes": 0,
@@ -4028,6 +4172,7 @@
             },
             "removed": {
               "n": 31,
+              "raw_signals": 31,
               "wins": 29,
               "losses": 2,
               "pushes": 0,
@@ -4045,6 +4190,7 @@
           "confirmation": {
             "base": {
               "n": 54,
+              "raw_signals": 54,
               "wins": 46,
               "losses": 8,
               "pushes": 0,
@@ -4055,6 +4201,7 @@
             },
             "kept": {
               "n": 34,
+              "raw_signals": 34,
               "wins": 28,
               "losses": 6,
               "pushes": 0,
@@ -4065,6 +4212,7 @@
             },
             "removed": {
               "n": 20,
+              "raw_signals": 20,
               "wins": 18,
               "losses": 2,
               "pushes": 0,
@@ -4082,6 +4230,7 @@
           "validation": {
             "base": {
               "n": 32,
+              "raw_signals": 32,
               "wins": 28,
               "losses": 4,
               "pushes": 0,
@@ -4092,6 +4241,7 @@
             },
             "kept": {
               "n": 16,
+              "raw_signals": 16,
               "wins": 13,
               "losses": 3,
               "pushes": 0,
@@ -4102,6 +4252,7 @@
             },
             "removed": {
               "n": 16,
+              "raw_signals": 16,
               "wins": 15,
               "losses": 1,
               "pushes": 0,
@@ -4119,6 +4270,7 @@
           "holdout": {
             "base": {
               "n": 55,
+              "raw_signals": 55,
               "wins": 47,
               "losses": 8,
               "pushes": 0,
@@ -4129,6 +4281,7 @@
             },
             "kept": {
               "n": 22,
+              "raw_signals": 22,
               "wins": 20,
               "losses": 2,
               "pushes": 0,
@@ -4139,6 +4292,7 @@
             },
             "removed": {
               "n": 33,
+              "raw_signals": 33,
               "wins": 27,
               "losses": 6,
               "pushes": 0,
@@ -4158,6 +4312,7 @@
           "discovery": {
             "base": {
               "n": 62,
+              "raw_signals": 62,
               "wins": 56,
               "losses": 6,
               "pushes": 0,
@@ -4168,6 +4323,7 @@
             },
             "kept": {
               "n": 43,
+              "raw_signals": 43,
               "wins": 39,
               "losses": 4,
               "pushes": 0,
@@ -4178,6 +4334,7 @@
             },
             "removed": {
               "n": 19,
+              "raw_signals": 19,
               "wins": 17,
               "losses": 2,
               "pushes": 0,
@@ -4195,6 +4352,7 @@
           "confirmation": {
             "base": {
               "n": 54,
+              "raw_signals": 54,
               "wins": 46,
               "losses": 8,
               "pushes": 0,
@@ -4205,6 +4363,7 @@
             },
             "kept": {
               "n": 44,
+              "raw_signals": 44,
               "wins": 38,
               "losses": 6,
               "pushes": 0,
@@ -4215,6 +4374,7 @@
             },
             "removed": {
               "n": 10,
+              "raw_signals": 10,
               "wins": 8,
               "losses": 2,
               "pushes": 0,
@@ -4232,6 +4392,7 @@
           "validation": {
             "base": {
               "n": 32,
+              "raw_signals": 32,
               "wins": 28,
               "losses": 4,
               "pushes": 0,
@@ -4242,6 +4403,7 @@
             },
             "kept": {
               "n": 22,
+              "raw_signals": 22,
               "wins": 19,
               "losses": 3,
               "pushes": 0,
@@ -4252,6 +4414,7 @@
             },
             "removed": {
               "n": 10,
+              "raw_signals": 10,
               "wins": 9,
               "losses": 1,
               "pushes": 0,
@@ -4269,6 +4432,7 @@
           "holdout": {
             "base": {
               "n": 55,
+              "raw_signals": 55,
               "wins": 47,
               "losses": 8,
               "pushes": 0,
@@ -4279,6 +4443,7 @@
             },
             "kept": {
               "n": 36,
+              "raw_signals": 36,
               "wins": 30,
               "losses": 6,
               "pushes": 0,
@@ -4289,6 +4454,7 @@
             },
             "removed": {
               "n": 19,
+              "raw_signals": 19,
               "wins": 17,
               "losses": 2,
               "pushes": 0,
@@ -4315,6 +4481,7 @@
           "coverage_fraction": 0.9666666666666667,
           "observed_only": {
             "n": 29,
+            "raw_signals": 29,
             "wins": 23,
             "losses": 6,
             "pushes": 0,
@@ -4371,6 +4538,7 @@
           "coverage_fraction": 0.9583333333333334,
           "observed_only": {
             "n": 23,
+            "raw_signals": 23,
             "wins": 22,
             "losses": 1,
             "pushes": 0,
@@ -4427,6 +4595,7 @@
           "coverage_fraction": 0.875,
           "observed_only": {
             "n": 28,
+            "raw_signals": 28,
             "wins": 24,
             "losses": 4,
             "pushes": 0,
@@ -4483,6 +4652,7 @@
           "coverage_fraction": 0.4727272727272727,
           "observed_only": {
             "n": 26,
+            "raw_signals": 26,
             "wins": 23,
             "losses": 3,
             "pushes": 0,
@@ -4555,6 +4725,7 @@
       ],
       "baseline": {
         "n": 428,
+        "raw_signals": 428,
         "wins": 241,
         "losses": 185,
         "pushes": 2,
@@ -4567,6 +4738,7 @@
         "2018-19": {
           "baseline": {
             "n": 59,
+            "raw_signals": 59,
             "wins": 34,
             "losses": 25,
             "pushes": 0,
@@ -4672,6 +4844,7 @@
         "2019-20": {
           "baseline": {
             "n": 56,
+            "raw_signals": 56,
             "wins": 30,
             "losses": 26,
             "pushes": 0,
@@ -4777,6 +4950,7 @@
         "2020-21": {
           "baseline": {
             "n": 49,
+            "raw_signals": 49,
             "wins": 27,
             "losses": 22,
             "pushes": 0,
@@ -4882,6 +5056,7 @@
         "2021-22": {
           "baseline": {
             "n": 45,
+            "raw_signals": 45,
             "wins": 24,
             "losses": 21,
             "pushes": 0,
@@ -4987,6 +5162,7 @@
         "2022-23": {
           "baseline": {
             "n": 57,
+            "raw_signals": 57,
             "wins": 31,
             "losses": 25,
             "pushes": 1,
@@ -5092,6 +5268,7 @@
         "2023-24": {
           "baseline": {
             "n": 59,
+            "raw_signals": 59,
             "wins": 33,
             "losses": 25,
             "pushes": 1,
@@ -5197,6 +5374,7 @@
         "2024-25": {
           "baseline": {
             "n": 52,
+            "raw_signals": 52,
             "wins": 27,
             "losses": 25,
             "pushes": 0,
@@ -5302,6 +5480,7 @@
         "2025-26": {
           "baseline": {
             "n": 51,
+            "raw_signals": 51,
             "wins": 35,
             "losses": 16,
             "pushes": 0,
@@ -5646,6 +5825,7 @@
           "discovery": {
             "base": {
               "n": 164,
+              "raw_signals": 164,
               "wins": 91,
               "losses": 73,
               "pushes": 0,
@@ -5656,6 +5836,7 @@
             },
             "kept": {
               "n": 41,
+              "raw_signals": 41,
               "wins": 23,
               "losses": 18,
               "pushes": 0,
@@ -5666,6 +5847,7 @@
             },
             "removed": {
               "n": 123,
+              "raw_signals": 123,
               "wins": 68,
               "losses": 55,
               "pushes": 0,
@@ -5683,6 +5865,7 @@
           "confirmation": {
             "base": {
               "n": 102,
+              "raw_signals": 102,
               "wins": 55,
               "losses": 46,
               "pushes": 1,
@@ -5693,6 +5876,7 @@
             },
             "kept": {
               "n": 37,
+              "raw_signals": 37,
               "wins": 23,
               "losses": 14,
               "pushes": 0,
@@ -5703,6 +5887,7 @@
             },
             "removed": {
               "n": 65,
+              "raw_signals": 65,
               "wins": 32,
               "losses": 32,
               "pushes": 1,
@@ -5720,6 +5905,7 @@
           "validation": {
             "base": {
               "n": 59,
+              "raw_signals": 59,
               "wins": 33,
               "losses": 25,
               "pushes": 1,
@@ -5730,6 +5916,7 @@
             },
             "kept": {
               "n": 14,
+              "raw_signals": 14,
               "wins": 6,
               "losses": 8,
               "pushes": 0,
@@ -5740,6 +5927,7 @@
             },
             "removed": {
               "n": 45,
+              "raw_signals": 45,
               "wins": 27,
               "losses": 17,
               "pushes": 1,
@@ -5757,6 +5945,7 @@
           "holdout": {
             "base": {
               "n": 103,
+              "raw_signals": 103,
               "wins": 62,
               "losses": 41,
               "pushes": 0,
@@ -5767,6 +5956,7 @@
             },
             "kept": {
               "n": 24,
+              "raw_signals": 24,
               "wins": 12,
               "losses": 12,
               "pushes": 0,
@@ -5777,6 +5967,7 @@
             },
             "removed": {
               "n": 79,
+              "raw_signals": 79,
               "wins": 50,
               "losses": 29,
               "pushes": 0,
@@ -5796,6 +5987,7 @@
           "discovery": {
             "base": {
               "n": 164,
+              "raw_signals": 164,
               "wins": 91,
               "losses": 73,
               "pushes": 0,
@@ -5806,6 +5998,7 @@
             },
             "kept": {
               "n": 78,
+              "raw_signals": 78,
               "wins": 39,
               "losses": 39,
               "pushes": 0,
@@ -5816,6 +6009,7 @@
             },
             "removed": {
               "n": 86,
+              "raw_signals": 86,
               "wins": 52,
               "losses": 34,
               "pushes": 0,
@@ -5833,6 +6027,7 @@
           "confirmation": {
             "base": {
               "n": 102,
+              "raw_signals": 102,
               "wins": 55,
               "losses": 46,
               "pushes": 1,
@@ -5843,6 +6038,7 @@
             },
             "kept": {
               "n": 63,
+              "raw_signals": 63,
               "wins": 34,
               "losses": 29,
               "pushes": 0,
@@ -5853,6 +6049,7 @@
             },
             "removed": {
               "n": 39,
+              "raw_signals": 39,
               "wins": 21,
               "losses": 17,
               "pushes": 1,
@@ -5870,6 +6067,7 @@
           "validation": {
             "base": {
               "n": 59,
+              "raw_signals": 59,
               "wins": 33,
               "losses": 25,
               "pushes": 1,
@@ -5880,6 +6078,7 @@
             },
             "kept": {
               "n": 24,
+              "raw_signals": 24,
               "wins": 13,
               "losses": 11,
               "pushes": 0,
@@ -5890,6 +6089,7 @@
             },
             "removed": {
               "n": 35,
+              "raw_signals": 35,
               "wins": 20,
               "losses": 14,
               "pushes": 1,
@@ -5907,6 +6107,7 @@
           "holdout": {
             "base": {
               "n": 103,
+              "raw_signals": 103,
               "wins": 62,
               "losses": 41,
               "pushes": 0,
@@ -5917,6 +6118,7 @@
             },
             "kept": {
               "n": 50,
+              "raw_signals": 50,
               "wins": 31,
               "losses": 19,
               "pushes": 0,
@@ -5927,6 +6129,7 @@
             },
             "removed": {
               "n": 53,
+              "raw_signals": 53,
               "wins": 31,
               "losses": 22,
               "pushes": 0,
@@ -5946,6 +6149,7 @@
           "discovery": {
             "base": {
               "n": 164,
+              "raw_signals": 164,
               "wins": 91,
               "losses": 73,
               "pushes": 0,
@@ -5956,6 +6160,7 @@
             },
             "kept": {
               "n": 124,
+              "raw_signals": 124,
               "wins": 65,
               "losses": 59,
               "pushes": 0,
@@ -5966,6 +6171,7 @@
             },
             "removed": {
               "n": 40,
+              "raw_signals": 40,
               "wins": 26,
               "losses": 14,
               "pushes": 0,
@@ -5983,6 +6189,7 @@
           "confirmation": {
             "base": {
               "n": 102,
+              "raw_signals": 102,
               "wins": 55,
               "losses": 46,
               "pushes": 1,
@@ -5993,6 +6200,7 @@
             },
             "kept": {
               "n": 84,
+              "raw_signals": 84,
               "wins": 47,
               "losses": 36,
               "pushes": 1,
@@ -6003,6 +6211,7 @@
             },
             "removed": {
               "n": 18,
+              "raw_signals": 18,
               "wins": 8,
               "losses": 10,
               "pushes": 0,
@@ -6020,6 +6229,7 @@
           "validation": {
             "base": {
               "n": 59,
+              "raw_signals": 59,
               "wins": 33,
               "losses": 25,
               "pushes": 1,
@@ -6030,6 +6240,7 @@
             },
             "kept": {
               "n": 45,
+              "raw_signals": 45,
               "wins": 26,
               "losses": 18,
               "pushes": 1,
@@ -6040,6 +6251,7 @@
             },
             "removed": {
               "n": 14,
+              "raw_signals": 14,
               "wins": 7,
               "losses": 7,
               "pushes": 0,
@@ -6057,6 +6269,7 @@
           "holdout": {
             "base": {
               "n": 103,
+              "raw_signals": 103,
               "wins": 62,
               "losses": 41,
               "pushes": 0,
@@ -6067,6 +6280,7 @@
             },
             "kept": {
               "n": 76,
+              "raw_signals": 76,
               "wins": 44,
               "losses": 32,
               "pushes": 0,
@@ -6077,6 +6291,7 @@
             },
             "removed": {
               "n": 27,
+              "raw_signals": 27,
               "wins": 18,
               "losses": 9,
               "pushes": 0,
@@ -6096,6 +6311,7 @@
           "discovery": {
             "base": {
               "n": 164,
+              "raw_signals": 164,
               "wins": 91,
               "losses": 73,
               "pushes": 0,
@@ -6106,6 +6322,7 @@
             },
             "kept": {
               "n": 145,
+              "raw_signals": 145,
               "wins": 78,
               "losses": 67,
               "pushes": 0,
@@ -6116,6 +6333,7 @@
             },
             "removed": {
               "n": 19,
+              "raw_signals": 19,
               "wins": 13,
               "losses": 6,
               "pushes": 0,
@@ -6133,6 +6351,7 @@
           "confirmation": {
             "base": {
               "n": 102,
+              "raw_signals": 102,
               "wins": 55,
               "losses": 46,
               "pushes": 1,
@@ -6143,6 +6362,7 @@
             },
             "kept": {
               "n": 93,
+              "raw_signals": 93,
               "wins": 52,
               "losses": 40,
               "pushes": 1,
@@ -6153,6 +6373,7 @@
             },
             "removed": {
               "n": 9,
+              "raw_signals": 9,
               "wins": 3,
               "losses": 6,
               "pushes": 0,
@@ -6170,6 +6391,7 @@
           "validation": {
             "base": {
               "n": 59,
+              "raw_signals": 59,
               "wins": 33,
               "losses": 25,
               "pushes": 1,
@@ -6180,6 +6402,7 @@
             },
             "kept": {
               "n": 49,
+              "raw_signals": 49,
               "wins": 27,
               "losses": 21,
               "pushes": 1,
@@ -6190,6 +6413,7 @@
             },
             "removed": {
               "n": 10,
+              "raw_signals": 10,
               "wins": 6,
               "losses": 4,
               "pushes": 0,
@@ -6207,6 +6431,7 @@
           "holdout": {
             "base": {
               "n": 103,
+              "raw_signals": 103,
               "wins": 62,
               "losses": 41,
               "pushes": 0,
@@ -6217,6 +6442,7 @@
             },
             "kept": {
               "n": 86,
+              "raw_signals": 86,
               "wins": 51,
               "losses": 35,
               "pushes": 0,
@@ -6227,6 +6453,7 @@
             },
             "removed": {
               "n": 17,
+              "raw_signals": 17,
               "wins": 11,
               "losses": 6,
               "pushes": 0,
@@ -6256,6 +6483,7 @@
           "discovery": {
             "base": {
               "n": 164,
+              "raw_signals": 164,
               "wins": 91,
               "losses": 73,
               "pushes": 0,
@@ -6266,6 +6494,7 @@
             },
             "kept": {
               "n": 61,
+              "raw_signals": 61,
               "wins": 41,
               "losses": 20,
               "pushes": 0,
@@ -6276,6 +6505,7 @@
             },
             "removed": {
               "n": 103,
+              "raw_signals": 103,
               "wins": 50,
               "losses": 53,
               "pushes": 0,
@@ -6294,6 +6524,7 @@
             "confirmation": {
               "base": {
                 "n": 102,
+                "raw_signals": 102,
                 "wins": 55,
                 "losses": 46,
                 "pushes": 1,
@@ -6304,6 +6535,7 @@
               },
               "kept": {
                 "n": 41,
+                "raw_signals": 41,
                 "wins": 27,
                 "losses": 14,
                 "pushes": 0,
@@ -6314,6 +6546,7 @@
               },
               "removed": {
                 "n": 61,
+                "raw_signals": 61,
                 "wins": 28,
                 "losses": 32,
                 "pushes": 1,
@@ -6331,6 +6564,7 @@
             "validation": {
               "base": {
                 "n": 59,
+                "raw_signals": 59,
                 "wins": 33,
                 "losses": 25,
                 "pushes": 1,
@@ -6341,6 +6575,7 @@
               },
               "kept": {
                 "n": 27,
+                "raw_signals": 27,
                 "wins": 17,
                 "losses": 10,
                 "pushes": 0,
@@ -6351,6 +6586,7 @@
               },
               "removed": {
                 "n": 32,
+                "raw_signals": 32,
                 "wins": 16,
                 "losses": 15,
                 "pushes": 1,
@@ -6368,6 +6604,7 @@
             "holdout": {
               "base": {
                 "n": 103,
+                "raw_signals": 103,
                 "wins": 62,
                 "losses": 41,
                 "pushes": 0,
@@ -6378,6 +6615,7 @@
               },
               "kept": {
                 "n": 41,
+                "raw_signals": 41,
                 "wins": 23,
                 "losses": 18,
                 "pushes": 0,
@@ -6388,6 +6626,7 @@
               },
               "removed": {
                 "n": 62,
+                "raw_signals": 62,
                 "wins": 39,
                 "losses": 23,
                 "pushes": 0,
@@ -6417,6 +6656,7 @@
           "discovery": {
             "base": {
               "n": 164,
+              "raw_signals": 164,
               "wins": 91,
               "losses": 73,
               "pushes": 0,
@@ -6427,6 +6667,7 @@
             },
             "kept": {
               "n": 60,
+              "raw_signals": 60,
               "wins": 38,
               "losses": 22,
               "pushes": 0,
@@ -6437,6 +6678,7 @@
             },
             "removed": {
               "n": 104,
+              "raw_signals": 104,
               "wins": 53,
               "losses": 51,
               "pushes": 0,
@@ -6455,6 +6697,7 @@
             "confirmation": {
               "base": {
                 "n": 102,
+                "raw_signals": 102,
                 "wins": 55,
                 "losses": 46,
                 "pushes": 1,
@@ -6465,6 +6708,7 @@
               },
               "kept": {
                 "n": 23,
+                "raw_signals": 23,
                 "wins": 10,
                 "losses": 12,
                 "pushes": 1,
@@ -6475,6 +6719,7 @@
               },
               "removed": {
                 "n": 79,
+                "raw_signals": 79,
                 "wins": 45,
                 "losses": 34,
                 "pushes": 0,
@@ -6492,6 +6737,7 @@
             "validation": {
               "base": {
                 "n": 59,
+                "raw_signals": 59,
                 "wins": 33,
                 "losses": 25,
                 "pushes": 1,
@@ -6502,6 +6748,7 @@
               },
               "kept": {
                 "n": 22,
+                "raw_signals": 22,
                 "wins": 11,
                 "losses": 11,
                 "pushes": 0,
@@ -6512,6 +6759,7 @@
               },
               "removed": {
                 "n": 37,
+                "raw_signals": 37,
                 "wins": 22,
                 "losses": 14,
                 "pushes": 1,
@@ -6529,6 +6777,7 @@
             "holdout": {
               "base": {
                 "n": 103,
+                "raw_signals": 103,
                 "wins": 62,
                 "losses": 41,
                 "pushes": 0,
@@ -6539,6 +6788,7 @@
               },
               "kept": {
                 "n": 39,
+                "raw_signals": 39,
                 "wins": 24,
                 "losses": 15,
                 "pushes": 0,
@@ -6549,6 +6799,7 @@
               },
               "removed": {
                 "n": 64,
+                "raw_signals": 64,
                 "wins": 38,
                 "losses": 26,
                 "pushes": 0,
@@ -6578,6 +6829,7 @@
           "discovery": {
             "base": {
               "n": 164,
+              "raw_signals": 164,
               "wins": 91,
               "losses": 73,
               "pushes": 0,
@@ -6588,6 +6840,7 @@
             },
             "kept": {
               "n": 59,
+              "raw_signals": 59,
               "wins": 36,
               "losses": 23,
               "pushes": 0,
@@ -6598,6 +6851,7 @@
             },
             "removed": {
               "n": 105,
+              "raw_signals": 105,
               "wins": 55,
               "losses": 50,
               "pushes": 0,
@@ -6616,6 +6870,7 @@
             "confirmation": {
               "base": {
                 "n": 102,
+                "raw_signals": 102,
                 "wins": 55,
                 "losses": 46,
                 "pushes": 1,
@@ -6626,6 +6881,7 @@
               },
               "kept": {
                 "n": 20,
+                "raw_signals": 20,
                 "wins": 8,
                 "losses": 11,
                 "pushes": 1,
@@ -6636,6 +6892,7 @@
               },
               "removed": {
                 "n": 82,
+                "raw_signals": 82,
                 "wins": 47,
                 "losses": 35,
                 "pushes": 0,
@@ -6653,6 +6910,7 @@
             "validation": {
               "base": {
                 "n": 59,
+                "raw_signals": 59,
                 "wins": 33,
                 "losses": 25,
                 "pushes": 1,
@@ -6663,6 +6921,7 @@
               },
               "kept": {
                 "n": 32,
+                "raw_signals": 32,
                 "wins": 19,
                 "losses": 12,
                 "pushes": 1,
@@ -6673,6 +6932,7 @@
               },
               "removed": {
                 "n": 27,
+                "raw_signals": 27,
                 "wins": 14,
                 "losses": 13,
                 "pushes": 0,
@@ -6690,6 +6950,7 @@
             "holdout": {
               "base": {
                 "n": 103,
+                "raw_signals": 103,
                 "wins": 62,
                 "losses": 41,
                 "pushes": 0,
@@ -6700,6 +6961,7 @@
               },
               "kept": {
                 "n": 44,
+                "raw_signals": 44,
                 "wins": 29,
                 "losses": 15,
                 "pushes": 0,
@@ -6710,6 +6972,7 @@
               },
               "removed": {
                 "n": 59,
+                "raw_signals": 59,
                 "wins": 33,
                 "losses": 26,
                 "pushes": 0,
@@ -6739,6 +7002,7 @@
           "discovery": {
             "base": {
               "n": 164,
+              "raw_signals": 164,
               "wins": 91,
               "losses": 73,
               "pushes": 0,
@@ -6749,6 +7013,7 @@
             },
             "kept": {
               "n": 76,
+              "raw_signals": 76,
               "wins": 45,
               "losses": 31,
               "pushes": 0,
@@ -6759,6 +7024,7 @@
             },
             "removed": {
               "n": 88,
+              "raw_signals": 88,
               "wins": 46,
               "losses": 42,
               "pushes": 0,
@@ -6777,6 +7043,7 @@
             "confirmation": {
               "base": {
                 "n": 102,
+                "raw_signals": 102,
                 "wins": 55,
                 "losses": 46,
                 "pushes": 1,
@@ -6787,6 +7054,7 @@
               },
               "kept": {
                 "n": 39,
+                "raw_signals": 39,
                 "wins": 18,
                 "losses": 21,
                 "pushes": 0,
@@ -6797,6 +7065,7 @@
               },
               "removed": {
                 "n": 63,
+                "raw_signals": 63,
                 "wins": 37,
                 "losses": 25,
                 "pushes": 1,
@@ -6814,6 +7083,7 @@
             "validation": {
               "base": {
                 "n": 59,
+                "raw_signals": 59,
                 "wins": 33,
                 "losses": 25,
                 "pushes": 1,
@@ -6824,6 +7094,7 @@
               },
               "kept": {
                 "n": 38,
+                "raw_signals": 38,
                 "wins": 22,
                 "losses": 15,
                 "pushes": 1,
@@ -6834,6 +7105,7 @@
               },
               "removed": {
                 "n": 21,
+                "raw_signals": 21,
                 "wins": 11,
                 "losses": 10,
                 "pushes": 0,
@@ -6851,6 +7123,7 @@
             "holdout": {
               "base": {
                 "n": 103,
+                "raw_signals": 103,
                 "wins": 62,
                 "losses": 41,
                 "pushes": 0,
@@ -6861,6 +7134,7 @@
               },
               "kept": {
                 "n": 50,
+                "raw_signals": 50,
                 "wins": 35,
                 "losses": 15,
                 "pushes": 0,
@@ -6871,6 +7145,7 @@
               },
               "removed": {
                 "n": 53,
+                "raw_signals": 53,
                 "wins": 27,
                 "losses": 26,
                 "pushes": 0,
@@ -6900,6 +7175,7 @@
           "discovery": {
             "base": {
               "n": 164,
+              "raw_signals": 164,
               "wins": 91,
               "losses": 73,
               "pushes": 0,
@@ -6910,6 +7186,7 @@
             },
             "kept": {
               "n": 58,
+              "raw_signals": 58,
               "wins": 35,
               "losses": 23,
               "pushes": 0,
@@ -6920,6 +7197,7 @@
             },
             "removed": {
               "n": 106,
+              "raw_signals": 106,
               "wins": 56,
               "losses": 50,
               "pushes": 0,
@@ -6938,6 +7216,7 @@
             "confirmation": {
               "base": {
                 "n": 102,
+                "raw_signals": 102,
                 "wins": 55,
                 "losses": 46,
                 "pushes": 1,
@@ -6948,6 +7227,7 @@
               },
               "kept": {
                 "n": 46,
+                "raw_signals": 46,
                 "wins": 24,
                 "losses": 22,
                 "pushes": 0,
@@ -6958,6 +7238,7 @@
               },
               "removed": {
                 "n": 56,
+                "raw_signals": 56,
                 "wins": 31,
                 "losses": 24,
                 "pushes": 1,
@@ -6975,6 +7256,7 @@
             "validation": {
               "base": {
                 "n": 59,
+                "raw_signals": 59,
                 "wins": 33,
                 "losses": 25,
                 "pushes": 1,
@@ -6985,6 +7267,7 @@
               },
               "kept": {
                 "n": 24,
+                "raw_signals": 24,
                 "wins": 11,
                 "losses": 13,
                 "pushes": 0,
@@ -6995,6 +7278,7 @@
               },
               "removed": {
                 "n": 35,
+                "raw_signals": 35,
                 "wins": 22,
                 "losses": 12,
                 "pushes": 1,
@@ -7012,6 +7296,7 @@
             "holdout": {
               "base": {
                 "n": 103,
+                "raw_signals": 103,
                 "wins": 62,
                 "losses": 41,
                 "pushes": 0,
@@ -7022,6 +7307,7 @@
               },
               "kept": {
                 "n": 24,
+                "raw_signals": 24,
                 "wins": 14,
                 "losses": 10,
                 "pushes": 0,
@@ -7032,6 +7318,7 @@
               },
               "removed": {
                 "n": 79,
+                "raw_signals": 79,
                 "wins": 48,
                 "losses": 31,
                 "pushes": 0,
@@ -7061,6 +7348,7 @@
           "discovery": {
             "base": {
               "n": 164,
+              "raw_signals": 164,
               "wins": 91,
               "losses": 73,
               "pushes": 0,
@@ -7071,6 +7359,7 @@
             },
             "kept": {
               "n": 114,
+              "raw_signals": 114,
               "wins": 65,
               "losses": 49,
               "pushes": 0,
@@ -7081,6 +7370,7 @@
             },
             "removed": {
               "n": 50,
+              "raw_signals": 50,
               "wins": 26,
               "losses": 24,
               "pushes": 0,
@@ -7099,6 +7389,7 @@
             "confirmation": {
               "base": {
                 "n": 102,
+                "raw_signals": 102,
                 "wins": 55,
                 "losses": 46,
                 "pushes": 1,
@@ -7109,6 +7400,7 @@
               },
               "kept": {
                 "n": 73,
+                "raw_signals": 73,
                 "wins": 40,
                 "losses": 32,
                 "pushes": 1,
@@ -7119,6 +7411,7 @@
               },
               "removed": {
                 "n": 29,
+                "raw_signals": 29,
                 "wins": 15,
                 "losses": 14,
                 "pushes": 0,
@@ -7136,6 +7429,7 @@
             "validation": {
               "base": {
                 "n": 59,
+                "raw_signals": 59,
                 "wins": 33,
                 "losses": 25,
                 "pushes": 1,
@@ -7146,6 +7440,7 @@
               },
               "kept": {
                 "n": 41,
+                "raw_signals": 41,
                 "wins": 24,
                 "losses": 16,
                 "pushes": 1,
@@ -7156,6 +7451,7 @@
               },
               "removed": {
                 "n": 18,
+                "raw_signals": 18,
                 "wins": 9,
                 "losses": 9,
                 "pushes": 0,
@@ -7173,6 +7469,7 @@
             "holdout": {
               "base": {
                 "n": 103,
+                "raw_signals": 103,
                 "wins": 62,
                 "losses": 41,
                 "pushes": 0,
@@ -7183,6 +7480,7 @@
               },
               "kept": {
                 "n": 66,
+                "raw_signals": 66,
                 "wins": 39,
                 "losses": 27,
                 "pushes": 0,
@@ -7193,6 +7491,7 @@
               },
               "removed": {
                 "n": 37,
+                "raw_signals": 37,
                 "wins": 23,
                 "losses": 14,
                 "pushes": 0,
@@ -7222,6 +7521,7 @@
           "discovery": {
             "base": {
               "n": 164,
+              "raw_signals": 164,
               "wins": 91,
               "losses": 73,
               "pushes": 0,
@@ -7232,6 +7532,7 @@
             },
             "kept": {
               "n": 61,
+              "raw_signals": 61,
               "wins": 35,
               "losses": 26,
               "pushes": 0,
@@ -7242,6 +7543,7 @@
             },
             "removed": {
               "n": 103,
+              "raw_signals": 103,
               "wins": 56,
               "losses": 47,
               "pushes": 0,
@@ -7260,6 +7562,7 @@
             "confirmation": {
               "base": {
                 "n": 102,
+                "raw_signals": 102,
                 "wins": 55,
                 "losses": 46,
                 "pushes": 1,
@@ -7270,6 +7573,7 @@
               },
               "kept": {
                 "n": 38,
+                "raw_signals": 38,
                 "wins": 21,
                 "losses": 17,
                 "pushes": 0,
@@ -7280,6 +7584,7 @@
               },
               "removed": {
                 "n": 64,
+                "raw_signals": 64,
                 "wins": 34,
                 "losses": 29,
                 "pushes": 1,
@@ -7297,6 +7602,7 @@
             "validation": {
               "base": {
                 "n": 59,
+                "raw_signals": 59,
                 "wins": 33,
                 "losses": 25,
                 "pushes": 1,
@@ -7307,6 +7613,7 @@
               },
               "kept": {
                 "n": 17,
+                "raw_signals": 17,
                 "wins": 11,
                 "losses": 5,
                 "pushes": 1,
@@ -7317,6 +7624,7 @@
               },
               "removed": {
                 "n": 42,
+                "raw_signals": 42,
                 "wins": 22,
                 "losses": 20,
                 "pushes": 0,
@@ -7334,6 +7642,7 @@
             "holdout": {
               "base": {
                 "n": 103,
+                "raw_signals": 103,
                 "wins": 62,
                 "losses": 41,
                 "pushes": 0,
@@ -7344,6 +7653,7 @@
               },
               "kept": {
                 "n": 39,
+                "raw_signals": 39,
                 "wins": 22,
                 "losses": 17,
                 "pushes": 0,
@@ -7354,6 +7664,7 @@
               },
               "removed": {
                 "n": 64,
+                "raw_signals": 64,
                 "wins": 40,
                 "losses": 24,
                 "pushes": 0,
@@ -7383,6 +7694,7 @@
           "discovery": {
             "base": {
               "n": 164,
+              "raw_signals": 164,
               "wins": 91,
               "losses": 73,
               "pushes": 0,
@@ -7393,6 +7705,7 @@
             },
             "kept": {
               "n": 58,
+              "raw_signals": 58,
               "wins": 33,
               "losses": 25,
               "pushes": 0,
@@ -7403,6 +7716,7 @@
             },
             "removed": {
               "n": 106,
+              "raw_signals": 106,
               "wins": 58,
               "losses": 48,
               "pushes": 0,
@@ -7421,6 +7735,7 @@
             "confirmation": {
               "base": {
                 "n": 102,
+                "raw_signals": 102,
                 "wins": 55,
                 "losses": 46,
                 "pushes": 1,
@@ -7431,6 +7746,7 @@
               },
               "kept": {
                 "n": 27,
+                "raw_signals": 27,
                 "wins": 16,
                 "losses": 11,
                 "pushes": 0,
@@ -7441,6 +7757,7 @@
               },
               "removed": {
                 "n": 75,
+                "raw_signals": 75,
                 "wins": 39,
                 "losses": 35,
                 "pushes": 1,
@@ -7458,6 +7775,7 @@
             "validation": {
               "base": {
                 "n": 59,
+                "raw_signals": 59,
                 "wins": 33,
                 "losses": 25,
                 "pushes": 1,
@@ -7468,6 +7786,7 @@
               },
               "kept": {
                 "n": 19,
+                "raw_signals": 19,
                 "wins": 12,
                 "losses": 7,
                 "pushes": 0,
@@ -7478,6 +7797,7 @@
               },
               "removed": {
                 "n": 40,
+                "raw_signals": 40,
                 "wins": 21,
                 "losses": 18,
                 "pushes": 1,
@@ -7495,6 +7815,7 @@
             "holdout": {
               "base": {
                 "n": 103,
+                "raw_signals": 103,
                 "wins": 62,
                 "losses": 41,
                 "pushes": 0,
@@ -7505,6 +7826,7 @@
               },
               "kept": {
                 "n": 39,
+                "raw_signals": 39,
                 "wins": 23,
                 "losses": 16,
                 "pushes": 0,
@@ -7515,6 +7837,7 @@
               },
               "removed": {
                 "n": 64,
+                "raw_signals": 64,
                 "wins": 39,
                 "losses": 25,
                 "pushes": 0,
@@ -7542,6 +7865,7 @@
           "coverage_fraction": 1.0,
           "observed_only": {
             "n": 45,
+            "raw_signals": 45,
             "wins": 24,
             "losses": 21,
             "pushes": 0,
@@ -7598,6 +7922,7 @@
           "coverage_fraction": 0.9824561403508771,
           "observed_only": {
             "n": 56,
+            "raw_signals": 56,
             "wins": 30,
             "losses": 25,
             "pushes": 1,
@@ -7654,6 +7979,7 @@
           "coverage_fraction": 0.9322033898305084,
           "observed_only": {
             "n": 55,
+            "raw_signals": 55,
             "wins": 29,
             "losses": 25,
             "pushes": 1,
@@ -7710,6 +8036,7 @@
           "coverage_fraction": 0.4854368932038835,
           "observed_only": {
             "n": 50,
+            "raw_signals": 50,
             "wins": 26,
             "losses": 24,
             "pushes": 0,
