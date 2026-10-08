@@ -55,7 +55,7 @@ for i,u in enumerate(urls,1):
     b,err=download(u)
     txt=""
     if b:
-        try:txt="\n".join((pg.extract_text() or "") for pg in PdfReader(io.BytesIO(b)))
+        try:reader=PdfReader(io.BytesIO(b));txt="\n".join((pg.extract_text() or "") for pg in reader.pages)
         except Exception as e:err=f"parse:{e}"
     if txt:
         texts[u]=txt
