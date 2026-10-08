@@ -37,6 +37,12 @@ jobs:
           else
             echo 'launcher unavailable to SSH user'
           fi
+          echo '== scanner refresh behavior =='
+          grep -nE 'refresh|manifest|current|subprocess|checkout|git|release|BASE' /opt/appwiza-operations/nba-live/run.py | head -70 || true
+          echo '== installed service helpers =='
+          find /opt/appwiza-operations/nba-live -maxdepth 1 -type f -printf '%f\\n' 2>/dev/null || true
+          echo '== active release link =='
+          readlink /srv/appwiza-sports/nba-live/current 2>/dev/null || true
           echo '== timer status =='
           systemctl is-active nba-live-scan.timer || true
           echo '== public method ids =='
@@ -46,6 +52,9 @@ jobs:
           d=json.load(open('/srv/appwiza-sports/public/nba/current.json'))
           print('method_count',len(d.get('arsenal') or []))
           print('ids',','.join(x.get('method_id','') for x in d.get('arsenal',[])))
+          print('source_commit',d.get('status',{}).get('source_commit'))
+          print('source_checked_at',d.get('status',{}).get('source_checked_at'))
+          print('generated_at',d.get('generated_at_utc'))
           PY
           fi
           REMOTE
