@@ -39,7 +39,9 @@ for p in DATA.glob("*_*/regular_season/team_boxscores.csv.gz"):
 
 agg=defaultdict(lambda:{
     "shooting_plays":0,"free_throws":0,"fg_attempt_plays":0,"fg_made_plays":0,"fg_coords":0,
-    "pbp_3_text":0,"scorevalue_3pa":0,"scorevalue_3pm":0,
+    "pbp_3_text":0,"pbp_3_anytext":0,"scorevalue_3pa":0,"scorevalue_3pm":0,
+    "radial3_22_5":0,"radial3_23_0":0,"radial3_23_5":0,"radial3_24_0":0,
+    "text3_radial22_5":0,"text3_radial23_0":0,
     "box_fga":0.0,"box_fgm":0.0,"box_3pa":0.0,"box_3pm":0.0,"distance_pairs":0,
     "distance_abs_error_sum":0.0,"distance_errors":[]
 })
@@ -60,22 +62,36 @@ for p in DATA.glob("*_*/regular_season/playbyplay.csv.gz"):
             if made:a["scorevalue_3pm"]+=1
         if coord(r):a["fg_coords"]+=1
         desc=(r.get("description") or "").lower()
-        if re.search(r"three[- ]point|3[- ]pt|3 pointer|3-point",desc):a["pbp_3_text"]+=1
-        td=text_distance(r);dd=derived_distance(r)
+        atyp=(r.get("action_type") or "").lower()
+        is_text3=bool(re.search(r"three[- ]point|3[- ]pt|3 pointer|3-point",desc))
+        is_anytext3=bool(re.search(r"three[- ]point|3[- ]pt|3 pointer|3-point",desc+" "+atyp))
+        if is_text3:a["pbp_3_text"]+=1
+        if is_anytext3:a["pbp_3_anytext"]+=1
+        dd=derived_distance(r)
+        if dd is not None:
+            if dd>=22.5:a["radial3_22_5"]+=1
+            if dd>=23.0:a["radial3_23_0"]+=1
+            if dd>=23.5:a["radial3_23_5"]+=1
+            if dd>=24.0:a["radial3_24_0"]+=1
+            if is_text3 and dd>=22.5:a["text3_radial22_5"]+=1
+            if is_text3 and dd>=23.0:a["text3_radial23_0"]+=1
+        td=text_distance(r)
         if td is not None and dd is not None:
             err=abs(td-dd);a["distance_pairs"]+=1;a["distance_abs_error_sum"]+=err
             if len(a["distance_errors"])<500:a["distance_errors"].append(err)
 
 season=defaultdict(lambda:{
     "team_games":0,"shooting_plays":0,"free_throws":0,"fg_attempt_plays":0,"fg_made_plays":0,"fg_coords":0,
-    "pbp_3_text":0,"scorevalue_3pa":0,"scorevalue_3pm":0,
+    "pbp_3_text":0,"pbp_3_anytext":0,"scorevalue_3pa":0,"scorevalue_3pm":0,
+    "radial3_22_5":0,"radial3_23_0":0,"radial3_23_5":0,"radial3_24_0":0,
+    "text3_radial22_5":0,"text3_radial23_0":0,
     "box_fga":0.0,"box_fgm":0.0,"box_3pa":0.0,"box_3pm":0.0,"distance_pairs":0,"distance_abs_error_sum":0.0,
     "distance_errors":[]
 })
 for key,a in agg.items():
     tr=team[key];s=key[0];x=season[s]
     x["team_games"]+=1
-    for k in ("shooting_plays","free_throws","fg_attempt_plays","fg_made_plays","fg_coords","pbp_3_text","scorevalue_3pa","scorevalue_3pm","distance_pairs"):
+    for k in ("shooting_plays","free_throws","fg_attempt_plays","fg_made_plays","fg_coords","pbp_3_text","pbp_3_anytext","scorevalue_3pa","scorevalue_3pm","radial3_22_5","radial3_23_0","radial3_23_5","radial3_24_0","text3_radial22_5","text3_radial23_0","distance_pairs"):
         x[k]+=a[k]
     x["box_fga"]+=n(tr.get("field_goals_attempted")) or 0
     x["box_fgm"]+=n(tr.get("field_goals_made")) or 0
@@ -91,6 +107,13 @@ for s,x in season.items():
     x["fgm_play_vs_box_ratio"]=x["fg_made_plays"]/x["box_fgm"] if x["box_fgm"] else None
     x["valid_coordinate_coverage_of_non_ft_fga"]=x["fg_coords"]/x["fg_attempt_plays"] if x["fg_attempt_plays"] else None
     x["text_3pa_vs_box_ratio"]=x["pbp_3_text"]/x["box_3pa"] if x["box_3pa"] else None
+    x["anytext_3pa_vs_box_ratio"]=x["pbp_3_anytext"]/x["box_3pa"] if x["box_3pa"] else None
+    x["radial3_22_5_vs_box_ratio"]=x["radial3_22_5"]/x["box_3pa"] if x["box_3pa"] else None
+    x["radial3_23_0_vs_box_ratio"]=x["radial3_23_0"]/x["box_3pa"] if x["box_3pa"] else None
+    x["radial3_23_5_vs_box_ratio"]=x["radial3_23_5"]/x["box_3pa"] if x["box_3pa"] else None
+    x["radial3_24_0_vs_box_ratio"]=x["radial3_24_0"]/x["box_3pa"] if x["box_3pa"] else None
+    x["explicit_text3_captured_by_radial22_5"]=x["text3_radial22_5"]/x["pbp_3_text"] if x["pbp_3_text"] else None
+    x["explicit_text3_captured_by_radial23_0"]=x["text3_radial23_0"]/x["pbp_3_text"] if x["pbp_3_text"] else None
     x["scorevalue_3pa_vs_box_ratio"]=x["scorevalue_3pa"]/x["box_3pa"] if x["box_3pa"] else None
     x["scorevalue_3pm_vs_box_ratio"]=x["scorevalue_3pm"]/x["box_3pm"] if x["box_3pm"] else None
     x["derived_vs_text_distance_mae_ft"]=x["distance_abs_error_sum"]/x["distance_pairs"] if x["distance_pairs"] else None
