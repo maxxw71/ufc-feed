@@ -1,5 +1,5 @@
 {
-  "generated_at_utc": "2026-10-07T18:16:21.668246+00:00",
+  "generated_at_utc": "2026-10-08T11:10:55.363124+00:00",
   "methods": {
     "NBA_H3_OVER_001": {
       "rule": {
@@ -1599,7 +1599,450 @@
             "wilson_low": 0.5076952952728147
           }
         }
-      ]
+      ],
+      "live_arsenal_overlap": {
+        "h3_games": 346,
+        "games_with_any_live_method": 116,
+        "games_with_no_live_method": 230,
+        "independent_game_fraction": 0.6647398843930635,
+        "performance_no_live_overlap": {
+          "n": 230,
+          "wins": 127,
+          "losses": 100,
+          "hit": 0.5594713656387665,
+          "roi": 0.06612952484090712,
+          "profit": 15.209790713408637,
+          "wilson_low": 0.4944305165007462
+        },
+        "performance_any_live_overlap": {
+          "n": 116,
+          "wins": 78,
+          "losses": 37,
+          "hit": 0.6782608695652174,
+          "roi": 0.2919748006238374,
+          "profit": 33.86907687236514,
+          "wilson_low": 0.588312128684693
+        },
+        "same_market_style_tot_overlap": {
+          "games": 21,
+          "performance": {
+            "n": 21,
+            "wins": 14,
+            "losses": 7,
+            "hit": 0.6666666666666666,
+            "roi": 0.2733330576467831,
+            "profit": 5.739994210582445,
+            "wilson_low": 0.45373075657210293
+          }
+        },
+        "by_live_method": {
+          "NBA_INTERACT_003": {
+            "shared_games": 25,
+            "h3_share": 0.07225433526011561,
+            "jaccard": 0.03128911138923655,
+            "h3_performance_on_shared_games": {
+              "n": 25,
+              "wins": 14,
+              "losses": 11,
+              "hit": 0.56,
+              "roi": 0.06976430976430975,
+              "profit": 1.7441077441077437,
+              "wilson_low": 0.37067017019564436
+            }
+          },
+          "NBA_LQ_003": {
+            "shared_games": 23,
+            "h3_share": 0.06647398843930635,
+            "jaccard": 0.03276353276353276,
+            "h3_performance_on_shared_games": {
+              "n": 23,
+              "wins": 14,
+              "losses": 9,
+              "hit": 0.6086956521739131,
+              "roi": 0.1616992486557704,
+              "profit": 3.719082719082719,
+              "wilson_low": 0.40785179603745997
+            }
+          },
+          "NBA_ML001_DEF_TS": {
+            "shared_games": 4,
+            "h3_share": 0.011560693641618497,
+            "jaccard": 0.009950248756218905,
+            "h3_performance_on_shared_games": {
+              "n": 4,
+              "wins": 4,
+              "losses": 0,
+              "hit": 1.0,
+              "roi": 0.9090909090909091,
+              "profit": 3.6363636363636362,
+              "wilson_low": 0.5100999795960008
+            }
+          },
+          "NBA_PHYSCOACH_001": {
+            "shared_games": 9,
+            "h3_share": 0.02601156069364162,
+            "jaccard": 0.013996889580093312,
+            "h3_performance_on_shared_games": {
+              "n": 9,
+              "wins": 6,
+              "losses": 3,
+              "hit": 0.6666666666666666,
+              "roi": 0.2775372775372775,
+              "profit": 2.4978354978354975,
+              "wilson_low": 0.35419734749908977
+            }
+          },
+          "NBA_ROTSHAPE_001": {
+            "shared_games": 24,
+            "h3_share": 0.06936416184971098,
+            "jaccard": 0.046065259117082535,
+            "h3_performance_on_shared_games": {
+              "n": 24,
+              "wins": 15,
+              "losses": 9,
+              "hit": 0.625,
+              "roi": 0.18917634393824867,
+              "profit": 4.540232254517968,
+              "wilson_low": 0.42709619037907065
+            }
+          },
+          "NBA_STAND_002": {
+            "shared_games": 6,
+            "h3_share": 0.017341040462427744,
+            "jaccard": 0.00823045267489712,
+            "h3_performance_on_shared_games": {
+              "n": 6,
+              "wins": 3,
+              "losses": 3,
+              "hit": 0.5,
+              "roi": -0.04545454545454547,
+              "profit": -0.2727272727272728,
+              "wilson_low": 0.1876128068994087
+            }
+          },
+          "NBA_STYLE_TOT_001": {
+            "shared_games": 21,
+            "h3_share": 0.06069364161849711,
+            "jaccard": 0.02551640340218712,
+            "h3_performance_on_shared_games": {
+              "n": 21,
+              "wins": 14,
+              "losses": 7,
+              "hit": 0.6666666666666666,
+              "roi": 0.2733330576467831,
+              "profit": 5.739994210582445,
+              "wilson_low": 0.45373075657210293
+            }
+          },
+          "NBA_TRAVEL_001": {
+            "shared_games": 29,
+            "h3_share": 0.0838150289017341,
+            "jaccard": 0.04991394148020654,
+            "h3_performance_on_shared_games": {
+              "n": 29,
+              "wins": 24,
+              "losses": 4,
+              "hit": 0.8571428571428571,
+              "roi": 0.6107849902087237,
+              "profit": 17.712764716052988,
+              "wilson_low": 0.6850982695512267
+            }
+          }
+        },
+        "by_live_method_count": {
+          "0": {
+            "n": 230,
+            "wins": 127,
+            "losses": 100,
+            "hit": 0.5594713656387665,
+            "roi": 0.06612952484090712,
+            "profit": 15.209790713408637,
+            "wilson_low": 0.4944305165007462
+          },
+          "1": {
+            "n": 95,
+            "wins": 65,
+            "losses": 29,
+            "hit": 0.6914893617021277,
+            "roi": 0.3173449785914451,
+            "profit": 30.147772966187286,
+            "wilson_low": 0.5921412315417918
+          },
+          "2": {
+            "n": 17,
+            "wins": 10,
+            "losses": 7,
+            "hit": 0.5882352941176471,
+            "roi": 0.11729595170030166,
+            "profit": 1.9940311789051282,
+            "wilson_low": 0.3600507438551554
+          },
+          "3_plus": {
+            "n": 4,
+            "wins": 3,
+            "losses": 1,
+            "hit": 0.75,
+            "roi": 0.43181818181818177,
+            "profit": 1.727272727272727,
+            "wilson_low": 0.30063605244263664
+          }
+        }
+      },
+      "mechanism_audit": {
+        "primary_feature_win_loss_contrasts": {
+          "clutch_gap": {
+            "wins_n": 205,
+            "losses_n": 137,
+            "wins_mean": 2.6292895857530003,
+            "losses_mean": 2.752650330205075,
+            "wins_median": 2.3000000000000003,
+            "losses_median": 2.3
+          },
+          "rank_gap": {
+            "wins_n": 205,
+            "losses_n": 137,
+            "wins_mean": 10.53170731707317,
+            "losses_mean": 10.299270072992702,
+            "wins_median": 10.0,
+            "losses_median": 10.0
+          },
+          "starterpm_gap": {
+            "wins_n": 205,
+            "losses_n": 137,
+            "wins_mean": 12.673373983739838,
+            "losses_mean": 12.61999391727494,
+            "wins_median": 11.48,
+            "losses_median": 11.8
+          },
+          "prior_games_min": {
+            "wins_n": 205,
+            "losses_n": 137,
+            "wins_mean": 34.892682926829266,
+            "losses_mean": 34.54014598540146,
+            "wins_median": 32.0,
+            "losses_median": 32.0
+          },
+          "total_line": {
+            "wins_n": 205,
+            "losses_n": 137,
+            "wins_mean": 225.8219512195122,
+            "losses_mean": 226.93613138686132,
+            "wins_median": 225.0,
+            "losses_median": 226.0
+          }
+        },
+        "season_maturity": {
+          "min_prior_games_5": {
+            "n": 304,
+            "wins": 184,
+            "losses": 116,
+            "hit": 0.6133333333333333,
+            "roi": 0.16784118366767714,
+            "profit": 51.02371983497385,
+            "wilson_low": 0.5571234733195609
+          },
+          "min_prior_games_10": {
+            "n": 282,
+            "wins": 167,
+            "losses": 111,
+            "hit": 0.6007194244604317,
+            "roi": 0.1440747194234613,
+            "profit": 40.62907087741609,
+            "wilson_low": 0.5421521716061333
+          },
+          "min_prior_games_15": {
+            "n": 263,
+            "wins": 156,
+            "losses": 103,
+            "hit": 0.6023166023166023,
+            "roi": 0.14710743723174535,
+            "profit": 38.689255991949025,
+            "wilson_low": 0.5416338377196145
+          },
+          "min_prior_games_20": {
+            "n": 232,
+            "wins": 139,
+            "losses": 89,
+            "hit": 0.6096491228070176,
+            "roi": 0.16041400073670312,
+            "profit": 37.21604817091512,
+            "wilson_low": 0.5450105489556651
+          },
+          "min_prior_games_30": {
+            "n": 183,
+            "wins": 105,
+            "losses": 76,
+            "hit": 0.580110497237569,
+            "roi": 0.10561689752689031,
+            "profit": 19.327892247420927,
+            "wilson_low": 0.5072753826288697
+          }
+        },
+        "prior_game_buckets": {
+          "0_9": {
+            "n": 64,
+            "wins": 38,
+            "losses": 26,
+            "hit": 0.59375,
+            "roi": 0.13202807356808893,
+            "profit": 8.449796708357692,
+            "wilson_low": 0.4714498650454971
+          },
+          "10_19": {
+            "n": 50,
+            "wins": 28,
+            "losses": 22,
+            "hit": 0.56,
+            "roi": 0.06826045413001934,
+            "profit": 3.413022706500967,
+            "wilson_low": 0.4230578680014353
+          },
+          "20_39": {
+            "n": 85,
+            "wins": 52,
+            "losses": 30,
+            "hit": 0.6341463414634146,
+            "roi": 0.2027228822043705,
+            "profit": 17.231444987371493,
+            "wilson_low": 0.5260706597602314
+          },
+          "40_plus": {
+            "n": 147,
+            "wins": 87,
+            "losses": 59,
+            "hit": 0.5958904109589042,
+            "roi": 0.13594968152070494,
+            "profit": 19.984603183543626,
+            "wilson_low": 0.5148206716721837
+          }
+        },
+        "closing_total_buckets": {
+          "under_215": {
+            "n": 35,
+            "wins": 22,
+            "losses": 13,
+            "hit": 0.6285714285714286,
+            "roi": 0.19999999999999998,
+            "profit": 6.999999999999999,
+            "wilson_low": 0.4633664048802107
+          },
+          "215_224_5": {
+            "n": 126,
+            "wins": 77,
+            "losses": 48,
+            "hit": 0.616,
+            "roi": 0.1724917409517336,
+            "profit": 21.733959359918437,
+            "wilson_low": 0.5284885300554436
+          },
+          "225_234_5": {
+            "n": 124,
+            "wins": 73,
+            "losses": 50,
+            "hit": 0.5934959349593496,
+            "roi": 0.13119091524613055,
+            "profit": 16.26767349052019,
+            "wilson_low": 0.5051369744531611
+          },
+          "235_plus": {
+            "n": 61,
+            "wins": 33,
+            "losses": 26,
+            "hit": 0.559322033898305,
+            "roi": 0.06683991369401894,
+            "profit": 4.077234735335155,
+            "wilson_low": 0.43289130270422654
+          }
+        },
+        "clutch_strength": {
+          "1_7_2_49": {
+            "n": 198,
+            "wins": 115,
+            "losses": 80,
+            "hit": 0.5897435897435898,
+            "roi": 0.12332837541940152,
+            "profit": 24.4190183330415,
+            "wilson_low": 0.5196183741657617
+          },
+          "2_5_3_99": {
+            "n": 116,
+            "wins": 75,
+            "losses": 40,
+            "hit": 0.6521739130434783,
+            "roi": 0.2415817725549021,
+            "profit": 28.023485616368642,
+            "wilson_low": 0.5614819530608828
+          },
+          "4_plus": {
+            "n": 32,
+            "wins": 15,
+            "losses": 17,
+            "hit": 0.46875,
+            "roi": -0.10511363636363638,
+            "profit": -3.363636363636364,
+            "wilson_low": 0.3086912990168234
+          }
+        },
+        "rank_gap_strength": {
+          "8_9": {
+            "n": 123,
+            "wins": 70,
+            "losses": 51,
+            "hit": 0.5785123966942148,
+            "roi": 0.10317792770020742,
+            "profit": 12.690885107125514,
+            "wilson_low": 0.48944135441778636
+          },
+          "10_12": {
+            "n": 166,
+            "wins": 99,
+            "losses": 65,
+            "hit": 0.6036585365853658,
+            "roi": 0.1507000534825389,
+            "profit": 25.01620887810146,
+            "wilson_low": 0.5272471029813737
+          },
+          "13_plus": {
+            "n": 57,
+            "wins": 36,
+            "losses": 21,
+            "hit": 0.631578947368421,
+            "roi": 0.1995048000095931,
+            "profit": 11.371773600546806,
+            "wilson_low": 0.5017755948554761
+          }
+        },
+        "starter_pm_strength": {
+          "7_16_9_99": {
+            "n": 116,
+            "wins": 75,
+            "losses": 39,
+            "hit": 0.6578947368421053,
+            "roi": 0.2497728485091946,
+            "profit": 28.973650427066573,
+            "wilson_low": 0.5669355094370843
+          },
+          "10_14_99": {
+            "n": 136,
+            "wins": 72,
+            "losses": 63,
+            "hit": 0.5333333333333333,
+            "roi": 0.018162458982890452,
+            "profit": 2.4700944216731013,
+            "wilson_low": 0.4494210205701084
+          },
+          "15_plus": {
+            "n": 94,
+            "wins": 58,
+            "losses": 35,
+            "hit": 0.6236559139784946,
+            "roi": 0.18760768869185218,
+            "profit": 17.635122737034106,
+            "wilson_low": 0.5221342705133759
+          }
+        }
+      }
     }
-  }
+  },
+  "policy": "Rules remain frozen. New H3_OVER_002 diagnostics measure overlap, data maturity, price stress, season stability and mechanism slices only; no 2024-26 thresholds are retuned."
 }
