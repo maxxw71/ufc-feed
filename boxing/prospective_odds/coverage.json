@@ -1,11 +1,11 @@
 {
-  "generated_at": "2026-10-07T21:20:52.305413+00:00",
-  "snapshot_records": 91,
-  "raw_quote_observations": 25194,
-  "verified_pre_event_quote_observations": 11328,
-  "verified_pre_event_sportsbook_quote_observations": 10582,
-  "verified_pre_event_prediction_market_quote_observations": 746,
-  "verification_pct": 44.96,
+  "generated_at": "2026-10-08T06:12:30.319579+00:00",
+  "snapshot_records": 92,
+  "raw_quote_observations": 25468,
+  "verified_pre_event_quote_observations": 11488,
+  "verified_pre_event_sportsbook_quote_observations": 10736,
+  "verified_pre_event_prediction_market_quote_observations": 752,
+  "verification_pct": 45.11,
   "unique_verified_bouts": 82,
   "unique_verified_sportsbook_bouts": 81,
   "unique_prediction_market_only_bouts": 1,
@@ -16,17 +16,18 @@
     "Unibet"
   ],
   "sportsbook_bouts_with_two_sided_latest_quotes": 81,
-  "settled_verified_bouts": 8,
-  "settled_verified_sportsbook_bouts": 8,
-  "past_unresolved_bouts": 16,
-  "past_unresolved_sportsbook_bouts": 15,
+  "settled_verified_bouts": 15,
+  "settled_verified_sportsbook_bouts": 15,
+  "past_unresolved_bouts": 9,
+  "past_unresolved_sportsbook_bouts": 8,
   "future_or_today_bouts": 58,
   "future_or_today_sportsbook_bouts": 58,
   "date_min": "2026-09-20",
   "date_max": "2026-12-31",
   "policy": "Only originally timestamped pre-event quotes are eligible; results require exact date+pair and either unanimous matching finished source rows or a strict manual supplement with at least two independent published result sources. Sportsbook and prediction-market observations are reported separately. For sportsbook validation, opening=first verified observation and latest=last verified observation before listed event start/date; consensus latest is the median of each sportsbook latest observation, never a retrospectively chosen price.",
   "unresolved_reasons": {
-    "missing_exact_date_pair_result": 16
+    "missing_exact_date_pair_result": 9
   },
+  "bout_level_results_location": "private_appwiza_server",
   "settled_count_meaning": "Verified fight outcomes; bookmaker-specific wager settlement remains separately unverified."
 }
