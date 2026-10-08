@@ -1,0 +1,49 @@
+name: NBA H5 Loss Forensics
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'nba/research/forensic_h5_losses.py'
+      - 'nba/research/audit_h5_candidates.py'
+      - 'nba/features/historical_injury_teams.csv.gz'
+      - '.github/workflows/nba-h5-loss-forensics.yml'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: nba-h5-loss-forensics
+  cancel-in-progress: false
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+        with: {fetch-depth: 0}
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.12'}
+      - name: Audit training-only loss filters and untouched later phases
+        run: python -B nba/research/forensic_h5_losses.py
+      - name: Publish research-only loss audit
+        shell: bash
+        run: |
+          set -euo pipefail
+          cp nba/research/hunt_v5/h5_loss_forensics.json /tmp/h5_loss_forensics.json
+          git config user.name appwiza-nba-bot
+          git config user.email actions@users.noreply.github.com
+          for attempt in 1 2 3; do
+            git fetch origin main
+            git reset --hard origin/main
+            git clean -fd
+            mkdir -p nba/research/hunt_v5
+            cp /tmp/h5_loss_forensics.json nba/research/hunt_v5/h5_loss_forensics.json
+            git add nba/research/hunt_v5/h5_loss_forensics.json
+            if git diff --cached --quiet; then exit 0; fi
+            git commit -m 'nba: publish H5 loss forensic diagnostics'
+            if git push origin HEAD:main; then exit 0; fi
+            sleep 4
+          done
+          exit 1
