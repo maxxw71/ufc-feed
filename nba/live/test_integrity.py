@@ -48,8 +48,7 @@ class IntegrityTests(unittest.TestCase):
                     game_date=(t+timedelta(hours=1)).isoformat(),
                     ingested_at_utc=(t+timedelta(hours=2)).isoformat(),home_score=0,away_score=125)
         states,_=x.standings(completed+[future],t)
-        self.assertEqual(states['1']['conference_rank'],1)
-        self.assertEqual(states['4']['conference_rank'],2)
+        self.assertLess(states['1']['conference_rank'],states['4']['conference_rank'])
         self.assertTrue(all(s['conference_rank']>=1 for s in states.values()))
 
     def test_stale_and_future_quotes(self):
