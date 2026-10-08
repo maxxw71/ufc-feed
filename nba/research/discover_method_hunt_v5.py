@@ -243,11 +243,27 @@ def hunt(rows,outk,pricek,bestk,worstk,lane):
                 "holdout_best":met(hold,outk,bestk),"holdout_worst":met(hold,outk,worstk)}
         if stress["overall_worst"]["roi"] is None or stress["overall_worst"]["roi"]<=0:continue
         if stress["holdout_worst"]["roi"] is None or stress["holdout_worst"]["roi"]<=0:continue
+        # Preserve full-precision discovery cuts so prospective validation
+        # does not accidentally use display-rounded threshold values.
         res.append({"rule":" AND ".join(f"{f} {o} {vv:.5g}" for f,o,vv in cs),
+                    "conditions":[[f,o,v] for f,o,v in cs],
                     "domains":sorted({DOMAIN.get(f,"other") for f,o,v in cs}),
+                    "by_season":{season:met([r for r in overall if r["season"]==season],outk,pricek) for season in sorted(ALL)},
+                    "holdout_provider_count":{
+                        "games":len({r["game_id"] for r in hold}),
+                        "games_with_2plus_books":len({r["game_id"] for r in hold if (n(market.get(r["game_id"],{}).get("pregame_provider_count")) or 0)>=2})
+                    },
                     **ph,"price_stress":stress})
     res.sort(key=lambda x:(x["holdout"]["wilson_low"] or 0,x["holdout"]["roi"],x["holdout"]["n"]),reverse=True)
-    return {"screened_conditions":len(screen),"rules_tested":len(rules),"candidates":res[:100]}
+    # Conditions are commutative: identical conjunctions are one method.
+    unique=[];seen_condition_sets=set()
+    for r in res:
+        signature=tuple(sorted(tuple(part) for part in r["conditions"]))
+        if signature in seen_condition_sets:continue
+        seen_condition_sets.add(signature);unique.append(r)
+    return {"screened_conditions":len(screen),"rules_tested":len(rules),
+            "duplicate_equivalent_rules_dropped":len(res)-len(unique),
+            "candidates":unique[:100]}
 
 ml=hunt([r for r in side if r["ml_price"] is not None],"ml_out","ml_price","ml_best","ml_worst","ml")
 ats=hunt([r for r in side if r["ats_price"] is not None and r["ats_out"] is not None],"ats_out","ats_price","ats_best","ats_worst","ats")
