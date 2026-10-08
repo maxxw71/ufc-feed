@@ -1,4 +1,4 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="description" content="Appwiza NBA live betting method arsenal and qualifying selections."><title>NBA arsenal | Appwiza</title><link rel="stylesheet" href="/sports/style.css"></head><body><header><nav><a class="brand" href="/">appwiza.com</a><a href="/sports/">Sports</a><a href="/sports/ufc/">UFC</a><a href="/sports/nfl/">NFL</a><a href="/sports/nba/" aria-current="page">NBA</a><a href="/sports/boxing/">Boxing</a><a href="/trading/">Trading</a></nav></header><main><span class="eyebrow">Appwiza · NBA</span><h1>NBA live arsenal</h1><p class="sub">Frozen NBA moneyline and totals methods. 2026–27 regular-season results are tracked prospectively and never used to retune the historical rules.</p><div class="bar"><span><span id="nba-method-count">10</span> live NBA methods</span><span>Regular season only · no preseason signals</span></div><div class="grid">
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="description" content="Appwiza NBA live betting method arsenal and qualifying selections."><title>NBA arsenal | Appwiza</title><link rel="stylesheet" href="/sports/style.css"></head><body><header><nav><a class="brand" href="/">appwiza.com</a><a href="/sports/">Sports</a><a href="/sports/ufc/">UFC</a><a href="/sports/nfl/">NFL</a><a href="/sports/nba/" aria-current="page">NBA</a><a href="/sports/boxing/">Boxing</a><a href="/trading/">Trading</a></nav></header><main><span class="eyebrow">Appwiza · NBA</span><h1>NBA live arsenal</h1><p class="sub">Frozen NBA moneyline and totals methods. 2026–27 regular-season results are tracked prospectively and never used to retune the historical rules.</p><div class="bar"><span><span id="nba-method-count">10</span> live NBA methods</span><span>Regular season only · no preseason signals</span></div><div class="grid" id="nba-live-method-grid">
 
 <article class="card"><span class="pill">LIVE METHOD</span><h3>ML001 · Defensive-Cap + True-Shooting</h3><p class="muted">Recent net-rating edge + rest advantage + defensive cap + true-shooting confirmation.</p><div class="stats"><div><span class="muted">Historical</span><b>51–9</b></div><div><span class="muted">Win rate</span><b>85.0%</b></div><div><span class="muted">ROI</span><b class="positive">+28.8%</b></div></div><p class="muted">Holdout: 9–1 · 90.0% · +35.0% ROI</p></article>
 
@@ -20,7 +20,7 @@
 <article class="card"><span class="pill">LIVE METHOD</span><h3>NBA_STAND_002_STARTPM · Standings Pressure + Starter Form Confirmation</h3><p class="muted">Strict subset of live STAND_002: the favorite also has &gt;=0.92 pregame starter plus-minus advantage. Same-game same-side overlaps increase method count; this is concentrated, not independent exposure.</p><div class="stats"><div><span class="muted">Historical</span><b>117–21</b></div><div><span class="muted">Win rate</span><b>84.78%</b></div><div><span class="muted">ROI</span><b class="positive">+18.46%</b></div></div><p class="muted">Holdout: 28–5 · 84.85% · +19.32% ROI · worst-price +16.74%</p></article>
 </div><div class="section-kicker" style="margin-top:38px">Current board</div><h2>Available selections</h2><div id="nba-board" class="empty">Loading active NBA scanner state…</div><p id="nba-scan-meta" class="muted"></p>
 
-<details class="method-key"><summary><span>Method Key · NBA</span></summary><div class="grid">
+<details class="method-key"><summary><span>Method Key · NBA</span></summary><div class="grid" id="nba-live-method-key-grid">
 <article class="card"><h3>ML001_DEF_TS</h3><p>net5 gap ≥ 7.759 · rest advantage ≥ 2 days · defensive advantage capped at 5.5 · TS5 gap ≥ 0.056032.</p></article>
 <article class="card"><h3>PHYSCOACH_001</h3><p>guard weight gap ≤ -10 lb · big weight gap ≥ +8 lb · market implied probability ≥ 59.68%.</p></article>
 <article class="card"><h3>INTERACT_003</h3><p>starter plus-minus5 gap ≥ +3 · starter-overlap advantage ≥ +1 · opponent top-five 3-day workload advantage ≥ 45 minutes.</p></article>
@@ -42,8 +42,55 @@
     const d=await r.json();
     const picks=Array.isArray(d.picks)?d.picks:[];
     if(Array.isArray(d.arsenal) && d.arsenal.length){
+      const live=d.arsenal.filter(m=>m.status==='live_arsenal');
       const count=document.getElementById('nba-method-count');
-      if(count) count.textContent=String(d.arsenal.filter(m=>m.status==='live_arsenal').length);
+      if(count)count.textContent=String(live.length);
+      const cards=document.getElementById('nba-live-method-grid');
+      const keyCards=document.getElementById('nba-live-method-key-grid');
+      function el(tag,cl,text){
+        const x=document.createElement(tag);
+        if(cl)x.className=cl;
+        if(text!==undefined&&text!==null)x.textContent=String(text);
+        return x;
+      }
+      function fmt(x,dp=2){
+        const z=Number(x);
+        return Number.isFinite(z)?(100*z).toFixed(dp).replace(/0+$/,'').replace(/\\.$/,'')+'%':'—';
+      }
+      function points(name,value){
+        const wrap=el('div');
+        wrap.appendChild(el('span','muted',name));
+        wrap.appendChild(el('b',null,value));
+        return wrap;
+      }
+      if(cards){
+        cards.replaceChildren();
+        for(const m of live){
+          const h=m.historical||{},card=el('article','card');
+          card.appendChild(el('span','pill',m.market==='total_over'?'LIVE TOTAL':'LIVE METHOD'));
+          card.appendChild(el('h3',null,(m.method_id||'')+' · '+(m.name||'')));
+          card.appendChild(el('p','muted',m.description||''));
+          const stats=el('div','stats');
+          const result=(h.wins??'—')+'–'+(h.losses??'—')+(h.pushes?' · '+h.pushes+' pushes':'');
+          stats.appendChild(points('Historical',result));
+          stats.appendChild(points('Win rate',fmt(h.hit_rate,1)));
+          stats.appendChild(points('ROI',fmt(h.roi,2)));
+          card.appendChild(stats);
+          const hold=(h.holdout_wins??'—')+'–'+(h.holdout_losses??'—')+' · '+fmt(h.holdout_hit_rate,1)+' · '+fmt(h.holdout_roi,2)+' ROI';
+          card.appendChild(el('p','muted','Holdout: '+hold));
+          cards.appendChild(card);
+        }
+      }
+      if(keyCards){
+        keyCards.replaceChildren();
+        for(const m of live){
+          const card=el('article','card');
+          card.appendChild(el('h3',null,m.method_id||''));
+          const parts=Object.entries(m.rule||{}).map(([name,value])=>name.replaceAll('_',' ')+': '+value);
+          card.appendChild(el('p',null,parts.join(' · ')));
+          keyCards.appendChild(card);
+        }
+      }
     }
     const generated=(d.status&&d.status.scanner_generated_at_utc)||d.generated_at_utc;
     meta.textContent=generated?'Scanner updated '+new Date(generated).toLocaleString(): '';
