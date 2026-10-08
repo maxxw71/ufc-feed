@@ -446,6 +446,10 @@ for g in upcoming:
           "NBA_STAND_002":[
             ("opp_seed6_gap",x["opp_seed6_gap"],lambda v:v>=0),("streak_gap",x["streak_gap"],lambda v:v<=-2),
             ("market_prob",x["market_prob"],lambda v:v>=0.5968)],
+          "NBA_STAND_002_STARTPM":[
+            ("opp_seed6_gap",x["opp_seed6_gap"],lambda v:v>=0),("streak_gap",x["streak_gap"],lambda v:v<=-2),
+            ("market_prob",x["market_prob"],lambda v:v>=0.5968),
+            ("starter_pm5_gap",x["starter_pm5_gap"],lambda v:v>=0.92)],
           "NBA_ROTSHAPE_001":[
             ("bench_share5_gap",x["bench_share5_gap"],lambda v:v<=-0.08308),("bench_used5_gap",x["bench_used5_gap"],lambda v:v>=1),
             ("clutch10_gap",x["clutch10_gap"],lambda v:v>=0.5)]
@@ -464,24 +468,6 @@ for g in upcoming:
                 "features_json":json.dumps({name:v for name,v,fn in conds},separators=(",",":"),sort_keys=True)}
             evaluations.append(ev)
             if ok:qualified.append(ev.copy())
-
-        # Shadow-only descendant. It never enters active_picks/Appwiza feed.
-        sconds=[
-          ("opp_seed6_gap",x["opp_seed6_gap"],lambda v:v>=0),
-          ("streak_gap",x["streak_gap"],lambda v:v<=-2),
-          ("market_prob",x["market_prob"],lambda v:v>=0.5968),
-          ("starter_pm5_gap",x["starter_pm5_gap"],lambda v:v>=0.92)
-        ]
-        smissing=[name for name,v,fn in sconds if v is None];sready=not smissing;sok=sready and all(fn(v) for name,v,fn in sconds)
-        sev={"scanned_at_utc":now.isoformat(),"season":SEASON,"game_id":gid,"scheduled_utc":g.get("game_date"),"hours_to_tip":hrs,
-             "method_id":"NBA_STAND_002_STARTPM","parent_method":"NBA_STAND_002","market":"moneyline",
-             "selection":x["team"],"selection_team_id":x["team_id"],"side":side,
-             "qualified":sok,"ready":sready,"missing_inputs":"|".join(smissing),"price":x["price"],"market_prob":x["market_prob"],
-             "market_captured_at":ms["captured_at"],"market_source":ms.get("source"),"market_books":ms.get("books"),
-             "starters_confirmed":x["starters_confirmed"],"prior_games":x["prior_games"],"publication":"shadow_only",
-             "features_json":json.dumps({name:v for name,v,fn in sconds},separators=(",",":"),sort_keys=True)}
-        shadow_evaluations.append(sev)
-        if sok:shadow_qualified.append(sev.copy())
 
     # Total method is game-level.
     h=dynamic["home"];a=dynamic["away"]
@@ -504,8 +490,11 @@ for g in upcoming:
     evaluations.append(ev)
     if ok:qualified.append(ev.copy())
 
-    # Shadow-only H3 total candidate: independent clutch/standings/starter-form mechanism.
-    h_rank=val(stand.get((gid,hid),{}),"conference_rank");a_rank=val(stand.get((gid,aid),{}),"conference_rank")
+    # Live H3 total candidate: three independently measured pregame domains.
+    # Conference rank is recomputed from observed completed games at scan time,
+    # never taken from the schedule's potentially future-filled feature table.
+    h_rank=val(live_stand.get(hid,{}),"conference_rank")
+    a_rank=val(live_stand.get(aid,{}),"conference_rank")
     rank_abs=abs(h_rank-a_rank) if None not in (h_rank,a_rank) else None
     clutch_abs=abs(h["clutch10_gap"]) if h.get("clutch10_gap") is not None else None
     starterpm_abs=abs(h["starter_pm5_gap"]) if h.get("starter_pm5_gap") is not None else None
@@ -513,20 +502,27 @@ for g in upcoming:
       ("clutch_abs_gap",clutch_abs,lambda v:v>=1.7),
       ("stand_rank_abs_gap",rank_abs,lambda v:v>=8),
       ("starterpm_abs_gap",starterpm_abs,lambda v:v>=7.16),
-      ("total_line",ms["total"],lambda v:True),
-      ("over_price",ms["over_price"],lambda v:True)
+      ("total_line",ms["total"],lambda v:True)
     ]
-    h3missing=[name for name,v,fn in h3conds if v is None];h3ready=not h3missing;h3ok=h3ready and all(fn(v) for name,v,fn in h3conds)
-    h3ev={"scanned_at_utc":now.isoformat(),"season":SEASON,"game_id":gid,"scheduled_utc":g.get("game_date"),"hours_to_tip":hrs,
+    h3missing=[name for name,v,fn in h3conds if v is None]
+    h3quote=ms.get("total_quote")
+    if not h3quote or integrity.valid_price(ms["over_price"]) is None:
+        h3missing.append("fresh_bookmaker_price")
+    h3ready=not h3missing
+    h3ok=h3ready and all(fn(v) for name,v,fn in h3conds)
+    h3ev={"scanned_at_utc":now.isoformat(),"season":SEASON,"game_id":gid,
+          "scheduled_utc":g.get("game_date"),"hours_to_tip":hrs,
           "method_id":"NBA_H3_OVER_002","market":"total_over","selection":"OVER","selection_team_id":"","side":"game",
-          "qualified":h3ok,"ready":h3ready,"missing_inputs":"|".join(h3missing),"price":ms["over_price"],"line":ms["total"],
-          "market_captured_at":ms["captured_at"],"market_source":ms.get("source"),"market_books":ms.get("books"),
+          "qualified":h3ok,"ready":h3ready,"missing_inputs":"|".join(h3missing),
+          "price":ms["over_price"],"line":ms["total"],
+          "bookmaker":h3quote.get("bookmaker") if h3quote else None,
+          "quote":h3quote,"market_captured_at":h3quote.get("captured_at_utc") if h3quote else None,
+          "market_source":ms.get("source"),"market_books":ms.get("books"),
           "starters_confirmed":h["starters_confirmed"] and a["starters_confirmed"],
           "prior_games":min([v for v in (h["prior_games"],a["prior_games"]) if v is not None],default=None),
-          "publication":"shadow_only",
           "features_json":json.dumps({name:v for name,v,fn in h3conds},separators=(",",":"),sort_keys=True)}
-    shadow_evaluations.append(h3ev)
-    if h3ok:shadow_qualified.append(h3ev.copy())
+    evaluations.append(h3ev)
+    if h3ok:qualified.append(h3ev.copy())
 
 # Freeze private evidence before any public qualification is published.
 integrity.forward(FORWARD,evaluations,games,now,{"code_hashes":code_hashes,"standings":live_stand,
@@ -566,8 +562,8 @@ shadow_active=list(shadow_current.values());shadow_active.sort(key=lambda r:(r["
 shadow_summary={"scanned_at_utc":now.isoformat(),"season":SEASON,"upcoming_games":len(upcoming),"evaluations":len(shadow_evaluations),
                 "ready_evaluations":sum(1 for e in shadow_evaluations if e["ready"]),"qualified":len(shadow_active),
                 "transitions":len(shadow_events),"publication":"shadow_only",
-                "methods":["NBA_H3_OVER_002","NBA_STAND_002_STARTPM"],
-                "policy":"Prospective-only shadow tracking. These signals are excluded from live Appwiza picks and do not retune frozen historical rules."}
+                "methods":[],
+                "policy":"Shadow-only candidates are excluded from live Appwiza picks. H3_OVER_002 and STAND_002_STARTPM are now live and are evaluated in the primary ledger."}
 (OUT/"shadow_latest.json").write_text(json.dumps(shadow_summary,indent=2)+"\n")
 append_jsonl(daydir/"shadow_scan_history.jsonl",[shadow_summary])
 
