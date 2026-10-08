@@ -50,12 +50,20 @@ if not GAMES.exists():
 
 rows=rgz(GAMES)
 urls=sorted({r.get("report_url") for r in rows if r.get("report_url")})
-texts={};errors={};report_rows=[]
+texts={};errors={};report_rows=[];layout_count=0
 for i,u in enumerate(urls,1):
     b,err=download(u)
     txt=""
     if b:
-        try:reader=PdfReader(io.BytesIO(b));txt="\n".join((pg.extract_text() or "") for pg in reader.pages)
+        try:
+            reader=PdfReader(io.BytesIO(b))
+            plain="\n".join((pg.extract_text() or "") for pg in reader.pages)
+            lines=[ln for ln in plain.splitlines() if ln.strip()]
+            statuses=len(re.findall(r"\\b(?:Out|Questionable|Probable|Doubtful|Available)\\b",plain,re.I))
+            needs_layout=statuses>=3 and len(lines)>4*statuses
+            txt=("\n".join((pg.extract_text(extraction_mode="layout") or "") for pg in reader.pages)
+                 if needs_layout else plain)
+            if needs_layout:layout_count+=1
         except Exception as e:err=f"parse:{e}"
     if txt:
         texts[u]=txt
@@ -75,9 +83,10 @@ for r in rows:
     txt=texts.get(r.get("report_url"),"")
     home=r.get("home_team") or "";away=r.get("away_team") or ""
     r["report_text_found"]=bool(txt)
-    r["home_mentioned"]=bool(txt and home.lower() in txt.lower())
-    r["away_mentioned"]=bool(txt and away.lower() in txt.lower())
-    r["both_teams_mentioned"]=bool(txt and home.lower() in txt.lower() and away.lower() in txt.lower())
+    collapsed=" ".join(txt.split()).lower()
+    r["home_mentioned"]=bool(txt and home.lower() in collapsed)
+    r["away_mentioned"]=bool(txt and away.lower() in collapsed)
+    r["both_teams_mentioned"]=bool(txt and home.lower() in collapsed and away.lower() in collapsed)
     r["status_terms"]=len(re.findall(r"\b(?:Out|Questionable|Probable|Doubtful|Available)\b",txt,re.I)) if txt else 0
     r["not_yet_submitted"]=bool(re.search(r"NOT YET SUBMITTED",txt,re.I)) if txt else False
 
@@ -94,7 +103,8 @@ summary={
  "games_with_both_teams_mentioned":sum(1 for r in rows if str(r.get("both_teams_mentioned")).lower() in ("true","1")),
  "unique_reports_selected":len(urls),"unique_reports_downloaded":sum(1 for u in urls if texts.get(u)),
  "download_errors":len(errors),"preserved_report_text_rows":len(report_rows),
- "policy":"Reuses the already point-in-time selected official NBA pre-tip report URL per game, downloads each unique PDF, preserves extracted report text, and never substitutes a later report."
+ "reports_requiring_layout_mode":layout_count,
+ "policy":"Reuses frozen pre-tip official NBA URLs without future substitution. Chooses layout extraction for PDFs whose text is split into single words. Keeps archived report text and counts parse failures separately."
 }
 (OUT/"coverage_summary.json").write_text(json.dumps(summary,indent=2)+"\n")
 (OUT/"download_errors.json").write_text(json.dumps(errors,indent=2)+"\n")
