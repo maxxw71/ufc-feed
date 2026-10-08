@@ -18,12 +18,15 @@ ap.add_argument("--scheduled",action="store_true",help="Apply 30-minute baseline
 ap.add_argument("--force",action="store_true",help="Force scan after a material source update")
 ARGS=ap.parse_args()
 
-def rgz(p):
-    if not p.exists(): return []
+def iter_gz(p):
+    if not p.exists():return
     try:
-        with gzip.open(p,"rt",encoding="utf-8",newline="") as f:return list(csv.DictReader(f))
+        with gzip.open(p,"rt",encoding="utf-8",newline="") as f:
+            yield from csv.DictReader(f)
     except gzip.BadGzipFile:
-        with open(p,"rt",encoding="utf-8",newline="") as f:return list(csv.DictReader(f))
+        with open(p,"rt",encoding="utf-8",newline="") as f:
+            yield from csv.DictReader(f)
+def rgz(p):return list(iter_gz(p))
 def wgz(p,rows):
     rows=list(rows);fs=[]
     for r in rows:
@@ -144,16 +147,16 @@ if not upcoming:
     raise SystemExit(0)
 
 teams=rgz(DATA/"team_boxscores.csv.gz")
-players=rgz(DATA/"player_boxscores.csv.gz")
-plays=rgz(DATA/"playbyplay.csv.gz")
+player_fields=("game_id","team_id","person_id","played","starter","minutes","points","plus_minus")
+players=[{k:r.get(k) for k in player_fields} for r in iter_gz(DATA/"player_boxscores.csv.gz")]
 
 # Historical feature indexes for target game context.
 def idx(path):
-    return {(r.get("game_id"),r.get("team_id")):r for r in rgz(path)}
+    return {(r.get("game_id"),r.get("team_id")):r for r in iter_gz(path) if r.get("game_id") in game_by}
 roll=idx(F/"team_rolling.csv.gz")
 travel=idx(F/"travel_pregame.csv.gz")
 stand=idx(F/"standings_pregame.csv.gz")
-context={(r.get("game_id"),r.get("team_id")):r for r in rgz(NBA/"team_game_context.csv.gz")}
+context={(r.get("game_id"),r.get("team_id")):r for r in iter_gz(NBA/"team_game_context.csv.gz") if r.get("game_id") in game_by}
 
 # Latest prospective confirmed starters, strictly before scan time.
 starter_rows=rgz(PRO/"starter_snapshots.csv.gz")+recent_jsonl("starters.jsonl")
@@ -223,9 +226,13 @@ for r in players:
         player_hist[pid].append((when,r))
 for pid in player_hist:player_hist[pid].sort(key=lambda z:z[0])
 
+# Only the latest ten observed completed games per team enter live clutch features.
+needed_pbp={gid for arr in by_team_games.values() for _,gid in arr[-10:]}
+pbp_fields=("action_number","score_home","score_away","period","clock")
 pb_by_game=defaultdict(list)
-for p in plays:
-    if p.get("game_id"):pb_by_game[p["game_id"]].append(p)
+for p in iter_gz(DATA/"playbyplay.csv.gz"):
+    if p.get("game_id") in needed_pbp:
+        pb_by_game[p["game_id"]].append({k:p.get(k) for k in pbp_fields})
 
 def prior_games(tid,target_when,limit=None):
     z=[x for x in by_team_games.get(str(tid),[]) if x[0]<target_when]
@@ -262,10 +269,11 @@ def top5_minutes_3d(tid,target_when):
     return sum(x["m3"] for x in arr[:5])
 
 # Current-season exact lineup stints, if postgame enrichment has run.
-stints=rgz(NBA/"lineups"/"historical_lineup_stints.csv.gz")
-stints=[r for r in stints if r.get("season")==SEASON]
 stints_by_team=defaultdict(list)
-for r in stints:stints_by_team[str(r.get("team_id"))].append(r)
+stint_fields=("game_id","lineup_player_ids","stint_duration_sec","stint_plus_minus")
+for r in iter_gz(NBA/"lineups"/"historical_lineup_stints.csv.gz"):
+    if r.get("season")==SEASON and r.get("game_id") in completed:
+        stints_by_team[str(r.get("team_id"))].append({k:r.get(k) for k in stint_fields})
 
 def lq_values(tid,starter_ids,target_when):
     if len(starter_ids)!=5:return (None,None)

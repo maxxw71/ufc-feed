@@ -1,51 +1,13 @@
 name: NBA Appwiza Live Feed
-
 on:
   workflow_dispatch:
-  push:
-    branches: [main]
-    paths:
-      - "nba/live/**"
-      - "nba/scanner/active_picks.json"
-      - "nba/scanner/latest.json"
-      - ".github/workflows/nba-appwiza-live-feed.yml"
-  schedule:
-    - cron: "17 * * * *"
-
 permissions:
-  contents: write
-
-concurrency:
-  group: nba-appwiza-live-feed
-  cancel-in-progress: true
-
+  contents: read
 jobs:
-  build:
+  status:
     runs-on: [self-hosted, Linux, X64, appwiza]
-    timeout-minutes: 15
+    timeout-minutes: 2
     steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-      - uses: actions/setup-python@v5
-        with:
-          python-version: "3.12"
-      - shell: bash
-        run: |
-          set -euo pipefail
-          git config user.name "appwiza-nba-bot"
-          git config user.email "actions@users.noreply.github.com"
-          for attempt in 1 2 3 4; do
-            git fetch origin main
-            git reset --hard origin/main
-            python nba/live/build_appwiza_feed.py
-            git add nba/live/appwiza_feed.json
-            if git diff --cached --quiet; then
-              echo "Feed already current."
-              exit 0
-            fi
-            git commit -m "nba: refresh Appwiza live feed"
-            if git push origin HEAD:main; then exit 0; fi
-            sleep 3
-          done
-          exit 1
+      - name: Independent live feed status
+        run: systemctl status nba-live-scan.timer --no-pager
+      # Feed publication is exclusively owned by nba-live-scan.service.

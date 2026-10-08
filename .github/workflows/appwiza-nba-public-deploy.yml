@@ -45,7 +45,7 @@ jobs:
           SSH="ssh -i $KEY -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=accept-new $HOST"
 
           cat nba/live/index.html | $SSH 'set -e; mkdir -p /srv/appwiza-sports/public/nba; cat > /srv/appwiza-sports/public/nba/index.html.new; chmod 0644 /srv/appwiza-sports/public/nba/index.html.new; mv -f /srv/appwiza-sports/public/nba/index.html.new /srv/appwiza-sports/public/nba/index.html'
-          cat nba/live/appwiza_feed.json | $SSH 'set -e; mkdir -p /srv/appwiza-sports/public/nba; cat > /srv/appwiza-sports/public/nba/current.json.new; chmod 0644 /srv/appwiza-sports/public/nba/current.json.new; mv -f /srv/appwiza-sports/public/nba/current.json.new /srv/appwiza-sports/public/nba/current.json'
+          cat nba/live/appwiza_feed.json | $SSH 'set -e; if test -f /srv/appwiza-sports/nba-live/ACTIVE; then cat > /dev/null; exit 0; fi; mkdir -p /srv/appwiza-sports/public/nba; cat > /srv/appwiza-sports/public/nba/current.json.new; chmod 0644 /srv/appwiza-sports/public/nba/current.json.new; mv -f /srv/appwiza-sports/public/nba/current.json.new /srv/appwiza-sports/public/nba/current.json'
 
       - name: Add NBA navigation to sports pages
         shell: bash

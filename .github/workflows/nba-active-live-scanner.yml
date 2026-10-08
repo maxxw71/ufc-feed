@@ -1,88 +1,27 @@
 name: NBA Active Live Scanner
-
 on:
   workflow_dispatch:
-  workflow_run:
-    workflows:
-      - NBA Market Snapshot
-      - NBA Availability Snapshot
-      - NBA External Odds Snapshot
-      - NBA Depth Chart Snapshot
-      - NBA Roster Profile Snapshot
-      - NBA Current Season Enrichment
-      - NBA Research Feature Refresh
-    types: [completed]
-    branches: [main]
   push:
     branches: [main]
     paths:
-      - 'nba/market/**'
-      - 'nba/availability/**'
-      - 'nba/depthcharts/**'
-      - 'nba/rosters/**'
-      - 'nba/contracts/**'
-      - 'nba/features/**'
-      - 'nba/data/2026_27/**'
-      - 'nba/live/arsenal.json'
       - 'nba/live/scan_live_methods.py'
+      - 'nba/live/live_integrity.py'
+      - 'nba/live/test_integrity.py'
       - '.github/workflows/nba-active-live-scanner.yml'
-  schedule:
-    - cron: '*/10 * * * *'
-
 permissions:
-  contents: write
-
+  contents: read
 concurrency:
   group: nba-active-live-scanner
   cancel-in-progress: true
-
-env:
-  APPWIZA_NBA_FORWARD_ROOT: /srv/appwiza-sports/capture/nba/forward
-  APPWIZA_NBA_PROSPECTIVE_ROOT: /srv/appwiza-sports/capture/nba/prospective
-
 jobs:
-  scan:
-    if: github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success'
+  validate:
     runs-on: [self-hosted, Linux, X64, appwiza]
-    timeout-minutes: 20
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-      - name: Validate live input guards
+      - name: Validate frozen scanner input guards
         run: python -B -m unittest discover -s nba/live -p test_integrity.py
-      - name: Evaluate frozen live methods
-        shell: bash
-        run: |
-          set -euo pipefail
-          if [[ "${{ github.event_name }}" == "schedule" ]]; then
-            python nba/live/scan_live_methods.py --scheduled
-          else
-            python nba/live/scan_live_methods.py --force
-          fi
-      - name: Build Appwiza feed from active scanner
-        run: python nba/live/build_appwiza_feed.py
-      - name: Commit scanner state
-        shell: bash
-        run: |
-          set -euo pipefail
-          git config user.name appwiza-nba-bot
-          git config user.email actions@users.noreply.github.com
-          git add nba/scanner nba/live/appwiza_feed.json
-          if git diff --cached --quiet; then
-            echo "No scanner state changes."
-            exit 0
-          fi
-          git commit -m "nba: refresh active scanner state"
-          git reset --hard HEAD
-          git clean -fd
-          for attempt in 1 2 3; do
-            git fetch origin main
-            if git rebase origin/main && git push; then exit 0; fi
-            git rebase --abort 2>/dev/null || true
-            sleep 3
-          done
-          exit 1
+      # Actual scanning/publication: appwiza nba-live-scan.timer, every ten minutes.
