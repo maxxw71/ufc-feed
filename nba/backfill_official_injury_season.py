@@ -113,7 +113,7 @@ for i,u in enumerate(sorted(set(selected.values())),1):
     b,err=request(u,"GET",tries=5,timeout=25)
     txt=""
     if b:
-        try:txt="\n".join((pg.extract_text() or "") for pg in PdfReader(io.BytesIO(b)))
+        try:reader=PdfReader(io.BytesIO(b));txt="\n".join((pg.extract_text() or "") for pg in reader.pages)
         except Exception as e:err=f"parse:{e}"
     texts[u]=txt
     if err and not txt:download_errors[u]=err
