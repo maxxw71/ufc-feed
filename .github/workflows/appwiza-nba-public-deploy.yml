@@ -74,4 +74,18 @@ jobs:
           grep -q 'NBA_STAND_002' /tmp/nba-current.json
           grep -q 'NBA_ROTSHAPE_001' /tmp/nba-current.json
           grep -q 'NBA_STYLE_TOT_001' /tmp/nba-current.json
+          grep -q '10</span> live NBA methods' /tmp/nba-live.html
+          grep -q 'NBA_H3_OVER_002' /tmp/nba-live.html
+          grep -q 'NBA_STAND_002_STARTPM' /tmp/nba-live.html
+          grep -q 'NBA_H3_OVER_002' /tmp/nba-current.json
+          grep -q 'NBA_STAND_002_STARTPM' /tmp/nba-current.json
+          python3 - <<'PY'
+          import json
+          d=json.load(open('/tmp/nba-current.json'))
+          methods=d.get('arsenal') or []
+          ids={x.get('method_id') for x in methods}
+          assert len(methods)==10, f'Expected ten published methods, got {len(methods)}'
+          assert {'NBA_H3_OVER_002','NBA_STAND_002_STARTPM'} <= ids
+          print('Verified production NBA HTML and JSON list ten methods')
+          PY
           echo 'NBA Appwiza public page and navigation verified'
