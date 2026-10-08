@@ -1,0 +1,1164 @@
+{
+  "generated_at_utc": "2026-10-08T13:12:54.008094+00:00",
+  "dataset_side_rows": 38074,
+  "methods": {
+    "NBA_H5_ML_001": {
+      "market": "moneyline",
+      "rule": "starter_negative_adv >= 2 AND prior_minutes_share_gap >= 0.079523 AND clutch10_gap <= -1.5",
+      "frozen_conditions": [
+        [
+          "starter_negative_adv",
+          ">=",
+          2.0
+        ],
+        [
+          "prior_minutes_share_gap",
+          ">=",
+          0.07952307590851293
+        ],
+        [
+          "clutch10_gap",
+          "<=",
+          -1.5
+        ]
+      ],
+      "overall": {
+        "n": 228,
+        "wins": 179,
+        "losses": 49,
+        "pushes": 0,
+        "hit": 0.7850877192982456,
+        "roi": 0.10157286692657794,
+        "profit_units": 23.15861365925977
+      },
+      "phases": {
+        "discA": {
+          "n": 64,
+          "wins": 53,
+          "losses": 11,
+          "pushes": 0,
+          "hit": 0.828125,
+          "roi": 0.19277366763193332,
+          "profit_units": 12.337514728443733
+        },
+        "discB": {
+          "n": 68,
+          "wins": 49,
+          "losses": 19,
+          "pushes": 0,
+          "hit": 0.7205882352941176,
+          "roi": 0.024155646852095994,
+          "profit_units": 1.6425839859425275
+        },
+        "validation": {
+          "n": 35,
+          "wins": 25,
+          "losses": 10,
+          "pushes": 0,
+          "hit": 0.7142857142857143,
+          "roi": 0.016035285066825028,
+          "profit_units": 0.561234977338876
+        },
+        "holdout": {
+          "n": 61,
+          "wins": 52,
+          "losses": 9,
+          "pushes": 0,
+          "hit": 0.8524590163934426,
+          "roi": 0.1412668847136825,
+          "profit_units": 8.617279967534634
+        }
+      },
+      "by_season": {
+        "2018-19": {
+          "n": 0,
+          "wins": 0,
+          "losses": 0,
+          "pushes": 0,
+          "hit": null,
+          "roi": null,
+          "profit_units": 0
+        },
+        "2019-20": {
+          "n": 18,
+          "wins": 12,
+          "losses": 6,
+          "pushes": 0,
+          "hit": 0.6666666666666666,
+          "roi": 0.03112449518519221,
+          "profit_units": 0.5602409133334598
+        },
+        "2020-21": {
+          "n": 46,
+          "wins": 41,
+          "losses": 5,
+          "pushes": 0,
+          "hit": 0.8913043478260869,
+          "roi": 0.256027691632832,
+          "profit_units": 11.777273815110272
+        },
+        "2021-22": {
+          "n": 41,
+          "wins": 33,
+          "losses": 8,
+          "pushes": 0,
+          "hit": 0.8048780487804879,
+          "roi": 0.19637119129513722,
+          "profit_units": 8.051218843100626
+        },
+        "2022-23": {
+          "n": 27,
+          "wins": 16,
+          "losses": 11,
+          "pushes": 0,
+          "hit": 0.5925925925925926,
+          "roi": -0.23735684656141107,
+          "profit_units": -6.408634857158098
+        },
+        "2023-24": {
+          "n": 35,
+          "wins": 25,
+          "losses": 10,
+          "pushes": 0,
+          "hit": 0.7142857142857143,
+          "roi": 0.016035285066825028,
+          "profit_units": 0.561234977338876
+        },
+        "2024-25": {
+          "n": 36,
+          "wins": 31,
+          "losses": 5,
+          "pushes": 0,
+          "hit": 0.8611111111111112,
+          "roi": 0.1497541756941955,
+          "profit_units": 5.391150324991038
+        },
+        "2025-26": {
+          "n": 25,
+          "wins": 21,
+          "losses": 4,
+          "pushes": 0,
+          "hit": 0.84,
+          "roi": 0.12904518570174384,
+          "profit_units": 3.226129642543596
+        }
+      },
+      "price_stress": {
+        "median": {
+          "n": 228,
+          "wins": 179,
+          "losses": 49,
+          "pushes": 0,
+          "hit": 0.7850877192982456,
+          "roi": 0.10157286692657794,
+          "profit_units": 23.15861365925977
+        },
+        "best": {
+          "n": 229,
+          "wins": 180,
+          "losses": 49,
+          "pushes": 0,
+          "hit": 0.7860262008733624,
+          "roi": 0.13663919868584773,
+          "profit_units": 31.290376499059132
+        },
+        "worst": {
+          "n": 229,
+          "wins": 180,
+          "losses": 49,
+          "pushes": 0,
+          "hit": 0.7860262008733624,
+          "roi": 0.08583285591330109,
+          "profit_units": 19.65572400414595
+        }
+      },
+      "holdout_price_stress": {
+        "median": {
+          "n": 61,
+          "wins": 52,
+          "losses": 9,
+          "pushes": 0,
+          "hit": 0.8524590163934426,
+          "roi": 0.1412668847136825,
+          "profit_units": 8.617279967534634
+        },
+        "best": {
+          "n": 61,
+          "wins": 52,
+          "losses": 9,
+          "pushes": 0,
+          "hit": 0.8524590163934426,
+          "roi": 0.1412668847136825,
+          "profit_units": 8.617279967534634
+        },
+        "worst": {
+          "n": 61,
+          "wins": 52,
+          "losses": 9,
+          "pushes": 0,
+          "hit": 0.8524590163934426,
+          "roi": 0.1412668847136825,
+          "profit_units": 8.617279967534634
+        }
+      },
+      "book_coverage": {
+        "1_or_fewer": 61,
+        "two_or_more": 168
+      },
+      "price_probability_buckets": {
+        "under_60pct": {
+          "n": 59,
+          "wins": 37,
+          "losses": 22,
+          "pushes": 0,
+          "hit": 0.6271186440677966,
+          "roi": 0.2384624424824065,
+          "profit_units": 14.069284106461984
+        },
+        "60_69pct": {
+          "n": 41,
+          "wins": 29,
+          "losses": 12,
+          "pushes": 0,
+          "hit": 0.7073170731707317,
+          "roi": 0.034739494424836384,
+          "profit_units": 1.4243192714182917
+        },
+        "70_79pct": {
+          "n": 59,
+          "wins": 51,
+          "losses": 8,
+          "pushes": 0,
+          "hit": 0.864406779661017,
+          "roi": 0.11640859724311454,
+          "profit_units": 6.868107237343758
+        },
+        "80plus_pct": {
+          "n": 69,
+          "wins": 62,
+          "losses": 7,
+          "pushes": 0,
+          "hit": 0.8985507246376812,
+          "roi": 0.011549319478778793,
+          "profit_units": 0.7969030440357368
+        }
+      },
+      "live_arsenal_same_selection_overlap": {
+        "shared": 50,
+        "independent": 179,
+        "shared_performance": {
+          "n": 50,
+          "wins": 46,
+          "losses": 4,
+          "pushes": 0,
+          "hit": 0.92,
+          "roi": 0.1699165725447858,
+          "profit_units": 8.49582862723929
+        },
+        "independent_performance": {
+          "n": 178,
+          "wins": 133,
+          "losses": 45,
+          "pushes": 0,
+          "hit": 0.7471910112359551,
+          "roi": 0.08237519680910382,
+          "profit_units": 14.66278503202048
+        },
+        "live_method_counts": {
+          "NBA_INTERACT_003": 14,
+          "NBA_LQ_003": 9,
+          "NBA_ML001_DEF_TS": 2,
+          "NBA_PHYSCOACH_001": 16,
+          "NBA_STAND_002": 8,
+          "NBA_TRAVEL_001": 8
+        }
+      },
+      "threshold_neighborhood": {
+        "tested": 27,
+        "eligible": 19,
+        "positive_overall_and_holdout": 12,
+        "positive_fraction": 0.631578947368421,
+        "worst_eligible_holdout_roi": -0.10236107901952665
+      },
+      "warning": "Post-selection audit: no new holdout created. These were mined from the same historical years; statistical winner's curse remains."
+    },
+    "NBA_H5_ML_002": {
+      "market": "moneyline",
+      "rule": "strength_pointdiff_gap >= 3.0759 AND clutch10_gap <= -1 AND is_home == 1 AND rank_gap >= 7",
+      "frozen_conditions": [
+        [
+          "strength_pointdiff_gap",
+          ">=",
+          3.0759493670886076
+        ],
+        [
+          "clutch10_gap",
+          "<=",
+          -1.0
+        ],
+        [
+          "is_home",
+          "==",
+          1.0
+        ],
+        [
+          "rank_gap",
+          ">=",
+          7.0
+        ]
+      ],
+      "overall": {
+        "n": 203,
+        "wins": 177,
+        "losses": 26,
+        "pushes": 0,
+        "hit": 0.8719211822660099,
+        "roi": 0.11323072522192737,
+        "profit_units": 22.985837220051256
+      },
+      "phases": {
+        "discA": {
+          "n": 62,
+          "wins": 56,
+          "losses": 6,
+          "pushes": 0,
+          "hit": 0.9032258064516129,
+          "roi": 0.17286497521832023,
+          "profit_units": 10.717628463535855
+        },
+        "discB": {
+          "n": 54,
+          "wins": 46,
+          "losses": 8,
+          "pushes": 0,
+          "hit": 0.8518518518518519,
+          "roi": 0.13075841451460987,
+          "profit_units": 7.060954383788934
+        },
+        "validation": {
+          "n": 32,
+          "wins": 28,
+          "losses": 4,
+          "pushes": 0,
+          "hit": 0.875,
+          "roi": 0.06944907890257504,
+          "profit_units": 2.2223705248824013
+        },
+        "holdout": {
+          "n": 55,
+          "wins": 47,
+          "losses": 8,
+          "pushes": 0,
+          "hit": 0.8545454545454545,
+          "roi": 0.05427061541534664,
+          "profit_units": 2.984883847844065
+        }
+      },
+      "by_season": {
+        "2018-19": {
+          "n": 22,
+          "wins": 19,
+          "losses": 3,
+          "pushes": 0,
+          "hit": 0.8636363636363636,
+          "roi": 0.13275354081868257,
+          "profit_units": 2.9205778980110164
+        },
+        "2019-20": {
+          "n": 14,
+          "wins": 14,
+          "losses": 0,
+          "pushes": 0,
+          "hit": 1.0,
+          "roi": 0.22708525282615605,
+          "profit_units": 3.179193539566185
+        },
+        "2020-21": {
+          "n": 26,
+          "wins": 23,
+          "losses": 3,
+          "pushes": 0,
+          "hit": 0.8846153846153846,
+          "roi": 0.17760988561379434,
+          "profit_units": 4.617857025958653
+        },
+        "2021-22": {
+          "n": 30,
+          "wins": 24,
+          "losses": 6,
+          "pushes": 0,
+          "hit": 0.8,
+          "roi": 0.055227418364967744,
+          "profit_units": 1.6568225509490324
+        },
+        "2022-23": {
+          "n": 24,
+          "wins": 22,
+          "losses": 2,
+          "pushes": 0,
+          "hit": 0.9166666666666666,
+          "roi": 0.22517215970166257,
+          "profit_units": 5.4041318328399015
+        },
+        "2023-24": {
+          "n": 32,
+          "wins": 28,
+          "losses": 4,
+          "pushes": 0,
+          "hit": 0.875,
+          "roi": 0.06944907890257504,
+          "profit_units": 2.2223705248824013
+        },
+        "2024-25": {
+          "n": 30,
+          "wins": 26,
+          "losses": 4,
+          "pushes": 0,
+          "hit": 0.8666666666666667,
+          "roi": 0.0594977922673044,
+          "profit_units": 1.784933768019132
+        },
+        "2025-26": {
+          "n": 25,
+          "wins": 21,
+          "losses": 4,
+          "pushes": 0,
+          "hit": 0.84,
+          "roi": 0.047998003192997324,
+          "profit_units": 1.1999500798249332
+        }
+      },
+      "price_stress": {
+        "median": {
+          "n": 203,
+          "wins": 177,
+          "losses": 26,
+          "pushes": 0,
+          "hit": 0.8719211822660099,
+          "roi": 0.11323072522192737,
+          "profit_units": 22.985837220051256
+        },
+        "best": {
+          "n": 203,
+          "wins": 177,
+          "losses": 26,
+          "pushes": 0,
+          "hit": 0.8719211822660099,
+          "roi": 0.14135277269383803,
+          "profit_units": 28.69461285684912
+        },
+        "worst": {
+          "n": 203,
+          "wins": 177,
+          "losses": 26,
+          "pushes": 0,
+          "hit": 0.8719211822660099,
+          "roi": 0.09090969327331537,
+          "profit_units": 18.45466773448302
+        }
+      },
+      "holdout_price_stress": {
+        "median": {
+          "n": 55,
+          "wins": 47,
+          "losses": 8,
+          "pushes": 0,
+          "hit": 0.8545454545454545,
+          "roi": 0.05427061541534664,
+          "profit_units": 2.984883847844065
+        },
+        "best": {
+          "n": 55,
+          "wins": 47,
+          "losses": 8,
+          "pushes": 0,
+          "hit": 0.8545454545454545,
+          "roi": 0.05427061541534664,
+          "profit_units": 2.984883847844065
+        },
+        "worst": {
+          "n": 55,
+          "wins": 47,
+          "losses": 8,
+          "pushes": 0,
+          "hit": 0.8545454545454545,
+          "roi": 0.05427061541534664,
+          "profit_units": 2.984883847844065
+        }
+      },
+      "book_coverage": {
+        "1_or_fewer": 55,
+        "two_or_more": 148
+      },
+      "price_probability_buckets": {
+        "under_60pct": {
+          "n": 20,
+          "wins": 14,
+          "losses": 6,
+          "pushes": 0,
+          "hit": 0.7,
+          "roi": 0.41834498993905,
+          "profit_units": 8.366899798781
+        },
+        "60_69pct": {
+          "n": 22,
+          "wins": 18,
+          "losses": 4,
+          "pushes": 0,
+          "hit": 0.8181818181818182,
+          "roi": 0.19940898517467007,
+          "profit_units": 4.386997673842742
+        },
+        "70_79pct": {
+          "n": 61,
+          "wins": 56,
+          "losses": 5,
+          "pushes": 0,
+          "hit": 0.9180327868852459,
+          "roi": 0.17728549669899898,
+          "profit_units": 10.814415298638938
+        },
+        "80plus_pct": {
+          "n": 100,
+          "wins": 89,
+          "losses": 11,
+          "pushes": 0,
+          "hit": 0.89,
+          "roi": -0.0058247555121142556,
+          "profit_units": -0.5824755512114256
+        }
+      },
+      "live_arsenal_same_selection_overlap": {
+        "shared": 28,
+        "independent": 175,
+        "shared_performance": {
+          "n": 28,
+          "wins": 28,
+          "losses": 0,
+          "pushes": 0,
+          "hit": 1.0,
+          "roi": 0.22604233920605027,
+          "profit_units": 6.329185497769408
+        },
+        "independent_performance": {
+          "n": 175,
+          "wins": 149,
+          "losses": 26,
+          "pushes": 0,
+          "hit": 0.8514285714285714,
+          "roi": 0.09518086698446769,
+          "profit_units": 16.656651722281847
+        },
+        "live_method_counts": {
+          "NBA_INTERACT_003": 8,
+          "NBA_LQ_003": 10,
+          "NBA_ML001_DEF_TS": 2,
+          "NBA_PHYSCOACH_001": 10
+        }
+      },
+      "threshold_neighborhood": {
+        "tested": 27,
+        "eligible": 21,
+        "positive_overall_and_holdout": 12,
+        "positive_fraction": 0.5714285714285714,
+        "worst_eligible_holdout_roi": -0.026115213452307932
+      },
+      "warning": "Post-selection audit: no new holdout created. These were mined from the same historical years; statistical winner's curse remains."
+    },
+    "NBA_H5_ML_003": {
+      "market": "moneyline",
+      "rule": "tx_minutes14_gap <= 0 AND clutch10_gap <= -1 AND is_home == 1 AND rank_gap >= 7",
+      "frozen_conditions": [
+        [
+          "tx_minutes14_gap",
+          "<=",
+          0.0
+        ],
+        [
+          "clutch10_gap",
+          "<=",
+          -1.0
+        ],
+        [
+          "is_home",
+          "==",
+          1.0
+        ],
+        [
+          "rank_gap",
+          ">=",
+          7.0
+        ]
+      ],
+      "overall": {
+        "n": 217,
+        "wins": 186,
+        "losses": 31,
+        "pushes": 0,
+        "hit": 0.8571428571428571,
+        "roi": 0.10647791745014835,
+        "profit_units": 23.105708086682192
+      },
+      "phases": {
+        "discA": {
+          "n": 68,
+          "wins": 60,
+          "losses": 8,
+          "pushes": 0,
+          "hit": 0.8823529411764706,
+          "roi": 0.1701976370492163,
+          "profit_units": 11.57343931934671
+        },
+        "discB": {
+          "n": 62,
+          "wins": 51,
+          "losses": 11,
+          "pushes": 0,
+          "hit": 0.8225806451612904,
+          "roi": 0.10201636120337121,
+          "profit_units": 6.325014394609015
+        },
+        "validation": {
+          "n": 32,
+          "wins": 28,
+          "losses": 4,
+          "pushes": 0,
+          "hit": 0.875,
+          "roi": 0.06944907890257504,
+          "profit_units": 2.2223705248824013
+        },
+        "holdout": {
+          "n": 55,
+          "wins": 47,
+          "losses": 8,
+          "pushes": 0,
+          "hit": 0.8545454545454545,
+          "roi": 0.05427061541534664,
+          "profit_units": 2.984883847844065
+        }
+      },
+      "by_season": {
+        "2018-19": {
+          "n": 23,
+          "wins": 19,
+          "losses": 4,
+          "pushes": 0,
+          "hit": 0.8260869565217391,
+          "roi": 0.08350338687004419,
+          "profit_units": 1.9205778980110162
+        },
+        "2019-20": {
+          "n": 14,
+          "wins": 14,
+          "losses": 0,
+          "pushes": 0,
+          "hit": 1.0,
+          "roi": 0.22708525282615605,
+          "profit_units": 3.179193539566185
+        },
+        "2020-21": {
+          "n": 31,
+          "wins": 27,
+          "losses": 4,
+          "pushes": 0,
+          "hit": 0.8709677419354839,
+          "roi": 0.2088279961861132,
+          "profit_units": 6.473667881769509
+        },
+        "2021-22": {
+          "n": 32,
+          "wins": 25,
+          "losses": 7,
+          "pushes": 0,
+          "hit": 0.78125,
+          "roi": 0.054900704717157266,
+          "profit_units": 1.7568225509490325
+        },
+        "2022-23": {
+          "n": 30,
+          "wins": 26,
+          "losses": 4,
+          "pushes": 0,
+          "hit": 0.8666666666666667,
+          "roi": 0.15227306145533276,
+          "profit_units": 4.568191843659982
+        },
+        "2023-24": {
+          "n": 32,
+          "wins": 28,
+          "losses": 4,
+          "pushes": 0,
+          "hit": 0.875,
+          "roi": 0.06944907890257504,
+          "profit_units": 2.2223705248824013
+        },
+        "2024-25": {
+          "n": 30,
+          "wins": 26,
+          "losses": 4,
+          "pushes": 0,
+          "hit": 0.8666666666666667,
+          "roi": 0.0594977922673044,
+          "profit_units": 1.784933768019132
+        },
+        "2025-26": {
+          "n": 25,
+          "wins": 21,
+          "losses": 4,
+          "pushes": 0,
+          "hit": 0.84,
+          "roi": 0.047998003192997324,
+          "profit_units": 1.1999500798249332
+        }
+      },
+      "price_stress": {
+        "median": {
+          "n": 217,
+          "wins": 186,
+          "losses": 31,
+          "pushes": 0,
+          "hit": 0.8571428571428571,
+          "roi": 0.10647791745014835,
+          "profit_units": 23.105708086682192
+        },
+        "best": {
+          "n": 217,
+          "wins": 186,
+          "losses": 31,
+          "pushes": 0,
+          "hit": 0.8571428571428571,
+          "roi": 0.13665192988878497,
+          "profit_units": 29.653468785866337
+        },
+        "worst": {
+          "n": 217,
+          "wins": 186,
+          "losses": 31,
+          "pushes": 0,
+          "hit": 0.8571428571428571,
+          "roi": 0.08462703938190433,
+          "profit_units": 18.36406754587324
+        }
+      },
+      "holdout_price_stress": {
+        "median": {
+          "n": 55,
+          "wins": 47,
+          "losses": 8,
+          "pushes": 0,
+          "hit": 0.8545454545454545,
+          "roi": 0.05427061541534664,
+          "profit_units": 2.984883847844065
+        },
+        "best": {
+          "n": 55,
+          "wins": 47,
+          "losses": 8,
+          "pushes": 0,
+          "hit": 0.8545454545454545,
+          "roi": 0.05427061541534664,
+          "profit_units": 2.984883847844065
+        },
+        "worst": {
+          "n": 55,
+          "wins": 47,
+          "losses": 8,
+          "pushes": 0,
+          "hit": 0.8545454545454545,
+          "roi": 0.05427061541534664,
+          "profit_units": 2.984883847844065
+        }
+      },
+      "book_coverage": {
+        "1_or_fewer": 55,
+        "two_or_more": 162
+      },
+      "price_probability_buckets": {
+        "under_60pct": {
+          "n": 25,
+          "wins": 17,
+          "losses": 8,
+          "pushes": 0,
+          "hit": 0.68,
+          "roi": 0.36580885908410715,
+          "profit_units": 9.145221477102679
+        },
+        "60_69pct": {
+          "n": 26,
+          "wins": 21,
+          "losses": 5,
+          "pushes": 0,
+          "hit": 0.8076923076923077,
+          "roi": 0.19199374148778253,
+          "profit_units": 4.991837278682346
+        },
+        "70_79pct": {
+          "n": 65,
+          "wins": 58,
+          "losses": 7,
+          "pushes": 0,
+          "hit": 0.8923076923076924,
+          "roi": 0.14437628023756807,
+          "profit_units": 9.384458215441924
+        },
+        "80plus_pct": {
+          "n": 101,
+          "wins": 90,
+          "losses": 11,
+          "pushes": 0,
+          "hit": 0.8910891089108911,
+          "roi": -0.004116919648958009,
+          "profit_units": -0.41580888454475895
+        }
+      },
+      "live_arsenal_same_selection_overlap": {
+        "shared": 31,
+        "independent": 186,
+        "shared_performance": {
+          "n": 31,
+          "wins": 30,
+          "losses": 1,
+          "pushes": 0,
+          "hit": 0.967741935483871,
+          "roi": 0.20164118600712086,
+          "profit_units": 6.250876766220746
+        },
+        "independent_performance": {
+          "n": 186,
+          "wins": 156,
+          "losses": 30,
+          "pushes": 0,
+          "hit": 0.8387096774193549,
+          "roi": 0.09061737269065293,
+          "profit_units": 16.854831320461443
+        },
+        "live_method_counts": {
+          "NBA_INTERACT_003": 9,
+          "NBA_LQ_003": 12,
+          "NBA_ML001_DEF_TS": 2,
+          "NBA_PHYSCOACH_001": 10
+        }
+      },
+      "threshold_neighborhood": {
+        "tested": 27,
+        "eligible": 14,
+        "positive_overall_and_holdout": 8,
+        "positive_fraction": 0.5714285714285714,
+        "worst_eligible_holdout_roi": -0.020225064922920047
+      },
+      "warning": "Post-selection audit: no new holdout created. These were mined from the same historical years; statistical winner's curse remains."
+    },
+    "NBA_H5_ATS_001": {
+      "market": "ats",
+      "rule": "clutch10_gap >= 1 AND rest_diff <= -1 AND starter_negative_adv >= 2",
+      "frozen_conditions": [
+        [
+          "clutch10_gap",
+          ">=",
+          1.0
+        ],
+        [
+          "rest_diff",
+          "<=",
+          -1.0
+        ],
+        [
+          "starter_negative_adv",
+          ">=",
+          2.0
+        ]
+      ],
+      "overall": {
+        "n": 428,
+        "wins": 241,
+        "losses": 185,
+        "pushes": 2,
+        "hit": 0.5657276995305164,
+        "roi": 0.07857512340343627,
+        "profit_units": 33.63015281667072
+      },
+      "phases": {
+        "discA": {
+          "n": 164,
+          "wins": 91,
+          "losses": 73,
+          "pushes": 0,
+          "hit": 0.5548780487804879,
+          "roi": 0.05887702693762199,
+          "profit_units": 9.655832417770007
+        },
+        "discB": {
+          "n": 102,
+          "wins": 55,
+          "losses": 46,
+          "pushes": 1,
+          "hit": 0.5445544554455446,
+          "roi": 0.03917683080249347,
+          "profit_units": 3.9960367418543337
+        },
+        "validation": {
+          "n": 59,
+          "wins": 33,
+          "losses": 25,
+          "pushes": 1,
+          "hit": 0.5689655172413793,
+          "roi": 0.08186054432971557,
+          "profit_units": 4.829772115453219
+        },
+        "holdout": {
+          "n": 103,
+          "wins": 62,
+          "losses": 41,
+          "pushes": 0,
+          "hit": 0.6019417475728155,
+          "roi": 0.14707292758828314,
+          "profit_units": 15.148511541593164
+        }
+      },
+      "by_season": {
+        "2018-19": {
+          "n": 59,
+          "wins": 34,
+          "losses": 25,
+          "pushes": 0,
+          "hit": 0.576271186440678,
+          "roi": 0.10015408320493065,
+          "profit_units": 5.909090909090908
+        },
+        "2019-20": {
+          "n": 56,
+          "wins": 30,
+          "losses": 26,
+          "pushes": 0,
+          "hit": 0.5357142857142857,
+          "roi": 0.021451552914724194,
+          "profit_units": 1.2012869632245549
+        },
+        "2020-21": {
+          "n": 49,
+          "wins": 27,
+          "losses": 22,
+          "pushes": 0,
+          "hit": 0.5510204081632653,
+          "roi": 0.05194805194805193,
+          "profit_units": 2.5454545454545445
+        },
+        "2021-22": {
+          "n": 45,
+          "wins": 24,
+          "losses": 21,
+          "pushes": 0,
+          "hit": 0.5333333333333333,
+          "roi": 0.018181818181818167,
+          "profit_units": 0.8181818181818175
+        },
+        "2022-23": {
+          "n": 57,
+          "wins": 31,
+          "losses": 25,
+          "pushes": 1,
+          "hit": 0.5535714285714286,
+          "roi": 0.055751840766184495,
+          "profit_units": 3.177854923672516
+        },
+        "2023-24": {
+          "n": 59,
+          "wins": 33,
+          "losses": 25,
+          "pushes": 1,
+          "hit": 0.5689655172413793,
+          "roi": 0.08186054432971557,
+          "profit_units": 4.829772115453219
+        },
+        "2024-25": {
+          "n": 52,
+          "wins": 27,
+          "losses": 25,
+          "pushes": 0,
+          "hit": 0.5192307692307693,
+          "roi": -0.012576191924018026,
+          "profit_units": -0.6539619800489374
+        },
+        "2025-26": {
+          "n": 51,
+          "wins": 35,
+          "losses": 16,
+          "pushes": 0,
+          "hit": 0.6862745098039216,
+          "roi": 0.3098524219929824,
+          "profit_units": 15.802473521642103
+        }
+      },
+      "price_stress": {
+        "median": {
+          "n": 428,
+          "wins": 241,
+          "losses": 185,
+          "pushes": 2,
+          "hit": 0.5657276995305164,
+          "roi": 0.07857512340343627,
+          "profit_units": 33.63015281667072
+        },
+        "best": {
+          "n": 428,
+          "wins": 241,
+          "losses": 185,
+          "pushes": 2,
+          "hit": 0.5657276995305164,
+          "roi": 0.11306351734390421,
+          "profit_units": 48.391185423191004
+        },
+        "worst": {
+          "n": 428,
+          "wins": 241,
+          "losses": 185,
+          "pushes": 2,
+          "hit": 0.5657276995305164,
+          "roi": 0.05287294311844248,
+          "profit_units": 22.62961965469338
+        }
+      },
+      "holdout_price_stress": {
+        "median": {
+          "n": 103,
+          "wins": 62,
+          "losses": 41,
+          "pushes": 0,
+          "hit": 0.6019417475728155,
+          "roi": 0.14707292758828314,
+          "profit_units": 15.148511541593164
+        },
+        "best": {
+          "n": 103,
+          "wins": 62,
+          "losses": 41,
+          "pushes": 0,
+          "hit": 0.6019417475728155,
+          "roi": 0.14776887003179842,
+          "profit_units": 15.220193613275237
+        },
+        "worst": {
+          "n": 103,
+          "wins": 62,
+          "losses": 41,
+          "pushes": 0,
+          "hit": 0.6019417475728155,
+          "roi": 0.14642347980924483,
+          "profit_units": 15.081618420352218
+        }
+      },
+      "book_coverage": {
+        "1_or_fewer": 100,
+        "two_or_more": 328
+      },
+      "price_probability_buckets": {
+        "under_60pct": {
+          "n": 116,
+          "wins": 64,
+          "losses": 52,
+          "pushes": 0,
+          "hit": 0.5517241379310345,
+          "roi": 0.05431339886523655,
+          "profit_units": 6.30035426836744
+        },
+        "60_69pct": {
+          "n": 99,
+          "wins": 53,
+          "losses": 46,
+          "pushes": 0,
+          "hit": 0.5353535353535354,
+          "roi": 0.019616496258734746,
+          "profit_units": 1.9420331296147397
+        },
+        "70_79pct": {
+          "n": 114,
+          "wins": 65,
+          "losses": 47,
+          "pushes": 2,
+          "hit": 0.5803571428571429,
+          "roi": 0.10297838430447834,
+          "profit_units": 11.73953581071053
+        },
+        "80plus_pct": {
+          "n": 98,
+          "wins": 59,
+          "losses": 39,
+          "pushes": 0,
+          "hit": 0.6020408163265306,
+          "roi": 0.14947173069365322,
+          "profit_units": 14.648229607978015
+        }
+      },
+      "live_arsenal_same_selection_overlap": {
+        "shared": 0,
+        "independent": 428,
+        "shared_performance": {
+          "n": 0,
+          "wins": 0,
+          "losses": 0,
+          "pushes": 0,
+          "hit": null,
+          "roi": null,
+          "profit_units": 0
+        },
+        "independent_performance": {
+          "n": 428,
+          "wins": 241,
+          "losses": 185,
+          "pushes": 2,
+          "hit": 0.5657276995305164,
+          "roi": 0.07857512340343627,
+          "profit_units": 33.63015281667072
+        },
+        "live_method_counts": {}
+      },
+      "threshold_neighborhood": {
+        "tested": 27,
+        "eligible": 16,
+        "positive_overall_and_holdout": 16,
+        "positive_fraction": 1.0,
+        "worst_eligible_holdout_roi": 0.09299033049711096
+      },
+      "warning": "Post-selection audit: no new holdout created. These were mined from the same historical years; statistical winner's curse remains."
+    }
+  },
+  "pairwise": {
+    "NBA_H5_ML_001|NBA_H5_ML_002": {
+      "shared_game_selections": 42,
+      "jaccard": 0.1076923076923077,
+      "a_shared_fraction": 0.18340611353711792,
+      "b_shared_fraction": 0.20689655172413793
+    },
+    "NBA_H5_ML_001|NBA_H5_ML_003": {
+      "shared_game_selections": 43,
+      "jaccard": 0.10669975186104218,
+      "a_shared_fraction": 0.18777292576419213,
+      "b_shared_fraction": 0.19815668202764977
+    },
+    "NBA_H5_ML_001|NBA_H5_ATS_001": {
+      "shared_game_selections": 0,
+      "jaccard": 0.0,
+      "a_shared_fraction": 0.0,
+      "b_shared_fraction": 0.0
+    },
+    "NBA_H5_ML_002|NBA_H5_ML_003": {
+      "shared_game_selections": 203,
+      "jaccard": 0.9354838709677419,
+      "a_shared_fraction": 1.0,
+      "b_shared_fraction": 0.9354838709677419
+    },
+    "NBA_H5_ML_002|NBA_H5_ATS_001": {
+      "shared_game_selections": 0,
+      "jaccard": 0.0,
+      "a_shared_fraction": 0.0,
+      "b_shared_fraction": 0.0
+    },
+    "NBA_H5_ML_003|NBA_H5_ATS_001": {
+      "shared_game_selections": 0,
+      "jaccard": 0.0,
+      "a_shared_fraction": 0.0,
+      "b_shared_fraction": 0.0
+    }
+  },
+  "policy": "Frozen H5 rule cuts are never changed. All metrics are retrospective. Threshold neighborhood, per-season stability, bookmaker depth, same-selection live overlap, and inter-candidate overlap are measured without promoting or retuning any candidate."
+}
