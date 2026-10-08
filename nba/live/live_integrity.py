@@ -49,7 +49,17 @@ def standings(games,now):
     for tid,z in state.items():
         wp=z['w']/(z['w']+z['l']);east=int(tid) in EAST
         vals=sorted([v['w']/(v['w']+v['l']) for t,v in state.items() if (int(t) in EAST)==east],reverse=True)
-        result[tid]={'current_streak':z['streak'],'winpct_gap_to_seed6':wp-vals[5] if len(vals)>=6 else None}
+        # Compute ranks only from results actually observed before the scan.
+        # This avoids the future-dated schedule standings table when H3 is live.
+        conf_teams=sorted(
+            ((other,s['w']/(s['w']+s['l']),s['w']) for other,s in state.items()
+             if (int(other) in EAST)==east and s['w']+s['l']>0),
+            key=lambda row:(row[1],row[2],row[0]),reverse=True
+        )
+        ranks={team:i for i,(team,_,_) in enumerate(conf_teams,1)}
+        result[tid]={'current_streak':z['streak'],
+                     'winpct_gap_to_seed6':wp-vals[5] if len(vals)>=6 else None,
+                     'conference_rank':ranks.get(tid)}
     return result,evidence
 def venue(g,catalog):
     matches=[v for v in catalog.values() if normalized(v.get('venue_name'))==normalized(g.get('arena_name')) and g.get('arena_name')]
