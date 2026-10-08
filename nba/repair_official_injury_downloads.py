@@ -86,6 +86,7 @@ wgz(OUT/"report_texts.csv.gz",report_rows)
 
 summary={
  "generated_at_utc":datetime.now(timezone.utc).isoformat(),"season":SEASON,"games":len(rows),
+ "source_archive":"NBA official injury-report PDF archive; URLs inherited from the frozen pre-tip mapping",
  "unique_game_dates":len({str(r.get("tip_et") or "")[:10] for r in rows if r.get("tip_et")}),
  "games_with_pre_tip_report":sum(1 for r in rows if str(r.get("report_found")).lower() in ("true","1")),
  "games_with_report_text":sum(1 for r in rows if str(r.get("report_text_found")).lower() in ("true","1")),
