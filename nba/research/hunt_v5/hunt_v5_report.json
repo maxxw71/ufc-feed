@@ -1,0 +1,517 @@
+{
+  "generated_at_utc": "2026-10-08T12:39:16.078161+00:00",
+  "side_rows": 19038,
+  "moneyline": {
+    "screened_conditions": 94,
+    "rules_tested": 5859,
+    "candidates": [
+      {
+        "rule": "starter_negative_adv >= 2 AND prior_minutes_share_gap >= 0.079523 AND clutch10_gap <= -1.5",
+        "domains": [
+          "clutch",
+          "prior_continuity",
+          "starter_impact"
+        ],
+        "discA": {
+          "n": 64,
+          "wins": 53,
+          "losses": 11,
+          "hit": 0.828125,
+          "roi": 0.19277366763193332,
+          "profit": 12.337514728443733,
+          "wilson_low": 0.717865585098341
+        },
+        "discB": {
+          "n": 68,
+          "wins": 49,
+          "losses": 19,
+          "hit": 0.7205882352941176,
+          "roi": 0.024155646852095994,
+          "profit": 1.6425839859425275,
+          "wilson_low": 0.6043634045165331
+        },
+        "validation": {
+          "n": 35,
+          "wins": 25,
+          "losses": 10,
+          "hit": 0.7142857142857143,
+          "roi": 0.016035285066825028,
+          "profit": 0.561234977338876,
+          "wilson_low": 0.5494475193017891
+        },
+        "holdout": {
+          "n": 61,
+          "wins": 52,
+          "losses": 9,
+          "hit": 0.8524590163934426,
+          "roi": 0.1412668847136825,
+          "profit": 8.617279967534634,
+          "wilson_low": 0.742765304981049
+        },
+        "price_stress": {
+          "overall_best": {
+            "n": 229,
+            "wins": 180,
+            "losses": 49,
+            "hit": 0.7860262008733624,
+            "roi": 0.13663919868584773,
+            "profit": 31.290376499059132,
+            "wilson_low": 0.7284187327141817
+          },
+          "overall_worst": {
+            "n": 229,
+            "wins": 180,
+            "losses": 49,
+            "hit": 0.7860262008733624,
+            "roi": 0.08583285591330109,
+            "profit": 19.65572400414595,
+            "wilson_low": 0.7284187327141817
+          },
+          "holdout_best": {
+            "n": 61,
+            "wins": 52,
+            "losses": 9,
+            "hit": 0.8524590163934426,
+            "roi": 0.1412668847136825,
+            "profit": 8.617279967534634,
+            "wilson_low": 0.742765304981049
+          },
+          "holdout_worst": {
+            "n": 61,
+            "wins": 52,
+            "losses": 9,
+            "hit": 0.8524590163934426,
+            "roi": 0.1412668847136825,
+            "profit": 8.617279967534634,
+            "wilson_low": 0.742765304981049
+          }
+        },
+        "method_id": "NBA_H5_ML_001"
+      },
+      {
+        "rule": "strength_pointdiff_gap >= 3.0759 AND clutch10_gap <= -1 AND is_home == 1 AND rank_gap >= 7",
+        "domains": [
+          "clutch",
+          "context",
+          "standings",
+          "strength_context"
+        ],
+        "discA": {
+          "n": 62,
+          "wins": 56,
+          "losses": 6,
+          "hit": 0.9032258064516129,
+          "roi": 0.17286497521832023,
+          "profit": 10.717628463535855,
+          "wilson_low": 0.8045095713255586
+        },
+        "discB": {
+          "n": 54,
+          "wins": 46,
+          "losses": 8,
+          "hit": 0.8518518518518519,
+          "roi": 0.13075841451460987,
+          "profit": 7.060954383788934,
+          "wilson_low": 0.733996325347515
+        },
+        "validation": {
+          "n": 32,
+          "wins": 28,
+          "losses": 4,
+          "hit": 0.875,
+          "roi": 0.06944907890257504,
+          "profit": 2.2223705248824013,
+          "wilson_low": 0.7193135021517204
+        },
+        "holdout": {
+          "n": 55,
+          "wins": 47,
+          "losses": 8,
+          "hit": 0.8545454545454545,
+          "roi": 0.05427061541534664,
+          "profit": 2.984883847844065,
+          "wilson_low": 0.7383883791170325
+        },
+        "price_stress": {
+          "overall_best": {
+            "n": 203,
+            "wins": 177,
+            "losses": 26,
+            "hit": 0.8719211822660099,
+            "roi": 0.14135277269383803,
+            "profit": 28.69461285684912,
+            "wilson_low": 0.8189505031973793
+          },
+          "overall_worst": {
+            "n": 203,
+            "wins": 177,
+            "losses": 26,
+            "hit": 0.8719211822660099,
+            "roi": 0.09090969327331537,
+            "profit": 18.45466773448302,
+            "wilson_low": 0.8189505031973793
+          },
+          "holdout_best": {
+            "n": 55,
+            "wins": 47,
+            "losses": 8,
+            "hit": 0.8545454545454545,
+            "roi": 0.05427061541534664,
+            "profit": 2.984883847844065,
+            "wilson_low": 0.7383883791170325
+          },
+          "holdout_worst": {
+            "n": 55,
+            "wins": 47,
+            "losses": 8,
+            "hit": 0.8545454545454545,
+            "roi": 0.05427061541534664,
+            "profit": 2.984883847844065,
+            "wilson_low": 0.7383883791170325
+          }
+        },
+        "method_id": "NBA_H5_ML_002"
+      },
+      {
+        "rule": "tx_minutes14_gap <= 0 AND clutch10_gap <= -1 AND is_home == 1 AND rank_gap >= 7",
+        "domains": [
+          "clutch",
+          "context",
+          "standings",
+          "transaction_value"
+        ],
+        "discA": {
+          "n": 68,
+          "wins": 60,
+          "losses": 8,
+          "hit": 0.8823529411764706,
+          "roi": 0.1701976370492163,
+          "profit": 11.57343931934671,
+          "wilson_low": 0.7846488137630566
+        },
+        "discB": {
+          "n": 62,
+          "wins": 51,
+          "losses": 11,
+          "hit": 0.8225806451612904,
+          "roi": 0.10201636120337121,
+          "profit": 6.325014394609015,
+          "wilson_low": 0.7095819851661979
+        },
+        "validation": {
+          "n": 32,
+          "wins": 28,
+          "losses": 4,
+          "hit": 0.875,
+          "roi": 0.06944907890257504,
+          "profit": 2.2223705248824013,
+          "wilson_low": 0.7193135021517204
+        },
+        "holdout": {
+          "n": 55,
+          "wins": 47,
+          "losses": 8,
+          "hit": 0.8545454545454545,
+          "roi": 0.05427061541534664,
+          "profit": 2.984883847844065,
+          "wilson_low": 0.7383883791170325
+        },
+        "price_stress": {
+          "overall_best": {
+            "n": 217,
+            "wins": 186,
+            "losses": 31,
+            "hit": 0.8571428571428571,
+            "roi": 0.13665192988878497,
+            "profit": 29.653468785866337,
+            "wilson_low": 0.8043617096009157
+          },
+          "overall_worst": {
+            "n": 217,
+            "wins": 186,
+            "losses": 31,
+            "hit": 0.8571428571428571,
+            "roi": 0.08462703938190433,
+            "profit": 18.36406754587324,
+            "wilson_low": 0.8043617096009157
+          },
+          "holdout_best": {
+            "n": 55,
+            "wins": 47,
+            "losses": 8,
+            "hit": 0.8545454545454545,
+            "roi": 0.05427061541534664,
+            "profit": 2.984883847844065,
+            "wilson_low": 0.7383883791170325
+          },
+          "holdout_worst": {
+            "n": 55,
+            "wins": 47,
+            "losses": 8,
+            "hit": 0.8545454545454545,
+            "roi": 0.05427061541534664,
+            "profit": 2.984883847844065,
+            "wilson_low": 0.7383883791170325
+          }
+        },
+        "method_id": "NBA_H5_ML_003"
+      },
+      {
+        "rule": "starter_negative_adv >= 2 AND venue_winpct_gap >= 0.12032 AND clutch10_gap <= -1.5",
+        "domains": [
+          "clutch",
+          "starter_impact",
+          "strength_context"
+        ],
+        "discA": {
+          "n": 115,
+          "wins": 95,
+          "losses": 20,
+          "hit": 0.8260869565217391,
+          "roi": 0.14344462369885191,
+          "profit": 16.49613172536797,
+          "wilson_low": 0.7465880380379792
+        },
+        "discB": {
+          "n": 64,
+          "wins": 46,
+          "losses": 18,
+          "hit": 0.71875,
+          "roi": 0.004647049550674399,
+          "profit": 0.2974111712431615,
+          "wilson_low": 0.598658376004965
+        },
+        "validation": {
+          "n": 49,
+          "wins": 37,
+          "losses": 12,
+          "hit": 0.7551020408163265,
+          "roi": 0.0013539220493407633,
+          "profit": 0.0663421804176974,
+          "wilson_low": 0.619134127396842
+        },
+        "holdout": {
+          "n": 63,
+          "wins": 53,
+          "losses": 10,
+          "hit": 0.8412698412698413,
+          "roi": 0.10322122586202409,
+          "profit": 6.502937229307518,
+          "wilson_low": 0.7318819237681831
+        },
+        "price_stress": {
+          "overall_best": {
+            "n": 291,
+            "wins": 231,
+            "losses": 60,
+            "hit": 0.7938144329896907,
+            "roi": 0.10945539472355123,
+            "profit": 31.85151986455341,
+            "wilson_low": 0.7436481954118088
+          },
+          "overall_worst": {
+            "n": 291,
+            "wins": 231,
+            "losses": 60,
+            "hit": 0.7938144329896907,
+            "roi": 0.05782158502765735,
+            "profit": 16.82608124304829,
+            "wilson_low": 0.7436481954118088
+          },
+          "holdout_best": {
+            "n": 63,
+            "wins": 53,
+            "losses": 10,
+            "hit": 0.8412698412698413,
+            "roi": 0.10322122586202409,
+            "profit": 6.502937229307518,
+            "wilson_low": 0.7318819237681831
+          },
+          "holdout_worst": {
+            "n": 63,
+            "wins": 53,
+            "losses": 10,
+            "hit": 0.8412698412698413,
+            "roi": 0.10322122586202409,
+            "profit": 6.502937229307518,
+            "wilson_low": 0.7318819237681831
+          }
+        },
+        "method_id": "NBA_H5_ML_004"
+      }
+    ]
+  },
+  "ats": {
+    "screened_conditions": 94,
+    "rules_tested": 5859,
+    "candidates": [
+      {
+        "rule": "clutch10_gap >= 1 AND rest_diff <= -1 AND starter_negative_adv >= 2",
+        "domains": [
+          "clutch",
+          "schedule",
+          "starter_impact"
+        ],
+        "discA": {
+          "n": 164,
+          "wins": 91,
+          "losses": 73,
+          "hit": 0.5548780487804879,
+          "roi": 0.05887702693762199,
+          "profit": 9.655832417770007,
+          "wilson_low": 0.4784241859718629
+        },
+        "discB": {
+          "n": 102,
+          "wins": 55,
+          "losses": 46,
+          "hit": 0.5445544554455446,
+          "roi": 0.03917683080249347,
+          "profit": 3.9960367418543337,
+          "wilson_low": 0.44757823482693293
+        },
+        "validation": {
+          "n": 59,
+          "wins": 33,
+          "losses": 25,
+          "hit": 0.5689655172413793,
+          "roi": 0.08186054432971557,
+          "profit": 4.829772115453219,
+          "wilson_low": 0.44117876705727427
+        },
+        "holdout": {
+          "n": 103,
+          "wins": 62,
+          "losses": 41,
+          "hit": 0.6019417475728155,
+          "roi": 0.14707292758828314,
+          "profit": 15.148511541593164,
+          "wilson_low": 0.5053850789080787
+        },
+        "price_stress": {
+          "overall_best": {
+            "n": 428,
+            "wins": 241,
+            "losses": 185,
+            "hit": 0.5657276995305164,
+            "roi": 0.11306351734390421,
+            "profit": 48.391185423191004,
+            "wilson_low": 0.5182782814799073
+          },
+          "overall_worst": {
+            "n": 428,
+            "wins": 241,
+            "losses": 185,
+            "hit": 0.5657276995305164,
+            "roi": 0.05287294311844248,
+            "profit": 22.62961965469338,
+            "wilson_low": 0.5182782814799073
+          },
+          "holdout_best": {
+            "n": 103,
+            "wins": 62,
+            "losses": 41,
+            "hit": 0.6019417475728155,
+            "roi": 0.14776887003179842,
+            "profit": 15.220193613275237,
+            "wilson_low": 0.5053850789080787
+          },
+          "holdout_worst": {
+            "n": 103,
+            "wins": 62,
+            "losses": 41,
+            "hit": 0.6019417475728155,
+            "roi": 0.14642347980924483,
+            "profit": 15.081618420352218,
+            "wilson_low": 0.5053850789080787
+          }
+        },
+        "method_id": "NBA_H5_ATS_001"
+      },
+      {
+        "rule": "clutch10_gap >= 1 AND starter_negative_adv >= 2 AND rest_diff <= -1",
+        "domains": [
+          "clutch",
+          "schedule",
+          "starter_impact"
+        ],
+        "discA": {
+          "n": 164,
+          "wins": 91,
+          "losses": 73,
+          "hit": 0.5548780487804879,
+          "roi": 0.05887702693762199,
+          "profit": 9.655832417770007,
+          "wilson_low": 0.4784241859718629
+        },
+        "discB": {
+          "n": 102,
+          "wins": 55,
+          "losses": 46,
+          "hit": 0.5445544554455446,
+          "roi": 0.03917683080249347,
+          "profit": 3.9960367418543337,
+          "wilson_low": 0.44757823482693293
+        },
+        "validation": {
+          "n": 59,
+          "wins": 33,
+          "losses": 25,
+          "hit": 0.5689655172413793,
+          "roi": 0.08186054432971557,
+          "profit": 4.829772115453219,
+          "wilson_low": 0.44117876705727427
+        },
+        "holdout": {
+          "n": 103,
+          "wins": 62,
+          "losses": 41,
+          "hit": 0.6019417475728155,
+          "roi": 0.14707292758828314,
+          "profit": 15.148511541593164,
+          "wilson_low": 0.5053850789080787
+        },
+        "price_stress": {
+          "overall_best": {
+            "n": 428,
+            "wins": 241,
+            "losses": 185,
+            "hit": 0.5657276995305164,
+            "roi": 0.11306351734390421,
+            "profit": 48.391185423191004,
+            "wilson_low": 0.5182782814799073
+          },
+          "overall_worst": {
+            "n": 428,
+            "wins": 241,
+            "losses": 185,
+            "hit": 0.5657276995305164,
+            "roi": 0.05287294311844248,
+            "profit": 22.62961965469338,
+            "wilson_low": 0.5182782814799073
+          },
+          "holdout_best": {
+            "n": 103,
+            "wins": 62,
+            "losses": 41,
+            "hit": 0.6019417475728155,
+            "roi": 0.14776887003179842,
+            "profit": 15.220193613275237,
+            "wilson_low": 0.5053850789080787
+          },
+          "holdout_worst": {
+            "n": 103,
+            "wins": 62,
+            "losses": 41,
+            "hit": 0.6019417475728155,
+            "roi": 0.14642347980924483,
+            "profit": 15.081618420352218,
+            "wilson_low": 0.5053850789080787
+          }
+        },
+        "method_id": "NBA_H5_ATS_002"
+      }
+    ]
+  },
+  "policy": "Hunt V5 tests independent moneyline/ATS interactions with balanced coverage across underused scientific domains, including features with weak marginal single-filter ROI. All threshold cuts and marginal ranking are from 2018-21 only; 2021-23 confirmation, 2023-24 validation and 2024-26 untouched holdout. No survivor is live by default. Surviving candidates must have positive ROI at historical worst executable prices overall and in holdout."
+}
