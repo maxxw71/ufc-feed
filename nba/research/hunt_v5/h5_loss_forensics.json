@@ -1,5 +1,5 @@
 {
-  "generated_at_utc": "2026-10-08T14:29:06.723228+00:00",
+  "generated_at_utc": "2026-10-08T14:30:45.537024+00:00",
   "policy": {
     "discovery": "2018-19 through 2020-21: train-only filter cutoffs and sorting",
     "confirmation": "2021-22 through 2022-23: displayed out-of-training, never used for threshold selection",
@@ -1771,6 +1771,494 @@
             "roi_lift": 0.03138386948762456,
             "unit_profit_change": 0.18790849673202636,
             "bets_retained_pct": 0.8360655737704918
+          }
+        }
+      },
+      "structural_zero_threshold_gates": {
+        "not_more_travel_than_opponent": {
+          "discovery": {
+            "base": {
+              "n": 64,
+              "raw_signals": 64,
+              "wins": 53,
+              "losses": 11,
+              "pushes": 0,
+              "roi": 0.19277366763193332,
+              "median_roi": 0.19277366763193332,
+              "worst_price_roi": 0.1688588111922794,
+              "profit_units": 12.337514728443733
+            },
+            "kept": {
+              "n": 34,
+              "raw_signals": 34,
+              "wins": 31,
+              "losses": 3,
+              "pushes": 0,
+              "roi": 0.3813802972520475,
+              "median_roi": 0.3813802972520475,
+              "worst_price_roi": 0.3535663329799978,
+              "profit_units": 12.966930106569613
+            },
+            "removed": {
+              "n": 30,
+              "raw_signals": 30,
+              "wins": 22,
+              "losses": 8,
+              "pushes": 0,
+              "roi": -0.02098051260419602,
+              "median_roi": -0.02098051260419602,
+              "worst_price_roi": -0.040476380167134764,
+              "profit_units": -0.6294153781258806
+            },
+            "wins_lost": 22,
+            "losses_avoided": 8,
+            "roi_lift": 0.18860662962011415,
+            "unit_profit_change": 0.6294153781258807,
+            "bets_retained_pct": 0.53125
+          },
+          "confirmation": {
+            "base": {
+              "n": 68,
+              "raw_signals": 68,
+              "wins": 49,
+              "losses": 19,
+              "pushes": 0,
+              "roi": 0.024155646852095994,
+              "median_roi": 0.024155646852095994,
+              "worst_price_roi": -0.006669427050925853,
+              "profit_units": 1.6425839859425275
+            },
+            "kept": {
+              "n": 24,
+              "raw_signals": 24,
+              "wins": 21,
+              "losses": 3,
+              "pushes": 0,
+              "roi": 0.2573560284030565,
+              "median_roi": 0.2573560284030565,
+              "worst_price_roi": 0.21568977118326124,
+              "profit_units": 6.176544681673356
+            },
+            "removed": {
+              "n": 44,
+              "raw_signals": 44,
+              "wins": 28,
+              "losses": 16,
+              "pushes": 0,
+              "roi": -0.10304456126660973,
+              "median_roi": -0.10304456126660973,
+              "worst_price_roi": -0.12795626245139155,
+              "profit_units": -4.533960695730828
+            },
+            "wins_lost": 28,
+            "losses_avoided": 16,
+            "roi_lift": 0.2332003815509605,
+            "unit_profit_change": 4.533960695730828,
+            "bets_retained_pct": 0.35294117647058826
+          },
+          "validation": {
+            "base": {
+              "n": 35,
+              "raw_signals": 36,
+              "wins": 25,
+              "losses": 10,
+              "pushes": 0,
+              "roi": 0.016035285066825028,
+              "median_roi": 0.016035285066825028,
+              "worst_price_roi": 0.019027809993566444,
+              "profit_units": 0.561234977338876
+            },
+            "kept": {
+              "n": 16,
+              "raw_signals": 16,
+              "wins": 13,
+              "losses": 3,
+              "pushes": 0,
+              "roi": 0.10015434241093599,
+              "median_roi": 0.10015434241093599,
+              "worst_price_roi": 0.07559633456255108,
+              "profit_units": 1.6024694785749758
+            },
+            "removed": {
+              "n": 19,
+              "raw_signals": 20,
+              "wins": 12,
+              "losses": 7,
+              "pushes": 0,
+              "roi": -0.054801815854531574,
+              "median_roi": -0.054801815854531574,
+              "worst_price_roi": -0.026227009661621264,
+              "profit_units": -1.0412345012361
+            },
+            "wins_lost": 12,
+            "losses_avoided": 7,
+            "roi_lift": 0.08411905734411096,
+            "unit_profit_change": 1.0412345012361,
+            "bets_retained_pct": 0.45714285714285713
+          },
+          "holdout": {
+            "base": {
+              "n": 61,
+              "raw_signals": 61,
+              "wins": 52,
+              "losses": 9,
+              "pushes": 0,
+              "roi": 0.1412668847136825,
+              "median_roi": 0.1412668847136825,
+              "worst_price_roi": 0.1412668847136825,
+              "profit_units": 8.617279967534634
+            },
+            "kept": {
+              "n": 25,
+              "raw_signals": 25,
+              "wins": 22,
+              "losses": 3,
+              "pushes": 0,
+              "roi": 0.18418988770649233,
+              "median_roi": 0.18418988770649233,
+              "worst_price_roi": 0.18418988770649233,
+              "profit_units": 4.604747192662308
+            },
+            "removed": {
+              "n": 36,
+              "raw_signals": 36,
+              "wins": 30,
+              "losses": 6,
+              "pushes": 0,
+              "roi": 0.1114592437464535,
+              "median_roi": 0.1114592437464535,
+              "worst_price_roi": 0.1114592437464535,
+              "profit_units": 4.012532774872326
+            },
+            "wins_lost": 30,
+            "losses_avoided": 6,
+            "roi_lift": 0.04292300299280982,
+            "unit_profit_change": -4.012532774872326,
+            "bets_retained_pct": 0.4098360655737705
+          }
+        },
+        "nonnegative_recent_net_rating_advantage": {
+          "discovery": {
+            "base": {
+              "n": 64,
+              "raw_signals": 64,
+              "wins": 53,
+              "losses": 11,
+              "pushes": 0,
+              "roi": 0.19277366763193332,
+              "median_roi": 0.19277366763193332,
+              "worst_price_roi": 0.1688588111922794,
+              "profit_units": 12.337514728443733
+            },
+            "kept": {
+              "n": 41,
+              "raw_signals": 41,
+              "wins": 36,
+              "losses": 5,
+              "pushes": 0,
+              "roi": 0.18347249035513183,
+              "median_roi": 0.18347249035513183,
+              "worst_price_roi": 0.16091658220982274,
+              "profit_units": 7.5223721045604055
+            },
+            "removed": {
+              "n": 23,
+              "raw_signals": 23,
+              "wins": 17,
+              "losses": 6,
+              "pushes": 0,
+              "roi": 0.20935402712536205,
+              "median_roi": 0.20935402712536205,
+              "worst_price_roi": 0.18301669763926737,
+              "profit_units": 4.815142623883327
+            },
+            "wins_lost": 17,
+            "losses_avoided": 6,
+            "roi_lift": -0.009301177276801492,
+            "unit_profit_change": -4.815142623883327,
+            "bets_retained_pct": 0.640625
+          },
+          "confirmation": {
+            "base": {
+              "n": 68,
+              "raw_signals": 68,
+              "wins": 49,
+              "losses": 19,
+              "pushes": 0,
+              "roi": 0.024155646852095994,
+              "median_roi": 0.024155646852095994,
+              "worst_price_roi": -0.006669427050925853,
+              "profit_units": 1.6425839859425275
+            },
+            "kept": {
+              "n": 53,
+              "raw_signals": 53,
+              "wins": 41,
+              "losses": 12,
+              "pushes": 0,
+              "roi": 0.009915299301642479,
+              "median_roi": 0.009915299301642479,
+              "worst_price_roi": -0.011065983799532638,
+              "profit_units": 0.5255108629870514
+            },
+            "removed": {
+              "n": 15,
+              "raw_signals": 15,
+              "wins": 8,
+              "losses": 7,
+              "pushes": 0,
+              "roi": 0.07447154153036507,
+              "median_roi": 0.07447154153036507,
+              "worst_price_roi": 0.008865073460818119,
+              "profit_units": 1.117073122955476
+            },
+            "wins_lost": 8,
+            "losses_avoided": 7,
+            "roi_lift": -0.014240347550453515,
+            "unit_profit_change": -1.117073122955476,
+            "bets_retained_pct": 0.7794117647058824
+          },
+          "validation": {
+            "base": {
+              "n": 35,
+              "raw_signals": 36,
+              "wins": 25,
+              "losses": 10,
+              "pushes": 0,
+              "roi": 0.016035285066825028,
+              "median_roi": 0.016035285066825028,
+              "worst_price_roi": 0.019027809993566444,
+              "profit_units": 0.561234977338876
+            },
+            "kept": {
+              "n": 29,
+              "raw_signals": 29,
+              "wins": 20,
+              "losses": 9,
+              "pushes": 0,
+              "roi": -0.03410020272976158,
+              "median_roi": -0.03410020272976158,
+              "worst_price_roi": -0.0557356083298417,
+              "profit_units": -0.9889058791630858
+            },
+            "removed": {
+              "n": 6,
+              "raw_signals": 7,
+              "wins": 5,
+              "losses": 1,
+              "pushes": 0,
+              "roi": 0.2583568094169936,
+              "median_roi": 0.2583568094169936,
+              "worst_price_roi": 0.32876197161911447,
+              "profit_units": 1.5501408565019617
+            },
+            "wins_lost": 5,
+            "losses_avoided": 1,
+            "roi_lift": -0.05013548779658661,
+            "unit_profit_change": -1.5501408565019617,
+            "bets_retained_pct": 0.8285714285714286
+          },
+          "holdout": {
+            "base": {
+              "n": 61,
+              "raw_signals": 61,
+              "wins": 52,
+              "losses": 9,
+              "pushes": 0,
+              "roi": 0.1412668847136825,
+              "median_roi": 0.1412668847136825,
+              "worst_price_roi": 0.1412668847136825,
+              "profit_units": 8.617279967534634
+            },
+            "kept": {
+              "n": 50,
+              "raw_signals": 50,
+              "wins": 44,
+              "losses": 6,
+              "pushes": 0,
+              "roi": 0.1689736427748296,
+              "median_roi": 0.1689736427748296,
+              "worst_price_roi": 0.1689736427748296,
+              "profit_units": 8.44868213874148
+            },
+            "removed": {
+              "n": 11,
+              "raw_signals": 11,
+              "wins": 8,
+              "losses": 3,
+              "pushes": 0,
+              "roi": 0.015327075344832073,
+              "median_roi": 0.015327075344832073,
+              "worst_price_roi": 0.015327075344832073,
+              "profit_units": 0.1685978287931528
+            },
+            "wins_lost": 8,
+            "losses_avoided": 3,
+            "roi_lift": 0.027706758061147085,
+            "unit_profit_change": -0.16859782879315333,
+            "bets_retained_pct": 0.819672131147541
+          }
+        },
+        "nonnegative_recent_true_shooting_advantage": {
+          "discovery": {
+            "base": {
+              "n": 64,
+              "raw_signals": 64,
+              "wins": 53,
+              "losses": 11,
+              "pushes": 0,
+              "roi": 0.19277366763193332,
+              "median_roi": 0.19277366763193332,
+              "worst_price_roi": 0.1688588111922794,
+              "profit_units": 12.337514728443733
+            },
+            "kept": {
+              "n": 37,
+              "raw_signals": 37,
+              "wins": 32,
+              "losses": 5,
+              "pushes": 0,
+              "roi": 0.17943657130789542,
+              "median_roi": 0.17943657130789542,
+              "worst_price_roi": 0.15648274082895935,
+              "profit_units": 6.639153138392131
+            },
+            "removed": {
+              "n": 27,
+              "raw_signals": 27,
+              "wins": 21,
+              "losses": 6,
+              "pushes": 0,
+              "roi": 0.21105042926117043,
+              "median_roi": 0.21105042926117043,
+              "worst_price_roi": 0.18581861131979213,
+              "profit_units": 5.698361590051602
+            },
+            "wins_lost": 21,
+            "losses_avoided": 6,
+            "roi_lift": -0.0133370963240379,
+            "unit_profit_change": -5.698361590051602,
+            "bets_retained_pct": 0.578125
+          },
+          "confirmation": {
+            "base": {
+              "n": 68,
+              "raw_signals": 68,
+              "wins": 49,
+              "losses": 19,
+              "pushes": 0,
+              "roi": 0.024155646852095994,
+              "median_roi": 0.024155646852095994,
+              "worst_price_roi": -0.006669427050925853,
+              "profit_units": 1.6425839859425275
+            },
+            "kept": {
+              "n": 45,
+              "raw_signals": 45,
+              "wins": 34,
+              "losses": 11,
+              "pushes": 0,
+              "roi": -0.03306203588171396,
+              "median_roi": -0.03306203588171396,
+              "worst_price_roi": -0.05326140316353669,
+              "profit_units": -1.4877916146771284
+            },
+            "removed": {
+              "n": 23,
+              "raw_signals": 23,
+              "wins": 15,
+              "losses": 8,
+              "pushes": 0,
+              "roi": 0.1361032869834633,
+              "median_roi": 0.1361032869834633,
+              "worst_price_roi": 0.08448878708244319,
+              "profit_units": 3.1303756006196557
+            },
+            "wins_lost": 15,
+            "losses_avoided": 8,
+            "roi_lift": -0.057217682733809956,
+            "unit_profit_change": -3.130375600619656,
+            "bets_retained_pct": 0.6617647058823529
+          },
+          "validation": {
+            "base": {
+              "n": 35,
+              "raw_signals": 36,
+              "wins": 25,
+              "losses": 10,
+              "pushes": 0,
+              "roi": 0.016035285066825028,
+              "median_roi": 0.016035285066825028,
+              "worst_price_roi": 0.019027809993566444,
+              "profit_units": 0.561234977338876
+            },
+            "kept": {
+              "n": 22,
+              "raw_signals": 22,
+              "wins": 18,
+              "losses": 4,
+              "pushes": 0,
+              "roi": 0.13477354430730765,
+              "median_roi": 0.13477354430730765,
+              "worst_price_roi": 0.1068315800401313,
+              "profit_units": 2.965017974760768
+            },
+            "removed": {
+              "n": 13,
+              "raw_signals": 14,
+              "wins": 7,
+              "losses": 6,
+              "pushes": 0,
+              "roi": -0.18490638441706864,
+              "median_roi": -0.18490638441706864,
+              "worst_price_roi": -0.11894954293674977,
+              "profit_units": -2.4037829974218923
+            },
+            "wins_lost": 7,
+            "losses_avoided": 6,
+            "roi_lift": 0.11873825924048262,
+            "unit_profit_change": 2.4037829974218923,
+            "bets_retained_pct": 0.6285714285714286
+          },
+          "holdout": {
+            "base": {
+              "n": 61,
+              "raw_signals": 61,
+              "wins": 52,
+              "losses": 9,
+              "pushes": 0,
+              "roi": 0.1412668847136825,
+              "median_roi": 0.1412668847136825,
+              "worst_price_roi": 0.1412668847136825,
+              "profit_units": 8.617279967534634
+            },
+            "kept": {
+              "n": 43,
+              "raw_signals": 43,
+              "wins": 37,
+              "losses": 6,
+              "pushes": 0,
+              "roi": 0.13771603118649267,
+              "median_roi": 0.13771603118649267,
+              "worst_price_roi": 0.13771603118649267,
+              "profit_units": 5.921789341019185
+            },
+            "removed": {
+              "n": 18,
+              "raw_signals": 18,
+              "wins": 15,
+              "losses": 3,
+              "pushes": 0,
+              "roi": 0.1497494792508583,
+              "median_roi": 0.1497494792508583,
+              "worst_price_roi": 0.1497494792508583,
+              "profit_units": 2.6954906265154492
+            },
+            "wins_lost": 15,
+            "losses_avoided": 3,
+            "roi_lift": -0.00355085352718984,
+            "unit_profit_change": -2.695490626515449,
+            "bets_retained_pct": 0.7049180327868853
           }
         }
       },
@@ -4471,6 +4959,494 @@
           }
         }
       },
+      "structural_zero_threshold_gates": {
+        "not_more_travel_than_opponent": {
+          "discovery": {
+            "base": {
+              "n": 62,
+              "raw_signals": 62,
+              "wins": 56,
+              "losses": 6,
+              "pushes": 0,
+              "roi": 0.17286497521832023,
+              "median_roi": 0.17286497521832023,
+              "worst_price_roi": 0.1421259063253632,
+              "profit_units": 10.717628463535855
+            },
+            "kept": {
+              "n": 33,
+              "raw_signals": 33,
+              "wins": 30,
+              "losses": 3,
+              "pushes": 0,
+              "roi": 0.2418685717628336,
+              "median_roi": 0.2418685717628336,
+              "worst_price_roi": 0.20008058261199663,
+              "profit_units": 7.981662868173509
+            },
+            "removed": {
+              "n": 29,
+              "raw_signals": 29,
+              "wins": 26,
+              "losses": 3,
+              "pushes": 0,
+              "roi": 0.09434364121939119,
+              "median_roi": 0.09434364121939119,
+              "worst_price_roi": 0.07617748158540102,
+              "profit_units": 2.7359655953623445
+            },
+            "wins_lost": 26,
+            "losses_avoided": 3,
+            "roi_lift": 0.06900359654451338,
+            "unit_profit_change": -2.7359655953623454,
+            "bets_retained_pct": 0.532258064516129
+          },
+          "confirmation": {
+            "base": {
+              "n": 54,
+              "raw_signals": 54,
+              "wins": 46,
+              "losses": 8,
+              "pushes": 0,
+              "roi": 0.13075841451460987,
+              "median_roi": 0.13075841451460987,
+              "worst_price_roi": 0.1016444084454642,
+              "profit_units": 7.060954383788934
+            },
+            "kept": {
+              "n": 32,
+              "raw_signals": 32,
+              "wins": 27,
+              "losses": 5,
+              "pushes": 0,
+              "roi": 0.08296274214156056,
+              "median_roi": 0.08296274214156056,
+              "worst_price_roi": 0.06325162751757576,
+              "profit_units": 2.654807748529938
+            },
+            "removed": {
+              "n": 22,
+              "raw_signals": 22,
+              "wins": 19,
+              "losses": 3,
+              "pushes": 0,
+              "roi": 0.20027939251177254,
+              "median_roi": 0.20027939251177254,
+              "worst_price_roi": 0.15748845343148374,
+              "profit_units": 4.406146635258996
+            },
+            "wins_lost": 19,
+            "losses_avoided": 3,
+            "roi_lift": -0.04779567237304931,
+            "unit_profit_change": -4.406146635258995,
+            "bets_retained_pct": 0.5925925925925926
+          },
+          "validation": {
+            "base": {
+              "n": 32,
+              "raw_signals": 32,
+              "wins": 28,
+              "losses": 4,
+              "pushes": 0,
+              "roi": 0.06944907890257504,
+              "median_roi": 0.06944907890257504,
+              "worst_price_roi": 0.03653686370035529,
+              "profit_units": 2.2223705248824013
+            },
+            "kept": {
+              "n": 21,
+              "raw_signals": 21,
+              "wins": 18,
+              "losses": 3,
+              "pushes": 0,
+              "roi": 0.056875701979631064,
+              "median_roi": 0.056875701979631064,
+              "worst_price_roi": 0.03627888169181232,
+              "profit_units": 1.1943897415722524
+            },
+            "removed": {
+              "n": 11,
+              "raw_signals": 11,
+              "wins": 10,
+              "losses": 1,
+              "pushes": 0,
+              "roi": 0.09345279848274081,
+              "median_roi": 0.09345279848274081,
+              "worst_price_roi": 0.03702937480757368,
+              "profit_units": 1.0279807833101489
+            },
+            "wins_lost": 10,
+            "losses_avoided": 1,
+            "roi_lift": -0.012573376922943975,
+            "unit_profit_change": -1.0279807833101489,
+            "bets_retained_pct": 0.65625
+          },
+          "holdout": {
+            "base": {
+              "n": 55,
+              "raw_signals": 55,
+              "wins": 47,
+              "losses": 8,
+              "pushes": 0,
+              "roi": 0.05427061541534664,
+              "median_roi": 0.05427061541534664,
+              "worst_price_roi": 0.05427061541534664,
+              "profit_units": 2.984883847844065
+            },
+            "kept": {
+              "n": 27,
+              "raw_signals": 27,
+              "wins": 25,
+              "losses": 2,
+              "pushes": 0,
+              "roi": 0.17597797933669795,
+              "median_roi": 0.17597797933669795,
+              "worst_price_roi": 0.17597797933669795,
+              "profit_units": 4.751405442090845
+            },
+            "removed": {
+              "n": 28,
+              "raw_signals": 28,
+              "wins": 22,
+              "losses": 6,
+              "pushes": 0,
+              "roi": -0.063090056937385,
+              "median_roi": -0.063090056937385,
+              "worst_price_roi": -0.063090056937385,
+              "profit_units": -1.7665215942467798
+            },
+            "wins_lost": 22,
+            "losses_avoided": 6,
+            "roi_lift": 0.12170736392135131,
+            "unit_profit_change": 1.7665215942467798,
+            "bets_retained_pct": 0.4909090909090909
+          }
+        },
+        "nonnegative_recent_net_rating_advantage": {
+          "discovery": {
+            "base": {
+              "n": 62,
+              "raw_signals": 62,
+              "wins": 56,
+              "losses": 6,
+              "pushes": 0,
+              "roi": 0.17286497521832023,
+              "median_roi": 0.17286497521832023,
+              "worst_price_roi": 0.1421259063253632,
+              "profit_units": 10.717628463535855
+            },
+            "kept": {
+              "n": 48,
+              "raw_signals": 48,
+              "wins": 43,
+              "losses": 5,
+              "pushes": 0,
+              "roi": 0.1530987801209667,
+              "median_roi": 0.1530987801209667,
+              "worst_price_roi": 0.12131219378119601,
+              "profit_units": 7.348741445806402
+            },
+            "removed": {
+              "n": 14,
+              "raw_signals": 14,
+              "wins": 13,
+              "losses": 1,
+              "pushes": 0,
+              "roi": 0.2406347869806751,
+              "median_roi": 0.2406347869806751,
+              "worst_price_roi": 0.21348720647679362,
+              "profit_units": 3.3688870177294516
+            },
+            "wins_lost": 13,
+            "losses_avoided": 1,
+            "roi_lift": -0.01976619509735353,
+            "unit_profit_change": -3.3688870177294525,
+            "bets_retained_pct": 0.7741935483870968
+          },
+          "confirmation": {
+            "base": {
+              "n": 54,
+              "raw_signals": 54,
+              "wins": 46,
+              "losses": 8,
+              "pushes": 0,
+              "roi": 0.13075841451460987,
+              "median_roi": 0.13075841451460987,
+              "worst_price_roi": 0.1016444084454642,
+              "profit_units": 7.060954383788934
+            },
+            "kept": {
+              "n": 42,
+              "raw_signals": 42,
+              "wins": 36,
+              "losses": 6,
+              "pushes": 0,
+              "roi": 0.14756692460731896,
+              "median_roi": 0.14756692460731896,
+              "worst_price_roi": 0.11868918237317755,
+              "profit_units": 6.197810833507396
+            },
+            "removed": {
+              "n": 12,
+              "raw_signals": 12,
+              "wins": 10,
+              "losses": 2,
+              "pushes": 0,
+              "roi": 0.07192862919012816,
+              "median_roi": 0.07192862919012816,
+              "worst_price_roi": 0.041987699698467516,
+              "profit_units": 0.8631435502815379
+            },
+            "wins_lost": 10,
+            "losses_avoided": 2,
+            "roi_lift": 0.01680851009270909,
+            "unit_profit_change": -0.8631435502815377,
+            "bets_retained_pct": 0.7777777777777778
+          },
+          "validation": {
+            "base": {
+              "n": 32,
+              "raw_signals": 32,
+              "wins": 28,
+              "losses": 4,
+              "pushes": 0,
+              "roi": 0.06944907890257504,
+              "median_roi": 0.06944907890257504,
+              "worst_price_roi": 0.03653686370035529,
+              "profit_units": 2.2223705248824013
+            },
+            "kept": {
+              "n": 25,
+              "raw_signals": 25,
+              "wins": 23,
+              "losses": 2,
+              "pushes": 0,
+              "roi": 0.12064994752835752,
+              "median_roi": 0.12064994752835752,
+              "worst_price_roi": 0.08429827785404673,
+              "profit_units": 3.016248688208938
+            },
+            "removed": {
+              "n": 7,
+              "raw_signals": 7,
+              "wins": 5,
+              "losses": 2,
+              "pushes": 0,
+              "roi": -0.11341116618950527,
+              "median_roi": -0.11341116618950527,
+              "worst_price_roi": -0.13403961541997125,
+              "profit_units": -0.7938781633265368
+            },
+            "wins_lost": 5,
+            "losses_avoided": 2,
+            "roi_lift": 0.05120086862578248,
+            "unit_profit_change": 0.7938781633265366,
+            "bets_retained_pct": 0.78125
+          },
+          "holdout": {
+            "base": {
+              "n": 55,
+              "raw_signals": 55,
+              "wins": 47,
+              "losses": 8,
+              "pushes": 0,
+              "roi": 0.05427061541534664,
+              "median_roi": 0.05427061541534664,
+              "worst_price_roi": 0.05427061541534664,
+              "profit_units": 2.984883847844065
+            },
+            "kept": {
+              "n": 53,
+              "raw_signals": 53,
+              "wins": 45,
+              "losses": 8,
+              "pushes": 0,
+              "roi": 0.016806909448778145,
+              "median_roi": 0.016806909448778145,
+              "worst_price_roi": 0.016806909448778145,
+              "profit_units": 0.8907662007852416
+            },
+            "removed": {
+              "n": 2,
+              "raw_signals": 2,
+              "wins": 2,
+              "losses": 0,
+              "pushes": 0,
+              "roi": 1.0470588235294118,
+              "median_roi": 1.0470588235294118,
+              "worst_price_roi": 1.0470588235294118,
+              "profit_units": 2.0941176470588236
+            },
+            "wins_lost": 2,
+            "losses_avoided": 0,
+            "roi_lift": -0.03746370596656849,
+            "unit_profit_change": -2.0941176470588236,
+            "bets_retained_pct": 0.9636363636363636
+          }
+        },
+        "nonnegative_recent_true_shooting_advantage": {
+          "discovery": {
+            "base": {
+              "n": 62,
+              "raw_signals": 62,
+              "wins": 56,
+              "losses": 6,
+              "pushes": 0,
+              "roi": 0.17286497521832023,
+              "median_roi": 0.17286497521832023,
+              "worst_price_roi": 0.1421259063253632,
+              "profit_units": 10.717628463535855
+            },
+            "kept": {
+              "n": 44,
+              "raw_signals": 44,
+              "wins": 40,
+              "losses": 4,
+              "pushes": 0,
+              "roi": 0.19937721207455697,
+              "median_roi": 0.19937721207455697,
+              "worst_price_roi": 0.16585451052714772,
+              "profit_units": 8.772597331280506
+            },
+            "removed": {
+              "n": 18,
+              "raw_signals": 18,
+              "wins": 16,
+              "losses": 2,
+              "pushes": 0,
+              "roi": 0.10805728512529704,
+              "median_roi": 0.10805728512529704,
+              "worst_price_roi": 0.08412265160988991,
+              "profit_units": 1.9450311322553466
+            },
+            "wins_lost": 16,
+            "losses_avoided": 2,
+            "roi_lift": 0.026512236856236743,
+            "unit_profit_change": -1.9450311322553482,
+            "bets_retained_pct": 0.7096774193548387
+          },
+          "confirmation": {
+            "base": {
+              "n": 54,
+              "raw_signals": 54,
+              "wins": 46,
+              "losses": 8,
+              "pushes": 0,
+              "roi": 0.13075841451460987,
+              "median_roi": 0.13075841451460987,
+              "worst_price_roi": 0.1016444084454642,
+              "profit_units": 7.060954383788934
+            },
+            "kept": {
+              "n": 38,
+              "raw_signals": 38,
+              "wins": 32,
+              "losses": 6,
+              "pushes": 0,
+              "roi": 0.08435718719955271,
+              "median_roi": 0.08435718719955271,
+              "worst_price_roi": 0.05607471519998391,
+              "profit_units": 3.205573113583003
+            },
+            "removed": {
+              "n": 16,
+              "raw_signals": 16,
+              "wins": 14,
+              "losses": 2,
+              "pushes": 0,
+              "roi": 0.2409613293878707,
+              "median_roi": 0.2409613293878707,
+              "worst_price_roi": 0.2098724299034799,
+              "profit_units": 3.8553812702059314
+            },
+            "wins_lost": 14,
+            "losses_avoided": 2,
+            "roi_lift": -0.046401227315057164,
+            "unit_profit_change": -3.855381270205931,
+            "bets_retained_pct": 0.7037037037037037
+          },
+          "validation": {
+            "base": {
+              "n": 32,
+              "raw_signals": 32,
+              "wins": 28,
+              "losses": 4,
+              "pushes": 0,
+              "roi": 0.06944907890257504,
+              "median_roi": 0.06944907890257504,
+              "worst_price_roi": 0.03653686370035529,
+              "profit_units": 2.2223705248824013
+            },
+            "kept": {
+              "n": 20,
+              "raw_signals": 20,
+              "wins": 18,
+              "losses": 2,
+              "pushes": 0,
+              "roi": 0.07604768293692646,
+              "median_roi": 0.07604768293692646,
+              "worst_price_roi": 0.050814483367403185,
+              "profit_units": 1.520953658738529
+            },
+            "removed": {
+              "n": 12,
+              "raw_signals": 12,
+              "wins": 10,
+              "losses": 2,
+              "pushes": 0,
+              "roi": 0.05845140551198935,
+              "median_roi": 0.05845140551198935,
+              "worst_price_roi": 0.012740830921942134,
+              "profit_units": 0.7014168661438722
+            },
+            "wins_lost": 10,
+            "losses_avoided": 2,
+            "roi_lift": 0.0065986040343514185,
+            "unit_profit_change": -0.7014168661438722,
+            "bets_retained_pct": 0.625
+          },
+          "holdout": {
+            "base": {
+              "n": 55,
+              "raw_signals": 55,
+              "wins": 47,
+              "losses": 8,
+              "pushes": 0,
+              "roi": 0.05427061541534664,
+              "median_roi": 0.05427061541534664,
+              "worst_price_roi": 0.05427061541534664,
+              "profit_units": 2.984883847844065
+            },
+            "kept": {
+              "n": 44,
+              "raw_signals": 44,
+              "wins": 38,
+              "losses": 6,
+              "pushes": 0,
+              "roi": 0.029367664240507393,
+              "median_roi": 0.029367664240507393,
+              "worst_price_roi": 0.029367664240507393,
+              "profit_units": 1.2921772265823253
+            },
+            "removed": {
+              "n": 11,
+              "raw_signals": 11,
+              "wins": 9,
+              "losses": 2,
+              "pushes": 0,
+              "roi": 0.15388242011470363,
+              "median_roi": 0.15388242011470363,
+              "worst_price_roi": 0.15388242011470363,
+              "profit_units": 1.6927066212617399
+            },
+            "wins_lost": 9,
+            "losses_avoided": 2,
+            "roi_lift": -0.024902951174839247,
+            "unit_profit_change": -1.6927066212617399,
+            "bets_retained_pct": 0.8
+          }
+        }
+      },
       "eligible_train_only_loss_filters": 0,
       "shortlist_train_ranked_not_holdout_ranked": [],
       "train_eligible_filters_improving_roi_in_all_later_phases": 0,
@@ -6467,6 +7443,494 @@
             "roi_lift": -0.018714079193007133,
             "unit_profit_change": -4.109650579599428,
             "bets_retained_pct": 0.8349514563106796
+          }
+        }
+      },
+      "structural_zero_threshold_gates": {
+        "not_more_travel_than_opponent": {
+          "discovery": {
+            "base": {
+              "n": 164,
+              "raw_signals": 164,
+              "wins": 91,
+              "losses": 73,
+              "pushes": 0,
+              "roi": 0.05887702693762199,
+              "median_roi": 0.05887702693762199,
+              "worst_price_roi": 0.03529976088236191,
+              "profit_units": 9.655832417770007
+            },
+            "kept": {
+              "n": 74,
+              "raw_signals": 74,
+              "wins": 43,
+              "losses": 31,
+              "pushes": 0,
+              "roi": 0.10933660933660933,
+              "median_roi": 0.10933660933660933,
+              "worst_price_roi": 0.08584697276383912,
+              "profit_units": 8.09090909090909
+            },
+            "removed": {
+              "n": 90,
+              "raw_signals": 90,
+              "wins": 48,
+              "losses": 42,
+              "pushes": 0,
+              "roi": 0.017388036965121312,
+              "median_roi": 0.017388036965121312,
+              "worst_price_roi": -0.006261279997963802,
+              "profit_units": 1.564923326860918
+            },
+            "wins_lost": 48,
+            "losses_avoided": 42,
+            "roi_lift": 0.05045958239898733,
+            "unit_profit_change": -1.5649233268609173,
+            "bets_retained_pct": 0.45121951219512196
+          },
+          "confirmation": {
+            "base": {
+              "n": 102,
+              "raw_signals": 102,
+              "wins": 55,
+              "losses": 46,
+              "pushes": 1,
+              "roi": 0.03917683080249347,
+              "median_roi": 0.03917683080249347,
+              "worst_price_roi": -0.008709954499498398,
+              "profit_units": 3.9960367418543337
+            },
+            "kept": {
+              "n": 44,
+              "raw_signals": 44,
+              "wins": 25,
+              "losses": 18,
+              "pushes": 1,
+              "roi": 0.10762756842823563,
+              "median_roi": 0.10762756842823563,
+              "worst_price_roi": 0.06594342715156465,
+              "profit_units": 4.735613010842368
+            },
+            "removed": {
+              "n": 58,
+              "raw_signals": 58,
+              "wins": 30,
+              "losses": 28,
+              "pushes": 0,
+              "roi": -0.012751314982552319,
+              "median_roi": -0.012751314982552319,
+              "worst_price_roi": -0.06534355437271865,
+              "profit_units": -0.7395762689880345
+            },
+            "wins_lost": 30,
+            "losses_avoided": 28,
+            "roi_lift": 0.06845073762574216,
+            "unit_profit_change": 0.7395762689880341,
+            "bets_retained_pct": 0.43137254901960786
+          },
+          "validation": {
+            "base": {
+              "n": 59,
+              "raw_signals": 59,
+              "wins": 33,
+              "losses": 25,
+              "pushes": 1,
+              "roi": 0.08186054432971557,
+              "median_roi": 0.08186054432971557,
+              "worst_price_roi": 0.044868742518349894,
+              "profit_units": 4.829772115453219
+            },
+            "kept": {
+              "n": 21,
+              "raw_signals": 21,
+              "wins": 10,
+              "losses": 11,
+              "pushes": 0,
+              "roi": -0.09264426703260645,
+              "median_roi": -0.09264426703260645,
+              "worst_price_roi": -0.12320258011288751,
+              "profit_units": -1.9455296076847355
+            },
+            "removed": {
+              "n": 38,
+              "raw_signals": 38,
+              "wins": 23,
+              "losses": 14,
+              "pushes": 1,
+              "roi": 0.1782974137667883,
+              "median_roi": 0.1782974137667883,
+              "worst_price_roi": 0.1377502629198232,
+              "profit_units": 6.775301723137955
+            },
+            "wins_lost": 23,
+            "losses_avoided": 14,
+            "roi_lift": -0.17450481136232202,
+            "unit_profit_change": -6.775301723137954,
+            "bets_retained_pct": 0.3559322033898305
+          },
+          "holdout": {
+            "base": {
+              "n": 103,
+              "raw_signals": 103,
+              "wins": 62,
+              "losses": 41,
+              "pushes": 0,
+              "roi": 0.14707292758828314,
+              "median_roi": 0.14707292758828314,
+              "worst_price_roi": 0.14642347980924483,
+              "profit_units": 15.148511541593164
+            },
+            "kept": {
+              "n": 50,
+              "raw_signals": 50,
+              "wins": 37,
+              "losses": 13,
+              "pushes": 0,
+              "roi": 0.4043116009328242,
+              "median_roi": 0.4043116009328242,
+              "worst_price_roi": 0.4029737385080053,
+              "profit_units": 20.21558004664121
+            },
+            "removed": {
+              "n": 53,
+              "raw_signals": 53,
+              "wins": 25,
+              "losses": 28,
+              "pushes": 0,
+              "roi": -0.09560506613298199,
+              "median_roi": -0.09560506613298199,
+              "worst_price_roi": -0.09560506613298199,
+              "profit_units": -5.067068505048045
+            },
+            "wins_lost": 25,
+            "losses_avoided": 28,
+            "roi_lift": 0.2572386733445411,
+            "unit_profit_change": 5.067068505048047,
+            "bets_retained_pct": 0.4854368932038835
+          }
+        },
+        "nonnegative_recent_net_rating_advantage": {
+          "discovery": {
+            "base": {
+              "n": 164,
+              "raw_signals": 164,
+              "wins": 91,
+              "losses": 73,
+              "pushes": 0,
+              "roi": 0.05887702693762199,
+              "median_roi": 0.05887702693762199,
+              "worst_price_roi": 0.03529976088236191,
+              "profit_units": 9.655832417770007
+            },
+            "kept": {
+              "n": 136,
+              "raw_signals": 136,
+              "wins": 78,
+              "losses": 58,
+              "pushes": 0,
+              "roi": 0.09436396690843146,
+              "median_roi": 0.09436396690843146,
+              "worst_price_roi": 0.07009535843990716,
+              "profit_units": 12.83349949954668
+            },
+            "removed": {
+              "n": 28,
+              "raw_signals": 28,
+              "wins": 13,
+              "losses": 15,
+              "pushes": 0,
+              "roi": -0.11348811006345254,
+              "median_roi": -0.11348811006345254,
+              "worst_price_roi": -0.13370742725428644,
+              "profit_units": -3.1776670817766712
+            },
+            "wins_lost": 13,
+            "losses_avoided": 15,
+            "roi_lift": 0.03548693997080947,
+            "unit_profit_change": 3.177667081776672,
+            "bets_retained_pct": 0.8292682926829268
+          },
+          "confirmation": {
+            "base": {
+              "n": 102,
+              "raw_signals": 102,
+              "wins": 55,
+              "losses": 46,
+              "pushes": 1,
+              "roi": 0.03917683080249347,
+              "median_roi": 0.03917683080249347,
+              "worst_price_roi": -0.008709954499498398,
+              "profit_units": 3.9960367418543337
+            },
+            "kept": {
+              "n": 85,
+              "raw_signals": 85,
+              "wins": 44,
+              "losses": 40,
+              "pushes": 1,
+              "roi": -4.6626566419602665e-05,
+              "median_roi": -4.6626566419602665e-05,
+              "worst_price_roi": -0.04924664402657849,
+              "profit_units": -0.003963258145666226
+            },
+            "removed": {
+              "n": 17,
+              "raw_signals": 17,
+              "wins": 11,
+              "losses": 6,
+              "pushes": 0,
+              "roi": 0.2352941176470588,
+              "median_roi": 0.2352941176470588,
+              "worst_price_roi": 0.1939734931359021,
+              "profit_units": 3.9999999999999996
+            },
+            "wins_lost": 11,
+            "losses_avoided": 6,
+            "roi_lift": -0.03922345736891307,
+            "unit_profit_change": -4.0,
+            "bets_retained_pct": 0.8333333333333334
+          },
+          "validation": {
+            "base": {
+              "n": 59,
+              "raw_signals": 59,
+              "wins": 33,
+              "losses": 25,
+              "pushes": 1,
+              "roi": 0.08186054432971557,
+              "median_roi": 0.08186054432971557,
+              "worst_price_roi": 0.044868742518349894,
+              "profit_units": 4.829772115453219
+            },
+            "kept": {
+              "n": 52,
+              "raw_signals": 52,
+              "wins": 29,
+              "losses": 22,
+              "pushes": 1,
+              "roi": 0.081329556591647,
+              "median_roi": 0.081329556591647,
+              "worst_price_roi": 0.04366034764206179,
+              "profit_units": 4.229136942765645
+            },
+            "removed": {
+              "n": 7,
+              "raw_signals": 7,
+              "wins": 4,
+              "losses": 3,
+              "pushes": 0,
+              "roi": 0.08580502466965348,
+              "median_roi": 0.08580502466965348,
+              "worst_price_roi": 0.053845390170775866,
+              "profit_units": 0.6006351726875744
+            },
+            "wins_lost": 4,
+            "losses_avoided": 3,
+            "roi_lift": -0.0005309877380685613,
+            "unit_profit_change": -0.600635172687574,
+            "bets_retained_pct": 0.8813559322033898
+          },
+          "holdout": {
+            "base": {
+              "n": 103,
+              "raw_signals": 103,
+              "wins": 62,
+              "losses": 41,
+              "pushes": 0,
+              "roi": 0.14707292758828314,
+              "median_roi": 0.14707292758828314,
+              "worst_price_roi": 0.14642347980924483,
+              "profit_units": 15.148511541593164
+            },
+            "kept": {
+              "n": 87,
+              "raw_signals": 87,
+              "wins": 55,
+              "losses": 32,
+              "pushes": 0,
+              "roi": 0.20692765122594073,
+              "median_roi": 0.20692765122594073,
+              "worst_price_roi": 0.2063808759415343,
+              "profit_units": 18.002705656656843
+            },
+            "removed": {
+              "n": 16,
+              "raw_signals": 16,
+              "wins": 7,
+              "losses": 9,
+              "pushes": 0,
+              "roi": -0.17838713219148003,
+              "median_roi": -0.17838713219148003,
+              "worst_price_roi": -0.17959486166007907,
+              "profit_units": -2.8541941150636805
+            },
+            "wins_lost": 7,
+            "losses_avoided": 9,
+            "roi_lift": 0.05985472363765759,
+            "unit_profit_change": 2.854194115063679,
+            "bets_retained_pct": 0.8446601941747572
+          }
+        },
+        "nonnegative_recent_true_shooting_advantage": {
+          "discovery": {
+            "base": {
+              "n": 164,
+              "raw_signals": 164,
+              "wins": 91,
+              "losses": 73,
+              "pushes": 0,
+              "roi": 0.05887702693762199,
+              "median_roi": 0.05887702693762199,
+              "worst_price_roi": 0.03529976088236191,
+              "profit_units": 9.655832417770007
+            },
+            "kept": {
+              "n": 119,
+              "raw_signals": 119,
+              "wins": 70,
+              "losses": 49,
+              "pushes": 0,
+              "roi": 0.1230060252911474,
+              "median_roi": 0.1230060252911474,
+              "worst_price_roi": 0.09709459792136456,
+              "profit_units": 14.637717009646542
+            },
+            "removed": {
+              "n": 45,
+              "raw_signals": 45,
+              "wins": 21,
+              "losses": 24,
+              "pushes": 0,
+              "roi": -0.11070854648614521,
+              "median_roi": -0.11070854648614521,
+              "worst_price_roi": -0.1281132526207784,
+              "profit_units": -4.981884591876534
+            },
+            "wins_lost": 21,
+            "losses_avoided": 24,
+            "roi_lift": 0.06412899835352541,
+            "unit_profit_change": 4.981884591876534,
+            "bets_retained_pct": 0.725609756097561
+          },
+          "confirmation": {
+            "base": {
+              "n": 102,
+              "raw_signals": 102,
+              "wins": 55,
+              "losses": 46,
+              "pushes": 1,
+              "roi": 0.03917683080249347,
+              "median_roi": 0.03917683080249347,
+              "worst_price_roi": -0.008709954499498398,
+              "profit_units": 3.9960367418543337
+            },
+            "kept": {
+              "n": 76,
+              "raw_signals": 76,
+              "wins": 43,
+              "losses": 32,
+              "pushes": 1,
+              "roi": 0.09324928727320296,
+              "median_roi": 0.09324928727320296,
+              "worst_price_roi": 0.04121494259089994,
+              "profit_units": 7.0869458327634245
+            },
+            "removed": {
+              "n": 26,
+              "raw_signals": 26,
+              "wins": 12,
+              "losses": 14,
+              "pushes": 0,
+              "roi": -0.1188811188811189,
+              "median_roi": -0.1188811188811189,
+              "worst_price_roi": -0.154644269071432,
+              "profit_units": -3.0909090909090913
+            },
+            "wins_lost": 12,
+            "losses_avoided": 14,
+            "roi_lift": 0.05407245647070949,
+            "unit_profit_change": 3.090909090909091,
+            "bets_retained_pct": 0.7450980392156863
+          },
+          "validation": {
+            "base": {
+              "n": 59,
+              "raw_signals": 59,
+              "wins": 33,
+              "losses": 25,
+              "pushes": 1,
+              "roi": 0.08186054432971557,
+              "median_roi": 0.08186054432971557,
+              "worst_price_roi": 0.044868742518349894,
+              "profit_units": 4.829772115453219
+            },
+            "kept": {
+              "n": 46,
+              "raw_signals": 46,
+              "wins": 25,
+              "losses": 20,
+              "pushes": 1,
+              "roi": 0.05663050497708331,
+              "median_roi": 0.05663050497708331,
+              "worst_price_roi": 0.018303702044907798,
+              "profit_units": 2.605003228945832
+            },
+            "removed": {
+              "n": 13,
+              "raw_signals": 13,
+              "wins": 8,
+              "losses": 5,
+              "pushes": 0,
+              "roi": 0.1711360681928759,
+              "median_roi": 0.1711360681928759,
+              "worst_price_roi": 0.13886811650129885,
+              "profit_units": 2.2247688865073867
+            },
+            "wins_lost": 8,
+            "losses_avoided": 5,
+            "roi_lift": -0.02523003935263226,
+            "unit_profit_change": -2.2247688865073867,
+            "bets_retained_pct": 0.7796610169491526
+          },
+          "holdout": {
+            "base": {
+              "n": 103,
+              "raw_signals": 103,
+              "wins": 62,
+              "losses": 41,
+              "pushes": 0,
+              "roi": 0.14707292758828314,
+              "median_roi": 0.14707292758828314,
+              "worst_price_roi": 0.14642347980924483,
+              "profit_units": 15.148511541593164
+            },
+            "kept": {
+              "n": 71,
+              "raw_signals": 71,
+              "wins": 46,
+              "losses": 25,
+              "pushes": 0,
+              "roi": 0.23713841716416964,
+              "median_roi": 0.23713841716416964,
+              "worst_price_roi": 0.2365817172810766,
+              "profit_units": 16.836827618656045
+            },
+            "removed": {
+              "n": 32,
+              "raw_signals": 32,
+              "wins": 16,
+              "losses": 16,
+              "pushes": 0,
+              "roi": -0.052759877408215014,
+              "median_roi": -0.052759877408215014,
+              "worst_price_roi": -0.05361510958138197,
+              "profit_units": -1.6883160770628804
+            },
+            "wins_lost": 16,
+            "losses_avoided": 16,
+            "roi_lift": 0.0900654895758865,
+            "unit_profit_change": 1.688316077062881,
+            "bets_retained_pct": 0.6893203883495146
           }
         }
       },
