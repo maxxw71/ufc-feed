@@ -1,0 +1,39 @@
+name: NBA Injury PDF Layout Probe
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'nba/probe_official_injury_layout.py'
+      - '.github/workflows/nba-injury-layout-probe.yml'
+permissions:
+  contents: write
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+        with: {fetch-depth: 0}
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.12'}
+      - run: python -m pip install -q pypdf
+      - run: python nba/probe_official_injury_layout.py
+      - shell: bash
+        run: |
+          set -euo pipefail
+          cp nba/availability/historical_by_season/pdf_layout_probe.json /tmp/nba_layout_probe.json
+          git config user.name appwiza-nba-bot
+          git config user.email actions@users.noreply.github.com
+          for attempt in 1 2 3; do
+            git fetch origin main
+            git reset --hard origin/main
+            git clean -fd
+            cp /tmp/nba_layout_probe.json nba/availability/historical_by_season/pdf_layout_probe.json
+            git add nba/availability/historical_by_season/pdf_layout_probe.json
+            if git diff --cached --quiet; then exit 0; fi
+            git commit -m 'nba: record official PDF extraction format comparison'
+            if git push origin HEAD:main; then exit 0; fi
+            sleep 3
+          done
+          exit 1
