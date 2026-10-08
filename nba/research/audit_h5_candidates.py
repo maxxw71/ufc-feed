@@ -130,7 +130,7 @@ for name in REVIEW:
     ss={(r["game_id"],r["team_id"]) for r in rr}
     selection_sets[name]=ss
     independent=[r for r in rr if not live_methods.get((str(r["game_id"]),market_name,str(r["selection"])))]
-    overlap=[r for r in rr if live_methods.get((str(r["game_id"]),market_name,str(r["selection"]))]
+    overlap=[r for r in rr if live_methods.get((str(r["game_id"]),market_name,str(r["selection"])))]
     phase={key:metrics([r for r in rr if r["season"] in seasons])
            for key,seasons in (("discA",A),("discB",B),("validation",V),("holdout",H))}
     valid=[(f,op,cut) for f,op,cut in conds if op!="=="]
