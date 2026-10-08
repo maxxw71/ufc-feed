@@ -51,6 +51,10 @@ jobs:
           LIMIT="${{ github.event.inputs.max_games || '' }}"
           EXTRA=()
           if [[ -n "$LIMIT" ]]; then EXTRA+=(--max-games "$LIMIT"); fi
+          # Daily collection refreshes active seasons; manual runs retain full backfill behavior.
+          if [[ "${{ github.event_name }}" == "schedule" ]]; then
+            EXTRA+=(--slice '2026-27|Pre Season' --slice '2026-27|Regular Season')
+          fi
           python nba/bootstrap_dataset.py "${EXTRA[@]}"
 
       - name: Integrity checks

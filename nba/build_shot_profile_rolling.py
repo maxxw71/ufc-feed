@@ -9,7 +9,7 @@ WINDOWS=(3,5,10)
 
 def rgz(p):
     if not p.exists():return []
-    with gzip.open(p,"rt",encoding="utf-8",newline="") as f:return list(csv.DictReader(f))
+    with gzip.open(p,"rt",encoding="utf-8",newline="") as f:yield from csv.DictReader(f)
 def wgz(p,rows):
     rows=list(rows);fs=[]
     for r in rows:
@@ -57,7 +57,7 @@ for p in DATA.glob("*_*/regular_season/playbyplay.csv.gz"):
     for r in rgz(p):
         if not r.get("game_id") or not r.get("team_id") or not truth(r.get("is_field_goal")):continue
         if free_throw(r) or shot_dist(r) is None:continue
-        shots[(r["game_id"],r["team_id"])].append(r)
+        shots[(r["game_id"],r["team_id"])].append((shot_dist(r),is_three(r),made(r)))
 
 team_games=defaultdict(list)
 for (gid,tid),arr in shots.items():
@@ -66,20 +66,20 @@ for (gid,tid),arr in shots.items():
     row={"season":g.get("season"),"game_id":gid,"game_date":g.get("game_date"),"team_id":tid}
     total=len(arr)
     zones={
-      "rim":[r for r in arr if shot_dist(r)<5],
-      "short":[r for r in arr if 5<=shot_dist(r)<15],
-      "mid":[r for r in arr if shot_dist(r)>=15 and not is_three(r)],
-      "three":[r for r in arr if is_three(r)]
+      "rim":[r for r in arr if r[0]<5],
+      "short":[r for r in arr if 5<=r[0]<15],
+      "mid":[r for r in arr if r[0]>=15 and not r[1]],
+      "three":[r for r in arr if r[1]]
     }
     for name,z in zones.items():
-        m=sum(1 for r in z if made(r))
+        m=sum(1 for r in z if r[2])
         row[f"{name}_fga"]=len(z);row[f"{name}_fgm"]=m
         row[f"{name}_rate"]=len(z)/total if total else None
         row[f"{name}_fg_pct"]=m/len(z) if z else None
     # Backward-compatible aliases: historical discovery code used "long" for 3-point range.
     row["long_fga"]=row["three_fga"];row["long_fgm"]=row["three_fgm"]
     row["long_rate"]=row["three_rate"];row["long_fg_pct"]=row["three_fg_pct"]
-    row["avg_shot_distance"]=sum(shot_dist(r) for r in arr)/total if total else None
+    row["avg_shot_distance"]=sum(r[0] for r in arr)/total if total else None
     row["paintish_rate"]=(row["rim_fga"]+row["short_fga"])/total if total else None
     row["midrange_rate"]=row["mid_fga"]/total if total else None
     team_games[(g.get("season"),tid)].append((when,row))

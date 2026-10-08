@@ -7,7 +7,7 @@ from datetime import datetime,timezone
 NBA=Path(__file__).resolve().parent;DATA=NBA/"data";OUT=NBA/"research"/"gap_audit";OUT.mkdir(parents=True,exist_ok=True)
 def rgz(p):
     if not p.exists():return []
-    with gzip.open(p,"rt",encoding="utf-8",newline="") as f:return list(csv.DictReader(f))
+    with gzip.open(p,"rt",encoding="utf-8",newline="") as f:yield from csv.DictReader(f)
 def n(v):
     try:return float(v)
     except:return None

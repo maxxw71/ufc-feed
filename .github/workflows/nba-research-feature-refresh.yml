@@ -50,33 +50,6 @@ jobs:
           git reset --hard origin/main
       - run: python -m pip install --upgrade requests
 
-      - name: Build schedule and fatigue context
-        run: python nba/build_context.py
-
-      - name: Build rolling team/player form
-        run: python nba/build_rolling_features.py
-
-      - name: Build pregame strength
-        run: python nba/build_pregame_strength.py
-
-      - name: Build game-flow features
-        run: python nba/build_game_flow_features.py
-
-      - name: Enrich historical player profiles
-        run: python nba/players/backfill_player_profiles.py
-
-      - name: Build availability impact
-        run: python nba/build_availability_impact.py
-
-      - name: Build historical market features
-        run: python nba/build_market_features.py
-
-      - name: Build player workload
-        run: python nba/build_player_workload.py
-
-      - name: Build coverage manifest
-        run: python nba/build_manifest.py
-
       - name: Commit research feature refresh
         shell: bash
         run: |
