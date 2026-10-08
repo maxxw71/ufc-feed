@@ -1,0 +1,46 @@
+name: NBA H3 OVER Loss Forensics
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'nba/research/audit_h3_over_losses.py'
+      - '.github/workflows/nba-h3-over-loss-forensics.yml'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: nba-h3-over-loss-forensics
+  cancel-in-progress: true
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python nba/research/audit_h3_over_losses.py
+      - shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name appwiza-nba-bot
+          git config user.email actions@users.noreply.github.com
+          git add nba/research/hunt_v3/h3_over_002_loss_forensics.json nba/research/hunt_v3/hunt_v3_over_robustness.json
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m 'nba: add H3 OVER loss forensics results'
+          git reset --hard HEAD
+          git clean -fd
+          for attempt in 1 2 3; do
+            git fetch origin main
+            if git rebase origin/main && git push; then exit 0; fi
+            git rebase --abort 2>/dev/null || true
+            sleep 3
+          done
+          exit 1
