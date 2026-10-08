@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-import argparse,csv,gzip,io,json,re,time,urllib.request,urllib.error,subprocess
+import argparse,csv,gzip,io,json,re,time,urllib.request,urllib.error,subprocess,hashlib
 from collections import defaultdict
 from datetime import datetime,timedelta,timezone
 from pathlib import Path
@@ -135,6 +135,22 @@ for day,items in sorted(by_day.items()):
         })
 with gzip.open(OUT/"coverage_games.csv.gz","wt",encoding="utf-8",newline="") as f:
     fields=list(rows[0]) if rows else ["_empty"];w=csv.DictWriter(f,fieldnames=fields);w.writeheader();w.writerows(rows)
+
+report_rows=[]
+for u in sorted(set(selected.values())):
+    txt=texts.get(u,"")
+    if not txt:continue
+    report_rows.append({
+      "season":SEASON,"report_url":u,
+      "text_sha256":hashlib.sha256(txt.encode("utf-8")).hexdigest(),
+      "text_chars":len(txt),
+      "status_terms":len(re.findall(r"\b(?:Out|Questionable|Probable|Doubtful|Available)\b",txt,re.I)),
+      "report_text":txt
+    })
+with gzip.open(OUT/"report_texts.csv.gz","wt",encoding="utf-8",newline="") as f:
+    fields=list(report_rows[0]) if report_rows else ["_empty"];w=csv.DictWriter(f,fieldnames=fields);w.writeheader();w.writerows(report_rows)
+(OUT/"download_errors.json").write_text(json.dumps(download_errors,indent=2)+"\n")
+
 summary={"generated_at_utc":datetime.now(timezone.utc).isoformat(),"season":SEASON,"games":len(rows),
  "unique_game_dates":len(by_day),"dates_with_any_report":sum(1 for d in by_day if existing.get(d)),
  "games_with_pre_tip_report":sum(1 for r in rows if r["report_found"]),
@@ -142,6 +158,7 @@ summary={"generated_at_utc":datetime.now(timezone.utc).isoformat(),"season":SEAS
  "games_with_both_teams_mentioned":sum(1 for r in rows if r["both_teams_mentioned"]),
  "unique_reports_selected":len(set(selected.values())),"unique_reports_downloaded":sum(1 for u in set(selected.values()) if texts.get(u)),
  "probe_non404_errors":probe_errors,"download_errors":len(download_errors),
- "policy":"Latest official NBA injury PDF nominally timestamped at least 15 minutes before tip. One season at a time with retry/backoff to avoid host throttling."}
+ "preserved_report_text_rows":len(report_rows),"parser":"pypdf PdfReader.pages",
+ "policy":"Latest official NBA injury PDF nominally timestamped at least 15 minutes before tip. One season at a time with retry/backoff; preserves extracted text for every successfully downloaded pre-tip report."}
 (OUT/"coverage_summary.json").write_text(json.dumps(summary,indent=2)+"\n")
 print(json.dumps(summary,indent=2))
