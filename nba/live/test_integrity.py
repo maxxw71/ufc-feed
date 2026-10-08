@@ -16,6 +16,42 @@ class IntegrityTests(unittest.TestCase):
         g=dict(self.g,game_date=(self.now-timedelta(hours=3)).isoformat(),completed=True,home_score=110,away_score=100,ingested_at_utc=(self.now+timedelta(seconds=1)).isoformat())
         self.assertEqual(x.standings([g],self.now)[0],{})
         g['ingested_at_utc']=self.now.isoformat();self.assertEqual(x.standings([g],self.now)[0]['1']['current_streak'],1)
+    def test_new_live_promotions_have_bookmaker_and_observed_state_guards(self):
+        root=Path(__file__).resolve().parents[1]
+        arsenal=json.loads((root/'live/arsenal.json').read_text())
+        ids={m['method_id'] for m in arsenal['methods']}
+        self.assertIn('NBA_H3_OVER_002',ids)
+        self.assertIn('NBA_STAND_002_STARTPM',ids)
+        scanner=(root/'live/scan_live_methods.py').read_text()
+        for mid in ('NBA_H3_OVER_002','NBA_STAND_002_STARTPM'):
+            self.assertIn('"method_id":"'+mid+'"',scanner) if mid=='NBA_H3_OVER_002' else self.assertIn('"'+mid+'":[',scanner)
+        self.assertIn('h_rank=val(live_stand.get(hid,{}),"conference_rank")',scanner)
+        self.assertIn('h3quote=ms.get("total_quote")',scanner)
+        self.assertIn('integrity.valid_price(ms["over_price"])',scanner)
+        # Prospective selections require an actual accepted quote; the frozen
+        # forward ledger must receive the primary live evaluations, not shadows.
+        self.assertIn('evaluations.append(h3ev)',scanner)
+        self.assertIn('evaluations.append(ev)',scanner)
+
+    def test_observed_only_standings_ranks(self):
+        t=self.now
+        completed=[]
+        for i,(home,away,hs,aw) in enumerate([
+            ('1','2',111,99),('4','5',97,102),('8','11',112,93)]):
+            completed.append({
+                'game_id':str(i),'home_team_id':home,'away_team_id':away,
+                'game_date':(t-timedelta(days=2+i)).isoformat(),
+                'ingested_at_utc':(t-timedelta(days=1)).isoformat(),
+                'completed':True,'home_score':hs,'away_score':aw
+            })
+        future=dict(completed[0],game_id='future',home_team_id='1',away_team_id='4',
+                    game_date=(t+timedelta(hours=1)).isoformat(),
+                    ingested_at_utc=(t+timedelta(hours=2)).isoformat(),home_score=0,away_score=125)
+        states,_=x.standings(completed+[future],t)
+        self.assertEqual(states['1']['conference_rank'],1)
+        self.assertEqual(states['4']['conference_rank'],2)
+        self.assertTrue(all(s['conference_rank']>=1 for s in states.values()))
+
     def test_stale_and_future_quotes(self):
         for age in (-1,31):
             q=dict(self.q,captured_at_utc=(self.now-timedelta(minutes=age)).isoformat())
