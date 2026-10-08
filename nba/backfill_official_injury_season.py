@@ -25,31 +25,59 @@ def fname(day,h):
     return f"{BASE}{day}_{hh:02d}{apm}.pdf"
 def request(url,method="HEAD",tries=4,timeout=15):
     last=None
+    headers={
+        "User-Agent":"Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 Chrome/154 Safari/537.36",
+        "Accept":"application/pdf,application/octet-stream;q=0.9,*/*;q=0.8",
+        "Accept-Language":"en-US,en;q=0.8",
+        "Connection":"close",
+    }
     if method=="GET":
+        # The official archive is sensitive to downloader/rate-limit behavior.
+        # urllib succeeded in the 2021-22 pilot where the curl-only season pass
+        # identified the URLs but downloaded 0 PDFs, so use urllib first and
+        # keep curl only as a fallback.
         for attempt in range(tries):
+            try:
+                req=urllib.request.Request(url,headers=headers)
+                with urllib.request.urlopen(req,timeout=timeout) as r:
+                    b=r.read()
+                if b[:5]==b"%PDF-":
+                    return b,None
+                last=f"urllib non-pdf payload ({len(b)} bytes)"
+            except urllib.error.HTTPError as e:
+                last=f"urllib HTTP {e.code}"
+                if e.code==404:return b"",last
+            except Exception as e:
+                last=f"urllib {e}"
+            time.sleep((attempt+1)*1.5)
+
+        for attempt in range(2):
             try:
                 cp=subprocess.run(
                     ["curl","-L","--silent","--show-error","--connect-timeout","8","--max-time",str(timeout),
-                     "--retry","2","--retry-delay","1","-A","Mozilla/5.0",url],
+                     "--retry","2","--retry-delay","1","-A",headers["User-Agent"],
+                     "-H","Accept: application/pdf,application/octet-stream;q=0.9,*/*;q=0.8",url],
                     stdout=subprocess.PIPE,stderr=subprocess.PIPE,check=False
                 )
                 if cp.returncode==0 and cp.stdout[:5]==b"%PDF-":
                     return cp.stdout,None
-                last=cp.stderr.decode("utf-8","replace").strip() or f"curl exit {cp.returncode}"
-                if "404" in last:return b"",last
+                last=cp.stderr.decode("utf-8","replace").strip() or f"curl non-pdf/exit {cp.returncode}"
             except Exception as e:
-                last=str(e)
-            time.sleep((attempt+1)*1.5)
+                last=f"curl {e}"
+            time.sleep((attempt+1)*2)
         return b"",last
+
     for attempt in range(tries):
         try:
-            req=urllib.request.Request(url,method="HEAD",headers={"User-Agent":"Mozilla/5.0"})
+            req=urllib.request.Request(url,method="HEAD",headers=headers)
             with urllib.request.urlopen(req,timeout=timeout) as r:
                 ok=r.status==200 and "pdf" in (r.headers.get("Content-Type") or "").lower()
                 return ok,None
         except urllib.error.HTTPError as e:
             last=f"HTTP {e.code}"
-            if e.code in (403,404):return False,last
+            if e.code==404:return False,last
+            # Do not permanently classify 403 as missing: it can be transient
+            # archive throttling. Back off and retry.
             time.sleep((attempt+1)*1.5)
         except Exception as e:
             last=str(e);time.sleep((attempt+1)*1.5)
