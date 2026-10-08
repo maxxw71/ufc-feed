@@ -119,6 +119,8 @@ if not upcoming:
       "policy":"Regular-season only. Evaluates frozen live arsenal against latest point-in-time data; no preseason picks.",
       "skip_reason":"no_upcoming_games"}
     (OUT/"active_picks.json").write_text(json.dumps({"generated_at_utc":now.isoformat(),"season":SEASON,"picks":[]},indent=2)+"\n")
+    (OUT/"shadow_active_picks.json").write_text(json.dumps({"generated_at_utc":now.isoformat(),"season":SEASON,"picks":[],"publication":"shadow_only"},indent=2)+"\n")
+    (OUT/"shadow_latest.json").write_text(json.dumps({"scanned_at_utc":now.isoformat(),"season":SEASON,"upcoming_games":0,"evaluations":0,"ready_evaluations":0,"qualified":0,"publication":"shadow_only","skip_reason":"no_upcoming_games"},indent=2)+"\n")
     (OUT/"latest.json").write_text(json.dumps(summary,indent=2)+"\n")
     append_jsonl(OUT/"history"/now.strftime("%Y-%m-%d")/"scan_history.jsonl",[summary])
     print(json.dumps(summary,indent=2))
@@ -418,6 +420,7 @@ def feature_target(gid,tid,oid):
     }
 
 evaluations=[];qualified=[]
+shadow_evaluations=[];shadow_qualified=[]
 arsenal=json.loads((LIVE/"arsenal.json").read_text())
 for g in upcoming:
     gid=g["game_id"];when=dt(g.get("game_date"));hrs=(when-now).total_seconds()/3600
@@ -494,6 +497,24 @@ for g in upcoming:
             evaluations.append(ev)
             if ok:qualified.append(ev.copy())
 
+        # Shadow-only descendant. It never enters active_picks/Appwiza feed.
+        sconds=[
+          ("opp_seed6_gap",x["opp_seed6_gap"],lambda v:v>=0),
+          ("streak_gap",x["streak_gap"],lambda v:v<=-2),
+          ("market_prob",x["market_prob"],lambda v:v>=0.5968),
+          ("starter_pm5_gap",x["starter_pm5_gap"],lambda v:v>=0.92)
+        ]
+        smissing=[name for name,v,fn in sconds if v is None];sready=not smissing;sok=sready and all(fn(v) for name,v,fn in sconds)
+        sev={"scanned_at_utc":now.isoformat(),"season":SEASON,"game_id":gid,"scheduled_utc":g.get("game_date"),"hours_to_tip":hrs,
+             "method_id":"NBA_STAND_002_STARTPM","parent_method":"NBA_STAND_002","market":"moneyline",
+             "selection":x["team"],"selection_team_id":x["team_id"],"side":side,
+             "qualified":sok,"ready":sready,"missing_inputs":"|".join(smissing),"price":x["price"],"market_prob":x["market_prob"],
+             "market_captured_at":ms["captured_at"],"market_source":ms.get("source"),"market_books":ms.get("books"),
+             "starters_confirmed":x["starters_confirmed"],"prior_games":x["prior_games"],"publication":"shadow_only",
+             "features_json":json.dumps({name:v for name,v,fn in sconds},separators=(",",":"),sort_keys=True)}
+        shadow_evaluations.append(sev)
+        if sok:shadow_qualified.append(sev.copy())
+
     # Total method is game-level.
     h=dynamic["home"];a=dynamic["away"]
     paint=h["paint_share5"]+a["paint_share5"] if None not in (h["paint_share5"],a["paint_share5"]) else None
@@ -512,10 +533,67 @@ for g in upcoming:
     evaluations.append(ev)
     if ok:qualified.append(ev.copy())
 
+    # Shadow-only H3 total candidate: independent clutch/standings/starter-form mechanism.
+    h_rank=val(stand.get((gid,hid),{}),"conference_rank");a_rank=val(stand.get((gid,aid),{}),"conference_rank")
+    rank_abs=abs(h_rank-a_rank) if None not in (h_rank,a_rank) else None
+    clutch_abs=abs(h["clutch10_gap"]) if h.get("clutch10_gap") is not None else None
+    starterpm_abs=abs(h["starter_pm5_gap"]) if h.get("starter_pm5_gap") is not None else None
+    h3conds=[
+      ("clutch_abs_gap",clutch_abs,lambda v:v>=1.7),
+      ("stand_rank_abs_gap",rank_abs,lambda v:v>=8),
+      ("starterpm_abs_gap",starterpm_abs,lambda v:v>=7.16),
+      ("total_line",ms["total"],lambda v:True),
+      ("over_price",ms["over_price"],lambda v:True)
+    ]
+    h3missing=[name for name,v,fn in h3conds if v is None];h3ready=not h3missing;h3ok=h3ready and all(fn(v) for name,v,fn in h3conds)
+    h3ev={"scanned_at_utc":now.isoformat(),"season":SEASON,"game_id":gid,"scheduled_utc":g.get("game_date"),"hours_to_tip":hrs,
+          "method_id":"NBA_H3_OVER_002","market":"total_over","selection":"OVER","selection_team_id":"","side":"game",
+          "qualified":h3ok,"ready":h3ready,"missing_inputs":"|".join(h3missing),"price":ms["over_price"],"line":ms["total"],
+          "market_captured_at":ms["captured_at"],"market_source":ms.get("source"),"market_books":ms.get("books"),
+          "starters_confirmed":h["starters_confirmed"] and a["starters_confirmed"],
+          "prior_games":min([v for v in (h["prior_games"],a["prior_games"]) if v is not None],default=None),
+          "publication":"shadow_only",
+          "features_json":json.dumps({name:v for name,v,fn in h3conds},separators=(",",":"),sort_keys=True)}
+    shadow_evaluations.append(h3ev)
+    if h3ok:shadow_qualified.append(h3ev.copy())
+
 # Append point-in-time scanner history to daily text partitions. This is intentionally
 # not a cumulative gzip: append-only JSONL keeps Git deltas small at 10-minute cadence.
 daydir=OUT/"history"/now.strftime("%Y-%m-%d")
 append_jsonl(daydir/"method_evaluations.jsonl",evaluations)
+append_jsonl(daydir/"shadow_method_evaluations.jsonl",shadow_evaluations)
+
+# Shadow-only transition ledger. This is deliberately separate from live qualification state.
+shadow_state_path=OUT/"shadow_qualification_state.json"
+try:shadow_state=json.loads(shadow_state_path.read_text())
+except:shadow_state={}
+shadow_events=[];shadow_current={}
+for ev in shadow_evaluations:
+    key="|".join([ev["game_id"],ev["method_id"],ev["selection"]])
+    old=shadow_state.get(key,{})
+    qual=bool(ev["qualified"])
+    if old.get("qualified")!=qual:
+        shadow_events.append({"changed_at_utc":now.isoformat(),"game_id":ev["game_id"],"scheduled_utc":ev["scheduled_utc"],
+                              "method_id":ev["method_id"],"selection":ev["selection"],"from_qualified":old.get("qualified"),
+                              "to_qualified":qual,"price":ev.get("price"),"line":ev.get("line"),"features_json":ev["features_json"]})
+    first=old.get("first_qualified_at")
+    if qual and not first:first=now.isoformat()
+    shadow_state[key]={"qualified":qual,"first_qualified_at":first,"last_evaluated_at":now.isoformat(),
+                       "last_qualified_at":now.isoformat() if qual else old.get("last_qualified_at"),
+                       "last_features_json":ev["features_json"]}
+    if qual:
+        q=ev.copy();q["first_qualified_at"]=first;q["last_qualified_at"]=now.isoformat();shadow_current[key]=q
+append_jsonl(daydir/"shadow_qualification_events.jsonl",shadow_events)
+shadow_state_path.write_text(json.dumps(shadow_state,indent=2,sort_keys=True)+"\n")
+shadow_active=list(shadow_current.values());shadow_active.sort(key=lambda r:(r["scheduled_utc"],r["method_id"],r["selection"]))
+(OUT/"shadow_active_picks.json").write_text(json.dumps({"generated_at_utc":now.isoformat(),"season":SEASON,"picks":shadow_active,"publication":"shadow_only"},indent=2)+"\n")
+shadow_summary={"scanned_at_utc":now.isoformat(),"season":SEASON,"upcoming_games":len(upcoming),"evaluations":len(shadow_evaluations),
+                "ready_evaluations":sum(1 for e in shadow_evaluations if e["ready"]),"qualified":len(shadow_active),
+                "transitions":len(shadow_events),"publication":"shadow_only",
+                "methods":["NBA_H3_OVER_002","NBA_STAND_002_STARTPM"],
+                "policy":"Prospective-only shadow tracking. These signals are excluded from live Appwiza picks and do not retune frozen historical rules."}
+(OUT/"shadow_latest.json").write_text(json.dumps(shadow_summary,indent=2)+"\n")
+append_jsonl(daydir/"shadow_scan_history.jsonl",[shadow_summary])
 
 # Transition ledger and active picks.
 state_path=OUT/"qualification_state.json"
