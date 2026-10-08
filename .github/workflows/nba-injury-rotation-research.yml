@@ -2,6 +2,10 @@ name: NBA Injury Rotation Research
 
 on:
   workflow_dispatch:
+  workflow_run:
+    workflows: [NBA Historical Injury Features]
+    types: [completed]
+    branches: [main]
   push:
     branches: [main]
     paths:
@@ -19,6 +23,7 @@ concurrency:
 
 jobs:
   research:
+    if: github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success'
     runs-on: ubuntu-latest
     timeout-minutes: 60
     steps:
