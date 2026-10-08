@@ -1,17 +1,17 @@
 {
-  "generated_at_utc": "2026-10-08T12:58:45.687027+00:00",
+  "generated_at_utc": "2026-10-08T13:21:02.923926+00:00",
   "season": "2023-24",
   "games": 1230,
+  "source_archive": "NBA official injury-report PDF archive; URLs inherited from the frozen pre-tip mapping",
+  "parser": "pypdf PdfReader.pages",
   "unique_game_dates": 160,
-  "dates_with_any_report": 160,
   "games_with_pre_tip_report": 1230,
   "games_with_report_text": 1230,
-  "games_with_both_teams_mentioned": 0,
+  "games_with_both_teams_mentioned": 1144,
   "unique_reports_selected": 564,
   "unique_reports_downloaded": 564,
-  "probe_non404_errors": 18,
   "download_errors": 0,
   "preserved_report_text_rows": 564,
-  "parser": "pypdf PdfReader.pages",
-  "policy": "Latest official NBA injury PDF nominally timestamped at least 15 minutes before tip. One season at a time with retry/backoff; preserves extracted text for every successfully downloaded pre-tip report."
+  "reports_requiring_layout_mode": 564,
+  "policy": "Reuses frozen pre-tip official NBA URLs without future substitution. Chooses layout extraction for PDFs whose text is split into single words. Keeps archived report text and counts parse failures separately."
 }
