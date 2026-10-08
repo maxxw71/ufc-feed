@@ -34,6 +34,22 @@ def norm(v):
     s=(v or "").lower().replace("’","'")
     s=re.sub(r"[^a-z0-9]+"," ",s)
     return " ".join(s.split())
+def report_name_aliases(v):
+    raw=" ".join(str(v or "").split())
+    vals=[norm(raw)]
+    if "," in raw:
+        last,first=raw.split(",",1)
+        vals.insert(0,norm(first+" "+last))
+    out=[]
+    for x in vals:
+        if x and x not in out:out.append(x)
+    return out
+def canonical_report_name(v):
+    raw=" ".join(str(v or "").split())
+    if "," in raw:
+        last,first=raw.split(",",1)
+        return " ".join((first+" "+last).split())
+    return raw
 def truth(v):return str(v).lower() in ("true","1","yes")
 def severity(status):
     s=(status or "").lower()
@@ -64,10 +80,14 @@ for name in timeline:timeline[name].sort(key=lambda z:z[0])
 timeline_dates={name:[x[0] for x in arr] for name,arr in timeline.items()}
 
 def latest_prior_player(name,target):
-    key=norm(name);arr=timeline.get(key)
-    if not arr or not target:return {}
-    i=bisect_left(timeline_dates[key],target)-1
-    return arr[i][1] if i>=0 else {}
+    if not target:return {}
+    best=None
+    for key in report_name_aliases(name):
+        arr=timeline.get(key)
+        if not arr:continue
+        i=bisect_left(timeline_dates[key],target)-1
+        if i>=0 and (best is None or arr[i][0]>best[0]):best=arr[i]
+    return best[1] if best else {}
 
 def parse_report(text):
     out=[];current_team=None
@@ -131,7 +151,7 @@ for season_dir in sorted(ROOT.glob("*_*")):
             row={
               "season":season,"game_id":gid,"tip_utc":tip.isoformat() if tip else "",
               "report_url":url,"team":team,"side":"home" if norm(team)==norm(home) else "away",
-              "player_name":e["player_name"],"status":e["status"],"reason":reason,
+              "player_name":canonical_report_name(e["player_name"]),"report_player_name":e["player_name"],"status":e["status"],"reason":reason,
               "severity_weight":sev,"injury_illness":is_injury,
               "person_id":feat.get("person_id") or "","rolling_identity_matched":bool(feat),
               "minutes_last5_avg":mins,"points_last5_avg":pts,"assists_last5_avg":ast,
