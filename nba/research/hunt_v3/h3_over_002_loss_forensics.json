@@ -1,0 +1,502 @@
+{
+  "generated_at_utc": "2026-10-08T11:13:25.125366+00:00",
+  "method_id": "NBA_H3_OVER_002",
+  "parent": {
+    "overall": {
+      "n": 346,
+      "wins": 205,
+      "losses": 137,
+      "hit": 0.5994152046783626,
+      "roi": 0.14184643810917277,
+      "profit": 49.07886758577378,
+      "wilson_low": 0.546654064484374
+    },
+    "phases": {
+      "discA": {
+        "n": 116,
+        "wins": 71,
+        "losses": 43,
+        "hit": 0.6228070175438597,
+        "roi": 0.18486638067918854,
+        "profit": 21.44450015878587,
+        "wilson_low": 0.5312004830192322
+      },
+      "discB": {
+        "n": 67,
+        "wins": 41,
+        "losses": 25,
+        "hit": 0.6212121212121212,
+        "roi": 0.1831136378985369,
+        "profit": 12.268613739201973,
+        "wilson_low": 0.500582541924983
+      },
+      "validation": {
+        "n": 67,
+        "wins": 36,
+        "losses": 30,
+        "hit": 0.5454545454545454,
+        "roi": 0.03955323579382095,
+        "profit": 2.6500667981860038,
+        "wilson_low": 0.42614799738706416
+      },
+      "holdout": {
+        "n": 96,
+        "wins": 57,
+        "losses": 39,
+        "hit": 0.59375,
+        "roi": 0.13245507176666596,
+        "profit": 12.715686889599931,
+        "wilson_low": 0.49373701577265144
+      }
+    },
+    "worst_price": {
+      "n": 346,
+      "wins": 205,
+      "losses": 137,
+      "hit": 0.5994152046783626,
+      "roi": 0.0999621593081745,
+      "profit": 34.586907120628375,
+      "wilson_low": 0.546654064484374
+    }
+  },
+  "win_loss_contrasts": [
+    {
+      "feature": "rest_abs_gap",
+      "win_mean": 0.824390243902439,
+      "loss_mean": 0.656934306569343,
+      "win_median": 1.0,
+      "loss_median": 1.0,
+      "standardized_win_minus_loss": 0.18544837927931965
+    },
+    {
+      "feature": "foul_sum",
+      "win_mean": 39.30226973319367,
+      "loss_mean": 38.67181831163301,
+      "win_median": 38.97167000274156,
+      "loss_median": 38.52623537977665,
+      "standardized_win_minus_loss": 0.18109988247242834
+    },
+    {
+      "feature": "coach_change_sum",
+      "win_mean": 0.0,
+      "loss_mean": 0.0072992700729927005,
+      "win_median": 0.0,
+      "loss_median": 0.0,
+      "standardized_win_minus_loss": -0.13518495145056042
+    },
+    {
+      "feature": "oreb_sum",
+      "win_mean": 0.4669675368074651,
+      "loss_mean": 0.4753651179351265,
+      "win_median": 0.46234864963381334,
+      "loss_median": 0.46720437299978046,
+      "standardized_win_minus_loss": -0.1325424399769942
+    },
+    {
+      "feature": "travel7d_abs_gap",
+      "win_mean": 1316.740807238309,
+      "loss_mean": 1213.1467551054398,
+      "win_median": 1179.1935862362886,
+      "loss_median": 928.1516746396996,
+      "standardized_win_minus_loss": 0.10011144248047775
+    },
+    {
+      "feature": "pace5",
+      "win_mean": 101.98366829268292,
+      "loss_mean": 102.20844525547446,
+      "win_median": 101.79599999999999,
+      "loss_median": 101.98400000000001,
+      "standardized_win_minus_loss": -0.08498830989709101
+    },
+    {
+      "feature": "threepa_sum",
+      "win_mean": 0.7812148070353082,
+      "loss_mean": 0.7878374845252372,
+      "win_median": 0.7843399328446093,
+      "loss_median": 0.7903245351119181,
+      "standardized_win_minus_loss": -0.0790635259696569
+    },
+    {
+      "feature": "net_abs_gap",
+      "win_mean": 17.820144702722793,
+      "loss_mean": 18.29161624885442,
+      "win_median": 17.29180905901675,
+      "loss_median": 18.06406024605093,
+      "standardized_win_minus_loss": -0.06442887422371345
+    },
+    {
+      "feature": "ts_sum",
+      "win_mean": 1.1467077007456064,
+      "loss_mean": 1.1447087043328354,
+      "win_median": 1.1535560327041012,
+      "loss_median": 1.1432727089025583,
+      "standardized_win_minus_loss": 0.045968644310314395
+    },
+    {
+      "feature": "lq_abs_gap",
+      "win_mean": 35.12537185437714,
+      "loss_mean": 33.62243689915718,
+      "win_median": 24.66809421841542,
+      "loss_median": 26.917588842022596,
+      "standardized_win_minus_loss": 0.042282338877846395
+    },
+    {
+      "feature": "rest_sum",
+      "win_mean": 4.239024390243903,
+      "loss_mean": 4.306569343065694,
+      "win_median": 4.0,
+      "loss_median": 4.0,
+      "standardized_win_minus_loss": -0.03928947526549495
+    },
+    {
+      "feature": "paint_sum",
+      "win_mean": 0.8778761958870009,
+      "loss_mean": 0.8759527055446192,
+      "win_median": 0.886304812115219,
+      "loss_median": 0.8829411589504812,
+      "standardized_win_minus_loss": 0.027008159498946947
+    },
+    {
+      "feature": "forced_tov_sum",
+      "win_mean": 26.847479674796748,
+      "loss_mean": 26.89330900243309,
+      "win_median": 26.6,
+      "loss_median": 26.6,
+      "standardized_win_minus_loss": -0.01286597887879696
+    },
+    {
+      "feature": "travel7d_sum",
+      "win_mean": 4013.0289025041434,
+      "loss_mean": 3991.23624265638,
+      "win_median": 4049.681458781036,
+      "loss_median": 3972.6183165880184,
+      "standardized_win_minus_loss": 0.01179197128994505
+    }
+  ],
+  "validated_extra_filter_candidates": [
+    {
+      "feature": "ts_sum",
+      "op": ">=",
+      "cut": 1.1490513453597666,
+      "phases": {
+        "discA": {
+          "n": 42,
+          "wins": 27,
+          "losses": 15,
+          "hit": 0.6428571428571429,
+          "roi": 0.22707772707772708,
+          "profit": 9.537264537264537,
+          "wilson_low": 0.49166089287079373
+        },
+        "discB": {
+          "n": 29,
+          "wins": 20,
+          "losses": 8,
+          "hit": 0.7142857142857143,
+          "roi": 0.3509553326997546,
+          "profit": 10.177704648292883,
+          "wilson_low": 0.529403642629825
+        },
+        "validation": {
+          "n": 52,
+          "wins": 31,
+          "losses": 20,
+          "hit": 0.6078431372549019,
+          "roi": 0.15585792793714343,
+          "profit": 8.104612252731458,
+          "wilson_low": 0.4708491122516505
+        },
+        "holdout": {
+          "n": 51,
+          "wins": 34,
+          "losses": 17,
+          "hit": 0.6666666666666666,
+          "roi": 0.27100307258022516,
+          "profit": 13.821156701591484,
+          "wilson_low": 0.5296812196648056
+        }
+      },
+      "overall": {
+        "n": 174,
+        "wins": 112,
+        "losses": 60,
+        "hit": 0.6511627906976745,
+        "roi": 0.23931458701080668,
+        "profit": 41.64073813988036,
+        "wilson_low": 0.5773377742219229
+      },
+      "worst_price": {
+        "n": 174,
+        "wins": 112,
+        "losses": 60,
+        "hit": 0.6511627906976745,
+        "roi": 0.18750372063462273,
+        "profit": 32.625647390424355,
+        "wilson_low": 0.5773377742219229
+      },
+      "holdout_worst_price": {
+        "n": 51,
+        "wins": 34,
+        "losses": 17,
+        "hit": 0.6666666666666666,
+        "roi": 0.2706241770606647,
+        "profit": 13.8018330300939,
+        "wilson_low": 0.5296812196648056
+      },
+      "holdout_roi_lift": 0.1385480008135592,
+      "holdout_hit_lift": 0.07291666666666663
+    },
+    {
+      "feature": "travel7d_abs_gap",
+      "op": ">=",
+      "cut": 1450.7229856559238,
+      "phases": {
+        "discA": {
+          "n": 42,
+          "wins": 28,
+          "losses": 14,
+          "hit": 0.6666666666666666,
+          "roi": 0.2703235968542091,
+          "profit": 11.353591067876781,
+          "wilson_low": 0.5155222701166692
+        },
+        "discB": {
+          "n": 24,
+          "wins": 16,
+          "losses": 8,
+          "hit": 0.6666666666666666,
+          "roi": 0.27255587549705196,
+          "profit": 6.541341011929247,
+          "wilson_low": 0.46705959494080457
+        },
+        "validation": {
+          "n": 25,
+          "wins": 16,
+          "losses": 8,
+          "hit": 0.6666666666666666,
+          "roi": 0.2595467418840662,
+          "profit": 6.488668547101654,
+          "wilson_low": 0.46705959494080457
+        },
+        "holdout": {
+          "n": 36,
+          "wins": 22,
+          "losses": 14,
+          "hit": 0.6111111111111112,
+          "roi": 0.16441938362228214,
+          "profit": 5.919097810402158,
+          "wilson_low": 0.4486417029674348
+        }
+      },
+      "overall": {
+        "n": 127,
+        "wins": 82,
+        "losses": 44,
+        "hit": 0.6507936507936508,
+        "roi": 0.23860392470322708,
+        "profit": 30.30269843730984,
+        "wilson_low": 0.5642112392113556
+      },
+      "worst_price": {
+        "n": 127,
+        "wins": 82,
+        "losses": 44,
+        "hit": 0.6507936507936508,
+        "roi": 0.1821810185401692,
+        "profit": 23.136989354601486,
+        "wilson_low": 0.5642112392113556
+      },
+      "holdout_worst_price": {
+        "n": 36,
+        "wins": 22,
+        "losses": 14,
+        "hit": 0.6111111111111112,
+        "roi": 0.16388261496957146,
+        "profit": 5.899774138904573,
+        "wilson_low": 0.4486417029674348
+      },
+      "holdout_roi_lift": 0.031964311855616184,
+      "holdout_hit_lift": 0.01736111111111116
+    }
+  ],
+  "posthoc_mechanism_diagnostics": {
+    "clutch_gap_under_4": {
+      "note": "Mechanism diagnostic only; not eligible for promotion because this slice was motivated after full-sample inspection.",
+      "overall": {
+        "n": 314,
+        "wins": 190,
+        "losses": 120,
+        "hit": 0.6129032258064516,
+        "roi": 0.1670143437879304,
+        "profit": 52.442503949410145,
+        "wilson_low": 0.5576137114169487
+      },
+      "phases": {
+        "discA": {
+          "n": 107,
+          "wins": 67,
+          "losses": 38,
+          "hit": 0.638095238095238,
+          "roi": 0.21316015441516106,
+          "profit": 22.808136522422235,
+          "wilson_low": 0.5428081976800061
+        },
+        "discB": {
+          "n": 59,
+          "wins": 38,
+          "losses": 20,
+          "hit": 0.6551724137931034,
+          "roi": 0.24646340698185162,
+          "profit": 14.541341011929246,
+          "wilson_low": 0.5266753715786766
+        },
+        "validation": {
+          "n": 57,
+          "wins": 31,
+          "losses": 25,
+          "hit": 0.5535714285714286,
+          "roi": 0.05446688162686769,
+          "profit": 3.1046122527314584,
+          "wilson_low": 0.4241298613178389
+        },
+        "holdout": {
+          "n": 91,
+          "wins": 54,
+          "losses": 37,
+          "hit": 0.5934065934065934,
+          "roi": 0.13174081497062862,
+          "profit": 11.988414162327205,
+          "wilson_low": 0.49069248026578854
+        }
+      },
+      "worst_price": {
+        "n": 314,
+        "wins": 190,
+        "losses": 120,
+        "hit": 0.6129032258064516,
+        "roi": 0.12392204391814983,
+        "profit": 38.91152179029905,
+        "wilson_low": 0.5576137114169487
+      }
+    },
+    "starterpm_gap_under_10": {
+      "note": "Mechanism diagnostic only; not eligible for promotion because this slice was motivated after full-sample inspection.",
+      "overall": {
+        "n": 116,
+        "wins": 75,
+        "losses": 39,
+        "hit": 0.6578947368421053,
+        "roi": 0.2497728485091946,
+        "profit": 28.973650427066573,
+        "wilson_low": 0.5669355094370843
+      },
+      "phases": {
+        "discA": {
+          "n": 39,
+          "wins": 27,
+          "losses": 10,
+          "hit": 0.7297297297297297,
+          "roi": 0.3703717989432275,
+          "profit": 14.444500158785873,
+          "wilson_low": 0.5702152452607867
+        },
+        "discB": {
+          "n": 31,
+          "wins": 19,
+          "losses": 12,
+          "hit": 0.6129032258064516,
+          "roi": 0.17008797653958943,
+          "profit": 5.2727272727272725,
+          "wilson_low": 0.43823801141131963
+        },
+        "validation": {
+          "n": 13,
+          "wins": 9,
+          "losses": 4,
+          "hit": 0.6923076923076923,
+          "roi": 0.321048321048321,
+          "profit": 4.173628173628173,
+          "wilson_low": 0.4236888781333764
+        },
+        "holdout": {
+          "n": 33,
+          "wins": 20,
+          "losses": 13,
+          "hit": 0.6060606060606061,
+          "roi": 0.15402408551288657,
+          "profit": 5.082794821925257,
+          "wilson_low": 0.4368314280651038
+        }
+      },
+      "worst_price": {
+        "n": 116,
+        "wins": 75,
+        "losses": 39,
+        "hit": 0.6578947368421053,
+        "roi": 0.19717890967159435,
+        "profit": 22.872753521904944,
+        "wilson_low": 0.5669355094370843
+      }
+    },
+    "starterpm_gap_15_plus": {
+      "note": "Mechanism diagnostic only; not eligible for promotion because this slice was motivated after full-sample inspection.",
+      "overall": {
+        "n": 94,
+        "wins": 58,
+        "losses": 35,
+        "hit": 0.6236559139784946,
+        "roi": 0.18760768869185218,
+        "profit": 17.635122737034106,
+        "wilson_low": 0.5221342705133759
+      },
+      "phases": {
+        "discA": {
+          "n": 30,
+          "wins": 20,
+          "losses": 10,
+          "hit": 0.6666666666666666,
+          "roi": 0.2727272727272727,
+          "profit": 8.181818181818182,
+          "wilson_low": 0.4877972581383026
+        },
+        "discB": {
+          "n": 13,
+          "wins": 7,
+          "losses": 6,
+          "hit": 0.5384615384615384,
+          "roi": 0.027972027972027955,
+          "profit": 0.3636363636363634,
+          "wilson_low": 0.29143432431832045
+        },
+        "validation": {
+          "n": 25,
+          "wins": 15,
+          "losses": 9,
+          "hit": 0.625,
+          "roi": 0.1831831055204298,
+          "profit": 4.579577638010745,
+          "wilson_low": 0.42709619037907065
+        },
+        "holdout": {
+          "n": 26,
+          "wins": 16,
+          "losses": 10,
+          "hit": 0.6153846153846154,
+          "roi": 0.17346502129110822,
+          "profit": 4.510090553568814,
+          "wilson_low": 0.4253452003942009
+        }
+      },
+      "worst_price": {
+        "n": 94,
+        "wins": 58,
+        "losses": 35,
+        "hit": 0.6236559139784946,
+        "roi": 0.14693439508618136,
+        "profit": 13.811833138101049,
+        "wilson_low": 0.5221342705133759
+      }
+    }
+  },
+  "policy": "Extra filters are learned only from 2018-21 H3_OVER_002 signals and must remain positive in 2021-23 confirmation, 2023-24 validation, 2024-26 holdout, and worst-price stress. Posthoc mechanism slices are reported separately and are never promotion-eligible."
+}
