@@ -1,0 +1,46 @@
+name: NBA Candidate Bankroll Scenarios
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'nba/research/simulate_candidate_additions.py'
+      - '.github/workflows/nba-candidate-bankroll-scenarios.yml'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: nba-candidate-bankroll-scenarios
+  cancel-in-progress: true
+
+jobs:
+  simulate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python nba/research/simulate_candidate_additions.py
+      - shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name appwiza-nba-bot
+          git config user.email actions@users.noreply.github.com
+          git add nba/research/bankroll/candidate_addition_50k_scenarios.json
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m 'nba: add candidate bankroll scenario results'
+          git reset --hard HEAD
+          git clean -fd
+          for attempt in 1 2 3; do
+            git fetch origin main
+            if git rebase origin/main && git push; then exit 0; fi
+            git rebase --abort 2>/dev/null || true
+            sleep 3
+          done
+          exit 1
