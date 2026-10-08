@@ -1,0 +1,52 @@
+name: NBA 2020-21 Injury Backfill
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/nba-injury-2020-21-backfill.yml'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: nba-injury-backfill-2020-21
+  cancel-in-progress: true
+
+jobs:
+  backfill:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install -q pypdf
+      - run: python nba/backfill_official_injury_season.py --season 2020-21 --sleep 0.18
+      - name: Publish season snapshot
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name appwiza-nba-bot
+          git config user.email actions@users.noreply.github.com
+          SNAP=/tmp/nba_2020_21_injury
+          rm -rf "$SNAP"
+          cp -a nba/availability/historical_by_season/2020_21 "$SNAP"
+          for attempt in 1 2 3; do
+            git fetch origin main
+            git reset --hard origin/main
+            git clean -fd
+            rm -rf nba/availability/historical_by_season/2020_21
+            mkdir -p nba/availability/historical_by_season
+            cp -a "$SNAP" nba/availability/historical_by_season/2020_21
+            git add nba/availability/historical_by_season/2020_21
+            if git diff --cached --quiet; then exit 0; fi
+            git commit -m "nba: add 2020-21 official injury coverage"
+            if git push origin HEAD:main; then exit 0; fi
+            sleep 4
+          done
+          exit 1
