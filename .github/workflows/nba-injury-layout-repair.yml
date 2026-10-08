@@ -1,0 +1,80 @@
+name: NBA Historical Injury Layout Repair
+on:
+  workflow_dispatch:
+  workflow_run:
+    workflows:
+      - NBA Injury 2023-26 Backfill
+    types: [completed]
+    branches: [main]
+  push:
+    branches: [main]
+    paths:
+      - 'nba/repair_official_injury_downloads.py'
+      - '.github/workflows/nba-injury-layout-repair.yml'
+permissions:
+  contents: write
+concurrency:
+  group: nba-injury-layout-repair
+  cancel-in-progress: false
+jobs:
+  repair:
+    if: github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success'
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    strategy:
+      fail-fast: false
+      max-parallel: 1
+      matrix:
+        season: ['2023-24', '2024-25', '2025-26']
+    steps:
+      - uses: actions/checkout@v4
+        with: {fetch-depth: 0}
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.12'}
+      - run: python -m pip install -q pypdf
+      - name: Extract official report text preserving table layout
+        shell: bash
+        env:
+          SEASON: ${{ matrix.season }}
+        run: |
+          TARGET=${SEASON//-/_}
+          if [[ ! -s "nba/availability/historical_by_season/${TARGET}/coverage_games.csv.gz" ]]; then
+            echo "Not yet backfilled: ${SEASON}. No false successful coverage asserted."
+            exit 0
+          fi
+          python nba/repair_official_injury_downloads.py --season "$SEASON" --sleep 0.10
+      - name: Publish corrected report texts
+        shell: bash
+        env:
+          SEASON: ${{ matrix.season }}
+        run: |
+          set -euo pipefail
+          TARGET=${SEASON//-/_}
+          SOURCE="nba/availability/historical_by_season/${TARGET}"
+          if [[ ! -f "${SOURCE}/report_texts.csv.gz" ]]; then exit 0; fi
+          SNAP="/tmp/nba_layout_${TARGET}"
+          cp -a "$SOURCE" "$SNAP"
+          python - "$SNAP" <<'PY'
+          import json,sys
+          from pathlib import Path
+          d=json.loads((Path(sys.argv[1])/'coverage_summary.json').read_text())
+          assert d['games_with_report_text'] > 0
+          assert d['unique_reports_downloaded'] > 0
+          print(d)
+          PY
+          git config user.name appwiza-nba-bot
+          git config user.email actions@users.noreply.github.com
+          for attempt in 1 2 3; do
+            git fetch origin main
+            git reset --hard origin/main
+            git clean -fd
+            mkdir -p "nba/availability/historical_by_season"
+            rm -rf "$SOURCE"
+            cp -a "$SNAP" "$SOURCE"
+            git add "$SOURCE"
+            if git diff --cached --quiet; then exit 0; fi
+            git commit -m "nba: restore ${SEASON} layout-aware injury report text"
+            if git push origin HEAD:main; then exit 0; fi
+            sleep 5
+          done
+          exit 1
