@@ -27,7 +27,8 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-      - run: python nba/build_shot_profile_rolling.py
+      - name: Build shot profiles with bounded-memory loader
+        run: python nba/build_shot_profile_rolling.py
       - run: python nba/research/discover_shot_profile.py
       - run: python nba/research/discover_shot_profile_v2.py
       - shell: bash
