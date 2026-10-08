@@ -29,8 +29,16 @@ jobs:
           for d in /srv/appwiza-sports/nba-live /srv/appwiza-sports/capture/nba /srv/appwiza-sports/public/nba; do
             test -d "$d" || continue
             echo "DIRECTORY $d"
-            find "$d" -maxdepth 2 -type f \( -name 'scan_live_methods.py' -o -name 'live_integrity.py' -o -name 'arsenal.json' -o -name 'current.json' -o -name 'ACTIVE' -o -name 'latest.json' \) -print
+            find "$d" -maxdepth 2 -type f \( -name 'scan_live_methods.py' -o -name 'live_integrity.py' -o -name 'arsenal.json' -o -name 'current.json' -o -name 'ACTIVE' -o -name 'latest.json' \) -print 2>/dev/null || true
           done
+          echo '== independent scanner launcher =='
+          if test -r /opt/appwiza-operations/nba-live/run.py; then
+            sed -n '1,150p' /opt/appwiza-operations/nba-live/run.py | grep -E 'git|fetch|reset|pull|checkout|repo|script|scan_live|arsenal|appwiza|root|system|subprocess|path|Path|python' || true
+          else
+            echo 'launcher unavailable to SSH user'
+          fi
+          echo '== timer status =='
+          systemctl is-active nba-live-scan.timer || true
           echo '== public method ids =='
           if test -f /srv/appwiza-sports/public/nba/current.json; then
             python3 - <<'PY'
