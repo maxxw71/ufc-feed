@@ -8,9 +8,13 @@ on:
       - '.github/workflows/nba-historical-injury-season.yml'
 permissions:
   contents: write
+
+concurrency:
+  group: nba-historical-injury-season
+  cancel-in-progress: true
 jobs:
   backfill:
-    runs-on: [self-hosted, Linux, X64, appwiza]
+    runs-on: ubuntu-latest
     timeout-minutes: 120
     steps:
       - uses: actions/checkout@v4
