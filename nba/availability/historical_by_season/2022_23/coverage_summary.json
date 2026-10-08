@@ -1,15 +1,16 @@
 {
-  "generated_at_utc": "2026-10-08T11:20:37.050262+00:00",
+  "generated_at_utc": "2026-10-08T11:26:39.998643+00:00",
   "season": "2022-23",
   "games": 1230,
   "source_archive": "NBA official injury-report PDF archive; URLs inherited from the frozen pre-tip mapping",
+  "parser": "pypdf PdfReader.pages",
   "unique_game_dates": 164,
   "games_with_pre_tip_report": 1230,
-  "games_with_report_text": 0,
-  "games_with_both_teams_mentioned": 0,
+  "games_with_report_text": 1230,
+  "games_with_both_teams_mentioned": 1212,
   "unique_reports_selected": 585,
-  "unique_reports_downloaded": 0,
-  "download_errors": 585,
-  "preserved_report_text_rows": 0,
+  "unique_reports_downloaded": 585,
+  "download_errors": 0,
+  "preserved_report_text_rows": 585,
   "policy": "Reuses the already point-in-time selected official NBA pre-tip report URL per game, downloads each unique PDF, preserves extracted report text, and never substitutes a later report."
 }
