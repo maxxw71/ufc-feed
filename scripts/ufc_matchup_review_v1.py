@@ -85,8 +85,8 @@ def _index_from_file(path):
                     "submission_loss":int(winner>=0 and side!=winner and finish_kind=="SUB"),
                     "ko_win":int(side==winner and finish_kind=="KO"),
                     "ko_loss":int(winner>=0 and side!=winner and finish_kind=="KO"),
-                    "first_round_finish_win":int(side==winner and finish_kind and rnd==1),
-                    "first_round_finish_loss":int(winner>=0 and side!=winner and finish_kind and rnd==1),
+                    "first_round_finish_win":int(side==winner and bool(finish_kind) and rnd==1),
+                    "first_round_finish_loss":int(winner>=0 and side!=winner and bool(finish_kind) and rnd==1),
                     "first_round_sub_win":int(side==winner and finish_kind=="SUB" and rnd==1),
                     "minutes":minutes,
                     "td_attempts":attempt_count(r,label,"Td")
