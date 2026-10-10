@@ -1,12 +1,12 @@
 {
-  "generated_at": "2026-10-09T12:03:45.534201+00:00",
+  "generated_at": "2026-10-10T11:20:36.191805+00:00",
   "daily_schedule_utc": "05:17",
   "hyperliquid_scope": "all active primary perps + builder/HIP-3 perps + spot",
   "binance_scope": "top 160 current USDT spot pairs by quote volume",
   "discovery_policy": "Hyperliquid primary-perp ROI-first; frozen thresholds then Binance replication",
   "roi_contract": "+5% target / -7.5% stop / 5d timeout; venue fees + 0.10% slippage per side; actual funding replay before live promotion",
   "candidate_count": 10,
-  "cross_validated_shadow_count": 5,
+  "cross_validated_shadow_count": 8,
   "live_auto_promotion": false,
   "next_stage": "forward shadow tracking and manual review before C-number assignment"
 }
