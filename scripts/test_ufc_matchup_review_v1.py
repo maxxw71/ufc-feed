@@ -13,7 +13,7 @@ spec.loader.exec_module(review)
 
 FIELDS=["event_date","player1","player2","result","method","round","time","p1_rd1_Td","p2_rd1_Td"]
 
-def fight(d,a,b,result="W","method":"DECISION - UNANIMOUS",rnd="3",time="5:00"):
+def fight(d,a,b,result="W",method="DECISION - UNANIMOUS",rnd="3",time="5:00"):
     return dict(event_date=d,player1=a,player2=b,result=result,method=method,
                 round=rnd,time=time,p1_rd1_Td="1 of 3",p2_rd1_Td="0 of 1")
 
