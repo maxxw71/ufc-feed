@@ -1,21 +1,34 @@
 {
-  "built_at": "2026-10-09T23:25:09.365894+00:00",
-  "market_captured_at": "2026-10-09T23:24:39.184194+00:00",
+  "built_at": "2026-10-10T07:35:02.306229+00:00",
+  "market_captured_at": "2026-10-10T07:34:29.541481+00:00",
   "elo_updated_at": "2026-10-07T00:00:00+00:00",
-  "elo_age_days": 2.9756743241666666,
-  "qualifier_count": 6,
+  "elo_age_days": 3.3158667057986113,
+  "qualifier_count": 5,
   "qualifiers": [
     {
-      "method_id": "MLS-A02",
+      "method_id": "MLS-R02V2",
       "selection": "Chicago Fire FC",
       "opponent": "New York City FC",
       "commence_time": "2026-10-10T18:30Z",
-      "american_price": "-125",
+      "american_price": "-110",
       "book": "DraftKings",
-      "market_prob": 0.5167785234899329,
+      "market_prob": 0.4867256637168142,
+      "research_status": "SHADOW_READY_REFINED",
+      "confidence_tier": "BASE",
+      "portfolio_conflict": true,
+      "same_side_consensus": null
+    },
+    {
+      "method_id": "MLS-A03",
+      "selection": "New York City FC",
+      "opponent": "Chicago Fire FC",
+      "commence_time": "2026-10-10T18:30Z",
+      "american_price": "+250",
+      "book": "DraftKings",
+      "market_prob": 0.26548672566371684,
       "research_status": "PROSPECTIVE_PRIORITY_SHADOW",
       "confidence_tier": "BASE",
-      "portfolio_conflict": false,
+      "portfolio_conflict": true,
       "same_side_consensus": null
     },
     {
@@ -29,32 +42,6 @@
       "research_status": "PROSPECTIVE_PRIORITY_SHADOW",
       "confidence_tier": "BASE",
       "portfolio_conflict": false,
-      "same_side_consensus": null
-    },
-    {
-      "method_id": "MLS-R01V2",
-      "selection": "Minnesota United FC",
-      "opponent": "Houston Dynamo FC",
-      "commence_time": "2026-10-11T00:30Z",
-      "american_price": "+105",
-      "book": "DraftKings",
-      "market_prob": 0.453118870145155,
-      "research_status": "SHADOW_READY_REFINED",
-      "confidence_tier": "BASE",
-      "portfolio_conflict": false,
-      "same_side_consensus": null
-    },
-    {
-      "method_id": "MLS-R01V2",
-      "selection": "Colorado Rapids",
-      "opponent": "San Jose Earthquakes",
-      "commence_time": "2026-10-11T01:30Z",
-      "american_price": "-115",
-      "book": "DraftKings",
-      "market_prob": 0.4921439102068078,
-      "research_status": "SHADOW_READY_REFINED",
-      "confidence_tier": "BASE",
-      "portfolio_conflict": true,
       "same_side_consensus": null
     },
     {
@@ -96,21 +83,9 @@
   "watch_only_method_ids": [
     "MLS-A04"
   ],
-  "active_qualifier_count": 6,
+  "active_qualifier_count": 5,
   "watch_qualifier_count": 0,
   "portfolio_matches": [
-    {
-      "event_id": "761846",
-      "home_team": "Chicago Fire FC",
-      "away_team": "New York City FC",
-      "selection": "Chicago Fire FC",
-      "methods": [
-        "MLS-A02"
-      ],
-      "consensus": false,
-      "max_bankroll_exposure_pct": 1.0,
-      "staking_policy": "MAX_1_PERCENT_CURRENT_BANKROLL_PER_MATCH"
-    },
     {
       "event_id": "761848",
       "home_team": "Orlando City SC",
@@ -122,32 +97,32 @@
       "consensus": false,
       "max_bankroll_exposure_pct": 1.0,
       "staking_policy": "MAX_1_PERCENT_CURRENT_BANKROLL_PER_MATCH"
-    },
-    {
-      "event_id": "761854",
-      "home_team": "Minnesota United FC",
-      "away_team": "Houston Dynamo FC",
-      "selection": "Minnesota United FC",
-      "methods": [
-        "MLS-R01V2"
-      ],
-      "consensus": false,
-      "max_bankroll_exposure_pct": 1.0,
-      "staking_policy": "MAX_1_PERCENT_CURRENT_BANKROLL_PER_MATCH"
     }
   ],
   "portfolio_conflicts": [
+    {
+      "event_id": "761846",
+      "home_team": "Chicago Fire FC",
+      "away_team": "New York City FC",
+      "methods": [
+        "MLS-R02V2",
+        "MLS-A03"
+      ],
+      "selections": [
+        "Chicago Fire FC",
+        "New York City FC"
+      ],
+      "policy": "NO_PORTFOLIO_ACTION"
+    },
     {
       "event_id": "761857",
       "home_team": "Colorado Rapids",
       "away_team": "San Jose Earthquakes",
       "methods": [
-        "MLS-R01V2",
         "MLS-R02V2",
         "MLS-A03"
       ],
       "selections": [
-        "Colorado Rapids",
         "Colorado Rapids",
         "San Jose Earthquakes"
       ],
@@ -156,16 +131,28 @@
   ],
   "conflicts": [
     {
-      "event_id": "761857",
-      "home_team": "Colorado Rapids",
-      "away_team": "San Jose Earthquakes",
+      "event_id": "761846",
+      "home_team": "Chicago Fire FC",
+      "away_team": "New York City FC",
       "methods": [
-        "MLS-R01V2",
         "MLS-R02V2",
         "MLS-A03"
       ],
       "selections": [
-        "Colorado Rapids",
+        "Chicago Fire FC",
+        "New York City FC"
+      ],
+      "policy": "TRACK_FOR_RESEARCH"
+    },
+    {
+      "event_id": "761857",
+      "home_team": "Colorado Rapids",
+      "away_team": "San Jose Earthquakes",
+      "methods": [
+        "MLS-R02V2",
+        "MLS-A03"
+      ],
+      "selections": [
         "Colorado Rapids",
         "San Jose Earthquakes"
       ],
