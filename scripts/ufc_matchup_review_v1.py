@@ -14,7 +14,7 @@ from datetime import date, datetime, timezone
 from functools import lru_cache
 from pathlib import Path
 
-VERSION = "UFC_MATCHUP_REVIEW_V1_20261010"
+VERSION = "UFC_MATCHUP_REVIEW_V1_1_20261010"
 MIN_UFC_FIGHTS = 2
 HISTORY_FILENAME = Path("raw/competitions.csv")
 
@@ -173,7 +173,18 @@ def assess_selection(pred, favorite, event_date, root):
         info["warnings"].append("EARLY_FINISH_COLLISION")
     if op["ko_wins"]>=2 and fp["ko_losses"]>=1:
         info["warnings"].append("KNOCKOUT_STYLE_COLLISION")
-    if op["submission_wins"]>=1 and fp["td_attempts_per15"] is not None and fp["td_attempts_per15"]>=1.0:
+    # A wrestler shooting into an opponent with a demonstrated submission
+    # finish is not cleared by a favorable age/striking profile. Prior UFCStats
+    # bouts can omit an earlier DWCS/regional submission loss, so the favorite
+    # need not already have a recorded UFC submission loss to warrant review.
+    # This conservative hold is an operational safeguard, not a validated ROI
+    # enhancement; replay against historical winners and losers separately.
+    if op["submission_wins"]>=1 and (
+        (fp["td_attempts_per15"] is not None and fp["td_attempts_per15"]>=3.0)
+        or fp["fights"]<=2
+    ):
+        info["reasons"].append("WRESTLER_TAKEDOWN_ENTRY_VS_DOCUMENTED_SUBMISSION_FINISHER")
+    elif op["submission_wins"]>=1 and fp["td_attempts_per15"] is not None and fp["td_attempts_per15"]>=1.0:
         info["warnings"].append("TAKEDOWN_ENTRY_VS_SUBMISSION_OPPONENT")
     if fp["td_coverage_fights"]==0 or op["td_coverage_fights"]==0:
         info["warnings"].append("TAKEDOWN_STAT_COVERAGE_INCOMPLETE")
