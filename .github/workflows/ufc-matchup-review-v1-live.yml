@@ -31,6 +31,7 @@ jobs:
           SCP=(scp -i "$KEY" -o BatchMode=yes -o ConnectTimeout=7 -o StrictHostKeyChecking=accept-new)
           "${SCP[@]}" scripts/ufc_matchup_review_v1.py "$HOST":/tmp/ufc_matchup_review_v1.py
           "${SCP[@]}" scripts/install_ufc_matchup_review_v1.py "$HOST":/tmp/install_ufc_matchup_review_v1.py
+          "${SCP[@]}" scripts/ufc_sync_tracker_canonical.py "$HOST":/tmp/ufc_sync_tracker_canonical_matchup.py
           "${SSH[@]}" "$HOST" 'bash -s' <<'REMOTE'
           set -Eeuo pipefail
           export HOME=/home/anestishkurti92
@@ -108,8 +109,11 @@ jobs:
           print('VERIFIED_UFC_MATCHUP_GATE_V1',review['version'],'all_matchups',total,
                 'site_canonical',len(canon),'no_test_email_sent',True)
           PY
+          # Only future pending approvals are changed; historic picks/results,
+          # first delivery, bookmaker and original odds remain immutable.
+          "$PY" /tmp/ufc_sync_tracker_canonical_matchup.py
           trap - ERR
-          rm -f /tmp/ufc_matchup_review_v1.py /tmp/install_ufc_matchup_review_v1.py
+          rm -f /tmp/ufc_matchup_review_v1.py /tmp/install_ufc_matchup_review_v1.py /tmp/ufc_sync_tracker_canonical_matchup.py
           systemctl is-active ufc-model-watcher.timer
           echo 'UFC matchup review live and canonical publication verified; no emails sent'
           REMOTE
