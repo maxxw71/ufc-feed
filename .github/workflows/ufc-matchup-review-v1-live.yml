@@ -73,7 +73,7 @@ jobs:
                   assert len(reviews)>=2,('missing both-side analysis',b)
                   for side in reviews.values():
                       assert side['status'] in ('PASS','HOLD')
-                      assert side['version']=='UFC_MATCHUP_REVIEW_V1_20261010'
+                      assert side['version']==w._review_version
                       held+=int(side['status']=='HOLD')
                   cards=w.ufc_email_design.method_cards(p,w.__dict__)
                   for card in cards:
@@ -88,7 +88,7 @@ jobs:
           case=w._review_assess({'fighter_a':'Felipe Franco','fighter_b':'Brendson Ribeiro',
                                   'market_a':.765438,'market_b':.234562},
                                  'Felipe Franco','2026-10-10',w.ROOT)
-          print('FRANCO_RIBEIRO_PRE_FIGHT_REVIEW',json.dumps({
+          assert case['status']=='HOLD',('dangerous UFC-only false clearance',case)\n          print('FRANCO_RIBEIRO_PRE_FIGHT_REVIEW',json.dumps({
               'status':case['status'],'reasons':case['reasons'],
               'favorite_history':case['favorite_history'],
               'opponent_history':case['opponent_history']},default=str))
