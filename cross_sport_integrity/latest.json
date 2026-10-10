@@ -1,14 +1,7 @@
 {
-  "built_at": "2026-10-10T20:04:13.227274+00:00",
-  "status": "FAIL",
-  "hard_failures": [
-    {
-      "name": "UFC canonical_future_tracker_exact",
-      "ok": false,
-      "detail": "canonical=['UFC:ufc-fight-night-october-10-2026:brendsonribeiro:felipefranco', 'UFC:ufc-fight-night-october-10-2026:geraldmeerschaert:juliuswalker', 'UFC:ufc-fight-night-october-17-2026:chelseachandler:melissacroden', 'UFC:ufc-fight-night-october-17-2026:jhonatadiniz:tannerboser'] tracker=['UFC:ufc-335:alexpereira:sergeipavlovich', 'UFC:ufc-fight-night-october-10-2026:brendsonribeiro:felipefranco', 'UFC:ufc-fight-night-october-17-2026:chelseachandler:melissacroden', 'UFC:ufc-fight-night-october-17-2026:jhonatadiniz:tannerboser']",
-      "hard": true
-    }
-  ],
+  "built_at": "2026-10-10T23:33:54.144867+00:00",
+  "status": "PASS",
+  "hard_failures": [],
   "warnings": [],
   "checks": [
     {
@@ -80,31 +73,13 @@
     {
       "name": "UFC canonical_public_current_exact",
       "ok": true,
-      "detail": "canonical=['UFC:ufc-fight-night-october-10-2026:brendsonribeiro:felipefranco', 'UFC:ufc-fight-night-october-10-2026:geraldmeerschaert:juliuswalker', 'UFC:ufc-fight-night-october-17-2026:chelseachandler:melissacroden', 'UFC:ufc-fight-night-october-17-2026:jhonatadiniz:tannerboser'] public=['UFC:ufc-fight-night-october-10-2026:brendsonribeiro:felipefranco', 'UFC:ufc-fight-night-october-10-2026:geraldmeerschaert:juliuswalker', 'UFC:ufc-fight-night-october-17-2026:chelseachandler:melissacroden', 'UFC:ufc-fight-night-october-17-2026:jhonatadiniz:tannerboser']",
+      "detail": "canonical=['UFC:ufc-fight-night-october-17-2026:jhonatadiniz:tannerboser'] public=['UFC:ufc-fight-night-october-17-2026:jhonatadiniz:tannerboser']",
       "hard": true
     },
     {
       "name": "UFC canonical_state_ids_exact",
       "ok": true,
-      "detail": "canonical=['UFC:ufc-fight-night-october-10-2026:brendsonribeiro:felipefranco', 'UFC:ufc-fight-night-october-10-2026:geraldmeerschaert:juliuswalker', 'UFC:ufc-fight-night-october-17-2026:chelseachandler:melissacroden', 'UFC:ufc-fight-night-october-17-2026:jhonatadiniz:tannerboser'] state=['UFC:ufc-fight-night-october-10-2026:brendsonribeiro:felipefranco', 'UFC:ufc-fight-night-october-10-2026:geraldmeerschaert:juliuswalker', 'UFC:ufc-fight-night-october-17-2026:chelseachandler:melissacroden', 'UFC:ufc-fight-night-october-17-2026:jhonatadiniz:tannerboser']",
-      "hard": true
-    },
-    {
-      "name": "UFC methods_exact:UFC:ufc-fight-night-october-10-2026:brendsonribeiro:felipefranco",
-      "ok": true,
-      "detail": "canonical=['U1'] state=['U1']",
-      "hard": true
-    },
-    {
-      "name": "UFC methods_exact:UFC:ufc-fight-night-october-10-2026:geraldmeerschaert:juliuswalker",
-      "ok": true,
-      "detail": "canonical=['U1'] state=['U1']",
-      "hard": true
-    },
-    {
-      "name": "UFC methods_exact:UFC:ufc-fight-night-october-17-2026:chelseachandler:melissacroden",
-      "ok": true,
-      "detail": "canonical=['U6'] state=['U6']",
+      "detail": "canonical=['UFC:ufc-fight-night-october-17-2026:jhonatadiniz:tannerboser'] state=['UFC:ufc-fight-night-october-17-2026:jhonatadiniz:tannerboser']",
       "hard": true
     },
     {
@@ -115,8 +90,8 @@
     },
     {
       "name": "UFC canonical_future_tracker_exact",
-      "ok": false,
-      "detail": "canonical=['UFC:ufc-fight-night-october-10-2026:brendsonribeiro:felipefranco', 'UFC:ufc-fight-night-october-10-2026:geraldmeerschaert:juliuswalker', 'UFC:ufc-fight-night-october-17-2026:chelseachandler:melissacroden', 'UFC:ufc-fight-night-october-17-2026:jhonatadiniz:tannerboser'] tracker=['UFC:ufc-335:alexpereira:sergeipavlovich', 'UFC:ufc-fight-night-october-10-2026:brendsonribeiro:felipefranco', 'UFC:ufc-fight-night-october-17-2026:chelseachandler:melissacroden', 'UFC:ufc-fight-night-october-17-2026:jhonatadiniz:tannerboser']",
+      "ok": true,
+      "detail": "canonical=['UFC:ufc-fight-night-october-17-2026:jhonatadiniz:tannerboser'] tracker=['UFC:ufc-fight-night-october-17-2026:jhonatadiniz:tannerboser']",
       "hard": true
     },
     {
@@ -234,7 +209,7 @@
       "ufc"
     ],
     "future_pending_by_sport": {
-      "UFC": 4
+      "UFC": 1
     }
   },
   "contract": {

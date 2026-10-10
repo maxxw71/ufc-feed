@@ -1,7 +1,7 @@
 CROSS-SPORT APPROVAL INTEGRITY
 ========================================================================================
-built_at: 2026-10-10T20:04:13.227274+00:00
-status: FAIL
+built_at: 2026-10-10T23:33:54.144867+00:00
+status: PASS
 
 CONTRACT
 NFL: LIVE_CANONICAL_ONLY
@@ -10,7 +10,7 @@ MLS: SHADOW_ONLY_NO_OFFICIAL_BETS
 BOXING: RESEARCH_ONLY_NO_OFFICIAL_BETS
 
 HARD FAILURES
-- UFC canonical_future_tracker_exact: canonical=['UFC:ufc-fight-night-october-10-2026:brendsonribeiro:felipefranco', 'UFC:ufc-fight-night-october-10-2026:geraldmeerschaert:juliuswalker', 'UFC:ufc-fight-night-october-17-2026:chelseachandler:melissacroden', 'UFC:ufc-fight-night-october-17-2026:jhonatadiniz:tannerboser'] tracker=['UFC:ufc-335:alexpereira:sergeipavlovich', 'UFC:ufc-fight-night-october-10-2026:brendsonribeiro:felipefranco', 'UFC:ufc-fight-night-october-17-2026:chelseachandler:melissacroden', 'UFC:ufc-fight-night-october-17-2026:jhonatadiniz:tannerboser']
+- none
 
 WARNINGS
 - none
@@ -27,13 +27,10 @@ ALL CHECKS
 [PASS] NFL m_record_fail_closed :: 
 [PASS] NFL page_missing_audit_fails_closed :: NFL public deep-audit must never treat a missing row as scanner-qualified/monitor
 [PASS] NFL page_missing_preseason_fails_closed :: missing deep-audit preseason status must be no-bet
-[PASS] UFC canonical_public_current_exact :: canonical=['UFC:ufc-fight-night-october-10-2026:brendsonribeiro:felipefranco', 'UFC:ufc-fight-night-october-10-2026:geraldmeerschaert:juliuswalker', 'UFC:ufc-fight-night-october-17-2026:chelseachandler:melissacroden', 'UFC:ufc-fight-night-october-17-2026:jhonatadiniz:tannerboser'] public=['UFC:ufc-fight-night-october-10-2026:brendsonribeiro:felipefranco', 'UFC:ufc-fight-night-october-10-2026:geraldmeerschaert:juliuswalker', 'UFC:ufc-fight-night-october-17-2026:chelseachandler:melissacroden', 'UFC:ufc-fight-night-october-17-2026:jhonatadiniz:tannerboser']
-[PASS] UFC canonical_state_ids_exact :: canonical=['UFC:ufc-fight-night-october-10-2026:brendsonribeiro:felipefranco', 'UFC:ufc-fight-night-october-10-2026:geraldmeerschaert:juliuswalker', 'UFC:ufc-fight-night-october-17-2026:chelseachandler:melissacroden', 'UFC:ufc-fight-night-october-17-2026:jhonatadiniz:tannerboser'] state=['UFC:ufc-fight-night-october-10-2026:brendsonribeiro:felipefranco', 'UFC:ufc-fight-night-october-10-2026:geraldmeerschaert:juliuswalker', 'UFC:ufc-fight-night-october-17-2026:chelseachandler:melissacroden', 'UFC:ufc-fight-night-october-17-2026:jhonatadiniz:tannerboser']
-[PASS] UFC methods_exact:UFC:ufc-fight-night-october-10-2026:brendsonribeiro:felipefranco :: canonical=['U1'] state=['U1']
-[PASS] UFC methods_exact:UFC:ufc-fight-night-october-10-2026:geraldmeerschaert:juliuswalker :: canonical=['U1'] state=['U1']
-[PASS] UFC methods_exact:UFC:ufc-fight-night-october-17-2026:chelseachandler:melissacroden :: canonical=['U6'] state=['U6']
+[PASS] UFC canonical_public_current_exact :: canonical=['UFC:ufc-fight-night-october-17-2026:jhonatadiniz:tannerboser'] public=['UFC:ufc-fight-night-october-17-2026:jhonatadiniz:tannerboser']
+[PASS] UFC canonical_state_ids_exact :: canonical=['UFC:ufc-fight-night-october-17-2026:jhonatadiniz:tannerboser'] state=['UFC:ufc-fight-night-october-17-2026:jhonatadiniz:tannerboser']
 [PASS] UFC methods_exact:UFC:ufc-fight-night-october-17-2026:jhonatadiniz:tannerboser :: canonical=['U10'] state=['U10']
-[FAIL] UFC canonical_future_tracker_exact :: canonical=['UFC:ufc-fight-night-october-10-2026:brendsonribeiro:felipefranco', 'UFC:ufc-fight-night-october-10-2026:geraldmeerschaert:juliuswalker', 'UFC:ufc-fight-night-october-17-2026:chelseachandler:melissacroden', 'UFC:ufc-fight-night-october-17-2026:jhonatadiniz:tannerboser'] tracker=['UFC:ufc-335:alexpereira:sergeipavlovich', 'UFC:ufc-fight-night-october-10-2026:brendsonribeiro:felipefranco', 'UFC:ufc-fight-night-october-17-2026:chelseachandler:melissacroden', 'UFC:ufc-fight-night-october-17-2026:jhonatadiniz:tannerboser']
+[PASS] UFC canonical_future_tracker_exact :: canonical=['UFC:ufc-fight-night-october-17-2026:jhonatadiniz:tannerboser'] tracker=['UFC:ufc-fight-night-october-17-2026:jhonatadiniz:tannerboser']
 [PASS] UFC extreme_no_bet_absent_from_canonical :: overlap=[]
 [PASS] UFC extreme_no_bet_absent_from_state :: overlap=[]
 [PASS] UFC extreme_no_bet_absent_from_tracker :: overlap=[]
