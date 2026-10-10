@@ -45,6 +45,21 @@ class MatchupReviewTest(unittest.TestCase):
         self.assertEqual(r["opponent_history"]["submission_wins"],1)
         self.assertEqual(r["opponent_history"]["fights"],2)
         self.assertIn("NONPOSITIVE_MODEL_EXPECTED_VALUE",r["warnings"])
+    def test_wrestler_held_even_without_documented_ufc_submission_loss(self):
+        # DWCS/regional losses can be missing from UFCStats history.
+        # Prevent a false green light when a takedown-heavy favorite meets
+        # an opponent with a known submission finish.
+        self.rows[0]["method"]="DECISION - UNANIMOUS"
+        with (self.root/"raw"/"competitions.csv").open("w",newline="") as fh:
+            writer=csv.DictWriter(fh,fieldnames=FIELDS)
+            writer.writeheader()
+            writer.writerows(self.rows)
+        review._cached_index.cache_clear()
+        r=review.assess_selection(self.pred,"Favorite","2026-10-10",self.root)
+        self.assertEqual(r["favorite_history"]["submission_losses"],0)
+        self.assertGreater(r["favorite_history"]["td_attempts_per15"],3)
+        self.assertEqual(r["status"],"HOLD")
+        self.assertIn("WRESTLER_TAKEDOWN_ENTRY_VS_DOCUMENTED_SUBMISSION_FINISHER",r["reasons"])
     def test_each_side_is_its_own_matchup(self):
         r=review.assess_selection(self.pred,"Opponent","2026-10-10",self.root)
         self.assertEqual(r["status"],"PASS")
