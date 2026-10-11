@@ -16,7 +16,7 @@ import pandas as pd
 LIMIT=pd.Timestamp("2026-10-10")
 TRAIN_END=pd.Timestamp("2024-01-01")
 LATE_END=pd.Timestamp("2025-01-01")
-SALT="UFC_OPPONENT_ADJUSTED_STYLES_V1_20261010"
+SALT="UFC_OPPONENT_ADJUSTED_STYLES_FULL_HISTORY_V2_20261010"
 def nm(x):return re.sub(r"[^a-z0-9]+"," ",str(x or "").lower()).strip()
 def num(x):
     try:
@@ -26,6 +26,12 @@ def num(x):
 def parse_of(x):
     m=re.search(r"(\d+(?:\.\d+)?)\s+of\s+(\d+(?:\.\d+)?)",str(x or ""),re.I)
     return (float(m.group(1)),float(m.group(2))) if m else (0.,0.)
+def ctrl(row,side):
+    tot=0.
+    for rd in range(1,6):
+        m=re.match(r"^\s*(\d+):(\d+)\s*$",str(row.get(f"{side}_rd{rd}_Ctrl") or ""))
+        if m:tot+=int(m.group(1))+int(m.group(2))/60
+    return tot
 def stat(row,side,field):
     return tuple(sum(parse_of(row.get(f"{side}_rd{n}_{field}"))[j] for n in range(1,6)) for j in (0,1))
 def minutes(row):
@@ -36,7 +42,7 @@ def newstate():
     return dict(fights=0,subw=0,subl=0,kow=0,kol=0,
                 td_faced=0.,td_allowed=0.,td_l=0.,td_a=0.,
                 adj_faced=0.,adj_expected=0.,adj_allowed=0.,adj_bouts=0,
-                sig_l=0.,sig_abs=0.,kd=0.,mins=0.)
+                sig_l=0.,sig_abs=0.,kd=0.,ctrl=0.,ctrl_allowed=0.,mins=0.)
 def feature(s):
     ta=s["td_a"];tf=s["td_faced"]
     return dict(
@@ -48,10 +54,15 @@ def feature(s):
       opp_adj_tdd=(s["adj_expected"]-s["adj_allowed"])/(s["adj_faced"]+12) if s["adj_faced"]>=5 else np.nan,
       adj_faced=s["adj_faced"],adj_bouts=int(s["adj_bouts"]),
       td_acc=(s["td_l"]+4)/(ta+10) if ta>=1 else np.nan,
+      td_acc_raw=s["td_l"]/ta if ta>0 else np.nan,
+      td_l15=s["td_l"]*15/s["mins"] if s["mins"]>0 else np.nan,
       td_a15=s["td_a"]*15/s["mins"] if s["mins"]>0 else np.nan,
       kd15=s["kd"]*15/s["mins"] if s["mins"]>0 else np.nan,
       sig_lpm=s["sig_l"]/s["mins"] if s["mins"]>0 else np.nan,
-      sig_abs_pm=s["sig_abs"]/s["mins"] if s["mins"]>0 else np.nan)
+      sig_abs_pm=s["sig_abs"]/s["mins"] if s["mins"]>0 else np.nan,
+      sig_diff_pm=(s["sig_l"]-s["sig_abs"])/s["mins"] if s["mins"]>0 else np.nan,
+      ctrl15=s["ctrl"]*15/s["mins"] if s["mins"]>0 else np.nan,
+      ctrl_allowed15=s["ctrl_allowed"]*15/s["mins"] if s["mins"]>0 else np.nan)
 def raw_features(raw):
     raw=raw.copy()
     raw["date"]=pd.to_datetime(raw.event_date,errors="coerce").dt.normalize()
@@ -92,6 +103,7 @@ def raw_features(raw):
                 q["kol"]+=int(ko and fighter!=winner)
                 q["td_faced"]+=tdopp_att;q["td_allowed"]+=tdopp_land
                 q["td_l"]+=tdland;q["td_a"]+=tdatt
+                q["ctrl"]+=ctrl(r,side);q["ctrl_allowed"]+=ctrl(r,oside)
                 if np.isfinite(mins):
                     q["mins"]+=mins;q["sig_l"]+=sigland;q["sig_abs"]+=sigopp;q["kd"]+=kd
                 if tdopp_att>0 and opp_old["fights"]>=2 and opp_old["td_a"]>=5:
@@ -175,6 +187,32 @@ def prepare(base_path,raw_path,regional_path):
               regional=reg_meta)
     return e,meta
 
+def corrected_full_history(d):
+    # Reconstruct every model-independent style input from complete raw UFCStats,
+    # not the historically reach/odds-filtered reach_market_sample.csv.
+    links={
+      "f_fights":"f_hist_fights","o_fights":"o_hist_fights",
+      "f_td_a15":"f_hist_td_a15","f_td_l15":"f_hist_td_l15",
+      "f_td_acc":"f_hist_td_acc_raw","f_ctrl15":"f_hist_ctrl15",
+      "o_td_a15":"o_hist_td_a15","o_td_def":"o_hist_td_def_raw",
+      "f_td_def":"f_hist_td_def_raw",
+      "o_sig_l_pm":"o_hist_sig_lpm","o_sig_diff_pm":"o_hist_sig_diff_pm",
+      "o_ctrl15":"o_hist_ctrl15",
+    }
+    before=d.copy();d=d.copy()
+    comparison={}
+    for dest,src in links.items():
+        if src not in d:raise RuntimeError("full UFCStats history missing "+src)
+        old=pd.to_numeric(d[dest],errors="coerce")
+        clean=pd.to_numeric(d[src],errors="coerce")
+        checked=old.notna() & clean.notna()
+        disagreements=int(((old-clean).abs()>1e-8)[checked].sum())
+        comparison[dest]={"rows_compared":int(checked.sum()),"different_rows":disagreements,
+                          "full_coverage":int(clean.notna().sum()),
+                          "mean_absolute_gap":round(float((old[checked]-clean[checked]).abs().mean()),4) if checked.any() else None}
+        d[dest]=clean
+    return d,comparison
+
 def met(z):
     n=len(z)
     if not n:return dict(n=0,wins=0,losses=0,roi_pct=None,win_pct=None)
@@ -252,6 +290,7 @@ def main():
     for s in ("base","raw","regional","outdir"):p.add_argument("--"+s,type=Path,required=True)
     a=p.parse_args();a.outdir.mkdir(parents=True,exist_ok=True)
     d,metadata=prepare(a.base,a.raw,a.regional)
+    d,full_history_corrections=corrected_full_history(d)
     d=features(d)
     masks={
       "180_prior_base":select_cohort(d),
@@ -267,7 +306,7 @@ def main():
     first=next(x for x in comparisons if x["cohort"]=="180_prior_base" and x["condition"]=="baseline")
     # Diagnostic only: prior 2024+ holdout has ALREADY been inspected in earlier
     # research. No hyperparameter cutoffs are optimized against any period here.
-    report=dict(version=SALT,policy="RESEARCH ONLY",input_metadata=metadata,
+    report=dict(version=SALT,policy="RESEARCH ONLY",input_metadata=metadata,full_history_corrections=full_history_corrections,
        no_publication_or_method_changes=True,
        historical_prefight_reconstruction=True,not_genuinely_unseen_holdout=True,
        dates_used_before="2026-10-10",groups={k:met(d[m]) for k,m in masks.items()},
@@ -279,7 +318,7 @@ def main():
                   {f"{period}_{metric}":val for period in ("all","train","reused_2024","later_2025_26")
                    for metric,val in x[period].items()} for x in comparisons]).to_csv(a.outdir/"comparison.csv",index=False)
     with (a.outdir/"REPORT.txt").open("w") as f:
-        f.write(SALT+"\n"+json.dumps(metadata,default=str)+"\n")
+        f.write(SALT+"\n"+json.dumps(metadata,default=str)+"\n"+json.dumps(full_history_corrections,default=str)+"\n")
         for name in masks:
             f.write("\n"+name.upper()+" "+json.dumps(met(d[masks[name]]))+"\n")
             for x in comparisons:
@@ -291,6 +330,7 @@ def main():
                 f.write("LOSS_CASE "+json.dumps(r,default=str)+"\n")
         f.write("\nNO LIVE PROMOTION; no future unseen validation.\n")
     print("SOURCE_COVERAGE",json.dumps(metadata))
+    print("FULL_HISTORY_RECONCILIATION",json.dumps(full_history_corrections))
     print("GROUPS",json.dumps(report["groups"]))
     for x in comparisons:
         if x["cohort"] in ("180_prior_base","shorter_younger_wrestlers"):
