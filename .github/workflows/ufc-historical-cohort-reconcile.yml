@@ -1,0 +1,51 @@
+name: UFC Historical Cohort Reconciliation
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/ufc-historical-cohort-reconcile.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  reconcile:
+    runs-on: [self-hosted, Linux, X64, appwiza]
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Reconcile historical 180 and 202 fight samples
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          KEY=/home/appwiza-runner/.ssh/appwiza_vps
+          HOST=anestishkurti92@127.0.0.1
+          scp -i "$KEY" -o BatchMode=yes -o ConnectTimeout=7 -o StrictHostKeyChecking=accept-new scripts/ufc_age_reach_wrestling_interactions.py "$HOST":/tmp/ufc_age_reach_wrestling_interactions.py
+          ssh -i "$KEY" -o BatchMode=yes -o ConnectTimeout=7 -o StrictHostKeyChecking=accept-new "$HOST" 'bash -s' <<'REMOTE'
+          set -Eeuo pipefail
+          export HOME=/home/anestishkurti92
+          "$HOME/ufc-predictor-v1/venv/bin/python" - <<'PY'
+          import sys
+          sys.path.insert(0,'/tmp')
+          import ufc_age_reach_wrestling_interactions as old
+          import ufc_opponent_adjusted_interaction_research as new
+          from pathlib import Path
+          root=Path.home()/'ufc-predictor-v1'
+          orig,_=old.load(root/'feature_expansion/prefight_favorite_features_v6.csv')
+          og=orig[old.masks(orig)["05 versus low-TD long-range striker proxy"]]
+          fresh=pd=None
+          c,_=new.prepare(root/'feature_expansion/prefight_favorite_features_v6.csv',
+              root/'raw/competitions.csv',
+              root/'regional_history/regional_fight_history.csv')
+          nc=c[new.select_cohort(c)]
+          def keys(x):
+              return set(zip(x.date.dt.strftime('%Y-%m-%d'),x.favorite.map(new.nm),x.opponent.map(new.nm)))
+          a,b=keys(og),keys(nc)
+          print('COHORT_RECONCILIATION',{'old_180':len(a),'new_202':len(b),
+                'intersection':len(a&b),'old_only':len(a-b),'new_only':len(b-a)})
+          diff=nc[nc.apply(lambda r:(r.date.strftime('%Y-%m-%d'),new.nm(r.favorite),new.nm(r.opponent)) in (b-a),axis=1)]
+          for r in diff[['event_date','favorite','opponent','f_fights','o_fights',
+                         'f_hist_fights','o_hist_fights','f_td_a15',
+                         'o_td_a15','o_sig_l_pm']].head(20).to_dict('records'):
+              print('NEW_ONLY',r)
+          PY
+          REMOTE
