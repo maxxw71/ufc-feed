@@ -1,10 +1,37 @@
 {
-  "built_at": "2026-10-11T07:39:57.326182+00:00",
-  "market_captured_at": "2026-10-11T07:39:28.473377+00:00",
+  "built_at": "2026-10-11T19:25:28.312638+00:00",
+  "market_captured_at": "2026-10-11T19:24:56.122906+00:00",
   "elo_updated_at": "2026-10-11T02:30:00+00:00",
-  "elo_age_days": 0.21514038863425927,
-  "qualifier_count": 0,
-  "qualifiers": [],
+  "elo_age_days": 0.7050572353587963,
+  "qualifier_count": 2,
+  "qualifiers": [
+    {
+      "method_id": "MLS-R03",
+      "selection": "New England Revolution",
+      "opponent": "FC Cincinnati",
+      "commence_time": "2026-10-14T23:30Z",
+      "american_price": "+215",
+      "book": "DraftKings",
+      "market_prob": 0.29185564977322026,
+      "research_status": "SHADOW_READY",
+      "confidence_tier": "BASE",
+      "portfolio_conflict": false,
+      "same_side_consensus": null
+    },
+    {
+      "method_id": "MLS-A03",
+      "selection": "Minnesota United FC",
+      "opponent": "Colorado Rapids",
+      "commence_time": "2026-10-15T01:30Z",
+      "american_price": "+205",
+      "book": "DraftKings",
+      "market_prob": 0.30085959885386826,
+      "research_status": "PROSPECTIVE_PRIORITY_SHADOW",
+      "confidence_tier": "BASE",
+      "portfolio_conflict": false,
+      "same_side_consensus": null
+    }
+  ],
   "active_method_ids": [
     "MLS-A02",
     "MLS-A03",
@@ -17,9 +44,34 @@
   "watch_only_method_ids": [
     "MLS-A04"
   ],
-  "active_qualifier_count": 0,
+  "active_qualifier_count": 2,
   "watch_qualifier_count": 0,
-  "portfolio_matches": [],
+  "portfolio_matches": [
+    {
+      "event_id": "761862",
+      "home_team": "FC Cincinnati",
+      "away_team": "New England Revolution",
+      "selection": "New England Revolution",
+      "methods": [
+        "MLS-R03"
+      ],
+      "consensus": false,
+      "max_bankroll_exposure_pct": 1.0,
+      "staking_policy": "MAX_1_PERCENT_CURRENT_BANKROLL_PER_MATCH"
+    },
+    {
+      "event_id": "761871",
+      "home_team": "Colorado Rapids",
+      "away_team": "Minnesota United FC",
+      "selection": "Minnesota United FC",
+      "methods": [
+        "MLS-A03"
+      ],
+      "consensus": false,
+      "max_bankroll_exposure_pct": 1.0,
+      "staking_policy": "MAX_1_PERCENT_CURRENT_BANKROLL_PER_MATCH"
+    }
+  ],
   "portfolio_conflicts": [],
   "conflicts": [],
   "consensus": [],
