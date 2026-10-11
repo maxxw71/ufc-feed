@@ -1,0 +1,34 @@
+name: UFC Age Reach Wrestling Interaction Study
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/ufc_age_reach_wrestling_interactions.py'
+      - '.github/workflows/ufc-age-reach-wrestling-study.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  research:
+    runs-on: [self-hosted, Linux, X64, appwiza]
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run read-only chronological UFC interaction research
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          python3 -m py_compile scripts/ufc_age_reach_wrestling_interactions.py
+          KEY=/home/appwiza-runner/.ssh/appwiza_vps
+          HOST=anestishkurti92@127.0.0.1
+          scp -i "$KEY" -o BatchMode=yes -o ConnectTimeout=7 -o StrictHostKeyChecking=accept-new scripts/ufc_age_reach_wrestling_interactions.py "$HOST":/tmp/ufc_age_reach_wrestling_interactions.py
+          ssh -i "$KEY" -o BatchMode=yes -o ConnectTimeout=7 -o StrictHostKeyChecking=accept-new "$HOST" 'bash -s' <<'REMOTE'
+          set -Eeuo pipefail
+          export HOME=/home/anestishkurti92
+          ROOT="$HOME/ufc-predictor-v1"
+          PY="$ROOT/venv/bin/python"
+          OUT=/tmp/ufc_age_reach_wrestling_study_20261010
+          mkdir -p "$OUT"
+          "$PY" /tmp/ufc_age_reach_wrestling_interactions.py --input "$ROOT/feature_expansion/prefight_favorite_features_v6.csv" --outdir "$OUT"
+          echo "RESEARCH_OUTPUT" "$OUT"
+          REMOTE
