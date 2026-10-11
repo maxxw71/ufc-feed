@@ -144,7 +144,7 @@ def candidates(d):
             train_a=summary(discovery[discovery.date.dt.year<=2019])
             train_b=summary(discovery[discovery.date.dt.year>=2020])
             eligible=all([sd["n"]>=20, train_a["n"]>=8,train_b["n"]>=8,
-                          sh["n"]>=8,sd["roi_pct"]>0,train_a["roi_pct"]>0,train_b["roi_pct"]>0])
+                          sh["n"]>=8,(sd["roi_pct"] or 0)>0,(train_a["roi_pct"] or 0)>0,(train_b["roi_pct"] or 0)>0])
             rows.append(dict(market_floor=market,tdd_threshold=tdd,reach_deficit_min=reach,
                              action=direction,train_n=sd["n"],train_wins=sd["wins"],
                              train_roi=sd["roi_pct"],early_train_n=train_a["n"],
