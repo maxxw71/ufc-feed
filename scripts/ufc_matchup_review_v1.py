@@ -170,6 +170,8 @@ def snap(events, event_date):
         "wins":sum(e["win"] for e in prior),
         "losses":sum(e["loss"] for e in prior),
         "submission_wins":sum(e["submission_win"] for e in prior),
+        "submission_wins_last3y":sum(e["submission_win"] for e in prior if (event_date-e["date"]).days<=1096),
+        "latest_submission_win":max((e["date"].isoformat() for e in prior if e["submission_win"]),default=None),
         "submission_losses":sum(e["submission_loss"] for e in prior),
         "ko_wins":sum(e["ko_win"] for e in prior),
         "ko_losses":sum(e["ko_loss"] for e in prior),
@@ -230,7 +232,8 @@ def assess_selection(pred, favorite, event_date, root):
     # Independent of U1-U12: a documented submission history on both sides
     # is a specific matchup trap. Hold for corroboration rather than assuming
     # the striking/age/market edge neutralizes the guillotine risk.
-    if op["submission_wins"]>=1 and fp["submission_losses"]>=1:
+    meaningful_sub_threat=op["submission_wins"]>=2 or op["submission_wins_last3y"]>=1
+    if meaningful_sub_threat and fp["submission_losses"]>=1:
         info["reasons"].append("SUBMISSION_TRAP_OPPONENT_SUB_WINS_AND_FAVORITE_SUB_LOSSES")
     if op["first_round_finish_wins"]>=2 and fp["first_round_finish_losses"]>=1:
         info["warnings"].append("EARLY_FINISH_COLLISION")
@@ -242,13 +245,15 @@ def assess_selection(pred, favorite, event_date, root):
     # need not already have a recorded UFC submission loss to warrant review.
     # This conservative hold is an operational safeguard, not a validated ROI
     # enhancement; replay against historical winners and losers separately.
-    if op["submission_wins"]>=1 and (
+    if meaningful_sub_threat and (
         (fp["td_attempts_per15"] is not None and fp["td_attempts_per15"]>=3.0)
         or fp["ufc_fights"]<=2
     ):
         info["reasons"].append("WRESTLER_TAKEDOWN_ENTRY_VS_DOCUMENTED_SUBMISSION_FINISHER")
     elif op["submission_wins"]>=1 and fp["td_attempts_per15"] is not None and fp["td_attempts_per15"]>=1.0:
         info["warnings"].append("TAKEDOWN_ENTRY_VS_SUBMISSION_OPPONENT")
+    if op["submission_wins"]>=1 and not meaningful_sub_threat:
+        info["warnings"].append("HISTORICAL_ONLY_SUBMISSION_WIN_REQUIRES_RELEVANCE_REVIEW")
     if fp["td_coverage_fights"]==0 or op["td_coverage_fights"]==0:
         info["warnings"].append("TAKEDOWN_STAT_COVERAGE_INCOMPLETE")
     if op["submission_wins"]==0:
