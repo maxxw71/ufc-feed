@@ -1,0 +1,38 @@
+name: UFC Opponent-Adjusted Interaction Research
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/ufc_opponent_adjusted_interaction_research.py'
+      - '.github/workflows/ufc-opponent-adjusted-interactions.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  research:
+    runs-on: [self-hosted, Linux, X64, appwiza]
+    timeout-minutes: 22
+    steps:
+      - uses: actions/checkout@v4
+      - name: Audit UFC historical matchup interactions without publishing bets
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          python3 -m py_compile scripts/ufc_opponent_adjusted_interaction_research.py
+          KEY=/home/appwiza-runner/.ssh/appwiza_vps
+          HOST=anestishkurti92@127.0.0.1
+          scp -i "$KEY" -o BatchMode=yes -o ConnectTimeout=7 -o StrictHostKeyChecking=accept-new scripts/ufc_opponent_adjusted_interaction_research.py "$HOST":/tmp/ufc_opponent_adjusted_interaction_research.py
+          ssh -i "$KEY" -o BatchMode=yes -o ConnectTimeout=7 -o StrictHostKeyChecking=accept-new "$HOST" 'bash -s' <<'REMOTE'
+          set -Eeuo pipefail
+          export HOME=/home/anestishkurti92
+          ROOT="$HOME/ufc-predictor-v1"
+          OUT=/tmp/ufc_opponent_adjusted_interactions_20261010
+          mkdir -p "$OUT"
+          "$ROOT/venv/bin/python" /tmp/ufc_opponent_adjusted_interaction_research.py \
+            --base "$ROOT/feature_expansion/prefight_favorite_features_v6.csv" \
+            --raw "$ROOT/raw/competitions.csv" \
+            --regional "$ROOT/regional_history/regional_fight_history.csv" \
+            --outdir "$OUT"
+          test -s "$OUT/results.json"
+          echo "UFC_OPPONENT_RESEARCH_DONE_AND_NO_LIVE_METHOD_CHANGED"
+          REMOTE
