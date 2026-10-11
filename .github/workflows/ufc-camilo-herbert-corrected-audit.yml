@@ -1,0 +1,88 @@
+name: UFC Camilo Herbert Corrected Pre-fight Audit
+on:
+  push:
+    branches: [main]
+    paths: ['.github/workflows/ufc-camilo-herbert-corrected-audit.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  audit:
+    runs-on: [self-hosted, Linux, X64, appwiza]
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - name: Read-only corrected UFC fight-specific profiles and scanner checks
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          KEY=/home/appwiza-runner/.ssh/appwiza_vps
+          HOST=anestishkurti92@127.0.0.1
+          ssh -i "$KEY" -o BatchMode=yes -o ConnectTimeout=7 -o StrictHostKeyChecking=accept-new "$HOST" 'bash -s' <<'REMOTE'
+          set -Eeuo pipefail
+          export HOME=/home/anestishkurti92
+          ROOT="$HOME/ufc-predictor-v1"
+          cd "$ROOT"
+          "$ROOT/venv/bin/python" - <<'PY'
+          import json,sys,importlib.util
+          from pathlib import Path
+          import pandas as pd
+          root=Path.home()/'ufc-predictor-v1'
+          modpath=Path('/tmp/ufc_opponent_adjusted_interaction_research.py')
+          if not modpath.exists():
+              print('MISSING_RESEARCH_MODULE',str(modpath));raise SystemExit(2)
+          spec=importlib.util.spec_from_file_location('research',modpath)
+          r=importlib.util.module_from_spec(spec);spec.loader.exec_module(r)
+          r.LIMIT=pd.Timestamp("2026-10-11")
+          raw=pd.read_csv(root/'raw/competitions.csv',low_memory=False)
+          fake={c:None for c in raw.columns}
+          fake.update(event_date='2026-10-10',player1='Matheus Camilo',player2='Jai Herbert',result='NC',method='None',round='0',time='0:00')
+          allraw=pd.concat([raw,pd.DataFrame([fake])],ignore_index=True)
+          snapshots,_=r.raw_features(allraw)
+          key=('2026-10-10','jai herbert','matheus camilo')
+          snap=snapshots.get(key)
+          assert snap is not None,'missing candidate matchup raw snapshot'
+          print('CORRECTED_FULL_UFCSTATS',json.dumps(snap,sort_keys=True,default=str))
+          reg,meta=r.regional(root/'regional_history/regional_fight_history.csv')
+          seen={}
+          for fighter in ('Matheus Camilo','Jai Herbert'):
+              q=raw[(raw.event_date.astype(str).str[:10]<'2026-10-10')&(
+                 raw.player1.astype(str).str.lower().eq(fighter.lower())|
+                 raw.player2.astype(str).str.lower().eq(fighter.lower()))]
+              keys=set()
+              for _,row in q.iterrows():
+                  opp=row.player2 if str(row.player1).lower()==fighter.lower() else row.player1
+                  keys.add((str(row.event_date)[:10],r.nm(opp)))
+              print('REGIONAL_HISTORY',fighter,json.dumps(r.regional_snap(reg,fighter,pd.Timestamp('2026-10-10'),keys)))
+              print('PRIOR_FIGHTS',fighter,json.dumps([{'date':str(x.event_date),'opponent':x.player2 if str(x.player1).lower()==fighter.lower() else x.player1,'method':x.method,'result':x.result} for _,x in q.sort_values('event_date').tail(5).iterrows()],default=str))
+          a=snap['matheus camilo'];b=snap['jai herbert']
+          flags={
+              'herbert_striking_danger':bool(b['sig_lpm']>=5 and b['sig_diff_pm']>=.5),
+              'herbert_pre_fight_td_defense_opportunities':b['td_faced'],
+              'herbert_tdd_reliable_12plus':bool(b['td_faced']>=12),
+              'herbert_quality_adjusted_tdd_evidence_sufficient':bool(b['adj_faced']>=12 and b['adj_bouts']>=2),
+              'camilo_low_td_conversion':bool(a['td_a15']>=3 and pd.notna(a['td_acc_raw']) and a['td_acc_raw']<=.30),
+              'camilo_fav_prior_sub_loss':bool(a['subloss']>=1),
+              'herbert_ufc_submission_wins':b['subwins']}
+          print('CORRECTED_MATCHUP_FLAGS',json.dumps(flags,default=str,sort_keys=True))
+          sp=importlib.util.spec_from_file_location('w','ufc_email_watcher.py')
+          w=importlib.util.module_from_spec(sp);sp.loader.exec_module(w)
+          feed=w.fetch_feed()
+          for e in feed.get('events') or []:
+              for bout in e.get('bouts') or []:
+                  if {r.nm(bout.get('fighter_a')),r.nm(bout.get('fighter_b'))}!={'matheus camilo','jai herbert'}:continue
+                  event_date=str(e.get('date'))[:10]
+                  bundle=w.joblib.load(w.BUNDLE_PATH)
+                  p=w.predict_bout(bout,pd.Timestamp(event_date).date(),bundle,w.load_reach_index(),w.load_skill_index())
+                  rawmethods=w._orig_method_cards_matchup(p,w.__dict__)
+                  safemethods=w.ufc_email_design.method_cards(p,w.__dict__)
+                  print('LIVE_SCANNER',json.dumps({
+                    'feed_updated':feed.get('generated_at'),'event':e.get('name'),'date':e.get('date'),
+                    'model_probability_a':p.get('p_a'),'model_probability_b':p.get('p_b'),
+                    'fighter_a':bout.get('fighter_a'),'fighter_b':bout.get('fighter_b'),
+                    'market':bout.get('market'),'raw_method_cards':[(c.get('id'),c.get('favorite')) for c in rawmethods],
+                    'approved_method_cards':[(c.get('id'),c.get('favorite')) for c in safemethods],
+                    'reviews':{name:{'status':v.get('status'),'reasons':v.get('reasons'),'warnings':v.get('warnings')} for name,v in p.get('matchup_reviews',{}).items()}
+                  },default=str,sort_keys=True))
+          PY
+          REMOTE
