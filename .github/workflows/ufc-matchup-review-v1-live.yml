@@ -1,9 +1,12 @@
-name: UFC Opponent Matchup Review V1 Live
+name: UFC Matchup Review Regional V2 Live
 on:
   push:
     branches: [main]
     paths:
       - 'scripts/ufc_matchup_review_v1.py'
+      - 'scripts/ufc_regional_history_v1.py'
+      - 'ufc/regional_verified_fights.csv'
+      - 'dwcs/research/regional_history/dwcs_prefight_regional_fight_detail.csv'
       - 'scripts/test_ufc_matchup_review_v1.py'
       - 'scripts/install_ufc_matchup_review_v1.py'
       - '.github/workflows/ufc-matchup-review-v1-live.yml'
@@ -20,7 +23,23 @@ jobs:
         run: |
           set -Eeuo pipefail
           python3 -m unittest discover -s scripts -p 'test_ufc_matchup_review_v1.py' -v
-          python3 -m py_compile scripts/ufc_matchup_review_v1.py scripts/install_ufc_matchup_review_v1.py
+          python3 -m py_compile scripts/ufc_matchup_review_v1.py scripts/install_ufc_matchup_review_v1.py scripts/ufc_regional_history_v1.py
+          mkdir -p "$RUNNER_TEMP/ufc-regional-build"
+          python3 scripts/ufc_regional_history_v1.py \
+            --archive dwcs/research/regional_history/dwcs_prefight_regional_fight_detail.csv \
+            --verified ufc/regional_verified_fights.csv \
+            --outdir "$RUNNER_TEMP/ufc-regional-build"
+          REGIONAL_BUILD="$RUNNER_TEMP/ufc-regional-build" python3 - <<'PY'
+          import csv,json,os
+          from pathlib import Path
+          root=Path(os.environ['REGIONAL_BUILD'])
+          r=list(csv.DictReader((root/'regional_fight_history.csv').open()))
+          assert len(r)>=100, 'Regional archive unexpectedly small'
+          assert any(x['fighter']=='Jai Herbert' and x['opponent']=='Tony Morgan' and x['method']=='Submission' and x['event_date']=='2016-05-14' for x in r)
+          assert any(x['fighter']=='Felipe Franco' and x['opponent']=='Freddy Vidal' and x['result']=='L' and x['method']=='Submission' for x in r)
+          assert any(x['fighter']=='Brendson Ribeiro' and x['result']=='W' and x['method']=='Submission' for x in r)
+          print('REGIONAL_FIXTURES_VERIFIED',len(r))
+          PY
       - name: Deploy and verify no-send UFC canonical selection gate
         shell: bash
         run: |
@@ -30,6 +49,8 @@ jobs:
           SSH=(ssh -i "$KEY" -o BatchMode=yes -o ConnectTimeout=7 -o StrictHostKeyChecking=accept-new)
           SCP=(scp -i "$KEY" -o BatchMode=yes -o ConnectTimeout=7 -o StrictHostKeyChecking=accept-new)
           "${SCP[@]}" scripts/ufc_matchup_review_v1.py "$HOST":/tmp/ufc_matchup_review_v1.py
+          "${SCP[@]}" "$RUNNER_TEMP/ufc-regional-build/regional_fight_history.csv" "$HOST":/tmp/ufc_regional_fight_history_v2.csv
+          "${SCP[@]}" "$RUNNER_TEMP/ufc-regional-build/regional_history_manifest.json" "$HOST":/tmp/ufc_regional_history_manifest_v2.json
           "${SCP[@]}" scripts/install_ufc_matchup_review_v1.py "$HOST":/tmp/install_ufc_matchup_review_v1.py
           "${SCP[@]}" scripts/ufc_sync_tracker_canonical.py "$HOST":/tmp/ufc_sync_tracker_canonical_matchup.py
           "${SSH[@]}" "$HOST" 'bash -s' <<'REMOTE'
@@ -46,6 +67,9 @@ jobs:
             cp "$BK" "$W"
           }
           trap rollback ERR
+          mkdir -p "$ROOT/regional_history"
+          cp /tmp/ufc_regional_fight_history_v2.csv "$ROOT/regional_history/regional_fight_history.csv"
+          cp /tmp/ufc_regional_history_manifest_v2.json "$ROOT/regional_history/regional_history_manifest.json"
           cp /tmp/ufc_matchup_review_v1.py "$ROOT/ufc_matchup_review_v1.py"
           "$PY" /tmp/install_ufc_matchup_review_v1.py "$W"
           "$PY" -m py_compile "$W" "$ROOT/ufc_matchup_review_v1.py"
@@ -90,6 +114,14 @@ jobs:
                                   'market_a':.765438,'market_b':.234562},
                                  'Felipe Franco','2026-10-10',w.ROOT)
           assert case['status']=='HOLD',('dangerous UFC-only false clearance',case)
+          herbert=w._review_assess({'fighter_a':'Matheus Camilo','fighter_b':'Jai Herbert'},'Matheus Camilo','2026-10-10',w.ROOT)
+          assert herbert['opponent_history']['regional_submission_wins']>=1,herbert
+          assert herbert['opponent_history']['latest_submission_win']=='2016-05-14',herbert
+          assert 'HISTORICAL_ONLY_SUBMISSION_WIN_REQUIRES_RELEVANCE_REVIEW' in herbert['warnings'],herbert
+          print('JAI_HERBERT_REGIONAL_HISTORY',json.dumps({'regional_fights':herbert['opponent_history']['regional_fights'],
+              'regional_sub_wins':herbert['opponent_history']['regional_submission_wins'],
+              'latest_submission_win':herbert['opponent_history']['latest_submission_win'],
+              'matchup_status':herbert['status'],'warnings':herbert['warnings']}))
           print('FRANCO_RIBEIRO_PRE_FIGHT_REVIEW',json.dumps({
               'status':case['status'],'reasons':case['reasons'],
               'favorite_history':case['favorite_history'],
@@ -113,7 +145,7 @@ jobs:
           # first delivery, bookmaker and original odds remain immutable.
           "$PY" /tmp/ufc_sync_tracker_canonical_matchup.py
           trap - ERR
-          rm -f /tmp/ufc_matchup_review_v1.py /tmp/install_ufc_matchup_review_v1.py /tmp/ufc_sync_tracker_canonical_matchup.py
+          rm -f /tmp/ufc_matchup_review_v1.py /tmp/install_ufc_matchup_review_v1.py /tmp/ufc_sync_tracker_canonical_matchup.py /tmp/ufc_regional_fight_history_v2.csv /tmp/ufc_regional_history_manifest_v2.json
           systemctl is-active ufc-model-watcher.timer
           echo 'UFC matchup review live and canonical publication verified; no emails sent'
           REMOTE
