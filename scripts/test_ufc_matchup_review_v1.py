@@ -86,7 +86,7 @@ class MatchupReviewTest(unittest.TestCase):
         self.assertEqual(r["opponent_history"]["independently_checked_regional_fights"],1)
     def test_old_herbert_regional_sub_is_caution_not_automatic_veto(self):
         with self.regional_file.open("a") as f:
-            f.write("2016-05-14,Jai Herbert,Tony Morgan,W,Submission,2,BAMMA 25,verified,https://example.com,,independently_checked,\\n")
+            f.write("2016-05-14,Jai Herbert,Tony Morgan,W,Submission,2,BAMMA 25,verified,https://example.com,,independently_checked,\n")
         # Favorite has a prior submission loss, but opponent's ONE submission
         # was ten years earlier; this must not trigger an automatic trap veto.
         r=review.assess_selection(
