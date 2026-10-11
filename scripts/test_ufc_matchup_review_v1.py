@@ -22,6 +22,9 @@ class MatchupReviewTest(unittest.TestCase):
         self.tmp=tempfile.TemporaryDirectory()
         root=Path(self.tmp.name);(root/"raw").mkdir()
         self.root=root
+        (root/"regional_history").mkdir()
+        self.regional_file=root/"regional_history"/"regional_fight_history.csv"
+        self.regional_file.write_text("event_date,fighter,opponent,result,method,round,organization,source,source_url,source_url_2,verification,source_cutoff_date\n")
         self.rows=[
           fight("2025-01-01","Favorite","A","L","SUBMISSION",1,"2:00"),
           fight("2025-03-01","Favorite","B"),
@@ -66,11 +69,32 @@ class MatchupReviewTest(unittest.TestCase):
         self.assertEqual(r["favorite_history"]["submission_wins"],1)
     def test_incomplete_prior_records_hold(self):
         r=review.assess_selection(self.pred,"Favorite","2025-03-01",self.root)
-        self.assertIn("INSUFFICIENT_PRIOR_UFC_HISTORY_REQUIRES_REGIONAL_DWCS_REVIEW",r["reasons"])
+        self.assertIn("FAVORITE_INSUFFICIENT_VERIFIED_PRO_FIGHT_CONTEXT",r["reasons"])
     def test_missing_raw_history_holds_not_passes(self):
         r=review.assess_selection(self.pred,"Favorite","2026-10-10",self.root/"missing")
         self.assertEqual(r["status"],"HOLD")
-        self.assertIn("VERIFIED_UFC_HISTORY_UNAVAILABLE",r["reasons"])
+        self.assertIn("UFC_OR_REGIONAL_HISTORY_UNAVAILABLE",r["reasons"])
+    def test_verified_regional_submission_counted_before_fight(self):
+        # Reproduce Herbert's May 2016 BAMMA rear naked choke.
+        with self.regional_file.open("a") as f:
+            f.write("2016-05-14,Jai Herbert,Tony Morgan,W,Submission,2,BAMMA 25,crosschecked_sherdog_espn,https://www.sherdog.com/fighter/Jai-Herbert-168551,https://www.espn.com/mma/fighter/history/_/id/4078246/jai-herbert,independently_checked,\n")
+        r=review.assess_selection(
+          dict(self.pred,fighter_a="Favorite",fighter_b="Jai Herbert"),
+          "Favorite","2026-10-10",self.root)
+        self.assertEqual(r["opponent_history"]["regional_submission_wins"],1)
+        self.assertEqual(r["opponent_history"]["submission_wins"],1)
+        self.assertEqual(r["opponent_history"]["independently_checked_regional_fights"],1)
+    def test_future_regional_record_never_leaks(self):
+        with self.regional_file.open("a") as f:
+            f.write("2026-11-01,Opponent,New Fighter,W,Submission,1,Test,test,https://example.com,,,archive_derived,\n")
+        r=review.assess_selection(self.pred,"Favorite","2026-10-10",self.root)
+        self.assertEqual(r["opponent_history"]["submission_wins"],1)
+    def test_regional_duplicate_ufc_does_not_double_count(self):
+        with self.regional_file.open("a") as f:
+            f.write("2025-01-01,Favorite,A,L,Submission,1,Test,test,https://example.com,,archive_derived,\n")
+        r=review.assess_selection(self.pred,"Favorite","2026-10-10",self.root)
+        self.assertEqual(r["favorite_history"]["fights"],2)
+        self.assertEqual(r["favorite_history"]["submission_losses"],1)
     def test_unknown_identity_holds(self):
         r=review.assess_selection(self.pred,"Stranger","2026-10-10",self.root)
         self.assertEqual(r["status"],"HOLD")
