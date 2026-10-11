@@ -40,6 +40,21 @@ jobs:
           def keys(x):
               return set(zip(x.date.dt.strftime('%Y-%m-%d'),x.favorite.map(new.nm),x.opponent.map(new.nm)))
           a,b=keys(og),keys(nc)
+          for side in ('f','o'):
+              base_col=side+'_fights'
+              raw_col=side+'_hist_fights'
+              z=c[[base_col,raw_col,'event_date']].dropna().copy()
+              delta=z[raw_col]-z[base_col]
+              print('PRIOR_UFC_FIGHT_COUNT_DISCREPANCY',side,{
+                'sample':len(z),'any_mismatch':int((delta!=0).sum()),
+                'base_undercount':int((delta>0).sum()),
+                'base_overcount':int((delta<0).sum()),
+                'large_undercount_ge3':int((delta>=3).sum()),
+                'max_undercount':int(delta.max()),
+                'median_delta':float(delta.median())})
+              for year,g in z.groupby(z.event_date.str[:4].astype(int)//5*5):
+                  diff=g[raw_col]-g[base_col]
+                  print('FIGHT_COUNT_BY_5YEAR_BLOCK',side,int(year),int(len(g)),int((diff!=0).sum()))
           print('COHORT_RECONCILIATION',{'old_180':len(a),'new_202':len(b),
                 'intersection':len(a&b),'old_only':len(a-b),'new_only':len(b-a)})
           diff=nc[nc.apply(lambda r:(r.date.strftime('%Y-%m-%d'),new.nm(r.favorite),new.nm(r.opponent)) in (b-a),axis=1)]
