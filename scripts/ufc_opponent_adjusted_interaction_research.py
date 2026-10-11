@@ -198,8 +198,8 @@ def features(d):
     d["o_high_def_shrunk"]=(d.o_reliable_tdd)&(d.o_hist_td_def_shrunk>=.68)
     d["o_above_expected_defense"]=(d.o_adjusted_valid)&(d.o_hist_opp_adj_tdd>=.08)
     d["o_striking_danger"]=(d.o_sig_l_pm>=5.0)&(d.o_sig_diff_pm>=.5)
-    d["o_knockout_danger"]=(d.o_hist_kow>=2)|(d.o_kd15>=.5)
-    d["f_entry_vulnerability"]=(d.f_hist_subl>=1)|(d.f_regional_subloss>=1)
+    d["o_knockout_danger"]=(d.o_hist_kowins>=2)|(d.o_kd15>=.5)
+    d["f_entry_vulnerability"]=(d.f_hist_subloss>=1)|(d.f_regional_subloss>=1)
     d["o_submission_threat"]=(d.o_hist_subwins>=1)|(d.o_regional_subwins>=2)
     d["submission_collision"]=d.f_entry_vulnerability&d.o_submission_threat
     d["f_low_td_conversion"]=(d.f_td_a15>=3)&(d.f_td_acc<=.30)&d.f_td_acc.notna()
@@ -241,7 +241,7 @@ def loss_rows(d,mask):
           "height_disadv","reach_disadv","f_td_a15","f_td_acc","f_ctrl15",
           "o_td_def","o_hist_td_faced","o_hist_td_def_shrunk",
           "o_hist_adj_faced","o_hist_opp_adj_tdd","o_sig_l_pm","o_sig_diff_pm",
-          "o_kd15","f_hist_subl","f_regional_subloss",
+          "o_kd15","f_hist_subloss","f_regional_subloss",
           "o_hist_subwins","o_regional_subwins",
           "o_striking_danger","submission_collision","entry_vs_defender",
           "o_reliable_tdd","o_adjusted_valid","period"]
