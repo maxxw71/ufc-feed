@@ -1,0 +1,38 @@
+name: UFC Age Reach Wrestling Source Audit
+on:
+  push:
+    branches: [main]
+    paths: ['.github/workflows/ufc-age-reach-wrestle-source-audit.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  inspect:
+    runs-on: [self-hosted, Linux, X64, appwiza]
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - name: Read-only source and field inspection
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          KEY=/home/appwiza-runner/.ssh/appwiza_vps
+          ssh -i "$KEY" -o BatchMode=yes -o ConnectTimeout=6 -o StrictHostKeyChecking=accept-new anestishkurti92@127.0.0.1 'bash -s' <<'REMOTE'
+          set -Eeuo pipefail
+          export HOME=/home/anestishkurti92
+          cd "$HOME/ufc-predictor-v1"
+          venv/bin/python - <<'PY'
+          import pandas as pd,json
+          from pathlib import Path
+          root=Path.home()/'ufc-predictor-v1'
+          for path in [root/'feature_expansion/prefight_favorite_features_v6.csv',root/'feature_expansion/prefight_favorite_features_v5.csv',root/'new_category_discovery/prefight_favorite_features.csv',root/'ufc_height_method_analysis/height_market_sample.csv',root/'ufc_reach_method_analysis/reach_market_sample.csv']:
+              print('SOURCE',str(path),'EXISTS',path.exists())
+              if not path.exists():continue
+              d=pd.read_csv(path,low_memory=False)
+              print('SHAPE',d.shape,'DATES',str(d.event_date.min()) if 'event_date' in d else '',str(d.event_date.max()) if 'event_date' in d else '')
+              print('ALLCOLS',json.dumps(d.columns.to_list()))
+              focus=[c for c in d if any(s in c.lower() for s in ['height','reach','age','td_','strik','sig_','win','market','price','decim','profit','stance','finish','fights','style','ctrl','event','favorite','opponent'])]
+              print('COVERAGE',json.dumps({c:int(d[c].notna().sum()) for c in focus[:150]}))
+              print('HEAD',d.head(2).to_json(orient='records')[:7000])
+          PY
+          REMOTE
