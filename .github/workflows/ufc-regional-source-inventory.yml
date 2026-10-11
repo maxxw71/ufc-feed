@@ -1,0 +1,48 @@
+name: UFC Regional Source Inventory
+on:
+  push:
+    branches: [main]
+    paths: ['.github/workflows/ufc-regional-source-inventory.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  audit:
+    runs-on: [self-hosted, Linux, X64, appwiza]
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - name: Inspect candidate prefight regional archives and schemas
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          echo "--- RUNNER DATA ARCHIVES ---"
+          find /tmp /home/appwiza-runner -maxdepth 4 \( -name '*.duckdb' -o -iname '*regional*.csv' -o -iname '*sherdog*.csv' \) -type f 2>/dev/null | head -35 || true
+          echo "--- UFC SERVER INVENTORY ---"
+          KEY=/home/appwiza-runner/.ssh/appwiza_vps
+          ssh -i "$KEY" -o BatchMode=yes -o ConnectTimeout=7 -o StrictHostKeyChecking=accept-new anestishkurti92@127.0.0.1 'bash -s' <<'REMOTE'
+          set -Eeuo pipefail
+          export HOME=/home/anestishkurti92
+          ROOT=$HOME/ufc-predictor-v1
+          echo "regional files (limited)"
+          find "$ROOT" /tmp -maxdepth 5 -type f \( -name '*.duckdb' -o -iname '*regional*.csv' -o -iname '*career*.csv' -o -iname '*fight_history*.csv' -o -iname '*tapology*.csv' -o -iname '*sherdog*.csv' \) 2>/dev/null | head -100 || true
+          "$ROOT/venv/bin/python" - <<'PY'
+          from pathlib import Path
+          import csv,sqlite3,json
+          root=Path.home()/'ufc-predictor-v1'
+          for p in [root/'raw/competitions.csv',root/'feature_expansion/prefight_favorite_features_v6.csv',
+                    root/'auto_research/state/immutable_warehouse.sqlite3',
+                    root/'auto_research/state/prospective_ufc.sqlite3']:
+              print('SOURCE',str(p),p.exists(),p.stat().st_size if p.exists() else 0)
+              if p.suffix=='.csv' and p.exists():
+                  with p.open() as f: print('FIELDS',next(csv.reader(f))[:55])
+              if p.suffix=='.sqlite3' and p.exists():
+                  c=sqlite3.connect(f'file:{p}?mode=ro',uri=True)
+                  print('TABLES',c.execute("select name from sqlite_master where type='table'").fetchall()[:35])
+                  c.close()
+          try:
+              import duckdb
+              print('DUCKDB_OK', duckdb.__version__)
+          except Exception as exc: print('DUCKDB_MISSING',type(exc).__name__)
+          PY
+          REMOTE
