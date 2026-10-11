@@ -84,9 +84,19 @@ class MatchupReviewTest(unittest.TestCase):
         self.assertEqual(r["opponent_history"]["regional_submission_wins"],1)
         self.assertEqual(r["opponent_history"]["submission_wins"],1)
         self.assertEqual(r["opponent_history"]["independently_checked_regional_fights"],1)
+    def test_old_herbert_regional_sub_is_caution_not_automatic_veto(self):
+        with self.regional_file.open("a") as f:
+            f.write("2016-05-14,Jai Herbert,Tony Morgan,W,Submission,2,BAMMA 25,verified,https://example.com,,independently_checked,\\n")
+        # Favorite has a prior submission loss, but opponent's ONE submission
+        # was ten years earlier; this must not trigger an automatic trap veto.
+        r=review.assess_selection(
+            dict(self.pred,fighter_a="Favorite",fighter_b="Jai Herbert"),
+            "Favorite","2026-10-10",self.root)
+        self.assertIn("HISTORICAL_ONLY_SUBMISSION_WIN_REQUIRES_RELEVANCE_REVIEW",r["warnings"])
+        self.assertNotIn("SUBMISSION_TRAP_OPPONENT_SUB_WINS_AND_FAVORITE_SUB_LOSSES",r["reasons"])
     def test_future_regional_record_never_leaks(self):
         with self.regional_file.open("a") as f:
-            f.write("2026-11-01,Opponent,New Fighter,W,Submission,1,Test,test,https://example.com,,,archive_derived,\n")
+            f.write("2026-11-01,Opponent,New Fighter,W,Submission,1,Test,test,https://example.com,,archive_derived,\n")
         r=review.assess_selection(self.pred,"Favorite","2026-10-10",self.root)
         self.assertEqual(r["opponent_history"]["submission_wins"],1)
     def test_regional_duplicate_ufc_does_not_double_count(self):
