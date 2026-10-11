@@ -1,0 +1,61 @@
+name: UFC Reach Wrestling Loss Mechanics Audit
+on:
+  push:
+    branches: [main]
+    paths: ['.github/workflows/ufc-reach-wrestling-loss-mechanics-audit.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  inspect:
+    runs-on: [self-hosted, Linux, X64, appwiza]
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Read-only causal failure-mode investigation
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          KEY=/home/appwiza-runner/.ssh/appwiza_vps
+          HOST=anestishkurti92@127.0.0.1
+          ssh -i "$KEY" -o BatchMode=yes -o ConnectTimeout=7 -o StrictHostKeyChecking=accept-new "$HOST" 'bash -s' <<'REMOTE'
+          set -Eeuo pipefail
+          export HOME=/home/anestishkurti92
+          "$HOME/ufc-predictor-v1/venv/bin/python" - <<'PY'
+          import pandas as pd,json,re
+          from pathlib import Path
+          root=Path.home()/'ufc-predictor-v1'
+          o=Path('/tmp/ufc_age_reach_wrestling_study_20261010')
+          d=pd.read_csv(o/'06_cases.csv',low_memory=False)
+          raw=pd.read_csv(root/'raw/competitions.csv',low_memory=False)
+          def norm(s):
+              return re.sub('[^a-z0-9]+',' ',str(s).lower()).strip()
+          raw['key']=raw['event_date'].astype(str).str[:10]+'|'+raw.player1.map(norm)+'|'+raw.player2.map(norm)
+          raw['alt']=raw['event_date'].astype(str).str[:10]+'|'+raw.player2.map(norm)+'|'+raw.player1.map(norm)
+          idx={}
+          for _,r in raw.iterrows():
+              idx[r['key']]=r; idx[r['alt']]=r
+          print('LOSSES_METHODS_AND_ROUNDS')
+          for _,r in d[d.win==0].iterrows():
+              key=str(r.event_date)[:10]+'|'+norm(r.favorite)+'|'+norm(r.opponent)
+              v=idx.get(key)
+              print('FIGHT_OUTCOME',json.dumps({'date':r.event_date,'favorite':r.favorite,'opponent':r.opponent,
+                'prior_opp_td_def':None if pd.isna(r.o_td_def) else round(float(r.o_td_def),3),
+                'prior_opp_sig_l_pm':round(float(r.o_sig_l_pm),3),
+                'prior_fav_ctrl15':round(float(r.f_ctrl15),3),
+                'actual_method':str(v['method']) if v is not None else 'not_joined',
+                'actual_round':str(v['round']) if v is not None else 'unknown'}))
+          print('OPPONENT_STRIKE_VOLUME_BANDS_DESC_POST_HOC')
+          for lo,hi in [(0,3.5),(3.5,4.5),(4.5,5.5),(5.5,99)]:
+              g=d[d.o_sig_l_pm.ge(lo)&d.o_sig_l_pm.lt(hi)]
+              a=g[g.period=='discovery'];b=g[g.period=='holdout']
+              def stat(f):
+                  return {'n':len(f),'wins':int(f.win.sum()),
+                    'roi_pct':round(float(f.profit100.mean()),2) if len(f) else None}
+              print('BAND',json.dumps({'range':[lo,hi],'all':stat(g),'discovery':stat(a),'holdout':stat(b)}))
+          for lo,hi in [(0,.6),(.6,.8),(.8,1.01)]:
+              g=d[d.o_td_def.ge(lo)&d.o_td_def.lt(hi)]
+              print('DEFENSE_BAND',json.dumps({'range':[lo,hi],
+                  'n':len(g),'wins':int(g.win.sum()),'roi_pct':round(float(g.profit100.mean()),2) if len(g) else None}))
+          PY
+          REMOTE
