@@ -33,7 +33,7 @@ Both won; **zero** examples were present in the 2024–26 holdout. This is too s
 ## Opponent takedown defense: surprisingly not a simple veto
 
 In the 54-fight younger/shorter wrestler cohort:
-- Opponent prior TD defense below 60%: **15/20**, +6.22% ROI. One more fight lacked TD-defense data.
+- Opponent prior TD defense below 60%: **15/20**, +6.22% ROI. Two additional fights lacked TD-defense data.
 - Opponent prior TD defense 60–79%: **20/20**, +45.37% ROI.
 - Opponent prior TD defense 80%+: **12/12**, +55.24% ROI.
 
