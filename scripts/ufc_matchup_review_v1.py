@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """Point-in-time UFC matchup review. Conservative safety gate, not a new winning method.
 
-Uses prior UFCStats bouts only. Missing regional/DWCS records are *not* treated
-as evidence of zero submission or finish risk. Research verdicts are versioned;
+Uses prior UFCStats bouts plus sourced regional/DWCS professional fights.
+Missing regional coverage is never treated as evidence of zero finish risk. Research verdicts are versioned;
 do not rewrite settled picks or pretend a postmortem rule is validated ROI.
 """
 from __future__ import annotations
@@ -14,9 +14,10 @@ from datetime import date, datetime, timezone
 from functools import lru_cache
 from pathlib import Path
 
-VERSION = "UFC_MATCHUP_REVIEW_V1_1_20261010"
+VERSION = "UFC_MATCHUP_REVIEW_V2_REGIONAL_20261010"
 MIN_UFC_FIGHTS = 2
 HISTORY_FILENAME = Path("raw/competitions.csv")
+REGIONAL_FILENAME = Path("regional_history/regional_fight_history.csv")
 
 def norm(name):
     return re.sub(r"[^a-z0-9]+", " ", str(name or "").lower()).strip()
@@ -89,7 +90,7 @@ def _index_from_file(path):
                     "first_round_finish_loss":int(winner>=0 and side!=winner and bool(finish_kind) and rnd==1),
                     "first_round_sub_win":int(side==winner and finish_kind=="SUB" and rnd==1),
                     "minutes":minutes,
-                    "td_attempts":attempt_count(r,label,"Td")
+                    "td_attempts":attempt_count(r,label,"Td"), "source":"ufcstats", "verification":"official"
                 }
                 rows.setdefault(fighter,[]).append(event)
     return {k:sorted(v,key=lambda x:x["date"]) for k,v in rows.items()}
@@ -103,6 +104,54 @@ def history(root):
     stat=path.stat()
     return _cached_index(str(path),stat.st_mtime_ns,stat.st_size)
 
+
+@lru_cache(maxsize=4)
+def _regional_index(path,modified_ns,size):
+    data={}
+    with Path(path).open(newline="",encoding="utf-8-sig") as f:
+        for row in csv.DictReader(f):
+            fight_date=as_date(row.get("event_date"))
+            fighter=norm(row.get("fighter")); opponent=norm(row.get("opponent"))
+            result=str(row.get("result") or "").strip().upper()
+            method=str(row.get("method") or "").lower()
+            if not fighter or not opponent or fighter==opponent or not fight_date:
+                continue
+            if result not in {"W","L","D","NC"}:continue
+            kind="SUB" if "sub" in method else "KO" if "ko" in method else None
+            rnd=number(row.get("round"))
+            event={
+                "date":fight_date,"opponent":opponent,
+                "win":int(result=="W"),"loss":int(result=="L"),
+                "submission_win":int(result=="W" and kind=="SUB"),
+                "submission_loss":int(result=="L" and kind=="SUB"),
+                "ko_win":int(result=="W" and kind=="KO"),
+                "ko_loss":int(result=="L" and kind=="KO"),
+                "first_round_finish_win":int(result=="W" and bool(kind) and rnd==1),
+                "first_round_finish_loss":int(result=="L" and bool(kind) and rnd==1),
+                "first_round_sub_win":int(result=="W" and kind=="SUB" and rnd==1),
+                "minutes":None,"td_attempts":None,
+                "source":str(row.get("source") or "regional"),
+                "verification":str(row.get("verification") or "archive_derived"),
+                "source_url":str(row.get("source_url") or "")
+            }
+            data.setdefault(fighter,[]).append(event)
+    return {k:sorted(events,key=lambda e:e["date"]) for k,events in data.items()}
+
+def regional_history(root):
+    path=Path(root)/REGIONAL_FILENAME
+    st=path.stat()
+    return _regional_index(str(path),st.st_mtime_ns,st.st_size)
+
+def combined_history(ufc,regional,event_date):
+    """Deduplicate fighter+opponent+date, preferring UFCStats when overlapping."""
+    prior={}
+    for e in ufc:
+        if e["date"]<event_date: prior[(e["date"],e["opponent"])]=dict(e)
+    for e in regional:
+        if e["date"]<event_date:
+            prior.setdefault((e["date"],e["opponent"]),dict(e))
+    return sorted(prior.values(),key=lambda e:(e["date"],e["opponent"]))
+
 def snap(events, event_date):
     prior=[e for e in events if e["date"] < event_date]
     recent=prior[-5:]
@@ -112,6 +161,12 @@ def snap(events, event_date):
     td_attempts=sum(e["td_attempts"] for e in tds)
     return {
         "fights":len(prior),
+        "ufc_fights":sum(e.get("source")=="ufcstats" for e in prior),
+        "regional_fights":sum(e.get("source")!="ufcstats" for e in prior),
+        "independently_checked_regional_fights":sum(e.get("verification")=="independently_checked" for e in prior),
+        "archive_derived_regional_fights":sum(e.get("verification")=="archive_derived" for e in prior),
+        "regional_submission_wins":sum(e["submission_win"] for e in prior if e.get("source")!="ufcstats"),
+        "regional_submission_losses":sum(e["submission_loss"] for e in prior if e.get("source")!="ufcstats"),
         "wins":sum(e["win"] for e in prior),
         "losses":sum(e["loss"] for e in prior),
         "submission_wins":sum(e["submission_win"] for e in prior),
@@ -145,7 +200,7 @@ def assess_selection(pred, favorite, event_date, root):
     opp=(b if norm(fav)==norm(a) else a if norm(fav)==norm(b) else "")
     info={
         "version":VERSION,"favorite":fav,"opponent":opp,"event_date":str(event_date)[:10],
-        "status":"HOLD","reasons":[],"warnings":[],"coverage":"ufcstats_prior_bouts_only",
+        "status":"HOLD","reasons":[],"warnings":[],"coverage":"ufcstats_and_sourced_regional_prior_fights_partial_roster",
         "favorite_history":{},"opponent_history":{},"market":_market_for(pred,fav)
     }
     ed=as_date(event_date)
@@ -154,16 +209,24 @@ def assess_selection(pred, favorite, event_date, root):
         return info
     try:
         ix=history(root)
+        regional=regional_history(root)
     except (OSError,ValueError) as exc:
-        info["reasons"].append("VERIFIED_UFC_HISTORY_UNAVAILABLE")
+        info["reasons"].append("UFC_OR_REGIONAL_HISTORY_UNAVAILABLE")
         info["warnings"].append(type(exc).__name__)
         return info
-    fp=snap(ix.get(norm(fav),[]),ed)
-    op=snap(ix.get(norm(opp),[]),ed)
+    fp=snap(combined_history(ix.get(norm(fav),[]),regional.get(norm(fav),[]),ed),ed)
+    op=snap(combined_history(ix.get(norm(opp),[]),regional.get(norm(opp),[]),ed),ed)
     info["favorite_history"]=fp
     info["opponent_history"]=op
-    if fp["fights"] < MIN_UFC_FIGHTS or op["fights"] < MIN_UFC_FIGHTS:
-        info["reasons"].append("INSUFFICIENT_PRIOR_UFC_HISTORY_REQUIRES_REGIONAL_DWCS_REVIEW")
+    # Archive-only rows can reveal threats, but never clear a low-UFC-sample
+    # matchup without at least three independently cross-checked pro fights.
+    for label,p in (("FAVORITE",fp),("OPPONENT",op)):
+        if p["ufc_fights"] < MIN_UFC_FIGHTS and p["independently_checked_regional_fights"] < 3:
+            info["reasons"].append(label+"_INSUFFICIENT_VERIFIED_PRO_FIGHT_CONTEXT")
+        if p["regional_fights"]==0:
+            info["warnings"].append(label+"_NO_REGIONAL_HISTORY_COVERAGE")
+        elif p["archive_derived_regional_fights"]>0:
+            info["warnings"].append(label+"_PARTIAL_DWCS_REGIONAL_ARCHIVE_SOURCE")
     # Independent of U1-U12: a documented submission history on both sides
     # is a specific matchup trap. Hold for corroboration rather than assuming
     # the striking/age/market edge neutralizes the guillotine risk.
@@ -181,7 +244,7 @@ def assess_selection(pred, favorite, event_date, root):
     # enhancement; replay against historical winners and losers separately.
     if op["submission_wins"]>=1 and (
         (fp["td_attempts_per15"] is not None and fp["td_attempts_per15"]>=3.0)
-        or fp["fights"]<=2
+        or fp["ufc_fights"]<=2
     ):
         info["reasons"].append("WRESTLER_TAKEDOWN_ENTRY_VS_DOCUMENTED_SUBMISSION_FINISHER")
     elif op["submission_wins"]>=1 and fp["td_attempts_per15"] is not None and fp["td_attempts_per15"]>=1.0:
@@ -189,7 +252,7 @@ def assess_selection(pred, favorite, event_date, root):
     if fp["td_coverage_fights"]==0 or op["td_coverage_fights"]==0:
         info["warnings"].append("TAKEDOWN_STAT_COVERAGE_INCOMPLETE")
     if op["submission_wins"]==0:
-        info["warnings"].append("ZERO_UFC_SUBMISSIONS_DOES_NOT_EXCLUDE_REGIONAL_SUBMISSIONS")
+        info["warnings"].append("NO_DOCUMENTED_SUBMISSION_WINS_PRO_HISTORY_INCOMPLETE")
     # Model EV is an independent warning, not a retrospectively tuned hard
     # rejection; missing/uncalibrated probabilities cannot prove a positive EV.
     ev=info["market"]["model_ev_pct"]
@@ -207,8 +270,8 @@ def check_line(review):
     def rate(x):
         return "unknown" if x is None else f"{float(x):.2f}"
     return (
-        "Matchup "+review["status"]+": favorite UFCStats history "
-        +f"{f['fights']} fights / {f['submission_losses']} submission losses / "
+        "Matchup "+review["status"]+": favorite UFC+regional history "
+        +f"{f['fights']} fights ({f['ufc_fights']} UFC, {f['regional_fights']} regional) / {f['submission_losses']} submission losses / "
         +f"{f['ko_losses']} KO losses / {rate(f['td_attempts_per15'])} TD attempts per 15; "
         +"opponent "+f"{o['fights']} fights / {o['submission_wins']} submission wins / "
         +f"{o['first_round_finish_wins']} first-round finish wins"
