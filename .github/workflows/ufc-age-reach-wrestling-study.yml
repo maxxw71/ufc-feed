@@ -30,5 +30,29 @@ jobs:
           OUT=/tmp/ufc_age_reach_wrestling_study_20261010
           mkdir -p "$OUT"
           "$PY" /tmp/ufc_age_reach_wrestling_interactions.py --input "$ROOT/feature_expansion/prefight_favorite_features_v6.csv" --outdir "$OUT"
+          "$PY" - <<'PY'
+          import json,pandas as pd
+          from pathlib import Path
+          o=Path('/tmp/ufc_age_reach_wrestling_study_20261010')
+          c=json.loads((o/'cohort_results.json').read_text())
+          for item in c:
+              if item['cohort'][:2] in ('05','06','07','09','10','11'):
+                  print('CONFIDENCE',json.dumps({
+                    'cohort':item['cohort'],'n':item['n'],
+                    'roi_95_bootstrap':item.get('roi_bootstrap_95pct'),
+                    'win_approx_95':item.get('win_ci_approx'),
+                    'holdout_n':item['holdout']['n'],
+                    'holdout_roi_95':item['holdout'].get('roi_bootstrap_95pct')},default=str))
+          for case in ['06_cases.csv','07_cases.csv','09_cases.csv']:
+              d=pd.read_csv(o/case)
+              cols=['event_date','favorite','opponent','weightclass','win','profit100',
+                    'market_prob','fav_decimal','age_adv','height_disadv',
+                    'reach_disadv','f_td_a15','f_ctrl15','o_td_a15','o_td_def',
+                    'o_sig_l_pm','f_fights','o_fights','period']
+              for status,group in [('LOSSES',d[d.win==0]),('MOST_RECENT',d.sort_values('event_date').tail(8))]:
+                  print('CASE',case,status,'count',len(group))
+                  for r in group[cols].to_dict('records'):
+                      print('FIGHT_ROW',json.dumps(r,default=str))
+          PY
           echo "RESEARCH_OUTPUT" "$OUT"
           REMOTE
