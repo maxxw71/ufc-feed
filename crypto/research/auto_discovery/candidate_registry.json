@@ -1,12 +1,12 @@
 {
-  "generated_at": "2026-10-11T11:33:53.355905+00:00",
+  "generated_at": "2026-10-12T13:20:28.865382+00:00",
   "source": "Hyperliquid all-pairs 4H research",
   "candidates": [
     {
-      "candidate_id": "AUTO-20261011-01",
-      "status": "SHADOW_ONLY",
+      "candidate_id": "AUTO-20261012-01",
+      "status": "CROSS_VALIDATED_SHADOW",
       "segment": "primary_perps",
-      "rule": "close_location <= 0.0855184 AND rsi_vs_sma3 <= -0.120468",
+      "rule": "close_location <= 0.085517 AND rsi_vs_sma3 <= -0.120639",
       "features": [
         "close_location",
         "rsi_vs_sma3"
@@ -15,473 +15,26 @@
         {
           "feature": "close_location",
           "op": "<=",
-          "a": 0.0855183541750705,
+          "a": 0.0855169512282866,
           "b": null
         },
         {
           "feature": "rsi_vs_sma3",
           "op": "<=",
-          "a": -0.1204675071565011,
+          "a": -0.120638651680922,
           "b": null
         }
       ],
       "validation": {
-        "train_n": 69,
-        "train_hit5": 0.855072463768116,
-        "hold_n": 39,
-        "hold_hit5": 0.8717948717948718,
-        "hold_hit10": 0.6410256410256411,
-        "hold_t5_before_s7p5": 0.8205128205128205,
-        "train_net_roi": 0.019926086956521736,
-        "hold_net_roi": 0.02466410256410257,
-        "hold_wilson_lower": 0.7329395096236953,
-        "episodes": 14,
-        "episode_hit5": 0.8392857142857143
-      },
-      "promotion_requirements": [
-        "independent cross-venue validation with frozen thresholds",
-        "full fees/slippage/actual-funding economic replay",
-        "forward shadow signals",
-        "manual review before assignment of C-number"
-      ],
-      "cross_venue_validation": {
-        "venue": "Binance USDT spot",
-        "split": "latest 40%",
-        "n": 39,
-        "hit5": 0.7435897435897436,
-        "hit10": 0.5641025641025641,
-        "t5_before_s7p5": 0.6923076923076923,
-        "net_roi": 0.008138461538461542,
-        "wilson_lower": 0.589180432321585,
-        "unsupported_features": [],
-        "passed": false
-      }
-    },
-    {
-      "candidate_id": "AUTO-20261011-02",
-      "status": "SHADOW_ONLY",
-      "segment": "primary_perps",
-      "rule": "rsi_accel <= -11.7377 AND price_pct1 <= -0.0547641",
-      "features": [
-        "rsi_accel",
-        "price_pct1"
-      ],
-      "conditions": [
-        {
-          "feature": "rsi_accel",
-          "op": "<=",
-          "a": -11.737702742963926,
-          "b": null
-        },
-        {
-          "feature": "price_pct1",
-          "op": "<=",
-          "a": -0.0547641289117234,
-          "b": null
-        }
-      ],
-      "validation": {
-        "train_n": 59,
-        "train_hit5": 0.847457627118644,
-        "hold_n": 46,
-        "hold_hit5": 0.8913043478260869,
-        "hold_hit10": 0.6739130434782609,
-        "hold_t5_before_s7p5": 0.8043478260869565,
-        "train_net_roi": 0.01320169491525424,
-        "hold_net_roi": 0.02264347826086957,
-        "hold_wilson_lower": 0.7696189698736853,
-        "episodes": 15,
-        "episode_hit5": 0.76
-      },
-      "promotion_requirements": [
-        "independent cross-venue validation with frozen thresholds",
-        "full fees/slippage/actual-funding economic replay",
-        "forward shadow signals",
-        "manual review before assignment of C-number"
-      ],
-      "cross_venue_validation": {
-        "venue": "Binance USDT spot",
-        "split": "latest 40%",
-        "n": 58,
-        "hit5": 0.8275862068965517,
-        "hit10": 0.6724137931034483,
-        "t5_before_s7p5": 0.6724137931034483,
-        "net_roi": 0.005651724137931036,
-        "wilson_lower": 0.7109149994332449,
-        "unsupported_features": [],
-        "passed": false
-      }
-    },
-    {
-      "candidate_id": "AUTO-20261011-03",
-      "status": "SHADOW_ONLY",
-      "segment": "primary_perps",
-      "rule": "price_pct1 <= -0.0590651 AND rsi_accel <= -8.98624",
-      "features": [
-        "price_pct1",
-        "rsi_accel"
-      ],
-      "conditions": [
-        {
-          "feature": "price_pct1",
-          "op": "<=",
-          "a": -0.0590651441715271,
-          "b": null
-        },
-        {
-          "feature": "rsi_accel",
-          "op": "<=",
-          "a": -8.986237705844246,
-          "b": null
-        }
-      ],
-      "validation": {
-        "train_n": 66,
-        "train_hit5": 0.8333333333333334,
-        "hold_n": 51,
-        "hold_hit5": 0.9019607843137255,
-        "hold_hit10": 0.6470588235294118,
-        "hold_t5_before_s7p5": 0.7843137254901961,
-        "train_net_roi": 0.013009090909090913,
-        "hold_net_roi": 0.020139215686274508,
-        "hold_wilson_lower": 0.7902151004554693,
-        "episodes": 17,
-        "episode_hit5": 0.8169934640522876
-      },
-      "promotion_requirements": [
-        "independent cross-venue validation with frozen thresholds",
-        "full fees/slippage/actual-funding economic replay",
-        "forward shadow signals",
-        "manual review before assignment of C-number"
-      ],
-      "cross_venue_validation": {
-        "venue": "Binance USDT spot",
-        "split": "latest 40%",
-        "n": 62,
-        "hit5": 0.8387096774193549,
-        "hit10": 0.6612903225806451,
-        "t5_before_s7p5": 0.6935483870967742,
-        "net_roi": 0.008293548387096776,
-        "wilson_lower": 0.7279343069043936,
-        "unsupported_features": [],
-        "passed": false
-      }
-    },
-    {
-      "candidate_id": "AUTO-20261011-04",
-      "status": "SHADOW_ONLY",
-      "segment": "primary_perps",
-      "rule": "rsi_vs_sma3 <= -0.120468 AND price_pct1 <= -0.0344585",
-      "features": [
-        "rsi_vs_sma3",
-        "price_pct1"
-      ],
-      "conditions": [
-        {
-          "feature": "rsi_vs_sma3",
-          "op": "<=",
-          "a": -0.1204675071565011,
-          "b": null
-        },
-        {
-          "feature": "price_pct1",
-          "op": "<=",
-          "a": -0.0344584771942576,
-          "b": null
-        }
-      ],
-      "validation": {
-        "train_n": 110,
-        "train_hit5": 0.8181818181818182,
-        "hold_n": 95,
-        "hold_hit5": 0.8736842105263158,
-        "hold_hit10": 0.6631578947368421,
-        "hold_t5_before_s7p5": 0.7894736842105263,
-        "train_net_roi": 0.014757420317773893,
-        "hold_net_roi": 0.020784210526315787,
-        "hold_wilson_lower": 0.7920768455041922,
-        "episodes": 27,
-        "episode_hit5": 0.7615740740740741
-      },
-      "promotion_requirements": [
-        "independent cross-venue validation with frozen thresholds",
-        "full fees/slippage/actual-funding economic replay",
-        "forward shadow signals",
-        "manual review before assignment of C-number"
-      ],
-      "cross_venue_validation": {
-        "venue": "Binance USDT spot",
-        "split": "latest 40%",
-        "n": 92,
-        "hit5": 0.8043478260869565,
-        "hit10": 0.6195652173913043,
-        "t5_before_s7p5": 0.7065217391304348,
-        "net_roi": 0.009915217391304349,
-        "wilson_lower": 0.7117948361760426,
-        "unsupported_features": [],
-        "passed": false
-      }
-    },
-    {
-      "candidate_id": "AUTO-20261011-05",
-      "status": "CROSS_VALIDATED_SHADOW",
-      "segment": "primary_perps",
-      "rule": "rsi_pct1 <= -0.181321 AND price_pct1 <= -0.0590651 AND rsi_accel <= -10.0444",
-      "features": [
-        "rsi_pct1",
-        "price_pct1",
-        "rsi_accel"
-      ],
-      "conditions": [
-        {
-          "feature": "rsi_pct1",
-          "op": "<=",
-          "a": -0.1813207076103542,
-          "b": null
-        },
-        {
-          "feature": "price_pct1",
-          "op": "<=",
-          "a": -0.0590651441715271,
-          "b": null
-        },
-        {
-          "feature": "rsi_accel",
-          "op": "<=",
-          "a": -10.044367075890037,
-          "b": null
-        }
-      ],
-      "validation": {
-        "train_n": 37,
-        "train_hit5": 0.8918918918918919,
-        "hold_n": 44,
-        "hold_hit5": 0.8863636363636364,
-        "hold_hit10": 0.6818181818181818,
-        "hold_t5_before_s7p5": 0.7727272727272727,
-        "train_net_roi": 0.02007297297297298,
-        "hold_net_roi": 0.018690909090909095,
-        "hold_wilson_lower": 0.7602056485186641,
-        "episodes": 14,
-        "episode_hit5": 0.7767857142857143
-      },
-      "promotion_requirements": [
-        "independent cross-venue validation with frozen thresholds",
-        "full fees/slippage/actual-funding economic replay",
-        "forward shadow signals",
-        "manual review before assignment of C-number"
-      ],
-      "cross_venue_validation": {
-        "venue": "Binance USDT spot",
-        "split": "latest 40%",
-        "n": 52,
-        "hit5": 0.8653846153846154,
-        "hit10": 0.6730769230769231,
-        "t5_before_s7p5": 0.7115384615384616,
-        "net_roi": 0.010542307692307693,
-        "wilson_lower": 0.7472642307950509,
-        "unsupported_features": [],
-        "passed": true
-      }
-    },
-    {
-      "candidate_id": "AUTO-20261011-06",
-      "status": "SHADOW_ONLY",
-      "segment": "primary_perps",
-      "rule": "rsi_pct1 <= -0.142048 AND price_pct1 <= -0.0547641",
-      "features": [
-        "rsi_pct1",
-        "price_pct1"
-      ],
-      "conditions": [
-        {
-          "feature": "rsi_pct1",
-          "op": "<=",
-          "a": -0.1420481158880264,
-          "b": null
-        },
-        {
-          "feature": "price_pct1",
-          "op": "<=",
-          "a": -0.0547641289117234,
-          "b": null
-        }
-      ],
-      "validation": {
-        "train_n": 79,
-        "train_hit5": 0.8354430379746836,
-        "hold_n": 66,
-        "hold_hit5": 0.8636363636363636,
-        "hold_hit10": 0.6515151515151515,
-        "hold_t5_before_s7p5": 0.7727272727272727,
-        "train_net_roi": 0.013872151898734175,
-        "hold_net_roi": 0.01869090909090909,
-        "hold_wilson_lower": 0.7607018517959349,
-        "episodes": 19,
-        "episode_hit5": 0.7710526315789474
-      },
-      "promotion_requirements": [
-        "independent cross-venue validation with frozen thresholds",
-        "full fees/slippage/actual-funding economic replay",
-        "forward shadow signals",
-        "manual review before assignment of C-number"
-      ],
-      "cross_venue_validation": {
-        "venue": "Binance USDT spot",
-        "split": "latest 40%",
-        "n": 71,
-        "hit5": 0.8169014084507042,
-        "hit10": 0.647887323943662,
-        "t5_before_s7p5": 0.676056338028169,
-        "net_roi": 0.006107042253521127,
-        "wilson_lower": 0.7115161048643927,
-        "unsupported_features": [],
-        "passed": false
-      }
-    },
-    {
-      "candidate_id": "AUTO-20261011-07",
-      "status": "SHADOW_ONLY",
-      "segment": "primary_perps",
-      "rule": "rsi_vs_sma3 <= -0.120468 AND close_location <= 0.102084",
-      "features": [
-        "rsi_vs_sma3",
-        "close_location"
-      ],
-      "conditions": [
-        {
-          "feature": "rsi_vs_sma3",
-          "op": "<=",
-          "a": -0.1204675071565011,
-          "b": null
-        },
-        {
-          "feature": "close_location",
-          "op": "<=",
-          "a": 0.1020843202273806,
-          "b": null
-        }
-      ],
-      "validation": {
-        "train_n": 77,
-        "train_hit5": 0.8311688311688312,
-        "hold_n": 45,
-        "hold_hit5": 0.8444444444444444,
-        "hold_hit10": 0.6222222222222222,
-        "hold_t5_before_s7p5": 0.7777777777777778,
-        "train_net_roi": 0.014632467532467533,
-        "hold_net_roi": 0.019322222222222227,
-        "hold_wilson_lower": 0.712158094887512,
-        "episodes": 18,
-        "episode_hit5": 0.7638888888888888
-      },
-      "promotion_requirements": [
-        "independent cross-venue validation with frozen thresholds",
-        "full fees/slippage/actual-funding economic replay",
-        "forward shadow signals",
-        "manual review before assignment of C-number"
-      ],
-      "cross_venue_validation": {
-        "venue": "Binance USDT spot",
-        "split": "latest 40%",
-        "n": 47,
-        "hit5": 0.7446808510638298,
-        "hit10": 0.574468085106383,
-        "t5_before_s7p5": 0.6595744680851063,
-        "net_roi": 0.004046808510638301,
-        "wilson_lower": 0.604915508600796,
-        "unsupported_features": [],
-        "passed": false
-      }
-    },
-    {
-      "candidate_id": "AUTO-20261011-08",
-      "status": "SHADOW_ONLY",
-      "segment": "primary_perps",
-      "rule": "close_location <= 0.0704607 AND price_pct1 <= -0.0344585",
-      "features": [
-        "close_location",
-        "price_pct1"
-      ],
-      "conditions": [
-        {
-          "feature": "close_location",
-          "op": "<=",
-          "a": 0.0704607046070451,
-          "b": null
-        },
-        {
-          "feature": "price_pct1",
-          "op": "<=",
-          "a": -0.0344584771942576,
-          "b": null
-        }
-      ],
-      "validation": {
-        "train_n": 84,
+        "train_n": 70,
         "train_hit5": 0.8571428571428571,
-        "hold_n": 39,
-        "hold_hit5": 0.8717948717948718,
-        "hold_hit10": 0.5897435897435898,
-        "hold_t5_before_s7p5": 0.7435897435897436,
-        "train_net_roi": 0.021802380952380955,
-        "hold_net_roi": 0.015048717948717956,
-        "hold_wilson_lower": 0.7329395096236953,
-        "episodes": 17,
-        "episode_hit5": 0.8774509803921569
-      },
-      "promotion_requirements": [
-        "independent cross-venue validation with frozen thresholds",
-        "full fees/slippage/actual-funding economic replay",
-        "forward shadow signals",
-        "manual review before assignment of C-number"
-      ],
-      "cross_venue_validation": {
-        "venue": "Binance USDT spot",
-        "split": "latest 40%",
-        "n": 44,
-        "hit5": 0.7954545454545454,
-        "hit10": 0.5909090909090909,
-        "t5_before_s7p5": 0.7045454545454546,
-        "net_roi": 0.009668181818181819,
-        "wilson_lower": 0.6549913631816677,
-        "unsupported_features": [],
-        "passed": false
-      }
-    },
-    {
-      "candidate_id": "AUTO-20261011-09",
-      "status": "SHADOW_ONLY",
-      "segment": "primary_perps",
-      "rule": "close_location <= 0.0704607 AND rsi_pct1 <= -0.142048",
-      "features": [
-        "close_location",
-        "rsi_pct1"
-      ],
-      "conditions": [
-        {
-          "feature": "close_location",
-          "op": "<=",
-          "a": 0.0704607046070451,
-          "b": null
-        },
-        {
-          "feature": "rsi_pct1",
-          "op": "<=",
-          "a": -0.1420481158880264,
-          "b": null
-        }
-      ],
-      "validation": {
-        "train_n": 64,
-        "train_hit5": 0.84375,
-        "hold_n": 33,
-        "hold_hit5": 0.8484848484848485,
-        "hold_hit10": 0.6060606060606061,
-        "hold_t5_before_s7p5": 0.7575757575757576,
-        "train_net_roi": 0.021709375000000003,
-        "hold_net_roi": 0.0167969696969697,
-        "hold_wilson_lower": 0.6907978686153953,
+        "hold_n": 37,
+        "hold_hit5": 0.8648648648648649,
+        "hold_hit10": 0.6486486486486487,
+        "hold_t5_before_s7p5": 0.8378378378378378,
+        "train_net_roi": 0.018528571428571426,
+        "hold_net_roi": 0.026829729729729735,
+        "hold_wilson_lower": 0.7202227252929444,
         "episodes": 12,
         "episode_hit5": 0.8125
       },
@@ -494,51 +47,51 @@
       "cross_venue_validation": {
         "venue": "Binance USDT spot",
         "split": "latest 40%",
-        "n": 36,
-        "hit5": 0.7222222222222222,
-        "hit10": 0.5277777777777778,
-        "t5_before_s7p5": 0.6388888888888888,
-        "net_roi": 0.0014611111111111135,
-        "wilson_lower": 0.5600719978365485,
+        "n": 33,
+        "hit5": 0.7878787878787878,
+        "hit10": 0.5454545454545454,
+        "t5_before_s7p5": 0.7272727272727273,
+        "net_roi": 0.01250909090909091,
+        "wilson_lower": 0.6224802241287064,
         "unsupported_features": [],
-        "passed": false
+        "passed": true
       }
     },
     {
-      "candidate_id": "AUTO-20261011-10",
+      "candidate_id": "AUTO-20261012-02",
       "status": "CROSS_VALIDATED_SHADOW",
       "segment": "primary_perps",
-      "rule": "close_location <= 0.0855184 AND rsi_accel <= -8.98624",
+      "rule": "price_pct1 <= -0.0592281 AND rsi_accel <= -10.0906",
       "features": [
-        "close_location",
+        "price_pct1",
         "rsi_accel"
       ],
       "conditions": [
         {
-          "feature": "close_location",
+          "feature": "price_pct1",
           "op": "<=",
-          "a": 0.0855183541750705,
+          "a": -0.0592281131655156,
           "b": null
         },
         {
           "feature": "rsi_accel",
           "op": "<=",
-          "a": -8.986237705844246,
+          "a": -10.090594983839289,
           "b": null
         }
       ],
       "validation": {
-        "train_n": 60,
-        "train_hit5": 0.8833333333333333,
-        "hold_n": 33,
-        "hold_hit5": 0.8484848484848485,
-        "hold_hit10": 0.6060606060606061,
-        "hold_t5_before_s7p5": 0.7575757575757576,
-        "train_net_roi": 0.02626666666666666,
-        "hold_net_roi": 0.0167969696969697,
-        "hold_wilson_lower": 0.6907978686153953,
-        "episodes": 13,
-        "episode_hit5": 0.7692307692307693
+        "train_n": 59,
+        "train_hit5": 0.847457627118644,
+        "hold_n": 47,
+        "hold_hit5": 0.8936170212765957,
+        "hold_hit10": 0.6595744680851063,
+        "hold_t5_before_s7p5": 0.7872340425531915,
+        "train_net_roi": 0.01320169491525424,
+        "hold_net_roi": 0.020504255319148942,
+        "hold_wilson_lower": 0.7740546030798721,
+        "episodes": 15,
+        "episode_hit5": 0.7925925925925926
       },
       "promotion_requirements": [
         "independent cross-venue validation with frozen thresholds",
@@ -549,16 +102,16 @@
       "cross_venue_validation": {
         "venue": "Binance USDT spot",
         "split": "latest 40%",
-        "n": 34,
-        "hit5": 0.8235294117647058,
-        "hit10": 0.6176470588235294,
-        "t5_before_s7p5": 0.7352941176470589,
-        "net_roi": 0.013511764705882353,
-        "wilson_lower": 0.6648593225994784,
+        "n": 55,
+        "hit5": 0.8727272727272727,
+        "hit10": 0.6545454545454545,
+        "t5_before_s7p5": 0.7454545454545455,
+        "net_roi": 0.01478181818181818,
+        "wilson_lower": 0.7598272515317739,
         "unsupported_features": [],
         "passed": true
       }
     }
   ],
-  "cross_venue_updated_at": "2026-10-11T11:33:53.618701+00:00"
+  "cross_venue_updated_at": "2026-10-12T13:20:29.284950+00:00"
 }
