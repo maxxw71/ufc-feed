@@ -1,13 +1,13 @@
 AUTO DISCOVERY — BINANCE CROSS-VENUE VALIDATION
 
-Binance 8% first-flush events: 810
-Independent Binance holdout events: 324
+Binance 8% first-flush events: 822
+Independent Binance holdout events: 329
 Candidates checked: 2
 Cross-validated shadow candidates: 2
 Binance net ROI gate: >= 1.00%/trade under the same +5/-7.5/5d contract
 
-    candidate_id                 status                                                    rule  binance_n  binance_hit5  binance_hit10  binance_t5_s7p5  binance_net_roi  binance_wilson_lower unsupported_features
-AUTO-20261012-01 CROSS_VALIDATED_SHADOW close_location <= 0.085517 AND rsi_vs_sma3 <= -0.120639         33      0.787879       0.545455         0.727273         0.012509              0.622480                     
-AUTO-20261012-02 CROSS_VALIDATED_SHADOW      price_pct1 <= -0.0592281 AND rsi_accel <= -10.0906         55      0.872727       0.654545         0.745455         0.014782              0.759827                     
+    candidate_id                 status                                                     rule  binance_n  binance_hit5  binance_hit10  binance_t5_s7p5  binance_net_roi  binance_wilson_lower unsupported_features
+AUTO-20261013-01 CROSS_VALIDATED_SHADOW close_location <= 0.0853279 AND rsi_vs_sma3 <= -0.120536         36      0.805556       0.555556         0.750000         0.015350              0.649716                     
+AUTO-20261013-02 CROSS_VALIDATED_SHADOW       price_pct1 <= -0.0591955 AND rsi_accel <= -10.0752         52      0.846154       0.634615         0.711538         0.010542              0.724757                     
 
 No candidate is auto-promoted live. CROSS_VALIDATED_SHADOW still requires forward shadow performance and manual review.
