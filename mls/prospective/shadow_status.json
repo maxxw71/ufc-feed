@@ -1,21 +1,34 @@
 {
-  "built_at": "2026-10-13T08:10:38.584259+00:00",
-  "market_captured_at": "2026-10-13T08:10:06.782043+00:00",
+  "built_at": "2026-10-13T20:43:47.722067+00:00",
+  "market_captured_at": "2026-10-13T20:42:58.716935+00:00",
   "elo_updated_at": "2026-10-11T00:00:00+00:00",
-  "elo_age_days": 2.340600224710648,
-  "qualifier_count": 2,
+  "elo_age_days": 2.863643254861111,
+  "qualifier_count": 4,
   "qualifiers": [
     {
       "method_id": "MLS-R03",
       "selection": "New England Revolution",
       "opponent": "FC Cincinnati",
       "commence_time": "2026-10-14T23:30Z",
-      "american_price": "+210",
+      "american_price": "+245",
       "book": "DraftKings",
-      "market_prob": 0.2971071149335418,
+      "market_prob": 0.2670713201820941,
       "research_status": "SHADOW_READY",
       "confidence_tier": "BASE",
-      "portfolio_conflict": false,
+      "portfolio_conflict": true,
+      "same_side_consensus": null
+    },
+    {
+      "method_id": "MLS-A02",
+      "selection": "FC Cincinnati",
+      "opponent": "New England Revolution",
+      "commence_time": "2026-10-14T23:30Z",
+      "american_price": "-120",
+      "book": "DraftKings",
+      "market_prob": 0.5025796661608498,
+      "research_status": "PROSPECTIVE_PRIORITY_SHADOW",
+      "confidence_tier": "BASE",
+      "portfolio_conflict": true,
       "same_side_consensus": null
     },
     {
@@ -27,6 +40,19 @@
       "book": "DraftKings",
       "market_prob": 0.2985582699239087,
       "research_status": "PROSPECTIVE_PRIORITY_SHADOW",
+      "confidence_tier": "BASE",
+      "portfolio_conflict": false,
+      "same_side_consensus": null
+    },
+    {
+      "method_id": "MLS-A04",
+      "selection": "LA Galaxy",
+      "opponent": "Portland Timbers",
+      "commence_time": "2026-10-15T02:30Z",
+      "american_price": "+100",
+      "book": "DraftKings",
+      "market_prob": 0.4605160281469898,
+      "research_status": "SHADOW_WATCH",
       "confidence_tier": "BASE",
       "portfolio_conflict": false,
       "same_side_consensus": null
@@ -44,21 +70,9 @@
   "watch_only_method_ids": [
     "MLS-A04"
   ],
-  "active_qualifier_count": 2,
-  "watch_qualifier_count": 0,
+  "active_qualifier_count": 3,
+  "watch_qualifier_count": 1,
   "portfolio_matches": [
-    {
-      "event_id": "761862",
-      "home_team": "FC Cincinnati",
-      "away_team": "New England Revolution",
-      "selection": "New England Revolution",
-      "methods": [
-        "MLS-R03"
-      ],
-      "consensus": false,
-      "max_bankroll_exposure_pct": 1.0,
-      "staking_policy": "MAX_1_PERCENT_CURRENT_BANKROLL_PER_MATCH"
-    },
     {
       "event_id": "761871",
       "home_team": "Colorado Rapids",
@@ -72,8 +86,38 @@
       "staking_policy": "MAX_1_PERCENT_CURRENT_BANKROLL_PER_MATCH"
     }
   ],
-  "portfolio_conflicts": [],
-  "conflicts": [],
+  "portfolio_conflicts": [
+    {
+      "event_id": "761862",
+      "home_team": "FC Cincinnati",
+      "away_team": "New England Revolution",
+      "methods": [
+        "MLS-R03",
+        "MLS-A02"
+      ],
+      "selections": [
+        "New England Revolution",
+        "FC Cincinnati"
+      ],
+      "policy": "NO_PORTFOLIO_ACTION"
+    }
+  ],
+  "conflicts": [
+    {
+      "event_id": "761862",
+      "home_team": "FC Cincinnati",
+      "away_team": "New England Revolution",
+      "methods": [
+        "MLS-R03",
+        "MLS-A02"
+      ],
+      "selections": [
+        "New England Revolution",
+        "FC Cincinnati"
+      ],
+      "policy": "TRACK_FOR_RESEARCH"
+    }
+  ],
   "consensus": [],
   "portfolio_policy": {
     "opposite_side_conflict": "ACTIVE_METHOD_CONFLICTS_GET_NO_PORTFOLIO_ACTION",
