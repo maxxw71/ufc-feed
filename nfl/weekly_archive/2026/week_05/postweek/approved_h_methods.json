@@ -1,0 +1,507 @@
+{
+  "schema_version": 1,
+  "season": 2026,
+  "mode": "SHADOW_ONLY",
+  "public_website_enabled": false,
+  "email_enabled": false,
+  "bet_tracker_enabled": false,
+  "global_guards": {
+    "season_type": "REG",
+    "selected_team_prior_completed_games_min": 3,
+    "require_current_actionable_moneyline": true,
+    "require_method_price_gate": true,
+    "require_all_method_rules": true,
+    "apply_one_validated_hard_veto_max": true,
+    "fail_closed_on_missing_feature": true
+  },
+  "week4_methods": [
+    "NFL-H002",
+    "NFL-H003",
+    "NFL-H008",
+    "NFL-H017",
+    "NFL-H027",
+    "NFL-H029",
+    "NFL-H033",
+    "NFL-H036"
+  ],
+  "week7_methods": [
+    "NFL-H005",
+    "NFL-H010",
+    "NFL-H028",
+    "NFL-H035"
+  ],
+  "methods": [
+    {
+      "method_id": "NFL-H002",
+      "stage_status": "SHADOW_ELIGIBLE",
+      "start_week": 4,
+      "min_prior_completed_games": 3,
+      "season_type": "REG",
+      "venue": "AWAY",
+      "price_band": "DOG35_49",
+      "live_probability_min": 0.35,
+      "live_probability_max": 0.4999,
+      "live_odds_range": "+100 to +186",
+      "price_decision": "KEEP_ORIGINAL_BAND",
+      "rules": [
+        {
+          "feature": "rank_edge_def_allowed_explosive_rate",
+          "op": "<=",
+          "threshold": -6.0
+        },
+        {
+          "feature": "recent_edge_punt_return_average",
+          "op": ">=",
+          "threshold": 2.495833333333334
+        }
+      ],
+      "hard_veto": {
+        "source": "BASE",
+        "feature": "dome_game",
+        "op": ">=",
+        "threshold": 1.0
+      },
+      "historical": {
+        "full_n": 143,
+        "full_roi": 0.3551048951048952,
+        "holdout_n": 47,
+        "holdout_roi": 0.4948936170212765,
+        "positive_season_ratio": 0.8421052631578947,
+        "historical_min_week": 4,
+        "historical_max_week": 18,
+        "timing_decision": "WEEK4_OK_AFTER_3_COMPLETED_GAMES"
+      }
+    },
+    {
+      "method_id": "NFL-H003",
+      "stage_status": "SHADOW_ELIGIBLE",
+      "start_week": 4,
+      "min_prior_completed_games": 3,
+      "season_type": "REG",
+      "venue": "AWAY",
+      "price_band": "DOG35_44",
+      "live_probability_min": 0.35,
+      "live_probability_max": 0.4499,
+      "live_odds_range": "+122 to +186",
+      "price_decision": "KEEP_ORIGINAL_BAND",
+      "rules": [
+        {
+          "feature": "rank_edge_third_down_success",
+          "op": ">=",
+          "threshold": 0.0
+        },
+        {
+          "feature": "rank_edge_sack_or_hit_rate",
+          "op": ">=",
+          "threshold": 5.0
+        }
+      ],
+      "hard_veto": {
+        "source": "BASE",
+        "feature": "recent_edge_def_allowed_pass_epa_per_dropback",
+        "op": ">=",
+        "threshold": 0.2182382565949704
+      },
+      "historical": {
+        "full_n": 173,
+        "full_roi": 0.4316184971098266,
+        "holdout_n": 43,
+        "holdout_roi": 0.4374418604651162,
+        "positive_season_ratio": 0.9,
+        "historical_min_week": 4,
+        "historical_max_week": 17,
+        "timing_decision": "WEEK4_OK_AFTER_3_COMPLETED_GAMES"
+      }
+    },
+    {
+      "method_id": "NFL-H008",
+      "stage_status": "SHADOW_ELIGIBLE",
+      "start_week": 4,
+      "min_prior_completed_games": 3,
+      "season_type": "REG",
+      "venue": "ANY",
+      "price_band": "DOG35_44",
+      "live_probability_min": 0.35,
+      "live_probability_max": 0.4228348709146821,
+      "live_odds_range": "+136 to +186",
+      "price_decision": "TIGHTEN_LIVE_PRICE",
+      "rules": [
+        {
+          "feature": "rank_edge_third_down_success",
+          "op": ">=",
+          "threshold": 0.0
+        },
+        {
+          "feature": "recent_edge_kick_return_average",
+          "op": ">=",
+          "threshold": 2.1666666666666643
+        }
+      ],
+      "hard_veto": null,
+      "historical": {
+        "full_n": 206,
+        "full_roi": 0.2943689320388349,
+        "holdout_n": 64,
+        "holdout_roi": 0.24453125,
+        "positive_season_ratio": 0.7,
+        "historical_min_week": 4,
+        "historical_max_week": 18,
+        "timing_decision": "WEEK4_OK_AFTER_3_COMPLETED_GAMES"
+      }
+    },
+    {
+      "method_id": "NFL-H017",
+      "stage_status": "SHADOW_ELIGIBLE",
+      "start_week": 4,
+      "min_prior_completed_games": 3,
+      "season_type": "REG",
+      "venue": "AWAY",
+      "price_band": "DOG35_49",
+      "live_probability_min": 0.35,
+      "live_probability_max": 0.4999,
+      "live_odds_range": "+100 to +186",
+      "price_decision": "KEEP_ORIGINAL_BAND",
+      "rules": [
+        {
+          "feature": "recent_edge_sack_or_hit_rate",
+          "op": ">=",
+          "threshold": -0.0437273575519235
+        },
+        {
+          "feature": "rank_edge_def_allowed_explosive_rate",
+          "op": "<=",
+          "threshold": -6.0
+        }
+      ],
+      "hard_veto": {
+        "source": "TRAVEL",
+        "feature": "adv_prior_road_miles_last5",
+        "op": "<=",
+        "threshold": -315.24304298251786
+      },
+      "historical": {
+        "full_n": 327,
+        "full_roi": 0.1912538226299694,
+        "holdout_n": 102,
+        "holdout_roi": 0.1823529411764706,
+        "positive_season_ratio": 0.7,
+        "historical_min_week": 4,
+        "historical_max_week": 18,
+        "timing_decision": "WEEK4_OK_AFTER_3_COMPLETED_GAMES"
+      }
+    },
+    {
+      "method_id": "NFL-H027",
+      "stage_status": "SHADOW_ELIGIBLE",
+      "start_week": 4,
+      "min_prior_completed_games": 3,
+      "season_type": "REG",
+      "venue": "AWAY",
+      "price_band": "DOG35_49",
+      "live_probability_min": 0.35,
+      "live_probability_max": 0.4999,
+      "live_odds_range": "+100 to +186",
+      "price_decision": "KEEP_ORIGINAL_BAND",
+      "rules": [
+        {
+          "feature": "recent_edge_punt_return_average",
+          "op": ">=",
+          "threshold": 4.415277777777777
+        },
+        {
+          "feature": "recent_edge_success_rate",
+          "op": ">=",
+          "threshold": 0.0
+        }
+      ],
+      "hard_veto": {
+        "source": "COACHING",
+        "feature": "dc_tenure_seasons",
+        "op": ">=",
+        "threshold": 3.0
+      },
+      "historical": {
+        "full_n": 147,
+        "full_roi": 0.3314965986394558,
+        "holdout_n": 43,
+        "holdout_roi": 0.2290697674418605,
+        "positive_season_ratio": 0.8,
+        "historical_min_week": 4,
+        "historical_max_week": 18,
+        "timing_decision": "WEEK4_OK_AFTER_3_COMPLETED_GAMES"
+      }
+    },
+    {
+      "method_id": "NFL-H029",
+      "stage_status": "SHADOW_ELIGIBLE",
+      "start_week": 4,
+      "min_prior_completed_games": 3,
+      "season_type": "REG",
+      "venue": "AWAY",
+      "price_band": "DOG35_49",
+      "live_probability_min": 0.35,
+      "live_probability_max": 0.4999,
+      "live_odds_range": "+100 to +186",
+      "price_decision": "KEEP_ORIGINAL_BAND",
+      "rules": [
+        {
+          "feature": "rank_edge_def_allowed_sack_or_hit_rate",
+          "op": ">=",
+          "threshold": 14.0
+        }
+      ],
+      "hard_veto": {
+        "source": "BASE",
+        "feature": "rank_edge_punt_return_average",
+        "op": "<=",
+        "threshold": -14.2
+      },
+      "historical": {
+        "full_n": 196,
+        "full_roi": 0.2107142857142857,
+        "holdout_n": 60,
+        "holdout_roi": 0.2178333333333333,
+        "positive_season_ratio": 0.7,
+        "historical_min_week": 4,
+        "historical_max_week": 18,
+        "timing_decision": "WEEK4_OK_AFTER_3_COMPLETED_GAMES"
+      }
+    },
+    {
+      "method_id": "NFL-H033",
+      "stage_status": "SHADOW_ELIGIBLE",
+      "start_week": 4,
+      "min_prior_completed_games": 3,
+      "season_type": "REG",
+      "venue": "AWAY",
+      "price_band": "DOG35_49",
+      "live_probability_min": 0.35,
+      "live_probability_max": 0.4999,
+      "live_odds_range": "+100 to +186",
+      "price_decision": "KEEP_ORIGINAL_BAND",
+      "rules": [
+        {
+          "feature": "recent_edge_punt_return_average",
+          "op": ">=",
+          "threshold": 4.415277777777777
+        }
+      ],
+      "hard_veto": null,
+      "historical": {
+        "full_n": 286,
+        "full_roi": 0.1988461538461538,
+        "holdout_n": 88,
+        "holdout_roi": 0.1614772727272727,
+        "positive_season_ratio": 0.75,
+        "historical_min_week": 4,
+        "historical_max_week": 18,
+        "timing_decision": "WEEK4_OK_AFTER_3_COMPLETED_GAMES"
+      }
+    },
+    {
+      "method_id": "NFL-H036",
+      "stage_status": "SHADOW_ELIGIBLE",
+      "start_week": 4,
+      "min_prior_completed_games": 3,
+      "season_type": "REG",
+      "venue": "AWAY",
+      "price_band": "DOG35_49",
+      "live_probability_min": 0.35,
+      "live_probability_max": 0.4999,
+      "live_odds_range": "+100 to +186",
+      "price_decision": "KEEP_ORIGINAL_BAND",
+      "rules": [
+        {
+          "feature": "rank_edge_def_allowed_explosive_rate",
+          "op": "<=",
+          "threshold": -9.75
+        },
+        {
+          "feature": "rank_edge_def_allowed_pass_epa_per_dropback",
+          "op": "<=",
+          "threshold": -6.0
+        }
+      ],
+      "hard_veto": {
+        "source": "TRAVEL",
+        "feature": "adv_prior_road_miles_last5",
+        "op": "<=",
+        "threshold": -449.2804356656068
+      },
+      "historical": {
+        "full_n": 142,
+        "full_roi": 0.3334507042253521,
+        "holdout_n": 46,
+        "holdout_roi": 0.1728260869565217,
+        "positive_season_ratio": 0.75,
+        "historical_min_week": 4,
+        "historical_max_week": 18,
+        "timing_decision": "WEEK4_OK_AFTER_3_COMPLETED_GAMES"
+      }
+    },
+    {
+      "method_id": "NFL-H005",
+      "stage_status": "LOCKED_UNTIL_WEEK_7",
+      "start_week": 7,
+      "min_prior_completed_games": 3,
+      "season_type": "REG",
+      "venue": "ANY",
+      "price_band": "DOG35_44",
+      "live_probability_min": 0.3657675657675657,
+      "live_probability_max": 0.4264566814577726,
+      "live_odds_range": "+134 to +173",
+      "price_decision": "TIGHTEN_LIVE_PRICE",
+      "rules": [
+        {
+          "feature": "rank_edge_third_down_success",
+          "op": ">=",
+          "threshold": 0.0
+        },
+        {
+          "feature": "rank_edge_off_epa_per_play",
+          "op": ">=",
+          "threshold": 10.0
+        }
+      ],
+      "hard_veto": {
+        "source": "COACHING",
+        "feature": "oc_prior_role_seasons",
+        "op": ">=",
+        "threshold": 3.0
+      },
+      "historical": {
+        "full_n": 143,
+        "full_roi": 0.4163636363636363,
+        "holdout_n": 41,
+        "holdout_roi": 0.3602439024390244,
+        "positive_season_ratio": 0.8333333333333334,
+        "historical_min_week": 4,
+        "historical_max_week": 18,
+        "timing_decision": "INSUFFICIENT_EARLY_EVIDENCE_START_WEEK7"
+      }
+    },
+    {
+      "method_id": "NFL-H010",
+      "stage_status": "LOCKED_UNTIL_WEEK_7",
+      "start_week": 7,
+      "min_prior_completed_games": 3,
+      "season_type": "REG",
+      "venue": "AWAY",
+      "price_band": "DOG35_49",
+      "live_probability_min": 0.35,
+      "live_probability_max": 0.4526943644590703,
+      "live_odds_range": "+121 to +186",
+      "price_decision": "TIGHTEN_LIVE_PRICE",
+      "rules": [
+        {
+          "feature": "rank_edge_third_down_success",
+          "op": ">=",
+          "threshold": 0.0
+        },
+        {
+          "feature": "rank_edge_pass_epa_per_dropback",
+          "op": ">=",
+          "threshold": 10.0
+        }
+      ],
+      "hard_veto": {
+        "source": "COACHING",
+        "feature": "adv_dc_prior_win_pct",
+        "op": "<=",
+        "threshold": -0.1042471042471042
+      },
+      "historical": {
+        "full_n": 162,
+        "full_roi": 0.3194444444444444,
+        "holdout_n": 40,
+        "holdout_roi": 0.3217499999999999,
+        "positive_season_ratio": 0.7222222222222222,
+        "historical_min_week": 4,
+        "historical_max_week": 17,
+        "timing_decision": "EARLY_WINDOW_WEAK_START_WEEK7"
+      }
+    },
+    {
+      "method_id": "NFL-H028",
+      "stage_status": "LOCKED_UNTIL_WEEK_7",
+      "start_week": 7,
+      "min_prior_completed_games": 3,
+      "season_type": "REG",
+      "venue": "AWAY",
+      "price_band": "DOG35_49",
+      "live_probability_min": 0.35,
+      "live_probability_max": 0.4999,
+      "live_odds_range": "+100 to +186",
+      "price_decision": "KEEP_ORIGINAL_BAND",
+      "rules": [
+        {
+          "feature": "recent_edge_sack_or_hit_rate",
+          "op": ">=",
+          "threshold": -0.0437273575519235
+        },
+        {
+          "feature": "rank_edge_pass_epa_per_dropback",
+          "op": ">=",
+          "threshold": 10.0
+        }
+      ],
+      "hard_veto": {
+        "source": "TRAVEL",
+        "feature": "adv_abs_tz_shift_hours",
+        "op": ">=",
+        "threshold": 0.0
+      },
+      "historical": {
+        "full_n": 175,
+        "full_roi": 0.2466285714285714,
+        "holdout_n": 43,
+        "holdout_roi": 0.2334883720930232,
+        "positive_season_ratio": 0.7058823529411765,
+        "historical_min_week": 4,
+        "historical_max_week": 17,
+        "timing_decision": "EARLY_WINDOW_WEAK_START_WEEK7"
+      }
+    },
+    {
+      "method_id": "NFL-H035",
+      "stage_status": "LOCKED_UNTIL_WEEK_7",
+      "start_week": 7,
+      "min_prior_completed_games": 3,
+      "season_type": "REG",
+      "venue": "AWAY",
+      "price_band": "DOG35_49",
+      "live_probability_min": 0.35,
+      "live_probability_max": 0.4999,
+      "live_odds_range": "+100 to +186",
+      "price_decision": "KEEP_ORIGINAL_BAND",
+      "rules": [
+        {
+          "feature": "rank_edge_def_allowed_pass_epa_per_dropback",
+          "op": "<=",
+          "threshold": -6.0
+        },
+        {
+          "feature": "recent_edge_punt_net_average",
+          "op": ">=",
+          "threshold": 2.046011904761898
+        }
+      ],
+      "hard_veto": {
+        "source": "COACHING",
+        "feature": "oc_tenure_seasons",
+        "op": ">=",
+        "threshold": 3.0
+      },
+      "historical": {
+        "full_n": 145,
+        "full_roi": 0.2969655172413792,
+        "holdout_n": 52,
+        "holdout_roi": 0.1542307692307692,
+        "positive_season_ratio": 0.75,
+        "historical_min_week": 4,
+        "historical_max_week": 18,
+        "timing_decision": "EARLY_WINDOW_WEAK_START_WEEK7"
+      }
+    }
+  ]
+}
