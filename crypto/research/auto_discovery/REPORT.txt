@@ -1,6 +1,6 @@
 AUTOMATIC CRYPTO METHOD DISCOVERY
 
-Source events: 1310
+Source events: 1311
 Eligible new candidates: 2
 
 Promotion policy: AUTO discoveries are SHADOW_ONLY. They never become a live C-number automatically.
@@ -9,8 +9,8 @@ ROI contract: +5% target / -7.5% stop / 5d timeout / 0.045% taker + 0.10% slippa
 
 TOP NEW CANDIDATES
       segment                                                     rule                   features                                                                                                                                                     conditions       novelty  train_n  train_hit5  train_t5_s7p5  train_net_roi  hold_n  hold_hit5  hold_hit10  hold_t5_s7p5  hold_net_roi  hold_wilson_lower  hold_episodes  episode_hit5  train_folds  train_fold_mean_hit5  train_fold_min_hit5  hold_median_mfe5d  hold_median_mae5d  eligible  research_score                               family_key
-primary_perps close_location <= 0.0853279 AND rsi_vs_sma3 <= -0.120536 close_location+rsi_vs_sma3 [{"feature": "close_location", "op": "<=", "a": 0.08532786151077464, "b": null}, {"feature": "rsi_vs_sma3", "op": "<=", "a": -0.12053596496626964, "b": null}] NEW_CANDIDATE       69    0.855072       0.768116       0.018114      37   0.864865    0.648649      0.837838      0.026830           0.720223             12      0.812500            3              0.835714             0.650000           0.114220          -0.035135      True        0.844505 primary_perps|close_location+rsi_vs_sma3
-primary_perps       price_pct1 <= -0.0591955 AND rsi_accel <= -10.0752       price_pct1+rsi_accel        [{"feature": "price_pct1", "op": "<=", "a": -0.0591955193667179, "b": null}, {"feature": "rsi_accel", "op": "<=", "a": -10.075185681189538, "b": null}] NEW_CANDIDATE       59    0.847458       0.728814       0.013202      47   0.893617    0.659574      0.787234      0.020504           0.774055             15      0.792593            4              0.838095             0.666667           0.137425          -0.050508      True        0.792695       primary_perps|price_pct1+rsi_accel
+primary_perps close_location <= 0.0855178 AND rsi_vs_sma3 <= -0.119994 close_location+rsi_vs_sma3 [{"feature": "close_location", "op": "<=", "a": 0.08551779299635695, "b": null}, {"feature": "rsi_vs_sma3", "op": "<=", "a": -0.11999354199892305, "b": null}] NEW_CANDIDATE       70    0.857143       0.771429       0.018529      37   0.864865    0.648649      0.837838      0.026830           0.720223             12      0.812500            3              0.842857                  0.6           0.114220          -0.035135      True        0.844505 primary_perps|close_location+rsi_vs_sma3
+primary_perps       price_pct1 <= -0.0591955 AND rsi_accel <= -10.0752       price_pct1+rsi_accel        [{"feature": "price_pct1", "op": "<=", "a": -0.0591955193667179, "b": null}, {"feature": "rsi_accel", "op": "<=", "a": -10.075185681189538, "b": null}] NEW_CANDIDATE       59    0.847458       0.728814       0.013202      47   0.893617    0.659574      0.787234      0.020504           0.774055             15      0.792593            4              0.839286                  0.6           0.137425          -0.050508      True        0.792695       primary_perps|price_pct1+rsi_accel
 
 GATES
 +5% holdout >= 80%

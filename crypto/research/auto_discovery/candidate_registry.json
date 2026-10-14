@@ -1,12 +1,12 @@
 {
-  "generated_at": "2026-10-13T12:52:49.509012+00:00",
+  "generated_at": "2026-10-14T10:23:35.508056+00:00",
   "source": "Hyperliquid all-pairs 4H research",
   "candidates": [
     {
-      "candidate_id": "AUTO-20261013-01",
+      "candidate_id": "AUTO-20261014-01",
       "status": "CROSS_VALIDATED_SHADOW",
       "segment": "primary_perps",
-      "rule": "close_location <= 0.0853279 AND rsi_vs_sma3 <= -0.120536",
+      "rule": "close_location <= 0.0855178 AND rsi_vs_sma3 <= -0.119994",
       "features": [
         "close_location",
         "rsi_vs_sma3"
@@ -15,24 +15,24 @@
         {
           "feature": "close_location",
           "op": "<=",
-          "a": 0.08532786151077464,
+          "a": 0.08551779299635695,
           "b": null
         },
         {
           "feature": "rsi_vs_sma3",
           "op": "<=",
-          "a": -0.12053596496626964,
+          "a": -0.11999354199892305,
           "b": null
         }
       ],
       "validation": {
-        "train_n": 69,
-        "train_hit5": 0.855072463768116,
+        "train_n": 70,
+        "train_hit5": 0.8571428571428571,
         "hold_n": 37,
         "hold_hit5": 0.8648648648648649,
         "hold_hit10": 0.6486486486486487,
         "hold_t5_before_s7p5": 0.8378378378378378,
-        "train_net_roi": 0.018114492753623184,
+        "train_net_roi": 0.018528571428571426,
         "hold_net_roi": 0.026829729729729735,
         "hold_wilson_lower": 0.7202227252929444,
         "episodes": 12,
@@ -47,18 +47,18 @@
       "cross_venue_validation": {
         "venue": "Binance USDT spot",
         "split": "latest 40%",
-        "n": 36,
-        "hit5": 0.8055555555555556,
-        "hit10": 0.5555555555555556,
-        "t5_before_s7p5": 0.75,
-        "net_roi": 0.015349999999999999,
-        "wilson_lower": 0.6497163793648479,
+        "n": 32,
+        "hit5": 0.78125,
+        "hit10": 0.59375,
+        "t5_before_s7p5": 0.71875,
+        "net_roi": 0.011443750000000003,
+        "wilson_lower": 0.6124466920955516,
         "unsupported_features": [],
         "passed": true
       }
     },
     {
-      "candidate_id": "AUTO-20261013-02",
+      "candidate_id": "AUTO-20261014-02",
       "status": "CROSS_VALIDATED_SHADOW",
       "segment": "primary_perps",
       "rule": "price_pct1 <= -0.0591955 AND rsi_accel <= -10.0752",
@@ -87,7 +87,7 @@
         "hold_hit5": 0.8936170212765957,
         "hold_hit10": 0.6595744680851063,
         "hold_t5_before_s7p5": 0.7872340425531915,
-        "train_net_roi": 0.013201694915254239,
+        "train_net_roi": 0.01320169491525424,
         "hold_net_roi": 0.020504255319148942,
         "hold_wilson_lower": 0.7740546030798721,
         "episodes": 15,
@@ -103,15 +103,15 @@
         "venue": "Binance USDT spot",
         "split": "latest 40%",
         "n": 52,
-        "hit5": 0.8461538461538461,
-        "hit10": 0.6346153846153846,
-        "t5_before_s7p5": 0.7115384615384616,
-        "net_roi": 0.010542307692307693,
-        "wilson_lower": 0.7247565640845235,
+        "hit5": 0.8846153846153846,
+        "hit10": 0.7307692307692307,
+        "t5_before_s7p5": 0.7692307692307693,
+        "net_roi": 0.017753846153846155,
+        "wilson_lower": 0.7702808110893793,
         "unsupported_features": [],
         "passed": true
       }
     }
   ],
-  "cross_venue_updated_at": "2026-10-13T12:52:49.908503+00:00"
+  "cross_venue_updated_at": "2026-10-14T10:23:35.932845+00:00"
 }
