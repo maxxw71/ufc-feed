@@ -1,13 +1,14 @@
 AUTO DISCOVERY — BINANCE CROSS-VENUE VALIDATION
 
-Binance 8% first-flush events: 791
-Independent Binance holdout events: 317
-Candidates checked: 2
-Cross-validated shadow candidates: 2
+Binance 8% first-flush events: 744
+Independent Binance holdout events: 298
+Candidates checked: 3
+Cross-validated shadow candidates: 3
 Binance net ROI gate: >= 1.00%/trade under the same +5/-7.5/5d contract
 
-    candidate_id                 status                                                     rule  binance_n  binance_hit5  binance_hit10  binance_t5_s7p5  binance_net_roi  binance_wilson_lower unsupported_features
-AUTO-20261014-01 CROSS_VALIDATED_SHADOW close_location <= 0.0855178 AND rsi_vs_sma3 <= -0.119994         32      0.781250       0.593750         0.718750         0.011444              0.612447                     
-AUTO-20261014-02 CROSS_VALIDATED_SHADOW       price_pct1 <= -0.0591955 AND rsi_accel <= -10.0752         52      0.884615       0.730769         0.769231         0.017754              0.770281                     
+    candidate_id                 status                                                                         rule  binance_n  binance_hit5  binance_hit10  binance_t5_s7p5  binance_net_roi  binance_wilson_lower unsupported_features
+AUTO-20261015-01 CROSS_VALIDATED_SHADOW                     close_location <= 0.0849525 AND rsi_vs_sma3 <= -0.120673         31      0.806452       0.580645         0.741935         0.014342              0.637194                     
+AUTO-20261015-02 CROSS_VALIDATED_SHADOW rsi_accel <= -10.0444 AND rsi_pct1 <= -0.183157 AND price_pct1 <= -0.0593586         45      0.911111       0.711111         0.800000         0.021600              0.792661                     
+AUTO-20261015-03 CROSS_VALIDATED_SHADOW                        rsi_accel <= -9.00756 AND close_location <= 0.0849525         30      0.866667       0.633333         0.766667         0.017433              0.703183                     
 
 No candidate is auto-promoted live. CROSS_VALIDATED_SHADOW still requires forward shadow performance and manual review.
