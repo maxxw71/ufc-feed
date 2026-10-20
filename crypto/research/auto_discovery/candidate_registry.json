@@ -1,64 +1,9 @@
 {
-  "generated_at": "2026-10-19T10:56:53.865003+00:00",
+  "generated_at": "2026-10-20T10:14:37.057049+00:00",
   "source": "Hyperliquid all-pairs 4H research",
   "candidates": [
     {
-      "candidate_id": "AUTO-20261019-01",
-      "status": "SHADOW_ONLY",
-      "segment": "primary_perps",
-      "rule": "close_location <= 0.0729181 AND range_ratio20 >= 1.22477",
-      "features": [
-        "close_location",
-        "range_ratio20"
-      ],
-      "conditions": [
-        {
-          "feature": "close_location",
-          "op": "<=",
-          "a": 0.07291810166689586,
-          "b": null
-        },
-        {
-          "feature": "range_ratio20",
-          "op": ">=",
-          "a": 1.224774255049247,
-          "b": null
-        }
-      ],
-      "validation": {
-        "train_n": 85,
-        "train_hit5": 0.8,
-        "hold_n": 35,
-        "hold_hit5": 0.9428571428571428,
-        "hold_hit10": 0.6571428571428571,
-        "hold_t5_before_s7p5": 0.8857142857142857,
-        "train_net_roi": 0.013276470588235292,
-        "hold_net_roi": 0.03281428571428571,
-        "hold_wilson_lower": 0.8139261926062996,
-        "episodes": 16,
-        "episode_hit5": 0.90625
-      },
-      "promotion_requirements": [
-        "independent cross-venue validation with frozen thresholds",
-        "full fees/slippage/actual-funding economic replay",
-        "forward shadow signals",
-        "manual review before assignment of C-number"
-      ],
-      "cross_venue_validation": {
-        "venue": "Binance USDT spot",
-        "split": "latest 40%",
-        "n": 34,
-        "hit5": 0.7352941176470589,
-        "hit10": 0.47058823529411764,
-        "t5_before_s7p5": 0.6470588235294118,
-        "net_roi": 0.0024823529411764733,
-        "wilson_lower": 0.5688253783710155,
-        "unsupported_features": [],
-        "passed": false
-      }
-    },
-    {
-      "candidate_id": "AUTO-20261019-02",
+      "candidate_id": "AUTO-20261020-01",
       "status": "SHADOW_ONLY",
       "segment": "primary_perps",
       "rule": "close_location <= 0.0729181 AND price_pct1 <= -0.0348791",
@@ -102,21 +47,21 @@
       "cross_venue_validation": {
         "venue": "Binance USDT spot",
         "split": "latest 40%",
-        "n": 36,
-        "hit5": 0.7777777777777778,
-        "hit10": 0.5,
-        "t5_before_s7p5": 0.6944444444444444,
-        "net_roi": 0.008405555555555555,
-        "wilson_lower": 0.6191498017214091,
+        "n": 40,
+        "hit5": 0.775,
+        "hit10": 0.575,
+        "t5_before_s7p5": 0.725,
+        "net_roi": 0.012934307992202732,
+        "wilson_lower": 0.6249660359590695,
         "unsupported_features": [],
         "passed": false
       }
     },
     {
-      "candidate_id": "AUTO-20261019-03",
+      "candidate_id": "AUTO-20261020-02",
       "status": "SHADOW_ONLY",
       "segment": "primary_perps",
-      "rule": "close_location <= 0.0729181 AND rsi_accel <= -6.08838",
+      "rule": "close_location <= 0.0729181 AND rsi_accel <= -6.04194",
       "features": [
         "close_location",
         "rsi_accel"
@@ -131,7 +76,7 @@
         {
           "feature": "rsi_accel",
           "op": "<=",
-          "a": -6.088382181128481,
+          "a": -6.041943194231987,
           "b": null
         }
       ],
@@ -157,16 +102,16 @@
       "cross_venue_validation": {
         "venue": "Binance USDT spot",
         "split": "latest 40%",
-        "n": 33,
-        "hit5": 0.7272727272727273,
-        "hit10": 0.48484848484848486,
-        "t5_before_s7p5": 0.6363636363636364,
-        "net_roi": 0.001145454545454548,
-        "wilson_lower": 0.5578211674561319,
+        "n": 34,
+        "hit5": 0.7352941176470589,
+        "hit10": 0.5588235294117647,
+        "t5_before_s7p5": 0.6764705882352942,
+        "net_roi": 0.006158823529411767,
+        "wilson_lower": 0.5688253783710155,
         "unsupported_features": [],
         "passed": false
       }
     }
   ],
-  "cross_venue_updated_at": "2026-10-19T10:56:54.284353+00:00"
+  "cross_venue_updated_at": "2026-10-20T10:14:37.403337+00:00"
 }
