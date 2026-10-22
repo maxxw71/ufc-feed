@@ -1,0 +1,43 @@
+name: Appwiza Disk Usage Audit
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/appwiza-disk-usage-audit.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: appwiza-disk-usage-audit
+  cancel-in-progress: true
+jobs:
+  audit:
+    runs-on: [self-hosted, Linux, X64, appwiza]
+    timeout-minutes: 8
+    steps:
+      - name: Read-only disk and cleanup candidate inventory
+        shell: bash
+        run: |
+          set -u
+          date -u
+          echo 'DISK_FILESYSTEMS'
+          df -hT / /home /srv /var /tmp 2>&1 || true
+          echo 'INODES'
+          df -i / /home /srv /var /tmp 2>&1 || true
+          echo 'RUNNER_COMPONENTS'
+          for d in /home/appwiza-runner/actions-runner/_work /home/appwiza-runner/actions-runner/_diag /home/appwiza-runner/actions-runner/_update /home/appwiza-runner/.cache /home/appwiza-runner/.local/share /home/appwiza-runner/.npm /home/appwiza-runner/.cargo; do
+            test -d "$d" && timeout 40 du -shx "$d" 2>&1 || true
+          done
+          echo 'TOP_LEVEL_DIRECTORIES'
+          for d in /home/appwiza-runner /home/anestishkurti92 /srv/appwiza-sports /var/log /var/cache /tmp /opt; do
+            if test -d "$d"; then
+              echo "DIRECTORY $d"
+              timeout 65 du -x -h --max-depth=1 "$d" 2>/dev/null | sort -h | tail -n 30 || true
+            fi
+          done
+          echo 'LARGE_FILES_PATHS_ONLY'
+          for d in /home/appwiza-runner/actions-runner /var/log /tmp; do
+            test -d "$d" && timeout 45 find "$d" -xdev -maxdepth 5 -type f -size +500M -printf '%s %p\n' 2>/dev/null | sort -nr | head -n 30 || true
+          done
+          echo 'SYSTEM_JOURNAL_SIZE'
+          journalctl --disk-usage 2>&1 || true
