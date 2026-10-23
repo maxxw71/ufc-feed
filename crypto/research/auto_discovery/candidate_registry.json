@@ -1,6 +1,62 @@
 {
-  "generated_at": "2026-10-22T10:21:48.037075+00:00",
+  "generated_at": "2026-10-23T10:13:29.205897+00:00",
   "source": "Hyperliquid all-pairs 4H research",
-  "candidates": [],
-  "cross_venue_updated_at": "2026-10-22T10:21:48.655815+00:00"
+  "candidates": [
+    {
+      "candidate_id": "AUTO-20261023-01",
+      "status": "SHADOW_ONLY",
+      "segment": "primary_perps",
+      "rule": "close_location <= 0.0723068 AND price_pct1 <= -0.0346295",
+      "features": [
+        "close_location",
+        "price_pct1"
+      ],
+      "conditions": [
+        {
+          "feature": "close_location",
+          "op": "<=",
+          "a": 0.07230679156908579,
+          "b": null
+        },
+        {
+          "feature": "price_pct1",
+          "op": "<=",
+          "a": -0.03462953930740931,
+          "b": null
+        }
+      ],
+      "validation": {
+        "train_n": 87,
+        "train_hit5": 0.8160919540229885,
+        "hold_n": 33,
+        "hold_hit5": 0.9393939393939394,
+        "hold_hit10": 0.6363636363636364,
+        "hold_t5_before_s7p5": 0.8787878787878788,
+        "train_net_roi": 0.012617241379310341,
+        "hold_net_roi": 0.03194848484848485,
+        "hold_wilson_lower": 0.8039341828220181,
+        "episodes": 14,
+        "episode_hit5": 0.9047619047619048
+      },
+      "promotion_requirements": [
+        "independent cross-venue validation with frozen thresholds",
+        "full fees/slippage/actual-funding economic replay",
+        "forward shadow signals",
+        "manual review before assignment of C-number"
+      ],
+      "cross_venue_validation": {
+        "venue": "Binance USDT spot",
+        "split": "latest 40%",
+        "n": 40,
+        "hit5": 0.775,
+        "hit10": 0.575,
+        "t5_before_s7p5": 0.675,
+        "net_roi": 0.006684307992202728,
+        "wilson_lower": 0.6249660359590695,
+        "unsupported_features": [],
+        "passed": false
+      }
+    }
+  ],
+  "cross_venue_updated_at": "2026-10-23T10:13:29.495078+00:00"
 }
