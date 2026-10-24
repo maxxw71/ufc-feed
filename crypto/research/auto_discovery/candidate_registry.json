@@ -1,12 +1,12 @@
 {
-  "generated_at": "2026-10-23T10:13:29.205897+00:00",
+  "generated_at": "2026-10-24T09:42:16.907929+00:00",
   "source": "Hyperliquid all-pairs 4H research",
   "candidates": [
     {
-      "candidate_id": "AUTO-20261023-01",
+      "candidate_id": "AUTO-20261024-01",
       "status": "SHADOW_ONLY",
       "segment": "primary_perps",
-      "rule": "close_location <= 0.0723068 AND price_pct1 <= -0.0346295",
+      "rule": "close_location <= 0.0886057 AND price_pct1 <= -0.0347543",
       "features": [
         "close_location",
         "price_pct1"
@@ -15,28 +15,28 @@
         {
           "feature": "close_location",
           "op": "<=",
-          "a": 0.07230679156908579,
+          "a": 0.08860573898232496,
           "b": null
         },
         {
           "feature": "price_pct1",
           "op": "<=",
-          "a": -0.03462953930740931,
+          "a": -0.034754299254132204,
           "b": null
         }
       ],
       "validation": {
-        "train_n": 87,
-        "train_hit5": 0.8160919540229885,
-        "hold_n": 33,
-        "hold_hit5": 0.9393939393939394,
+        "train_n": 100,
+        "train_hit5": 0.84,
+        "hold_n": 44,
+        "hold_hit5": 0.8636363636363636,
         "hold_hit10": 0.6363636363636364,
-        "hold_t5_before_s7p5": 0.8787878787878788,
-        "train_net_roi": 0.012617241379310341,
-        "hold_net_roi": 0.03194848484848485,
-        "hold_wilson_lower": 0.8039341828220181,
-        "episodes": 14,
-        "episode_hit5": 0.9047619047619048
+        "hold_t5_before_s7p5": 0.7954545454545454,
+        "train_net_roi": 0.013350000000000004,
+        "hold_net_roi": 0.021531818181818187,
+        "hold_wilson_lower": 0.7329026247825904,
+        "episodes": 18,
+        "episode_hit5": 0.787037037037037
       },
       "promotion_requirements": [
         "independent cross-venue validation with frozen thresholds",
@@ -47,16 +47,16 @@
       "cross_venue_validation": {
         "venue": "Binance USDT spot",
         "split": "latest 40%",
-        "n": 40,
-        "hit5": 0.775,
-        "hit10": 0.575,
-        "t5_before_s7p5": 0.675,
-        "net_roi": 0.006684307992202728,
-        "wilson_lower": 0.6249660359590695,
+        "n": 45,
+        "hit5": 0.6888888888888889,
+        "hit10": 0.5111111111111111,
+        "t5_before_s7p5": 0.6,
+        "net_roi": 3.37272965916035e-05,
+        "wilson_lower": 0.5433492001245104,
         "unsupported_features": [],
         "passed": false
       }
     }
   ],
-  "cross_venue_updated_at": "2026-10-23T10:13:29.495078+00:00"
+  "cross_venue_updated_at": "2026-10-24T09:42:17.296280+00:00"
 }

@@ -1,6 +1,6 @@
 AUTOMATIC CRYPTO METHOD DISCOVERY
 
-Source events: 1304
+Source events: 1302
 Eligible new candidates: 1
 
 Promotion policy: AUTO discoveries are SHADOW_ONLY. They never become a live C-number automatically.
@@ -8,8 +8,8 @@ Discovery order: Hyperliquid primary perps first on cost-adjusted ROI, then froz
 ROI contract: +5% target / -7.5% stop / 5d timeout / 0.045% taker + 0.10% slippage per side; funding replay remains mandatory.
 
 TOP NEW CANDIDATES
-      segment                                                     rule                  features                                                                                                                                                    conditions       novelty  train_n  train_hit5  train_t5_s7p5  train_net_roi  hold_n  hold_hit5  hold_hit10  hold_t5_s7p5  hold_net_roi  hold_wilson_lower  hold_episodes  episode_hit5  train_folds  train_fold_mean_hit5  train_fold_min_hit5  hold_median_mfe5d  hold_median_mae5d  eligible  research_score                              family_key
-primary_perps close_location <= 0.0723068 AND price_pct1 <= -0.0346295 close_location+price_pct1 [{"feature": "close_location", "op": "<=", "a": 0.07230679156908579, "b": null}, {"feature": "price_pct1", "op": "<=", "a": -0.03462953930740931, "b": null}] NEW_CANDIDATE       87    0.816092       0.724138       0.012617      33   0.939394    0.636364      0.878788      0.031948           0.803934             14      0.904762            4              0.809548             0.615385           0.128557          -0.039359      True        0.923683 primary_perps|close_location+price_pct1
+      segment                                                     rule                  features                                                                                                                                                     conditions       novelty  train_n  train_hit5  train_t5_s7p5  train_net_roi  hold_n  hold_hit5  hold_hit10  hold_t5_s7p5  hold_net_roi  hold_wilson_lower  hold_episodes  episode_hit5  train_folds  train_fold_mean_hit5  train_fold_min_hit5  hold_median_mfe5d  hold_median_mae5d  eligible  research_score                              family_key
+primary_perps close_location <= 0.0886057 AND price_pct1 <= -0.0347543 close_location+price_pct1 [{"feature": "close_location", "op": "<=", "a": 0.08860573898232496, "b": null}, {"feature": "price_pct1", "op": "<=", "a": -0.034754299254132204, "b": null}] NEW_CANDIDATE      100        0.84           0.73        0.01335      44   0.863636    0.636364      0.795455      0.021532           0.732903             18      0.787037            4              0.832541              0.62963           0.128822          -0.043192      True        0.788959 primary_perps|close_location+price_pct1
 
 GATES
 +5% holdout >= 80%
