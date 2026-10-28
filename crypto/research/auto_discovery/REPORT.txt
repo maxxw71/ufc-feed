@@ -1,15 +1,14 @@
 AUTOMATIC CRYPTO METHOD DISCOVERY
 
-Source events: 1300
-Eligible new candidates: 1
+Source events: 1302
+Eligible new candidates: 0
 
 Promotion policy: AUTO discoveries are SHADOW_ONLY. They never become a live C-number automatically.
 Discovery order: Hyperliquid primary perps first on cost-adjusted ROI, then frozen-threshold cross-venue replication.
 ROI contract: +5% target / -7.5% stop / 5d timeout / 0.045% taker + 0.10% slippage per side; funding replay remains mandatory.
 
 TOP NEW CANDIDATES
-      segment                                                     rule                  features                                                                                                                                                    conditions       novelty  train_n  train_hit5  train_t5_s7p5  train_net_roi  hold_n  hold_hit5  hold_hit10  hold_t5_s7p5  hold_net_roi  hold_wilson_lower  hold_episodes  episode_hit5  train_folds  train_fold_mean_hit5  train_fold_min_hit5  hold_median_mfe5d  hold_median_mae5d  eligible  research_score                              family_key
-primary_perps close_location <= 0.0886057 AND price_pct1 <= -0.0352761 close_location+price_pct1 [{"feature": "close_location", "op": "<=", "a": 0.08860573898232496, "b": null}, {"feature": "price_pct1", "op": "<=", "a": -0.03527610947270399, "b": null}] NEW_CANDIDATE       99    0.838384       0.727273       0.013009      43   0.860465    0.651163      0.790698      0.020937           0.727361             18      0.787037            4               0.82898             0.615385           0.129086          -0.042634      True        0.781547 primary_perps|close_location+price_pct1
+No candidate passed today's full gate.
 
 GATES
 +5% holdout >= 80%
