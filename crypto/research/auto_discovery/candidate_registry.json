@@ -1,6 +1,62 @@
 {
-  "generated_at": "2026-10-31T11:04:57.707927+00:00",
+  "generated_at": "2026-11-01T12:00:05.371591+00:00",
   "source": "Hyperliquid all-pairs 4H research",
-  "candidates": [],
-  "cross_venue_updated_at": "2026-10-31T11:04:58.005468+00:00"
+  "candidates": [
+    {
+      "candidate_id": "AUTO-20261101-01",
+      "status": "SHADOW_ONLY",
+      "segment": "primary_perps",
+      "rule": "close_location <= 0.0855175 AND rsi_accel <= -8.59543",
+      "features": [
+        "close_location",
+        "rsi_accel"
+      ],
+      "conditions": [
+        {
+          "feature": "close_location",
+          "op": "<=",
+          "a": 0.08551751240700019,
+          "b": null
+        },
+        {
+          "feature": "rsi_accel",
+          "op": "<=",
+          "a": -8.595433778433536,
+          "b": null
+        }
+      ],
+      "validation": {
+        "train_n": 58,
+        "train_hit5": 0.8448275862068966,
+        "hold_n": 31,
+        "hold_hit5": 0.8709677419354839,
+        "hold_hit10": 0.6451612903225806,
+        "hold_t5_before_s7p5": 0.8387096774193549,
+        "train_net_roi": 0.01692758620689655,
+        "hold_net_roi": 0.026938709677419365,
+        "hold_wilson_lower": 0.7114724304561464,
+        "episodes": 12,
+        "episode_hit5": 0.7916666666666666
+      },
+      "promotion_requirements": [
+        "independent cross-venue validation with frozen thresholds",
+        "full fees/slippage/actual-funding economic replay",
+        "forward shadow signals",
+        "manual review before assignment of C-number"
+      ],
+      "cross_venue_validation": {
+        "venue": "Binance USDT spot",
+        "split": "latest 40%",
+        "n": 33,
+        "hit5": 0.8181818181818182,
+        "hit10": 0.6060606060606061,
+        "t5_before_s7p5": 0.6666666666666666,
+        "net_roi": 0.0071685568556855706,
+        "wilson_lower": 0.656114329507048,
+        "unsupported_features": [],
+        "passed": false
+      }
+    }
+  ],
+  "cross_venue_updated_at": "2026-11-01T12:00:05.746558+00:00"
 }
