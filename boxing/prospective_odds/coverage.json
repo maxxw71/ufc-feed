@@ -1,13 +1,13 @@
 {
-  "generated_at": "2026-10-13T23:44:55.140307+00:00",
-  "snapshot_records": 110,
-  "raw_quote_observations": 29550,
-  "verified_pre_event_quote_observations": 14076,
-  "verified_pre_event_sportsbook_quote_observations": 13226,
-  "verified_pre_event_prediction_market_quote_observations": 850,
-  "verification_pct": 47.63,
-  "unique_verified_bouts": 89,
-  "unique_verified_sportsbook_bouts": 88,
+  "generated_at": "2026-11-01T17:07:08.298967+00:00",
+  "snapshot_records": 111,
+  "raw_quote_observations": 29808,
+  "verified_pre_event_quote_observations": 14324,
+  "verified_pre_event_sportsbook_quote_observations": 13472,
+  "verified_pre_event_prediction_market_quote_observations": 852,
+  "verification_pct": 48.05,
+  "unique_verified_bouts": 142,
+  "unique_verified_sportsbook_bouts": 141,
   "unique_prediction_market_only_bouts": 1,
   "unique_sportsbooks": [
     "BetWay",
@@ -15,18 +15,18 @@
     "FanDuel",
     "Unibet"
   ],
-  "sportsbook_bouts_with_two_sided_latest_quotes": 88,
+  "sportsbook_bouts_with_two_sided_latest_quotes": 141,
   "settled_verified_bouts": 15,
   "settled_verified_sportsbook_bouts": 15,
-  "past_unresolved_bouts": 23,
-  "past_unresolved_sportsbook_bouts": 22,
-  "future_or_today_bouts": 51,
-  "future_or_today_sportsbook_bouts": 51,
+  "past_unresolved_bouts": 42,
+  "past_unresolved_sportsbook_bouts": 41,
+  "future_or_today_bouts": 85,
+  "future_or_today_sportsbook_bouts": 85,
   "date_min": "2026-09-20",
-  "date_max": "2026-12-31",
+  "date_max": "2027-01-23",
   "policy": "Only originally timestamped pre-event quotes are eligible; results require exact date+pair and either unanimous matching finished source rows or a strict manual supplement with at least two independent published result sources. Sportsbook and prediction-market observations are reported separately. For sportsbook validation, opening=first verified observation and latest=last verified observation before listed event start/date; consensus latest is the median of each sportsbook latest observation, never a retrospectively chosen price.",
   "unresolved_reasons": {
-    "missing_exact_date_pair_result": 23
+    "missing_exact_date_pair_result": 42
   },
   "bout_level_results_location": "private_appwiza_server",
   "settled_count_meaning": "Verified fight outcomes; bookmaker-specific wager settlement remains separately unverified."
