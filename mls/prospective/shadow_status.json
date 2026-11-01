@@ -1,60 +1,47 @@
 {
-  "built_at": "2026-10-13T20:43:47.722067+00:00",
-  "market_captured_at": "2026-10-13T20:42:58.716935+00:00",
-  "elo_updated_at": "2026-10-11T00:00:00+00:00",
-  "elo_age_days": 2.863643254861111,
-  "qualifier_count": 4,
+  "built_at": "2026-11-01T16:59:46.460870+00:00",
+  "market_captured_at": "2026-11-01T16:59:05.509001+00:00",
+  "elo_updated_at": "2026-11-01T01:30:00+00:00",
+  "elo_age_days": 0.645495713125,
+  "qualifier_count": 3,
   "qualifiers": [
     {
-      "method_id": "MLS-R03",
-      "selection": "New England Revolution",
-      "opponent": "FC Cincinnati",
-      "commence_time": "2026-10-14T23:30Z",
-      "american_price": "+245",
+      "method_id": "MLS-A06",
+      "selection": "Minnesota United FC",
+      "opponent": "Los Angeles FC",
+      "commence_time": "2026-11-02T01:30Z",
+      "american_price": "+320",
       "book": "DraftKings",
-      "market_prob": 0.2670713201820941,
-      "research_status": "SHADOW_READY",
+      "market_prob": 0.22076588547958442,
+      "research_status": "PROSPECTIVE_PRIORITY_SHADOW",
       "confidence_tier": "BASE",
-      "portfolio_conflict": true,
+      "portfolio_conflict": false,
       "same_side_consensus": null
     },
     {
       "method_id": "MLS-A02",
-      "selection": "FC Cincinnati",
-      "opponent": "New England Revolution",
-      "commence_time": "2026-10-14T23:30Z",
-      "american_price": "-120",
+      "selection": "Portland Timbers",
+      "opponent": "Houston Dynamo FC",
+      "commence_time": "2026-11-02T02:45Z",
+      "american_price": "-135",
       "book": "DraftKings",
-      "market_prob": 0.5025796661608498,
+      "market_prob": 0.5314826498422713,
       "research_status": "PROSPECTIVE_PRIORITY_SHADOW",
       "confidence_tier": "BASE",
       "portfolio_conflict": true,
       "same_side_consensus": null
     },
     {
-      "method_id": "MLS-A03",
-      "selection": "Minnesota United FC",
-      "opponent": "Colorado Rapids",
-      "commence_time": "2026-10-15T01:30Z",
-      "american_price": "+210",
+      "method_id": "MLS-A06",
+      "selection": "Houston Dynamo FC",
+      "opponent": "Portland Timbers",
+      "commence_time": "2026-11-02T02:45Z",
+      "american_price": "+300",
       "book": "DraftKings",
-      "market_prob": 0.2985582699239087,
+      "market_prob": 0.23129337539432177,
       "research_status": "PROSPECTIVE_PRIORITY_SHADOW",
       "confidence_tier": "BASE",
-      "portfolio_conflict": false,
-      "same_side_consensus": null
-    },
-    {
-      "method_id": "MLS-A04",
-      "selection": "LA Galaxy",
-      "opponent": "Portland Timbers",
-      "commence_time": "2026-10-15T02:30Z",
-      "american_price": "+100",
-      "book": "DraftKings",
-      "market_prob": 0.4605160281469898,
-      "research_status": "SHADOW_WATCH",
-      "confidence_tier": "BASE",
-      "portfolio_conflict": false,
+      "portfolio_conflict": true,
       "same_side_consensus": null
     }
   ],
@@ -71,15 +58,15 @@
     "MLS-A04"
   ],
   "active_qualifier_count": 3,
-  "watch_qualifier_count": 1,
+  "watch_qualifier_count": 0,
   "portfolio_matches": [
     {
-      "event_id": "761871",
-      "home_team": "Colorado Rapids",
+      "event_id": "761921",
+      "home_team": "Los Angeles FC",
       "away_team": "Minnesota United FC",
       "selection": "Minnesota United FC",
       "methods": [
-        "MLS-A03"
+        "MLS-A06"
       ],
       "consensus": false,
       "max_bankroll_exposure_pct": 1.0,
@@ -88,32 +75,32 @@
   ],
   "portfolio_conflicts": [
     {
-      "event_id": "761862",
-      "home_team": "FC Cincinnati",
-      "away_team": "New England Revolution",
+      "event_id": "761933",
+      "home_team": "Portland Timbers",
+      "away_team": "Houston Dynamo FC",
       "methods": [
-        "MLS-R03",
-        "MLS-A02"
+        "MLS-A02",
+        "MLS-A06"
       ],
       "selections": [
-        "New England Revolution",
-        "FC Cincinnati"
+        "Portland Timbers",
+        "Houston Dynamo FC"
       ],
       "policy": "NO_PORTFOLIO_ACTION"
     }
   ],
   "conflicts": [
     {
-      "event_id": "761862",
-      "home_team": "FC Cincinnati",
-      "away_team": "New England Revolution",
+      "event_id": "761933",
+      "home_team": "Portland Timbers",
+      "away_team": "Houston Dynamo FC",
       "methods": [
-        "MLS-R03",
-        "MLS-A02"
+        "MLS-A02",
+        "MLS-A06"
       ],
       "selections": [
-        "New England Revolution",
-        "FC Cincinnati"
+        "Portland Timbers",
+        "Houston Dynamo FC"
       ],
       "policy": "TRACK_FOR_RESEARCH"
     }
