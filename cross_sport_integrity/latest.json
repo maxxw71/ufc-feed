@@ -1,11 +1,11 @@
 {
-  "built_at": "2026-10-14T00:29:18.452833+00:00",
+  "built_at": "2026-11-01T17:06:33.319050+00:00",
   "status": "FAIL",
   "hard_failures": [
     {
       "name": "UFC canonical_future_tracker_exact",
       "ok": false,
-      "detail": "canonical=['UFC:ufc-335:alexpereira:sergeipavlovich', 'UFC:ufc-fight-night-october-17-2026:jhonatadiniz:tannerboser'] tracker=['UFC:ufc-fight-night-october-17-2026:jhonatadiniz:tannerboser']",
+      "detail": "canonical=['UFC:ufc-335:alexpereira:sergeipavlovich'] tracker=[]",
       "hard": true
     }
   ],
@@ -14,7 +14,7 @@
     {
       "name": "sports_surface_inventory",
       "ok": true,
-      "detail": "public_dirs=['boxing', 'downloads', 'dwcs', 'mls', 'nba', 'nfl', 'theme', 'trading', 'ufc']; state_files=['downloads', 'nfl', 'ufc']",
+      "detail": "public_dirs=['boxing', 'downloads', 'dwcs', 'mls', 'nba', 'nfl', 'theme', 'ufc']; state_files=['downloads', 'nfl', 'ufc']",
       "hard": false
     },
     {
@@ -80,13 +80,13 @@
     {
       "name": "UFC canonical_public_current_exact",
       "ok": true,
-      "detail": "canonical=['UFC:ufc-335:alexpereira:sergeipavlovich', 'UFC:ufc-fight-night-october-17-2026:jhonatadiniz:tannerboser'] public=['UFC:ufc-335:alexpereira:sergeipavlovich', 'UFC:ufc-fight-night-october-17-2026:jhonatadiniz:tannerboser']",
+      "detail": "canonical=['UFC:ufc-335:alexpereira:sergeipavlovich'] public=['UFC:ufc-335:alexpereira:sergeipavlovich']",
       "hard": true
     },
     {
       "name": "UFC canonical_state_ids_exact",
       "ok": true,
-      "detail": "canonical=['UFC:ufc-335:alexpereira:sergeipavlovich', 'UFC:ufc-fight-night-october-17-2026:jhonatadiniz:tannerboser'] state=['UFC:ufc-335:alexpereira:sergeipavlovich', 'UFC:ufc-fight-night-october-17-2026:jhonatadiniz:tannerboser']",
+      "detail": "canonical=['UFC:ufc-335:alexpereira:sergeipavlovich'] state=['UFC:ufc-335:alexpereira:sergeipavlovich']",
       "hard": true
     },
     {
@@ -96,15 +96,9 @@
       "hard": true
     },
     {
-      "name": "UFC methods_exact:UFC:ufc-fight-night-october-17-2026:jhonatadiniz:tannerboser",
-      "ok": true,
-      "detail": "canonical=['U10'] state=['U10']",
-      "hard": true
-    },
-    {
       "name": "UFC canonical_future_tracker_exact",
       "ok": false,
-      "detail": "canonical=['UFC:ufc-335:alexpereira:sergeipavlovich', 'UFC:ufc-fight-night-october-17-2026:jhonatadiniz:tannerboser'] tracker=['UFC:ufc-fight-night-october-17-2026:jhonatadiniz:tannerboser']",
+      "detail": "canonical=['UFC:ufc-335:alexpereira:sergeipavlovich'] tracker=[]",
       "hard": true
     },
     {
@@ -213,7 +207,6 @@
       "nba",
       "nfl",
       "theme",
-      "trading",
       "ufc"
     ],
     "state_files": [
@@ -221,9 +214,7 @@
       "nfl",
       "ufc"
     ],
-    "future_pending_by_sport": {
-      "UFC": 1
-    }
+    "future_pending_by_sport": {}
   },
   "contract": {
     "NFL": "LIVE_CANONICAL_ONLY",
